@@ -1,0 +1,4 @@
+1.Las velas ya se pintan bien junto con el cvd y el delta
+2. El volume profile está bien
+3. El volume profile fixed ya funciona bien.
+4. Ya tenemos el detector de perfiles D operativo. Detecta rangos y luego calcula el volume profile.

@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:code.claude.com)",
+      "SlashCommand(/init)",
+      "WebFetch(domain:blueberrymarkets.com)",
+      "WebFetch(domain:www.altrady.com)",
+      "Bash(python:*)",
+      "Bash(node testRangeDetection.js:*)",
+      "Bash(node -e:*)",
+      "Bash(node quickTest.js:*)",
+      "Bash(node optimizeRangeDetection.js:*)",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node convertToPDF.js:*)",
+      "Bash(start Resumen_Desarrollo_RangeDetector.html)",
+      "Bash(cd:*)",
+      "Bash(nul)",
+      "Bash(.venvScriptspip.exe install aiohttp==3.9.1)",
+      "Bash(.venv/Scripts/pip.exe:*)",
+      "Bash(findstr:*)",
+      "Bash(.venvScriptspip.exe install -r requirements.txt)",
+      "Bash(\".venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8000)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

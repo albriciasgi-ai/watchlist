@@ -1,0 +1,2 @@
+1. Guardar el cálculo del atr en algún archivo para que podamos comparar con el gráfico para ver si hay alguna anomalía.
+2. Una vez detectado un rango, que vaya extendiéndolo hasta que el precio salga de él. Ahí estaría la fecha final del rango.
