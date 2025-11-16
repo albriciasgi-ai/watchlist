@@ -82,6 +82,9 @@ const Watchlist = () => {
   const [selectedSymbolForRP, setSelectedSymbolForRP] = useState(null);
   const [rejectionPatternConfigs, setRejectionPatternConfigs] = useState({});
 
+  // 📊 NUEVO: Estado para Open Interest mode
+  const [oiMode, setOiMode] = useState("histogram"); // "histogram", "cumulative", "flow"
+
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
     const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
@@ -248,6 +251,24 @@ const Watchlist = () => {
               />
               Open Interest
             </label>
+
+            {indicatorStates["Open Interest"] && (
+              <select
+                value={oiMode}
+                onChange={(e) => setOiMode(e.target.value)}
+                style={{
+                  marginLeft: "5px",
+                  padding: "2px 5px",
+                  fontSize: "11px",
+                  border: "1px solid #DDD",
+                  borderRadius: "3px"
+                }}
+              >
+                <option value="histogram">Histogram</option>
+                <option value="cumulative">Cumulative</option>
+                <option value="flow">Flow</option>
+              </select>
+            )}
           </div>
         </div>
       </div>
@@ -262,6 +283,7 @@ const Watchlist = () => {
             indicatorStates={indicatorStates}
             vpConfig={vpConfig}
             vpFixedRange={vpFixedRange}
+            oiMode={oiMode}
             onOpenVpSettings={() => handleOpenVpSettings(sym)}
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
