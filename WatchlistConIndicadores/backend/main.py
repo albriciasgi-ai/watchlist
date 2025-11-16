@@ -452,6 +452,212 @@ async def upload_cache(symbol: str, interval: str, data: dict):
         return {"success": False, "error": str(e)}
 
 
+# ==================== OPEN INTEREST ENDPOINT ====================
+
+@app.get("/api/open-interest/{symbol}")
+async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
+    """Endpoint para obtener Open Interest con límites por timeframe"""
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # CRÍTICO: Aplicar límite máximo por timeframe
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # CRÍTICO: Calcular cuántas velas necesitamos para days_to_fetch
+        interval_minutes = get_interval_minutes(interval_final)
+        minutes_in_period = days_to_fetch * 24 * 60
+        expected_candles = int(minutes_in_period / interval_minutes)
+
+        # Intentar cargar del cache
+        cached_data = load_cache(symbol, interval_final, "openinterest")
+
+        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
+            oi_data = cached_data.get("data", [])
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+
+            if len(oi_data) > 0:
+                print(f"[CACHE CHECK] {symbol} {interval_final} OI - Cache: {len(oi_data)} puntos, Necesita: {expected_candles}, Age: {cache_age:.0f}s")
+
+                # Si el cache tiene suficientes datos para days_to_fetch, usarlo
+                if len(oi_data) >= expected_candles:
+                    oi_to_return = oi_data[-expected_candles:]
+
+                    print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+
+                    return {
+                        "symbol": symbol,
+                        "interval": interval_final,
+                        "data": oi_to_return,
+                        "success": True,
+                        "from_cache": True,
+                        "cache_age_seconds": int(cache_age),
+                        "total_points": len(oi_to_return),
+                        "days_requested": days,
+                        "days_fetched": days_to_fetch,
+                        "max_days_allowed": max_days_allowed
+                    }
+                else:
+                    print(f"[CACHE MISS] ❌ {symbol} {interval_final} OI - Cache insuficiente, refrescando...")
+
+        # Obtener datos frescos de Bybit
+        print(f"[{symbol}] 🔄 Obteniendo datos de Open Interest de Bybit...")
+
+        # Calcular timestamps
+        end_ms = int(time.time() * 1000)
+        start_ms = end_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        # Configurar cliente HTTP con timeout
+        timeout = httpx.Timeout(30.0, connect=10.0)
+
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            # Bybit usa el endpoint de open-interest con parámetros category, symbol, intervalTime, startTime, endTime
+            url = "https://api.bybit.com/v5/market/open-interest"
+
+            # Convertir intervalo a formato Bybit (5min, 15min, 30min, 1h, 4h, 1d)
+            bybit_interval_map = {
+                "5": "5min",
+                "15": "15min",
+                "30": "30min",
+                "60": "1h",
+                "240": "4h",
+                "D": "1d"
+            }
+            bybit_interval = bybit_interval_map.get(interval_final, "15min")
+
+            params = {
+                "category": "linear",
+                "symbol": symbol,
+                "intervalTime": bybit_interval,
+                "startTime": start_ms,
+                "endTime": end_ms,
+                "limit": 200  # Máximo por request
+            }
+
+            oi_points = []
+            current_start = start_ms
+
+            # Hacer múltiples requests si es necesario
+            max_requests = 10
+            for request_num in range(max_requests):
+                params["startTime"] = current_start
+
+                response = await client.get(url, params=params)
+
+                if response.status_code != 200:
+                    print(f"[ERROR] Bybit Open Interest API error: {response.status_code}")
+                    break
+
+                result = response.json()
+
+                if result.get("retCode") != 0:
+                    print(f"[ERROR] Bybit API retCode: {result.get('retCode')} - {result.get('retMsg')}")
+                    break
+
+                batch_data = result.get("result", {}).get("list", [])
+
+                if not batch_data:
+                    break
+
+                # Procesar datos
+                for item in reversed(batch_data):  # Bybit devuelve en orden descendente
+                    timestamp = int(item.get("timestamp"))
+                    oi_value = float(item.get("openInterest", 0))
+
+                    # Convertir timestamp a datetime Colombia
+                    ts_seconds = timestamp / 1000
+                    dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+                    dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+                    oi_points.append({
+                        "timestamp": timestamp,
+                        "openInterest": oi_value,
+                        "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+                    })
+
+                # Actualizar timestamp para siguiente batch
+                if len(batch_data) > 0:
+                    last_timestamp = int(batch_data[0].get("timestamp"))
+                    current_start = last_timestamp + 1
+
+                    if current_start >= end_ms:
+                        break
+                else:
+                    break
+
+                # Si ya tenemos suficientes datos, salir
+                if len(oi_points) >= expected_candles:
+                    break
+
+                await asyncio.sleep(0.1)
+
+        # Calcular deltas de Open Interest
+        processed_data = []
+        prev_oi = None
+
+        for i, point in enumerate(oi_points):
+            oi_delta = 0
+            if prev_oi is not None:
+                oi_delta = point["openInterest"] - prev_oi
+
+            processed_data.append({
+                "timestamp": point["timestamp"],
+                "openInterest": point["openInterest"],
+                "openInterestDelta": oi_delta,
+                "datetime_colombia": point["datetime_colombia"]
+            })
+
+            prev_oi = point["openInterest"]
+
+        # Limitar al número exacto de puntos solicitados
+        if len(processed_data) > expected_candles:
+            processed_data = processed_data[-expected_candles:]
+
+        # Guardar en cache
+        cache_obj = {
+            "symbol": symbol,
+            "interval": interval_final,
+            "data": processed_data
+        }
+        save_cache(symbol, interval_final, "openinterest", cache_obj)
+
+        print(f"[{symbol}] ✅ Open Interest: Devolviendo {len(processed_data)} puntos (esperados: {expected_candles})")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "data": processed_data,
+            "success": True,
+            "from_cache": False,
+            "total_points": len(processed_data),
+            "days_requested": days,
+            "days_fetched": days_to_fetch,
+            "max_days_allowed": max_days_allowed
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "error": str(e),
+            "success": False
+        }
+
+
 # ==================== REJECTION PATTERN ENDPOINTS ====================
 
 from fastapi import Request

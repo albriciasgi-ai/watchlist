@@ -5,6 +5,7 @@
 import VolumeProfileIndicator from "./VolumeProfileIndicator";
 import VolumeIndicator from "./VolumeIndicator";
 import CVDIndicator from "./CVDIndicator";
+import OpenInterestIndicator from "./OpenInterestIndicator";
 import VolumeProfileFixedRangeIndicator from "./VolumeProfileFixedRangeIndicator";
 import RangeDetectionIndicator from "./RangeDetectionIndicator";
 import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
@@ -33,6 +34,7 @@ class IndicatorManager {
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       new VolumeIndicator(this.symbol, this.interval, this.days),
       new CVDIndicator(this.symbol, this.interval, this.days),
+      new OpenInterestIndicator(this.symbol, this.interval, this.days),
       new RejectionPatternIndicator(this.symbol, this.interval, this.days)
     ];
 
@@ -43,11 +45,10 @@ class IndicatorManager {
       patternIndicator.setShowMode('all'); // Mostrar todos los patrones por defecto
     }
 
-    // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile si es necesario
+    // ✅ Cargar datos para Volume Profile y Open Interest
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile") {
+        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
           return ind.fetchData();
         }
         return Promise.resolve();
@@ -90,20 +91,20 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh solo para Volume Profile
+  // ✅ SIMPLIFICADO: refresh solo para Volume Profile y Open Interest
   async refresh() {
     const startTime = Date.now();
-    console.log(`[${this.symbol}] 🔄 Refrescando Volume Profile...`);
-    
+    console.log(`[${this.symbol}] 🔄 Refrescando Volume Profile y Open Interest...`);
+
     try {
       await Promise.all(
         this.indicators.map(async (indicator) => {
-          if (indicator.enabled && indicator.name === "Volume Profile") {
+          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest")) {
             await indicator.fetchData();
           }
         })
       );
-      
+
       const duration = Date.now() - startTime;
       console.log(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
     } catch (error) {
