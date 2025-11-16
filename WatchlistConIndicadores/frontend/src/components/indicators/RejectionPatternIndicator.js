@@ -85,7 +85,7 @@ class RejectionPatternIndicator extends IndicatorBase {
    */
   setShowMode(mode) {
     this.showMode = mode;
-    console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
+    // console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
   }
 
   /**
@@ -99,7 +99,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     this.localPatterns = this.localDetector.detectPatterns(candles, this.config);
-    console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
+    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
   }
 
   async fetchData() {
@@ -136,7 +136,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (data.success) {
         this.patterns = data.patterns || [];
-        console.log(`[${this.symbol}] Loaded ${this.patterns.length} rejection patterns`);
+        // console.log(`[${this.symbol}] Loaded ${this.patterns.length} rejection patterns`);
       } else {
         console.error(`[${this.symbol}] Failed to fetch patterns:`, data.error);
         this.patterns = [];

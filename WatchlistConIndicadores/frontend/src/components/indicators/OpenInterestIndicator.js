@@ -103,6 +103,14 @@ class OpenInterestIndicator extends IndicatorBase {
       }
     }
 
+    // Debug: log si no encuentra nada (solo una vez para no saturar)
+    if (closestValue === null && !this._loggedNoMatch) {
+      const candleDate = new Date(candleTimestamp).toISOString();
+      const oiTimestamps = Array.from(this.dataMap.keys()).slice(0, 3).map(t => new Date(t).toISOString());
+      console.log(`[${this.symbol}] ⚠️ No OI match found for candle ${candleDate}. Sample OI timestamps:`, oiTimestamps);
+      this._loggedNoMatch = true;
+    }
+
     return closestValue;
   }
 
@@ -361,11 +369,21 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Calcular datos
     const data = this.calculateHistogramMode(visibleCandles);
-    if (data.length === 0) return;
+    console.log(`[${this.symbol}] 🎨 RENDER Histogram: data.length=${data.length}`);
+    if (data.length === 0) {
+      console.log(`[${this.symbol}] ❌ RENDER: No data, exiting`);
+      return;
+    }
 
     // Encontrar valor máximo para escala
+    const deltas = data.map(d => d.delta);
     const maxDelta = Math.max(...data.map(d => Math.abs(d.delta)));
-    if (maxDelta === 0) return;
+    console.log(`[${this.symbol}] 🎨 RENDER: maxDelta=${maxDelta}, sample deltas:`, deltas.slice(0, 10));
+
+    if (maxDelta === 0) {
+      console.log(`[${this.symbol}] ❌ RENDER: maxDelta is 0, no bars to draw`);
+      return;
+    }
 
     const histogramHeight = height - 25;
     const histogramY = y + 20;
