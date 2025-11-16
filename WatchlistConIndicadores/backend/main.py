@@ -456,8 +456,12 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                 "max_days_allowed": max_days_allowed
             }
 
-        # Calcular desde Bybit API
-        print(f"[CALCULATING] {symbol} {interval_final} Open Interest...")
+        # Calcular cuántos datos necesitamos
+        interval_minutes = get_interval_minutes(interval_final)
+        minutes_in_period = days_to_fetch * 24 * 60
+        total_points_needed = int(minutes_in_period / interval_minutes)
+
+        print(f"[CALCULATING] {symbol} {interval_final} Open Interest... necesitamos {total_points_needed} puntos")
 
         # Bybit Open Interest usa intervalos específicos
         # 5min, 15min, 30min, 1h, 4h, 1d
@@ -474,32 +478,79 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
         oi_interval = oi_interval_map.get(interval_final, "15min")
 
         # Bybit devuelve máximo 200 puntos por request
-        limit = 200
+        limit_per_request = 200
+
+        # Calcular timestamps
+        now_ms = int(time.time() * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos al futuro
+        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        all_oi_data = []
+        current_end = end_ms
 
         async with httpx.AsyncClient(timeout=30) as client:
-            url = (
-                "https://api.bybit.com/v5/market/open-interest?"
-                f"category=linear&symbol={symbol}&intervalTime={oi_interval}&limit={limit}"
-            )
+            request_count = 0
+            max_requests = 10
 
-            print(f"[BYBIT API] {url}")
-            r = await client.get(url)
-            data = r.json()
+            # Hacer múltiples requests hasta obtener todos los datos necesarios
+            while len(all_oi_data) < total_points_needed and request_count < max_requests:
+                request_count += 1
 
-            if data.get("retCode") != 0:
-                print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
-                return {
-                    "symbol": symbol,
-                    "interval": interval_final,
-                    "indicator": "openInterest",
-                    "data": [],
-                    "success": False,
-                    "error": data.get('retMsg', 'Unknown error')
-                }
+                url = (
+                    "https://api.bybit.com/v5/market/open-interest?"
+                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
+                    f"&limit={limit_per_request}&endTime={current_end}"
+                )
 
-            oi_list = data["result"]["list"]
+                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({len(all_oi_data)}/{total_points_needed} puntos)")
+                r = await client.get(url)
+                data = r.json()
 
-            if not oi_list:
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                    if request_count == 1:  # Solo error si es el primer request
+                        return {
+                            "symbol": symbol,
+                            "interval": interval_final,
+                            "indicator": "openInterest",
+                            "data": [],
+                            "success": False,
+                            "error": data.get('retMsg', 'Unknown error')
+                        }
+                    break
+
+                oi_batch = data["result"]["list"]
+
+                if not oi_batch:
+                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                    break
+
+                # oi_batch viene en orden descendente (más reciente primero)
+                # Agregar al inicio de all_oi_data para mantener orden cronológico
+                all_oi_data = oi_batch + all_oi_data
+
+                # Actualizar current_end para el siguiente batch
+                # El más antiguo de este batch es el último elemento
+                oldest_item = oi_batch[-1]
+                oldest_ts = int(oldest_item["timestamp"])
+
+                # Si ya llegamos al inicio del periodo, salir
+                if oldest_ts <= start_ms:
+                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                    break
+
+                # Siguiente request debe terminar justo antes del más antiguo de este batch
+                current_end = oldest_ts - 1
+
+                # Si ya tenemos suficientes puntos, salir
+                if len(all_oi_data) >= total_points_needed:
+                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                    break
+
+                # Pequeña pausa entre requests
+                await asyncio.sleep(0.1)
+
+            if not all_oi_data:
                 print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
                 return {
                     "symbol": symbol,
@@ -510,13 +561,13 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                     "error": "No Open Interest data available"
                 }
 
-            # Procesar datos
-            # oi_list viene en orden descendente (más reciente primero)
-            oi_list.reverse()  # Ordenar ascendente
+            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
 
+            # Procesar datos
+            # all_oi_data ya está en orden cronológico (ascendente)
             processed_data = []
 
-            for item in oi_list:
+            for item in all_oi_data:
                 ts_ms = int(item["timestamp"])
                 oi_value = float(item["openInterest"])
 
@@ -554,7 +605,8 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                 "total_points": len(processed_data),
                 "days_requested": days,
                 "days_fetched": days_to_fetch,
-                "max_days_allowed": max_days_allowed
+                "max_days_allowed": max_days_allowed,
+                "api_requests_made": request_count
             }
 
     except Exception as e:
