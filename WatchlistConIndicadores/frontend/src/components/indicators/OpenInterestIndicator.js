@@ -45,6 +45,8 @@ class OpenInterestIndicator extends IndicatorBase {
         this.data = result.data;
 
         console.log(`[${this.symbol}] ✅ Open Interest loaded: ${this.data.length} points`);
+        console.log(`[${this.symbol}] 📊 OI Data Range: ${new Date(this.data[0].timestamp).toISOString()} → ${new Date(this.data[this.data.length-1].timestamp).toISOString()}`);
+        console.log(`[${this.symbol}] 📊 First OI: ${this.data[0].openInterest}, Last OI: ${this.data[this.data.length-1].openInterest}`);
         return true;
       } else {
         console.warn(`[${this.symbol}] ⚠️ No Open Interest data available`);
@@ -78,6 +80,33 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
+   * Busca el valor de OI más cercano al timestamp de la vela
+   * Tolerancia: +/- 5 minutos
+   */
+  findClosestOI(candleTimestamp) {
+    const tolerance = 5 * 60 * 1000; // 5 minutos en ms
+
+    // Primero intentar match exacto
+    if (this.dataMap.has(candleTimestamp)) {
+      return this.dataMap.get(candleTimestamp);
+    }
+
+    // Buscar el más cercano dentro de la tolerancia
+    let closestValue = null;
+    let minDiff = Infinity;
+
+    for (const [ts, value] of this.dataMap) {
+      const diff = Math.abs(ts - candleTimestamp);
+      if (diff <= tolerance && diff < minDiff) {
+        minDiff = diff;
+        closestValue = value;
+      }
+    }
+
+    return closestValue;
+  }
+
+  /**
    * MODO 1: HISTOGRAM - Delta simple de OI (como Volume Delta)
    * Calcula: OI[i] - OI[i-1]
    */
@@ -86,6 +115,8 @@ class OpenInterestIndicator extends IndicatorBase {
 
     const result = [];
     let lastOIValue = null;
+    let exactMatches = 0;
+    let nonZeroDeltas = 0;
 
     // Encontrar primer valor de OI
     for (const item of this.data) {
@@ -99,10 +130,14 @@ class OpenInterestIndicator extends IndicatorBase {
 
     for (let i = 0; i < candles.length; i++) {
       const candle = candles[i];
-      const oiValue = this.dataMap.get(candle.timestamp);
+      const oiValue = this.findClosestOI(candle.timestamp);
 
-      let currentOI = oiValue !== undefined ? oiValue : lastOIValue;
+      if (oiValue !== null && oiValue !== undefined) exactMatches++;
+
+      let currentOI = oiValue !== null && oiValue !== undefined ? oiValue : lastOIValue;
       const delta = i === 0 ? 0 : currentOI - lastOIValue;
+
+      if (delta !== 0) nonZeroDeltas++;
 
       result.push({
         timestamp: candle.timestamp,
@@ -112,6 +147,8 @@ class OpenInterestIndicator extends IndicatorBase {
 
       lastOIValue = currentOI;
     }
+
+    console.log(`[${this.symbol}] 📊 Histogram Mode: ${candles.length} candles, ${exactMatches} OI matches, ${nonZeroDeltas} non-zero deltas`);
 
     return result;
   }
@@ -138,9 +175,9 @@ class OpenInterestIndicator extends IndicatorBase {
 
     for (let i = 0; i < candles.length; i++) {
       const candle = candles[i];
-      const oiValue = this.dataMap.get(candle.timestamp);
+      const oiValue = this.findClosestOI(candle.timestamp);
 
-      let currentOI = oiValue !== undefined ? oiValue : lastOIValue;
+      let currentOI = oiValue !== null && oiValue !== undefined ? oiValue : lastOIValue;
       const delta = i === 0 ? 0 : currentOI - lastOIValue;
 
       const previousCumulative = cumulativeDelta;
@@ -184,7 +221,7 @@ class OpenInterestIndicator extends IndicatorBase {
     let lastKnownOI = firstOIValue;
 
     for (const candle of candles) {
-      const oiValue = this.dataMap.get(candle.timestamp);
+      const oiValue = this.findClosestOI(candle.timestamp);
 
       if (oiValue !== undefined && oiValue !== null) {
         lastKnownOI = oiValue;
