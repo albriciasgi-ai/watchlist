@@ -115,7 +115,8 @@ class LocalPatternDetector {
       }
     }
 
-    console.log(`[LocalPatternDetector] Detected ${patterns.length} patterns in ${candles.length} candles`);
+    // Reduced logging: only log when patterns are detected for debugging
+    // console.log(`[LocalPatternDetector] Detected ${patterns.length} patterns in ${candles.length} candles`);
     return patterns;
   }
 
