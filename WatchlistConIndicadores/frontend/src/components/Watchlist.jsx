@@ -395,6 +395,7 @@ const Watchlist = () => {
       )}
 
       {/* ⚡ NUEVO: Modal de Support/Resistance Settings */}
+      {console.log('[Watchlist] Render check - showSRSettings:', showSRSettings, 'selectedSymbolForSR:', selectedSymbolForSR)}
       {showSRSettings && selectedSymbolForSR && (
         <SupportResistanceSettings
           symbol={selectedSymbolForSR}

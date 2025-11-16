@@ -15,6 +15,7 @@ const SupportResistanceSettings = ({
   onClose,
   initialConfig
 }) => {
+  console.log('[SupportResistanceSettings] Component mounting with:', { symbol, initialConfig });
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
 
   useEffect(() => {
