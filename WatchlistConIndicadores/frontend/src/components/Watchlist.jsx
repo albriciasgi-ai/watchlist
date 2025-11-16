@@ -4,6 +4,7 @@ import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
+import SupportResistanceSettings from "./SupportResistanceSettings";
 import wsManager from "./WebSocketManager";
 
 const symbols = [
@@ -82,6 +83,11 @@ const Watchlist = () => {
   const [selectedSymbolForRP, setSelectedSymbolForRP] = useState(null);
   const [rejectionPatternConfigs, setRejectionPatternConfigs] = useState({});
 
+  // ⚡ NUEVO: Estado para Support/Resistance Settings
+  const [showSRSettings, setShowSRSettings] = useState(false);
+  const [selectedSymbolForSR, setSelectedSymbolForSR] = useState(null);
+  const [srConfigs, setSRConfigs] = useState({});
+
   // 📊 NUEVO: Estado para Open Interest mode
   const [oiMode, setOiMode] = useState("histogram"); // "histogram", "cumulative", "flow"
 
@@ -157,6 +163,21 @@ const Watchlist = () => {
     setShowRejectionPatternSettings(true);
   };
 
+  // ⚡ NUEVO: Handler para abrir Support/Resistance Settings
+  const handleOpenSRSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForSR(symbol);
+
+    // Guardar referencia del IndicatorManager
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+
+    setShowSRSettings(true);
+  };
+
   // 🔔 NUEVO: Handler para cambio de config de patrones
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfigs(prev => ({
@@ -169,6 +190,26 @@ const Watchlist = () => {
     if (manager) {
       manager.updateRejectionPatternConfig(config);
       console.log(`[Watchlist] Updated rejection pattern config for ${selectedSymbolForRP}`);
+    }
+  };
+
+  // ⚡ NUEVO: Handler para cambio de config de S/R
+  const handleSRConfigChange = (config) => {
+    setSRConfigs(prev => ({
+      ...prev,
+      [selectedSymbolForSR]: config
+    }));
+
+    // Actualizar el IndicatorManager con la nueva configuración
+    const manager = indicatorManagers[selectedSymbolForSR]?.manager;
+    if (manager) {
+      manager.applyConfig("Support & Resistance", config);
+      // Re-fetch data con nueva configuración
+      const srIndicator = manager.indicators.find(ind => ind.name === "Support & Resistance");
+      if (srIndicator) {
+        srIndicator.fetchData();
+      }
+      console.log(`[Watchlist] Updated S/R config for ${selectedSymbolForSR}`);
     }
   };
 
@@ -287,7 +328,9 @@ const Watchlist = () => {
             onOpenVpSettings={() => handleOpenVpSettings(sym)}
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
+            onOpenSRSettings={(indicatorManagerRef) => handleOpenSRSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
+            srConfig={srConfigs[sym]}
           />
         ))}
       </div>
@@ -346,6 +389,19 @@ const Watchlist = () => {
             setSelectedSymbolForRP(null);
           }}
           initialConfig={rejectionPatternConfigs[selectedSymbolForRP]}
+        />
+      )}
+
+      {/* ⚡ NUEVO: Modal de Support/Resistance Settings */}
+      {showSRSettings && selectedSymbolForSR && (
+        <SupportResistanceSettings
+          symbol={selectedSymbolForSR}
+          onConfigChange={handleSRConfigChange}
+          onClose={() => {
+            setShowSRSettings(false);
+            setSelectedSymbolForSR(null);
+          }}
+          initialConfig={srConfigs[selectedSymbolForSR]}
         />
       )}
     </div>
