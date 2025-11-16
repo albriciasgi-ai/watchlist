@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './IndicatorSettings.css';
+import './RejectionPatternSettings.css';
 
 /**
  * Support & Resistance Settings Component
