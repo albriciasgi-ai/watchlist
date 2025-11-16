@@ -1,0 +1,77 @@
+═══════════════════════════════════════════════════════════════
+    COMANDOS RÁPIDOS PARA INICIAR LA APLICACIÓN
+═══════════════════════════════════════════════════════════════
+
+📍 Estás aquí: /home/user/watchlist/WatchlistConIndicadores
+
+
+🔥 INICIO RÁPIDO (Copiar y Pegar)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TERMINAL 1 - BACKEND:
+
+cd /home/user/watchlist/WatchlistConIndicadores/backend
+source .venv/bin/activate
+uvicorn main:app --reload --port 8000
+
+
+TERMINAL 2 - FRONTEND:
+
+cd /home/user/watchlist/WatchlistConIndicadores/frontend
+npm run dev
+
+
+NAVEGADOR:
+
+http://localhost:5173/
+
+
+═══════════════════════════════════════════════════════════════
+
+✅ VERIFICACIÓN RÁPIDA
+
+Backend OK si ves:
+  INFO:     Application startup complete.
+  INFO:     Uvicorn running on http://127.0.0.1:8000
+
+Frontend OK si ves:
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+
+═══════════════════════════════════════════════════════════════
+
+🎯 ACTIVAR OPEN INTEREST
+
+Opción 1 - Desde el código (permanente):
+  Editar: frontend/src/components/indicators/IndicatorManager.js
+  Línea 51: Cambiar "false" a "true"
+
+Opción 2 - Agregar checkbox en UI:
+  Ver archivo: LISTO_PARA_USAR.md (sección 4, Opción B)
+
+═══════════════════════════════════════════════════════════════
+
+📊 PROBAR QUE FUNCIONA
+
+1. Abre la consola del navegador (F12)
+2. Busca logs como:
+   [BTCUSDT] ✅ Open Interest: 1440 puntos desde...
+3. Cambia timeframes (1h, 4h, 1d)
+4. Verifica que ves TODAS las barras moradas
+
+═══════════════════════════════════════════════════════════════
+
+❌ SI HAY PROBLEMAS
+
+Limpiar cache:
+  rm -rf /home/user/watchlist/WatchlistConIndicadores/backend/cache/*.json
+
+Recargar página:
+  Ctrl + Shift + R (hard reload)
+
+Ver documentación completa:
+  LISTO_PARA_USAR.md
+
+═══════════════════════════════════════════════════════════════
+
+🎉 ¡TODO LISTO! Solo ejecutar los 2 comandos de arriba
