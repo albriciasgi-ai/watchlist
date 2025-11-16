@@ -95,17 +95,35 @@ class OpenInterestIndicator extends IndicatorBase {
     const oiValues = [];
     const timestamps = [];
 
-    // Extraer valores de OI que coinciden con las velas
+    // PASO 1: Encontrar el primer valor de OI disponible
+    let firstOIValue = null;
+    for (const item of this.data) {
+      if (item.openInterest !== undefined && item.openInterest !== null) {
+        firstOIValue = item.openInterest;
+        break;
+      }
+    }
+
+    // Si no hay ningún valor de OI, retornar vacío
+    if (firstOIValue === null) return [];
+
+    // PASO 2: Construir array de valores OI para todas las velas
+    // Rellenar con el primer valor conocido hasta encontrar datos reales
+    let lastKnownOI = firstOIValue;
+
     for (const candle of candles) {
       const oiValue = this.dataMap.get(candle.timestamp);
-      if (oiValue !== undefined) {
+
+      if (oiValue !== undefined && oiValue !== null) {
+        // Tenemos dato real de OI
+        lastKnownOI = oiValue;
         oiValues.push(oiValue);
-        timestamps.push(candle.timestamp);
       } else {
-        // Si no hay dato de OI para esta vela, usar el último conocido
-        oiValues.push(oiValues.length > 0 ? oiValues[oiValues.length - 1] : 0);
-        timestamps.push(candle.timestamp);
+        // No hay dato - usar el último conocido (forward fill)
+        oiValues.push(lastKnownOI);
       }
+
+      timestamps.push(candle.timestamp);
     }
 
     if (oiValues.length === 0) return [];
