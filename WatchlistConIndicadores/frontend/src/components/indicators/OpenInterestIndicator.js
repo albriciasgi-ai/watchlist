@@ -1,7 +1,8 @@
 // src/components/indicators/OpenInterestIndicator.js
-// Open Interest Flow & Price Sentiment Indicator
-// Basado en LuxAlgo Open Interest Inflows & Outflows
-// Implementación Híbrida: OI Flow Sentiment + Price Sentiment (sin Correlation)
+// Open Interest Indicator con 3 modos de visualización
+// Modo 1: Histogram (delta simple como Volume Delta)
+// Modo 2: Cumulative (acumulativo como CVD)
+// Modo 3: Flow (OI Flow Sentiment con EMA - LuxAlgo)
 
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
@@ -14,8 +15,9 @@ class OpenInterestIndicator extends IndicatorBase {
     this.days = days;
 
     // Configuración
-    this.smoothing = 3; // Suavizado para EMA (configurable)
-    this.showPriceSentiment = true; // Toggle para mostrar/ocultar Price Sentiment
+    this.mode = "histogram"; // "histogram", "cumulative", "flow"
+    this.smoothing = 3; // Suavizado para modo Flow
+    this.showPriceSentiment = false; // Price Sentiment solo en modo Flow
 
     // Datos desde el backend
     this.dataMap = null; // Map de timestamp -> openInterest
@@ -60,20 +62,14 @@ class OpenInterestIndicator extends IndicatorBase {
 
   /**
    * Calcula EMA (Exponential Moving Average)
-   * @param {Array} values - Array de valores
-   * @param {number} period - Periodo de la EMA
-   * @returns {Array} - Array de valores EMA
    */
   calculateEMA(values, period) {
     if (!values || values.length === 0) return [];
 
-    const k = 2 / (period + 1); // Multiplier
+    const k = 2 / (period + 1);
     const ema = [];
-
-    // Primer valor = primer valor de la serie
     ema[0] = values[0];
 
-    // Calcular EMA para el resto
     for (let i = 1; i < values.length; i++) {
       ema[i] = (values[i] * k) + (ema[i - 1] * (1 - k));
     }
@@ -82,20 +78,98 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
-   * Calcula OI Flow Sentiment basado en fórmula LuxAlgo
-   * oiF = EMA(oiH + oiL - 2 * EMA(oiC, 13), smoothing)
-   *
-   * Como solo tenemos un valor de OI por timestamp (no OHLC de OI),
-   * usamos una aproximación simplificada:
-   * oiF = EMA(oiValue - EMA(oiValue, 13), smoothing)
+   * MODO 1: HISTOGRAM - Delta simple de OI (como Volume Delta)
+   * Calcula: OI[i] - OI[i-1]
    */
-  calculateOIFlowSentiment(candles) {
+  calculateHistogramMode(candles) {
+    if (!candles || candles.length === 0 || !this.dataMap) return [];
+
+    const result = [];
+    let lastOIValue = null;
+
+    // Encontrar primer valor de OI
+    for (const item of this.data) {
+      if (item.openInterest !== undefined && item.openInterest !== null) {
+        lastOIValue = item.openInterest;
+        break;
+      }
+    }
+
+    if (lastOIValue === null) return [];
+
+    for (let i = 0; i < candles.length; i++) {
+      const candle = candles[i];
+      const oiValue = this.dataMap.get(candle.timestamp);
+
+      let currentOI = oiValue !== undefined ? oiValue : lastOIValue;
+      const delta = i === 0 ? 0 : currentOI - lastOIValue;
+
+      result.push({
+        timestamp: candle.timestamp,
+        delta: delta,
+        oiValue: currentOI
+      });
+
+      lastOIValue = currentOI;
+    }
+
+    return result;
+  }
+
+  /**
+   * MODO 2: CUMULATIVE - Suma acumulativa de deltas (como CVD)
+   */
+  calculateCumulativeMode(candles) {
+    if (!candles || candles.length === 0 || !this.dataMap) return [];
+
+    const result = [];
+    let lastOIValue = null;
+    let cumulativeDelta = 0;
+
+    // Encontrar primer valor de OI
+    for (const item of this.data) {
+      if (item.openInterest !== undefined && item.openInterest !== null) {
+        lastOIValue = item.openInterest;
+        break;
+      }
+    }
+
+    if (lastOIValue === null) return [];
+
+    for (let i = 0; i < candles.length; i++) {
+      const candle = candles[i];
+      const oiValue = this.dataMap.get(candle.timestamp);
+
+      let currentOI = oiValue !== undefined ? oiValue : lastOIValue;
+      const delta = i === 0 ? 0 : currentOI - lastOIValue;
+
+      const previousCumulative = cumulativeDelta;
+      cumulativeDelta += delta;
+
+      result.push({
+        timestamp: candle.timestamp,
+        openCumulative: previousCumulative,
+        closeCumulative: cumulativeDelta,
+        delta: delta,
+        oiValue: currentOI
+      });
+
+      lastOIValue = currentOI;
+    }
+
+    return result;
+  }
+
+  /**
+   * MODO 3: FLOW - OI Flow Sentiment con EMA (LuxAlgo)
+   */
+  calculateFlowMode(candles) {
     if (!candles || candles.length === 0 || !this.dataMap) return [];
 
     const oiValues = [];
     const timestamps = [];
 
-    // PASO 1: Encontrar el primer valor de OI disponible
+    // Encontrar primer valor de OI
     let firstOIValue = null;
     for (const item of this.data) {
       if (item.openInterest !== undefined && item.openInterest !== null) {
@@ -104,22 +178,18 @@ class OpenInterestIndicator extends IndicatorBase {
       }
     }
 
-    // Si no hay ningún valor de OI, retornar vacío
     if (firstOIValue === null) return [];
 
-    // PASO 2: Construir array de valores OI para todas las velas
-    // Rellenar con el primer valor conocido hasta encontrar datos reales
+    // Rellenar array de OI values
     let lastKnownOI = firstOIValue;
 
     for (const candle of candles) {
       const oiValue = this.dataMap.get(candle.timestamp);
 
       if (oiValue !== undefined && oiValue !== null) {
-        // Tenemos dato real de OI
         lastKnownOI = oiValue;
         oiValues.push(oiValue);
       } else {
-        // No hay dato - usar el último conocido (forward fill)
         oiValues.push(lastKnownOI);
       }
 
@@ -140,7 +210,7 @@ class OpenInterestIndicator extends IndicatorBase {
     // Aplicar smoothing: EMA(oiDiff, smoothing)
     const oiFlow = this.calculateEMA(oiDiff, this.smoothing);
 
-    // Construir resultado con timestamps
+    // Construir resultado
     const result = [];
     for (let i = 0; i < timestamps.length; i++) {
       result.push({
@@ -154,27 +224,21 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
-   * Calcula Price Sentiment basado en fórmula LuxAlgo
-   * prF = EMA(h + l - 2 * EMA(c, 13), smoothing)
+   * Calcula Price Sentiment (solo para modo Flow)
    */
   calculatePriceSentiment(candles) {
     if (!candles || candles.length === 0) return [];
 
     const closeValues = candles.map(c => c.close);
-
-    // Calcular EMA(close, 13)
     const emaClose13 = this.calculateEMA(closeValues, 13);
 
-    // Calcular: (high + low) - 2 * EMA(close, 13)
     const priceDiff = [];
     for (let i = 0; i < candles.length; i++) {
       priceDiff[i] = (candles[i].high + candles[i].low) - (2 * emaClose13[i]);
     }
 
-    // Aplicar smoothing: EMA(priceDiff, smoothing)
     const priceFlow = this.calculateEMA(priceDiff, this.smoothing);
 
-    // Construir resultado
     const result = [];
     for (let i = 0; i < candles.length; i++) {
       result.push({
@@ -187,31 +251,29 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
-   * Normaliza Price Sentiment al rango de OI Flow para superposición visual
+   * Normaliza Price Sentiment
    */
-  normalizePriceSentiment(priceSentiment, oiFlowMin, oiFlowMax) {
+  normalizePriceSentiment(priceSentiment, minValue, maxValue) {
     if (!priceSentiment || priceSentiment.length === 0) return [];
 
-    // Encontrar rango de Price Sentiment
     const priceValues = priceSentiment.map(p => p.priceFlow);
     const priceMin = Math.min(...priceValues);
     const priceMax = Math.max(...priceValues);
 
     const priceRange = priceMax - priceMin;
-    const oiRange = oiFlowMax - oiFlowMin;
+    const valueRange = maxValue - minValue;
 
-    if (priceRange === 0 || oiRange === 0) return priceSentiment;
+    if (priceRange === 0 || valueRange === 0) return priceSentiment;
 
-    // Normalizar
     return priceSentiment.map(p => ({
       timestamp: p.timestamp,
       priceFlow: p.priceFlow,
-      priceFlowNormalized: ((p.priceFlow - priceMin) / priceRange) * oiRange + oiFlowMin
+      priceFlowNormalized: ((p.priceFlow - priceMin) / priceRange) * valueRange + minValue
     }));
   }
 
   /**
-   * Renderiza el indicador Open Interest
+   * Renderiza el indicador según el modo actual
    */
   render(ctx, bounds, visibleCandles) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
@@ -220,18 +282,34 @@ class OpenInterestIndicator extends IndicatorBase {
       return;
     }
 
-    const { x, y, width, height } = bounds;
+    switch (this.mode) {
+      case "histogram":
+        this.renderHistogramMode(ctx, bounds, visibleCandles);
+        break;
+      case "cumulative":
+        this.renderCumulativeMode(ctx, bounds, visibleCandles);
+        break;
+      case "flow":
+        this.renderFlowMode(ctx, bounds, visibleCandles);
+        break;
+      default:
+        this.renderHistogramMode(ctx, bounds, visibleCandles);
+    }
+  }
 
-    // Colores (siguiendo el patrón LuxAlgo)
-    const bullColor = "#00897B"; // Verde teal (OI Flow positivo)
-    const bearColor = "#FF5252"; // Rojo (OI Flow negativo)
-    const priceSentimentColor = "rgba(149, 152, 161, 0.5)"; // Gris transparente
+  /**
+   * RENDER MODO 1: HISTOGRAM
+   */
+  renderHistogramMode(ctx, bounds, visibleCandles) {
+    const { x, y, width, height } = bounds;
+    const bullColor = "#34C759";
+    const bearColor = "#FF3B30";
 
     // Fondo
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
-    // Línea separadora superior
+    // Línea separadora
     ctx.strokeStyle = "#DDE2E7";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -242,23 +320,208 @@ class OpenInterestIndicator extends IndicatorBase {
     // Título
     ctx.fillStyle = "#666";
     ctx.font = "bold 11px Inter, sans-serif";
-    ctx.fillText(`Open Interest Flow & Price Sentiment (Smoothing: ${this.smoothing})`, x + 5, y + 15);
+    ctx.fillText("Open Interest Delta (Histogram)", x + 5, y + 15);
 
-    // Calcular OI Flow Sentiment
-    const oiFlowData = this.calculateOIFlowSentiment(visibleCandles);
+    // Calcular datos
+    const data = this.calculateHistogramMode(visibleCandles);
+    if (data.length === 0) return;
 
-    if (oiFlowData.length === 0) {
-      this.renderNoDataMessage(ctx, bounds);
-      return;
+    // Encontrar valor máximo para escala
+    const maxDelta = Math.max(...data.map(d => Math.abs(d.delta)));
+    if (maxDelta === 0) return;
+
+    const histogramHeight = height - 25;
+    const histogramY = y + 20;
+    const barWidth = width / visibleCandles.length;
+    const deltaScale = (histogramHeight / 2) / maxDelta;
+
+    // Línea cero
+    const zeroY = histogramY + histogramHeight / 2;
+    ctx.strokeStyle = "#DDE2E7";
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath();
+    ctx.moveTo(x, zeroY);
+    ctx.lineTo(x + width, zeroY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Dibujar barras
+    data.forEach((d, i) => {
+      const barX = x + (i * barWidth);
+      const delta = d.delta;
+
+      if (delta === 0) return;
+
+      const barHeight = Math.abs(delta) * deltaScale;
+      const color = delta >= 0 ? bullColor : bearColor;
+
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.7;
+
+      if (delta >= 0) {
+        ctx.fillRect(barX, zeroY - barHeight, barWidth * 0.8, barHeight);
+      } else {
+        ctx.fillRect(barX, zeroY, barWidth * 0.8, barHeight);
+      }
+    });
+
+    ctx.globalAlpha = 1.0;
+
+    // Labels
+    ctx.fillStyle = "#999";
+    ctx.font = "9px Inter, sans-serif";
+    ctx.fillText(`+${maxDelta.toFixed(0)}`, x + width - 50, histogramY + 10);
+    ctx.fillText(`-${maxDelta.toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
+
+    // Valor actual
+    if (data.length > 0) {
+      const lastDelta = data[data.length - 1].delta;
+      const lastOI = data[data.length - 1].oiValue;
+      ctx.fillStyle = lastDelta >= 0 ? bullColor : bearColor;
+      ctx.font = "bold 10px Inter, sans-serif";
+      ctx.fillText(`Δ: ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
+    }
+  }
+
+  /**
+   * RENDER MODO 2: CUMULATIVE
+   */
+  renderCumulativeMode(ctx, bounds, visibleCandles) {
+    const { x, y, width, height } = bounds;
+    const bullColor = "#34C759";
+    const bearColor = "#FF3B30";
+
+    // Fondo
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(x, y, width, height);
+
+    // Línea separadora
+    ctx.strokeStyle = "#DDE2E7";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.stroke();
+
+    // Título
+    ctx.fillStyle = "#666";
+    ctx.font = "bold 11px Inter, sans-serif";
+    ctx.fillText("Open Interest Cumulative Delta", x + 5, y + 15);
+
+    // Calcular datos
+    const data = this.calculateCumulativeMode(visibleCandles);
+    if (data.length === 0) return;
+
+    // Encontrar rango
+    const cumulativeValues = [];
+    data.forEach(d => {
+      cumulativeValues.push(d.openCumulative);
+      cumulativeValues.push(d.closeCumulative);
+    });
+
+    const minCumulative = Math.min(...cumulativeValues);
+    const maxCumulative = Math.max(...cumulativeValues);
+    const cumulativeRange = maxCumulative - minCumulative;
+
+    if (cumulativeRange === 0) return;
+
+    const chartHeight = height - 25;
+    const chartY = y + 20;
+    const barWidth = width / visibleCandles.length;
+    const cumulativeScale = chartHeight / cumulativeRange;
+
+    // Dibujar barras acumulativas
+    data.forEach((d, i) => {
+      const barX = x + (i * barWidth);
+
+      const openY = chartY + chartHeight - ((d.openCumulative - minCumulative) * cumulativeScale);
+      const closeY = chartY + chartHeight - ((d.closeCumulative - minCumulative) * cumulativeScale);
+
+      const color = d.closeCumulative >= d.openCumulative ? bullColor : bearColor;
+
+      const barHeight = Math.abs(closeY - openY);
+      const minBarHeight = 2;
+
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.6;
+
+      if (barHeight < minBarHeight) {
+        const avgY = (openY + closeY) / 2;
+        ctx.fillRect(barX, avgY - minBarHeight/2, barWidth * 0.9, minBarHeight);
+      } else {
+        const topY = Math.min(openY, closeY);
+        ctx.fillRect(barX, topY, barWidth * 0.9, Math.max(barHeight, minBarHeight));
+      }
+    });
+
+    ctx.globalAlpha = 1.0;
+
+    // Línea de cero
+    if (minCumulative < 0 && maxCumulative > 0) {
+      const zeroY = chartY + chartHeight - ((0 - minCumulative) * cumulativeScale);
+      ctx.strokeStyle = "#666";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(x, zeroY);
+      ctx.lineTo(x + width, zeroY);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
 
-    // Calcular Price Sentiment (si está habilitado)
+    // Labels
+    ctx.fillStyle = "#999";
+    ctx.font = "9px Inter, sans-serif";
+    ctx.fillText(`${maxCumulative.toFixed(0)}`, x + width - 50, chartY + 10);
+    ctx.fillText(`${minCumulative.toFixed(0)}`, x + width - 50, chartY + chartHeight - 5);
+
+    // Valor actual
+    if (data.length > 0) {
+      const lastCumulative = data[data.length - 1].closeCumulative;
+      const lastOI = data[data.length - 1].oiValue;
+      ctx.fillStyle = lastCumulative >= 0 ? bullColor : bearColor;
+      ctx.font = "bold 10px Inter, sans-serif";
+      ctx.fillText(`Cumulative: ${lastCumulative >= 0 ? '+' : ''}${lastCumulative.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, chartY + chartHeight - 5);
+    }
+  }
+
+  /**
+   * RENDER MODO 3: FLOW
+   */
+  renderFlowMode(ctx, bounds, visibleCandles) {
+    const { x, y, width, height } = bounds;
+    const bullColor = "#00897B";
+    const bearColor = "#FF5252";
+    const priceSentimentColor = "rgba(149, 152, 161, 0.5)";
+
+    // Fondo
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(x, y, width, height);
+
+    // Línea separadora
+    ctx.strokeStyle = "#DDE2E7";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.stroke();
+
+    // Título
+    ctx.fillStyle = "#666";
+    ctx.font = "bold 11px Inter, sans-serif";
+    ctx.fillText(`Open Interest Flow Sentiment (Smoothing: ${this.smoothing})`, x + 5, y + 15);
+
+    // Calcular datos
+    const oiFlowData = this.calculateFlowMode(visibleCandles);
+    if (oiFlowData.length === 0) return;
+
+    // Calcular Price Sentiment si está habilitado
     let priceSentimentData = [];
     if (this.showPriceSentiment) {
       priceSentimentData = this.calculatePriceSentiment(visibleCandles);
     }
 
-    // Encontrar rango de valores para escala
+    // Encontrar rango
     const oiFlowValues = oiFlowData.map(d => d.oiFlow);
     const minOIFlow = Math.min(...oiFlowValues);
     const maxOIFlow = Math.max(...oiFlowValues);
@@ -266,13 +529,9 @@ class OpenInterestIndicator extends IndicatorBase {
 
     if (oiFlowRange === 0) return;
 
-    // Normalizar Price Sentiment al rango de OI Flow
+    // Normalizar Price Sentiment
     if (this.showPriceSentiment && priceSentimentData.length > 0) {
-      priceSentimentData = this.normalizePriceSentiment(
-        priceSentimentData,
-        minOIFlow,
-        maxOIFlow
-      );
+      priceSentimentData = this.normalizePriceSentiment(priceSentimentData, minOIFlow, maxOIFlow);
     }
 
     const chartHeight = height - 25;
@@ -293,50 +552,44 @@ class OpenInterestIndicator extends IndicatorBase {
       ctx.setLineDash([]);
     }
 
-    // Dibujar barras de OI Flow Sentiment (estilo columnas)
+    // Dibujar barras
     oiFlowData.forEach((d, i) => {
       const barX = x + (i * barWidth);
       const value = d.oiFlow;
 
-      // Calcular altura de barra
       const barHeight = Math.abs(value) * oiScale;
       const baseY = chartY + chartHeight - ((0 - minOIFlow) * oiScale);
 
-      // Color: verde si positivo (o si sube), rojo si negativo (o si baja)
       let color = bullColor;
       let alpha = 0.8;
 
       if (value > 0) {
-        // Positivo - verificar si está subiendo o bajando
         if (i > 0 && oiFlowData[i - 1].oiFlow > value) {
-          alpha = 0.5; // Más transparente si está bajando
+          alpha = 0.5;
         }
         color = bullColor;
       } else if (value < 0) {
-        // Negativo - verificar si está bajando más o recuperando
         if (i > 0 && oiFlowData[i - 1].oiFlow < value) {
-          alpha = 0.5; // Más transparente si está recuperando
+          alpha = 0.5;
         }
         color = bearColor;
       } else {
-        return; // No dibujar barras con valor 0
+        return;
       }
 
       ctx.fillStyle = color;
       ctx.globalAlpha = alpha;
 
       if (value >= 0) {
-        // Barra positiva (hacia arriba)
         ctx.fillRect(barX, baseY - barHeight, barWidth * 0.9, barHeight);
       } else {
-        // Barra negativa (hacia abajo)
         ctx.fillRect(barX, baseY, barWidth * 0.9, barHeight);
       }
     });
 
     ctx.globalAlpha = 1.0;
 
-    // Dibujar Price Sentiment (línea superpuesta)
+    // Dibujar Price Sentiment
     if (this.showPriceSentiment && priceSentimentData.length > 0) {
       ctx.strokeStyle = priceSentimentColor;
       ctx.lineWidth = 2;
@@ -356,38 +609,32 @@ class OpenInterestIndicator extends IndicatorBase {
       ctx.stroke();
     }
 
-    // Labels de escala
+    // Labels
     ctx.fillStyle = "#999";
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText(`+${maxOIFlow.toFixed(0)}`, x + width - 60, chartY + 10);
     ctx.fillText(`${minOIFlow.toFixed(0)}`, x + width - 60, chartY + chartHeight - 5);
 
-    // Valor actual de OI Flow
+    // Valor actual
     if (oiFlowData.length > 0) {
       const lastOIFlow = oiFlowData[oiFlowData.length - 1].oiFlow;
       const lastOI = oiFlowData[oiFlowData.length - 1].oiValue;
 
       ctx.fillStyle = lastOIFlow >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(
-        `OI Flow: ${lastOIFlow >= 0 ? '+' : ''}${lastOIFlow.toFixed(2)} | OI: ${lastOI.toFixed(0)}`,
-        x + 5,
-        chartY + chartHeight - 5
-      );
+      ctx.fillText(`OI Flow: ${lastOIFlow >= 0 ? '+' : ''}${lastOIFlow.toFixed(2)} | OI: ${lastOI.toFixed(0)}`, x + 5, chartY + chartHeight - 5);
     }
   }
 
   /**
-   * Renderiza mensaje cuando no hay datos
+   * Renderiza mensaje de no datos
    */
   renderNoDataMessage(ctx, bounds) {
     const { x, y, width, height } = bounds;
 
-    // Fondo
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
-    // Línea separadora superior
     ctx.strokeStyle = "#DDE2E7";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -395,20 +642,18 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.lineTo(x + width, y);
     ctx.stroke();
 
-    // Mensaje
     ctx.fillStyle = "#FF9800";
     ctx.font = "11px Inter, sans-serif";
-    ctx.fillText(
-      `No Open Interest data available for ${this.symbol}`,
-      x + width / 2 - 120,
-      y + height / 2
-    );
+    ctx.fillText(`No Open Interest data available for ${this.symbol}`, x + width / 2 - 120, y + height / 2);
   }
 
   /**
-   * Actualiza configuración del indicador
+   * Actualiza configuración
    */
   updateConfig(config) {
+    if (config.mode !== undefined) {
+      this.mode = config.mode;
+    }
     if (config.smoothing !== undefined) {
       this.smoothing = config.smoothing;
     }

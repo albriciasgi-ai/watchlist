@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -944,6 +944,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   }, [vpFixedRange, symbol]);
 
+  // 📊 Efecto para actualizar modo de Open Interest cuando cambie
+  useEffect(() => {
+    if (indicatorManagerRef.current && oiMode) {
+      indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  }, [oiMode]);
+
   // ==================== MAIN EFFECT ====================
   
   useEffect(() => {
@@ -965,6 +973,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         indicatorManagerRef.current.applyConfig("Volume Profile", vpConfig);
         indicatorManagerRef.current.setIndicatorMode("Volume Profile", vpConfig.mode);
       }
+
+      // 📊 Configurar modo de Open Interest
+      if (oiMode && indicatorManagerRef.current) {
+        indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      }
+
       if (indicatorManagerRef.current) {
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
