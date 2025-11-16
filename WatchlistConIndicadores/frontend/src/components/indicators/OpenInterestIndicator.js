@@ -3,6 +3,7 @@
 // Modo 1: Histogram (delta simple como Volume Delta)
 // Modo 2: Cumulative (acumulativo como CVD)
 // Modo 3: Flow (OI Flow Sentiment con EMA - LuxAlgo)
+// VERSION: 2.0 - Azul/Naranja + Fullscreen selector
 
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
@@ -13,6 +14,9 @@ class OpenInterestIndicator extends IndicatorBase {
     this.name = "Open Interest";
     this.height = 100;
     this.days = days;
+
+    // VERSION CHECK
+    console.log(`%c[OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector`, 'background: #1E88E5; color: white; font-weight: bold; padding: 4px;');
 
     // Configuración
     this.mode = "histogram"; // "histogram", "cumulative", "flow"
