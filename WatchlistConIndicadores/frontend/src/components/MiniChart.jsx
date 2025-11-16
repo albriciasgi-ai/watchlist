@@ -1182,7 +1182,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           {onOpenSRSettings && (
             <button
               className="sr-settings-btn"
-              onClick={() => onOpenSRSettings(indicatorManagerRef.current)}
+              onClick={() => {
+                console.log('[MiniChart] S/R button clicked, calling onOpenSRSettings with:', indicatorManagerRef.current);
+                onOpenSRSettings(indicatorManagerRef.current);
+              }}
               title="Configurar Support/Resistance"
               style={{
                 background: '#4CAF50',
