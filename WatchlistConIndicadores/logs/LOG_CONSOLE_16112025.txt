@@ -1,0 +1,2675 @@
+:5173/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [817] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [818] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [818] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [818] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [851] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [851] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [851] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [851] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 439 patterns in 1440 candles
+ [MASKUSDT] Local detection: 439 patterns found
+ [889] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [889] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [889] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [889] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [ATOMUSDT] Local detection: 433 patterns found
+ [920] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [920] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [920] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [920] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [454] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [454] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [454] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [454] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 431 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 431 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 432 patterns in 1440 candles
+ [TRXUSDT] Local detection: 432 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 430 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 430 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [TRXUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [TRXUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 447 patterns in 1440 candles
+ [POLUSDT] Local detection: 447 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 430 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 430 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [TRXUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 432 patterns in 1440 candles
+ [TRXUSDT] Local detection: 432 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 430 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 430 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 420 patterns in 1440 candles
+ [TRBUSDT] Local detection: 420 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 430 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLYXUSDT] Local detection: 430 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 431 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLYXUSDT] Local detection: 431 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 447 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLUSDT] Local detection: 447 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 431 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLYXUSDT] Local detection: 431 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 447 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLUSDT] Local detection: 447 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 514 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ASTRUSDT] Local detection: 514 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 431 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLYXUSDT] Local detection: 431 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 431 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLYXUSDT] Local detection: 431 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 447 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLUSDT] Local detection: 447 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GRTUSDT] Local detection: 404 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 443 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ALGOUSDT] Local detection: 443 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 396 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 396 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 439 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [MASKUSDT] Local detection: 439 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 433 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ATOMUSDT] Local detection: 433 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 447 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLUSDT] Local detection: 447 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 412 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [INJUSDT] Local detection: 412 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PENDLEUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [GALAUSDT] Local detection: 411 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ADAUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 429 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [PEOPLEUSDT] Local detection: 429 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 394 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SUIUSDT] Local detection: 394 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 426 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AAVEUSDT] Local detection: 426 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 432 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRXUSDT] Local detection: 432 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TONUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 378 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [SOLUSDT] Local detection: 378 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 375 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BTCUSDT] Local detection: 375 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [CAKEUSDT] Local detection: 438 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 399 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ETHUSDT] Local detection: 399 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [TRBUSDT] Local detection: 419 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [ARBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 410 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [OPUSDT] Local detection: 410 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 447 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [POLUSDT] Local detection: 447 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [UNIUSDT] Local detection: 368 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [XRPUSDT] Local detection: 395 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 415 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [BNBUSDT] Local detection: 415 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 408 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [AVAXUSDT] Local detection: 408 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 398 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [DOTUSDT] Local detection: 398 patterns found
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 392 patterns in 1440 candles
+RejectionPatternIndicator.js:102 [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [PEOPLEUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 431 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 431 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [ATOMUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 439 patterns in 1440 candles
+ [MASKUSDT] Local detection: 439 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [ATOMUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 430 patterns in 1440 candles
+ [POLYXUSDT] Local detection: 430 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [PEOPLEUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [PEOPLEUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 398 patterns in 1440 candles
+ [DOTUSDT] Local detection: 398 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [DOTUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [DOTUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [PEOPLEUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [ATOMUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 432 patterns in 1440 candles
+ [TRXUSDT] Local detection: 432 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 447 patterns in 1440 candles
+ [POLUSDT] Local detection: 447 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 439 patterns in 1440 candles
+ [MASKUSDT] Local detection: 439 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 514 patterns in 1440 candles
+ [ASTRUSDT] Local detection: 514 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [ADAUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 376 patterns in 1440 candles
+ [BTCUSDT] Local detection: 376 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 376 patterns in 1440 candles
+ [BTCUSDT] Local detection: 376 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 439 patterns in 1440 candles
+ [MASKUSDT] Local detection: 439 patterns found
+ [LocalPatternDetector] Detected 392 patterns in 1440 candles
+ [HBARUSDT] Local detection: 392 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 376 patterns in 1440 candles
+ [BTCUSDT] Local detection: 376 patterns found
+ [LocalPatternDetector] Detected 426 patterns in 1440 candles
+ [AAVEUSDT] Local detection: 426 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [TRXUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [TONUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 438 patterns in 1440 candles
+ [CAKEUSDT] Local detection: 438 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 419 patterns in 1440 candles
+ [TRBUSDT] Local detection: 419 patterns found
+ [LocalPatternDetector] Detected 433 patterns in 1440 candles
+ [ATOMUSDT] Local detection: 433 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 410 patterns in 1440 candles
+ [OPUSDT] Local detection: 410 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [ARBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 447 patterns in 1440 candles
+ [POLUSDT] Local detection: 447 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 514 patterns in 1440 candles
+ [ASTRUSDT] Local detection: 514 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 408 patterns in 1440 candles
+ [AVAXUSDT] Local detection: 408 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [DOTUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 393 patterns in 1440 candles
+ [HBARUSDT] Local detection: 393 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 409 patterns in 1440 candles
+ [PENDLEUSDT] Local detection: 409 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 376 patterns in 1440 candles
+ [BTCUSDT] Local detection: 376 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 404 patterns in 1440 candles
+ [GRTUSDT] Local detection: 404 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 378 patterns in 1440 candles
+ [SOLUSDT] Local detection: 378 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 429 patterns in 1440 candles
+ [PEOPLEUSDT] Local detection: 429 patterns found
+ [LocalPatternDetector] Detected 376 patterns in 1440 candles
+ [BTCUSDT] Local detection: 376 patterns found
+ [LocalPatternDetector] Detected 412 patterns in 1440 candles
+ [INJUSDT] Local detection: 412 patterns found
+ [LocalPatternDetector] Detected 443 patterns in 1440 candles
+ [ALGOUSDT] Local detection: 443 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 430 patterns in 1440 candles
+ [ADAUSDT] Local detection: 430 patterns found
+ [LocalPatternDetector] Detected 375 patterns in 1440 candles
+ [BTCUSDT] Local detection: 375 patterns found
+ [LocalPatternDetector] Detected 394 patterns in 1440 candles
+ [SUIUSDT] Local detection: 394 patterns found
+ [LocalPatternDetector] Detected 395 patterns in 1440 candles
+ [XRPUSDT] Local detection: 395 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [DOTUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 368 patterns in 1440 candles
+ [UNIUSDT] Local detection: 368 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 415 patterns in 1440 candles
+ [BNBUSDT] Local detection: 415 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [DOTUSDT] Local detection: 399 patterns found
+ [LocalPatternDetector] Detected 411 patterns in 1440 candles
+ [GALAUSDT] Local detection: 411 patterns found
+ [LocalPatternDetector] Detected 399 patterns in 1440 candles
+ [ETHUSDT] Local detection: 399 patterns found
