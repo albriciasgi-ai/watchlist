@@ -47,11 +47,17 @@ class IndicatorManager {
       patternIndicator.setShowMode('all'); // Mostrar todos los patrones por defecto
     }
 
-    // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile y Open Interest si es necesario
+    // Habilitar el indicador de Support/Resistance por defecto
+    const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
+    if (srIndicator) {
+      srIndicator.enabled = true;
+      console.log(`[${this.symbol}] ✅ Support/Resistance indicator enabled`);
+    }
+
+    // Cargar datos del backend para indicadores que lo necesitan
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
+        if (ind.name === "Volume Profile" || ind.name === "Open Interest" || ind.name === "Support & Resistance") {
           return ind.fetchData();
         }
         return Promise.resolve();

@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSRSettings, rejectionPatternConfig, srConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -987,6 +987,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
       }
 
+      // ⚡ Configurar Support/Resistance
+      if (srConfig && indicatorManagerRef.current) {
+        indicatorManagerRef.current.applyConfig("Support & Resistance", srConfig);
+        log.indicator(symbol, '⚡ Support/Resistance config applied');
+      }
+
       if (indicatorManagerRef.current) {
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
@@ -1171,6 +1177,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               }}
             >
               📊 Patterns
+            </button>
+          )}
+          {onOpenSRSettings && (
+            <button
+              className="sr-settings-btn"
+              onClick={() => onOpenSRSettings(indicatorManagerRef.current)}
+              title="Configurar Support/Resistance"
+              style={{
+                background: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              ⚡ S/R
             </button>
           )}
           {onOpenRangeDetectionSettings && (
