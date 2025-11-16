@@ -1,0 +1,84 @@
+{
+  "symbol": "CAKEUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [
+      {
+        "price": 2.792,
+        "type": "resistance",
+        "strength": 0.18,
+        "touches": 2,
+        "avgVolume": 4.487155859348546,
+        "firstTouch": 1756062000000,
+        "lastTouch": 1762833600000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 2.4695,
+        "type": "resistance",
+        "strength": 0.09,
+        "touches": 2,
+        "avgVolume": 1.6125123980376235,
+        "firstTouch": 1757343600000,
+        "lastTouch": 1763150400000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 2.7619999999999996,
+        "type": "resistance",
+        "strength": 0.07,
+        "touches": 2,
+        "avgVolume": 4.417203902235281,
+        "firstTouch": 1755741600000,
+        "lastTouch": 1758078000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 2.569,
+        "type": "support",
+        "strength": 0.09,
+        "touches": 3,
+        "avgVolume": 2.570984203740144,
+        "firstTouch": 1756400400000,
+        "lastTouch": 1761685200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 2.5196666666666663,
+        "type": "support",
+        "strength": 0.06,
+        "touches": 3,
+        "avgVolume": 3.7840807016087155,
+        "firstTouch": 1755651600000,
+        "lastTouch": 1758888000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 2.332,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.7149934942340389
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331769.8486748
+}

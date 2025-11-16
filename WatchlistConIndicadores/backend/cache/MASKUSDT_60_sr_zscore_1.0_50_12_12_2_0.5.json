@@ -1,0 +1,105 @@
+{
+  "symbol": "MASKUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [
+      {
+        "price": 0.8575999999999999,
+        "type": "resistance",
+        "strength": 4.69,
+        "touches": 2,
+        "avgVolume": 1.8330091904753572,
+        "firstTouch": 1762704000000,
+        "lastTouch": 1762812000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 1.304,
+        "type": "resistance",
+        "strength": 0.27,
+        "touches": 2,
+        "avgVolume": 4.742977072877812,
+        "firstTouch": 1758902400000,
+        "lastTouch": 1759507200000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 0.7019,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 3.1926238401159206,
+        "firstTouch": 1763092800000,
+        "lastTouch": 1763161200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 1.1925,
+        "type": "support",
+        "strength": 0.15,
+        "touches": 2,
+        "avgVolume": 3.6536094806364905,
+        "firstTouch": 1755864000000,
+        "lastTouch": 1756692000000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 1.2035,
+        "type": "support",
+        "strength": 0.06,
+        "touches": 2,
+        "avgVolume": 3.9315150205143206,
+        "firstTouch": 1757080800000,
+        "lastTouch": 1759251600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 1.2105000000000001,
+        "type": "support",
+        "strength": 0.03,
+        "touches": 2,
+        "avgVolume": 2.69651969778154,
+        "firstTouch": 1755698400000,
+        "lastTouch": 1759150800000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [
+      {
+        "centerPrice": 1.2015,
+        "minPrice": 1.1925,
+        "maxPrice": 1.2105000000000001,
+        "rangePct": 1.509433962264171,
+        "numLevels": 3,
+        "totalTouches": 6,
+        "avgStrength": 0.08
+      }
+    ],
+    "currentPrice": 0.6966,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.23717464130473867
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331782.8208416
+}

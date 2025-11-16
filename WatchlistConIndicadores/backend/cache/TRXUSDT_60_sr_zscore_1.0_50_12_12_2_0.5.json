@@ -1,0 +1,160 @@
+{
+  "symbol": "TRXUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [
+      {
+        "price": 0.32461,
+        "type": "resistance",
+        "strength": 0.81,
+        "touches": 2,
+        "avgVolume": 2.70580769741155,
+        "firstTouch": 1760950800000,
+        "lastTouch": 1761120000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 0.29924333333333336,
+        "type": "resistance",
+        "strength": 0.52,
+        "touches": 3,
+        "avgVolume": 1.6618363999205883,
+        "firstTouch": 1761660000000,
+        "lastTouch": 1763283600000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 0.354155,
+        "type": "resistance",
+        "strength": 0.49,
+        "touches": 2,
+        "avgVolume": 2.367632364284019,
+        "firstTouch": 1757739600000,
+        "lastTouch": 1757905200000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 0.316855,
+        "type": "support",
+        "strength": 1.01,
+        "touches": 2,
+        "avgVolume": 2.0904174524082695,
+        "firstTouch": 1761022800000,
+        "lastTouch": 1761130800000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.29312000000000005,
+        "type": "support",
+        "strength": 0.68,
+        "touches": 2,
+        "avgVolume": 1.7057032954872509,
+        "firstTouch": 1761368400000,
+        "lastTouch": 1761685200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.29646,
+        "type": "support",
+        "strength": 0.21,
+        "touches": 4,
+        "avgVolume": 3.929778627196243,
+        "firstTouch": 1757196000000,
+        "lastTouch": 1761631200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.33033500000000005,
+        "type": "support",
+        "strength": 0.2,
+        "touches": 2,
+        "avgVolume": 2.696073331726904,
+        "firstTouch": 1758801600000,
+        "lastTouch": 1759262400000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.33875666666666665,
+        "type": "support",
+        "strength": 0.16,
+        "touches": 3,
+        "avgVolume": 4.667890508997121,
+        "firstTouch": 1758034800000,
+        "lastTouch": 1759521600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.33257333333333333,
+        "type": "support",
+        "strength": 0.07,
+        "touches": 3,
+        "avgVolume": 3.766576402973597,
+        "firstTouch": 1756483200000,
+        "lastTouch": 1759140000000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.34680999999999995,
+        "type": "support",
+        "strength": 0.04,
+        "touches": 2,
+        "avgVolume": 2.527371810588722,
+        "firstTouch": 1755698400000,
+        "lastTouch": 1757779200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.3352,
+        "type": "support",
+        "strength": 0.03,
+        "touches": 2,
+        "avgVolume": 1.97532265276438,
+        "firstTouch": 1756818000000,
+        "lastTouch": 1758963600000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [
+      {
+        "centerPrice": 0.3327675,
+        "minPrice": 0.33033500000000005,
+        "maxPrice": 0.3352,
+        "rangePct": 1.4727473625259062,
+        "numLevels": 3,
+        "totalTouches": 7,
+        "avgStrength": 0.1
+      }
+    ],
+    "currentPrice": 0.29195,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.8513904399562456
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331757.377648
+}

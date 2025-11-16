@@ -1,0 +1,84 @@
+{
+  "symbol": "AVAXUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [
+      {
+        "price": 25.789,
+        "type": "resistance",
+        "strength": 0.29,
+        "touches": 2,
+        "avgVolume": 3.8530253978828575,
+        "firstTouch": 1756886400000,
+        "lastTouch": 1757343600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 25.0945,
+        "type": "resistance",
+        "strength": 0.22,
+        "touches": 2,
+        "avgVolume": 4.289378710643835,
+        "firstTouch": 1756389600000,
+        "lastTouch": 1757073600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 29.6,
+        "type": "resistance",
+        "strength": 0.05,
+        "touches": 2,
+        "avgVolume": 1.5423034080249773,
+        "firstTouch": 1758906000000,
+        "lastTouch": 1759946400000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 28.2215,
+        "type": "support",
+        "strength": 0.4,
+        "touches": 2,
+        "avgVolume": 3.8436743216956035,
+        "firstTouch": 1757592000000,
+        "lastTouch": 1757923200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 29.115000000000002,
+        "type": "support",
+        "strength": 0.22,
+        "touches": 2,
+        "avgVolume": 3.995917210067595,
+        "firstTouch": 1758520800000,
+        "lastTouch": 1759143600000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 14.897,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.045715633406535415
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331777.3570962
+}

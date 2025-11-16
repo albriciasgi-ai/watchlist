@@ -1,0 +1,50 @@
+{
+  "symbol": "GRTUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.07824500000000001,
+        "type": "support",
+        "strength": 0.25,
+        "touches": 2,
+        "avgVolume": 3.0399659473100993,
+        "firstTouch": 1758819600000,
+        "lastTouch": 1759248000000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.06155,
+        "type": "support",
+        "strength": 0.22,
+        "touches": 2,
+        "avgVolume": 1.4223244719667916,
+        "firstTouch": 1760860800000,
+        "lastTouch": 1761685200000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.05531,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.8532923347027969
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331789.3657906
+}

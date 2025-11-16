@@ -1,0 +1,95 @@
+{
+  "symbol": "HBARUSDT",
+  "interval": "60",
+  "data": {
+    "resistances": [
+      {
+        "price": 0.18142,
+        "type": "resistance",
+        "strength": 0.35,
+        "touches": 2,
+        "avgVolume": 2.139270788277349,
+        "firstTouch": 1761058800000,
+        "lastTouch": 1762538400000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.21994,
+        "type": "resistance",
+        "strength": 0.12,
+        "touches": 2,
+        "avgVolume": 2.423531141316538,
+        "firstTouch": 1759158000000,
+        "lastTouch": 1761634800000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 0.159005,
+        "type": "support",
+        "strength": 1.69,
+        "touches": 2,
+        "avgVolume": 1.6129178038348424,
+        "firstTouch": 1762290000000,
+        "lastTouch": 1762516800000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.162525,
+        "type": "support",
+        "strength": 0.27,
+        "touches": 2,
+        "avgVolume": 1.5278626359790843,
+        "firstTouch": 1760864400000,
+        "lastTouch": 1761235200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.209165,
+        "type": "support",
+        "strength": 0.19,
+        "touches": 2,
+        "avgVolume": 4.0785445333395485,
+        "firstTouch": 1758520800000,
+        "lastTouch": 1759251600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.22008499999999998,
+        "type": "support",
+        "strength": 0.02,
+        "touches": 2,
+        "avgVolume": 1.9850239237323346,
+        "firstTouch": 1756558800000,
+        "lastTouch": 1759500000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.14733,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.16554459212949188
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763331780.5294273
+}
