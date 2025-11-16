@@ -129,7 +129,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   const [mousePos, setMousePos] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
+
+  // Actualizar fullscreenOiMode cuando cambia oiMode del padre
+  useEffect(() => {
+    if (oiMode) {
+      setFullscreenOiMode(oiMode);
+    }
+  }, [oiMode]);
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
@@ -1249,12 +1257,49 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       {isFullscreen && (
         <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
           <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
-            <button 
+            <button
               className="close-fullscreen-btn"
               onClick={() => setIsFullscreen(false)}
             >
               ✕
             </button>
+
+            {/* Selector de modo de Open Interest en fullscreen */}
+            {indicatorStates["Open Interest"] && (
+              <div style={{
+                position: 'absolute',
+                top: '15px',
+                left: '15px',
+                zIndex: 1000,
+                background: 'white',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
+                  Open Interest Mode:
+                </label>
+                <select
+                  value={fullscreenOiMode}
+                  onChange={(e) => setFullscreenOiMode(e.target.value)}
+                  style={{
+                    padding: '4px 8px',
+                    fontSize: '11px',
+                    border: '1px solid #ddd',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="histogram">Histogram</option>
+                  <option value="cumulative">Cumulative</option>
+                  <option value="flow">Flow</option>
+                </select>
+              </div>
+            )}
+
             <MiniChart
               symbol={symbol}
               interval={interval}
@@ -1262,6 +1307,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               indicatorStates={indicatorStates}
               vpConfig={vpConfig}
               vpFixedRange={vpFixedRange}
+              oiMode={fullscreenOiMode}
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}

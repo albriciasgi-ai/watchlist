@@ -456,26 +456,39 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                 "max_days_allowed": max_days_allowed
             }
 
-        # Calcular cuántos datos necesitamos
-        interval_minutes = get_interval_minutes(interval_final)
-        minutes_in_period = days_to_fetch * 24 * 60
-        total_points_needed = int(minutes_in_period / interval_minutes)
-
-        print(f"[CALCULATING] {symbol} {interval_final} Open Interest... necesitamos {total_points_needed} puntos")
-
         # Bybit Open Interest usa intervalos específicos
-        # 5min, 15min, 30min, 1h, 4h, 1d
+        # Disponibles: 5min, 15min, 30min, 1h, 4h, 1d
+        # NOTA: 2h NO está disponible, usar 1h en su lugar
         oi_interval_map = {
             "5": "5min",
             "15": "15min",
             "30": "30min",
             "60": "1h",
-            "120": "2h",
+            "120": "1h",  # 2h no disponible, usar 1h
             "240": "4h",
             "D": "1d"
         }
 
+        # Mapeo inverso: de Bybit interval a minutos
+        oi_interval_to_minutes = {
+            "5min": 5,
+            "15min": 15,
+            "30min": 30,
+            "1h": 60,
+            "4h": 240,
+            "1d": 1440
+        }
+
         oi_interval = oi_interval_map.get(interval_final, "15min")
+        oi_interval_minutes = oi_interval_to_minutes.get(oi_interval, 15)
+
+        # CRÍTICO: Calcular puntos necesarios basándose en el intervalo de OI, NO el de las velas
+        # Porque podemos tener velas de 2h pero OI de 1h (el doble de puntos)
+        minutes_in_period = days_to_fetch * 24 * 60
+        total_points_needed = int(minutes_in_period / oi_interval_minutes)
+
+        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
+        print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
 
         # Bybit devuelve máximo 200 puntos por request
         limit_per_request = 200
@@ -502,7 +515,9 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                     f"&limit={limit_per_request}&endTime={current_end}"
                 )
 
-                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({len(all_oi_data)}/{total_points_needed} puntos)")
+                # Convertir timestamp a fecha para debug
+                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
                 r = await client.get(url)
                 data = r.json()
 
@@ -524,6 +539,11 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
                 if not oi_batch:
                     print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
                     break
+
+                # Log del batch recibido
+                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
 
                 # oi_batch viene en orden descendente (más reciente primero)
                 # Agregar al inicio de all_oi_data para mantener orden cronológico
@@ -563,8 +583,19 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
 
             print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
 
+            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+            # porque Bybit devuelve descendente y agregamos al inicio
+            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+            all_oi_data.reverse()
+
+            # Verificar orden
+            if len(all_oi_data) >= 2:
+                first_ts = int(all_oi_data[0]["timestamp"])
+                last_ts = int(all_oi_data[-1]["timestamp"])
+                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
             # Procesar datos
-            # all_oi_data ya está en orden cronológico (ascendente)
+            # all_oi_data ahora sí está en orden cronológico ascendente
             processed_data = []
 
             for item in all_oi_data:
