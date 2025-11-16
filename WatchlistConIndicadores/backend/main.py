@@ -563,8 +563,19 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
 
             print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
 
+            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+            # porque Bybit devuelve descendente y agregamos al inicio
+            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+            all_oi_data.reverse()
+
+            # Verificar orden
+            if len(all_oi_data) >= 2:
+                first_ts = int(all_oi_data[0]["timestamp"])
+                last_ts = int(all_oi_data[-1]["timestamp"])
+                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
             # Procesar datos
-            # all_oi_data ya está en orden cronológico (ascendente)
+            # all_oi_data ahora sí está en orden cronológico ascendente
             processed_data = []
 
             for item in all_oi_data:

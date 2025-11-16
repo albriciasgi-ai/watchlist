@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Open Interest</title>
+</head>
+<body>
+    <h1>Open Interest Test</h1>
+    <button onclick="testOI()">Test BTCUSDT 15min</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testOI() {
+            const output = document.getElementById('output');
+            output.textContent = 'Fetching...';
+
+            try {
+                const url = 'http://localhost:8000/api/open-interest/BTCUSDT?interval=15&days=30';
+                console.log('Fetching:', url);
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                output.textContent = JSON.stringify(data, null, 2);
+
+                console.log('Response:', data);
+                console.log('Data points:', data.data?.length);
+
+                if (data.data && data.data.length > 0) {
+                    console.log('First 5 timestamps:');
+                    data.data.slice(0, 5).forEach((item, i) => {
+                        const date = new Date(item.timestamp);
+                        console.log(`${i}: ${date.toISOString()} - OI: ${item.openInterest}`);
+                    });
+
+                    console.log('\nLast 5 timestamps:');
+                    data.data.slice(-5).forEach((item, i) => {
+                        const date = new Date(item.timestamp);
+                        console.log(`${i}: ${date.toISOString()} - OI: ${item.openInterest}`);
+                    });
+                }
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
