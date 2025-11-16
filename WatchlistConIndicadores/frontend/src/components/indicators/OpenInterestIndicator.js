@@ -347,8 +347,8 @@ class OpenInterestIndicator extends IndicatorBase {
    */
   renderHistogramMode(ctx, bounds, visibleCandles) {
     const { x, y, width, height } = bounds;
-    const bullColor = "#34C759";
-    const bearColor = "#FF3B30";
+    const bullColor = "#1E88E5"; // Azul oscuro
+    const bearColor = "#F57C00"; // Naranja oscuro
 
     // Fondo
     ctx.fillStyle = "#FFFFFF";
@@ -443,8 +443,8 @@ class OpenInterestIndicator extends IndicatorBase {
    */
   renderCumulativeMode(ctx, bounds, visibleCandles) {
     const { x, y, width, height } = bounds;
-    const bullColor = "#34C759";
-    const bearColor = "#FF3B30";
+    const bullColor = "#1E88E5"; // Azul oscuro
+    const bearColor = "#F57C00"; // Naranja oscuro
 
     // Fondo
     ctx.fillStyle = "#FFFFFF";
