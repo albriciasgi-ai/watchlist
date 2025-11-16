@@ -1,0 +1,189 @@
+Esto es sólo como referencia, el nuestro es para nuestra aplicación
+
+// This work is licensed under a Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) https://creativecommons.org/licenses/by-nc-sa/4.0/
+// © LuxAlgo
+
+//@version = 4
+study(title="Alli+2 indicadores resistencias",shorttitle = " Alli+2 indicadores resistencias", overlay = true ,  max_bars_back=1000)
+//
+toggleBreaks  = input(true, title = "Show Breaks" )
+leftBars  = input(15, title = "Left Bars ")
+rightBars  = input(15, title = "Right Bars")
+volumeThresh  = input(20, title = "Volume Threshold")
+//
+highUsePivot = fixnan(pivothigh(leftBars, rightBars)[1])
+lowUsePivot = fixnan(pivotlow(leftBars, rightBars)[1])
+r1 = plot(highUsePivot, color=change(highUsePivot) ? na : #FF0000,  linewidth=3, offset=-(rightBars+1), title="Resistance")
+s1 = plot(lowUsePivot, color=change(lowUsePivot) ? na : #233dee,  linewidth=3, offset=-(rightBars+1), title="Support")
+
+//Volume %
+short = ema(volume, 5)
+long = ema(volume, 10)
+osc = 100 * (short - long) / long
+
+
+//For breaks with volume
+plotshape(toggleBreaks and crossunder(close,lowUsePivot) and not (open - close < high - open) and osc > volumeThresh, title = "Break", text = 'B', style = shape.labeldown, location = location.abovebar, color= color.red,textcolor = color.white, transp = 0, size = size.tiny)
+plotshape(toggleBreaks and crossover(close,highUsePivot ) and not(open - low > close - open) and osc > volumeThresh, title = "Break", text = 'B', style = shape.labelup, location = location.belowbar, color= color.green,textcolor = color.white, transp = 0, size = size.tiny)
+
+//For bull / bear wicks
+plotshape(toggleBreaks and crossover(close,highUsePivot ) and open - low > close - open , title = "Break", text = 'Bull Wick', style = shape.labelup, location = location.bottom, color= color.green,textcolor = color.white, transp = 0, size = size.tiny)
+plotshape(toggleBreaks and crossunder(close,lowUsePivot) and open - close < high - open , title = "Break", text = 'Bear Wick', style = shape.labeldown, location = location.bottom, color= color.red,textcolor = color.white, transp = 0, size = size.tiny)
+
+
+alertcondition(crossunder(close,lowUsePivot) and osc > volumeThresh , title = "Support Broken" , message = "Support Broken")
+alertcondition(crossover(close,highUsePivot) and osc > volumeThresh, title = "Resistance Broken" , message = "Resistance Broken")
+
+returns = (close - close[1]) / close
+absReturns = abs(returns)
+sum = 0.0
+sum := nz(sum[1]) 
+sum := absReturns * 100 + sum
+avgRet = sum  / bar_index
+avgRet100 = avgRet / 100
+avgRetClose100 = close * avgRet / 100
+
+//-----------------------Inputs-----------------------------
+
+srsource = input(defval="high/low", title="Support & Resistance Levels Source", options=["close", "high/low", "highwick/lowwick", "ohlc4"], type=input.string)
+srLoopback = input(title="S&R Levels Loopback", type=input.integer, defval=30, step=1, minval=1, maxval=100)   //how many candles back will look to find a max or min
+srDist = input(title="Distance Between S&R Levels", type=input.float, defval=0.5, step=0.5, minval=0, maxval=100) * avgRet100
+srMaxLevels = input(title="S&R Max Levels", type=input.integer, defval=500, step=50, minval=50, maxval=500)   //how many candles back will look to find a max or min
+SellZone = input(40, minval=0, step=1)
+HighlightBreaches = input(true, title="Highlight Tops & Bottoms?", type=input.bool)
+
+
+//----------------------------Support and Resistance Levels--------------------------------
+
+var srArray = array.new_float(500, close), var srArray1 = array.new_float(500, close), var srArray2 = array.new_float(500, close), last_high = 0.0, last_low = 0.0, second_last_high = 0.0, second_last_low = 0.0
+sr = close, sr1 = 0.0, sr2 = 0.0
+highback = float(na),lowback = float(na), highback1 = float(na),lowback1 = float(na) 
+srZone = 0  // Suport and Resistance Area 
+
+f_round( _val) => 
+    // Rounds _val to _increases/decreases of around 1%
+    _decimals = round(2 - log10(_val))
+    _p = pow(10, _decimals)
+    round(abs(_val) * _p) / _p
+
+highwick = ((close >= open ? close : open) + high) / 2
+lowwick = ((close <= open ? close : open) + low) / 2
+srsrc1 = srsource == "ohlc4" ? ohlc4 : srsource == "close" ? close : srsource == "high/low" ? high : highwick
+srsrc2 = srsource == "ohlc4" ? ohlc4 : srsource == "close" ? close : srsource == "high/low" ? low : lowwick
+
+//Peak-Valleys & Flat Levels
+
+sr := nz(sr[1]), sr1 := nz(sr1[1]), sr2 := nz(sr2[1])
+highback := highest(srsrc1[4], srLoopback), lowback := lowest(srsrc2[4], srLoopback)
+
+if highback > srsrc1 and highback > srsrc1[1] and highback > srsrc1[2] and highback > srsrc1[3] and highback[1] < highback and abs(1 - highback / array.get(srArray1,0)) > srDist and abs(1 - highback / array.get(srArray1,1)) > srDist and abs(1 - highback / array.get(srArray2,0)) > srDist
+ and abs(1 - highback / array.get(srArray2,1)) > srDist
+    sr1 := f_round(srsrc1[4])
+    array.insert(srArray1, 0, sr1)
+
+if lowback < srsrc2 and lowback < srsrc2[1] and lowback < srsrc2[2] and lowback < srsrc2[3] and lowback[1] > lowback and abs(1 - lowback / array.get(srArray2,0)) > srDist and abs(1 - lowback / array.get(srArray2,1)) > srDist and abs(1 - lowback / array.get(srArray1,0)) > srDist
+ and abs(1 - lowback / array.get(srArray1,1)) > srDist
+    sr2 := f_round(srsrc2[4])
+    array.insert(srArray2, 0, sr2)
+
+plot(srLoopback == 0 or sr1 == 0 ? na : sr1, title="Support & Resistance High", color=color.red, transp=0, linewidth=1, style=plot.style_circles, join=false)
+plot(srLoopback == 0 or sr2 == 0 ? na : sr2, title="Support & Resistance Low", color=color.green, transp=0, linewidth=1, style=plot.style_circles, join=false)
+// plot(sr1, color=color.red)
+// plot(sr2, color=color.green)
+
+smma(src, length) =>
+    smma =  0.0
+    smma := na(smma[1]) ? sma(src, length) : (smma[1] * (length - 1) + src) / length
+    smma
+jawLength = 13
+teethLength = 8
+lipsLength = 5
+jawOffset = 8
+teethOffset= 5
+lipsOffset = 3
+jaw = smma(hl2, jawLength)
+teeth = smma(hl2, teethLength)
+lips = smma(hl2, lipsLength)
+plot(jaw, "jaw", offset = jawOffset, color=#2962FF)
+plot(teeth, "Teeth", offset = teethOffset, color=#E91E63)
+plot(lips, "Lips", offset = lipsOffset, color=#66BB6A)
+//plot(lips*1.06, "Lips", offset = 3, style=plot.style_cross, color=#ff00f2)
+//plot(lips*0.94, "Lips", offset = 3, style=plot.style_cross, color=#ff02c8)
+
+
+//acá empiezan las alertas
+
+cambio_lips= 100*change(lips)/lips
+//plot(100*ta.change(jaw)/jaw, "Jaw",style= plot.style_line , color = color.blue )
+//plot(100*ta.change(teeth)/teeth, "Teeth", style= plot.style_line , color = color.red )
+//alerta1= cambio_lips[0]>0 and cambio_lips[1]<0 and cambio_lips [1] > -0.2 and cambio_lips [2] > -0.2 ? 1: na
+alerta1= cambio_lips>0.2 ? 1: 0
+alerta1_abajo= cambio_lips<-0.2 ? 1: 0
+
+// 2. delta volumen
+z=100*volume/sma(volume,3)  // volumen en porcentaje
+//f=sma(z,3)
+alerta2 = z>=140? 1:0
+
+//3. awesome con fuerza
+nLengthSlow = 34
+nLengthFast = 5
+nLengthMA = 15
+nLengthEMA = 15
+nLengthWMA = 15
+xSMA1_hl2 = sma(hl2, nLengthFast)
+xSMA2_hl2 = sma(hl2, nLengthSlow)
+xSMA1_SMA2 = xSMA1_hl2 - xSMA2_hl2
+
+awesome_abs= sma (abs(xSMA1_SMA2),200)
+awesome_porcentaje= xSMA1_SMA2/awesome_abs
+
+alerta3= awesome_porcentaje>1.2 ? 1: 0 // and ta.change(awesome_porcentaje)>=0? 1:na
+alerta3_abajo= awesome_porcentaje<-1.2 ? 1:0 //and ta.change(awesome_porcentaje)<=0
+
+// emas alineados
+rapido =  ema(close, 50)
+lento = ema(close, 200)
+//alerta4 = rapido > lento? 1:na
+//alerta4_abajo = rapido < lento? 1:na
+
+// accelerator
+
+ao = sma(hl2,5) - sma(hl2,34)
+ac = ao - sma(ao,5) 
+ac1 = abs(ac) //absolute value para calculo del sma
+base_porcentaje=sma(ac1,100)
+ac_percent =ac/base_porcentaje // ya queda en % el acelerador. Incluye valores negativos y positivos
+ac_sma=sma(ac1/base_porcentaje,200)
+ac_1=sma(ac_percent,100) 
+alerta7=ac_percent>0? 1:0
+alerta6= change (ac_percent)>0.2? 1:0 //ac_percent> 0 and 
+alerta6_abajo= change (ac_percent)<0? 1:0 // ac_percent< 0 and
+
+delta_acelerador = change(ac_percent) <=0? change(ac_percent):0
+alerta = delta_acelerador> delta_acelerador[1] and delta_acelerador[1]< delta_acelerador[2] ? 1:0
+
+
+alerta5=alerta3*alerta6*alerta7//*alerta4
+alerta5_abajo=alerta1_abajo*alerta2*alerta3_abajo*alerta6_abajo//*alerta4_abajo
+//if alerta5 >0
+    //line.new(bar_index, close, bar_index, close * 1.01, extend = extend.both, color = color.rgb(0, 153, 255), style = line.style_solid, width = 2)
+
+alerta8=alerta3*alerta
+
+alerta9=(alerta5 + alerta8 )/2
+
+//if alerta8 >0
+   // line.new(bar_index, close, bar_index, close * 1.01, extend = extend.both, color = color.rgb(255, 166, 0), style = line.style_solid, width = 2)
+
+
+
+//For breaks with volume
+plotshape( alerta , title = "Rebotín", text = 'Reb', style = shape.triangledown, location = location.top, color= color.rgb(255, 223, 82),textcolor = color.rgb(7, 7, 7), transp = 0, size = size.tiny)
+//plotshape( alerta5 , title = "Parriba", text = 'Sub', style = shape.triangleup, location = location.top, color= color.rgb(94, 82, 255),textcolor = color.white, transp = 0, size = size.tiny)
+//plotshape(toggleBreaks and crossover(close,highUsePivot ) and not(open - low > close - open) and osc > volumeThresh, title = "Break", text = 'B', style = shape.labelup, location = location.belowbar, color= color.green,textcolor = color.white, transp = 0, size = size.tiny)
+
+//plot(alerta9, "unión", style= plot.style_histogram , color =  color.rgb(0, 247, 95) , linewidth =4 )
+//plot(alerta5, "saltico", style= plot.style_histogram , color =  color.rgb(0, 17, 255) , linewidth =4 )
+//plot(alerta8, "rebotín", style= plot.style_histogram , color =  color.rgb(247, 140, 0) , linewidth =4 )
+alertcondition(alerta>0? alerta8:0, title = "rebotín" , message = "rebotin")

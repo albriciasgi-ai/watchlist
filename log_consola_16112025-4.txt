@@ -1,0 +1,1006 @@
+:5173/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [954] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [954] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [954] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [954] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 422 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [977] 🕯️  AAVEUSDT | 🚀 Ejecutando analyzeRanges() con 1439 velas 
+IndicatorManager.js:457 [AAVEUSDT] 🎯 IndicatorManager.analyzeRanges() llamado con 1439 velas
+IndicatorManager.js:469 [AAVEUSDT] ✅ Llamando a rangeDetector.analyze()...
+ATRBasedRangeDetector.js:112 [AAVEUSDT] 🔄 Ejecutando análisis ATR-Based con 1439 velas...
+ATRBasedRangeDetector.js:132 [AAVEUSDT] 📊 ATR calculado: 1239 valores, SMA: 1420 valores
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 4 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [AAVEUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [AAVEUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [AAVEUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [AAVEUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [AAVEUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:403 [AAVEUSDT] 🎯 Post-merge: 15 rangos → 5 rangos (10 mergeados)
+ATRBasedRangeDetector.js:143 [AAVEUSDT] ✅ Análisis completado: 5 rangos detectados
+IndicatorManager.js:594 [AAVEUSDT] ⏭️ createTrendProfiles desactivado o no hay detector
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [992] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [992] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [992] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [993] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 402 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [026] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [026] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [026] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [026] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [068] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [068] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [068] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [069] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 390 patterns in 1440 candles
+MiniChart.jsx:18 [100] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [100] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [100] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [100] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 402 patterns in 1440 candles
+MiniChart.jsx:18 [135] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [135] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [136] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [136] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 421 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [600] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:18 [600] 🕯️  ETHUSDT | Solicitando histórico: 15 días @ 15 
+IndicatorManager.js:30 [ETHUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManager.js:54 [ETHUSDT] ✅ Support/Resistance indicator enabled
+OpenInterestIndicator.js:37 [ETHUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ETHUSDT?interval=15&days=15
+SupportResistanceIndicator.js:59 [ETHUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ETHUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+MiniChart.jsx:24 [601] 📡 ETHUSDT | Suscrito a WebSocket @ 15 
+MiniChart.jsx:18 [602] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+IndicatorManager.js:778 [ETHUSDT] 🧹 IndicatorManager destruido
+MiniChart.jsx:18 [602] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:18 [602] 🕯️  ETHUSDT | Solicitando histórico: 15 días @ 15 
+IndicatorManager.js:30 [ETHUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManager.js:54 [ETHUSDT] ✅ Support/Resistance indicator enabled
+OpenInterestIndicator.js:37 [ETHUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ETHUSDT?interval=15&days=15
+SupportResistanceIndicator.js:59 [ETHUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ETHUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+MiniChart.jsx:24 [603] 📡 ETHUSDT | Suscrito a WebSocket @ 15 
+MiniChart.jsx:18 [227] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [228] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [228] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [228] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 431 patterns in 1440 candles
+MiniChart.jsx:18 [412] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+MiniChart.jsx:18 [607] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [607] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [607] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [607] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 411 patterns in 1440 candles
+MiniChart.jsx:18 [635] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [636] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [636] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [636] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 389 patterns in 1440 candles
+MiniChart.jsx:18 [670] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [671] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [671] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [671] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 436 patterns in 1440 candles
+MiniChart.jsx:18 [707] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [707] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [707] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [707] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 404 patterns in 1440 candles
+MiniChart.jsx:18 [079] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [079] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [079] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [080] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 368 patterns in 1440 candles
+MiniChart.jsx:18 [881] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [881] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [881] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [881] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 402 patterns in 1440 candles
+MiniChart.jsx:18 [249] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [250] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [250] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [250] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 509 patterns in 1440 candles
+MiniChart.jsx:18 [966] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [966] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [966] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [966] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 419 patterns in 1440 candles
+MiniChart.jsx:18 [002] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [002] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [003] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [003] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 386 patterns in 1440 candles
+MiniChart.jsx:18 [716] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [717] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [717] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [717] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 441 patterns in 1440 candles
+MiniChart.jsx:18 [746] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [746] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [747] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [747] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 407 patterns in 1440 candles
+OpenInterestIndicator.js:51 [ETHUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [ETHUSDT] 📊 OI Data Range: 2025-11-14T19:15:00.000Z → 2025-11-02T07:00:00.000Z
+OpenInterestIndicator.js:53 [ETHUSDT] 📊 First OI: 669982.3, Last OI: 719961.19
+SupportResistanceIndicator.js:70 [ETHUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+IndicatorManager.js:369 [ETHUSDT] 📂 29 Fixed Ranges cargados desde localStorage
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762891896126 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761907500000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762318800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762582500000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762746300000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762891200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762029000000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762909200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761177600000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762036200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762037100000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1763237700000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761089400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761328800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761478200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761703200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762734600000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762889400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1763231400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762354800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1760554800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759482000000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759766400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759852800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1760029200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1757782800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1757923200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1758589200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1758902400000 cargado Object
+IndicatorManager.js:99 [ETHUSDT] 🔄 Sincronizadas 29 instancias de Fixed Ranges
+IndicatorManager.js:393 [ETHUSDT] 🎯 Range Detection HABILITADO (ATR-Based)
+ATRBasedRangeDetector.js:32 [ETHUSDT] 🎯 Config ATR actualizada: Object
+IndicatorManager.js:743 [ETHUSDT@15] 💾 Config de Range Detection guardada
+IndicatorManager.js:767 [ETHUSDT] 📂 Config de Range Detection cargada
+MiniChart.jsx:999 [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:30 [101] 📊 ETHUSDT | ✅ Indicadores inicializados 
+MiniChart.jsx:18 [480] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [480] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [480] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [480] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 422 patterns in 1440 candles
+MiniChart.jsx:18 [513] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [513] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [513] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [513] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 402 patterns in 1440 candles
+OpenInterestIndicator.js:51 [ETHUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [ETHUSDT] 📊 OI Data Range: 2025-11-14T19:15:00.000Z → 2025-11-02T07:00:00.000Z
+OpenInterestIndicator.js:53 [ETHUSDT] 📊 First OI: 669982.3, Last OI: 719961.19
+SupportResistanceIndicator.js:70 [ETHUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+IndicatorManager.js:369 [ETHUSDT] 📂 29 Fixed Ranges cargados desde localStorage
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762891896126 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761907500000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762318800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762582500000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762746300000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762891200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762029000000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762909200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761177600000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762036200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762037100000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1763237700000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761089400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761328800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761478200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1761703200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762734600000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762889400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1763231400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1762354800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1760554800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759482000000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759766400000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1759852800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1760029200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1757782800000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1757923200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1758589200000 cargado Object
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1758902400000 cargado Object
+IndicatorManager.js:99 [ETHUSDT] 🔄 Sincronizadas 29 instancias de Fixed Ranges
+IndicatorManager.js:393 [ETHUSDT] 🎯 Range Detection HABILITADO (ATR-Based)
+ATRBasedRangeDetector.js:32 [ETHUSDT] 🎯 Config ATR actualizada: Object
+IndicatorManager.js:743 [ETHUSDT@15] 💾 Config de Range Detection guardada
+IndicatorManager.js:767 [ETHUSDT] 📂 Config de Range Detection cargada
+MiniChart.jsx:999 [ETHUSDT] ✅ Sincronizados 29 Fixed Range Profiles
+MiniChart.jsx:30 [531] 📊 ETHUSDT | ✅ Indicadores inicializados 
+MiniChart.jsx:18 [363] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [364] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [364] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [364] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 440 patterns in 1440 candles
+MiniChart.jsx:18 [744] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [744] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [744] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [744] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 395 patterns in 1440 candles
+MiniChart.jsx:18 [946] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [946] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [946] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [946] 🕯️  ETHUSDT | 🔍 Range Detection habilitado - programando análisis en 1.5s 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [162] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [163] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [163] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [163] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 438 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [197] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [197] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [197] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [197] 🕯️  ETHUSDT | 🔍 Range Detection habilitado - programando análisis en 1.5s 
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [447] 🕯️  ETHUSDT | 🚀 Ejecutando analyzeRanges() con 1439 velas 
+IndicatorManager.js:457 [ETHUSDT] 🎯 IndicatorManager.analyzeRanges() llamado con 1439 velas
+IndicatorManager.js:469 [ETHUSDT] ✅ Llamando a rangeDetector.analyze()...
+ATRBasedRangeDetector.js:112 [ETHUSDT] 🔄 Ejecutando análisis ATR-Based con 1439 velas...
+ATRBasedRangeDetector.js:132 [ETHUSDT] 📊 ATR calculado: 1239 valores, SMA: 1420 valores
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 4 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:403 [ETHUSDT] 🎯 Post-merge: 11 rangos → 5 rangos (6 mergeados)
+ATRBasedRangeDetector.js:143 [ETHUSDT] ✅ Análisis completado: 5 rangos detectados
+IndicatorManager.js:507 [ETHUSDT] 🔄 Actualizando Volume Profile del rango range_1763237700000: 2025-11-16T02:15:00.000Z → 2025-11-16T11:00:00.000Z
+VolumeProfileFixedRangeIndicator.js:516 [ETHUSDT] ✅ Fixed Range range_1763237700000 cargado Object
+IndicatorManager.js:524 Uncaught TypeError: this.saveFixedRangeProfiles is not a function
+    at IndicatorManager.createAutoFixedRange (IndicatorManager.js:524:14)
+    at IndicatorManager.js:477:12
+    at Array.forEach (<anonymous>)
+    at IndicatorManager.analyzeRanges (IndicatorManager.js:476:21)
+    at MiniChart.jsx:524:41
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [698] 🕯️  ETHUSDT | 🚀 Ejecutando analyzeRanges() con 1439 velas 
+IndicatorManager.js:457 [ETHUSDT] 🎯 IndicatorManager.analyzeRanges() llamado con 1439 velas
+IndicatorManager.js:469 [ETHUSDT] ✅ Llamando a rangeDetector.analyze()...
+ATRBasedRangeDetector.js:112 [ETHUSDT] 🔄 Ejecutando análisis ATR-Based con 1439 velas...
+ATRBasedRangeDetector.js:132 [ETHUSDT] 📊 ATR calculado: 1239 valores, SMA: 1420 valores
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 3 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 4 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:198 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera del rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 5 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 1 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:283 [ETHUSDT] 🔙 Re-ingreso detectado después de 2 velas fuera - continuando rango
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 1/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 2/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 3/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 4/5 velas fuera
+ATRBasedRangeDetector.js:277 [ETHUSDT] ⏸️ Breakout temporal: 5/5 velas fuera
+ATRBasedRangeDetector.js:270 [ETHUSDT] ❌ Rango finalizado: breakout confirmado (6 velas fuera)
+ATRBasedRangeDetector.js:339 [ETHUSDT] ✨ Rango ATR detectado: Object
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:385 [ETHUSDT] 🔗 Mergeando rangos overlapeados en post-procesamiento
+ATRBasedRangeDetector.js:403 [ETHUSDT] 🎯 Post-merge: 11 rangos → 5 rangos (6 mergeados)
+ATRBasedRangeDetector.js:143 [ETHUSDT] ✅ Análisis completado: 5 rangos detectados
+IndicatorManager.js:594 [ETHUSDT] ⏭️ createTrendProfiles desactivado o no hay detector
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+MiniChart.jsx:18 [205] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+IndicatorManager.js:778 [ETHUSDT] 🧹 IndicatorManager destruido
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 400 patterns in 1440 candles

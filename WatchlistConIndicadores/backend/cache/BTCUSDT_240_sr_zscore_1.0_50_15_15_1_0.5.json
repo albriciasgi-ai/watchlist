@@ -1,0 +1,73 @@
+{
+  "symbol": "BTCUSDT",
+  "interval": "240",
+  "data": {
+    "resistances": [
+      {
+        "price": 114000.0,
+        "type": "resistance",
+        "strength": 0.28,
+        "touches": 1,
+        "avgVolume": 1.098053394301803,
+        "firstTouch": 1761062400000,
+        "lastTouch": 1761062400000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 98888.1,
+        "type": "support",
+        "strength": 2.03,
+        "touches": 1,
+        "avgVolume": 1.6895847277190559,
+        "firstTouch": 1762286400000,
+        "lastTouch": 1762286400000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 101045.9,
+        "type": "support",
+        "strength": 1.21,
+        "touches": 1,
+        "avgVolume": 6.045752020831437,
+        "firstTouch": 1760126400000,
+        "lastTouch": 1760126400000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 106225.0,
+        "type": "support",
+        "strength": 0.98,
+        "touches": 1,
+        "avgVolume": 1.1421301950219382,
+        "firstTouch": 1761840000000,
+        "lastTouch": 1761840000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 94421.0,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.7479366178864323
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 15,
+    "rightBars": 15,
+    "minTouches": 1,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763321718.9766285
+}

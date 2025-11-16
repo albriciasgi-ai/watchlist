@@ -1,0 +1,62 @@
+{
+  "symbol": "INJUSDT",
+  "interval": "15",
+  "data": {
+    "resistances": [
+      {
+        "price": 6.9365,
+        "type": "resistance",
+        "strength": 3.99,
+        "touches": 2,
+        "avgVolume": 1.0129673150946619,
+        "firstTouch": 1763228700000,
+        "lastTouch": 1763287200000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 7.116,
+        "type": "support",
+        "strength": 5.13,
+        "touches": 2,
+        "avgVolume": 2.3240283212537234,
+        "firstTouch": 1762152300000,
+        "lastTouch": 1762166700000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 6.525,
+        "type": "support",
+        "strength": 1.63,
+        "touches": 2,
+        "avgVolume": 4.940803455407646,
+        "firstTouch": 1762183800000,
+        "lastTouch": 1763162100000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 6.357,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.21901304493394727
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763327459.4844854
+}

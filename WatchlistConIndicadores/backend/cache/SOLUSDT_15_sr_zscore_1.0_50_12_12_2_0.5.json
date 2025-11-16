@@ -1,0 +1,150 @@
+{
+  "symbol": "SOLUSDT",
+  "interval": "15",
+  "data": {
+    "resistances": [
+      {
+        "price": 144.56,
+        "type": "resistance",
+        "strength": 9.62,
+        "touches": 2,
+        "avgVolume": 3.571322782740541,
+        "firstTouch": 1763103600000,
+        "lastTouch": 1763226900000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 188.675,
+        "type": "resistance",
+        "strength": 3.55,
+        "touches": 2,
+        "avgVolume": 1.6528124432975506,
+        "firstTouch": 1762069500000,
+        "lastTouch": 1762128000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 161.25,
+        "type": "resistance",
+        "strength": 1.21,
+        "touches": 2,
+        "avgVolume": 2.089842445879783,
+        "firstTouch": 1762437600000,
+        "lastTouch": 1762945200000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 155.39,
+        "type": "support",
+        "strength": 6.52,
+        "touches": 2,
+        "avgVolume": 2.196217860376372,
+        "firstTouch": 1762617600000,
+        "lastTouch": 1762658100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 163.39499999999998,
+        "type": "support",
+        "strength": 5.81,
+        "touches": 2,
+        "avgVolume": 2.234284792997848,
+        "firstTouch": 1762732800000,
+        "lastTouch": 1762840800000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 137.17000000000002,
+        "type": "support",
+        "strength": 5.37,
+        "touches": 2,
+        "avgVolume": 1.5381767981737822,
+        "firstTouch": 1763161200000,
+        "lastTouch": 1763257500000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 173.785,
+        "type": "support",
+        "strength": 5.26,
+        "touches": 2,
+        "avgVolume": 2.38368476311176,
+        "firstTouch": 1762152300000,
+        "lastTouch": 1762166700000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 150.0,
+        "type": "support",
+        "strength": 2.4,
+        "touches": 2,
+        "avgVolume": 3.799163536324344,
+        "firstTouch": 1762525800000,
+        "lastTouch": 1763003700000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 164.64666666666668,
+        "type": "support",
+        "strength": 1.83,
+        "touches": 3,
+        "avgVolume": 2.7583511457363876,
+        "firstTouch": 1762183800000,
+        "lastTouch": 1762811100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 159.595,
+        "type": "support",
+        "strength": 1.71,
+        "touches": 2,
+        "avgVolume": 1.344784301695344,
+        "firstTouch": 1762391700000,
+        "lastTouch": 1762586100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 153.62,
+        "type": "support",
+        "strength": 1.57,
+        "touches": 3,
+        "avgVolume": 1.9765302147053354,
+        "firstTouch": 1762446600000,
+        "lastTouch": 1763024400000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 136.04,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.08548887039826433
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763327443.826913
+}
