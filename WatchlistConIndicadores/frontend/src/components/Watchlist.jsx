@@ -165,7 +165,6 @@ const Watchlist = () => {
 
   // ⚡ NUEVO: Handler para abrir Support/Resistance Settings
   const handleOpenSRSettings = (symbol, indicatorManagerRef) => {
-    console.log('[Watchlist] handleOpenSRSettings called with:', { symbol, indicatorManagerRef });
     setSelectedSymbolForSR(symbol);
 
     // Guardar referencia del IndicatorManager
@@ -176,7 +175,6 @@ const Watchlist = () => {
       }));
     }
 
-    console.log('[Watchlist] Setting showSRSettings to true');
     setShowSRSettings(true);
   };
 
@@ -395,7 +393,6 @@ const Watchlist = () => {
       )}
 
       {/* ⚡ NUEVO: Modal de Support/Resistance Settings */}
-      {console.log('[Watchlist] Render check - showSRSettings:', showSRSettings, 'selectedSymbolForSR:', selectedSymbolForSR)}
       {showSRSettings && selectedSymbolForSR && (
         <SupportResistanceSettings
           symbol={selectedSymbolForSR}
