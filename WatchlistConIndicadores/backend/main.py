@@ -411,6 +411,165 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
             "success": False
         }
 
+@app.get("/api/open-interest/{symbol}")
+async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
+    """
+    Endpoint para obtener Open Interest de Bybit Futures
+    Calcula OI Flow Sentiment siguiendo el patrón LuxAlgo
+    """
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # Aplicar límite máximo por timeframe
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # Intentar cargar del cache
+        cached_data = load_cache(symbol, interval_final, "openinterest")
+
+        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed
+            }
+
+        # Calcular desde Bybit API
+        print(f"[CALCULATING] {symbol} {interval_final} Open Interest...")
+
+        # Bybit Open Interest usa intervalos específicos
+        # 5min, 15min, 30min, 1h, 4h, 1d
+        oi_interval_map = {
+            "5": "5min",
+            "15": "15min",
+            "30": "30min",
+            "60": "1h",
+            "120": "2h",
+            "240": "4h",
+            "D": "1d"
+        }
+
+        oi_interval = oi_interval_map.get(interval_final, "15min")
+
+        # Bybit devuelve máximo 200 puntos por request
+        limit = 200
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            url = (
+                "https://api.bybit.com/v5/market/open-interest?"
+                f"category=linear&symbol={symbol}&intervalTime={oi_interval}&limit={limit}"
+            )
+
+            print(f"[BYBIT API] {url}")
+            r = await client.get(url)
+            data = r.json()
+
+            if data.get("retCode") != 0:
+                print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "openInterest",
+                    "data": [],
+                    "success": False,
+                    "error": data.get('retMsg', 'Unknown error')
+                }
+
+            oi_list = data["result"]["list"]
+
+            if not oi_list:
+                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "openInterest",
+                    "data": [],
+                    "success": False,
+                    "error": "No Open Interest data available"
+                }
+
+            # Procesar datos
+            # oi_list viene en orden descendente (más reciente primero)
+            oi_list.reverse()  # Ordenar ascendente
+
+            processed_data = []
+
+            for item in oi_list:
+                ts_ms = int(item["timestamp"])
+                oi_value = float(item["openInterest"])
+
+                # Convertir timestamp a datetime Colombia
+                ts_seconds = ts_ms / 1000
+                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+                processed_data.append({
+                    "timestamp": ts_ms,
+                    "openInterest": oi_value,
+                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+                })
+
+            # Guardar en cache
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data
+            }
+            save_cache(symbol, interval_final, "openinterest", cache_data)
+            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
+
+            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data,
+                "success": True,
+                "from_cache": False,
+                "calculated": True,
+                "total_points": len(processed_data),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": [],
+            "success": False,
+            "error": str(e)
+        }
+
 @app.post("/api/clear-cache")
 async def clear_cache():
     """Endpoint para limpiar el cache manualmente"""

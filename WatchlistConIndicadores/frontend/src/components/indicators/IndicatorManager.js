@@ -10,6 +10,7 @@ import RangeDetectionIndicator from "./RangeDetectionIndicator";
 import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
+import OpenInterestIndicator from "./OpenInterestIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -33,7 +34,8 @@ class IndicatorManager {
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       new VolumeIndicator(this.symbol, this.interval, this.days),
       new CVDIndicator(this.symbol, this.interval, this.days),
-      new RejectionPatternIndicator(this.symbol, this.interval, this.days)
+      new RejectionPatternIndicator(this.symbol, this.interval, this.days),
+      new OpenInterestIndicator(this.symbol, this.interval, this.days)
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -44,10 +46,10 @@ class IndicatorManager {
     }
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile si es necesario
+    // Solo cargar Volume Profile y Open Interest si es necesario
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile") {
+        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
           return ind.fetchData();
         }
         return Promise.resolve();
