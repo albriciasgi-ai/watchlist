@@ -222,12 +222,21 @@ const Watchlist = () => {
             </label>
 
             <label>
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={indicatorStates["Volume Profile"]}
                 onChange={() => toggleIndicator("Volume Profile")}
               />
               Volume Profile
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Open Interest"]}
+                onChange={() => toggleIndicator("Open Interest")}
+              />
+              Open Interest
             </label>
 
             {indicatorStates["Volume Profile"] && (
