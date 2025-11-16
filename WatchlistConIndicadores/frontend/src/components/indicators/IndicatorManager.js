@@ -521,7 +521,7 @@ class IndicatorManager {
         }
 
         // Guardar cambios
-        this.saveFixedRangeProfiles();
+        this.saveFixedRangeProfilesToStorage();
       }
       return; // Ya existe y fue actualizado
     }
