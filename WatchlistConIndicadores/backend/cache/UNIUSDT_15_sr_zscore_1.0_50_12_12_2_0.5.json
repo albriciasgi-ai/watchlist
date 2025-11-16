@@ -5,12 +5,12 @@
     "resistances": [],
     "supports": [],
     "consolidationZones": [],
-    "currentPrice": 7.16,
+    "currentPrice": 7.112,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.24378355181275768
+      "currentZScore": -0.41762227407551156
     }
   },
   "config": {
@@ -23,5 +23,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763327452.0112865
+  "timestamp": 1763329813.767277
 }

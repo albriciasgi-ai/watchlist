@@ -39,12 +39,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 0.0131,
+    "currentPrice": 0.01309,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.6086978096354878
+      "currentZScore": 0.06226699740496273
     }
   },
   "config": {
@@ -57,5 +57,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763327456.8911111
+  "timestamp": 1763329822.337797
 }
