@@ -5,6 +5,8 @@ import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
+import AlertPanel from "./AlertPanel";
+import { AlertToastContainer } from "./AlertToast";
 import wsManager from "./WebSocketManager";
 
 const symbols = [
@@ -90,6 +92,22 @@ const Watchlist = () => {
 
   // 📊 NUEVO: Estado para Open Interest mode
   const [oiMode, setOiMode] = useState("histogram"); // "histogram", "cumulative", "flow"
+
+  // 🔔 NUEVO: Sistema de Alertas Integrado
+  const [alerts, setAlerts] = useState([]);
+  const [toastAlerts, setToastAlerts] = useState([]);
+  const [showAlertPanel, setShowAlertPanel] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    enabled: true,
+    soundEnabled: false,
+    minSeverity: 'LOW', // 'LOW', 'MEDIUM', 'HIGH'
+    enabledIndicators: {
+      'Support & Resistance': true,
+      'Rejection Patterns': true,
+      'Volume Profile': false,
+      'Open Interest': false
+    }
+  });
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -213,6 +231,96 @@ const Watchlist = () => {
     }
   };
 
+  // 🔔 NUEVO: Sistema de Alertas - useEffect para cargar desde localStorage
+  useEffect(() => {
+    const savedAlerts = localStorage.getItem('watchlist_alerts');
+    const savedAlertConfig = localStorage.getItem('watchlist_alert_config');
+
+    if (savedAlerts) {
+      try {
+        const parsed = JSON.parse(savedAlerts);
+        setAlerts(parsed);
+      } catch (e) {
+        console.error('[Watchlist] Error loading alerts:', e);
+      }
+    }
+
+    if (savedAlertConfig) {
+      try {
+        const parsed = JSON.parse(savedAlertConfig);
+        setAlertConfig(parsed);
+      } catch (e) {
+        console.error('[Watchlist] Error loading alert config:', e);
+      }
+    }
+  }, []);
+
+  // 🔔 NUEVO: Guardar alertas en localStorage cuando cambien
+  useEffect(() => {
+    localStorage.setItem('watchlist_alerts', JSON.stringify(alerts));
+  }, [alerts]);
+
+  // 🔔 NUEVO: Guardar configuración de alertas en localStorage
+  useEffect(() => {
+    localStorage.setItem('watchlist_alert_config', JSON.stringify(alertConfig));
+  }, [alertConfig]);
+
+  // 🔔 NUEVO: Agregar nueva alerta
+  const addAlert = (alert) => {
+    // Verificar si las alertas están habilitadas
+    if (!alertConfig.enabled) return;
+
+    // Verificar si el indicador está habilitado
+    if (alert.indicatorType && !alertConfig.enabledIndicators[alert.indicatorType]) return;
+
+    // Verificar severidad mínima
+    const severityLevels = { 'LOW': 1, 'MEDIUM': 2, 'HIGH': 3 };
+    const minLevel = severityLevels[alertConfig.minSeverity] || 1;
+    const alertLevel = severityLevels[alert.severity] || 1;
+    if (alertLevel < minLevel) return;
+
+    // Crear alerta con ID único
+    const newAlert = {
+      ...alert,
+      id: Date.now() + Math.random(),
+      timestamp: alert.timestamp || Date.now()
+    };
+
+    // Agregar a alertas
+    setAlerts(prev => [newAlert, ...prev].slice(0, 100)); // Mantener solo últimas 100
+
+    // Mostrar toast notification
+    setToastAlerts(prev => [...prev, newAlert]);
+
+    console.log('[Watchlist] Alert added:', newAlert);
+  };
+
+  // 🔔 NUEVO: Eliminar toast
+  const dismissToast = (toastId) => {
+    setToastAlerts(prev => prev.filter(t => (t.id || t.timestamp) !== toastId));
+  };
+
+  // 🔔 NUEVO: Eliminar alerta específica
+  const deleteAlert = (alertId) => {
+    setAlerts(prev => prev.filter(a => a.id !== alertId));
+  };
+
+  // 🔔 NUEVO: Limpiar todas las alertas
+  const clearAllAlerts = () => {
+    if (window.confirm('¿Estás seguro de que quieres borrar todas las alertas?')) {
+      setAlerts([]);
+      setToastAlerts([]);
+    }
+  };
+
+  // Exponer función addAlert globalmente para que los indicadores puedan usarla
+  useEffect(() => {
+    window.addWatchlistAlert = addAlert;
+    return () => {
+      delete window.addWatchlistAlert;
+    };
+  }, [alertConfig]); // Re-crear cuando cambie la configuración
+
   // Obtener opciones de días disponibles según el timeframe actual
   const getAvailableDaysOptions = () => {
     return DAYS_OPTIONS_BY_INTERVAL[interval] || [1, 2, 5, 10, 30];
@@ -310,6 +418,86 @@ const Watchlist = () => {
                 <option value="flow">Flow</option>
               </select>
             )}
+
+            {/* 🔔 NUEVO: Botón de Alertas */}
+            <button
+              onClick={() => setShowAlertPanel(true)}
+              style={{
+                marginLeft: '16px',
+                padding: '6px 12px',
+                background: alerts.length > 0 ? '#ff9800' : '#4a9eff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+              title="Ver historial de alertas"
+            >
+              🔔 Alerts
+              {alerts.length > 0 && (
+                <span style={{
+                  background: 'rgba(255,255,255,0.3)',
+                  padding: '2px 6px',
+                  borderRadius: '10px',
+                  fontSize: '11px'
+                }}>
+                  {alerts.length}
+                </span>
+              )}
+            </button>
+
+            {/* 🧪 NUEVO: Botón de Prueba de Alertas (solo para testing) */}
+            <button
+              onClick={() => {
+                const testSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+                const testTypes = ['Support', 'Resistance'];
+                const testSeverities = ['HIGH', 'MEDIUM', 'LOW'];
+
+                const randomSymbol = testSymbols[Math.floor(Math.random() * testSymbols.length)];
+                const randomType = testTypes[Math.floor(Math.random() * testTypes.length)];
+                const randomSeverity = testSeverities[Math.floor(Math.random() * testSeverities.length)];
+                const randomPrice = (Math.random() * 50000 + 20000).toFixed(2);
+                const randomLevel = (parseFloat(randomPrice) * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2);
+
+                addAlert({
+                  indicatorType: 'Support & Resistance',
+                  severity: randomSeverity,
+                  icon: randomType === 'Support' ? '🟢' : '🔴',
+                  title: `${randomSymbol} approaching ${randomType}`,
+                  symbol: randomSymbol,
+                  interval: interval,
+                  type: 'S/R Level',
+                  description: `Price $${randomPrice} is near ${randomType.toLowerCase()} level at $${randomLevel}\nThis is a test alert`,
+                  data: {
+                    price: parseFloat(randomPrice),
+                    levelPrice: parseFloat(randomLevel),
+                    levelType: randomType.toLowerCase(),
+                    strength: Math.random() * 10,
+                    touches: Math.floor(Math.random() * 10) + 1,
+                    distance: Math.random() * 0.5
+                  }
+                });
+              }}
+              style={{
+                marginLeft: '8px',
+                padding: '6px 12px',
+                background: '#9C27B0',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              }}
+              title="Generar alerta de prueba"
+            >
+              🧪 Test Alert
+            </button>
           </div>
         </div>
       </div>
@@ -404,6 +592,22 @@ const Watchlist = () => {
           initialConfig={srConfigs[selectedSymbolForSR]}
         />
       )}
+
+      {/* 🔔 NUEVO: Alert Panel */}
+      {showAlertPanel && (
+        <AlertPanel
+          alerts={alerts}
+          onClose={() => setShowAlertPanel(false)}
+          onClearAlerts={clearAllAlerts}
+          onDeleteAlert={deleteAlert}
+        />
+      )}
+
+      {/* 🔔 NUEVO: Toast Notifications */}
+      <AlertToastContainer
+        alerts={toastAlerts}
+        onDismiss={dismissToast}
+      />
     </div>
   );
 };

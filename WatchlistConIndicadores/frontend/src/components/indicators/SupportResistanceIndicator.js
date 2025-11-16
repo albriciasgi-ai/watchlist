@@ -68,6 +68,10 @@ class SupportResistanceIndicator extends IndicatorBase {
         this.currentPrice = result.data.currentPrice || 0;
 
         console.log(`[${this.symbol}] ✅ S/R loaded: ${this.resistances.length} resistances, ${this.supports.length} supports, ${this.consolidationZones.length} zones`);
+
+        // Check for price alerts
+        this.checkPriceAlerts(this.currentPrice);
+
         return true;
       } else {
         console.warn(`[${this.symbol}] ⚠️ No S/R data available`);
@@ -221,6 +225,93 @@ class SupportResistanceIndicator extends IndicatorBase {
       ctx.fillStyle = color;
       ctx.fillText(labelText, labelX + 4, priceY + 4);
     }
+  }
+
+  /**
+   * Check for price alerts (when price approaches S/R levels)
+   */
+  checkPriceAlerts(currentPrice) {
+    if (!window.addWatchlistAlert) return;
+    if (!currentPrice) return;
+    if (this.resistances.length === 0 && this.supports.length === 0) return;
+
+    const proximityPercent = 0.3; // Alert when within 0.3% of level
+    const minStrength = 5; // Only alert on strong levels
+
+    // Check resistances
+    this.resistances.forEach(resistance => {
+      if (resistance.status !== 'active') return;
+      if (resistance.strength < minStrength) return;
+
+      const distancePercent = Math.abs((currentPrice - resistance.price) / resistance.price * 100);
+
+      if (distancePercent <= proximityPercent) {
+        // Check if we haven't alerted for this level recently
+        const alertKey = `sr_alert_${this.symbol}_R_${resistance.price.toFixed(2)}`;
+        const lastAlertTime = localStorage.getItem(alertKey);
+        const now = Date.now();
+
+        if (!lastAlertTime || now - parseInt(lastAlertTime) > 3600000) { // 1 hour cooldown
+          localStorage.setItem(alertKey, now.toString());
+
+          window.addWatchlistAlert({
+            indicatorType: 'Support & Resistance',
+            severity: resistance.strength >= 8 ? 'HIGH' : resistance.strength >= 6 ? 'MEDIUM' : 'LOW',
+            icon: '🔴',
+            title: `${this.symbol} approaching Resistance`,
+            symbol: this.symbol,
+            interval: this.interval,
+            type: 'S/R Level',
+            description: `Price $${currentPrice.toFixed(2)} is ${distancePercent.toFixed(2)}% from resistance level at $${resistance.price.toFixed(2)}\nStrength: ${resistance.strength.toFixed(1)}/10 • Touches: ${resistance.touches}x`,
+            data: {
+              price: currentPrice,
+              levelPrice: resistance.price,
+              levelType: 'resistance',
+              strength: resistance.strength,
+              touches: resistance.touches,
+              distance: distancePercent
+            }
+          });
+        }
+      }
+    });
+
+    // Check supports
+    this.supports.forEach(support => {
+      if (support.status !== 'active') return;
+      if (support.strength < minStrength) return;
+
+      const distancePercent = Math.abs((currentPrice - support.price) / support.price * 100);
+
+      if (distancePercent <= proximityPercent) {
+        const alertKey = `sr_alert_${this.symbol}_S_${support.price.toFixed(2)}`;
+        const lastAlertTime = localStorage.getItem(alertKey);
+        const now = Date.now();
+
+        if (!lastAlertTime || now - parseInt(lastAlertTime) > 3600000) { // 1 hour cooldown
+          localStorage.setItem(alertKey, now.toString());
+
+          window.addWatchlistAlert({
+            indicatorType: 'Support & Resistance',
+            severity: support.strength >= 8 ? 'HIGH' : support.strength >= 6 ? 'MEDIUM' : 'LOW',
+            icon: '🟢',
+            title: `${this.symbol} approaching Support`,
+            symbol: this.symbol,
+            interval: this.interval,
+            type: 'S/R Level',
+            description: `Price $${currentPrice.toFixed(2)} is ${distancePercent.toFixed(2)}% from support level at $${support.price.toFixed(2)}\nStrength: ${support.strength.toFixed(1)}/10 • Touches: ${support.touches}x`,
+            data: {
+              price: currentPrice,
+              levelPrice: support.price,
+              levelType: 'support',
+              strength: support.strength,
+              touches: support.touches,
+              distance: distancePercent
+            }
+          });
+        }
+      }
+    });
   }
 
   /**
