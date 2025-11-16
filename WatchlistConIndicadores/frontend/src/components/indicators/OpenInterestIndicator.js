@@ -19,7 +19,7 @@ class OpenInterestIndicator extends IndicatorBase {
     console.log(`%c[OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector`, 'background: #1E88E5; color: white; font-weight: bold; padding: 4px;');
 
     // Configuración
-    this.mode = "histogram"; // "histogram", "cumulative", "flow"
+    this.mode = "absolute"; // "absolute", "histogram", "cumulative", "flow"
     this.smoothing = 3; // Suavizado para modo Flow
     this.showPriceSentiment = false; // Price Sentiment solo en modo Flow
 
@@ -332,6 +332,9 @@ class OpenInterestIndicator extends IndicatorBase {
     }
 
     switch (this.mode) {
+      case "absolute":
+        this.renderAbsoluteMode(ctx, bounds, visibleCandles);
+        break;
       case "histogram":
         this.renderHistogramMode(ctx, bounds, visibleCandles);
         break;
@@ -342,8 +345,181 @@ class OpenInterestIndicator extends IndicatorBase {
         this.renderFlowMode(ctx, bounds, visibleCandles);
         break;
       default:
-        this.renderHistogramMode(ctx, bounds, visibleCandles);
+        this.renderAbsoluteMode(ctx, bounds, visibleCandles);
     }
+  }
+
+  /**
+   * RENDER MODO 0: ABSOLUTE - Valor absoluto de OI como área morada continua (estilo TradingView)
+   */
+  renderAbsoluteMode(ctx, bounds, visibleCandles) {
+    const { x, y, width, height } = bounds;
+    const oiColor = "#9C27B0"; // Morado
+
+    // Fondo
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(x, y, width, height);
+
+    // Línea separadora
+    ctx.strokeStyle = "#DDE2E7";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.stroke();
+
+    // Título
+    ctx.fillStyle = "#666";
+    ctx.font = "bold 11px Inter, sans-serif";
+    ctx.fillText("Open Interest", x + 5, y + 15);
+
+    // Obtener valores de OI para las velas visibles
+    const oiValues = [];
+    let lastKnownOI = null;
+
+    // Buscar primer valor conocido de OI
+    for (const item of this.data) {
+      if (item.openInterest !== undefined && item.openInterest !== null) {
+        lastKnownOI = item.openInterest;
+        break;
+      }
+    }
+
+    if (lastKnownOI === null) {
+      this.renderNoDataMessage(ctx, bounds);
+      return;
+    }
+
+    // Rellenar array de OI values
+    for (const candle of visibleCandles) {
+      const oiValue = this.findClosestOI(candle.timestamp);
+      if (oiValue !== undefined && oiValue !== null) {
+        lastKnownOI = oiValue;
+        oiValues.push(oiValue);
+      } else {
+        oiValues.push(lastKnownOI);
+      }
+    }
+
+    if (oiValues.length === 0) {
+      this.renderNoDataMessage(ctx, bounds);
+      return;
+    }
+
+    // Calcular escala
+    const maxOI = Math.max(...oiValues);
+    const minOI = Math.min(...oiValues);
+    const oiRange = maxOI - minOI;
+
+    if (oiRange === 0) {
+      // Si no hay variación, dibujar línea plana
+      const chartHeight = height - 30;
+      const chartY = y + 20;
+      const midY = chartY + chartHeight / 2;
+
+      ctx.fillStyle = oiColor;
+      ctx.globalAlpha = 0.3;
+      ctx.fillRect(x, midY - 2, width, 4);
+      ctx.globalAlpha = 1.0;
+
+      // Label
+      ctx.fillStyle = "#999";
+      ctx.font = "9px Inter, sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(this.formatOI(maxOI), x + width - 5, chartY + 12);
+      ctx.textAlign = "left";
+      return;
+    }
+
+    const chartHeight = height - 30;
+    const chartY = y + 20;
+    const barWidth = width / visibleCandles.length;
+    const oiScale = chartHeight / oiRange;
+
+    // Línea base (valor mínimo)
+    const baseY = chartY + chartHeight;
+
+    // Dibujar área morada (relleno + contorno)
+    ctx.fillStyle = oiColor;
+    ctx.globalAlpha = 0.3; // Área semi-transparente
+    ctx.beginPath();
+    ctx.moveTo(x, baseY);
+
+    oiValues.forEach((oiValue, i) => {
+      const barX = x + (i * barWidth);
+      const barHeight = (oiValue - minOI) * oiScale;
+      const barY = baseY - barHeight;
+      ctx.lineTo(barX, barY);
+    });
+
+    ctx.lineTo(x + width, baseY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Dibujar línea de contorno superior
+    ctx.globalAlpha = 1.0;
+    ctx.strokeStyle = oiColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    oiValues.forEach((oiValue, i) => {
+      const barX = x + (i * barWidth);
+      const barHeight = (oiValue - minOI) * oiScale;
+      const barY = baseY - barHeight;
+      if (i === 0) {
+        ctx.moveTo(barX, barY);
+      } else {
+        ctx.lineTo(barX, barY);
+      }
+    });
+
+    ctx.stroke();
+
+    // Labels de escala
+    ctx.fillStyle = "#999";
+    ctx.font = "9px Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(this.formatOI(maxOI), x + width - 5, chartY + 12);
+    ctx.fillText(this.formatOI(minOI), x + width - 5, baseY - 5);
+    ctx.textAlign = "left";
+
+    // Valor actual
+    if (oiValues.length > 0) {
+      const lastOI = oiValues[oiValues.length - 1];
+
+      // Calcular cambio porcentual
+      let changePercent = 0;
+      let changeColor = "#666";
+
+      if (oiValues.length >= 2) {
+        const prevOI = oiValues[oiValues.length - 2];
+        if (prevOI > 0) {
+          changePercent = ((lastOI - prevOI) / prevOI) * 100;
+          changeColor = changePercent >= 0 ? "#34C759" : "#FF3B30";
+        }
+      }
+
+      ctx.fillStyle = oiColor;
+      ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText(`OI: ${this.formatOI(lastOI)}`, x + 5, baseY - 5);
+
+      if (Math.abs(changePercent) >= 0.01) {
+        ctx.fillStyle = changeColor;
+        ctx.font = "bold 10px Inter, sans-serif";
+        ctx.fillText(
+          `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`,
+          x + 5,
+          baseY - 18
+        );
+      }
+    }
+
+    // Info: total de puntos
+    ctx.fillStyle = "#999";
+    ctx.font = "9px Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(`${oiValues.length} puntos`, x + width - 5, y + 15);
+    ctx.textAlign = "left";
   }
 
   /**
@@ -409,18 +585,22 @@ class OpenInterestIndicator extends IndicatorBase {
       const barX = x + (i * barWidth);
       const delta = d.delta;
 
-      if (delta === 0) return;
-
-      const barHeight = Math.abs(delta) * deltaScale;
+      // No skip barras con delta=0, dibujar una línea fina
+      const barHeight = delta === 0 ? 0 : Math.abs(delta) * deltaScale;
       const color = delta >= 0 ? bullColor : bearColor;
 
       ctx.fillStyle = color;
       ctx.globalAlpha = 0.7;
 
-      if (delta >= 0) {
-        ctx.fillRect(barX, zeroY - barHeight, barWidth * 0.8, barHeight);
+      if (barHeight > 0) {
+        if (delta >= 0) {
+          ctx.fillRect(barX, zeroY - barHeight, barWidth * 0.8, barHeight);
+        } else {
+          ctx.fillRect(barX, zeroY, barWidth * 0.8, barHeight);
+        }
       } else {
-        ctx.fillRect(barX, zeroY, barWidth * 0.8, barHeight);
+        // Dibujar línea fina en el centro para barras con delta=0
+        ctx.fillRect(barX, zeroY - 0.5, barWidth * 0.8, 1);
       }
     });
 
@@ -633,6 +813,11 @@ class OpenInterestIndicator extends IndicatorBase {
         }
         color = bearColor;
       } else {
+        // No skip value=0, dibujar línea fina
+        ctx.fillStyle = "#999";
+        ctx.globalAlpha = 0.3;
+        ctx.fillRect(barX, baseY - 0.5, barWidth * 0.9, 1);
+        ctx.globalAlpha = 1.0;
         return;
       }
 
@@ -640,9 +825,9 @@ class OpenInterestIndicator extends IndicatorBase {
       ctx.globalAlpha = alpha;
 
       if (value >= 0) {
-        ctx.fillRect(barX, baseY - barHeight, barWidth * 0.9, barHeight);
+        ctx.fillRect(barX, baseY - barHeight, barWidth * 0.9, Math.max(barHeight, 1));
       } else {
-        ctx.fillRect(barX, baseY, barWidth * 0.9, barHeight);
+        ctx.fillRect(barX, baseY, barWidth * 0.9, Math.max(barHeight, 1));
       }
     });
 
@@ -707,11 +892,12 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
-   * Actualiza configuración
+   * Aplica configuración (compatible con IndicatorManager)
    */
-  updateConfig(config) {
+  applyConfig(config) {
     if (config.mode !== undefined) {
       this.mode = config.mode;
+      console.log(`%c[OpenInterestIndicator] Mode changed to: ${this.mode}`, 'background: #9C27B0; color: white; font-weight: bold; padding: 4px;');
     }
     if (config.smoothing !== undefined) {
       this.smoothing = config.smoothing;

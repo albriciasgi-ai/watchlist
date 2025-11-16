@@ -129,7 +129,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   const [mousePos, setMousePos] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
+  const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "absolute");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
 
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
@@ -1293,6 +1293,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
                     cursor: 'pointer'
                   }}
                 >
+                  <option value="absolute">Absolute</option>
                   <option value="histogram">Histogram</option>
                   <option value="cumulative">Cumulative</option>
                   <option value="flow">Flow</option>

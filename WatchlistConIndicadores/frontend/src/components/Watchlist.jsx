@@ -83,7 +83,7 @@ const Watchlist = () => {
   const [rejectionPatternConfigs, setRejectionPatternConfigs] = useState({});
 
   // 📊 NUEVO: Estado para Open Interest mode
-  const [oiMode, setOiMode] = useState("histogram"); // "histogram", "cumulative", "flow"
+  const [oiMode, setOiMode] = useState("absolute"); // "absolute", "histogram", "cumulative", "flow"
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -264,6 +264,7 @@ const Watchlist = () => {
                   borderRadius: "3px"
                 }}
               >
+                <option value="absolute">Absolute</option>
                 <option value="histogram">Histogram</option>
                 <option value="cumulative">Cumulative</option>
                 <option value="flow">Flow</option>
