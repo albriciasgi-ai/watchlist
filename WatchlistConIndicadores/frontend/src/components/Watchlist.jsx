@@ -43,7 +43,8 @@ const Watchlist = () => {
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
-    "Volume Profile": false
+    "Volume Profile": false,
+    "Open Interest": false
   });
   
   const [vpConfig, setVpConfig] = useState({
