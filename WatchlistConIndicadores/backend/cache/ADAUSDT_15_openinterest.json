@@ -4,36 +4,6 @@
   "indicator": "openInterest",
   "data": [
     {
-      "timestamp": 1763075700000,
-      "openInterest": 182440057.0,
-      "datetime_colombia": "2025-11-13 18:15:00"
-    },
-    {
-      "timestamp": 1763076600000,
-      "openInterest": 182029695.0,
-      "datetime_colombia": "2025-11-13 18:30:00"
-    },
-    {
-      "timestamp": 1763077500000,
-      "openInterest": 182365082.0,
-      "datetime_colombia": "2025-11-13 18:45:00"
-    },
-    {
-      "timestamp": 1763078400000,
-      "openInterest": 182022963.0,
-      "datetime_colombia": "2025-11-13 19:00:00"
-    },
-    {
-      "timestamp": 1763079300000,
-      "openInterest": 181243499.0,
-      "datetime_colombia": "2025-11-13 19:15:00"
-    },
-    {
-      "timestamp": 1763080200000,
-      "openInterest": 181457826.0,
-      "datetime_colombia": "2025-11-13 19:30:00"
-    },
-    {
       "timestamp": 1763081100000,
       "openInterest": 181711147.0,
       "datetime_colombia": "2025-11-13 19:45:00"
@@ -1002,7 +972,37 @@
       "timestamp": 1763254800000,
       "openInterest": 169708089.0,
       "datetime_colombia": "2025-11-15 20:00:00"
+    },
+    {
+      "timestamp": 1763255700000,
+      "openInterest": 171868395.0,
+      "datetime_colombia": "2025-11-15 20:15:00"
+    },
+    {
+      "timestamp": 1763256600000,
+      "openInterest": 171873765.0,
+      "datetime_colombia": "2025-11-15 20:30:00"
+    },
+    {
+      "timestamp": 1763257500000,
+      "openInterest": 171867833.0,
+      "datetime_colombia": "2025-11-15 20:45:00"
+    },
+    {
+      "timestamp": 1763258400000,
+      "openInterest": 173815609.0,
+      "datetime_colombia": "2025-11-15 21:00:00"
+    },
+    {
+      "timestamp": 1763259300000,
+      "openInterest": 173023430.0,
+      "datetime_colombia": "2025-11-15 21:15:00"
+    },
+    {
+      "timestamp": 1763260200000,
+      "openInterest": 172484097.0,
+      "datetime_colombia": "2025-11-15 21:30:00"
     }
   ],
-  "timestamp": 1763255610.88219
+  "timestamp": 1763261004.7441635
 }
