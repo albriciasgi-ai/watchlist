@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import httpx
 import asyncio
 import time
@@ -8,10 +9,36 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
+# Configuración global
+COLOMBIA_TZ = timezone(timedelta(hours=-5))
+CACHE_DIR = Path("cache")
+CACHE_DIR.mkdir(exist_ok=True)
+BACKTESTING_CACHE_DIR = Path("backtesting_cache")
+BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    from alert_sender import initialize_alert_sender
+    await initialize_alert_sender()
+    print("[STARTUP] Backend started successfully")
+    print("[STARTUP] Alert sender initialized")
+    print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
+
+    yield
+
+    # Shutdown
+    from alert_sender import shutdown_alert_sender
+    await shutdown_alert_sender()
+    print("[SHUTDOWN] Backend shutdown complete")
+
+
 app = FastAPI(
     title="Crypto Watchlist Backend",
     description="Servidor backend para la Watchlist de criptomonedas con Bybit Futures",
     version="2.5.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -21,10 +48,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-COLOMBIA_TZ = timezone(timedelta(hours=-5))
-CACHE_DIR = Path("cache")
-CACHE_DIR.mkdir(exist_ok=True)
 
 # Cache reducido a 30 minutos para datos más frescos
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
@@ -1390,9 +1413,6 @@ async def get_available_contexts(symbol: str, interval: str = "4h"):
 
 # ==================== BACKTESTING ENGINE ENDPOINTS ====================
 
-BACKTESTING_CACHE_DIR = Path("backtesting_cache")
-BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
-
 # Configuración de timeframes y subdivisiones para backtesting
 BACKTESTING_CONFIG = {
     "15m": {
@@ -1687,21 +1707,3 @@ async def delete_backtesting_cache(symbol: str):
             "success": False,
             "error": str(e)
         }
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup"""
-    from alert_sender import initialize_alert_sender
-    await initialize_alert_sender()
-    print("[STARTUP] Backend started successfully")
-    print("[STARTUP] Alert sender initialized")
-    print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    from alert_sender import shutdown_alert_sender
-    await shutdown_alert_sender()
-    print("[SHUTDOWN] Backend shutdown complete")

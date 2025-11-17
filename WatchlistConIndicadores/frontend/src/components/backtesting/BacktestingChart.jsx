@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 
 const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController }) => {
   const chartCanvasRef = useRef(null);
