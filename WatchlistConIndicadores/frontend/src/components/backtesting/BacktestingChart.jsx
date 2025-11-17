@@ -97,8 +97,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     // Limpiar canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Dibujar fondo
-    ctx.fillStyle = '#1e1e1e';
+    // Dibujar fondo claro
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
     // Calcular dimensiones del área de chart
@@ -108,7 +108,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
     if (visibleCandles.main.length === 0) {
       // Mostrar mensaje si no hay datos
-      ctx.fillStyle = '#888';
+      ctx.fillStyle = '#666';
       ctx.font = '14px monospace';
       ctx.textAlign = 'center';
       ctx.fillText('No hay datos para mostrar', width / 2, height / 2);
@@ -207,7 +207,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Dibujar escala de precios (derecha)
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = '#666';
     ctx.font = '11px monospace';
     ctx.textAlign = 'left';
 
@@ -216,8 +216,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       const price = minPrice + (priceRange / priceSteps) * i;
       const y = priceToY(price);
 
-      // Línea de guía
-      ctx.strokeStyle = '#333';
+      // Línea de guía (gris claro)
+      ctx.strokeStyle = '#e0e0e0';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(margin.left, y);

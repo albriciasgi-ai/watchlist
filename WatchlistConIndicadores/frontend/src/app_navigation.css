@@ -5,7 +5,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0a0a0a;
+  background: #f5f5f5; /* Fondo claro por defecto */
 }
 
 .app-navigation {
@@ -14,9 +14,9 @@
   justify-content: space-between;
   padding: 0 24px;
   height: 60px;
-  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-  border-bottom: 2px solid #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-brand {
@@ -53,7 +53,7 @@
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: #888;
+  color: #666;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -62,13 +62,14 @@
 }
 
 .nav-tab:hover {
-  color: #e0e0e0;
+  color: #333;
   background: rgba(102, 126, 234, 0.1);
 }
 
 .nav-tab.active {
-  color: #fff;
-  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.15);
+  font-weight: 600;
 }
 
 .nav-tab.active::after {
@@ -97,11 +98,11 @@
 
 .nav-status {
   padding: 6px 14px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
   border-radius: 6px;
   font-size: 12px;
-  color: #888;
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
@@ -109,7 +110,8 @@
 
 .app-content {
   flex: 1;
-  overflow: hidden;
+  overflow: auto; /* IMPORTANTE: Permitir scroll */
+  background: transparent; /* No forzar color de fondo */
 }
 
 /* ==================== RESPONSIVE ==================== */
