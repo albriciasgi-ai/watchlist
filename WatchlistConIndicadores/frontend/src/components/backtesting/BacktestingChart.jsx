@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as fabric from 'fabric';
+import { Canvas, Line, Rect, IText } from 'fabric';
 
 const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController }) => {
   const chartCanvasRef = useRef(null);
@@ -21,7 +21,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   useEffect(() => {
     if (!drawingCanvasRef.current) return;
 
-    const canvas = new fabric.Canvas(drawingCanvasRef.current, {
+    const canvas = new Canvas(drawingCanvasRef.current, {
       selection: true,
       backgroundColor: 'transparent',
       renderOnAddRemove: true
@@ -293,7 +293,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const addLine = () => {
     if (!fabricCanvas) return;
 
-    const line = new fabric.Line([50, 100, 200, 100], {
+    const line = new Line([50, 100, 200, 100], {
       stroke: '#ff6b6b',
       strokeWidth: 2,
       selectable: true,
@@ -313,7 +313,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const addRectangle = () => {
     if (!fabricCanvas) return;
 
-    const rect = new fabric.Rect({
+    const rect = new Rect({
       left: 100,
       top: 100,
       fill: 'rgba(76, 175, 80, 0.2)',
@@ -338,7 +338,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const addText = () => {
     if (!fabricCanvas) return;
 
-    const text = new fabric.IText('Texto', {
+    const text = new IText('Texto', {
       left: 100,
       top: 100,
       fontSize: 16,
