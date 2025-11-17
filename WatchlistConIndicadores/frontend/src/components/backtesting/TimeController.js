@@ -143,6 +143,16 @@ class TimeController {
       return;
     }
 
+    // Si estamos al final, resetear al inicio automáticamente
+    if (this.currentTime >= this.endTime) {
+      console.log('[TimeController] Al final, reseteando al inicio');
+      this.currentTime = this.startTime;
+      this.currentSubdivision = 0;
+      if (this.onTimeUpdate) {
+        this.onTimeUpdate(this.currentTime);
+      }
+    }
+
     this.isPlaying = true;
 
     // Calcular intervalo de actualización basado en velocidad y subdivisiones

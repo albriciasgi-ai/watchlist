@@ -19,6 +19,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const [offsetY, setOffsetY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [manualPan, setManualPan] = useState(false); // Usuario movió manualmente
 
   // Configuración de visualización
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
@@ -97,7 +98,15 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
     // Obtener subdivisiones de la última vela en progreso
     const lastCandleTime = candles.length > 0 ? candles[candles.length - 1].timestamp : 0;
-    const nextCandleTime = lastCandleTime + (timeframeData.subdivision_count * 60 * 1000);
+
+    // Calcular duración del timeframe en ms
+    const timeframeMinutes = {
+      "15m": 15,
+      "1h": 60,
+      "4h": 240
+    };
+    const timeframeDuration = (timeframeMinutes[timeframe] || 15) * 60 * 1000;
+    const nextCandleTime = lastCandleTime + timeframeDuration;
 
     // Si currentTime está entre lastCandleTime y nextCandleTime, mostrar subdivisiones
     if (currentTime > lastCandleTime && currentTime < nextCandleTime) {
@@ -121,9 +130,9 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Auto-scroll: mantener las velas más recientes visibles
-    // Solo hacer auto-scroll si hay suficientes velas
-    if (chartDimensions.width > 0 && candles.length > 0) {
-      const totalCandleWidth = CANDLE_WIDTH + CANDLE_SPACING;
+    // Solo hacer auto-scroll si hay suficientes velas Y el usuario no ha hecho paneo manual
+    if (chartDimensions.width > 0 && candles.length > 0 && !manualPan) {
+      const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
       const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
 
       if (candles.length > maxVisibleCandles) {
@@ -169,10 +178,23 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Calcular escala de precios con padding (5% arriba y abajo)
+    // Solo usar las últimas N velas que caben en pantalla para mejor visualización
+    const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+    const maxVisibleCandlesCalc = Math.floor((chartWidth - 100) / totalCandleWidthCalc);
+    const candlesForScale = visibleCandles.main.slice(-Math.min(maxVisibleCandlesCalc * 2, visibleCandles.main.length));
+
     const allPrices = [];
-    visibleCandles.main.forEach(c => {
+    candlesForScale.forEach(c => {
       allPrices.push(c.high, c.low);
     });
+
+    // Si hay subdivisiones, incluirlas en el cálculo
+    if (visibleCandles.currentSubdivisions && visibleCandles.currentSubdivisions.length > 0) {
+      visibleCandles.currentSubdivisions.forEach(sub => {
+        allPrices.push(sub.high, sub.low);
+      });
+    }
+
     const maxPriceRaw = Math.max(...allPrices);
     const minPriceRaw = Math.min(...allPrices);
     const priceRangeRaw = maxPriceRaw - minPriceRaw;
@@ -188,12 +210,12 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       return margin.top + (maxPrice - price) * priceScale + offsetY;
     };
 
-    // Usar ancho fijo de vela
-    const candleWidth = CANDLE_WIDTH;
+    // Usar ancho de vela con zoom aplicado
+    const candleWidth = CANDLE_WIDTH * scaleX;
     const wickWidth = Math.max(1, candleWidth / 5);
 
-    // Dibujar velas principales con espaciado fijo
-    const totalCandleWidth = candleWidth + CANDLE_SPACING;
+    // Dibujar velas principales con espaciado con zoom aplicado
+    const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
     visibleCandles.main.forEach((candle, index) => {
       const x = margin.left + index * totalCandleWidth + offsetX;
       const yHigh = priceToY(candle.high);
@@ -622,6 +644,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
       setOffsetX(newOffsetX);
       setOffsetY(newOffsetY);
+      setManualPan(true); // Marcar que el usuario hizo paneo manual
     };
 
     // Mouse up - terminar drag
@@ -633,10 +656,17 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     const handleWheel = (e) => {
       e.preventDefault();
 
+      // Deshabilitar wheel durante drag
+      if (isDragging) return;
+
       if (e.ctrlKey) {
         // Ctrl + wheel: zoom horizontal
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-        setScaleX(prev => Math.max(0.1, Math.min(10, prev * zoomFactor)));
+        setScaleX(prev => {
+          const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor));
+          setManualPan(true); // El zoom también desactiva auto-scroll
+          return newScale;
+        });
       } else {
         // Wheel normal: zoom vertical (precio)
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
