@@ -2,12 +2,24 @@
   "symbol": "UNIUSDT",
   "interval": "15",
   "data": {
-    "resistances": [],
+    "resistances": [
+      {
+        "price": 8.141,
+        "type": "resistance",
+        "strength": 4.86,
+        "touches": 2,
+        "avgVolume": 4.549443985702798,
+        "firstTouch": 1763045100000,
+        "lastTouch": 1763366400000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
     "supports": [
       {
         "price": 6.970000000000001,
         "type": "support",
-        "strength": 4.77,
+        "strength": 4.71,
         "touches": 2,
         "avgVolume": 2.8259442663196985,
         "firstTouch": 1763130600000,
@@ -17,12 +29,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 7.369,
+    "currentPrice": 7.878,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.5528452628936228
+      "currentZScore": 0.19859376084502317
     }
   },
   "config": {
@@ -35,5 +47,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763351074.2659526
+  "timestamp": 1763386031.373515
 }

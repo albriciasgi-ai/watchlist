@@ -2,35 +2,12 @@
   "symbol": "ETHUSDT",
   "interval": "15",
   "data": {
-    "resistances": [
-      {
-        "price": 3916.2200000000003,
-        "type": "resistance",
-        "strength": 4.42,
-        "touches": 2,
-        "avgVolume": 2.0923200345164865,
-        "firstTouch": 1762069500000,
-        "lastTouch": 1762127100000,
-        "status": "active",
-        "breakVolume": null
-      }
-    ],
+    "resistances": [],
     "supports": [
-      {
-        "price": 3840.045,
-        "type": "support",
-        "strength": 5.12,
-        "touches": 2,
-        "avgVolume": 2.486591103274576,
-        "firstTouch": 1762077600000,
-        "lastTouch": 1762092900000,
-        "status": "broken",
-        "breakVolume": null
-      },
       {
         "price": 3370.12,
         "type": "support",
-        "strength": 2.53,
+        "strength": 2.49,
         "touches": 4,
         "avgVolume": 2.492088020152787,
         "firstTouch": 1762413300000,
@@ -40,12 +17,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 3171.22,
+    "currentPrice": 3150.68,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.7275249036974358
+      "currentZScore": 1.1761008900730496
     }
   },
   "config": {
@@ -58,5 +35,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763351014.868459
+  "timestamp": 1763386012.0842786
 }

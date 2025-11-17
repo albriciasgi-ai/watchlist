@@ -17,7 +17,7 @@
       {
         "price": 2.5970000000000004,
         "type": "resistance",
-        "strength": 1.73,
+        "strength": 1.7,
         "touches": 2,
         "avgVolume": 1.637666714739269,
         "firstTouch": 1762669800000,
@@ -41,7 +41,7 @@
       {
         "price": 2.3705,
         "type": "support",
-        "strength": 6.04,
+        "strength": 5.96,
         "touches": 2,
         "avgVolume": 2.008748653131887,
         "firstTouch": 1763145900000,
@@ -52,7 +52,7 @@
       {
         "price": 2.3155,
         "type": "support",
-        "strength": 5.84,
+        "strength": 5.76,
         "touches": 2,
         "avgVolume": 3.7768975820837607,
         "firstTouch": 1763094600000,
@@ -63,7 +63,7 @@
       {
         "price": 2.4923333333333333,
         "type": "support",
-        "strength": 4.36,
+        "strength": 4.29,
         "touches": 3,
         "avgVolume": 2.267380692437589,
         "firstTouch": 1762682400000,
@@ -74,33 +74,22 @@
       {
         "price": 2.4525,
         "type": "support",
-        "strength": 2.03,
+        "strength": 2.0,
         "touches": 2,
         "avgVolume": 1.4362392780020108,
         "firstTouch": 1762792200000,
         "lastTouch": 1763003700000,
         "status": "broken",
         "breakVolume": null
-      },
-      {
-        "price": 2.426,
-        "type": "support",
-        "strength": 0.74,
-        "touches": 2,
-        "avgVolume": 2.1832196493625142,
-        "firstTouch": 1762100100000,
-        "lastTouch": 1762963200000,
-        "status": "broken",
-        "breakVolume": null
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 2.392,
+    "currentPrice": 2.356,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.7577228314917319
+      "currentZScore": -0.15923388572613076
     }
   },
   "config": {
@@ -113,5 +102,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763351068.6296086
+  "timestamp": 1763386028.7487657
 }
