@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const PerformancePanel = ({ orderManager }) => {
+const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   const [balance, setBalance] = useState({});
   const [metrics, setMetrics] = useState({});
   const [openOrders, setOpenOrders] = useState([]);
@@ -29,13 +29,46 @@ const PerformancePanel = ({ orderManager }) => {
   /**
    * Cierra una orden específica
    */
-  const handleCloseOrder = (orderId, currentPrice, currentTime) => {
-    if (!orderManager || !currentPrice) return;
+  const handleCloseOrder = (orderId) => {
+    if (!orderManager || !currentPrice || !currentTime) {
+      alert('No se puede cerrar la orden: precio o tiempo no disponible');
+      return;
+    }
 
     if (confirm('¿Cerrar esta orden?')) {
       orderManager.closeOrder(orderId, currentPrice, currentTime, 'manual');
+      // Actualizar inmediatamente
       setOpenOrders(orderManager.getOpenOrders());
+      setBalance(orderManager.getBalance());
+      setMetrics(orderManager.getMetrics());
     }
+  };
+
+  /**
+   * Cierra todas las órdenes abiertas
+   */
+  const handleCloseAllOrders = () => {
+    if (!orderManager || !currentPrice || !currentTime) return;
+
+    if (openOrders.length === 0) {
+      alert('No hay órdenes abiertas');
+      return;
+    }
+
+    if (!confirm(`¿Cerrar todas las ${openOrders.length} órdenes abiertas?`)) {
+      return;
+    }
+
+    openOrders.forEach(order => {
+      orderManager.closeOrder(order.id, currentPrice, currentTime, 'manual_close_all');
+    });
+
+    // Actualizar inmediatamente
+    setOpenOrders(orderManager.getOpenOrders());
+    setBalance(orderManager.getBalance());
+    setMetrics(orderManager.getMetrics());
+
+    console.log('[PerformancePanel] Todas las órdenes cerradas');
   };
 
   /**
@@ -177,53 +210,93 @@ const PerformancePanel = ({ orderManager }) => {
         {openOrders.length === 0 ? (
           <div className="no-orders">No hay órdenes abiertas</div>
         ) : (
-          <div className="orders-list">
-            {openOrders.map(order => (
-              <div key={order.id} className={`order-item ${order.side}`}>
-                <div className="order-header">
-                  <span className="order-id">#{order.id}</span>
-                  <span className={`order-side-badge ${order.side}`}>
-                    {order.side === 'long' ? '📈 LONG' : '📉 SHORT'}
-                  </span>
-                </div>
-                <div className="order-details">
-                  <div className="order-detail-row">
-                    <span>Entrada:</span>
-                    <span>${order.entryPrice.toFixed(2)}</span>
+          <>
+            <div className="orders-list">
+              {openOrders.map(order => (
+                <div key={order.id} className={`order-item ${order.side}`}>
+                  <div className="order-header">
+                    <span className="order-id">#{order.id}</span>
+                    <span className={`order-side-badge ${order.side}`}>
+                      {order.side === 'long' ? '📈 LONG' : '📉 SHORT'}
+                    </span>
+                    <button
+                      className="btn-close-order"
+                      onClick={() => handleCloseOrder(order.id)}
+                      title="Cerrar esta orden"
+                      style={{
+                        marginLeft: 'auto',
+                        padding: '4px 8px',
+                        fontSize: '11px',
+                        backgroundColor: '#ef5350',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✕ Cerrar
+                    </button>
                   </div>
-                  <div className="order-detail-row">
-                    <span>Cantidad:</span>
-                    <span>{order.quantity}</span>
-                  </div>
-                  {order.stopLoss && (
+                  <div className="order-details">
                     <div className="order-detail-row">
-                      <span>SL:</span>
-                      <span>${order.stopLoss.toFixed(2)}</span>
+                      <span>Entrada:</span>
+                      <span>${order.entryPrice.toFixed(2)}</span>
+                    </div>
+                    <div className="order-detail-row">
+                      <span>Cantidad:</span>
+                      <span>{order.quantity}</span>
+                    </div>
+                    {order.stopLoss && (
+                      <div className="order-detail-row">
+                        <span>SL:</span>
+                        <span>${order.stopLoss.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {order.takeProfit && (
+                      <div className="order-detail-row">
+                        <span>TP:</span>
+                        <span>${order.takeProfit.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="order-detail-row order-pnl">
+                      <span>P&L:</span>
+                      <span>{formatPnL(order.currentPnl || 0)}</span>
+                    </div>
+                    <div className="order-detail-row">
+                      <span>P&L %:</span>
+                      <span>{formatPnL(order.currentPnlPercent || 0)}%</span>
+                    </div>
+                  </div>
+                  {order.notes && (
+                    <div className="order-notes">
+                      📝 {order.notes}
                     </div>
                   )}
-                  {order.takeProfit && (
-                    <div className="order-detail-row">
-                      <span>TP:</span>
-                      <span>${order.takeProfit.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="order-detail-row order-pnl">
-                    <span>PnL:</span>
-                    <span>{formatPnL(order.currentPnl || 0)}</span>
-                  </div>
-                  <div className="order-detail-row">
-                    <span>PnL %:</span>
-                    <span>{formatPnL(order.currentPnlPercent || 0)}%</span>
-                  </div>
                 </div>
-                {order.notes && (
-                  <div className="order-notes">
-                    📝 {order.notes}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* Botón Cerrar Todas debajo de la lista */}
+            <div style={{ marginTop: '12px' }}>
+              <button
+                className="btn-close-all"
+                onClick={handleCloseAllOrders}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: '#ef5350',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '13px'
+                }}
+              >
+                ❌ Cerrar Todas las Órdenes
+              </button>
+            </div>
+          </>
         )}
       </div>
 

@@ -457,6 +457,7 @@ const BacktestingApp = () => {
             timeframe={selectedTimeframe}
             marketData={marketData}
             currentTime={currentTime}
+            isPlaying={isPlaying}
             timeController={timeControllerRef.current}
             orderManager={orderManagerRef.current}
           />
@@ -497,7 +498,11 @@ const BacktestingApp = () => {
             )}
 
             {activePanel === 'performance' && (
-              <PerformancePanel orderManager={orderManagerRef.current} />
+              <PerformancePanel
+                orderManager={orderManagerRef.current}
+                currentPrice={currentPrice}
+                currentTime={currentTime}
+              />
             )}
 
             {activePanel === 'history' && (

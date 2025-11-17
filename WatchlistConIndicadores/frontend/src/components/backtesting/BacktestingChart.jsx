@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 // import * as fabric from 'fabric'; // TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
 
-const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController, orderManager }) => {
+const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlaying, timeController, orderManager }) => {
   const chartCanvasRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -92,10 +92,21 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
    * IMPORTANTE: Ahora muestra historial previo + velas hasta currentTime
    */
   useEffect(() => {
-    if (!marketData || !currentTime) return;
+    if (!marketData) return;
 
     const timeframeData = marketData.timeframes[timeframe];
     if (!timeframeData) return;
+
+    // Si no hay currentTime, mostrar todas las velas disponibles
+    if (!currentTime) {
+      setVisibleCandles({
+        main: timeframeData.main,
+        currentSubdivisions: [],
+        isFormingNewCandle: false,
+        currentTimeMarker: null
+      });
+      return;
+    }
 
     // Encontrar el índice de la última vela que no excede currentTime
     const currentIndex = timeframeData.main.findIndex(candle => candle.timestamp > currentTime);
@@ -141,8 +152,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Auto-scroll: mantener las velas más recientes visibles
-    // Solo hacer auto-scroll si hay suficientes velas Y el usuario no ha hecho paneo manual
-    if (chartDimensions.width > 0 && candles.length > 0 && !manualPan) {
+    // Durante la reproducción (isPlaying), siempre hacer auto-scroll
+    // Si está pausado, solo hacer auto-scroll si el usuario no ha hecho paneo manual
+    const shouldAutoScroll = chartDimensions.width > 0 && candles.length > 0 && (isPlaying || !manualPan);
+
+    if (shouldAutoScroll) {
       const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
       const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
 
@@ -157,7 +171,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
         setOffsetX(Math.max(0, centerOffset));
       }
     }
-  }, [currentTime, marketData, timeframe, chartDimensions.width]);
+  }, [currentTime, marketData, timeframe, chartDimensions.width, isPlaying, manualPan, scaleX]);
 
   /**
    * Renderizar velas en el canvas
