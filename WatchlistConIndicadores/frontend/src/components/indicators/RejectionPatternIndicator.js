@@ -85,7 +85,7 @@ class RejectionPatternIndicator extends IndicatorBase {
    */
   setShowMode(mode) {
     this.showMode = mode;
-    console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
+    // console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
   }
 
   /**
@@ -99,7 +99,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     this.localPatterns = this.localDetector.detectPatterns(candles, this.config);
-    console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
+    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
   }
 
   async fetchData() {
@@ -136,7 +136,12 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (data.success) {
         this.patterns = data.patterns || [];
-        console.log(`[${this.symbol}] Loaded ${this.patterns.length} rejection patterns`);
+        // console.log(`[${this.symbol}] Loaded ${this.patterns.length} rejection patterns`);
+
+        // Check for new pattern alerts
+        if (this.config.alertsEnabled) {
+          this.checkPatternAlerts(this.patterns);
+        }
       } else {
         console.error(`[${this.symbol}] Failed to fetch patterns:`, data.error);
         this.patterns = [];
@@ -147,6 +152,106 @@ class RejectionPatternIndicator extends IndicatorBase {
     } finally {
       this.loading = false;
     }
+  }
+
+  /**
+   * Check for pattern alerts (when new patterns are detected)
+   */
+  checkPatternAlerts(patterns) {
+    if (!window.addWatchlistAlert) return;
+    if (!patterns || patterns.length === 0) return;
+
+    // Only alert on most recent patterns (last 3 candles)
+    const now = Date.now();
+    const recentThreshold = 3 * this.getIntervalMs();
+
+    patterns.forEach(pattern => {
+      const patternAge = now - pattern.timestamp;
+      if (patternAge > recentThreshold) return; // Skip old patterns
+
+      // Check cooldown to prevent duplicate alerts
+      const alertKey = `rp_alert_${this.symbol}_${pattern.patternType}_${pattern.timestamp}`;
+      const lastAlertTime = localStorage.getItem(alertKey);
+
+      if (lastAlertTime) return; // Already alerted for this pattern
+
+      // Mark as alerted
+      localStorage.setItem(alertKey, now.toString());
+
+      // Determine severity based on confidence
+      let severity = 'LOW';
+      if (pattern.confidence >= 80) severity = 'HIGH';
+      else if (pattern.confidence >= 65) severity = 'MEDIUM';
+
+      // Get pattern name and icon
+      const patternName = this.getPatternName(pattern.patternType);
+      const patternIcon = this.icons[pattern.patternType] || '📊';
+
+      // Build description
+      let description = `Pattern detected @ $${pattern.price.toFixed(2)}\nConfidence: ${pattern.confidence.toFixed(1)}%`;
+
+      if (pattern.nearLevels && pattern.nearLevels.length > 0) {
+        description += `\n\nNear ${pattern.nearLevels.length} key level(s):`;
+        pattern.nearLevels.slice(0, 2).forEach(level => {
+          const distance = Math.abs((pattern.price - level.price) / pattern.price * 100);
+          description += `\n  • ${level.type} @ $${level.price.toFixed(2)} (${distance.toFixed(2)}% away)`;
+        });
+      }
+
+      // Send alert
+      window.addWatchlistAlert({
+        indicatorType: 'Rejection Patterns',
+        severity: severity,
+        icon: patternIcon,
+        title: `${this.symbol} ${patternName}`,
+        symbol: this.symbol,
+        interval: this.interval,
+        type: 'Rejection Pattern',
+        description: description,
+        data: {
+          price: pattern.price,
+          patternType: pattern.patternType,
+          confidence: pattern.confidence,
+          timestamp: pattern.timestamp,
+          nearLevels: pattern.nearLevels,
+          candle: pattern.candle
+        }
+      });
+    });
+  }
+
+  /**
+   * Get human-readable pattern name
+   */
+  getPatternName(patternType) {
+    const names = {
+      'HAMMER': 'Hammer',
+      'SHOOTING_STAR': 'Shooting Star',
+      'ENGULFING_BULLISH': 'Bullish Engulfing',
+      'ENGULFING_BEARISH': 'Bearish Engulfing',
+      'DOJI_DRAGONFLY': 'Dragonfly Doji',
+      'DOJI_GRAVESTONE': 'Gravestone Doji'
+    };
+    return names[patternType] || patternType;
+  }
+
+  /**
+   * Get interval in milliseconds
+   */
+  getIntervalMs() {
+    const intervalMap = {
+      '1': 60000,
+      '3': 180000,
+      '5': 300000,
+      '15': 900000,
+      '30': 1800000,
+      '60': 3600000,
+      '120': 7200000,
+      '240': 14400000,
+      'D': 86400000,
+      'W': 604800000
+    };
+    return intervalMap[this.interval] || 900000; // Default 15m
   }
 
   // Método para overlay (llamado por IndicatorManager)

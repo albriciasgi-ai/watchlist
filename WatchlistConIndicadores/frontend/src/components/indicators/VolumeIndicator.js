@@ -59,6 +59,64 @@ class VolumeIndicator extends IndicatorBase {
     return volumeDeltaData;
   }
 
+  /**
+   * 🔔 NUEVO: Verificar y generar alertas para Volume Delta significativo
+   */
+  checkVolumeDeltaAlerts(volumeDeltaData, currentPrice) {
+    if (!volumeDeltaData || volumeDeltaData.length < 10 || !window.addWatchlistAlert) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Obtener las últimas N velas para calcular promedio
+    const lookbackPeriod = Math.min(20, volumeDeltaData.length - 1);
+    const recentData = volumeDeltaData.slice(-lookbackPeriod - 1, -1); // Excluir la última
+    const currentData = volumeDeltaData[volumeDeltaData.length - 1];
+
+    // Calcular promedio de delta absoluto
+    const avgAbsDelta = recentData.reduce((sum, d) => sum + Math.abs(d.volumeDelta), 0) / recentData.length;
+
+    if (avgAbsDelta === 0) return;
+
+    // Calcular multiplicador del delta actual vs promedio
+    const currentAbsDelta = Math.abs(currentData.volumeDelta);
+    const deltaMultiplier = currentAbsDelta / avgAbsDelta;
+
+    // Verificar cooldown
+    const alertKey = `vol_delta_alert_${this.symbol}_${Math.floor(now / cooldownPeriod)}`;
+    const lastAlertTime = localStorage.getItem(alertKey);
+
+    if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+      return; // Skip if in cooldown
+    }
+
+    // Determinar dirección y tipo
+    const direction = currentData.volumeDelta >= 0 ? 'alcista' : 'bajista';
+    const icon = currentData.volumeDelta >= 0 ? '🟢' : '🔴';
+
+    // Generar alerta
+    window.addWatchlistAlert({
+      indicatorType: 'Volume Delta',
+      severity: 'MEDIUM', // Will be recalculated by addAlert based on profile
+      icon: icon,
+      title: `${this.symbol} Volume Delta ${direction} significativo`,
+      symbol: this.symbol,
+      interval: this.interval,
+      type: 'Volume Delta Spike',
+      description: `Volume Delta ${direction}: ${currentData.volumeDelta.toFixed(0)}\nPromedio: ${avgAbsDelta.toFixed(0)}\nMultiplicador: ${deltaMultiplier.toFixed(2)}x`,
+      data: {
+        price: currentPrice,
+        volumeDelta: currentData.volumeDelta,
+        avgVolumeDelta: avgAbsDelta,
+        multiplier: deltaMultiplier,
+        direction: direction
+      }
+    });
+
+    // Guardar timestamp de la alerta
+    localStorage.setItem(alertKey, now.toString());
+  }
+
   render(ctx, bounds, visibleCandles) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
@@ -85,8 +143,14 @@ class VolumeIndicator extends IndicatorBase {
 
     // ✅ CALCULAR en tiempo real desde las velas visibles
     const volumeDeltaData = this.calculateVolumeDelta(visibleCandles);
-    
+
     if (volumeDeltaData.length === 0) return;
+
+    // 🔔 NUEVO: Verificar alertas de Volume Delta
+    if (visibleCandles && visibleCandles.length > 0) {
+      const currentPrice = visibleCandles[visibleCandles.length - 1].close;
+      this.checkVolumeDeltaAlerts(volumeDeltaData, currentPrice);
+    }
 
     // Encontrar valor máximo para escala
     const maxVolumeDelta = Math.max(...volumeDeltaData.map(d => Math.abs(d.volumeDelta)));

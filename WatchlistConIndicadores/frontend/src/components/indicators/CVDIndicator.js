@@ -79,6 +79,113 @@ class CVDIndicator extends IndicatorBase {
     return cvdData;
   }
 
+  /**
+   * 🔔 NUEVO: Verificar y generar alertas para cambios significativos en CVD
+   */
+  checkCVDAlerts(cvdData, currentPrice) {
+    if (!cvdData || cvdData.length < 20 || !window.addWatchlistAlert) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Obtener datos recientes para análisis
+    const lookbackPeriod = Math.min(50, cvdData.length);
+    const recentData = cvdData.slice(-lookbackPeriod);
+    const currentData = cvdData[cvdData.length - 1];
+
+    // Calcular extremos de CVD en el período reciente
+    const cvdValues = recentData.map(d => d.closeCVD);
+    const maxCVD = Math.max(...cvdValues);
+    const minCVD = Math.min(...cvdValues);
+    const cvdRange = maxCVD - minCVD;
+
+    if (cvdRange === 0) return;
+
+    // Verificar si estamos en extremos
+    const currentCVD = currentData.closeCVD;
+    const distanceToMax = Math.abs((currentCVD - maxCVD) / cvdRange);
+    const distanceToMin = Math.abs((currentCVD - minCVD) / cvdRange);
+
+    let alertType = null;
+    let severity = 'LOW';
+
+    if (distanceToMax < 0.05) {
+      // Cerca del máximo
+      alertType = 'maximum';
+      severity = 'MEDIUM';
+    } else if (distanceToMin < 0.05) {
+      // Cerca del mínimo
+      alertType = 'minimum';
+      severity = 'MEDIUM';
+    }
+
+    // También detectar cambios fuertes de tendencia
+    if (cvdData.length >= 10) {
+      const prev5 = cvdData.slice(-10, -5).map(d => d.closeCVD);
+      const last5 = cvdData.slice(-5).map(d => d.closeCVD);
+      const avgPrev = prev5.reduce((sum, v) => sum + v, 0) / prev5.length;
+      const avgLast = last5.reduce((sum, v) => sum + v, 0) / last5.length;
+      const trendChange = ((avgLast - avgPrev) / cvdRange) * 100;
+
+      if (Math.abs(trendChange) > 30) {
+        alertType = trendChange > 0 ? 'strong_bullish_trend' : 'strong_bearish_trend';
+        severity = 'HIGH';
+      }
+    }
+
+    if (!alertType) return; // No hay condiciones de alerta
+
+    // Verificar cooldown
+    const alertKey = `cvd_alert_${this.symbol}_${alertType}_${Math.floor(now / cooldownPeriod)}`;
+    const lastAlertTime = localStorage.getItem(alertKey);
+
+    if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+      return; // Skip if in cooldown
+    }
+
+    // Determinar mensaje según el tipo
+    let title, description, icon;
+    if (alertType === 'maximum') {
+      icon = '🔼';
+      title = `${this.symbol} CVD en máximo reciente`;
+      description = `CVD alcanzó nivel máximo reciente: ${currentCVD.toFixed(0)}\nRango: ${minCVD.toFixed(0)} - ${maxCVD.toFixed(0)}`;
+    } else if (alertType === 'minimum') {
+      icon = '🔽';
+      title = `${this.symbol} CVD en mínimo reciente`;
+      description = `CVD alcanzó nivel mínimo reciente: ${currentCVD.toFixed(0)}\nRango: ${minCVD.toFixed(0)} - ${maxCVD.toFixed(0)}`;
+    } else if (alertType === 'strong_bullish_trend') {
+      icon = '📈';
+      title = `${this.symbol} CVD tendencia alcista fuerte`;
+      description = `CVD muestra tendencia alcista fuerte\nCVD actual: ${currentCVD.toFixed(0)}`;
+    } else if (alertType === 'strong_bearish_trend') {
+      icon = '📉';
+      title = `${this.symbol} CVD tendencia bajista fuerte`;
+      description = `CVD muestra tendencia bajista fuerte\nCVD actual: ${currentCVD.toFixed(0)}`;
+    }
+
+    // Generar alerta
+    window.addWatchlistAlert({
+      indicatorType: 'CVD',
+      severity: severity,
+      icon: icon,
+      title: title,
+      symbol: this.symbol,
+      interval: this.interval,
+      type: 'CVD ' + alertType.replace(/_/g, ' '),
+      description: description,
+      data: {
+        price: currentPrice,
+        cvdValue: currentCVD,
+        cvdMax: maxCVD,
+        cvdMin: minCVD,
+        alertType: alertType
+      }
+    });
+
+    // Guardar timestamp de la alerta
+    localStorage.setItem(alertKey, now.toString());
+  }
+
   render(ctx, bounds, visibleCandles) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
@@ -105,8 +212,14 @@ class CVDIndicator extends IndicatorBase {
 
     // ✅ CALCULAR en tiempo real desde las velas visibles
     const cvdData = this.calculateCVD(visibleCandles);
-    
+
     if (cvdData.length === 0) return;
+
+    // 🔔 NUEVO: Verificar alertas de CVD
+    if (visibleCandles && visibleCandles.length > 0) {
+      const currentPrice = visibleCandles[visibleCandles.length - 1].close;
+      this.checkCVDAlerts(cvdData, currentPrice);
+    }
 
     // Calcular escala basada en CVD
     const cvdValues = [];

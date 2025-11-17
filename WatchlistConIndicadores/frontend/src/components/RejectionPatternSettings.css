@@ -18,6 +18,136 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
+/* Support & Resistance Settings Styles */
+.indicator-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.indicator-settings-modal {
+  background: #1e1e1e;
+  border: 2px solid #333;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.setting-row {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-row label {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.setting-row input[type="number"],
+.setting-row input[type="range"] {
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.setting-row .hint {
+  color: #666;
+  font-size: 11px;
+}
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #252525;
+  border-top: 1px solid #333;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #4a9eff;
+  border: none;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #3a8eef;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #555;
+  color: #aaa;
+}
+
+.btn-secondary:hover {
+  background: #333;
+  border-color: #666;
+  color: #fff;
+}
+
+.info-box {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.info-box p {
+  margin: 6px 0;
+}
+
+.info-box strong {
+  color: #fff;
+}
+
 .settings-header {
   display: flex;
   justify-content: space-between;

@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSRSettings, rejectionPatternConfig, srConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -129,7 +129,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   const [mousePos, setMousePos] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
+
+  // Actualizar fullscreenOiMode cuando cambia oiMode del padre
+  useEffect(() => {
+    if (oiMode) {
+      setFullscreenOiMode(oiMode);
+    }
+  }, [oiMode]);
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
@@ -142,6 +150,69 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       "60": "60", "120": "120", "240": "240", "D": "D", "W": "W"
     };
     return map[interval] || "15";
+  };
+
+  // ==================== VOLUME ALERTS ====================
+
+  /**
+   * 🔔 Verificar y generar alertas para volumen tradicional significativo
+   */
+  const checkVolumeAlerts = (candles) => {
+    if (!candles || candles.length < 10 || !window.addWatchlistAlert) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Obtener las últimas N velas para calcular promedio
+    const lookbackPeriod = Math.min(20, candles.length - 1);
+    const recentData = candles.slice(-lookbackPeriod - 1, -1); // Excluir la última
+    const currentCandle = candles[candles.length - 1];
+
+    // Ignorar si es vela en progreso
+    if (currentCandle.in_progress) return;
+
+    // Calcular promedio de volumen
+    const avgVolume = recentData.reduce((sum, c) => sum + c.volume, 0) / recentData.length;
+
+    if (avgVolume === 0) return;
+
+    // Calcular multiplicador del volumen actual vs promedio
+    const currentVolume = currentCandle.volume;
+    const volumeMultiplier = currentVolume / avgVolume;
+
+    // Verificar cooldown
+    const alertKey = `vol_alert_${symbol}_${Math.floor(now / cooldownPeriod)}`;
+    const lastAlertTime = localStorage.getItem(alertKey);
+
+    if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+      return; // Skip if in cooldown
+    }
+
+    // Determinar dirección
+    const direction = currentCandle.close >= currentCandle.open ? 'alcista' : 'bajista';
+    const icon = currentCandle.close >= currentCandle.open ? '🟢' : '🔴';
+
+    // Generar alerta
+    window.addWatchlistAlert({
+      indicatorType: 'Volume',
+      severity: 'MEDIUM', // Will be recalculated by addAlert based on profile
+      icon: icon,
+      title: `${symbol} Volumen ${direction} elevado`,
+      symbol: symbol,
+      interval: interval,
+      type: 'Volume Spike',
+      description: `Volumen ${direction}: ${currentVolume.toFixed(0)}\\nPromedio: ${avgVolume.toFixed(0)}\\nMultiplicador: ${volumeMultiplier.toFixed(2)}x`,
+      data: {
+        price: currentCandle.close,
+        volume: currentVolume,
+        avgVolume: avgVolume,
+        multiplier: volumeMultiplier,
+        direction: direction
+      }
+    });
+
+    // Guardar timestamp de la alerta
+    localStorage.setItem(alertKey, now.toString());
   };
 
   // ==================== DRAW CHART ====================
@@ -334,6 +405,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     ctx.fillStyle = textColor;
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
+
+    // 🔔 NUEVO: Verificar alertas de volumen tradicional
+    checkVolumeAlerts(visibleCandles);
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
     const timeY = volumeStartY + volumeHeight + 15;
@@ -944,6 +1018,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   }, [vpFixedRange, symbol]);
 
+  // 📊 Efecto para actualizar modo de Open Interest cuando cambie
+  useEffect(() => {
+    if (indicatorManagerRef.current && oiMode) {
+      indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  }, [oiMode]);
+
   // ==================== MAIN EFFECT ====================
   
   useEffect(() => {
@@ -965,6 +1047,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         indicatorManagerRef.current.applyConfig("Volume Profile", vpConfig);
         indicatorManagerRef.current.setIndicatorMode("Volume Profile", vpConfig.mode);
       }
+
+      // 📊 Configurar modo de Open Interest
+      if (oiMode && indicatorManagerRef.current) {
+        indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      }
+
+      // ⚡ Configurar Support/Resistance
+      if (srConfig && indicatorManagerRef.current) {
+        indicatorManagerRef.current.applyConfig("Support & Resistance", srConfig);
+        log.indicator(symbol, '⚡ Support/Resistance config applied');
+      }
+
       if (indicatorManagerRef.current) {
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
@@ -1151,6 +1245,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               📊 Patterns
             </button>
           )}
+          {onOpenSRSettings && (
+            <button
+              className="sr-settings-btn"
+              onClick={() => onOpenSRSettings(indicatorManagerRef.current)}
+              title="Configurar Support/Resistance"
+              style={{
+                background: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              ⚡ S/R
+            </button>
+          )}
           {onOpenRangeDetectionSettings && (
             <button
               className="rd-chart-settings-btn"
@@ -1235,12 +1349,49 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       {isFullscreen && (
         <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
           <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
-            <button 
+            <button
               className="close-fullscreen-btn"
               onClick={() => setIsFullscreen(false)}
             >
               ✕
             </button>
+
+            {/* Selector de modo de Open Interest en fullscreen */}
+            {indicatorStates["Open Interest"] && (
+              <div style={{
+                position: 'absolute',
+                top: '15px',
+                left: '15px',
+                zIndex: 1000,
+                background: 'white',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
+                  Open Interest Mode:
+                </label>
+                <select
+                  value={fullscreenOiMode}
+                  onChange={(e) => setFullscreenOiMode(e.target.value)}
+                  style={{
+                    padding: '4px 8px',
+                    fontSize: '11px',
+                    border: '1px solid #ddd',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="histogram">Histogram</option>
+                  <option value="cumulative">Cumulative</option>
+                  <option value="flow">Flow</option>
+                </select>
+              </div>
+            )}
+
             <MiniChart
               symbol={symbol}
               interval={interval}
@@ -1248,10 +1399,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               indicatorStates={indicatorStates}
               vpConfig={vpConfig}
               vpFixedRange={vpFixedRange}
+              oiMode={fullscreenOiMode}
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
+              onOpenSRSettings={onOpenSRSettings}
               rejectionPatternConfig={rejectionPatternConfig}
+              srConfig={srConfig}
             />
           </div>
         </div>

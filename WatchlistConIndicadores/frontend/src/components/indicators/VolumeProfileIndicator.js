@@ -294,6 +294,82 @@ class VolumeProfileIndicator extends IndicatorBase {
   }
 
   /**
+   * 🔔 NUEVO: Verificar y generar alertas para Volume Profile
+   */
+  checkVolumeProfileAlerts(currentPrice) {
+    if (!this.profile || !window.addWatchlistAlert) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Array de niveles a verificar
+    const levelsToCheck = [
+      {
+        type: 'POC',
+        price: this.profile.poc.price,
+        icon: '🎯',
+        description: `Point of Control at ${this.profile.poc.price.toFixed(2)}`
+      },
+      {
+        type: 'ValueArea',
+        subtype: 'VAH',
+        price: this.profile.valueArea.vahPrice,
+        icon: '📊',
+        description: `Value Area High at ${this.profile.valueArea.vahPrice.toFixed(2)}`
+      },
+      {
+        type: 'ValueArea',
+        subtype: 'VAL',
+        price: this.profile.valueArea.valPrice,
+        icon: '📊',
+        description: `Value Area Low at ${this.profile.valueArea.valPrice.toFixed(2)}`
+      }
+    ];
+
+    levelsToCheck.forEach(level => {
+      // Calcular distancia al nivel
+      const distancePercent = Math.abs((currentPrice - level.price) / level.price * 100);
+
+      // Verificar cooldown
+      const alertKey = `vp_alert_${this.symbol}_${level.type}_${level.subtype || ''}_${level.price.toFixed(2)}`;
+      const lastAlertTime = localStorage.getItem(alertKey);
+
+      if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+        return; // Skip if in cooldown
+      }
+
+      // Determinar severidad basada en la distancia
+      let severity = 'LOW';
+      if (distancePercent <= 0.1) severity = 'HIGH';
+      else if (distancePercent <= 0.3) severity = 'MEDIUM';
+
+      // Generar alerta
+      window.addWatchlistAlert({
+        indicatorType: 'Volume Profile',
+        severity: severity,
+        icon: level.icon,
+        title: `${this.symbol} approaching ${level.type}`,
+        symbol: this.symbol,
+        interval: this.interval,
+        type: level.type,
+        description: `Price $${currentPrice.toFixed(2)} is near ${level.description}\nDistance: ${distancePercent.toFixed(2)}%\nMode: ${this.mode}`,
+        data: {
+          price: currentPrice,
+          levelPrice: level.price,
+          levelType: level.subtype || level.type,
+          distance: distancePercent,
+          mode: this.mode,
+          totalVolume: this.profile.totalVolume,
+          pocPrice: this.profile.poc.price
+        }
+      });
+
+      // Guardar timestamp de la alerta
+      localStorage.setItem(alertKey, now.toString());
+    });
+  }
+
+  /**
    * NUEVO: Renderizar sombreado del rango en modo fixed
    */
   renderRangeShading(ctx, bounds, visibleCandles, startTimestamp, endTimestamp) {
@@ -452,6 +528,12 @@ class VolumeProfileIndicator extends IndicatorBase {
     }
 
     if (!this.profile) return;
+
+    // 🔔 NUEVO: Verificar alertas con el precio actual (última vela visible)
+    if (visibleCandles && visibleCandles.length > 0) {
+      const currentPrice = visibleCandles[visibleCandles.length - 1].close;
+      this.checkVolumeProfileAlerts(currentPrice);
+    }
 
     const { x, y, width, height } = bounds;
     

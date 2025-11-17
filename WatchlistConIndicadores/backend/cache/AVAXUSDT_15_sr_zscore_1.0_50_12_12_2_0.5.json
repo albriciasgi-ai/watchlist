@@ -1,0 +1,51 @@
+{
+  "symbol": "AVAXUSDT",
+  "interval": "15",
+  "data": {
+    "resistances": [
+      {
+        "price": 16.808999999999997,
+        "type": "resistance",
+        "strength": 2.35,
+        "touches": 2,
+        "avgVolume": 1.2872276464532248,
+        "firstTouch": 1762267500000,
+        "lastTouch": 1762386300000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 17.171666666666667,
+        "type": "support",
+        "strength": 0.92,
+        "touches": 3,
+        "avgVolume": 1.775811036147152,
+        "firstTouch": 1762152300000,
+        "lastTouch": 1763024400000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 15.502,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.9169611041799551
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763351076.7046654
+}

@@ -1,0 +1,62 @@
+{
+  "symbol": "AVAXUSDT",
+  "interval": "5",
+  "data": {
+    "resistances": [
+      {
+        "price": 17.651,
+        "type": "resistance",
+        "strength": 8.2,
+        "touches": 2,
+        "avgVolume": 2.3569693170241406,
+        "firstTouch": 1762950000000,
+        "lastTouch": 1763005800000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 15.107333333333335,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 3,
+        "avgVolume": 1.9750672352127712,
+        "firstTouch": 1763124000000,
+        "lastTouch": 1763153100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 15.27725,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 4,
+        "avgVolume": 3.5930358179417854,
+        "firstTouch": 1763094900000,
+        "lastTouch": 1763302500000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 15.183,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -1.0999144729348145
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763343188.9055848
+}

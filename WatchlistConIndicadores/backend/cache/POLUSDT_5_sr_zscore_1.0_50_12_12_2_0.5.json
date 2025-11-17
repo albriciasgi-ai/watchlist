@@ -1,0 +1,50 @@
+{
+  "symbol": "POLUSDT",
+  "interval": "5",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.14705000000000001,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 4.09032555371482,
+        "firstTouch": 1763315700000,
+        "lastTouch": 1763334000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 0.17243333333333333,
+        "type": "support",
+        "strength": 4.78,
+        "touches": 3,
+        "avgVolume": 1.2355030713872222,
+        "firstTouch": 1762926000000,
+        "lastTouch": 1763044500000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.1501,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.4592507140975398
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763343177.1475334
+}

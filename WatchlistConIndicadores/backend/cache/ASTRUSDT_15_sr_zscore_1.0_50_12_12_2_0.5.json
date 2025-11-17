@@ -1,0 +1,61 @@
+{
+  "symbol": "ASTRUSDT",
+  "interval": "15",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.01534,
+        "type": "support",
+        "strength": 4.25,
+        "touches": 2,
+        "avgVolume": 1.4208642965073317,
+        "firstTouch": 1762617600000,
+        "lastTouch": 1762696800000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.015594,
+        "type": "support",
+        "strength": 2.61,
+        "touches": 5,
+        "avgVolume": 2.6048726364748314,
+        "firstTouch": 1762152300000,
+        "lastTouch": 1762847100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.01323,
+        "type": "support",
+        "strength": 1.14,
+        "touches": 3,
+        "avgVolume": 2.054349748393507,
+        "firstTouch": 1762291800000,
+        "lastTouch": 1763161200000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.01346,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.7137130737636688
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763351084.9978123
+}

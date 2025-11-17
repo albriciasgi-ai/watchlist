@@ -1,0 +1,7 @@
+1. Hacer más rápida la aplicación. 3 veces más rápida
+2. Hacer el backtester
+3. Hacer que se pueda dibujar sobre los gráficos y mantenga los dibujos en el minichart. Que se pueda medir al presionar la rueda del mouse
+4. Hacer el indicador para las resistencias en niveles importantes
+5. Hacer el footprint + estrategias de la enciclopedia.
+
+product manager para que recomiendo cómo mejorarla

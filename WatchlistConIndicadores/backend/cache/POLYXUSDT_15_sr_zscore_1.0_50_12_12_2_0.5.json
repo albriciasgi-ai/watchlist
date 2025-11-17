@@ -1,0 +1,50 @@
+{
+  "symbol": "POLYXUSDT",
+  "interval": "15",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.06747500000000001,
+        "type": "support",
+        "strength": 9.3,
+        "touches": 2,
+        "avgVolume": 4.08154615521523,
+        "firstTouch": 1762183800000,
+        "lastTouch": 1762235100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.07816000000000001,
+        "type": "support",
+        "strength": 3.41,
+        "touches": 2,
+        "avgVolume": 2.5228395034289033,
+        "firstTouch": 1762586100000,
+        "lastTouch": 1762785900000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.06973,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -1.2156193738444787
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763351068.731279
+}

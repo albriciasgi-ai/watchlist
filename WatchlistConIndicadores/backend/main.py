@@ -411,6 +411,248 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
             "success": False
         }
 
+@app.get("/api/open-interest/{symbol}")
+async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
+    """
+    Endpoint para obtener Open Interest de Bybit Futures
+    Calcula OI Flow Sentiment siguiendo el patrón LuxAlgo
+    """
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # Aplicar límite máximo por timeframe
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # Intentar cargar del cache
+        cached_data = load_cache(symbol, interval_final, "openinterest")
+
+        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed
+            }
+
+        # Bybit Open Interest usa intervalos específicos
+        # Disponibles: 5min, 15min, 30min, 1h, 4h, 1d
+        # NOTA: 2h NO está disponible, usar 1h en su lugar
+        oi_interval_map = {
+            "5": "5min",
+            "15": "15min",
+            "30": "30min",
+            "60": "1h",
+            "120": "1h",  # 2h no disponible, usar 1h
+            "240": "4h",
+            "D": "1d"
+        }
+
+        # Mapeo inverso: de Bybit interval a minutos
+        oi_interval_to_minutes = {
+            "5min": 5,
+            "15min": 15,
+            "30min": 30,
+            "1h": 60,
+            "4h": 240,
+            "1d": 1440
+        }
+
+        oi_interval = oi_interval_map.get(interval_final, "15min")
+        oi_interval_minutes = oi_interval_to_minutes.get(oi_interval, 15)
+
+        # CRÍTICO: Calcular puntos necesarios basándose en el intervalo de OI, NO el de las velas
+        # Porque podemos tener velas de 2h pero OI de 1h (el doble de puntos)
+        minutes_in_period = days_to_fetch * 24 * 60
+        total_points_needed = int(minutes_in_period / oi_interval_minutes)
+
+        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
+        print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
+
+        # Bybit devuelve máximo 200 puntos por request
+        limit_per_request = 200
+
+        # Calcular timestamps
+        now_ms = int(time.time() * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos al futuro
+        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        all_oi_data = []
+        current_end = end_ms
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            request_count = 0
+            max_requests = 10
+
+            # Hacer múltiples requests hasta obtener todos los datos necesarios
+            while len(all_oi_data) < total_points_needed and request_count < max_requests:
+                request_count += 1
+
+                url = (
+                    "https://api.bybit.com/v5/market/open-interest?"
+                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
+                    f"&limit={limit_per_request}&endTime={current_end}"
+                )
+
+                # Convertir timestamp a fecha para debug
+                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                    if request_count == 1:  # Solo error si es el primer request
+                        return {
+                            "symbol": symbol,
+                            "interval": interval_final,
+                            "indicator": "openInterest",
+                            "data": [],
+                            "success": False,
+                            "error": data.get('retMsg', 'Unknown error')
+                        }
+                    break
+
+                oi_batch = data["result"]["list"]
+
+                if not oi_batch:
+                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                    break
+
+                # Log del batch recibido
+                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+
+                # oi_batch viene en orden descendente (más reciente primero)
+                # Agregar al inicio de all_oi_data para mantener orden cronológico
+                all_oi_data = oi_batch + all_oi_data
+
+                # Actualizar current_end para el siguiente batch
+                # El más antiguo de este batch es el último elemento
+                oldest_item = oi_batch[-1]
+                oldest_ts = int(oldest_item["timestamp"])
+
+                # Si ya llegamos al inicio del periodo, salir
+                if oldest_ts <= start_ms:
+                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                    break
+
+                # Siguiente request debe terminar justo antes del más antiguo de este batch
+                current_end = oldest_ts - 1
+
+                # Si ya tenemos suficientes puntos, salir
+                if len(all_oi_data) >= total_points_needed:
+                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                    break
+
+                # Pequeña pausa entre requests
+                await asyncio.sleep(0.1)
+
+            if not all_oi_data:
+                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "openInterest",
+                    "data": [],
+                    "success": False,
+                    "error": "No Open Interest data available"
+                }
+
+            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
+
+            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+            # porque Bybit devuelve descendente y agregamos al inicio
+            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+            all_oi_data.reverse()
+
+            # Verificar orden
+            if len(all_oi_data) >= 2:
+                first_ts = int(all_oi_data[0]["timestamp"])
+                last_ts = int(all_oi_data[-1]["timestamp"])
+                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
+            # Procesar datos
+            # all_oi_data ahora sí está en orden cronológico ascendente
+            processed_data = []
+
+            for item in all_oi_data:
+                ts_ms = int(item["timestamp"])
+                oi_value = float(item["openInterest"])
+
+                # Convertir timestamp a datetime Colombia
+                ts_seconds = ts_ms / 1000
+                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+                processed_data.append({
+                    "timestamp": ts_ms,
+                    "openInterest": oi_value,
+                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+                })
+
+            # Guardar en cache
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data
+            }
+            save_cache(symbol, interval_final, "openinterest", cache_data)
+            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
+
+            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data,
+                "success": True,
+                "from_cache": False,
+                "calculated": True,
+                "total_points": len(processed_data),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed,
+                "api_requests_made": request_count
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": [],
+            "success": False,
+            "error": str(e)
+        }
+
 @app.post("/api/clear-cache")
 async def clear_cache():
     """Endpoint para limpiar el cache manualmente"""
@@ -450,6 +692,580 @@ async def upload_cache(symbol: str, interval: str, data: dict):
 
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+
+# ==================== SUPPORT/RESISTANCE FUNCTIONS ====================
+
+def calculate_z_score(values: list, period: int = 50):
+    """
+    Calcula el Z-Score para cada valor en la lista
+    Z-Score = (valor - media) / desviación estándar
+
+    Args:
+        values: Lista de valores (ej: volúmenes)
+        period: Período para calcular media y desviación estándar
+
+    Returns:
+        Lista de z-scores
+    """
+    import statistics
+
+    z_scores = []
+
+    for i in range(len(values)):
+        # Tomar ventana de 'period' valores anteriores (incluyendo el actual)
+        start_idx = max(0, i - period + 1)
+        window = values[start_idx:i + 1]
+
+        if len(window) < 2:
+            z_scores.append(0.0)
+            continue
+
+        mean = statistics.mean(window)
+        stdev = statistics.stdev(window)
+
+        if stdev == 0:
+            z_scores.append(0.0)
+        else:
+            z_score = (values[i] - mean) / stdev
+            z_scores.append(z_score)
+
+    return z_scores
+
+
+def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
+                  z_scores: list = None, z_threshold: float = 1.5):
+    """
+    Detecta pivots (máximos y mínimos locales) con volumen significativo
+
+    Args:
+        candles: Lista de velas con formato {timestamp, open, high, low, close, volume}
+        left_bars: Barras a la izquierda que deben ser menores
+        right_bars: Barras a la derecha que deben ser menores
+        z_scores: Lista de z-scores del volumen (si es None, acepta todos)
+        z_threshold: Umbral de z-score para considerar volumen significativo
+
+    Returns:
+        Lista de pivots: {type, price, timestamp, volume, z_score, candle_index}
+    """
+    pivots = []
+
+    # No podemos detectar pivots en los extremos
+    for i in range(left_bars, len(candles) - right_bars):
+        candle = candles[i]
+        high = candle['high']
+        low = candle['low']
+        volume = candle['volume']
+
+        # Verificar volumen significativo
+        if z_scores and z_scores[i] < z_threshold:
+            continue
+
+        # Detectar pivot high (resistencia)
+        is_pivot_high = True
+        for j in range(i - left_bars, i):
+            if candles[j]['high'] >= high:
+                is_pivot_high = False
+                break
+
+        if is_pivot_high:
+            for j in range(i + 1, i + right_bars + 1):
+                if candles[j]['high'] >= high:
+                    is_pivot_high = False
+                    break
+
+        if is_pivot_high:
+            pivots.append({
+                'type': 'resistance',
+                'price': high,
+                'timestamp': candle['timestamp'],
+                'volume': volume,
+                'z_score': z_scores[i] if z_scores else 0.0,
+                'candle_index': i
+            })
+
+        # Detectar pivot low (soporte)
+        is_pivot_low = True
+        for j in range(i - left_bars, i):
+            if candles[j]['low'] <= low:
+                is_pivot_low = False
+                break
+
+        if is_pivot_low:
+            for j in range(i + 1, i + right_bars + 1):
+                if candles[j]['low'] <= low:
+                    is_pivot_low = False
+                    break
+
+        if is_pivot_low:
+            pivots.append({
+                'type': 'support',
+                'price': low,
+                'timestamp': candle['timestamp'],
+                'volume': volume,
+                'z_score': z_scores[i] if z_scores else 0.0,
+                'candle_index': i
+            })
+
+    return pivots
+
+
+def cluster_levels(pivots: list, distance_pct: float = 0.5):
+    """
+    Agrupa pivots que están cercanos entre sí (clustering)
+
+    Args:
+        pivots: Lista de pivots detectados
+        distance_pct: Distancia máxima en % para considerar niveles como iguales
+
+    Returns:
+        Lista de niveles agrupados con sus touches
+    """
+    if not pivots:
+        return []
+
+    # Separar soportes y resistencias
+    supports = [p for p in pivots if p['type'] == 'support']
+    resistances = [p for p in pivots if p['type'] == 'resistance']
+
+    def cluster_group(group):
+        if not group:
+            return []
+
+        # Ordenar por precio
+        sorted_group = sorted(group, key=lambda x: x['price'])
+
+        clusters = []
+        current_cluster = [sorted_group[0]]
+
+        for i in range(1, len(sorted_group)):
+            pivot = sorted_group[i]
+            cluster_avg_price = sum(p['price'] for p in current_cluster) / len(current_cluster)
+
+            # Calcular distancia porcentual
+            distance = abs(pivot['price'] - cluster_avg_price) / cluster_avg_price * 100
+
+            if distance <= distance_pct:
+                # Agregar a cluster actual
+                current_cluster.append(pivot)
+            else:
+                # Crear nuevo cluster
+                clusters.append(current_cluster)
+                current_cluster = [pivot]
+
+        # Agregar último cluster
+        clusters.append(current_cluster)
+
+        return clusters
+
+    support_clusters = cluster_group(supports)
+    resistance_clusters = cluster_group(resistances)
+
+    # Convertir clusters a niveles con metadata
+    levels = []
+
+    for cluster in support_clusters:
+        avg_price = sum(p['price'] for p in cluster) / len(cluster)
+        avg_volume = sum(p['volume'] for p in cluster) / len(cluster)
+        avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
+
+        levels.append({
+            'type': 'support',
+            'price': avg_price,
+            'touches': len(cluster),
+            'touch_timestamps': [p['timestamp'] for p in cluster],
+            'first_touch': min(p['timestamp'] for p in cluster),
+            'last_touch': max(p['timestamp'] for p in cluster),
+            'avg_volume': avg_volume,
+            'avg_z_score': avg_z_score,
+            'pivots': cluster
+        })
+
+    for cluster in resistance_clusters:
+        avg_price = sum(p['price'] for p in cluster) / len(cluster)
+        avg_volume = sum(p['volume'] for p in cluster) / len(cluster)
+        avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
+
+        levels.append({
+            'type': 'resistance',
+            'price': avg_price,
+            'touches': len(cluster),
+            'touch_timestamps': [p['timestamp'] for p in cluster],
+            'first_touch': min(p['timestamp'] for p in cluster),
+            'last_touch': max(p['timestamp'] for p in cluster),
+            'avg_volume': avg_volume,
+            'avg_z_score': avg_z_score,
+            'pivots': cluster
+        })
+
+    return levels
+
+
+def calculate_level_strength(level: dict, current_time_ms: int):
+    """
+    Calcula la fuerza de un nivel S/R
+
+    Fórmula: Strength = (touches × avg_z_score × recency_factor) / time_spread
+
+    Args:
+        level: Diccionario con información del nivel
+        current_time_ms: Timestamp actual en millisegundos
+
+    Returns:
+        Score de fuerza (0-10)
+    """
+    touches = level['touches']
+    avg_z_score = level['avg_z_score']
+    first_touch = level['first_touch']
+    last_touch = level['last_touch']
+
+    # Factor de recencia (más reciente = mejor)
+    time_since_last_touch_days = (current_time_ms - last_touch) / (1000 * 60 * 60 * 24)
+    recency_factor = max(0.1, 1.0 - (time_since_last_touch_days / 30))  # Decay over 30 days
+
+    # Spread temporal (cuánto tiempo ha sido válido el nivel)
+    time_spread_days = max(1, (last_touch - first_touch) / (1000 * 60 * 60 * 24))
+
+    # Calcular strength raw
+    strength_raw = (touches * avg_z_score * recency_factor) / max(1, time_spread_days)
+
+    # Normalizar a escala 0-10
+    # Asumimos que un strength_raw de 5+ es excelente
+    strength = min(10.0, (strength_raw / 5.0) * 10.0)
+
+    return round(strength, 2)
+
+
+def detect_consolidation_zones(levels: list, min_levels: int = 3, max_distance_pct: float = 2.0):
+    """
+    Detecta zonas de consolidación (múltiples niveles S/R cercanos)
+
+    Args:
+        levels: Lista de niveles S/R
+        min_levels: Mínimo de niveles para considerar una zona
+        max_distance_pct: Distancia máxima en % entre el nivel más alto y más bajo
+
+    Returns:
+        Lista de zonas de consolidación
+    """
+    if len(levels) < min_levels:
+        return []
+
+    # Ordenar niveles por precio
+    sorted_levels = sorted(levels, key=lambda x: x['price'])
+
+    zones = []
+
+    # Ventana deslizante para encontrar grupos de niveles cercanos
+    for i in range(len(sorted_levels) - min_levels + 1):
+        for j in range(i + min_levels - 1, len(sorted_levels)):
+            window_levels = sorted_levels[i:j + 1]
+
+            if len(window_levels) < min_levels:
+                continue
+
+            min_price = min(l['price'] for l in window_levels)
+            max_price = max(l['price'] for l in window_levels)
+
+            distance_pct = ((max_price - min_price) / min_price) * 100
+
+            if distance_pct <= max_distance_pct:
+                # Zona de consolidación encontrada
+                avg_price = (min_price + max_price) / 2
+                total_touches = sum(l['touches'] for l in window_levels)
+                avg_strength = sum(l.get('strength', 0) for l in window_levels) / len(window_levels)
+
+                zones.append({
+                    'center_price': avg_price,
+                    'min_price': min_price,
+                    'max_price': max_price,
+                    'range_pct': distance_pct,
+                    'num_levels': len(window_levels),
+                    'total_touches': total_touches,
+                    'avg_strength': round(avg_strength, 2),
+                    'levels': window_levels
+                })
+
+    # Eliminar zonas duplicadas/superpuestas (quedarse con las más fuertes)
+    unique_zones = []
+    for zone in sorted(zones, key=lambda x: x['avg_strength'], reverse=True):
+        is_duplicate = False
+        for existing_zone in unique_zones:
+            # Verificar si hay superposición significativa
+            if (zone['min_price'] <= existing_zone['max_price'] and
+                zone['max_price'] >= existing_zone['min_price']):
+                is_duplicate = True
+                break
+
+        if not is_duplicate:
+            unique_zones.append(zone)
+
+    return sorted(unique_zones, key=lambda x: x['center_price'])
+
+
+def determine_level_status(level: dict, current_price: float, candles: list):
+    """
+    Determina el estado actual del nivel (active, broken, tested)
+
+    Args:
+        level: Nivel S/R
+        current_price: Precio actual
+        candles: Velas históricas para verificar si fue roto
+
+    Returns:
+        Estado: "active", "broken", "tested"
+        break_volume: Z-score del volumen cuando fue roto (si aplica)
+    """
+    level_price = level['price']
+    level_type = level['type']
+    last_touch = level['last_touch']
+
+    # Buscar si el nivel fue roto después del último touch
+    break_volume = None
+    was_broken = False
+
+    for candle in candles:
+        if candle['timestamp'] <= last_touch:
+            continue
+
+        # Verificar ruptura
+        if level_type == 'resistance' and candle['close'] > level_price:
+            was_broken = True
+            break
+        elif level_type == 'support' and candle['close'] < level_price:
+            was_broken = True
+            break
+
+    # Determinar estado actual
+    if was_broken:
+        status = 'broken'
+    elif level_type == 'resistance' and current_price < level_price:
+        status = 'active'
+    elif level_type == 'support' and current_price > level_price:
+        status = 'active'
+    else:
+        status = 'tested'
+
+    return status, break_volume
+
+
+@app.get("/api/support-resistance/{symbol}")
+async def get_support_resistance(
+    symbol: str,
+    interval: str = "15",
+    days: int = 30,
+    volume_method: str = "zscore",
+    z_score_threshold: float = 1.5,
+    z_score_period: int = 50,
+    left_bars: int = 15,
+    right_bars: int = 15,
+    min_touches: int = 1,
+    cluster_distance: float = 0.5,
+    max_levels: int = 20
+):
+    """
+    Endpoint para detectar niveles de Soporte y Resistencia con volumen significativo
+
+    Parámetros:
+        - symbol: Par a analizar (ej: BTCUSDT)
+        - interval: Intervalo temporal (15, 60, 240, D, etc.)
+        - days: Días históricos a analizar
+        - volume_method: "zscore" o "simple"
+        - z_score_threshold: Umbral de z-score para filtrar volumen (1.5 por defecto)
+        - z_score_period: Período para calcular z-score (50 por defecto)
+        - left_bars: Barras a la izquierda del pivot (15 por defecto)
+        - right_bars: Barras a la derecha del pivot (15 por defecto)
+        - min_touches: Mínimo de toques para considerar nivel válido (1 por defecto)
+        - cluster_distance: Distancia en % para agrupar niveles (0.5 por defecto)
+        - max_levels: Máximo de niveles a retornar (20 por defecto)
+    """
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        print(f"[{symbol}] 📊 SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
+
+        # Intentar cargar del cache
+        cache_key = f"sr_{volume_method}_{z_score_threshold}_{z_score_period}_{left_bars}_{right_bars}_{min_touches}_{cluster_distance}"
+        cached_data = load_cache(symbol, interval_final, cache_key)
+
+        if cached_data and cached_data.get("symbol") == symbol:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] ✅ {symbol} {interval_final} S/R desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "supportResistance",
+                "data": cached_data.get("data", {}),
+                "config": cached_data.get("config", {}),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age)
+            }
+
+        # Obtener datos históricos
+        historical = await get_historical(symbol, interval_final, days)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "supportResistance",
+                "data": {},
+                "success": False,
+                "error": "No se pudieron obtener datos históricos"
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] Analizando {len(candles)} velas para S/R")
+
+        # Calcular Z-Score del volumen
+        volumes = [c['volume'] for c in candles]
+        z_scores = None
+
+        if volume_method == "zscore":
+            z_scores = calculate_z_score(volumes, z_score_period)
+            print(f"[{symbol}] Z-Scores calculados (period={z_score_period})")
+
+        # Detectar pivots
+        pivots = detect_pivots(candles, left_bars, right_bars, z_scores, z_score_threshold)
+        print(f"[{symbol}] Pivots detectados: {len(pivots)}")
+
+        # Agrupar niveles
+        levels = cluster_levels(pivots, cluster_distance)
+        print(f"[{symbol}] Niveles agrupados: {len(levels)}")
+
+        # Filtrar por mínimo de touches
+        levels = [l for l in levels if l['touches'] >= min_touches]
+        print(f"[{symbol}] Niveles después de filtrar por min_touches: {len(levels)}")
+
+        # Calcular strength para cada nivel
+        current_time_ms = int(time.time() * 1000)
+        current_price = candles[-1]['close']
+
+        for level in levels:
+            level['strength'] = calculate_level_strength(level, current_time_ms)
+            status, break_volume = determine_level_status(level, current_price, candles)
+            level['status'] = status
+            level['break_volume'] = break_volume
+
+        # Ordenar por strength y limitar
+        levels = sorted(levels, key=lambda x: x['strength'], reverse=True)[:max_levels]
+
+        # Detectar zonas de consolidación
+        consolidation_zones = detect_consolidation_zones(levels, min_levels=3, max_distance_pct=2.0)
+        print(f"[{symbol}] Zonas de consolidación detectadas: {len(consolidation_zones)}")
+
+        # Separar en soportes y resistencias
+        resistances = [l for l in levels if l['type'] == 'resistance']
+        supports = [l for l in levels if l['type'] == 'support']
+
+        # Preparar respuesta
+        response_data = {
+            "resistances": [
+                {
+                    "price": r['price'],
+                    "type": "resistance",
+                    "strength": r['strength'],
+                    "touches": r['touches'],
+                    "avgVolume": r['avg_z_score'],
+                    "firstTouch": r['first_touch'],
+                    "lastTouch": r['last_touch'],
+                    "status": r['status'],
+                    "breakVolume": r['break_volume']
+                }
+                for r in resistances
+            ],
+            "supports": [
+                {
+                    "price": s['price'],
+                    "type": "support",
+                    "strength": s['strength'],
+                    "touches": s['touches'],
+                    "avgVolume": s['avg_z_score'],
+                    "firstTouch": s['first_touch'],
+                    "lastTouch": s['last_touch'],
+                    "status": s['status'],
+                    "breakVolume": s['break_volume']
+                }
+                for s in supports
+            ],
+            "consolidationZones": [
+                {
+                    "centerPrice": z['center_price'],
+                    "minPrice": z['min_price'],
+                    "maxPrice": z['max_price'],
+                    "rangePct": z['range_pct'],
+                    "numLevels": z['num_levels'],
+                    "totalTouches": z['total_touches'],
+                    "avgStrength": z['avg_strength']
+                }
+                for z in consolidation_zones
+            ],
+            "currentPrice": current_price,
+            "volumeStats": {
+                "method": volume_method,
+                "zScoreThreshold": z_score_threshold if volume_method == "zscore" else None,
+                "period": z_score_period if volume_method == "zscore" else None,
+                "currentZScore": z_scores[-1] if z_scores else None
+            }
+        }
+
+        config_used = {
+            "volumeMethod": volume_method,
+            "zScoreThreshold": z_score_threshold,
+            "zScorePeriod": z_score_period,
+            "leftBars": left_bars,
+            "rightBars": right_bars,
+            "minTouches": min_touches,
+            "clusterDistance": cluster_distance,
+            "maxLevels": max_levels
+        }
+
+        # Guardar en cache
+        cache_data = {
+            "symbol": symbol,
+            "interval": interval_final,
+            "data": response_data,
+            "config": config_used
+        }
+        save_cache(symbol, interval_final, cache_key, cache_data)
+        print(f"[CACHE SAVED] {symbol} {interval_final} S/R guardado")
+
+        print(f"[SUCCESS] {symbol} {interval_final} S/R: {len(supports)} soportes, {len(resistances)} resistencias, {len(consolidation_zones)} zonas")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "supportResistance",
+            "data": response_data,
+            "config": config_used,
+            "success": True,
+            "from_cache": False
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Support/Resistance {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "supportResistance",
+            "data": {},
+            "success": False,
+            "error": str(e)
+        }
 
 
 # ==================== REJECTION PATTERN ENDPOINTS ====================
