@@ -410,10 +410,20 @@ const BacktestingApp = () => {
             >
               <option value="0.5">0.5x</option>
               <option value="1">1x</option>
-              <option value="2">2x</option>
-              <option value="5">5x</option>
-              <option value="10">10x</option>
               <option value="20">20x</option>
+              <option value="40">40x</option>
+              <option value="60">60x</option>
+              <option value="80">80x</option>
+              <option value="100">100x</option>
+              <option value="200">200x</option>
+              <option value="300">300x</option>
+              <option value="400">400x</option>
+              <option value="500">500x</option>
+              <option value="600">600x</option>
+              <option value="700">700x</option>
+              <option value="800">800x</option>
+              <option value="900">900x</option>
+              <option value="1000">1000x</option>
             </select>
           </div>
 

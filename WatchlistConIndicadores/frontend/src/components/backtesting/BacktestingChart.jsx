@@ -13,7 +13,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const [orders, setOrders] = useState([]);
 
   // Estado de zoom y pan
-  const [scale, setScale] = useState(1);
+  const [scaleX, setScaleX] = useState(1); // Zoom horizontal
+  const [scaleY, setScaleY] = useState(1); // Zoom vertical (precio)
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -22,7 +23,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   // Configuración de visualización
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
-  const VISIBLE_HISTORY = 100; // Número de velas históricas a mostrar antes de currentTime
+  // Mostrar TODO el historial hasta currentTime (no limitar)
+  const VISIBLE_HISTORY = Infinity; // Mostrar todas las velas históricas
 
   /**
    * Actualizar órdenes cuando cambia el orderManager
@@ -179,7 +181,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     const maxPrice = maxPriceRaw + padding;
     const minPrice = minPriceRaw - padding;
     const priceRange = maxPrice - minPrice;
-    const priceScale = chartHeight / priceRange;
+    const priceScale = (chartHeight / priceRange) * scaleY; // Aplicar zoom vertical
 
     // Función para convertir precio a coordenada Y (con offset)
     const priceToY = (price) => {
@@ -422,20 +424,48 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       ctx.fillText(dateStr, margin.left + 18, margin.top + 28);
     }
 
-    // Dibujar línea vertical en la última vela visible (marca el "presente" en la simulación)
-    if (visibleCandles.main.length > 0) {
-      const lastVisibleX = margin.left + (visibleCandles.main.length - 1) * totalCandleWidth + offsetX + candleWidth / 2;
+    // Dibujar rótulos de tiempo en el eje horizontal
+    ctx.fillStyle = '#666';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
 
-      ctx.strokeStyle = 'rgba(255, 167, 38, 0.5)';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([]);
-      ctx.beginPath();
-      ctx.moveTo(lastVisibleX, margin.top);
-      ctx.lineTo(lastVisibleX, height - margin.bottom);
-      ctx.stroke();
+    // Calcular cuántas etiquetas mostrar basado en el ancho disponible
+    const timeLabelsCount = Math.min(8, Math.floor(chartWidth / 120)); // Una etiqueta cada ~120px
+    const candleStep = Math.max(1, Math.floor(visibleCandles.main.length / timeLabelsCount));
+
+    for (let i = 0; i < visibleCandles.main.length; i += candleStep) {
+      const candle = visibleCandles.main[i];
+      const x = margin.left + i * totalCandleWidth + offsetX + candleWidth / 2;
+
+      // Solo dibujar si está visible en pantalla
+      if (x >= margin.left && x <= width - margin.right) {
+        const date = new Date(candle.timestamp);
+        const timeStr = date.toLocaleString('es-CO', {
+          timeZone: 'America/Bogota',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        // Rotar texto para que quepa mejor
+        ctx.save();
+        ctx.translate(x, height - margin.bottom + 15);
+        ctx.rotate(-Math.PI / 4); // Rotar 45 grados
+        ctx.fillText(timeStr, 0, 0);
+        ctx.restore();
+
+        // Línea de marca
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, height - margin.bottom);
+        ctx.lineTo(x, height - margin.bottom + 5);
+        ctx.stroke();
+      }
     }
 
-  }, [visibleCandles, chartDimensions, offsetX, offsetY, scale, orders]);
+  }, [visibleCandles, chartDimensions, offsetX, offsetY, scaleX, scaleY, orders]);
 
   /**
    * Herramientas de dibujo con Fabric.js
@@ -599,19 +629,34 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       setIsDragging(false);
     };
 
-    // Mouse wheel - zoom vertical (precio)
+    // Mouse wheel - zoom vertical o horizontal según teclas modificadoras
     const handleWheel = (e) => {
       e.preventDefault();
 
-      if (e.shiftKey) {
-        // Shift + wheel: scroll horizontal
-        const delta = e.deltaY > 0 ? -30 : 30;
-        setOffsetX(prev => prev + delta);
+      if (e.ctrlKey) {
+        // Ctrl + wheel: zoom horizontal
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        setScaleX(prev => Math.max(0.1, Math.min(10, prev * zoomFactor)));
       } else {
-        // Wheel normal: zoom vertical (no implementado aún, pero se puede agregar)
-        // Por ahora solo scroll horizontal
-        const delta = e.deltaY > 0 ? -30 : 30;
-        setOffsetX(prev => prev + delta);
+        // Wheel normal: zoom vertical (precio)
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        setScaleY(prev => Math.max(0.1, Math.min(10, prev * zoomFactor)));
+      }
+    };
+
+    // Doble click - fit screen en eje vertical (precios)
+    const handleDoubleClick = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const width = rect.width;
+
+      // Verificar si el click fue en el área del eje vertical (derecha)
+      // El eje de precios está en los últimos 80px a la derecha
+      if (x > width - 80) {
+        // Resetear zoom vertical y offset vertical
+        setScaleY(1);
+        setOffsetY(0);
+        console.log('[BacktestingChart] Fit screen - zoom vertical reseteado');
       }
     };
 
@@ -620,6 +665,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp);
     canvas.addEventListener('wheel', handleWheel, { passive: false });
+    canvas.addEventListener('dblclick', handleDoubleClick);
 
     return () => {
       canvas.removeEventListener('mousedown', handleMouseDown);
@@ -627,6 +673,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseleave', handleMouseUp);
       canvas.removeEventListener('wheel', handleWheel);
+      canvas.removeEventListener('dblclick', handleDoubleClick);
     };
   }, [isDragging, dragStart, offsetX, offsetY]);
 

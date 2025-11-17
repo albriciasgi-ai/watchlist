@@ -21,8 +21,21 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
    * Maneja la creación de una orden
    */
   const handleCreateOrder = () => {
-    if (!orderManager || !currentPrice || !currentTime) {
-      alert('Sistema no inicializado');
+    if (!orderManager) {
+      alert('OrderManager no inicializado. Por favor reinicia el backtesting.');
+      console.error('[TradingControls] orderManager es null');
+      return;
+    }
+
+    if (!currentPrice) {
+      alert('Precio actual no disponible. Por favor inicia la reproducción primero.');
+      console.error('[TradingControls] currentPrice es null');
+      return;
+    }
+
+    if (!currentTime) {
+      alert('Tiempo actual no disponible. Por favor inicia la reproducción primero.');
+      console.error('[TradingControls] currentTime es null');
       return;
     }
 

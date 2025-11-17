@@ -26,6 +26,16 @@ class TimeController {
       "4h": 240
     };
 
+    // Configuración de subdivisiones intravela (estados internos)
+    this.subdivisionConfig = {
+      "15m": { interval: 5, count: 3 }, // 3 estados de 5min cada uno
+      "1h": { interval: 15, count: 4 }, // 4 estados de 15min cada uno
+      "4h": { interval: 60, count: 4 }  // 4 estados de 1h cada uno
+    };
+
+    // Estado actual de la subdivisión
+    this.currentSubdivision = 0; // 0, 1, 2, ... hasta count-1
+
     // BroadcastChannel para sincronización multi-pestaña
     this.syncChannel = null;
     this.isMaster = false; // Solo una pestaña es master
@@ -135,22 +145,33 @@ class TimeController {
 
     this.isPlaying = true;
 
-    // Calcular intervalo de actualización basado en velocidad
-    // En velocidad 1x: 1 vela cada 2 segundos (2000ms)
-    // En velocidad 2x: 1 vela cada 1 segundo (1000ms)
-    // En velocidad 5x: 1 vela cada 400ms
-    // En velocidad 10x: 1 vela cada 200ms
-    // En velocidad 20x: 1 vela cada 100ms
-    const baseInterval = 2000; // ms por vela en velocidad 1x
-    const updateIntervalMs = Math.max(50, baseInterval / this.playbackSpeed);
+    // Calcular intervalo de actualización basado en velocidad y subdivisiones
+    // El intervalo base es el tiempo real del timeframe en ms
+    // Ejemplo: 15min @ 1x = 15 * 60 * 1000 = 900,000ms
+    // Pero dividimos por el número de subdivisiones para mostrar estados intravela
+    const subdivisions = this.subdivisionConfig[this.timeframe];
+    const timeframeMs = this.timeframeMinutes[this.timeframe] * 60 * 1000;
+    const subdivisionMs = (subdivisions.interval * 60 * 1000);
 
-    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - interval: ${updateIntervalMs}ms - currentTime: ${new Date(this.currentTime).toISOString()}`);
+    // Calcular el intervalo de actualización según la velocidad
+    // En 1x, cada subdivisión debe tardar su tiempo real
+    // Ejemplo: 15min @ 1x con 3 subdivisiones = 5min por subdivisión = 300,000ms
+    // En 15x: 300,000ms / 15 = 20,000ms = 20 segundos por subdivisión
+    const updateIntervalMs = Math.max(16, subdivisionMs / this.playbackSpeed); // mínimo 16ms (60fps)
+
+    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - interval: ${updateIntervalMs}ms - subdivisiones: ${subdivisions.count} - currentTime: ${new Date(this.currentTime).toISOString()}`);
 
     this.interval = setInterval(() => {
       const increment = this.getTimeIncrement();
       this.currentTime += increment;
 
-      console.log(`[TimeController] Tick - currentTime: ${new Date(this.currentTime).toISOString()}, increment: ${increment}ms`);
+      // Avanzar subdivisión
+      this.currentSubdivision++;
+      if (this.currentSubdivision >= subdivisions.count) {
+        this.currentSubdivision = 0;
+      }
+
+      console.log(`[TimeController] Tick - currentTime: ${new Date(this.currentTime).toISOString()}, increment: ${increment}ms, subdivision: ${this.currentSubdivision}/${subdivisions.count}`);
 
       // Si llegamos al final, pausar
       if (this.currentTime >= this.endTime) {
@@ -249,17 +270,15 @@ class TimeController {
   }
 
   /**
-   * Calcula el incremento de tiempo por tick según timeframe
-   * NOTA: Ahora avanza exactamente 1 vela por tick, independiente de la velocidad
-   * La velocidad se controla ajustando el intervalo en play()
+   * Calcula el incremento de tiempo por tick según subdivisión
+   * Avanza por subdivisiones (estados intravela) en lugar de velas completas
+   * Ejemplo: 15m con 3 subdivisiones → avanza 5 min por tick
    */
   getTimeIncrement() {
-    // Avanzar exactamente 1 vela del timeframe
-    // - 15m: avanza 15 minutos
-    // - 1h: avanza 1 hora
-    // - 4h: avanza 4 horas
-    const baseIncrement = this.timeframeMinutes[this.timeframe] * 60 * 1000; // ms
-    return baseIncrement;
+    // Avanzar por subdivisión (estado intravela)
+    const subdivisions = this.subdivisionConfig[this.timeframe];
+    const subdivisionIncrement = subdivisions.interval * 60 * 1000; // ms
+    return subdivisionIncrement;
   }
 
   /**
