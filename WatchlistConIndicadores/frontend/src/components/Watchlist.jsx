@@ -6,6 +6,7 @@ import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
 import AlertPanel from "./AlertPanel";
+import AlertConfigPanel from "./AlertConfigPanel";
 import { AlertToastContainer } from "./AlertToast";
 import wsManager from "./WebSocketManager";
 
@@ -97,16 +98,22 @@ const Watchlist = () => {
   const [alerts, setAlerts] = useState([]);
   const [toastAlerts, setToastAlerts] = useState([]);
   const [showAlertPanel, setShowAlertPanel] = useState(false);
+  const [showAlertConfig, setShowAlertConfig] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     enabled: true,
     soundEnabled: false,
+    browserNotifications: false,
     minSeverity: 'LOW', // 'LOW', 'MEDIUM', 'HIGH'
     enabledIndicators: {
       'Support & Resistance': true,
       'Rejection Patterns': true,
       'Volume Profile': false,
       'Open Interest': false
-    }
+    },
+    confluenceEnabled: true,
+    minIndicatorsForConfluence: 2,
+    confluenceWindowCandles: 3,
+    confluencePriceProximity: 0.5
   });
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
@@ -428,7 +435,8 @@ const Watchlist = () => {
                 background: alerts.length > 0 ? '#ff9800' : '#4a9eff',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px',
+                borderRadius: '4px 0 0 4px',
+                borderRight: '1px solid rgba(255,255,255,0.2)',
                 cursor: 'pointer',
                 fontSize: '13px',
                 fontWeight: 'bold',
@@ -449,6 +457,24 @@ const Watchlist = () => {
                   {alerts.length}
                 </span>
               )}
+            </button>
+
+            {/* ⚙️ NUEVO: Botón de Configuración de Alertas */}
+            <button
+              onClick={() => setShowAlertConfig(true)}
+              style={{
+                padding: '6px 10px',
+                background: '#4a9eff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '0 4px 4px 0',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              }}
+              title="Configurar sistema de alertas"
+            >
+              ⚙️
             </button>
 
             {/* 🧪 NUEVO: Botón de Prueba de Alertas (solo para testing) */}
@@ -600,6 +626,18 @@ const Watchlist = () => {
           onClose={() => setShowAlertPanel(false)}
           onClearAlerts={clearAllAlerts}
           onDeleteAlert={deleteAlert}
+        />
+      )}
+
+      {/* ⚙️ NUEVO: Alert Configuration Panel */}
+      {showAlertConfig && (
+        <AlertConfigPanel
+          config={alertConfig}
+          onConfigChange={(newConfig) => {
+            setAlertConfig(newConfig);
+            console.log('[Watchlist] Alert config updated:', newConfig);
+          }}
+          onClose={() => setShowAlertConfig(false)}
         />
       )}
 
