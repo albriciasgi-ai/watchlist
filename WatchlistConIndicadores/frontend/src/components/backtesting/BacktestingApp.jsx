@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TimeController from './TimeController';
 import BacktestingChart from './BacktestingChart';
+import OrderManager from './OrderManager';
+import TradingControls from './TradingControls';
+import PerformancePanel from './PerformancePanel';
+import TradeHistory from './TradeHistory';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
 
@@ -18,9 +22,14 @@ const BacktestingApp = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [startDate, setStartDate] = useState('');
+  const [currentPrice, setCurrentPrice] = useState(null);
+
+  // Estado de UI
+  const [activePanel, setActivePanel] = useState('trading'); // 'trading', 'performance', 'history'
 
   // Referencias
   const timeControllerRef = useRef(null);
+  const orderManagerRef = useRef(null);
 
   /**
    * Carga datos de backtesting desde el backend
@@ -180,6 +189,12 @@ const BacktestingApp = () => {
 
       timeControllerRef.current = controller;
 
+      // Crear OrderManager
+      if (!orderManagerRef.current) {
+        orderManagerRef.current = new OrderManager(10000); // Balance inicial $10,000
+        console.log('[BacktestingApp] OrderManager creado');
+      }
+
       // Si se especificó una fecha de inicio, saltar a ella
       if (startDate) {
         const startTimestamp = new Date(startDate).getTime();
@@ -198,6 +213,24 @@ const BacktestingApp = () => {
    */
   const handleTimeUpdate = (newTime) => {
     setCurrentTime(newTime);
+
+    // Obtener precio actual de los datos
+    if (marketData && marketData.timeframes && marketData.timeframes[selectedTimeframe]) {
+      const timeframeData = marketData.timeframes[selectedTimeframe];
+
+      // Buscar la vela más reciente que no exceda currentTime
+      const visibleCandles = timeframeData.main.filter(c => c.timestamp <= newTime);
+
+      if (visibleCandles.length > 0) {
+        const lastCandle = visibleCandles[visibleCandles.length - 1];
+        setCurrentPrice(lastCandle.close);
+
+        // Actualizar órdenes con el precio actual
+        if (orderManagerRef.current) {
+          orderManagerRef.current.updateOrders(lastCandle.close, newTime);
+        }
+      }
+    }
   };
 
   /**
@@ -342,6 +375,11 @@ const BacktestingApp = () => {
               minute: '2-digit'
             })}
           </div>
+          {currentPrice && (
+            <div className="current-price">
+              Precio: ${currentPrice.toFixed(2)}
+            </div>
+          )}
         </div>
 
         <div className="playback-controls">
@@ -386,14 +424,61 @@ const BacktestingApp = () => {
         </div>
       </div>
 
-      <div className="backtesting-main">
-        <BacktestingChart
-          symbol={symbol}
-          timeframe={selectedTimeframe}
-          marketData={marketData}
-          currentTime={currentTime}
-          timeController={timeControllerRef.current}
-        />
+      <div className="backtesting-main-wrapper">
+        <div className="backtesting-main">
+          <BacktestingChart
+            symbol={symbol}
+            timeframe={selectedTimeframe}
+            marketData={marketData}
+            currentTime={currentTime}
+            timeController={timeControllerRef.current}
+            orderManager={orderManagerRef.current}
+          />
+        </div>
+
+        <div className="backtesting-sidebar">
+          {/* Panel Tabs */}
+          <div className="sidebar-tabs">
+            <button
+              className={`tab-btn ${activePanel === 'trading' ? 'active' : ''}`}
+              onClick={() => setActivePanel('trading')}
+            >
+              📊 Trading
+            </button>
+            <button
+              className={`tab-btn ${activePanel === 'performance' ? 'active' : ''}`}
+              onClick={() => setActivePanel('performance')}
+            >
+              📈 Métricas
+            </button>
+            <button
+              className={`tab-btn ${activePanel === 'history' ? 'active' : ''}`}
+              onClick={() => setActivePanel('history')}
+            >
+              📋 Historial
+            </button>
+          </div>
+
+          {/* Panel Content */}
+          <div className="sidebar-content">
+            {activePanel === 'trading' && (
+              <TradingControls
+                orderManager={orderManagerRef.current}
+                currentPrice={currentPrice}
+                currentTime={currentTime}
+                onOrderCreated={() => console.log('[BacktestingApp] Orden creada')}
+              />
+            )}
+
+            {activePanel === 'performance' && (
+              <PerformancePanel orderManager={orderManagerRef.current} />
+            )}
+
+            {activePanel === 'history' && (
+              <TradeHistory orderManager={orderManagerRef.current} />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 // import * as fabric from 'fabric'; // TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
 
-const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController }) => {
+const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController, orderManager }) => {
   const chartCanvasRef = useRef(null);
   const drawingCanvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -10,10 +10,27 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const [drawingTool, setDrawingTool] = useState('none'); // 'none', 'line', 'rect', 'text'
   const [visibleCandles, setVisibleCandles] = useState([]);
   const [chartDimensions, setChartDimensions] = useState({ width: 0, height: 0 });
+  const [orders, setOrders] = useState([]);
 
   // Estado de zoom y pan
   const [scale, setScale] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
+
+  /**
+   * Actualizar órdenes cuando cambia el orderManager
+   */
+  useEffect(() => {
+    if (!orderManager) return;
+
+    const updateOrders = () => {
+      setOrders(orderManager.getAllOrders());
+    };
+
+    updateOrders();
+    const interval = setInterval(updateOrders, 1000);
+
+    return () => clearInterval(interval);
+  }, [orderManager]);
 
   /**
    * Inicialización del Fabric.js canvas
@@ -254,7 +271,95 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       );
     }
 
-  }, [visibleCandles, chartDimensions, offsetX, scale]);
+    // Dibujar órdenes (líneas de entrada, SL, TP)
+    if (orders && orders.length > 0) {
+      orders.forEach(order => {
+        // Solo dibujar órdenes que están en el rango de precios visible
+        if (order.entryPrice < minPrice || order.entryPrice > maxPrice) return;
+
+        const isOpen = order.status === 'open';
+        const isClosed = order.status === 'closed';
+        const isLong = order.side === 'long';
+
+        // Línea de entrada
+        const entryY = priceToY(order.entryPrice);
+        ctx.strokeStyle = isOpen ? (isLong ? '#26a69a' : '#ef5350') : '#999';
+        ctx.lineWidth = isOpen ? 2 : 1;
+        ctx.setLineDash(isOpen ? [] : [3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, entryY);
+        ctx.lineTo(width - margin.right, entryY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Etiqueta de entrada
+        ctx.fillStyle = isOpen ? (isLong ? '#26a69a' : '#ef5350') : '#999';
+        ctx.fillRect(margin.left, entryY - 8, 30, 16);
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`#${order.id}`, margin.left + 2, entryY + 3);
+
+        // Dibujar Stop Loss si existe
+        if (order.stopLoss && order.stopLoss >= minPrice && order.stopLoss <= maxPrice) {
+          const slY = priceToY(order.stopLoss);
+          ctx.strokeStyle = '#ef5350';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 4]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, slY);
+          ctx.lineTo(width - margin.right, slY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Etiqueta SL
+          ctx.fillStyle = '#ef5350';
+          ctx.fillRect(margin.left, slY - 8, 20, 16);
+          ctx.fillStyle = '#fff';
+          ctx.font = '9px monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText('SL', margin.left + 2, slY + 3);
+        }
+
+        // Dibujar Take Profit si existe
+        if (order.takeProfit && order.takeProfit >= minPrice && order.takeProfit <= maxPrice) {
+          const tpY = priceToY(order.takeProfit);
+          ctx.strokeStyle = '#26a69a';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 4]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, tpY);
+          ctx.lineTo(width - margin.right, tpY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Etiqueta TP
+          ctx.fillStyle = '#26a69a';
+          ctx.fillRect(margin.left, tpY - 8, 20, 16);
+          ctx.fillStyle = '#fff';
+          ctx.font = '9px monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText('TP', margin.left + 2, tpY + 3);
+        }
+
+        // Dibujar precio de salida si la orden está cerrada
+        if (isClosed && order.exitPrice && order.exitPrice >= minPrice && order.exitPrice <= maxPrice) {
+          const exitY = priceToY(order.exitPrice);
+          const isProfitable = order.pnl > 0;
+
+          ctx.strokeStyle = isProfitable ? '#26a69a80' : '#ef535080';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([1, 2]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, exitY);
+          ctx.lineTo(width - margin.right, exitY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      });
+    }
+
+  }, [visibleCandles, chartDimensions, offsetX, scale, orders]);
 
   /**
    * Herramientas de dibujo con Fabric.js
