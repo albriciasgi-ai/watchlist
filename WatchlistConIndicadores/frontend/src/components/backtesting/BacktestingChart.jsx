@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as fabric from 'fabric';
+// import * as fabric from 'fabric'; // TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
 
 const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeController }) => {
   const chartCanvasRef = useRef(null);
@@ -17,24 +17,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
   /**
    * Inicialización del Fabric.js canvas
+   * TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
    */
   useEffect(() => {
-    if (!drawingCanvasRef.current) return;
-
-    const canvas = new fabric.Canvas(drawingCanvasRef.current, {
-      selection: true,
-      backgroundColor: 'transparent',
-      renderOnAddRemove: true
-    });
-
-    setFabricCanvas(canvas);
-
-    console.log('[BacktestingChart] Fabric.js canvas inicializado');
-
-    // Cleanup
-    return () => {
-      canvas.dispose();
-    };
+    // TODO: Re-habilitar cuando se solucione el problema de Fabric.js con Vite
+    console.log('[BacktestingChart] Drawing tools disabled - Fabric.js compatibility issue');
   }, []);
 
   /**
@@ -42,7 +29,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
    */
   useEffect(() => {
     const updateDimensions = () => {
-      if (containerRef.current && chartCanvasRef.current && fabricCanvas) {
+      if (containerRef.current && chartCanvasRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         const width = rect.width;
         const height = rect.height;
@@ -50,9 +37,6 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
         // Actualizar canvas de chart
         chartCanvasRef.current.width = width;
         chartCanvasRef.current.height = height;
-
-        // Actualizar fabric canvas
-        fabricCanvas.setDimensions({ width, height });
 
         setChartDimensions({ width, height });
       }
@@ -62,7 +46,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     window.addEventListener('resize', updateDimensions);
 
     return () => window.removeEventListener('resize', updateDimensions);
-  }, [fabricCanvas]);
+  }, []);
 
   /**
    * Actualizar velas visibles según currentTime
@@ -428,6 +412,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
   return (
     <div className="backtesting-chart-container">
+      {/* DRAWING TOOLBAR TEMPORALMENTE DESHABILITADO
       <div className="drawing-toolbar">
         <button
           className={drawingTool === 'none' ? 'active' : ''}
@@ -455,10 +440,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
           🗑️ Borrar Todo
         </button>
       </div>
+      */}
 
       <div className="chart-wrapper" ref={containerRef}>
         <canvas ref={chartCanvasRef} className="chart-canvas"></canvas>
-        <canvas ref={drawingCanvasRef} className="drawing-canvas"></canvas>
+        {/* <canvas ref={drawingCanvasRef} className="drawing-canvas"></canvas> */}
       </div>
     </div>
   );
