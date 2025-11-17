@@ -4,13 +4,24 @@
   "data": {
     "resistances": [
       {
-        "price": 182.735,
+        "price": 182.6,
         "type": "resistance",
         "strength": 10.0,
-        "touches": 2,
-        "avgVolume": 3.846452149482192,
+        "touches": 3,
+        "avgVolume": 4.740249119650537,
         "firstTouch": 1763228700000,
-        "lastTouch": 1763288100000,
+        "lastTouch": 1763384400000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 232.89999999999998,
+        "type": "resistance",
+        "strength": 1.01,
+        "touches": 2,
+        "avgVolume": 2.6118279729757043,
+        "firstTouch": 1762128900000,
+        "lastTouch": 1762819200000,
         "status": "active",
         "breakVolume": null
       }
@@ -30,7 +41,7 @@
       {
         "price": 192.74,
         "type": "support",
-        "strength": 3.35,
+        "strength": 3.23,
         "touches": 2,
         "avgVolume": 3.9104557144783287,
         "firstTouch": 1762183800000,
@@ -41,9 +52,9 @@
       {
         "price": 208.715,
         "type": "support",
-        "strength": 2.95,
+        "strength": 2.61,
         "touches": 2,
-        "avgVolume": 1.3590206256763375,
+        "avgVolume": 1.2556010623150862,
         "firstTouch": 1762152300000,
         "lastTouch": 1762166700000,
         "status": "broken",
@@ -51,12 +62,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 176.54,
+    "currentPrice": 166.06,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.970974741973199
+      "currentZScore": -0.6463981856116536
     }
   },
   "config": {
@@ -69,5 +80,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763351056.339413
+  "timestamp": 1763411700.971223
 }
