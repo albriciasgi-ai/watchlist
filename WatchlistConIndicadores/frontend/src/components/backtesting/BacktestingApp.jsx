@@ -204,6 +204,9 @@ const BacktestingApp = () => {
       setCurrentTime(controller.currentTime);
       setInitialized(true);
 
+      // Forzar actualización del precio inicial
+      handleTimeUpdate(controller.currentTime);
+
       console.log('[BacktestingApp] ✅ Inicializado');
     }
   };

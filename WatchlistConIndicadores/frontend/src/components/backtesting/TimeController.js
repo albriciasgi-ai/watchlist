@@ -134,9 +134,17 @@ class TimeController {
     }
 
     this.isPlaying = true;
-    const updateIntervalMs = 1000; // Actualizar cada segundo
 
-    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - currentTime: ${new Date(this.currentTime).toISOString()}`);
+    // Calcular intervalo de actualización basado en velocidad
+    // En velocidad 1x: 1 vela cada 2 segundos (2000ms)
+    // En velocidad 2x: 1 vela cada 1 segundo (1000ms)
+    // En velocidad 5x: 1 vela cada 400ms
+    // En velocidad 10x: 1 vela cada 200ms
+    // En velocidad 20x: 1 vela cada 100ms
+    const baseInterval = 2000; // ms por vela en velocidad 1x
+    const updateIntervalMs = Math.max(50, baseInterval / this.playbackSpeed);
+
+    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - interval: ${updateIntervalMs}ms - currentTime: ${new Date(this.currentTime).toISOString()}`);
 
     this.interval = setInterval(() => {
       const increment = this.getTimeIncrement();
@@ -241,17 +249,17 @@ class TimeController {
   }
 
   /**
-   * Calcula el incremento de tiempo por tick según velocidad y timeframe
+   * Calcula el incremento de tiempo por tick según timeframe
+   * NOTA: Ahora avanza exactamente 1 vela por tick, independiente de la velocidad
+   * La velocidad se controla ajustando el intervalo en play()
    */
   getTimeIncrement() {
-    // Con 1x de velocidad:
-    // - Cada segundo real avanza 1 intervalo del timeframe
-    // - 15m: cada segundo avanza 15 minutos
-    // - 1h: cada segundo avanza 1 hora
-    // - 4h: cada segundo avanza 4 horas
-
+    // Avanzar exactamente 1 vela del timeframe
+    // - 15m: avanza 15 minutos
+    // - 1h: avanza 1 hora
+    // - 4h: avanza 4 horas
     const baseIncrement = this.timeframeMinutes[this.timeframe] * 60 * 1000; // ms
-    return baseIncrement * this.playbackSpeed;
+    return baseIncrement;
   }
 
   /**

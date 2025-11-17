@@ -318,6 +318,11 @@
 
 .chart-canvas {
   z-index: 1;
+  cursor: grab;
+}
+
+.chart-canvas.dragging {
+  cursor: grabbing;
 }
 
 .drawing-canvas {

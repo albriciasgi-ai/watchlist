@@ -15,6 +15,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   // Estado de zoom y pan
   const [scale, setScale] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Configuración de visualización
+  const CANDLE_WIDTH = 8; // Ancho fijo por vela
+  const CANDLE_SPACING = 2; // Espacio entre velas
+  const VISIBLE_HISTORY = 100; // Número de velas históricas a mostrar antes de currentTime
 
   /**
    * Actualizar órdenes cuando cambia el orderManager
@@ -67,6 +75,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
   /**
    * Actualizar velas visibles según currentTime
+   * IMPORTANTE: Ahora muestra historial previo + velas hasta currentTime
    */
   useEffect(() => {
     if (!marketData || !currentTime) return;
@@ -74,8 +83,15 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     const timeframeData = marketData.timeframes[timeframe];
     if (!timeframeData) return;
 
-    // Filtrar velas hasta currentTime
-    const candles = timeframeData.main.filter(candle => candle.timestamp <= currentTime);
+    // Encontrar el índice de la última vela que no excede currentTime
+    const currentIndex = timeframeData.main.findIndex(candle => candle.timestamp > currentTime);
+    const lastVisibleIndex = currentIndex === -1 ? timeframeData.main.length : currentIndex;
+
+    // Calcular índice de inicio (incluir historial previo)
+    const startIndex = Math.max(0, lastVisibleIndex - VISIBLE_HISTORY);
+
+    // Obtener velas desde startIndex hasta lastVisibleIndex
+    const candles = timeframeData.main.slice(startIndex, lastVisibleIndex);
 
     // Obtener subdivisiones de la última vela en progreso
     const lastCandleTime = candles.length > 0 ? candles[candles.length - 1].timestamp : 0;
@@ -90,16 +106,34 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       setVisibleCandles({
         main: candles,
         currentSubdivisions: subdivisions,
-        isFormingNewCandle: true
+        isFormingNewCandle: true,
+        currentTimeMarker: currentTime
       });
     } else {
       setVisibleCandles({
         main: candles,
         currentSubdivisions: [],
-        isFormingNewCandle: false
+        isFormingNewCandle: false,
+        currentTimeMarker: currentTime
       });
     }
-  }, [currentTime, marketData, timeframe]);
+
+    // Auto-scroll: mantener las velas más recientes visibles
+    // Solo hacer auto-scroll si hay suficientes velas
+    if (chartDimensions.width > 0 && candles.length > 0) {
+      const totalCandleWidth = CANDLE_WIDTH + CANDLE_SPACING;
+      const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
+
+      if (candles.length > maxVisibleCandles) {
+        // Desplazar para que las últimas velas estén visibles, dejando espacio a la derecha
+        const newOffsetX = Math.min(0, -(candles.length - maxVisibleCandles + 10) * totalCandleWidth);
+        setOffsetX(newOffsetX);
+      } else {
+        // Si hay pocas velas, centrarlas o dejarlas a la izquierda
+        setOffsetX(0);
+      }
+    }
+  }, [currentTime, marketData, timeframe, chartDimensions.width]);
 
   /**
    * Renderizar velas en el canvas
@@ -132,28 +166,34 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       return;
     }
 
-    // Calcular escala de precios
+    // Calcular escala de precios con padding (5% arriba y abajo)
     const allPrices = [];
     visibleCandles.main.forEach(c => {
       allPrices.push(c.high, c.low);
     });
-    const maxPrice = Math.max(...allPrices);
-    const minPrice = Math.min(...allPrices);
+    const maxPriceRaw = Math.max(...allPrices);
+    const minPriceRaw = Math.min(...allPrices);
+    const priceRangeRaw = maxPriceRaw - minPriceRaw;
+    const padding = priceRangeRaw * 0.05; // 5% padding
+
+    const maxPrice = maxPriceRaw + padding;
+    const minPrice = minPriceRaw - padding;
     const priceRange = maxPrice - minPrice;
     const priceScale = chartHeight / priceRange;
 
-    // Función para convertir precio a coordenada Y
+    // Función para convertir precio a coordenada Y (con offset)
     const priceToY = (price) => {
-      return margin.top + (maxPrice - price) * priceScale;
+      return margin.top + (maxPrice - price) * priceScale + offsetY;
     };
 
-    // Calcular ancho de vela
-    const candleWidth = Math.max(2, chartWidth / visibleCandles.main.length);
+    // Usar ancho fijo de vela
+    const candleWidth = CANDLE_WIDTH;
     const wickWidth = Math.max(1, candleWidth / 5);
 
-    // Dibujar velas principales
+    // Dibujar velas principales con espaciado fijo
+    const totalCandleWidth = candleWidth + CANDLE_SPACING;
     visibleCandles.main.forEach((candle, index) => {
-      const x = margin.left + index * candleWidth + offsetX;
+      const x = margin.left + index * totalCandleWidth + offsetX;
       const yHigh = priceToY(candle.high);
       const yLow = priceToY(candle.low);
       const yOpen = priceToY(candle.open);
@@ -191,7 +231,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
     // Dibujar subdivisiones de la vela en formación (si existen)
     if (visibleCandles.isFormingNewCandle && visibleCandles.currentSubdivisions.length > 0) {
-      const startX = margin.left + visibleCandles.main.length * candleWidth + offsetX;
+      const startX = margin.left + visibleCandles.main.length * totalCandleWidth + offsetX;
       const subCandleWidth = candleWidth / visibleCandles.currentSubdivisions.length;
 
       visibleCandles.currentSubdivisions.forEach((sub, index) => {
@@ -359,7 +399,43 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       });
     }
 
-  }, [visibleCandles, chartDimensions, offsetX, scale, orders]);
+    // Dibujar indicador de fecha/tiempo actual (en la parte superior del gráfico)
+    if (visibleCandles.currentTimeMarker) {
+      const dateStr = new Date(visibleCandles.currentTimeMarker).toLocaleString('es-CO', {
+        timeZone: 'America/Bogota',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      // Fondo semi-transparente
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillRect(margin.left + 10, margin.top + 10, 200, 30);
+
+      // Texto de fecha/hora
+      ctx.fillStyle = '#ffa726';
+      ctx.font = 'bold 13px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(dateStr, margin.left + 18, margin.top + 28);
+    }
+
+    // Dibujar línea vertical en la última vela visible (marca el "presente" en la simulación)
+    if (visibleCandles.main.length > 0) {
+      const lastVisibleX = margin.left + (visibleCandles.main.length - 1) * totalCandleWidth + offsetX + candleWidth / 2;
+
+      ctx.strokeStyle = 'rgba(255, 167, 38, 0.5)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(lastVisibleX, margin.top);
+      ctx.lineTo(lastVisibleX, height - margin.bottom);
+      ctx.stroke();
+    }
+
+  }, [visibleCandles, chartDimensions, offsetX, offsetY, scale, orders]);
 
   /**
    * Herramientas de dibujo con Fabric.js
@@ -495,6 +571,66 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   }, [fabricCanvas, symbol, timeframe]);
 
   /**
+   * Event handlers para paneo (drag) y zoom (wheel)
+   */
+  useEffect(() => {
+    const canvas = chartCanvasRef.current;
+    if (!canvas) return;
+
+    // Mouse down - iniciar drag
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
+    };
+
+    // Mouse move - arrastrar
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+
+      const newOffsetX = e.clientX - dragStart.x;
+      const newOffsetY = e.clientY - dragStart.y;
+
+      setOffsetX(newOffsetX);
+      setOffsetY(newOffsetY);
+    };
+
+    // Mouse up - terminar drag
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    // Mouse wheel - zoom vertical (precio)
+    const handleWheel = (e) => {
+      e.preventDefault();
+
+      if (e.shiftKey) {
+        // Shift + wheel: scroll horizontal
+        const delta = e.deltaY > 0 ? -30 : 30;
+        setOffsetX(prev => prev + delta);
+      } else {
+        // Wheel normal: zoom vertical (no implementado aún, pero se puede agregar)
+        // Por ahora solo scroll horizontal
+        const delta = e.deltaY > 0 ? -30 : 30;
+        setOffsetX(prev => prev + delta);
+      }
+    };
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseUp);
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [isDragging, dragStart, offsetX, offsetY]);
+
+  /**
    * Guardar dibujos automáticamente cuando cambian
    */
   useEffect(() => {
@@ -548,7 +684,10 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       */}
 
       <div className="chart-wrapper" ref={containerRef}>
-        <canvas ref={chartCanvasRef} className="chart-canvas"></canvas>
+        <canvas
+          ref={chartCanvasRef}
+          className={`chart-canvas ${isDragging ? 'dragging' : ''}`}
+        ></canvas>
         {/* <canvas ref={drawingCanvasRef} className="drawing-canvas"></canvas> */}
       </div>
     </div>
