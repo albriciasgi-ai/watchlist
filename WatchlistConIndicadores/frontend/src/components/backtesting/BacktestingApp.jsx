@@ -198,14 +198,16 @@ const BacktestingApp = () => {
       // Si se especificó una fecha de inicio, saltar a ella
       if (startDate) {
         const startTimestamp = new Date(startDate).getTime();
+        console.log('[BacktestingApp] Saltando a fecha de inicio:', new Date(startTimestamp));
         controller.jumpTo(startTimestamp);
+        setCurrentTime(startTimestamp);
+        handleTimeUpdate(startTimestamp);
+      } else {
+        setCurrentTime(controller.currentTime);
+        handleTimeUpdate(controller.currentTime);
       }
 
-      setCurrentTime(controller.currentTime);
       setInitialized(true);
-
-      // Forzar actualización del precio inicial
-      handleTimeUpdate(controller.currentTime);
 
       console.log('[BacktestingApp] ✅ Inicializado');
     }
@@ -267,6 +269,8 @@ const BacktestingApp = () => {
       timeControllerRef.current.stop();
       setIsPlaying(false);
       setCurrentTime(timeControllerRef.current.currentTime);
+      // Actualizar el precio actual cuando se detiene
+      handleTimeUpdate(timeControllerRef.current.currentTime);
     }
   };
 

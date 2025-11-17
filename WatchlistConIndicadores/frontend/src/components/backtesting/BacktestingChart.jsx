@@ -28,6 +28,17 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
   const VISIBLE_HISTORY = Infinity; // Mostrar todas las velas históricas
 
   /**
+   * Ir a la última vela - resetea el paneo manual y reactiva auto-scroll
+   */
+  const goToLastCandle = () => {
+    setManualPan(false); // Reactivar auto-scroll
+    setScaleX(1); // Resetear zoom horizontal
+    setScaleY(1); // Resetear zoom vertical
+    setOffsetY(0); // Resetear offset vertical
+    console.log('[BacktestingChart] Navegando a última vela');
+  };
+
+  /**
    * Actualizar órdenes cuando cambia el orderManager
    */
   useEffect(() => {
@@ -136,12 +147,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
 
       if (candles.length > maxVisibleCandles) {
-        // Desplazar para que las últimas velas estén visibles, dejando espacio a la derecha
-        const newOffsetX = Math.min(0, -(candles.length - maxVisibleCandles + 10) * totalCandleWidth);
+        // Desplazar para que las últimas velas estén más centradas, dejando ~30% de espacio a la derecha
+        const rightPadding = Math.floor(maxVisibleCandles * 0.3); // 30% del espacio visible
+        const newOffsetX = Math.min(0, -(candles.length - maxVisibleCandles + rightPadding) * totalCandleWidth);
         setOffsetX(newOffsetX);
       } else {
-        // Si hay pocas velas, centrarlas o dejarlas a la izquierda
-        setOffsetX(0);
+        // Si hay pocas velas, centrarlas
+        const centerOffset = (chartDimensions.width - (candles.length * totalCandleWidth)) / 2;
+        setOffsetX(Math.max(0, centerOffset));
       }
     }
   }, [currentTime, marketData, timeframe, chartDimensions.width]);
@@ -178,10 +191,16 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Calcular escala de precios con padding (5% arriba y abajo)
-    // Solo usar las últimas N velas que caben en pantalla para mejor visualización
+    // Usar TODAS las velas visibles en pantalla para escala dinámica
     const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
-    const maxVisibleCandlesCalc = Math.floor((chartWidth - 100) / totalCandleWidthCalc);
-    const candlesForScale = visibleCandles.main.slice(-Math.min(maxVisibleCandlesCalc * 2, visibleCandles.main.length));
+
+    // Determinar qué velas están realmente visibles en pantalla basándonos en offsetX
+    const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
+    const maxVisibleCandlesCalc = Math.floor(chartWidth / totalCandleWidthCalc);
+    const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandlesCalc + 5);
+
+    // Usar solo las velas que están en pantalla
+    const candlesForScale = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
 
     const allPrices = [];
     candlesForScale.forEach(c => {
@@ -192,6 +211,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     if (visibleCandles.currentSubdivisions && visibleCandles.currentSubdivisions.length > 0) {
       visibleCandles.currentSubdivisions.forEach(sub => {
         allPrices.push(sub.high, sub.low);
+      });
+    }
+
+    // Si no hay precios para calcular, usar todas las velas como fallback
+    if (allPrices.length === 0) {
+      visibleCandles.main.forEach(c => {
+        allPrices.push(c.high, c.low);
       });
     }
 
@@ -447,12 +473,12 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
     }
 
     // Dibujar rótulos de tiempo en el eje horizontal
-    ctx.fillStyle = '#666';
-    ctx.font = '10px monospace';
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 11px monospace';
     ctx.textAlign = 'center';
 
     // Calcular cuántas etiquetas mostrar basado en el ancho disponible
-    const timeLabelsCount = Math.min(8, Math.floor(chartWidth / 120)); // Una etiqueta cada ~120px
+    const timeLabelsCount = Math.min(10, Math.floor(chartWidth / 100)); // Una etiqueta cada ~100px
     const candleStep = Math.max(1, Math.floor(visibleCandles.main.length / timeLabelsCount));
 
     for (let i = 0; i < visibleCandles.main.length; i += candleStep) {
@@ -462,27 +488,36 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       // Solo dibujar si está visible en pantalla
       if (x >= margin.left && x <= width - margin.right) {
         const date = new Date(candle.timestamp);
-        const timeStr = date.toLocaleString('es-CO', {
-          timeZone: 'America/Bogota',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+
+        // Formato más compacto: DD/MM HH:mm
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const timeStr = `${day}/${month} ${hours}:${minutes}`;
 
         // Rotar texto para que quepa mejor
         ctx.save();
-        ctx.translate(x, height - margin.bottom + 15);
+        ctx.translate(x, height - margin.bottom + 18);
         ctx.rotate(-Math.PI / 4); // Rotar 45 grados
+        ctx.fillStyle = '#444';
         ctx.fillText(timeStr, 0, 0);
         ctx.restore();
 
-        // Línea de marca
-        ctx.strokeStyle = '#e0e0e0';
+        // Línea de marca más visible
+        ctx.strokeStyle = '#ccc';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(x, height - margin.bottom);
-        ctx.lineTo(x, height - margin.bottom + 5);
+        ctx.lineTo(x, height - margin.bottom + 8);
+        ctx.stroke();
+
+        // Línea vertical de guía (opcional, más sutil)
+        ctx.strokeStyle = '#f5f5f5';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, margin.top);
+        ctx.lineTo(x, height - margin.bottom);
         ctx.stroke();
       }
     }
@@ -660,16 +695,16 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal
-        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        // Ctrl + wheel: zoom horizontal (más suave)
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso (más suave)
         setScaleX(prev => {
           const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor));
           setManualPan(true); // El zoom también desactiva auto-scroll
           return newScale;
         });
       } else {
-        // Wheel normal: zoom vertical (precio)
-        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        // Wheel normal: zoom vertical (precio) - también más suave
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
         setScaleY(prev => Math.max(0.1, Math.min(10, prev * zoomFactor)));
       }
     };
@@ -730,6 +765,33 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, timeCont
 
   return (
     <div className="backtesting-chart-container">
+      {/* Botón para ir a última vela */}
+      <div className="chart-controls" style={{
+        position: 'absolute',
+        top: '10px',
+        right: '100px',
+        zIndex: 10
+      }}>
+        <button
+          onClick={goToLastCandle}
+          className="btn-go-to-last"
+          title="Ir a la última vela y resetear zoom"
+          style={{
+            padding: '8px 12px',
+            backgroundColor: '#2196F3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          ⏭️ Última Vela
+        </button>
+      </div>
+
       {/* DRAWING TOOLBAR TEMPORALMENTE DESHABILITADO
       <div className="drawing-toolbar">
         <button
