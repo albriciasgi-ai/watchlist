@@ -152,6 +152,69 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     return map[interval] || "15";
   };
 
+  // ==================== VOLUME ALERTS ====================
+
+  /**
+   * 🔔 Verificar y generar alertas para volumen tradicional significativo
+   */
+  const checkVolumeAlerts = (candles) => {
+    if (!candles || candles.length < 10 || !window.addWatchlistAlert) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Obtener las últimas N velas para calcular promedio
+    const lookbackPeriod = Math.min(20, candles.length - 1);
+    const recentData = candles.slice(-lookbackPeriod - 1, -1); // Excluir la última
+    const currentCandle = candles[candles.length - 1];
+
+    // Ignorar si es vela en progreso
+    if (currentCandle.in_progress) return;
+
+    // Calcular promedio de volumen
+    const avgVolume = recentData.reduce((sum, c) => sum + c.volume, 0) / recentData.length;
+
+    if (avgVolume === 0) return;
+
+    // Calcular multiplicador del volumen actual vs promedio
+    const currentVolume = currentCandle.volume;
+    const volumeMultiplier = currentVolume / avgVolume;
+
+    // Verificar cooldown
+    const alertKey = `vol_alert_${symbol}_${Math.floor(now / cooldownPeriod)}`;
+    const lastAlertTime = localStorage.getItem(alertKey);
+
+    if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+      return; // Skip if in cooldown
+    }
+
+    // Determinar dirección
+    const direction = currentCandle.close >= currentCandle.open ? 'alcista' : 'bajista';
+    const icon = currentCandle.close >= currentCandle.open ? '🟢' : '🔴';
+
+    // Generar alerta
+    window.addWatchlistAlert({
+      indicatorType: 'Volume',
+      severity: 'MEDIUM', // Will be recalculated by addAlert based on profile
+      icon: icon,
+      title: `${symbol} Volumen ${direction} elevado`,
+      symbol: symbol,
+      interval: interval,
+      type: 'Volume Spike',
+      description: `Volumen ${direction}: ${currentVolume.toFixed(0)}\\nPromedio: ${avgVolume.toFixed(0)}\\nMultiplicador: ${volumeMultiplier.toFixed(2)}x`,
+      data: {
+        price: currentCandle.close,
+        volume: currentVolume,
+        avgVolume: avgVolume,
+        multiplier: volumeMultiplier,
+        direction: direction
+      }
+    });
+
+    // Guardar timestamp de la alerta
+    localStorage.setItem(alertKey, now.toString());
+  };
+
   // ==================== DRAW CHART ====================
   
   const drawChart = (candles, livePrice = null, mouseX = null, mouseY = null) => {
@@ -342,6 +405,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     ctx.fillStyle = textColor;
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
+
+    // 🔔 NUEVO: Verificar alertas de volumen tradicional
+    checkVolumeAlerts(visibleCandles);
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
     const timeY = volumeStartY + volumeHeight + 15;

@@ -299,6 +299,53 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
             )}
           </section>
 
+          {/* Volume Settings */}
+          <section className="editor-section">
+            <div className="section-header">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={localProfile.indicators['Volume'].enabled}
+                  onChange={() => handleIndicatorToggle('Volume')}
+                />
+                <span className="indicator-title">📊 Volumen</span>
+              </label>
+            </div>
+
+            {localProfile.indicators['Volume'].enabled && (
+              <div className="indicator-filters">
+                <div className="filter-row">
+                  <label>
+                    Multiplicador Mínimo
+                    <input
+                      type="number"
+                      min="1.5"
+                      max="10.0"
+                      step="0.5"
+                      value={localProfile.indicators['Volume'].minMultiplier}
+                      onChange={(e) => handleIndicatorConfigChange('Volume', 'minMultiplier', parseFloat(e.target.value))}
+                    />
+                  </label>
+                  <span className="filter-hint">Alertar cuando volumen es X veces el promedio</span>
+                </div>
+
+                <div className="filter-row">
+                  <label>
+                    Período de Comparación
+                    <input
+                      type="number"
+                      min="10"
+                      max="50"
+                      value={localProfile.indicators['Volume'].lookbackPeriod}
+                      onChange={(e) => handleIndicatorConfigChange('Volume', 'lookbackPeriod', parseInt(e.target.value))}
+                    />
+                  </label>
+                  <span className="filter-hint">Velas para calcular promedio de volumen</span>
+                </div>
+              </div>
+            )}
+          </section>
+
           {/* Volume Delta Settings */}
           <section className="editor-section">
             <div className="section-header">

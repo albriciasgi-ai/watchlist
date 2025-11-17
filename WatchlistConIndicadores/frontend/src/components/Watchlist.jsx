@@ -131,6 +131,11 @@ const Watchlist = () => {
             minChangePercent: 20,
             lookbackCandles: 3
           },
+          'Volume': {
+            enabled: false,
+            minMultiplier: 2.0,
+            lookbackPeriod: 20
+          },
           'Volume Delta': {
             enabled: false,
             minMultiplier: 2.0,
@@ -575,6 +580,19 @@ const Watchlist = () => {
       const absChange = Math.abs(alert.data.changePercent);
       if (absChange >= 30) calculatedSeverity = 'HIGH';
       else if (absChange >= 20) calculatedSeverity = 'MEDIUM';
+      else calculatedSeverity = 'LOW';
+    }
+
+    if (alert.indicatorType === 'Volume' && alert.data) {
+      // Validar contra filtros de Volume
+      if (alert.data.multiplier < indicatorSettings.minMultiplier) {
+        console.log(`[Watchlist] Volume multiplier ${alert.data.multiplier} below minimum ${indicatorSettings.minMultiplier}`);
+        passesFilters = false;
+      }
+
+      // Calcular severidad basada en multiplier
+      if (alert.data.multiplier >= 4.0) calculatedSeverity = 'HIGH';
+      else if (alert.data.multiplier >= 2.5) calculatedSeverity = 'MEDIUM';
       else calculatedSeverity = 'LOW';
     }
 

@@ -163,6 +163,11 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
             minChangePercent: 15,
             lookbackCandles: 5
           },
+          'Volume': {
+            enabled: true,
+            minMultiplier: 2.0,
+            lookbackPeriod: 20
+          },
           'Volume Delta': {
             enabled: true,
             minMultiplier: 2.5,
@@ -206,6 +211,11 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
             enabled: true,
             minChangePercent: 20,
             lookbackCandles: 5
+          },
+          'Volume': {
+            enabled: true,
+            minMultiplier: 2.5,
+            lookbackPeriod: 20
           },
           'Volume Delta': {
             enabled: true,
@@ -438,6 +448,11 @@ function getDefaultConfig() {
           enabled: false,
           minChangePercent: 20,
           lookbackCandles: 3
+        },
+        'Volume': {
+          enabled: false,
+          minMultiplier: 2.0,
+          lookbackPeriod: 20
         },
         'Volume Delta': {
           enabled: false,
