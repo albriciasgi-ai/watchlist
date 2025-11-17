@@ -1,0 +1,27 @@
+{
+  "symbol": "TONUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [],
+    "consolidationZones": [],
+    "currentPrice": 1.7523,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.16329787378282318
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414976.2423913
+}

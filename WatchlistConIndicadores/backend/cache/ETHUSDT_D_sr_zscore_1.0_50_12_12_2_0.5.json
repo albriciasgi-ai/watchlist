@@ -1,0 +1,27 @@
+{
+  "symbol": "ETHUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [],
+    "consolidationZones": [],
+    "currentPrice": 2995.25,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.3613371945545629
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414966.2670758
+}

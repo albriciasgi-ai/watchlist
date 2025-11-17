@@ -1,0 +1,27 @@
+{
+  "symbol": "PENDLEUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [],
+    "consolidationZones": [],
+    "currentPrice": 2.2594,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.9618374343927915
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414975.2219765
+}

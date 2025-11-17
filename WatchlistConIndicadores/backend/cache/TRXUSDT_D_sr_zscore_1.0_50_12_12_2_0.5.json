@@ -1,0 +1,39 @@
+{
+  "symbol": "TRXUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.29688000000000003,
+        "type": "support",
+        "strength": 0.03,
+        "touches": 2,
+        "avgVolume": 2.911006364626528,
+        "firstTouch": 1757116800000,
+        "lastTouch": 1760054400000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.29057,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": 0.10384058172164869
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414966.274664
+}

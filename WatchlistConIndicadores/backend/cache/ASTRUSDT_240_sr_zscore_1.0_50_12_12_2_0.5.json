@@ -1,0 +1,39 @@
+{
+  "symbol": "ASTRUSDT",
+  "interval": "240",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 0.023469999999999998,
+        "type": "support",
+        "strength": 0.04,
+        "touches": 2,
+        "avgVolume": 1.6109141561354428,
+        "firstTouch": 1756152000000,
+        "lastTouch": 1757592000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.01301,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.6028865905768142
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414767.8515134
+}

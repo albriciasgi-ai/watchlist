@@ -1,0 +1,27 @@
+{
+  "symbol": "BNBUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [],
+    "consolidationZones": [],
+    "currentPrice": 899.8,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.6198979664858775
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414980.6773422
+}

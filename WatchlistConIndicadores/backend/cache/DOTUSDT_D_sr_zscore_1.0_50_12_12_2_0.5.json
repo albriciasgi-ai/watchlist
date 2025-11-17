@@ -1,0 +1,27 @@
+{
+  "symbol": "DOTUSDT",
+  "interval": "D",
+  "data": {
+    "resistances": [],
+    "supports": [],
+    "consolidationZones": [],
+    "currentPrice": 2.6379,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.303420218304038
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414978.2984216
+}

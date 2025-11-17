@@ -1,0 +1,51 @@
+{
+  "symbol": "DOTUSDT",
+  "interval": "240",
+  "data": {
+    "resistances": [
+      {
+        "price": 4.2867,
+        "type": "resistance",
+        "strength": 0.03,
+        "touches": 2,
+        "avgVolume": 3.113337438827374,
+        "firstTouch": 1756051200000,
+        "lastTouch": 1760097600000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 3.6835,
+        "type": "support",
+        "strength": 0.29,
+        "touches": 2,
+        "avgVolume": 2.4411563380710195,
+        "firstTouch": 1755864000000,
+        "lastTouch": 1756152000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 2.6456,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.6582441071813102
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414763.5589232
+}

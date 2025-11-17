@@ -1,0 +1,39 @@
+{
+  "symbol": "BTCUSDT",
+  "interval": "240",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 99044.95000000001,
+        "type": "support",
+        "strength": 1.39,
+        "touches": 2,
+        "avgVolume": 1.4128163488412762,
+        "firstTouch": 1762286400000,
+        "lastTouch": 1762516800000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 91773.2,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.328235275913781
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763414751.2083664
+}

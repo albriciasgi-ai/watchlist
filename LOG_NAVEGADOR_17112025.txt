@@ -1,0 +1,1001 @@
+ [POLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [157] 📊 POLUSDT | ✅ Indicadores inicializados 
+ [959] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [959] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [959] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [959] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [992] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [993] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [993] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [993] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [POLYXUSDT] ✅ Open Interest loaded: 1600 points
+ [POLYXUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [POLYXUSDT] 📊 First OI: 14170406, Last OI: 6913162
+ [POLYXUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [POLYXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLYXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [011] 📊 POLYXUSDT | ✅ Indicadores inicializados 
+ [CAKEUSDT] ✅ Open Interest loaded: 1600 points
+ [CAKEUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [CAKEUSDT] 📊 First OI: 2866188.2, Last OI: 3567756
+ [CAKEUSDT] ✅ S/R loaded: 2 resistances, 5 supports, 0 zones
+ [CAKEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [CAKEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [385] 📊 CAKEUSDT | ✅ Indicadores inicializados 
+ [385] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [385] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [385] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [386] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [757] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [757] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [757] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [757] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [PENDLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PENDLEUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [PENDLEUSDT] 📊 First OI: 5823898, Last OI: 5097355
+ [PENDLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PENDLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PENDLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [084] 📊 PENDLEUSDT | ✅ Indicadores inicializados 
+ [TONUSDT] ✅ Open Interest loaded: 1600 points
+ [TONUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [TONUSDT] 📊 First OI: 18969925.8, Last OI: 16651924.8
+ [496] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [496] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [496] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [497] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [497] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [497] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [497] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [497] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TONUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [TONUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TONUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [515] 📊 TONUSDT | ✅ Indicadores inicializados 
+ [UNIUSDT] ✅ Open Interest loaded: 1600 points
+ [UNIUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [UNIUSDT] 📊 First OI: 7657505.4, Last OI: 4443459.4
+ [UNIUSDT] ✅ S/R loaded: 1 resistances, 1 supports, 0 zones
+ [UNIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [UNIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [518] 📊 UNIUSDT | ✅ Indicadores inicializados 
+ [ARBUSDT] ✅ Open Interest loaded: 1600 points
+ [ARBUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [ARBUSDT] 📊 First OI: 117947645, Last OI: 93789497.4
+ [ARBUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [ARBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ARBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [862] 📊 ARBUSDT | ✅ Indicadores inicializados 
+ [561] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [561] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [561] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [562] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [DOTUSDT] ✅ Open Interest loaded: 1600 points
+ [DOTUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [DOTUSDT] 📊 First OI: 12219089.8, Last OI: 12616876.7
+ [DOTUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [DOTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [DOTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [580] 📊 DOTUSDT | ✅ Indicadores inicializados 
+ [966] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [966] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [966] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [966] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [AVAXUSDT] ✅ Open Interest loaded: 1600 points
+ [AVAXUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [AVAXUSDT] 📊 First OI: 3555325, Last OI: 3043483.4
+ [AVAXUSDT] ✅ S/R loaded: 1 resistances, 1 supports, 0 zones
+ [AVAXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AVAXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [983] 📊 AVAXUSDT | ✅ Indicadores inicializados 
+ [375] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [375] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [375] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [375] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [375] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [375] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [375] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [375] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BNBUSDT] ✅ Open Interest loaded: 1600 points
+ [BNBUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [BNBUSDT] 📊 First OI: 134666.4, Last OI: 115335.93
+ [BNBUSDT] ✅ S/R loaded: 3 resistances, 5 supports, 1 zones
+ [BNBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BNBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [394] 📊 BNBUSDT | ✅ Indicadores inicializados 
+ [PEOPLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PEOPLEUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [PEOPLEUSDT] 📊 First OI: 197080066, Last OI: 279765676
+ [784] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [784] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [784] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [784] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [PEOPLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PEOPLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PEOPLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [785] 📊 PEOPLEUSDT | ✅ Indicadores inicializados 
+ [HBARUSDT] ✅ Open Interest loaded: 1600 points
+ [HBARUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [HBARUSDT] 📊 First OI: 144850956, Last OI: 154299556
+ [HBARUSDT] ✅ S/R loaded: 0 resistances, 2 supports, 0 zones
+ [HBARUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [HBARUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [142] 📊 HBARUSDT | ✅ Indicadores inicializados 
+ [519] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [519] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [519] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [519] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ASTRUSDT] ✅ S/R loaded: 0 resistances, 3 supports, 0 zones
+ [ASTRUSDT] ✅ Open Interest loaded: 1600 points
+ [ASTRUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [ASTRUSDT] 📊 First OI: 73763656, Last OI: 66396966
+ [ASTRUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ASTRUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [537] 📊 ASTRUSDT | ✅ Indicadores inicializados 
+ [948] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [948] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [949] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [949] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [949] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [949] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [949] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [949] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [MASKUSDT] ✅ Open Interest loaded: 1600 points
+ [MASKUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [MASKUSDT] 📊 First OI: 2441958.6, Last OI: 2210181
+ [TRBUSDT] ✅ Open Interest loaded: 1600 points
+ [TRBUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [TRBUSDT] 📊 First OI: 389667.65, Last OI: 363354.36
+ [MASKUSDT] ✅ S/R loaded: 3 resistances, 4 supports, 0 zones
+ [MASKUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MASKUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [366] 📊 MASKUSDT | ✅ Indicadores inicializados 
+ [366] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [366] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [367] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [367] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TRBUSDT] ✅ S/R loaded: 1 resistances, 4 supports, 0 zones
+ [TRBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [368] 📊 TRBUSDT | ✅ Indicadores inicializados 
+ [IndexedDB] Datos cargados para BTCUSDT
+ [BacktestingApp] Usando datos de IndexedDB
+ [TimeController] Inicializado: 2022-11-18T13:45:00.000Z → 2024-04-22T09:30:00.000Z
+ [OrderManager] Inicializado con balance: 10000
+ [BacktestingApp] OrderManager creado
+ [TimeController] ⏭️ Jump to 2024-04-22T09:30:00.000Z
+ [BacktestingApp] ✅ Inicializado
+ [BacktestingChart] Drawing tools disabled - Fabric.js compatibility issue
+ [BacktestingChart] Drawing tools disabled - Fabric.js compatibility issue
+ [INJUSDT] ✅ Open Interest loaded: 1600 points
+ [INJUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [INJUSDT] 📊 First OI: 1711614, Last OI: 1886713.2
+ [INJUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [INJUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [INJUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [794] 📊 INJUSDT | ✅ Indicadores inicializados 
+ [146] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [146] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [147] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [147] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ATOMUSDT] ✅ Open Interest loaded: 1600 points
+ [ATOMUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [ATOMUSDT] 📊 First OI: 9710904.3, Last OI: 10754430.19999999
+ [TimeController] Rol de master reclamado
+ [757] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [757] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [757] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [757] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ATOMUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [ATOMUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ATOMUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [759] 📊 ATOMUSDT | ✅ Indicadores inicializados 
+ [GRTUSDT] ✅ Open Interest loaded: 1600 points
+ [GRTUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [GRTUSDT] 📊 First OI: 52120263, Last OI: 50237735.8
+ [GRTUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [GRTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GRTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [786] 📊 GRTUSDT | ✅ Indicadores inicializados 
+ [213] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [214] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [214] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [214] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [215] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [215] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [215] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [215] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [216] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [216] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [216] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [216] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ALGOUSDT] ✅ Open Interest loaded: 1600 points
+ [ALGOUSDT] 📊 OI Data Range: 2025-11-15T20:30:00.000Z → 2025-11-03T08:15:00.000Z
+ [ALGOUSDT] 📊 First OI: 64014601.6, Last OI: 69616118
+ [ALGOUSDT] ✅ S/R loaded: 2 resistances, 2 supports, 0 zones
+ [ALGOUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ALGOUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [229] 📊 ALGOUSDT | ✅ Indicadores inicializados 
+ [545] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [545] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [545] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [545] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [579] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [579] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [579] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [579] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [673] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [674] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [674] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [674] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [032] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [032] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [033] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [033] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [422] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [422] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [422] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [423] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [423] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [423] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [423] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [423] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BacktestingApp] handlePlay clicked Object
+ [TimeController] Al final, reseteando al inicio
+ [TimeController] ▶️ Play @ 1x - interval: 300000ms - subdivisiones: 3 - currentTime: 2022-11-18T13:45:00.000Z
+ [138] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [139] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [139] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [139] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [139] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [139] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [139] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [139] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [577] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [577] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [577] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [577] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [610] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [610] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [610] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [611] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [960] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [960] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [960] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [960] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [702] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [702] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [702] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [703] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [703] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [703] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [703] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [703] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [703] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [703] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [704] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [704] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [497] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [497] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [497] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [498] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [564] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [564] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [564] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [564] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [565] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [565] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [565] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [565] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] ⏸️ Pause
+ [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2022-11-18T13:45:00.000Z
+ [TimeController] ⚡ Speed: 10000x
+ [TimeController] Tick - currentTime: 2022-11-18T13:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T13:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [575] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [576] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [576] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [576] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T15:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [936] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [937] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [937] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [937] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T16:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T16:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [325] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [325] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [326] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [326] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T17:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T17:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T18:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [112] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [112] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [113] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [113] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T19:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T19:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [503] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [503] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [503] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [503] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [503] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [503] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [503] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [503] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T20:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T20:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T21:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [185] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [185] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [185] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [185] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T22:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T22:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [538] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [538] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [538] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [538] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-18T23:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T23:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T00:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [215] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [216] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [216] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [216] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T01:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T01:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T02:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [015] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [015] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [015] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [015] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T03:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T03:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [082] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [082] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [082] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [082] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [082] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [083] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [083] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [083] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T04:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [116] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [116] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [116] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [116] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T04:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T04:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [469] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [470] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [470] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [470] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T05:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [585] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [585] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [586] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [586] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TimeController] Tick - currentTime: 2022-11-19T05:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T05:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T06:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T07:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T08:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T09:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T10:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T11:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T12:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T13:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T14:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T15:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T16:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T17:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T18:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T19:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T20:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T21:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T22:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-19T23:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T00:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T01:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T02:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T03:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T04:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T05:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T06:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T07:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T08:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T09:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T10:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-20T11:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [BacktestingApp] handleStop clicked
+ [TimeController] ⏸️ Pause
+ [TimeController] ⏹️ Stop
+ [BacktestingApp] handlePlay clicked Object
+ [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2022-11-18T13:45:00.000Z
+ [TimeController] Tick - currentTime: 2022-11-18T13:50:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T13:55:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:00:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:05:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:10:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:15:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:20:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:25:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:30:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:35:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:40:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:45:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:50:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T14:55:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:00:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:05:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:10:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:15:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:20:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:25:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:30:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:35:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:40:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:45:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2022-11-18T15:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T15:55:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:00:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:05:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:10:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:15:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:20:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:25:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:30:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:35:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:40:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:45:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T16:55:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:00:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:05:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:10:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:15:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:20:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:25:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:30:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:35:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:40:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:45:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T17:55:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:00:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:05:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:10:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:15:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:20:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:25:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:30:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:35:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:40:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:45:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T18:55:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:00:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:05:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:10:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:15:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:20:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:25:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:30:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:35:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:40:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:45:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T19:55:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:00:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:05:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:10:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:15:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:20:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:25:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:30:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:35:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:40:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:45:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:50:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:184 [TimeController] Tick - currentTime: 2022-11-18T20:55:00.000Z, increment: 300000ms, subdivision: 0/3
+BacktestingApp.jsx:265 [BacktestingApp] handleStop clicked
+TimeController.js:220 [TimeController] ⏸️ Pause
+TimeController.js:235 [TimeController] ⏹️ Stop
+TradingControls.jsx:32 [TradingControls] currentPrice es null
+handleCreateOrder @ TradingControls.jsx:32
