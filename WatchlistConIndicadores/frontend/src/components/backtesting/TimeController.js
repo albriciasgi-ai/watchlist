@@ -143,14 +143,10 @@ class TimeController {
       return;
     }
 
-    // Si estamos al final, resetear al inicio automáticamente
+    // Si estamos al final, NO hacer nada (no resetear al inicio automáticamente)
     if (this.currentTime >= this.endTime) {
-      console.log('[TimeController] Al final, reseteando al inicio');
-      this.currentTime = this.startTime;
-      this.currentSubdivision = 0;
-      if (this.onTimeUpdate) {
-        this.onTimeUpdate(this.currentTime);
-      }
+      console.log('[TimeController] Ya estamos al final del historial. No se puede reproducir más.');
+      return; // No permitir reproducir si ya estamos al final
     }
 
     this.isPlaying = true;

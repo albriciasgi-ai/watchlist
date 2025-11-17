@@ -201,9 +201,28 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] Saltando a fecha de inicio:', new Date(startTimestamp));
         controller.jumpTo(startTimestamp);
         setCurrentTime(startTimestamp);
+
+        // IMPORTANTE: Actualizar el precio ANTES de marcar como initialized
+        // para que los botones de comprar/vender funcionen correctamente
+        const visibleCandles = timeframeData.main.filter(c => c.timestamp <= startTimestamp);
+        if (visibleCandles.length > 0) {
+          const lastCandle = visibleCandles[visibleCandles.length - 1];
+          setCurrentPrice(lastCandle.close);
+          console.log('[BacktestingApp] Precio inicial establecido:', lastCandle.close);
+        }
+
         handleTimeUpdate(startTimestamp);
       } else {
         setCurrentTime(controller.currentTime);
+
+        // IMPORTANTE: Establecer precio inicial para currentTime
+        const visibleCandles = timeframeData.main.filter(c => c.timestamp <= controller.currentTime);
+        if (visibleCandles.length > 0) {
+          const lastCandle = visibleCandles[visibleCandles.length - 1];
+          setCurrentPrice(lastCandle.close);
+          console.log('[BacktestingApp] Precio inicial establecido:', lastCandle.close);
+        }
+
         handleTimeUpdate(controller.currentTime);
       }
 
