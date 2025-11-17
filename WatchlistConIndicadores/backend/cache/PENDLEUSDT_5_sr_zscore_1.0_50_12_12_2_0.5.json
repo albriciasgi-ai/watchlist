@@ -1,0 +1,61 @@
+{
+  "symbol": "PENDLEUSDT",
+  "interval": "5",
+  "data": {
+    "resistances": [],
+    "supports": [
+      {
+        "price": 2.58555,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 4.831856027395094,
+        "firstTouch": 1762963800000,
+        "lastTouch": 1763003700000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 2.29095,
+        "type": "support",
+        "strength": 8.19,
+        "touches": 2,
+        "avgVolume": 2.0562343697881844,
+        "firstTouch": 1763257200000,
+        "lastTouch": 1763331000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 2.23855,
+        "type": "support",
+        "strength": 6.57,
+        "touches": 2,
+        "avgVolume": 3.458422564669872,
+        "firstTouch": 1763130600000,
+        "lastTouch": 1763310300000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 2.4135,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.2719320862515035
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763343181.219531
+}

@@ -1,0 +1,1010 @@
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [TRXUSDT] ✅ Support/Resistance indicator enabled
+ [TRXUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/TRXUSDT?interval=15&days=15
+ [TRXUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/TRXUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [411] 📡 TRXUSDT | Suscrito a WebSocket @ 15 
+ [412] 🕯️  XRPUSDT | 🚀 Componente montado, iniciando... 
+ [412] 🕯️  XRPUSDT | Solicitando histórico: 15 días @ 15 
+ [XRPUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [XRPUSDT] ✅ Support/Resistance indicator enabled
+ [XRPUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/XRPUSDT?interval=15&days=15
+ [XRPUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/XRPUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [415] 📡 XRPUSDT | Suscrito a WebSocket @ 15 
+ [416] 🕯️  SOLUSDT | 🚀 Componente montado, iniciando... 
+ [417] 🕯️  SOLUSDT | Solicitando histórico: 15 días @ 15 
+ [SOLUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [SOLUSDT] ✅ Support/Resistance indicator enabled
+ [SOLUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/SOLUSDT?interval=15&days=15
+ [SOLUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/SOLUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [420] 📡 SOLUSDT | Suscrito a WebSocket @ 15 
+ [421] 🕯️  AAVEUSDT | 🚀 Componente montado, iniciando... 
+ [421] 🕯️  AAVEUSDT | Solicitando histórico: 15 días @ 15 
+ [AAVEUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [AAVEUSDT] ✅ Support/Resistance indicator enabled
+ [AAVEUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/AAVEUSDT?interval=15&days=15
+ [AAVEUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/AAVEUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [423] 📡 AAVEUSDT | Suscrito a WebSocket @ 15 
+ [424] 🕯️  GALAUSDT | 🚀 Componente montado, iniciando... 
+ [424] 🕯️  GALAUSDT | Solicitando histórico: 15 días @ 15 
+ [GALAUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [GALAUSDT] ✅ Support/Resistance indicator enabled
+ [GALAUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/GALAUSDT?interval=15&days=15
+ [GALAUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/GALAUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [427] 📡 GALAUSDT | Suscrito a WebSocket @ 15 
+ [428] 🕯️  OPUSDT | 🚀 Componente montado, iniciando... 
+ [429] 🕯️  OPUSDT | Solicitando histórico: 15 días @ 15 
+ [OPUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OPUSDT] ✅ Support/Resistance indicator enabled
+ [OPUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/OPUSDT?interval=15&days=15
+ [OPUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/OPUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [432] 📡 OPUSDT | Suscrito a WebSocket @ 15 
+ [433] 🕯️  ADAUSDT | 🚀 Componente montado, iniciando... 
+ [433] 🕯️  ADAUSDT | Solicitando histórico: 15 días @ 15 
+ [ADAUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ADAUSDT] ✅ Support/Resistance indicator enabled
+ [ADAUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ADAUSDT?interval=15&days=15
+ [ADAUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ADAUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [435] 📡 ADAUSDT | Suscrito a WebSocket @ 15 
+ [436] 🕯️  SUIUSDT | 🚀 Componente montado, iniciando... 
+ [436] 🕯️  SUIUSDT | Solicitando histórico: 15 días @ 15 
+ [SUIUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [SUIUSDT] ✅ Support/Resistance indicator enabled
+ [SUIUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/SUIUSDT?interval=15&days=15
+ [SUIUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/SUIUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [439] 📡 SUIUSDT | Suscrito a WebSocket @ 15 
+ [439] 🕯️  POLUSDT | 🚀 Componente montado, iniciando... 
+ [440] 🕯️  POLUSDT | Solicitando histórico: 15 días @ 15 
+ [POLUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [POLUSDT] ✅ Support/Resistance indicator enabled
+ [POLUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/POLUSDT?interval=15&days=15
+ [POLUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/POLUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [442] 📡 POLUSDT | Suscrito a WebSocket @ 15 
+ [442] 🕯️  POLYXUSDT | 🚀 Componente montado, iniciando... 
+ [443] 🕯️  POLYXUSDT | Solicitando histórico: 15 días @ 15 
+ [POLYXUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [POLYXUSDT] ✅ Support/Resistance indicator enabled
+ [POLYXUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/POLYXUSDT?interval=15&days=15
+ [POLYXUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/POLYXUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [446] 📡 POLYXUSDT | Suscrito a WebSocket @ 15 
+ [447] 🕯️  CAKEUSDT | 🚀 Componente montado, iniciando... 
+ [447] 🕯️  CAKEUSDT | Solicitando histórico: 15 días @ 15 
+ [CAKEUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [CAKEUSDT] ✅ Support/Resistance indicator enabled
+ [CAKEUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/CAKEUSDT?interval=15&days=15
+ [CAKEUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/CAKEUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [449] 📡 CAKEUSDT | Suscrito a WebSocket @ 15 
+ [450] 🕯️  PENDLEUSDT | 🚀 Componente montado, iniciando... 
+ [450] 🕯️  PENDLEUSDT | Solicitando histórico: 15 días @ 15 
+ [PENDLEUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [PENDLEUSDT] ✅ Support/Resistance indicator enabled
+ [PENDLEUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/PENDLEUSDT?interval=15&days=15
+ [PENDLEUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/PENDLEUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [453] 📡 PENDLEUSDT | Suscrito a WebSocket @ 15 
+ [454] 🕯️  TONUSDT | 🚀 Componente montado, iniciando... 
+ [454] 🕯️  TONUSDT | Solicitando histórico: 15 días @ 15 
+ [TONUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [TONUSDT] ✅ Support/Resistance indicator enabled
+ [TONUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/TONUSDT?interval=15&days=15
+ [TONUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/TONUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [457] 📡 TONUSDT | Suscrito a WebSocket @ 15 
+ [457] 🕯️  UNIUSDT | 🚀 Componente montado, iniciando... 
+ [458] 🕯️  UNIUSDT | Solicitando histórico: 15 días @ 15 
+ [UNIUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [UNIUSDT] ✅ Support/Resistance indicator enabled
+ [UNIUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/UNIUSDT?interval=15&days=15
+ [UNIUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/UNIUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [460] 📡 UNIUSDT | Suscrito a WebSocket @ 15 
+ [461] 🕯️  ARBUSDT | 🚀 Componente montado, iniciando... 
+ [461] 🕯️  ARBUSDT | Solicitando histórico: 15 días @ 15 
+ [ARBUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ARBUSDT] ✅ Support/Resistance indicator enabled
+ [ARBUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ARBUSDT?interval=15&days=15
+ [ARBUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ARBUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [464] 📡 ARBUSDT | Suscrito a WebSocket @ 15 
+ [465] 🕯️  DOTUSDT | 🚀 Componente montado, iniciando... 
+ [465] 🕯️  DOTUSDT | Solicitando histórico: 15 días @ 15 
+ [DOTUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [DOTUSDT] ✅ Support/Resistance indicator enabled
+ [DOTUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/DOTUSDT?interval=15&days=15
+ [DOTUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/DOTUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [467] 📡 DOTUSDT | Suscrito a WebSocket @ 15 
+ [468] 🕯️  AVAXUSDT | 🚀 Componente montado, iniciando... 
+ [468] 🕯️  AVAXUSDT | Solicitando histórico: 15 días @ 15 
+ [AVAXUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [AVAXUSDT] ✅ Support/Resistance indicator enabled
+ [AVAXUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/AVAXUSDT?interval=15&days=15
+ [AVAXUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/AVAXUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [470] 📡 AVAXUSDT | Suscrito a WebSocket @ 15 
+ [471] 🕯️  BNBUSDT | 🚀 Componente montado, iniciando... 
+ [472] 🕯️  BNBUSDT | Solicitando histórico: 15 días @ 15 
+ [BNBUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [BNBUSDT] ✅ Support/Resistance indicator enabled
+ [BNBUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/BNBUSDT?interval=15&days=15
+ [BNBUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/BNBUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [474] 📡 BNBUSDT | Suscrito a WebSocket @ 15 
+ [475] 🕯️  PEOPLEUSDT | 🚀 Componente montado, iniciando... 
+ [475] 🕯️  PEOPLEUSDT | Solicitando histórico: 15 días @ 15 
+ [PEOPLEUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [PEOPLEUSDT] ✅ Support/Resistance indicator enabled
+ [PEOPLEUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/PEOPLEUSDT?interval=15&days=15
+ [PEOPLEUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/PEOPLEUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [478] 📡 PEOPLEUSDT | Suscrito a WebSocket @ 15 
+ [479] 🕯️  HBARUSDT | 🚀 Componente montado, iniciando... 
+ [479] 🕯️  HBARUSDT | Solicitando histórico: 15 días @ 15 
+ [HBARUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [HBARUSDT] ✅ Support/Resistance indicator enabled
+ [HBARUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/HBARUSDT?interval=15&days=15
+ [HBARUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/HBARUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [481] 📡 HBARUSDT | Suscrito a WebSocket @ 15 
+ [482] 🕯️  ASTRUSDT | 🚀 Componente montado, iniciando... 
+ [482] 🕯️  ASTRUSDT | Solicitando histórico: 15 días @ 15 
+ [ASTRUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ASTRUSDT] ✅ Support/Resistance indicator enabled
+ [ASTRUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ASTRUSDT?interval=15&days=15
+ [ASTRUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ASTRUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [484] 📡 ASTRUSDT | Suscrito a WebSocket @ 15 
+ [484] 🕯️  MASKUSDT | 🚀 Componente montado, iniciando... 
+ [485] 🕯️  MASKUSDT | Solicitando histórico: 15 días @ 15 
+ [MASKUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [MASKUSDT] ✅ Support/Resistance indicator enabled
+ [MASKUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/MASKUSDT?interval=15&days=15
+ [MASKUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/MASKUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [486] 📡 MASKUSDT | Suscrito a WebSocket @ 15 
+ [487] 🕯️  TRBUSDT | 🚀 Componente montado, iniciando... 
+ [487] 🕯️  TRBUSDT | Solicitando histórico: 15 días @ 15 
+ [TRBUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [TRBUSDT] ✅ Support/Resistance indicator enabled
+ [TRBUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/TRBUSDT?interval=15&days=15
+ [TRBUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/TRBUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [489] 📡 TRBUSDT | Suscrito a WebSocket @ 15 
+ [489] 🕯️  INJUSDT | 🚀 Componente montado, iniciando... 
+ [490] 🕯️  INJUSDT | Solicitando histórico: 15 días @ 15 
+ [INJUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [INJUSDT] ✅ Support/Resistance indicator enabled
+ [INJUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/INJUSDT?interval=15&days=15
+ [INJUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/INJUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [492] 📡 INJUSDT | Suscrito a WebSocket @ 15 
+ [492] 🕯️  ATOMUSDT | 🚀 Componente montado, iniciando... 
+ [492] 🕯️  ATOMUSDT | Solicitando histórico: 15 días @ 15 
+ [ATOMUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ATOMUSDT] ✅ Support/Resistance indicator enabled
+ [ATOMUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ATOMUSDT?interval=15&days=15
+ [ATOMUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ATOMUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [494] 📡 ATOMUSDT | Suscrito a WebSocket @ 15 
+ [495] 🕯️  GRTUSDT | 🚀 Componente montado, iniciando... 
+ [496] 🕯️  GRTUSDT | Solicitando histórico: 15 días @ 15 
+ [GRTUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [GRTUSDT] ✅ Support/Resistance indicator enabled
+ [GRTUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/GRTUSDT?interval=15&days=15
+ [GRTUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/GRTUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [498] 📡 GRTUSDT | Suscrito a WebSocket @ 15 
+ [498] 🕯️  ALGOUSDT | 🚀 Componente montado, iniciando... 
+ [499] 🕯️  ALGOUSDT | Solicitando histórico: 15 días @ 15 
+ [ALGOUSDT] 🔧 IndicatorManager: Inicializando con 15 días @ 15
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ALGOUSDT] ✅ Support/Resistance indicator enabled
+ [ALGOUSDT] 📊 Open Interest: Fetching from http://localhost:8000/api/open-interest/ALGOUSDT?interval=15&days=15
+ [ALGOUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ALGOUSDT?interval=15&days=90&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [500] 📡 ALGOUSDT | Suscrito a WebSocket @ 15 
+ [BTCUSDT] ✅ S/R loaded: 1 resistances, 5 supports, 0 zones
+ [ETHUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [BTCUSDT] ✅ Open Interest loaded: 1600 points
+ [BTCUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [BTCUSDT] 📊 First OI: 57826.577, Last OI: 50586.03
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [156] 📊 BTCUSDT | ✅ Indicadores inicializados 
+ [ETHUSDT] ✅ Open Interest loaded: 1600 points
+ [ETHUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ETHUSDT] 📊 First OI: 657286.97, Last OI: 747169.08
+ [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [196] 📊 ETHUSDT | ✅ Indicadores inicializados 
+ [TRXUSDT] ✅ S/R loaded: 2 resistances, 5 supports, 1 zones
+ [TRXUSDT] ✅ Open Interest loaded: 1600 points
+ [TRXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TRXUSDT] 📊 First OI: 144236932, Last OI: 149985514
+ [TRXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [239] 📊 TRXUSDT | ✅ Indicadores inicializados 
+ [XRPUSDT] ✅ Open Interest loaded: 1600 points
+ [XRPUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [XRPUSDT] 📊 First OI: 146082484.2, Last OI: 183912232.8
+ [SOLUSDT] ✅ Open Interest loaded: 1600 points
+ [SOLUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [SOLUSDT] 📊 First OI: 5329761.5, Last OI: 6059981.2
+ [XRPUSDT] ✅ S/R loaded: 2 resistances, 8 supports, 1 zones
+ [XRPUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [XRPUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [312] 📊 XRPUSDT | ✅ Indicadores inicializados 
+ [AAVEUSDT] ✅ Open Interest loaded: 1600 points
+ [AAVEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [AAVEUSDT] 📊 First OI: 253562.69, Last OI: 263921.74
+ [AAVEUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [AAVEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AAVEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [352] 📊 AAVEUSDT | ✅ Indicadores inicializados 
+ [SOLUSDT] ✅ S/R loaded: 2 resistances, 9 supports, 0 zones
+ [SOLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [SOLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [356] 📊 SOLUSDT | ✅ Indicadores inicializados 
+ [GALAUSDT] ✅ S/R loaded: 0 resistances, 5 supports, 0 zones
+ [GALAUSDT] ✅ Open Interest loaded: 1600 points
+ [GALAUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [GALAUSDT] 📊 First OI: 1176127023, Last OI: 971687868
+ [GALAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GALAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [396] 📊 GALAUSDT | ✅ Indicadores inicializados 
+ [OPUSDT] ✅ S/R loaded: 4 resistances, 5 supports, 1 zones
+ [OPUSDT] ✅ Open Interest loaded: 1600 points
+ [OPUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [OPUSDT] 📊 First OI: 44673050.5, Last OI: 46275838.8
+ [OPUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [OPUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [440] 📊 OPUSDT | ✅ Indicadores inicializados 
+ [ADAUSDT] ✅ Open Interest loaded: 1600 points
+ [ADAUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ADAUSDT] 📊 First OI: 168018157, Last OI: 159320580
+ [ADAUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [ADAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ADAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [473] 📊 ADAUSDT | ✅ Indicadores inicializados 
+ [SUIUSDT] ✅ S/R loaded: 2 resistances, 5 supports, 0 zones
+ [POLUSDT] ✅ Open Interest loaded: 1600 points
+ [POLUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [POLUSDT] 📊 First OI: 71304556, Last OI: 72233772
+ [SUIUSDT] ✅ Open Interest loaded: 1600 points
+ [SUIUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [SUIUSDT] 📊 First OI: 48945560, Last OI: 46732640
+ [SUIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [SUIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [544] 📊 SUIUSDT | ✅ Indicadores inicializados 
+ [POLYXUSDT] ✅ S/R loaded: 0 resistances, 2 supports, 0 zones
+ [POLYXUSDT] ✅ Open Interest loaded: 1600 points
+ [POLYXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [POLYXUSDT] 📊 First OI: 15154120, Last OI: 7071346
+ [POLYXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLYXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [580] 📊 POLYXUSDT | ✅ Indicadores inicializados 
+ [POLUSDT] ✅ S/R loaded: 0 resistances, 5 supports, 0 zones
+ [POLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [583] 📊 POLUSDT | ✅ Indicadores inicializados 
+ [CAKEUSDT] ✅ Open Interest loaded: 1600 points
+ [CAKEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [CAKEUSDT] 📊 First OI: 2992361.2, Last OI: 3944914.2
+ [CAKEUSDT] ✅ S/R loaded: 2 resistances, 6 supports, 0 zones
+ [CAKEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [CAKEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [621] 📊 CAKEUSDT | ✅ Indicadores inicializados 
+ [PENDLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PENDLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PENDLEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [PENDLEUSDT] 📊 First OI: 5788736, Last OI: 4841788
+ [PENDLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PENDLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [658] 📊 PENDLEUSDT | ✅ Indicadores inicializados 
+ [TONUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [TONUSDT] ✅ Open Interest loaded: 1600 points
+ [TONUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TONUSDT] 📊 First OI: 18794864.2, Last OI: 18228194.8
+ [TONUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TONUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [693] 📊 TONUSDT | ✅ Indicadores inicializados 
+ [UNIUSDT] ✅ S/R loaded: 0 resistances, 1 supports, 0 zones
+ [ARBUSDT] ✅ Open Interest loaded: 1600 points
+ [ARBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ARBUSDT] 📊 First OI: 121137137.2, Last OI: 91669371.8
+ [UNIUSDT] ✅ Open Interest loaded: 1600 points
+ [UNIUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [UNIUSDT] 📊 First OI: 7862925.7, Last OI: 4372455
+ [UNIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [UNIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [766] 📊 UNIUSDT | ✅ Indicadores inicializados 
+ [DOTUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [ARBUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [ARBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ARBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [788] 📊 ARBUSDT | ✅ Indicadores inicializados 
+ [DOTUSDT] ✅ Open Interest loaded: 1600 points
+ [DOTUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [DOTUSDT] 📊 First OI: 12497800.8, Last OI: 12842813.8
+ [DOTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [DOTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [839] 📊 DOTUSDT | ✅ Indicadores inicializados 
+ [AVAXUSDT] ✅ Open Interest loaded: 1600 points
+ [AVAXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [AVAXUSDT] 📊 First OI: 3549145, Last OI: 2952901.8
+ [AVAXUSDT] ✅ S/R loaded: 1 resistances, 1 supports, 0 zones
+ [AVAXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AVAXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [883] 📊 AVAXUSDT | ✅ Indicadores inicializados 
+ [BNBUSDT] ✅ S/R loaded: 3 resistances, 4 supports, 1 zones
+ [BNBUSDT] ✅ Open Interest loaded: 1600 points
+ [BNBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [BNBUSDT] 📊 First OI: 130948.91, Last OI: 112107.6
+ [BNBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BNBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [938] 📊 BNBUSDT | ✅ Indicadores inicializados 
+ [PEOPLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PEOPLEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [PEOPLEUSDT] 📊 First OI: 200190501, Last OI: 271601928
+ [PEOPLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PEOPLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PEOPLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [984] 📊 PEOPLEUSDT | ✅ Indicadores inicializados 
+ [HBARUSDT] ✅ S/R loaded: 0 resistances, 1 supports, 0 zones
+ [HBARUSDT] ✅ Open Interest loaded: 1600 points
+ [HBARUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [HBARUSDT] 📊 First OI: 136434530, Last OI: 164365608
+ [HBARUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [HBARUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [025] 📊 HBARUSDT | ✅ Indicadores inicializados 
+ [ASTRUSDT] ✅ S/R loaded: 0 resistances, 3 supports, 0 zones
+ [MASKUSDT] ✅ Open Interest loaded: 1600 points
+ [MASKUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [MASKUSDT] 📊 First OI: 2488367, Last OI: 2211901.4
+ [ASTRUSDT] ✅ Open Interest loaded: 1600 points
+ [ASTRUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ASTRUSDT] 📊 First OI: 70677040, Last OI: 58788262
+ [ASTRUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ASTRUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [093] 📊 ASTRUSDT | ✅ Indicadores inicializados 
+ [TRBUSDT] ✅ Open Interest loaded: 1600 points
+ [TRBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TRBUSDT] 📊 First OI: 370170.63, Last OI: 377995.62
+ [MASKUSDT] ✅ S/R loaded: 3 resistances, 3 supports, 0 zones
+ [MASKUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MASKUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [129] 📊 MASKUSDT | ✅ Indicadores inicializados 
+ [TRBUSDT] ✅ S/R loaded: 1 resistances, 4 supports, 0 zones
+ [TRBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [131] 📊 TRBUSDT | ✅ Indicadores inicializados 
+ [INJUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [ATOMUSDT] ✅ Open Interest loaded: 1600 points
+ [ATOMUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ATOMUSDT] 📊 First OI: 9676200.5, Last OI: 10766106
+ [INJUSDT] ✅ Open Interest loaded: 1600 points
+ [INJUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [INJUSDT] 📊 First OI: 1652411.5, Last OI: 1816941
+ [INJUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [INJUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [202] 📊 INJUSDT | ✅ Indicadores inicializados 
+ [GRTUSDT] ✅ Open Interest loaded: 1600 points
+ [GRTUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [GRTUSDT] 📊 First OI: 51802590.6, Last OI: 50572657.3
+ [ATOMUSDT] ✅ S/R loaded: 0 resistances, 2 supports, 0 zones
+ [ATOMUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ATOMUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [234] 📊 ATOMUSDT | ✅ Indicadores inicializados 
+ [GRTUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [GRTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GRTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [238] 📊 GRTUSDT | ✅ Indicadores inicializados 
+ [ALGOUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ WebSocket Manager conectado [15]
+ [ALGOUSDT] ✅ Open Interest loaded: 1600 points
+ [ALGOUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ALGOUSDT] 📊 First OI: 61092145.4, Last OI: 71536796.4
+ [ALGOUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ALGOUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [305] 📊 ALGOUSDT | ✅ Indicadores inicializados 
+ [BTCUSDT] ✅ S/R loaded: 1 resistances, 5 supports, 0 zones
+ [ETHUSDT] ✅ Open Interest loaded: 1600 points
+ [ETHUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ETHUSDT] 📊 First OI: 657286.97, Last OI: 747169.08
+ [ETHUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [340] 📊 ETHUSDT | ✅ Indicadores inicializados 
+ [BTCUSDT] ✅ Open Interest loaded: 1600 points
+ [BTCUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [BTCUSDT] 📊 First OI: 57826.577, Last OI: 50586.03
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [370] 📊 BTCUSDT | ✅ Indicadores inicializados 
+ [758] 🕯️  BTCUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [761] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [763] 🕯️  TRXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [764] 🕯️  XRPUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [765] 🕯️  SOLUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [766] 🕯️  AAVEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [067] 🕯️  GALAUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [068] 🕯️  OPUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [069] 🕯️  ADAUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [069] 🕯️  SUIUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [070] 🕯️  POLUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [071] 🕯️  POLYXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [071] 🕯️  CAKEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [072] 🕯️  PENDLEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [072] 🕯️  TONUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [073] 🕯️  UNIUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [073] 🕯️  ARBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [074] 🕯️  DOTUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [075] 🕯️  AVAXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [076] 🕯️  BNBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [077] 🕯️  PEOPLEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [077] 🕯️  HBARUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [078] 🕯️  ASTRUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [079] 🕯️  MASKUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [080] 🕯️  TRBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [080] 🕯️  INJUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [081] 🕯️  ATOMUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [082] 🕯️  GRTUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [083] 🕯️  ALGOUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [TRXUSDT] ✅ S/R loaded: 2 resistances, 5 supports, 1 zones
+ [TRXUSDT] ✅ Open Interest loaded: 1600 points
+ [TRXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TRXUSDT] 📊 First OI: 144236932, Last OI: 149985514
+ [TRXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [726] 📊 TRXUSDT | ✅ Indicadores inicializados 
+ [XRPUSDT] ✅ Open Interest loaded: 1600 points
+ [XRPUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [XRPUSDT] 📊 First OI: 146082484.2, Last OI: 183912232.8
+ [SOLUSDT] ✅ Open Interest loaded: 1600 points
+ [SOLUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [SOLUSDT] 📊 First OI: 5329761.5, Last OI: 6059981.2
+ [XRPUSDT] ✅ S/R loaded: 2 resistances, 8 supports, 1 zones
+ [XRPUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [XRPUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [554] 📊 XRPUSDT | ✅ Indicadores inicializados 
+ [AAVEUSDT] ✅ Open Interest loaded: 1600 points
+ [AAVEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [AAVEUSDT] 📊 First OI: 253562.69, Last OI: 263921.74
+ [441] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [441] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [442] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [443] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [AAVEUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+ [AAVEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AAVEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [494] 📊 AAVEUSDT | ✅ Indicadores inicializados 
+ [SOLUSDT] ✅ S/R loaded: 2 resistances, 9 supports, 0 zones
+ [SOLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [SOLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [496] 📊 SOLUSDT | ✅ Indicadores inicializados 
+ [GALAUSDT] ✅ S/R loaded: 0 resistances, 5 supports, 0 zones
+ [GALAUSDT] ✅ Open Interest loaded: 1600 points
+ [GALAUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [GALAUSDT] 📊 First OI: 1176127023, Last OI: 971687868
+ [GALAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GALAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [519] 📊 GALAUSDT | ✅ Indicadores inicializados 
+ [887] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [887] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [888] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [888] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [020] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [020] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [020] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [021] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [090] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [091] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [091] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [092] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [OPUSDT] ✅ Open Interest loaded: 1600 points
+ [OPUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [OPUSDT] 📊 First OI: 44673050.5, Last OI: 46275838.8
+ [OPUSDT] ✅ S/R loaded: 4 resistances, 5 supports, 1 zones
+ [OPUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [OPUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [930] 📊 OPUSDT | ✅ Indicadores inicializados 
+ [007] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [008] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [008] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [008] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ADAUSDT] ✅ Open Interest loaded: 1600 points
+ [ADAUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ADAUSDT] 📊 First OI: 168018157, Last OI: 159320580
+ [630] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [631] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [631] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [632] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ADAUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [ADAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ADAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [652] 📊 ADAUSDT | ✅ Indicadores inicializados 
+ [SUIUSDT] ✅ S/R loaded: 2 resistances, 5 supports, 0 zones
+ [POLUSDT] ✅ Open Interest loaded: 1600 points
+ [POLUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [POLUSDT] 📊 First OI: 71304556, Last OI: 72233772
+ [SUIUSDT] ✅ Open Interest loaded: 1600 points
+ [SUIUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [SUIUSDT] 📊 First OI: 48945560, Last OI: 46732640
+ [SUIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [SUIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [467] 📊 SUIUSDT | ✅ Indicadores inicializados 
+ [655] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [656] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [656] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [656] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [POLYXUSDT] ✅ S/R loaded: 0 resistances, 2 supports, 0 zones
+ [POLYXUSDT] ✅ Open Interest loaded: 1600 points
+ [POLYXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [POLYXUSDT] 📊 First OI: 15154120, Last OI: 7071346
+ [POLYXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLYXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [358] 📊 POLYXUSDT | ✅ Indicadores inicializados 
+ [POLUSDT] ✅ S/R loaded: 0 resistances, 5 supports, 0 zones
+ [POLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [361] 📊 POLUSDT | ✅ Indicadores inicializados 
+ [CAKEUSDT] ✅ Open Interest loaded: 1600 points
+ [CAKEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [CAKEUSDT] 📊 First OI: 2992361.2, Last OI: 3944914.2
+ [CAKEUSDT] ✅ S/R loaded: 2 resistances, 6 supports, 0 zones
+ [CAKEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [CAKEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [409] 📊 CAKEUSDT | ✅ Indicadores inicializados 
+ [639] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [639] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [640] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [640] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+AlertProfileEditor.j…t=1763352247637:681 Uncaught 
+AlertProfileEditor.j…t=1763352247637:681 Uncaught 
+ The above error occurred in the <AlertProfileEditor> component:
+
+    at AlertProfileEditor (http://localhost:5173/src/components/AlertProfileEditor.jsx?t=1763352247637:20:31)
+    at div
+    at AlertConfigPanel (http://localhost:5173/src/components/AlertConfigPanel.jsx?t=1763352247637:21:29)
+    at div
+    at Watchlist (http://localhost:5173/src/components/Watchlist.jsx?t=1763352247637:79:35)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ react-dom_client.js?v=53d88be1:14030
+react-dom_client.js?v=53d88be1:9127 Uncaught 
+ [243] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [244] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+ [ETHUSDT] 🧹 IndicatorManager destruido
+ [245] 🕯️  TRXUSDT | 🛑 Componente desmontado, limpiando... 
+ [TRXUSDT] 🧹 IndicatorManager destruido
+ [245] 🕯️  XRPUSDT | 🛑 Componente desmontado, limpiando... 
+ [XRPUSDT] 🧹 IndicatorManager destruido
+ [246] 🕯️  SOLUSDT | 🛑 Componente desmontado, limpiando... 
+ [SOLUSDT] 🧹 IndicatorManager destruido
+ [246] 🕯️  AAVEUSDT | 🛑 Componente desmontado, limpiando... 
+ [AAVEUSDT] 🧹 IndicatorManager destruido
+ [247] 🕯️  GALAUSDT | 🛑 Componente desmontado, limpiando... 
+ [GALAUSDT] 🧹 IndicatorManager destruido
+ [247] 🕯️  OPUSDT | 🛑 Componente desmontado, limpiando... 
+ [OPUSDT] 🧹 IndicatorManager destruido
+ [248] 🕯️  ADAUSDT | 🛑 Componente desmontado, limpiando... 
+ [ADAUSDT] 🧹 IndicatorManager destruido
+ [249] 🕯️  SUIUSDT | 🛑 Componente desmontado, limpiando... 
+ [SUIUSDT] 🧹 IndicatorManager destruido
+ [249] 🕯️  POLUSDT | 🛑 Componente desmontado, limpiando... 
+ [POLUSDT] 🧹 IndicatorManager destruido
+ [250] 🕯️  POLYXUSDT | 🛑 Componente desmontado, limpiando... 
+ [POLYXUSDT] 🧹 IndicatorManager destruido
+ [251] 🕯️  CAKEUSDT | 🛑 Componente desmontado, limpiando... 
+ [CAKEUSDT] 🧹 IndicatorManager destruido
+ [251] 🕯️  PENDLEUSDT | 🛑 Componente desmontado, limpiando... 
+ [PENDLEUSDT] 🧹 IndicatorManager destruido
+ [252] 🕯️  TONUSDT | 🛑 Componente desmontado, limpiando... 
+ [TONUSDT] 🧹 IndicatorManager destruido
+ [253] 🕯️  UNIUSDT | 🛑 Componente desmontado, limpiando... 
+ [UNIUSDT] 🧹 IndicatorManager destruido
+ [253] 🕯️  ARBUSDT | 🛑 Componente desmontado, limpiando... 
+ [ARBUSDT] 🧹 IndicatorManager destruido
+ [254] 🕯️  DOTUSDT | 🛑 Componente desmontado, limpiando... 
+ [DOTUSDT] 🧹 IndicatorManager destruido
+ [254] 🕯️  AVAXUSDT | 🛑 Componente desmontado, limpiando... 
+ [AVAXUSDT] 🧹 IndicatorManager destruido
+ [255] 🕯️  BNBUSDT | 🛑 Componente desmontado, limpiando... 
+ [BNBUSDT] 🧹 IndicatorManager destruido
+ [255] 🕯️  PEOPLEUSDT | 🛑 Componente desmontado, limpiando... 
+ [PEOPLEUSDT] 🧹 IndicatorManager destruido
+ [256] 🕯️  HBARUSDT | 🛑 Componente desmontado, limpiando... 
+ [HBARUSDT] 🧹 IndicatorManager destruido
+ [256] 🕯️  ASTRUSDT | 🛑 Componente desmontado, limpiando... 
+ [ASTRUSDT] 🧹 IndicatorManager destruido
+ [257] 🕯️  MASKUSDT | 🛑 Componente desmontado, limpiando... 
+ [MASKUSDT] 🧹 IndicatorManager destruido
+ [257] 🕯️  TRBUSDT | 🛑 Componente desmontado, limpiando... 
+ [TRBUSDT] 🧹 IndicatorManager destruido
+ [258] 🕯️  INJUSDT | 🛑 Componente desmontado, limpiando... 
+ [INJUSDT] 🧹 IndicatorManager destruido
+ [258] 🕯️  ATOMUSDT | 🛑 Componente desmontado, limpiando... 
+ [ATOMUSDT] 🧹 IndicatorManager destruido
+ [259] 🕯️  GRTUSDT | 🛑 Componente desmontado, limpiando... 
+ [GRTUSDT] 🧹 IndicatorManager destruido
+ [259] 🕯️  ALGOUSDT | 🛑 Componente desmontado, limpiando... 
+ [ALGOUSDT] 🧹 IndicatorManager destruido
+ [518] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [519] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [519] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [520] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [591] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [591] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [592] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [592] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [PENDLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PENDLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PENDLEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [PENDLEUSDT] 📊 First OI: 5788736, Last OI: 4841788
+ [PENDLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PENDLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [361] 📊 PENDLEUSDT | ✅ Indicadores inicializados 
+ [TONUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [204] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [205] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [205] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [205] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [279] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [280] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [280] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [281] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [355] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [355] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [356] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [356] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TONUSDT] ✅ Open Interest loaded: 1600 points
+ [TONUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TONUSDT] 📊 First OI: 18794864.2, Last OI: 18228194.8
+ [TONUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TONUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [393] 📊 TONUSDT | ✅ Indicadores inicializados 
+ [UNIUSDT] ✅ S/R loaded: 0 resistances, 1 supports, 0 zones
+ [ARBUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [ARBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+OpenInterestIndicator.js:53 [ARBUSDT] 📊 First OI: 121137137.2, Last OI: 91669371.8
+OpenInterestIndicator.js:51 [UNIUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [UNIUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+OpenInterestIndicator.js:53 [UNIUSDT] 📊 First OI: 7862925.7, Last OI: 4372455
+IndicatorManager.js:99 [UNIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1065 [UNIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:30 [192] 📊 UNIUSDT | ✅ Indicadores inicializados 
+SupportResistanceIndicator.js:70 [DOTUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+SupportResistanceIndicator.js:70 [ARBUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 0 zones
+IndicatorManager.js:99 [ARBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1065 [ARBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:30 [030] 📊 ARBUSDT | ✅ Indicadores inicializados 
+OpenInterestIndicator.js:51 [DOTUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [DOTUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+OpenInterestIndicator.js:53 [DOTUSDT] 📊 First OI: 12497800.8, Last OI: 12842813.8
+IndicatorManager.js:99 [DOTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1065 [DOTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:30 [111] 📊 DOTUSDT | ✅ Indicadores inicializados 
+OpenInterestIndicator.js:51 [AVAXUSDT] ✅ Open Interest loaded: 1600 points
+OpenInterestIndicator.js:52 [AVAXUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+OpenInterestIndicator.js:53 [AVAXUSDT] 📊 First OI: 3549145, Last OI: 2952901.8
+SupportResistanceIndicator.js:70 [AVAXUSDT] ✅ S/R loaded: 1 resistances, 1 supports, 0 zones
+IndicatorManager.js:99 [AVAXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1065 [AVAXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:30 [186] 📊 AVAXUSDT | ✅ Indicadores inicializados 
+MiniChart.jsx:18 [035] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [035] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [035] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [036] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [246] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [246] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [247] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [247] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [325] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [325] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [326] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [326] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BNBUSDT] ✅ S/R loaded: 3 resistances, 4 supports, 1 zones
+ [BNBUSDT] ✅ Open Interest loaded: 1600 points
+ [BNBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [BNBUSDT] 📊 First OI: 130948.91, Last OI: 112107.6
+ [BNBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BNBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [363] 📊 BNBUSDT | ✅ Indicadores inicializados 
+ [971] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [971] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [972] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [972] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [043] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [044] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [044] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [044] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [PEOPLEUSDT] ✅ Open Interest loaded: 1600 points
+ [PEOPLEUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [PEOPLEUSDT] 📊 First OI: 200190501, Last OI: 271601928
+ [PEOPLEUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [PEOPLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PEOPLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [077] 📊 PEOPLEUSDT | ✅ Indicadores inicializados 
+ [HBARUSDT] ✅ S/R loaded: 0 resistances, 1 supports, 0 zones
+ [740] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [740] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [741] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [741] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [820] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [820] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [821] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [821] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [HBARUSDT] ✅ Open Interest loaded: 1600 points
+ [HBARUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [HBARUSDT] 📊 First OI: 136434530, Last OI: 164365608
+ [HBARUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [HBARUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [855] 📊 HBARUSDT | ✅ Indicadores inicializados 
+ [ASTRUSDT] ✅ S/R loaded: 0 resistances, 3 supports, 0 zones
+ [MASKUSDT] ✅ Open Interest loaded: 1600 points
+ [MASKUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [MASKUSDT] 📊 First OI: 2488367, Last OI: 2211901.4
+ [ASTRUSDT] ✅ Open Interest loaded: 1600 points
+ [ASTRUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ASTRUSDT] 📊 First OI: 70677040, Last OI: 58788262
+ [ASTRUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ASTRUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [671] 📊 ASTRUSDT | ✅ Indicadores inicializados 
+ [TRBUSDT] ✅ Open Interest loaded: 1600 points
+ [TRBUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [TRBUSDT] 📊 First OI: 370170.63, Last OI: 377995.62
+ [MASKUSDT] ✅ S/R loaded: 3 resistances, 3 supports, 0 zones
+ [MASKUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MASKUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [715] 📊 MASKUSDT | ✅ Indicadores inicializados 
+ [622] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [623] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [623] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [624] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [TRBUSDT] ✅ S/R loaded: 1 resistances, 4 supports, 0 zones
+ [TRBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [629] 📊 TRBUSDT | ✅ Indicadores inicializados 
+ [INJUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [ATOMUSDT] ✅ Open Interest loaded: 1600 points
+ [ATOMUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ATOMUSDT] 📊 First OI: 9676200.5, Last OI: 10766106
+ [585] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [586] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [586] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [587] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [663] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [664] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [664] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [664] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [733] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [733] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [734] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [734] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [805] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [805] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [806] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [806] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [GRTUSDT] ✅ Open Interest loaded: 1600 points
+ [GRTUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [GRTUSDT] 📊 First OI: 51802590.6, Last OI: 50572657.3
+ [INJUSDT] ✅ Open Interest loaded: 1600 points
+ [INJUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [INJUSDT] 📊 First OI: 1652411.5, Last OI: 1816941
+ [INJUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [INJUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [695] 📊 INJUSDT | ✅ Indicadores inicializados 
+ [ATOMUSDT] ✅ S/R loaded: 0 resistances, 2 supports, 0 zones
+ [ATOMUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ATOMUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [698] 📊 ATOMUSDT | ✅ Indicadores inicializados 
+ [GRTUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [GRTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GRTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [540] 📊 GRTUSDT | ✅ Indicadores inicializados 
+ [ALGOUSDT] ✅ S/R loaded: 1 resistances, 2 supports, 0 zones
+ [ALGOUSDT] ✅ Open Interest loaded: 1600 points
+ [ALGOUSDT] 📊 OI Data Range: 2025-11-15T01:45:00.000Z → 2025-11-02T13:30:00.000Z
+ [ALGOUSDT] 📊 First OI: 61092145.4, Last OI: 71536796.4
+ [ALGOUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ALGOUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [580] 📊 ALGOUSDT | ✅ Indicadores inicializados 
+ [187] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [188] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [188] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [188] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [974] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [974] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [975] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [975] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [827] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [827] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [828] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [828] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [902] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [903] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [903] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [903] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [977] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [977] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [978] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [978] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [049] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [049] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [050] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [050] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [551] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [552] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [552] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [552] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [789] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [789] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [789] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [789] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [879] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [880] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [880] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [880] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [955] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [956] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [956] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [956] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [530] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [531] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [531] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [531] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [614] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [614] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [615] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [615] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [414] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [415] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [415] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [416] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [658] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [658] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [659] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [659] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [734] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [734] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [734] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [735] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [811] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [812] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [812] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [812] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [456] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [457] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [457] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [457] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [272] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [272] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [273] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [273] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [310] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [311] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [311] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [312] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [595] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [595] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [595] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [596] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [695] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [696] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [696] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [697] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [520] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [520] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [520] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [521] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [601] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [601] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [601] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [602] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [682] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [682] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [683] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: NO
+ [683] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [133] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [134] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [134] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [135] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [471] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [472] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [472] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [472] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [553] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [553] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [554] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [554] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [625] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [626] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [626] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [627] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [698] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [698] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [699] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [699] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [772] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [772] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [772] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [773] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [877] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [878] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [878] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [878] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [469] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [469] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [470] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [470] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:18 [551] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [551] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [552] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: NO
+MiniChart.jsx:18 [552] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+WebSocketManager.js:68 WebSocket Manager cerrado

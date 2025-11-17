@@ -2,24 +2,12 @@
   "symbol": "HBARUSDT",
   "interval": "15",
   "data": {
-    "resistances": [
-      {
-        "price": 0.19672,
-        "type": "resistance",
-        "strength": 0.56,
-        "touches": 2,
-        "avgVolume": 1.549331689171645,
-        "firstTouch": 1762058700000,
-        "lastTouch": 1762823700000,
-        "status": "active",
-        "breakVolume": null
-      }
-    ],
+    "resistances": [],
     "supports": [
       {
         "price": 0.159005,
         "type": "support",
-        "strength": 2.15,
+        "strength": 2.13,
         "touches": 2,
         "avgVolume": 2.069989564970573,
         "firstTouch": 1762291800000,
@@ -29,12 +17,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 0.14704,
+    "currentPrice": 0.14956,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.21435329096341024
+      "currentZScore": -0.8093481943434535
     }
   },
   "config": {
@@ -47,5 +35,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763335290.4329412
+  "timestamp": 1763351083.7503078
 }

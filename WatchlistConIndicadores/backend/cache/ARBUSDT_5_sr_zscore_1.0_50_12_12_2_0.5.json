@@ -1,0 +1,84 @@
+{
+  "symbol": "ARBUSDT",
+  "interval": "5",
+  "data": {
+    "resistances": [
+      {
+        "price": 0.2472,
+        "type": "resistance",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 4.225596976737146,
+        "firstTouch": 1763150100000,
+        "lastTouch": 1763286600000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 0.23225,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 3.5066281590389954,
+        "firstTouch": 1763124000000,
+        "lastTouch": 1763161500000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.236875,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 4,
+        "avgVolume": 3.403091190709823,
+        "firstTouch": 1763253000000,
+        "lastTouch": 1763300700000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.273,
+        "type": "support",
+        "strength": 6.59,
+        "touches": 2,
+        "avgVolume": 1.9411290356298403,
+        "firstTouch": 1762934100000,
+        "lastTouch": 1762951200000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.2391,
+        "type": "support",
+        "strength": 5.35,
+        "touches": 3,
+        "avgVolume": 1.2164983760199564,
+        "firstTouch": 1763085300000,
+        "lastTouch": 1763196600000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 0.2368,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.9934318361288584
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763343186.3242717
+}

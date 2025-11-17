@@ -1,0 +1,84 @@
+{
+  "symbol": "INJUSDT",
+  "interval": "5",
+  "data": {
+    "resistances": [
+      {
+        "price": 6.879,
+        "type": "resistance",
+        "strength": 6.67,
+        "touches": 2,
+        "avgVolume": 1.708116395678569,
+        "firstTouch": 1763270100000,
+        "lastTouch": 1763280000000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "supports": [
+      {
+        "price": 6.6475,
+        "type": "support",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 4.703386855775408,
+        "firstTouch": 1763094900000,
+        "lastTouch": 1763200800000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 6.3004999999999995,
+        "type": "support",
+        "strength": 7.35,
+        "touches": 2,
+        "avgVolume": 1.8470329556648237,
+        "firstTouch": 1763315700000,
+        "lastTouch": 1763331000000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 7.4315,
+        "type": "support",
+        "strength": 6.96,
+        "touches": 2,
+        "avgVolume": 1.966181075002769,
+        "firstTouch": 1763035500000,
+        "lastTouch": 1763044500000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 6.548,
+        "type": "support",
+        "strength": 6.4,
+        "touches": 2,
+        "avgVolume": 1.8166975789183577,
+        "firstTouch": 1763162700000,
+        "lastTouch": 1763257500000,
+        "status": "broken",
+        "breakVolume": null
+      }
+    ],
+    "consolidationZones": [],
+    "currentPrice": 6.526,
+    "volumeStats": {
+      "method": "zscore",
+      "zScoreThreshold": 1.0,
+      "period": 50,
+      "currentZScore": -0.6851290211506259
+    }
+  },
+  "config": {
+    "volumeMethod": "zscore",
+    "zScoreThreshold": 1.0,
+    "zScorePeriod": 50,
+    "leftBars": 12,
+    "rightBars": 12,
+    "minTouches": 2,
+    "clusterDistance": 0.5,
+    "maxLevels": 20
+  },
+  "timestamp": 1763343200.0885365
+}
