@@ -5,6 +5,7 @@ import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
 import wsManager from "./WebSocketManager";
+import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
 
 const symbols = [
   "BTCUSDT", "ETHUSDT", "TRXUSDT", "XRPUSDT", "SOLUSDT", "AAVEUSDT",
@@ -241,6 +242,9 @@ const Watchlist = () => {
           </div>
         </div>
       </div>
+
+      {/* 🎯 NUEVO: Proximity Alert Dashboard */}
+      <ProximityAlertDashboard symbols={symbols} />
 
       <div className="grid-container">
         {symbols.map((sym) => (

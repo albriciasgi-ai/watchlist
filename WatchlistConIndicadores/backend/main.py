@@ -572,6 +572,293 @@ async def get_available_contexts(symbol: str, interval: str = "4h"):
     }
 
 
+# ==================== PROXIMITY ALERTS ENDPOINTS ====================
+
+def calculate_proximity_score(current_price: float, target_price: float, tolerance_pct: float = 1.0) -> dict:
+    """
+    Calcula el score de proximidad basado en la distancia al precio objetivo
+
+    Args:
+        current_price: Precio actual
+        target_price: Precio objetivo
+        tolerance_pct: Tolerancia en porcentaje (default 1.0%)
+
+    Returns:
+        dict con score (0-70), distance_pct, phase
+    """
+    distance_pct = abs(current_price - target_price) / target_price * 100
+
+    # Definir zonas de proximidad (PRIORIZADO - hasta 70 puntos)
+    if distance_pct <= 0.3:
+        # Ultra Close
+        score = 70
+        phase = "active"
+    elif distance_pct <= 0.5:
+        # Close
+        score = 55
+        phase = "in_zone"
+    elif distance_pct <= tolerance_pct:
+        # Near (dentro de tolerancia)
+        score = 40
+        phase = "in_zone"
+    elif distance_pct <= 2.0:
+        # Approaching
+        # Escala lineal de 40 a 25
+        score = 40 - ((distance_pct - tolerance_pct) / (2.0 - tolerance_pct)) * 15
+        phase = "approaching"
+    else:
+        # Far - escala descendente hasta 0
+        score = max(0, 25 - (distance_pct - 2.0) * 2)
+        phase = "idle"
+
+    return {
+        "score": round(score, 2),
+        "distancePct": round(distance_pct, 4),
+        "phase": phase
+    }
+
+
+def calculate_volume_score(volumes: list, z_score_period: int = 50, threshold_zscore: float = 2.0) -> dict:
+    """
+    Calcula el score de volumen basado en z-score actual
+
+    Args:
+        volumes: Lista de volúmenes (últimas N velas)
+        z_score_period: Período para calcular z-score
+        threshold_zscore: Umbral de z-score configurado por usuario
+
+    Returns:
+        dict con score (0-30), current_zscore, trend
+    """
+    if len(volumes) < 2:
+        return {
+            "score": 0,
+            "currentZScore": 0,
+            "trend": "neutral"
+        }
+
+    # Calcular z-scores
+    z_scores = calculate_z_score(volumes, z_score_period)
+    current_zscore = z_scores[-1] if z_scores else 0
+
+    # Calcular score basado en umbral (hasta 30 puntos)
+    if current_zscore >= threshold_zscore:
+        score = 30
+    elif current_zscore >= threshold_zscore * 0.75:
+        score = 22
+    elif current_zscore >= threshold_zscore * 0.5:
+        score = 15
+    else:
+        # Escala proporcional
+        score = (current_zscore / (threshold_zscore * 0.5)) * 15
+        score = max(0, min(15, score))
+
+    # Detectar tendencia (últimas 3 velas)
+    if len(z_scores) >= 3:
+        recent_z = z_scores[-3:]
+        if recent_z[-1] > recent_z[-2] > recent_z[-3]:
+            trend = "increasing"
+        elif recent_z[-1] < recent_z[-2] < recent_z[-3]:
+            trend = "decreasing"
+        else:
+            trend = "neutral"
+    else:
+        trend = "neutral"
+
+    return {
+        "score": round(score, 2),
+        "currentZScore": round(current_zscore, 2),
+        "trend": trend
+    }
+
+
+@app.post("/api/proximity-alerts/calculate")
+async def calculate_proximity_alert(request: Request):
+    """
+    Calcula el score de proximidad para una alerta específica
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "15",
+      "targetPrice": 95000,
+      "tolerancePct": 1.0,
+      "volumeThresholdZScore": 2.0,
+      "zScorePeriod": 50
+    }
+
+    Returns:
+    {
+      "success": true,
+      "symbol": "BTCUSDT",
+      "currentPrice": 95123.45,
+      "targetPrice": 95000,
+      "totalScore": 85,
+      "proximityScore": 55,
+      "volumeScore": 30,
+      "phase": "in_zone",
+      "distancePct": 0.13,
+      "currentZScore": 2.5,
+      "volumeTrend": "increasing"
+    }
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '15')
+        target_price = body.get('targetPrice')
+        tolerance_pct = body.get('tolerancePct', 1.0)
+        volume_threshold_zscore = body.get('volumeThresholdZScore', 2.0)
+        z_score_period = body.get('zScorePeriod', 50)
+
+        if not symbol or target_price is None:
+            return {
+                "success": False,
+                "error": "symbol and targetPrice are required"
+            }
+
+        # Obtener datos históricos (últimos 2 días en 15min = 192 velas, suficiente para z-score)
+        historical = await get_historical(symbol, interval, days=2)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+        current_price = candles[-1]['close']
+        volumes = [c['volume'] for c in candles]
+
+        # Calcular proximity score
+        proximity_result = calculate_proximity_score(current_price, target_price, tolerance_pct)
+
+        # Calcular volume score
+        volume_result = calculate_volume_score(volumes, z_score_period, volume_threshold_zscore)
+
+        # Score total
+        total_score = proximity_result['score'] + volume_result['score']
+
+        # Determinar fase final (puede upgradearse si volumen es muy alto)
+        phase = proximity_result['phase']
+        if total_score >= 75:
+            phase = "active"
+        elif total_score >= 50:
+            if phase == "idle":
+                phase = "approaching"
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "currentPrice": round(current_price, 2),
+            "targetPrice": target_price,
+            "totalScore": round(total_score, 2),
+            "proximityScore": proximity_result['score'],
+            "volumeScore": volume_result['score'],
+            "phase": phase,
+            "distancePct": proximity_result['distancePct'],
+            "currentZScore": volume_result['currentZScore'],
+            "volumeTrend": volume_result['trend'],
+            "timestamp": int(time.time() * 1000)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Proximity alert calculation: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/proximity-alerts/batch")
+async def calculate_proximity_alerts_batch(request: Request):
+    """
+    Calcula scores para múltiples alertas en paralelo
+
+    Body:
+    {
+      "alerts": [
+        {
+          "id": "uuid-1",
+          "symbol": "BTCUSDT",
+          "interval": "15",
+          "targetPrice": 95000,
+          "tolerancePct": 1.0,
+          "volumeThresholdZScore": 2.0
+        },
+        ...
+      ]
+    }
+
+    Returns:
+    {
+      "success": true,
+      "results": [
+        {
+          "id": "uuid-1",
+          "success": true,
+          "totalScore": 85,
+          ...
+        },
+        ...
+      ]
+    }
+    """
+    try:
+        body = await request.json()
+        alerts = body.get('alerts', [])
+
+        if not alerts:
+            return {
+                "success": False,
+                "error": "No alerts provided"
+            }
+
+        # Procesar todas las alertas
+        results = []
+
+        for alert_config in alerts:
+            alert_id = alert_config.get('id')
+
+            try:
+                # Crear request simulado para reutilizar función
+                class FakeRequest:
+                    async def json(self):
+                        return alert_config
+
+                fake_req = FakeRequest()
+                result = await calculate_proximity_alert(fake_req)
+
+                result['id'] = alert_id
+                results.append(result)
+
+            except Exception as e:
+                print(f"[ERROR] Processing alert {alert_id}: {str(e)}")
+                results.append({
+                    "id": alert_id,
+                    "success": False,
+                    "error": str(e)
+                })
+
+        return {
+            "success": True,
+            "results": results,
+            "total": len(alerts),
+            "timestamp": int(time.time() * 1000)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Batch proximity alerts: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
@@ -579,6 +866,7 @@ async def startup_event():
     await initialize_alert_sender()
     print("[STARTUP] Backend started successfully")
     print("[STARTUP] Alert sender initialized")
+    print("[STARTUP] Proximity alerts system ready")
 
 
 @app.on_event("shutdown")

@@ -1,0 +1,134 @@
+/* src/components/ProximityAlerts/ProximityAlertDashboard.css */
+
+.proximity-alert-dashboard {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.dashboard-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.title-icon {
+  font-size: 20px;
+}
+
+.title-text {
+  color: #4a9eff;
+}
+
+.polling-indicator {
+  color: #4caf50;
+  font-size: 10px;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-add-alert {
+  background-color: #4a9eff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(74, 158, 255, 0.2);
+}
+
+.btn-add-alert:hover {
+  background-color: #3d8ce7;
+  box-shadow: 0 4px 8px rgba(74, 158, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-add-alert:active {
+  transform: translateY(0);
+}
+
+.alert-circles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+/* Scrollbar personalizado */
+.alert-circles-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.alert-circles-grid::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+
+.alert-circles-grid::-webkit-scrollbar-thumb {
+  background: #4a9eff;
+  border-radius: 3px;
+}
+
+.alert-circles-grid::-webkit-scrollbar-thumb:hover {
+  background: #3d8ce7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .proximity-alert-dashboard {
+    padding: 12px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dashboard-title {
+    font-size: 14px;
+  }
+
+  .btn-add-alert {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .alert-circles-grid {
+    gap: 8px;
+  }
+}
