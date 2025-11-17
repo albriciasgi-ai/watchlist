@@ -6,7 +6,7 @@
       {
         "price": 0.2939375,
         "type": "resistance",
-        "strength": 3.67,
+        "strength": 3.65,
         "touches": 4,
         "avgVolume": 3.557366312626675,
         "firstTouch": 1762599600000,
@@ -17,7 +17,7 @@
       {
         "price": 0.29579500000000003,
         "type": "resistance",
-        "strength": 2.03,
+        "strength": 2.02,
         "touches": 2,
         "avgVolume": 4.604470860959188,
         "firstTouch": 1762160400000,
@@ -30,7 +30,7 @@
       {
         "price": 0.2826066666666667,
         "type": "support",
-        "strength": 9.42,
+        "strength": 9.34,
         "touches": 3,
         "avgVolume": 2.3489930652205993,
         "firstTouch": 1762446600000,
@@ -41,7 +41,7 @@
       {
         "price": 0.276265,
         "type": "support",
-        "strength": 7.51,
+        "strength": 7.44,
         "touches": 2,
         "avgVolume": 3.258846991176098,
         "firstTouch": 1762244100000,
@@ -52,7 +52,7 @@
       {
         "price": 0.29498,
         "type": "support",
-        "strength": 6.28,
+        "strength": 6.24,
         "touches": 2,
         "avgVolume": 1.8756471711812361,
         "firstTouch": 1762905600000,
@@ -63,7 +63,7 @@
       {
         "price": 0.28895,
         "type": "support",
-        "strength": 2.74,
+        "strength": 2.72,
         "touches": 5,
         "avgVolume": 1.5538868421447027,
         "firstTouch": 1762683300000,
@@ -74,9 +74,9 @@
       {
         "price": 0.29264,
         "type": "support",
-        "strength": 1.4,
+        "strength": 1.36,
         "touches": 2,
-        "avgVolume": 3.9850935774216003,
+        "avgVolume": 3.917110271141921,
         "firstTouch": 1762145100000,
         "lastTouch": 1762974900000,
         "status": "broken",
@@ -91,15 +91,15 @@
         "rangePct": 0.6319370614501423,
         "numLevels": 3,
         "totalTouches": 8,
-        "avgStrength": 3.99
+        "avgStrength": 3.97
       }
     ],
-    "currentPrice": 0.29289,
+    "currentPrice": 0.29433,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.19068867144832424
+      "currentZScore": -0.5533357960448252
     }
   },
   "config": {
@@ -112,5 +112,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763386011.5333257
+  "timestamp": 1763400781.6999133
 }

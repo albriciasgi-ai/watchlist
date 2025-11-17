@@ -2,7 +2,19 @@
   "symbol": "ATOMUSDT",
   "interval": "15",
   "data": {
-    "resistances": [],
+    "resistances": [
+      {
+        "price": 2.9135,
+        "type": "resistance",
+        "strength": 4.17,
+        "touches": 2,
+        "avgVolume": 3.476858540636629,
+        "firstTouch": 1763102700000,
+        "lastTouch": 1763389800000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
     "supports": [
       {
         "price": 2.8345000000000002,
@@ -18,7 +30,7 @@
       {
         "price": 2.756,
         "type": "support",
-        "strength": 2.41,
+        "strength": 2.39,
         "touches": 5,
         "avgVolume": 3.0374938596670553,
         "firstTouch": 1762166700000,
@@ -28,12 +40,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 2.839,
+    "currentPrice": 2.807,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": 1.3103637823743295
+      "currentZScore": -0.8924523092862682
     }
   },
   "config": {
@@ -46,5 +58,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763386045.1983542
+  "timestamp": 1763400817.2892094
 }
