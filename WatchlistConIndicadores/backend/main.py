@@ -1388,6 +1388,307 @@ async def get_available_contexts(symbol: str, interval: str = "4h"):
     }
 
 
+# ==================== BACKTESTING ENGINE ENDPOINTS ====================
+
+BACKTESTING_CACHE_DIR = Path("backtesting_cache")
+BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
+
+# Configuración de timeframes y subdivisiones para backtesting
+BACKTESTING_CONFIG = {
+    "15m": {
+        "interval": "15",
+        "subdivisions": {
+            "interval": "5",
+            "count": 3  # 3 velas de 5 minutos forman 1 vela de 15 minutos
+        }
+    },
+    "1h": {
+        "interval": "60",
+        "subdivisions": {
+            "interval": "15",
+            "count": 4  # 4 velas de 15 minutos forman 1 vela de 1 hora
+        }
+    },
+    "4h": {
+        "interval": "240",
+        "subdivisions": {
+            "interval": "60",
+            "count": 4  # 4 velas de 1 hora forman 1 vela de 4 horas
+        }
+    }
+}
+
+
+def save_backtesting_cache(symbol: str, data: dict):
+    """Guarda datos de backtesting en caché permanente"""
+    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    with open(cache_file, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print(f"[BACKTESTING CACHE] Guardado {symbol} - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+
+
+def load_backtesting_cache(symbol: str):
+    """Carga datos de backtesting del caché"""
+    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    if cache_file.exists():
+        try:
+            with open(cache_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                print(f"[BACKTESTING CACHE] Cargado {symbol} desde caché - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+                return data
+        except Exception as e:
+            print(f"[BACKTESTING CACHE ERROR] {symbol}: {str(e)}")
+    return None
+
+
+async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 1095):
+    """
+    Descarga datos históricos para un timeframe específico
+
+    Args:
+        symbol: Par de trading (ej: BTCUSDT)
+        interval: Intervalo (5, 15, 60, 240)
+        days: Días a descargar (default 1095 = 3 años)
+
+    Returns:
+        Lista de velas o None si hay error
+    """
+    try:
+        interval_minutes = get_interval_minutes(interval)
+        minutes_in_period = days * 24 * 60
+        total_candles_needed = int(minutes_in_period / interval_minutes)
+
+        print(f"[BACKTESTING] {symbol} @ {interval}m - Necesitamos {total_candles_needed} velas para {days} días")
+
+        now_ms = int(time.time() * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos
+        start_ms = now_ms - (days * 24 * 60 * 60 * 1000)
+
+        all_candles = []
+        current_start = start_ms
+
+        async with httpx.AsyncClient(timeout=60) as client:
+            request_count = 0
+            max_requests = 50  # Más requests permitidos para 3 años de datos
+
+            while len(all_candles) < total_candles_needed and request_count < max_requests:
+                request_count += 1
+                candles_remaining = total_candles_needed - len(all_candles)
+                fetch_limit = min(1000, candles_remaining)  # Bybit limit = 1000
+
+                url = (
+                    "https://api.bybit.com/v5/market/kline?"
+                    f"category=linear&symbol={symbol}&interval={interval}"
+                    f"&start={current_start}&limit={fetch_limit}"
+                )
+
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
+                    break
+
+                batch_candles = data["result"]["list"]
+                if not batch_candles:
+                    print(f"[INFO {symbol}] No más datos disponibles")
+                    break
+
+                batch_candles.reverse()
+                all_candles.extend(batch_candles)
+
+                last_candle_ts = int(batch_candles[-1][0])
+                current_start = last_candle_ts + (interval_minutes * 60 * 1000)
+
+                if request_count % 10 == 0:
+                    print(f"[BACKTESTING] {symbol} @ {interval}m - Descargadas {len(all_candles)}/{total_candles_needed} velas ({request_count} requests)")
+
+                if current_start >= end_ms:
+                    break
+
+                if len(all_candles) >= total_candles_needed:
+                    break
+
+                await asyncio.sleep(0.1)  # Rate limiting
+
+        # Procesar velas
+        candles = []
+        for c in all_candles:
+            ts_ms = int(c[0])
+            candles.append({
+                "timestamp": ts_ms,
+                "open": float(c[1]),
+                "high": float(c[2]),
+                "low": float(c[3]),
+                "close": float(c[4]),
+                "volume": float(c[5])
+            })
+
+        print(f"[BACKTESTING] ✅ {symbol} @ {interval}m - {len(candles)} velas descargadas")
+        return candles
+
+    except Exception as e:
+        print(f"[ERROR] Backtesting fetch {symbol} @ {interval}m: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
+@app.get("/api/backtesting/bulk-data/{symbol}")
+async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
+    """
+    Descarga y cachea 3 años de datos para backtesting
+
+    Retorna:
+    {
+        "symbol": "BTCUSDT",
+        "timeframes": {
+            "15m": {
+                "main": [...],  // Velas de 15 minutos
+                "subdivisions": [...]  // Velas de 5 minutos
+            },
+            "1h": {
+                "main": [...],
+                "subdivisions": [...]  // Velas de 15 minutos
+            },
+            "4h": {
+                "main": [...],
+                "subdivisions": [...]  // Velas de 1 hora
+            }
+        },
+        "metadata": {
+            "cached_at": timestamp,
+            "total_size_mb": float,
+            "date_range": {
+                "start": datetime,
+                "end": datetime
+            }
+        }
+    }
+    """
+    try:
+        # Intentar cargar del caché si existe
+        if not force_refresh:
+            cached_data = load_backtesting_cache(symbol)
+            if cached_data:
+                return {
+                    "success": True,
+                    "from_cache": True,
+                    **cached_data
+                }
+
+        print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
+
+        timeframes_data = {}
+        days = 1095  # 3 años
+
+        # Descargar datos para cada timeframe
+        for tf_name, config in BACKTESTING_CONFIG.items():
+            print(f"\n[BACKTESTING] ===== Procesando {tf_name} =====")
+
+            # Descargar velas principales
+            main_interval = config["interval"]
+            main_candles = await fetch_backtesting_timeframe(symbol, main_interval, days)
+
+            if not main_candles:
+                print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
+                continue
+
+            # Descargar subdivisiones
+            subdivision_interval = config["subdivisions"]["interval"]
+            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, days)
+
+            if not subdivision_candles:
+                print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
+                continue
+
+            timeframes_data[tf_name] = {
+                "main": main_candles,
+                "subdivisions": subdivision_candles,
+                "subdivision_count": config["subdivisions"]["count"]
+            }
+
+            print(f"[BACKTESTING] {tf_name} completado:")
+            print(f"  - Main: {len(main_candles)} velas de {main_interval}m")
+            print(f"  - Subdivisions: {len(subdivision_candles)} velas de {subdivision_interval}m")
+
+        # Calcular metadata
+        all_timestamps = []
+        for tf_data in timeframes_data.values():
+            all_timestamps.extend([c["timestamp"] for c in tf_data["main"]])
+
+        if all_timestamps:
+            min_ts = min(all_timestamps)
+            max_ts = max(all_timestamps)
+
+            start_date = datetime.fromtimestamp(min_ts / 1000, tz=COLOMBIA_TZ)
+            end_date = datetime.fromtimestamp(max_ts / 1000, tz=COLOMBIA_TZ)
+        else:
+            start_date = end_date = datetime.now(COLOMBIA_TZ)
+
+        metadata = {
+            "cached_at": int(time.time() * 1000),
+            "cached_at_colombia": datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_range": {
+                "start": start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "end": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "days": days
+            }
+        }
+
+        # Preparar respuesta
+        response_data = {
+            "symbol": symbol,
+            "timeframes": timeframes_data,
+            "metadata": metadata
+        }
+
+        # Guardar en caché
+        save_backtesting_cache(symbol, response_data)
+
+        print(f"\n[BACKTESTING] ✅ Datos completos para {symbol} listos")
+        print(f"  - Timeframes: {list(timeframes_data.keys())}")
+        print(f"  - Rango: {metadata['date_range']['start']} → {metadata['date_range']['end']}")
+
+        return {
+            "success": True,
+            "from_cache": False,
+            **response_data
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Backtesting bulk data {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.delete("/api/backtesting/cache/{symbol}")
+async def delete_backtesting_cache(symbol: str):
+    """Elimina el caché de backtesting para un símbolo específico"""
+    try:
+        cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+        if cache_file.exists():
+            cache_file.unlink()
+            return {
+                "success": True,
+                "message": f"Caché de backtesting eliminado para {symbol}"
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"No existe caché para {symbol}"
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
@@ -1395,6 +1696,7 @@ async def startup_event():
     await initialize_alert_sender()
     print("[STARTUP] Backend started successfully")
     print("[STARTUP] Alert sender initialized")
+    print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
 
 
 @app.on_event("shutdown")
