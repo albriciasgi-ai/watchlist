@@ -128,32 +128,40 @@ class TimeController {
    * Inicia la reproducción
    */
   play() {
-    if (this.isPlaying) return;
+    if (this.isPlaying) {
+      console.log('[TimeController] Ya está reproduciendo');
+      return;
+    }
 
     this.isPlaying = true;
     const updateIntervalMs = 1000; // Actualizar cada segundo
+
+    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - currentTime: ${new Date(this.currentTime).toISOString()}`);
 
     this.interval = setInterval(() => {
       const increment = this.getTimeIncrement();
       this.currentTime += increment;
 
+      console.log(`[TimeController] Tick - currentTime: ${new Date(this.currentTime).toISOString()}, increment: ${increment}ms`);
+
       // Si llegamos al final, pausar
       if (this.currentTime >= this.endTime) {
         this.currentTime = this.endTime;
+        console.log('[TimeController] Llegamos al final');
         this.pause();
       }
 
       // Notificar cambio
       if (this.onTimeUpdate) {
         this.onTimeUpdate(this.currentTime);
+      } else {
+        console.warn('[TimeController] No hay callback onTimeUpdate');
       }
 
       // Sincronizar con otras pestañas
       this.broadcastState();
 
     }, updateIntervalMs);
-
-    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x`);
   }
 
   /**

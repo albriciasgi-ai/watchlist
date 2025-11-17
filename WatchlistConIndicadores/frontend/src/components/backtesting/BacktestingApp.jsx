@@ -204,13 +204,21 @@ const BacktestingApp = () => {
    * Controles de reproducción
    */
   const handlePlay = () => {
+    console.log('[BacktestingApp] handlePlay clicked', {
+      hasController: !!timeControllerRef.current,
+      currentTime,
+      isPlaying
+    });
     if (timeControllerRef.current) {
       timeControllerRef.current.play();
       setIsPlaying(true);
+    } else {
+      console.error('[BacktestingApp] No hay timeController');
     }
   };
 
   const handlePause = () => {
+    console.log('[BacktestingApp] handlePause clicked');
     if (timeControllerRef.current) {
       timeControllerRef.current.pause();
       setIsPlaying(false);
@@ -218,6 +226,7 @@ const BacktestingApp = () => {
   };
 
   const handleStop = () => {
+    console.log('[BacktestingApp] handleStop clicked');
     if (timeControllerRef.current) {
       timeControllerRef.current.stop();
       setIsPlaying(false);
