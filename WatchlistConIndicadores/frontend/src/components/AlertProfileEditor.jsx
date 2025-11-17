@@ -56,7 +56,7 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
       <div className="profile-editor-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="profile-editor-header">
-          <h3>{isNew ? '➕ New Alert Profile' : '✏️ Edit Alert Profile'}</h3>
+          <h3>{isNew ? '➕ Nuevo Perfil de Alertas' : '✏️ Editar Perfil de Alertas'}</h3>
           <button className="close-btn" onClick={onCancel}>×</button>
         </div>
 
@@ -64,27 +64,27 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
         <div className="profile-editor-content">
           {/* Profile Name */}
           <section className="editor-section">
-            <h4>📝 Profile Details</h4>
+            <h4>📝 Detalles del Perfil</h4>
             <div className="input-row">
               <label>
-                Profile Name
+                Nombre del Perfil
                 <input
                   type="text"
                   value={localProfile.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="e.g., Scalping Agresivo, Swing Trading..."
+                  placeholder="ej., Scalping Agresivo, Swing Trading..."
                   autoFocus
                 />
               </label>
             </div>
             <div className="input-row">
               <label>
-                Description (optional)
+                Descripción (opcional)
                 <input
                   type="text"
                   value={localProfile.description}
                   onChange={(e) => handleChange('description', e.target.value)}
-                  placeholder="Brief description of this profile..."
+                  placeholder="Breve descripción de este perfil..."
                 />
               </label>
             </div>
@@ -107,7 +107,7 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
               <div className="indicator-filters">
                 <div className="filter-row">
                   <label>
-                    Minimum Strength
+                    Fuerza Mínima
                     <input
                       type="number"
                       min="1"
@@ -117,12 +117,12 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
                       onChange={(e) => handleIndicatorConfigChange('Support & Resistance', 'minStrength', parseFloat(e.target.value))}
                     />
                   </label>
-                  <span className="filter-hint">Level strength score (1-10)</span>
+                  <span className="filter-hint">Puntuación de fuerza del nivel (1-10)</span>
                 </div>
 
                 <div className="filter-row">
                   <label>
-                    Distance Threshold (%)
+                    Umbral de Distancia (%)
                     <input
                       type="number"
                       min="0.1"
@@ -132,12 +132,12 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
                       onChange={(e) => handleIndicatorConfigChange('Support & Resistance', 'proximityPercent', parseFloat(e.target.value))}
                     />
                   </label>
-                  <span className="filter-hint">Alert when price within % of level</span>
+                  <span className="filter-hint">Alertar cuando precio esté dentro del % del nivel</span>
                 </div>
 
                 <div className="filter-row">
                   <label>
-                    Minimum Touches
+                    Toques Mínimos
                     <input
                       type="number"
                       min="1"
@@ -146,7 +146,7 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
                       onChange={(e) => handleIndicatorConfigChange('Support & Resistance', 'minTouches', parseInt(e.target.value))}
                     />
                   </label>
-                  <span className="filter-hint">Minimum times price touched level</span>
+                  <span className="filter-hint">Cantidad mínima de veces que el precio tocó el nivel</span>
                 </div>
               </div>
             )}
@@ -384,10 +384,10 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
         {/* Footer */}
         <div className="profile-editor-footer">
           <button className="btn-secondary" onClick={onCancel}>
-            Cancel
+            Cancelar
           </button>
           <button className="btn-primary" onClick={handleSave}>
-            {isNew ? 'Create Profile' : 'Save Changes'}
+            {isNew ? 'Crear Perfil' : 'Guardar Cambios'}
           </button>
         </div>
       </div>

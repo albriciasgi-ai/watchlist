@@ -756,7 +756,7 @@ const Watchlist = () => {
               }}
               title="Ver historial de alertas"
             >
-              🔔 Alerts
+              🔔 Alertas
               {alerts.length > 0 && (
                 <span style={{
                   background: 'rgba(255,255,255,0.3)',
@@ -791,31 +791,34 @@ const Watchlist = () => {
             <button
               onClick={() => {
                 const testSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
-                const testTypes = ['Support', 'Resistance'];
-                const testSeverities = ['HIGH', 'MEDIUM', 'LOW'];
+                const testTypes = ['Soporte', 'Resistencia'];
 
                 const randomSymbol = testSymbols[Math.floor(Math.random() * testSymbols.length)];
                 const randomType = testTypes[Math.floor(Math.random() * testTypes.length)];
-                const randomSeverity = testSeverities[Math.floor(Math.random() * testSeverities.length)];
                 const randomPrice = (Math.random() * 50000 + 20000).toFixed(2);
                 const randomLevel = (parseFloat(randomPrice) * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2);
 
+                // Generar valores que siempre pasen los filtros del perfil por defecto
+                const strength = 8 + Math.random() * 2; // 8-10 (mínimo del perfil default es 8)
+                const touches = 2 + Math.floor(Math.random() * 3); // 2-4 (mínimo es 2)
+                const distance = Math.random() * 0.15; // 0-0.15% (máximo del perfil es 0.2%)
+
                 addAlert({
                   indicatorType: 'Support & Resistance',
-                  severity: randomSeverity,
-                  icon: randomType === 'Support' ? '🟢' : '🔴',
-                  title: `${randomSymbol} approaching ${randomType}`,
+                  severity: 'HIGH', // Será recalculado por addAlert
+                  icon: randomType === 'Soporte' ? '🟢' : '🔴',
+                  title: `${randomSymbol} cerca de ${randomType}`,
                   symbol: randomSymbol,
                   interval: interval,
-                  type: 'S/R Level',
-                  description: `Price $${randomPrice} is near ${randomType.toLowerCase()} level at $${randomLevel}\nThis is a test alert`,
+                  type: 'Nivel S/R',
+                  description: `Precio $${randomPrice} está cerca del ${randomType.toLowerCase()} en $${randomLevel}\nFuerza: ${strength.toFixed(1)} | Toques: ${touches} | Distancia: ${distance.toFixed(2)}%\nEsta es una alerta de prueba`,
                   data: {
                     price: parseFloat(randomPrice),
                     levelPrice: parseFloat(randomLevel),
                     levelType: randomType.toLowerCase(),
-                    strength: Math.random() * 10,
-                    touches: Math.floor(Math.random() * 10) + 1,
-                    distance: Math.random() * 0.5
+                    strength: strength,
+                    touches: touches,
+                    distance: distance
                   }
                 });
               }}
@@ -832,7 +835,7 @@ const Watchlist = () => {
               }}
               title="Generar alerta de prueba"
             >
-              🧪 Test Alert
+              🧪 Prueba
             </button>
           </div>
         </div>

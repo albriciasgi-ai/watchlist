@@ -60,7 +60,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
   };
 
   const handleDeleteProfile = (profileId) => {
-    if (!window.confirm('Are you sure you want to delete this profile?')) {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este perfil?')) {
       return;
     }
 
@@ -95,7 +95,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
       {
         id: 'default_scalping',
         name: '⚡ Scalping Agresivo',
-        description: 'Alerts on strong levels with high confidence patterns',
+        description: 'Alertas en niveles fuertes con patrones de alta confianza',
         indicators: {
           'Support & Resistance': {
             enabled: true,
@@ -128,7 +128,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
       {
         id: 'default_swing',
         name: '📈 Swing Trading',
-        description: 'Balanced alerts for swing trading positions',
+        description: 'Alertas balanceadas para posiciones de swing trading',
         indicators: {
           'Support & Resistance': {
             enabled: true,
@@ -161,7 +161,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
       {
         id: 'default_confluence',
         name: '🎯 Confluencias Extremas',
-        description: 'Only extreme multi-indicator confluence',
+        description: 'Solo confluencias extremas de múltiples indicadores',
         indicators: {
           'Support & Resistance': {
             enabled: true,
@@ -201,7 +201,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
       <div className="alert-config-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="alert-config-header">
-          <h3>⚙️ Alert System Configuration</h3>
+          <h3>⚙️ Configuración del Sistema de Alertas</h3>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
@@ -209,7 +209,7 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
         <div className="alert-config-content">
           {/* Section 1: Global Settings */}
           <section className="config-section">
-            <h4>🔔 Global Settings</h4>
+            <h4>🔔 Configuración Global</h4>
 
             <div className="config-row">
               <label className="checkbox-label">
@@ -218,9 +218,9 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
                   checked={localConfig.enabled}
                   onChange={(e) => handleChange('enabled', e.target.checked)}
                 />
-                <span>Enable Alert System</span>
+                <span>Activar Sistema de Alertas</span>
               </label>
-              <span className="config-hint">Master switch for all alerts</span>
+              <span className="config-hint">Interruptor maestro para todas las alertas</span>
             </div>
 
             <div className="config-row">
@@ -231,9 +231,9 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
                   onChange={(e) => handleChange('soundEnabled', e.target.checked)}
                   disabled={!localConfig.enabled}
                 />
-                <span>Enable Sound Notifications</span>
+                <span>Activar Notificaciones de Sonido</span>
               </label>
-              <span className="config-hint">Play sound when alert arrives</span>
+              <span className="config-hint">Reproducir sonido cuando llegue una alerta</span>
             </div>
 
             <div className="config-row">
@@ -244,29 +244,29 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
                   onChange={(e) => handleChange('browserNotifications', e.target.checked)}
                   disabled={!localConfig.enabled}
                 />
-                <span>Enable Browser Notifications</span>
+                <span>Activar Notificaciones del Navegador</span>
               </label>
-              <span className="config-hint">Show native browser notifications</span>
+              <span className="config-hint">Mostrar notificaciones nativas del navegador</span>
             </div>
           </section>
 
           {/* Section 2: Alert Profiles */}
           <section className="config-section">
             <div className="section-header-with-button">
-              <h4>📊 Alert Profiles</h4>
+              <h4>📊 Perfiles de Alertas</h4>
               <button className="btn-create-profile" onClick={handleCreateProfile}>
-                ➕ Create New Profile
+                ➕ Crear Nuevo Perfil
               </button>
             </div>
             <p className="section-description">
-              Create custom alert profiles with specific filters for each indicator. Each profile can have different settings and confluence rules.
+              Crea perfiles personalizados de alertas con filtros específicos para cada indicador. Cada perfil puede tener diferentes configuraciones y reglas de confluencia.
             </p>
 
             {localConfig.profiles.length === 0 ? (
               <div className="no-profiles">
-                <p>No profiles yet. Create your first alert profile!</p>
+                <p>No hay perfiles todavía. ¡Crea tu primer perfil de alertas!</p>
                 <button className="btn-primary" onClick={handleCreateProfile}>
-                  ➕ Create Profile
+                  ➕ Crear Perfil
                 </button>
               </div>
             ) : (
@@ -291,14 +291,14 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
                         <button
                           className="btn-edit"
                           onClick={() => handleEditProfile(profile)}
-                          title="Edit profile"
+                          title="Editar perfil"
                         >
                           ✏️
                         </button>
                         <button
                           className="btn-delete"
                           onClick={() => handleDeleteProfile(profile.id)}
-                          title="Delete profile"
+                          title="Eliminar perfil"
                         >
                           🗑️
                         </button>
@@ -327,24 +327,24 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
 
           {/* Summary */}
           <section className="config-section summary">
-            <h4>📋 Current Status</h4>
+            <h4>📋 Estado Actual</h4>
             <div className="summary-content">
               {!localConfig.enabled && (
-                <p className="warning">⚠️ Alert system is disabled</p>
+                <p className="warning">⚠️ Sistema de alertas desactivado</p>
               )}
               {localConfig.enabled && !localConfig.activeProfileId && (
-                <p className="warning">⚠️ No active profile - select one to receive alerts</p>
+                <p className="warning">⚠️ No hay perfil activo - selecciona uno para recibir alertas</p>
               )}
               {localConfig.enabled && activeProfile && (
                 <p className="success">
-                  ✅ Active Profile: <strong>{activeProfile.name}</strong>
+                  ✅ Perfil Activo: <strong>{activeProfile.name}</strong>
                 </p>
               )}
               {localConfig.soundEnabled && (
-                <p className="info">🔊 Sound notifications enabled</p>
+                <p className="info">🔊 Notificaciones de sonido activadas</p>
               )}
               {localConfig.browserNotifications && (
-                <p className="info">🌐 Browser notifications enabled</p>
+                <p className="info">🌐 Notificaciones del navegador activadas</p>
               )}
             </div>
           </section>
@@ -353,10 +353,10 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
         {/* Footer */}
         <div className="alert-config-footer">
           <button className="btn-secondary" onClick={onClose}>
-            Cancel
+            Cancelar
           </button>
           <button className="btn-primary" onClick={handleSave}>
-            Save & Close
+            Guardar y Cerrar
           </button>
         </div>
       </div>
@@ -382,7 +382,7 @@ function getDefaultConfig() {
     {
       id: 'default_scalping',
       name: '⚡ Scalping Agresivo',
-      description: 'Alerts on strong levels with high confidence patterns',
+      description: 'Alertas en niveles fuertes con patrones de alta confianza',
       indicators: {
         'Support & Resistance': {
           enabled: true,
