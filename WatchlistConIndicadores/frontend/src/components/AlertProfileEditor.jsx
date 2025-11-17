@@ -299,6 +299,110 @@ const AlertProfileEditor = ({ profile, onSave, onCancel, isNew = false }) => {
             )}
           </section>
 
+          {/* Volume Delta Settings */}
+          <section className="editor-section">
+            <div className="section-header">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={localProfile.indicators['Volume Delta'].enabled}
+                  onChange={() => handleIndicatorToggle('Volume Delta')}
+                />
+                <span className="indicator-title">📊 Volume Delta</span>
+              </label>
+            </div>
+
+            {localProfile.indicators['Volume Delta'].enabled && (
+              <div className="indicator-filters">
+                <div className="filter-row">
+                  <label>
+                    Multiplicador Mínimo
+                    <input
+                      type="number"
+                      min="1.5"
+                      max="10.0"
+                      step="0.5"
+                      value={localProfile.indicators['Volume Delta'].minMultiplier}
+                      onChange={(e) => handleIndicatorConfigChange('Volume Delta', 'minMultiplier', parseFloat(e.target.value))}
+                    />
+                  </label>
+                  <span className="filter-hint">Alertar cuando delta es X veces el promedio</span>
+                </div>
+
+                <div className="filter-row">
+                  <label>
+                    Período de Comparación
+                    <input
+                      type="number"
+                      min="10"
+                      max="50"
+                      value={localProfile.indicators['Volume Delta'].lookbackPeriod}
+                      onChange={(e) => handleIndicatorConfigChange('Volume Delta', 'lookbackPeriod', parseInt(e.target.value))}
+                    />
+                  </label>
+                  <span className="filter-hint">Velas para calcular promedio de volumen</span>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* CVD Settings */}
+          <section className="editor-section">
+            <div className="section-header">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={localProfile.indicators['CVD'].enabled}
+                  onChange={() => handleIndicatorToggle('CVD')}
+                />
+                <span className="indicator-title">📈 CVD (Cumulative Volume Delta)</span>
+              </label>
+            </div>
+
+            {localProfile.indicators['CVD'].enabled && (
+              <div className="indicator-filters">
+                <div className="filter-row">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={localProfile.indicators['CVD'].alertOnExtremes}
+                      onChange={(e) => handleIndicatorConfigChange('CVD', 'alertOnExtremes', e.target.checked)}
+                    />
+                    <span>Alertar en Extremos (máximos/mínimos)</span>
+                  </label>
+                  <span className="filter-hint">CVD alcanza niveles extremos recientes</span>
+                </div>
+
+                <div className="filter-row">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={localProfile.indicators['CVD'].alertOnTrendChange}
+                      onChange={(e) => handleIndicatorConfigChange('CVD', 'alertOnTrendChange', e.target.checked)}
+                    />
+                    <span>Alertar en Cambio de Tendencia</span>
+                  </label>
+                  <span className="filter-hint">Tendencia alcista/bajista fuerte en CVD</span>
+                </div>
+
+                <div className="filter-row">
+                  <label>
+                    Umbral de Extremo (%)
+                    <input
+                      type="number"
+                      min="0.01"
+                      max="0.20"
+                      step="0.01"
+                      value={localProfile.indicators['CVD'].extremeThreshold}
+                      onChange={(e) => handleIndicatorConfigChange('CVD', 'extremeThreshold', parseFloat(e.target.value))}
+                    />
+                  </label>
+                  <span className="filter-hint">Proximidad al máx/mín para alertar (0.05 = 5%)</span>
+                </div>
+              </div>
+            )}
+          </section>
+
           {/* Confluence Settings */}
           <section className="editor-section">
             <h4>🎯 Confluence Detection</h4>
@@ -422,6 +526,17 @@ function getDefaultProfile() {
         enabled: false,
         minChangePercent: 15,
         lookbackCandles: 5
+      },
+      'Volume Delta': {
+        enabled: false,
+        minMultiplier: 2.0,
+        lookbackPeriod: 20
+      },
+      'CVD': {
+        enabled: false,
+        alertOnExtremes: true,
+        alertOnTrendChange: true,
+        extremeThreshold: 0.05
       }
     },
     confluenceEnabled: true,

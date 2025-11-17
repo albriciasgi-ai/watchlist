@@ -130,6 +130,17 @@ const Watchlist = () => {
             enabled: false,
             minChangePercent: 20,
             lookbackCandles: 3
+          },
+          'Volume Delta': {
+            enabled: false,
+            minMultiplier: 2.0,
+            lookbackPeriod: 20
+          },
+          'CVD': {
+            enabled: false,
+            alertOnExtremes: true,
+            alertOnTrendChange: true,
+            extremeThreshold: 0.05
           }
         },
         confluenceEnabled: true,
@@ -565,6 +576,37 @@ const Watchlist = () => {
       if (absChange >= 30) calculatedSeverity = 'HIGH';
       else if (absChange >= 20) calculatedSeverity = 'MEDIUM';
       else calculatedSeverity = 'LOW';
+    }
+
+    if (alert.indicatorType === 'Volume Delta' && alert.data) {
+      // Validar contra filtros de Volume Delta
+      if (alert.data.multiplier < indicatorSettings.minMultiplier) {
+        console.log(`[Watchlist] Volume Delta multiplier ${alert.data.multiplier} below minimum ${indicatorSettings.minMultiplier}`);
+        passesFilters = false;
+      }
+
+      // Calcular severidad basada en multiplier
+      if (alert.data.multiplier >= 4.0) calculatedSeverity = 'HIGH';
+      else if (alert.data.multiplier >= 2.5) calculatedSeverity = 'MEDIUM';
+      else calculatedSeverity = 'LOW';
+    }
+
+    if (alert.indicatorType === 'CVD' && alert.data) {
+      // Validar contra filtros de CVD
+      // Las alertas de CVD ya están filtradas por el indicador
+      // Solo verificamos si están habilitadas las opciones correctas
+      if (alert.data.alertType === 'maximum' || alert.data.alertType === 'minimum') {
+        if (!indicatorSettings.alertOnExtremes) {
+          passesFilters = false;
+        }
+      }
+      if (alert.data.alertType === 'strong_bullish_trend' || alert.data.alertType === 'strong_bearish_trend') {
+        if (!indicatorSettings.alertOnTrendChange) {
+          passesFilters = false;
+        }
+      }
+
+      // La severidad ya viene calculada por el indicador
     }
 
     if (!passesFilters) {

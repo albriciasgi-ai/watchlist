@@ -118,6 +118,17 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
             enabled: false,
             minChangePercent: 20,
             lookbackCandles: 3
+          },
+          'Volume Delta': {
+            enabled: false,
+            minMultiplier: 2.0,
+            lookbackPeriod: 20
+          },
+          'CVD': {
+            enabled: false,
+            alertOnExtremes: true,
+            alertOnTrendChange: true,
+            extremeThreshold: 0.05
           }
         },
         confluenceEnabled: true,
@@ -151,6 +162,17 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
             enabled: true,
             minChangePercent: 15,
             lookbackCandles: 5
+          },
+          'Volume Delta': {
+            enabled: true,
+            minMultiplier: 2.5,
+            lookbackPeriod: 20
+          },
+          'CVD': {
+            enabled: true,
+            alertOnExtremes: true,
+            alertOnTrendChange: true,
+            extremeThreshold: 0.05
           }
         },
         confluenceEnabled: true,
@@ -184,6 +206,17 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
             enabled: true,
             minChangePercent: 20,
             lookbackCandles: 5
+          },
+          'Volume Delta': {
+            enabled: true,
+            minMultiplier: 3.0,
+            lookbackPeriod: 20
+          },
+          'CVD': {
+            enabled: true,
+            alertOnExtremes: true,
+            alertOnTrendChange: true,
+            extremeThreshold: 0.03
           }
         },
         confluenceEnabled: true,
@@ -405,6 +438,17 @@ function getDefaultConfig() {
           enabled: false,
           minChangePercent: 20,
           lookbackCandles: 3
+        },
+        'Volume Delta': {
+          enabled: false,
+          minMultiplier: 2.0,
+          lookbackPeriod: 20
+        },
+        'CVD': {
+          enabled: false,
+          alertOnExtremes: true,
+          alertOnTrendChange: true,
+          extremeThreshold: 0.05
         }
       },
       confluenceEnabled: true,
