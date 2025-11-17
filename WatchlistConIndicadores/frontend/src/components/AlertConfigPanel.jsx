@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import AlertProfileEditor from './AlertProfileEditor';
 import './AlertConfigPanel.css';
 
 /**
- * Alert Configuration Panel
+ * Alert Configuration Panel with Profile Management
  *
- * Allows users to configure global alert settings:
- * - Which indicators can send alerts
- * - Minimum severity level
- * - Sound and browser notifications
- * - Confluence detection settings
+ * Manages multiple alert profiles with custom filters per indicator
  */
 const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
   const [localConfig, setLocalConfig] = useState(config || getDefaultConfig());
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(null);
+  const [isNewProfile, setIsNewProfile] = useState(false);
 
   const handleChange = (key, value) => {
     const newConfig = { ...localConfig, [key]: value };
     setLocalConfig(newConfig);
-  };
-
-  const handleIndicatorToggle = (indicatorName) => {
-    const newIndicators = {
-      ...localConfig.enabledIndicators,
-      [indicatorName]: !localConfig.enabledIndicators[indicatorName]
-    };
-    setLocalConfig({
-      ...localConfig,
-      enabledIndicators: newIndicators
-    });
   };
 
   const handleSave = () => {
@@ -36,29 +25,191 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
     onClose();
   };
 
-  const handleReset = () => {
-    const defaultConfig = getDefaultConfig();
-    setLocalConfig(defaultConfig);
+  const handleCreateProfile = () => {
+    setEditingProfile(null);
+    setIsNewProfile(true);
+    setShowProfileEditor(true);
   };
 
-  const getEnabledIndicatorsCount = () => {
-    return Object.values(localConfig.enabledIndicators).filter(v => v).length;
+  const handleEditProfile = (profile) => {
+    setEditingProfile(profile);
+    setIsNewProfile(false);
+    setShowProfileEditor(true);
   };
+
+  const handleSaveProfile = (profile) => {
+    let updatedProfiles;
+
+    if (isNewProfile) {
+      // Add new profile
+      updatedProfiles = [...localConfig.profiles, profile];
+    } else {
+      // Update existing profile
+      updatedProfiles = localConfig.profiles.map(p =>
+        p.id === profile.id ? profile : p
+      );
+    }
+
+    setLocalConfig({
+      ...localConfig,
+      profiles: updatedProfiles
+    });
+
+    setShowProfileEditor(false);
+    setEditingProfile(null);
+  };
+
+  const handleDeleteProfile = (profileId) => {
+    if (!window.confirm('Are you sure you want to delete this profile?')) {
+      return;
+    }
+
+    const updatedProfiles = localConfig.profiles.filter(p => p.id !== profileId);
+
+    // If deleting active profile, switch to first available or null
+    let newActiveProfile = localConfig.activeProfileId;
+    if (profileId === localConfig.activeProfileId) {
+      newActiveProfile = updatedProfiles.length > 0 ? updatedProfiles[0].id : null;
+    }
+
+    setLocalConfig({
+      ...localConfig,
+      profiles: updatedProfiles,
+      activeProfileId: newActiveProfile
+    });
+  };
+
+  const handleSetActiveProfile = (profileId) => {
+    setLocalConfig({
+      ...localConfig,
+      activeProfileId: profileId
+    });
+  };
+
+  const getActiveProfile = () => {
+    return localConfig.profiles.find(p => p.id === localConfig.activeProfileId);
+  };
+
+  const getDefaultProfiles = () => {
+    return [
+      {
+        id: 'default_scalping',
+        name: '⚡ Scalping Agresivo',
+        description: 'Alerts on strong levels with high confidence patterns',
+        indicators: {
+          'Support & Resistance': {
+            enabled: true,
+            minStrength: 8,
+            proximityPercent: 0.2,
+            minTouches: 2
+          },
+          'Rejection Patterns': {
+            enabled: true,
+            minConfidence: 75,
+            requireNearLevel: true
+          },
+          'Volume Profile': {
+            enabled: false,
+            alertOnPOC: true,
+            alertOnValueArea: false,
+            proximityPercent: 0.3
+          },
+          'Open Interest': {
+            enabled: false,
+            minChangePercent: 20,
+            lookbackCandles: 3
+          }
+        },
+        confluenceEnabled: true,
+        minIndicatorsForConfluence: 2,
+        confluenceWindowCandles: 2,
+        confluencePriceProximity: 0.3
+      },
+      {
+        id: 'default_swing',
+        name: '📈 Swing Trading',
+        description: 'Balanced alerts for swing trading positions',
+        indicators: {
+          'Support & Resistance': {
+            enabled: true,
+            minStrength: 5,
+            proximityPercent: 0.5,
+            minTouches: 3
+          },
+          'Rejection Patterns': {
+            enabled: true,
+            minConfidence: 65,
+            requireNearLevel: true
+          },
+          'Volume Profile': {
+            enabled: true,
+            alertOnPOC: true,
+            alertOnValueArea: true,
+            proximityPercent: 0.5
+          },
+          'Open Interest': {
+            enabled: true,
+            minChangePercent: 15,
+            lookbackCandles: 5
+          }
+        },
+        confluenceEnabled: true,
+        minIndicatorsForConfluence: 3,
+        confluenceWindowCandles: 5,
+        confluencePriceProximity: 0.5
+      },
+      {
+        id: 'default_confluence',
+        name: '🎯 Confluencias Extremas',
+        description: 'Only extreme multi-indicator confluence',
+        indicators: {
+          'Support & Resistance': {
+            enabled: true,
+            minStrength: 9,
+            proximityPercent: 0.3,
+            minTouches: 4
+          },
+          'Rejection Patterns': {
+            enabled: true,
+            minConfidence: 85,
+            requireNearLevel: true
+          },
+          'Volume Profile': {
+            enabled: true,
+            alertOnPOC: true,
+            alertOnValueArea: true,
+            proximityPercent: 0.4
+          },
+          'Open Interest': {
+            enabled: true,
+            minChangePercent: 20,
+            lookbackCandles: 5
+          }
+        },
+        confluenceEnabled: true,
+        minIndicatorsForConfluence: 4,
+        confluenceWindowCandles: 3,
+        confluencePriceProximity: 0.5
+      }
+    ];
+  };
+
+  const activeProfile = getActiveProfile();
 
   return (
     <div className="alert-config-overlay" onClick={onClose}>
       <div className="alert-config-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="alert-config-header">
-          <h3>⚙️ Alert Configuration</h3>
+          <h3>⚙️ Alert System Configuration</h3>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
         {/* Content */}
         <div className="alert-config-content">
-          {/* Section 1: General Settings */}
+          {/* Section 1: Global Settings */}
           <section className="config-section">
-            <h4>🔔 General Settings</h4>
+            <h4>🔔 Global Settings</h4>
 
             <div className="config-row">
               <label className="checkbox-label">
@@ -97,188 +248,103 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
               </label>
               <span className="config-hint">Show native browser notifications</span>
             </div>
-
-            <div className="config-row">
-              <label>
-                Minimum Severity Level
-                <select
-                  value={localConfig.minSeverity}
-                  onChange={(e) => handleChange('minSeverity', e.target.value)}
-                  disabled={!localConfig.enabled}
-                >
-                  <option value="LOW">Low (all alerts)</option>
-                  <option value="MEDIUM">Medium and High only</option>
-                  <option value="HIGH">High only</option>
-                </select>
-              </label>
-              <span className="config-hint">Filter alerts by importance</span>
-            </div>
           </section>
 
-          {/* Section 2: Indicator Settings */}
+          {/* Section 2: Alert Profiles */}
           <section className="config-section">
-            <h4>📊 Indicator Alerts</h4>
+            <div className="section-header-with-button">
+              <h4>📊 Alert Profiles</h4>
+              <button className="btn-create-profile" onClick={handleCreateProfile}>
+                ➕ Create New Profile
+              </button>
+            </div>
             <p className="section-description">
-              Choose which indicators can send alerts. Only enabled indicators will trigger notifications.
+              Create custom alert profiles with specific filters for each indicator. Each profile can have different settings and confluence rules.
             </p>
 
-            <div className="indicators-list">
-              <div className={`indicator-toggle ${localConfig.enabledIndicators['Support & Resistance'] ? 'enabled' : ''}`}>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={localConfig.enabledIndicators['Support & Resistance']}
-                    onChange={() => handleIndicatorToggle('Support & Resistance')}
-                    disabled={!localConfig.enabled}
-                  />
-                  <span className="indicator-name">
-                    <span className="indicator-icon">⚡</span>
-                    Support & Resistance
-                  </span>
-                </label>
-                <small>Alerts when price approaches key levels</small>
+            {localConfig.profiles.length === 0 ? (
+              <div className="no-profiles">
+                <p>No profiles yet. Create your first alert profile!</p>
+                <button className="btn-primary" onClick={handleCreateProfile}>
+                  ➕ Create Profile
+                </button>
               </div>
+            ) : (
+              <div className="profiles-list">
+                {localConfig.profiles.map(profile => (
+                  <div
+                    key={profile.id}
+                    className={`profile-card ${profile.id === localConfig.activeProfileId ? 'active' : ''}`}
+                  >
+                    <div className="profile-header">
+                      <label className="profile-radio">
+                        <input
+                          type="radio"
+                          name="activeProfile"
+                          checked={profile.id === localConfig.activeProfileId}
+                          onChange={() => handleSetActiveProfile(profile.id)}
+                          disabled={!localConfig.enabled}
+                        />
+                        <span className="profile-name">{profile.name}</span>
+                      </label>
+                      <div className="profile-actions">
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEditProfile(profile)}
+                          title="Edit profile"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDeleteProfile(profile.id)}
+                          title="Delete profile"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
 
-              <div className={`indicator-toggle ${localConfig.enabledIndicators['Rejection Patterns'] ? 'enabled' : ''}`}>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={localConfig.enabledIndicators['Rejection Patterns']}
-                    onChange={() => handleIndicatorToggle('Rejection Patterns')}
-                    disabled={!localConfig.enabled}
-                  />
-                  <span className="indicator-name">
-                    <span className="indicator-icon">📊</span>
-                    Rejection Patterns
-                  </span>
-                </label>
-                <small>Alerts on hammer, shooting star, engulfing patterns</small>
+                    {profile.description && (
+                      <div className="profile-description">{profile.description}</div>
+                    )}
+
+                    <div className="profile-stats">
+                      {Object.entries(profile.indicators).filter(([_, ind]) => ind.enabled).map(([name]) => (
+                        <span key={name} className="indicator-badge">{name}</span>
+                      ))}
+                      {profile.confluenceEnabled && (
+                        <span className="confluence-badge">
+                          🎯 Confluence: {profile.minIndicatorsForConfluence}+
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <div className={`indicator-toggle ${localConfig.enabledIndicators['Volume Profile'] ? 'enabled' : ''}`}>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={localConfig.enabledIndicators['Volume Profile']}
-                    onChange={() => handleIndicatorToggle('Volume Profile')}
-                    disabled={!localConfig.enabled}
-                  />
-                  <span className="indicator-name">
-                    <span className="indicator-icon">📈</span>
-                    Volume Profile
-                  </span>
-                </label>
-                <small>Alerts at POC and Value Area boundaries</small>
-              </div>
-
-              <div className={`indicator-toggle ${localConfig.enabledIndicators['Open Interest'] ? 'enabled' : ''}`}>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={localConfig.enabledIndicators['Open Interest']}
-                    onChange={() => handleIndicatorToggle('Open Interest')}
-                    disabled={!localConfig.enabled}
-                  />
-                  <span className="indicator-name">
-                    <span className="indicator-icon">🔥</span>
-                    Open Interest
-                  </span>
-                </label>
-                <small>Alerts on significant OI changes</small>
-              </div>
-            </div>
-
-            <div className="indicators-summary">
-              {getEnabledIndicatorsCount()} of 4 indicators enabled
-            </div>
-          </section>
-
-          {/* Section 3: Confluence Detection */}
-          <section className="config-section">
-            <h4>🎯 Confluence Detection</h4>
-            <p className="section-description">
-              Detect when multiple indicators agree on the same area/price. Confluence alerts are automatically marked as HIGH severity.
-            </p>
-
-            <div className="config-row">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={localConfig.confluenceEnabled}
-                  onChange={(e) => handleChange('confluenceEnabled', e.target.checked)}
-                  disabled={!localConfig.enabled}
-                />
-                <span>Enable Confluence Detection</span>
-              </label>
-              <span className="config-hint">Detect multi-indicator agreement</span>
-            </div>
-
-            <div className="config-row">
-              <label>
-                Minimum Indicators for Confluence
-                <input
-                  type="number"
-                  min="2"
-                  max="4"
-                  value={localConfig.minIndicatorsForConfluence}
-                  onChange={(e) => handleChange('minIndicatorsForConfluence', parseInt(e.target.value))}
-                  disabled={!localConfig.enabled || !localConfig.confluenceEnabled}
-                />
-              </label>
-              <span className="config-hint">How many indicators must agree (2-4)</span>
-            </div>
-
-            <div className="config-row">
-              <label>
-                Confluence Time Window (candles)
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={localConfig.confluenceWindowCandles}
-                  onChange={(e) => handleChange('confluenceWindowCandles', parseInt(e.target.value))}
-                  disabled={!localConfig.enabled || !localConfig.confluenceEnabled}
-                />
-              </label>
-              <span className="config-hint">±candles to consider indicators as confluent</span>
-            </div>
-
-            <div className="config-row">
-              <label>
-                Price Proximity (%)
-                <input
-                  type="number"
-                  min="0.1"
-                  max="2.0"
-                  step="0.1"
-                  value={localConfig.confluencePriceProximity}
-                  onChange={(e) => handleChange('confluencePriceProximity', parseFloat(e.target.value))}
-                  disabled={!localConfig.enabled || !localConfig.confluenceEnabled}
-                />
-              </label>
-              <span className="config-hint">Max price distance to group alerts (%)</span>
-            </div>
+            )}
           </section>
 
           {/* Summary */}
           <section className="config-section summary">
-            <h4>📋 Summary</h4>
+            <h4>📋 Current Status</h4>
             <div className="summary-content">
               {!localConfig.enabled && (
                 <p className="warning">⚠️ Alert system is disabled</p>
               )}
-              {localConfig.enabled && getEnabledIndicatorsCount() === 0 && (
-                <p className="warning">⚠️ No indicators enabled - you won't receive any alerts</p>
+              {localConfig.enabled && !localConfig.activeProfileId && (
+                <p className="warning">⚠️ No active profile - select one to receive alerts</p>
               )}
-              {localConfig.enabled && getEnabledIndicatorsCount() > 0 && (
+              {localConfig.enabled && activeProfile && (
                 <p className="success">
-                  ✅ Alert system active with {getEnabledIndicatorsCount()} indicator(s)
+                  ✅ Active Profile: <strong>{activeProfile.name}</strong>
                 </p>
               )}
-              {localConfig.confluenceEnabled && (
-                <p className="info">
-                  🎯 Confluence detection active: {localConfig.minIndicatorsForConfluence}+ indicators within ±{localConfig.confluenceWindowCandles} candles and {localConfig.confluencePriceProximity}%
-                </p>
+              {localConfig.soundEnabled && (
+                <p className="info">🔊 Sound notifications enabled</p>
+              )}
+              {localConfig.browserNotifications && (
+                <p className="info">🌐 Browser notifications enabled</p>
               )}
             </div>
           </section>
@@ -286,34 +352,74 @@ const AlertConfigPanel = ({ config, onConfigChange, onClose }) => {
 
         {/* Footer */}
         <div className="alert-config-footer">
-          <button className="btn-secondary" onClick={handleReset}>
-            Reset to Default
+          <button className="btn-secondary" onClick={onClose}>
+            Cancel
           </button>
           <button className="btn-primary" onClick={handleSave}>
             Save & Close
           </button>
         </div>
       </div>
+
+      {/* Profile Editor Modal */}
+      {showProfileEditor && (
+        <AlertProfileEditor
+          profile={editingProfile}
+          onSave={handleSaveProfile}
+          onCancel={() => {
+            setShowProfileEditor(false);
+            setEditingProfile(null);
+          }}
+          isNew={isNewProfile}
+        />
+      )}
     </div>
   );
 };
 
 function getDefaultConfig() {
+  const defaultProfiles = [
+    {
+      id: 'default_scalping',
+      name: '⚡ Scalping Agresivo',
+      description: 'Alerts on strong levels with high confidence patterns',
+      indicators: {
+        'Support & Resistance': {
+          enabled: true,
+          minStrength: 8,
+          proximityPercent: 0.2,
+          minTouches: 2
+        },
+        'Rejection Patterns': {
+          enabled: true,
+          minConfidence: 75,
+          requireNearLevel: true
+        },
+        'Volume Profile': {
+          enabled: false,
+          alertOnPOC: true,
+          alertOnValueArea: false,
+          proximityPercent: 0.3
+        },
+        'Open Interest': {
+          enabled: false,
+          minChangePercent: 20,
+          lookbackCandles: 3
+        }
+      },
+      confluenceEnabled: true,
+      minIndicatorsForConfluence: 2,
+      confluenceWindowCandles: 2,
+      confluencePriceProximity: 0.3
+    }
+  ];
+
   return {
     enabled: true,
     soundEnabled: false,
     browserNotifications: false,
-    minSeverity: 'LOW',
-    enabledIndicators: {
-      'Support & Resistance': true,
-      'Rejection Patterns': true,
-      'Volume Profile': false,
-      'Open Interest': false
-    },
-    confluenceEnabled: true,
-    minIndicatorsForConfluence: 2,
-    confluenceWindowCandles: 3,
-    confluencePriceProximity: 0.5
+    profiles: defaultProfiles,
+    activeProfileId: 'default_scalping'
   };
 }
 

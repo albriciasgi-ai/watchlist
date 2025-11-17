@@ -103,17 +103,42 @@ const Watchlist = () => {
     enabled: true,
     soundEnabled: false,
     browserNotifications: false,
-    minSeverity: 'LOW', // 'LOW', 'MEDIUM', 'HIGH'
-    enabledIndicators: {
-      'Support & Resistance': true,
-      'Rejection Patterns': true,
-      'Volume Profile': false,
-      'Open Interest': false
-    },
-    confluenceEnabled: true,
-    minIndicatorsForConfluence: 2,
-    confluenceWindowCandles: 3,
-    confluencePriceProximity: 0.5
+    profiles: [
+      {
+        id: 'default_scalping',
+        name: '⚡ Scalping Agresivo',
+        description: 'Alerts on strong levels with high confidence patterns',
+        indicators: {
+          'Support & Resistance': {
+            enabled: true,
+            minStrength: 8,
+            proximityPercent: 0.2,
+            minTouches: 2
+          },
+          'Rejection Patterns': {
+            enabled: true,
+            minConfidence: 75,
+            requireNearLevel: true
+          },
+          'Volume Profile': {
+            enabled: false,
+            alertOnPOC: true,
+            alertOnValueArea: false,
+            proximityPercent: 0.3
+          },
+          'Open Interest': {
+            enabled: false,
+            minChangePercent: 20,
+            lookbackCandles: 3
+          }
+        },
+        confluenceEnabled: true,
+        minIndicatorsForConfluence: 2,
+        confluenceWindowCandles: 2,
+        confluencePriceProximity: 0.3
+      }
+    ],
+    activeProfileId: 'default_scalping'
   });
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
@@ -272,32 +297,317 @@ const Watchlist = () => {
     localStorage.setItem('watchlist_alert_config', JSON.stringify(alertConfig));
   }, [alertConfig]);
 
-  // 🔔 NUEVO: Agregar nueva alerta
+  // 🎯 NUEVO: Detectar confluencias entre múltiples indicadores
+  const checkConfluence = (allAlerts, newAlert, profile) => {
+    // Solo verificar si el nuevo alert tiene precio y símbolo
+    if (!newAlert.data || !newAlert.data.price || !newAlert.symbol) return;
+
+    const now = Date.now();
+    const timeWindowMs = getIntervalMs(interval) * profile.confluenceWindowCandles;
+    const priceProximityPercent = profile.confluencePriceProximity;
+    const targetPrice = newAlert.data.price;
+
+    // Buscar alertas recientes del mismo símbolo
+    const recentAlerts = allAlerts.filter(a => {
+      // Excluir el nuevo alert de la búsqueda
+      if (a.id === newAlert.id) return false;
+
+      // Mismo símbolo
+      if (a.symbol !== newAlert.symbol) return false;
+
+      // Dentro de la ventana de tiempo
+      const timeDiff = Math.abs(now - a.timestamp);
+      if (timeDiff > timeWindowMs) return false;
+
+      // Tiene precio
+      if (!a.data || !a.data.price) return false;
+
+      // Precio cercano (dentro de la proximidad)
+      const priceDiff = Math.abs((a.data.price - targetPrice) / targetPrice * 100);
+      if (priceDiff > priceProximityPercent) return false;
+
+      // No es una alerta de confluencia (para evitar recursión)
+      if (a.type === 'Confluence') return false;
+
+      return true;
+    });
+
+    // Contar indicadores únicos involucrados (incluyendo el nuevo)
+    const indicatorTypes = new Set([newAlert.indicatorType]);
+    recentAlerts.forEach(a => {
+      if (a.indicatorType) indicatorTypes.add(a.indicatorType);
+    });
+
+    const indicatorCount = indicatorTypes.size;
+
+    // Si cumplimos el mínimo de indicadores, crear alerta de confluencia
+    if (indicatorCount >= profile.minIndicatorsForConfluence) {
+      // Verificar cooldown para confluencias
+      const confluenceKey = `confluence_${newAlert.symbol}_${Math.floor(targetPrice)}`;
+      const lastConfluence = localStorage.getItem(confluenceKey);
+
+      if (lastConfluence && (now - parseInt(lastConfluence)) < 1800000) { // 30 minutos cooldown
+        return;
+      }
+
+      // Crear descripción de la confluencia
+      const indicatorsList = Array.from(indicatorTypes).join(', ');
+      const avgPrice = ([newAlert, ...recentAlerts].reduce((sum, a) => sum + a.data.price, 0)) / (recentAlerts.length + 1);
+
+      const confluenceAlert = {
+        indicatorType: 'Confluence',
+        severity: 'HIGH', // Las confluencias siempre son HIGH
+        icon: '🎯',
+        title: `${newAlert.symbol} CONFLUENCE DETECTED`,
+        symbol: newAlert.symbol,
+        interval: interval,
+        type: 'Confluence',
+        description: `${indicatorCount} indicators agree near $${avgPrice.toFixed(2)}\n` +
+                     `Indicators: ${indicatorsList}\n` +
+                     `Price range: ${priceProximityPercent}%\n` +
+                     `Time window: ${profile.confluenceWindowCandles} candles`,
+        data: {
+          price: avgPrice,
+          indicatorCount: indicatorCount,
+          indicators: Array.from(indicatorTypes),
+          involvedAlerts: [newAlert.id, ...recentAlerts.map(a => a.id)],
+          priceRange: priceProximityPercent,
+          timeWindow: profile.confluenceWindowCandles
+        },
+        id: Date.now() + Math.random(),
+        timestamp: now,
+        profileName: profile.name
+      };
+
+      // Agregar la alerta de confluencia
+      setAlerts(prev => [confluenceAlert, ...prev].slice(0, 100));
+      setToastAlerts(prev => [...prev, confluenceAlert]);
+
+      // Reproducir sonido para confluencia (siempre HIGH)
+      if (alertConfig.soundEnabled) {
+        playAlertSound('HIGH');
+      }
+
+      // Guardar cooldown
+      localStorage.setItem(confluenceKey, now.toString());
+
+      console.log('[Watchlist] 🎯 CONFLUENCE DETECTED:', confluenceAlert);
+    }
+  };
+
+  // Helper function to get interval in milliseconds
+  const getIntervalMs = (interval) => {
+    const map = {
+      '5': 5 * 60 * 1000,
+      '15': 15 * 60 * 1000,
+      '30': 30 * 60 * 1000,
+      '60': 60 * 60 * 1000,
+      '240': 240 * 60 * 1000,
+      'D': 24 * 60 * 60 * 1000,
+      'W': 7 * 24 * 60 * 60 * 1000
+    };
+    return map[interval] || 15 * 60 * 1000;
+  };
+
+  // 🔊 NUEVO: Reproducir sonido basado en severidad
+  const playAlertSound = (severity) => {
+    try {
+      // Crear contexto de audio
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      // Conectar nodos
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Configurar según severidad
+      let frequency, duration;
+      switch (severity) {
+        case 'HIGH':
+          // Sonido urgente: frecuencia alta, más largo
+          frequency = 880; // A5
+          duration = 0.3;
+          // Beep doble
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + duration);
+
+          // Segundo beep
+          setTimeout(() => {
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            osc2.start(audioContext.currentTime);
+            osc2.stop(audioContext.currentTime + duration);
+          }, 200);
+          break;
+
+        case 'MEDIUM':
+          // Sonido moderado: frecuencia media
+          frequency = 660; // E5
+          duration = 0.2;
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+          gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + duration);
+          break;
+
+        case 'LOW':
+        default:
+          // Sonido suave: frecuencia baja
+          frequency = 440; // A4
+          duration = 0.15;
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+          gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + duration);
+          break;
+      }
+
+      // Limpiar después del sonido
+      setTimeout(() => {
+        audioContext.close();
+      }, 1000);
+
+    } catch (error) {
+      console.error('[Watchlist] Error playing alert sound:', error);
+    }
+  };
+
+  // 🔔 NUEVO: Agregar nueva alerta (con validación basada en perfiles)
   const addAlert = (alert) => {
     // Verificar si las alertas están habilitadas
     if (!alertConfig.enabled) return;
 
-    // Verificar si el indicador está habilitado
-    if (alert.indicatorType && !alertConfig.enabledIndicators[alert.indicatorType]) return;
+    // Obtener el perfil activo
+    const activeProfile = alertConfig.profiles.find(p => p.id === alertConfig.activeProfileId);
+    if (!activeProfile) {
+      console.log('[Watchlist] No active profile, alert rejected');
+      return;
+    }
 
-    // Verificar severidad mínima
-    const severityLevels = { 'LOW': 1, 'MEDIUM': 2, 'HIGH': 3 };
-    const minLevel = severityLevels[alertConfig.minSeverity] || 1;
-    const alertLevel = severityLevels[alert.severity] || 1;
-    if (alertLevel < minLevel) return;
+    // Verificar si el indicador está habilitado en el perfil
+    const indicatorSettings = activeProfile.indicators[alert.indicatorType];
+    if (!indicatorSettings || !indicatorSettings.enabled) {
+      console.log(`[Watchlist] Indicator ${alert.indicatorType} not enabled in profile, alert rejected`);
+      return;
+    }
 
-    // Crear alerta con ID único
+    // Validar contra filtros específicos del perfil según el tipo de indicador
+    let passesFilters = true;
+    let calculatedSeverity = alert.severity || 'LOW';
+
+    if (alert.indicatorType === 'Support & Resistance' && alert.data) {
+      // Validar contra filtros de S/R
+      if (alert.data.strength < indicatorSettings.minStrength) {
+        console.log(`[Watchlist] S/R strength ${alert.data.strength} below minimum ${indicatorSettings.minStrength}`);
+        passesFilters = false;
+      }
+      if (alert.data.touches < indicatorSettings.minTouches) {
+        console.log(`[Watchlist] S/R touches ${alert.data.touches} below minimum ${indicatorSettings.minTouches}`);
+        passesFilters = false;
+      }
+      if (alert.data.distance > indicatorSettings.proximityPercent) {
+        console.log(`[Watchlist] S/R distance ${alert.data.distance}% above maximum ${indicatorSettings.proximityPercent}%`);
+        passesFilters = false;
+      }
+
+      // Calcular severidad basada en strength
+      if (alert.data.strength >= 9) calculatedSeverity = 'HIGH';
+      else if (alert.data.strength >= 7) calculatedSeverity = 'MEDIUM';
+      else calculatedSeverity = 'LOW';
+    }
+
+    if (alert.indicatorType === 'Rejection Patterns' && alert.data) {
+      // Validar contra filtros de Rejection Patterns
+      if (alert.data.confidence < indicatorSettings.minConfidence) {
+        console.log(`[Watchlist] Pattern confidence ${alert.data.confidence}% below minimum ${indicatorSettings.minConfidence}%`);
+        passesFilters = false;
+      }
+
+      // Calcular severidad basada en confidence
+      if (alert.data.confidence >= 85) calculatedSeverity = 'HIGH';
+      else if (alert.data.confidence >= 70) calculatedSeverity = 'MEDIUM';
+      else calculatedSeverity = 'LOW';
+    }
+
+    if (alert.indicatorType === 'Volume Profile' && alert.data) {
+      // Validar contra filtros de Volume Profile
+      if (alert.data.levelType === 'POC' && !indicatorSettings.alertOnPOC) {
+        passesFilters = false;
+      }
+      if (alert.data.levelType === 'ValueArea' && !indicatorSettings.alertOnValueArea) {
+        passesFilters = false;
+      }
+      if (alert.data.distance > indicatorSettings.proximityPercent) {
+        passesFilters = false;
+      }
+    }
+
+    if (alert.indicatorType === 'Open Interest' && alert.data) {
+      // Validar contra filtros de Open Interest
+      if (Math.abs(alert.data.changePercent) < indicatorSettings.minChangePercent) {
+        console.log(`[Watchlist] OI change ${alert.data.changePercent}% below minimum ${indicatorSettings.minChangePercent}%`);
+        passesFilters = false;
+      }
+
+      // Calcular severidad basada en changePercent
+      const absChange = Math.abs(alert.data.changePercent);
+      if (absChange >= 30) calculatedSeverity = 'HIGH';
+      else if (absChange >= 20) calculatedSeverity = 'MEDIUM';
+      else calculatedSeverity = 'LOW';
+    }
+
+    if (!passesFilters) {
+      console.log('[Watchlist] Alert rejected by profile filters');
+      return;
+    }
+
+    // Crear alerta con ID único y severidad calculada
     const newAlert = {
       ...alert,
+      severity: calculatedSeverity,
       id: Date.now() + Math.random(),
-      timestamp: alert.timestamp || Date.now()
+      timestamp: alert.timestamp || Date.now(),
+      profileName: activeProfile.name
     };
 
     // Agregar a alertas
-    setAlerts(prev => [newAlert, ...prev].slice(0, 100)); // Mantener solo últimas 100
+    setAlerts(prev => {
+      const updatedAlerts = [newAlert, ...prev].slice(0, 100); // Mantener solo últimas 100
+
+      // 🎯 NUEVO: Detección de Confluencias
+      if (activeProfile.confluenceEnabled && newAlert.data && newAlert.data.price) {
+        checkConfluence(updatedAlerts, newAlert, activeProfile);
+      }
+
+      return updatedAlerts;
+    });
 
     // Mostrar toast notification
     setToastAlerts(prev => [...prev, newAlert]);
+
+    // Reproducir sonido si está habilitado
+    if (alertConfig.soundEnabled) {
+      playAlertSound(calculatedSeverity);
+    }
+
+    // Mostrar notificación del navegador si está habilitada
+    if (alertConfig.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
+      new Notification(newAlert.title, {
+        body: newAlert.description,
+        icon: newAlert.icon
+      });
+    }
 
     console.log('[Watchlist] Alert added:', newAlert);
   };

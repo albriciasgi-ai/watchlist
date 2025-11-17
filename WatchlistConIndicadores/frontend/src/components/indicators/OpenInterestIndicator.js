@@ -322,6 +322,65 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
+   * 🔔 NUEVO: Verificar y generar alertas para cambios significativos en Open Interest
+   */
+  checkOpenInterestAlerts(visibleCandles, lookbackCandles = 5) {
+    if (!this.dataMap || !this.data || this.data.length === 0 || !window.addWatchlistAlert) return;
+    if (!visibleCandles || visibleCandles.length < lookbackCandles + 1) return;
+
+    const now = Date.now();
+    const cooldownPeriod = 3600000; // 1 hora
+
+    // Obtener OI actual y OI hace N velas
+    const currentCandle = visibleCandles[visibleCandles.length - 1];
+    const lookbackCandle = visibleCandles[visibleCandles.length - 1 - lookbackCandles];
+
+    const currentOI = this.findClosestOI(currentCandle.timestamp);
+    const lookbackOI = this.findClosestOI(lookbackCandle.timestamp);
+
+    if (currentOI === null || lookbackOI === null || lookbackOI === 0) return;
+
+    // Calcular cambio porcentual
+    const changePercent = ((currentOI - lookbackOI) / lookbackOI) * 100;
+    const absChangePercent = Math.abs(changePercent);
+
+    // Verificar cooldown
+    const alertKey = `oi_alert_${this.symbol}_${Math.floor(now / cooldownPeriod)}`;
+    const lastAlertTime = localStorage.getItem(alertKey);
+
+    if (lastAlertTime && (now - parseInt(lastAlertTime)) < cooldownPeriod) {
+      return; // Skip if in cooldown
+    }
+
+    // Determinar dirección y severidad
+    const direction = changePercent >= 0 ? 'increase' : 'decrease';
+    const icon = changePercent >= 0 ? '📈' : '📉';
+
+    // Generar alerta
+    window.addWatchlistAlert({
+      indicatorType: 'Open Interest',
+      severity: 'MEDIUM', // Will be recalculated by addAlert based on profile
+      icon: icon,
+      title: `${this.symbol} OI ${direction}`,
+      symbol: this.symbol,
+      interval: this.interval,
+      type: 'OI Change',
+      description: `Open Interest ${direction} by ${absChangePercent.toFixed(2)}% over ${lookbackCandles} candles\nCurrent OI: ${currentOI.toFixed(0)}\nPrevious OI: ${lookbackOI.toFixed(0)}\nMode: ${this.mode}`,
+      data: {
+        price: currentCandle.close,
+        changePercent: changePercent,
+        currentOI: currentOI,
+        previousOI: lookbackOI,
+        lookbackCandles: lookbackCandles,
+        mode: this.mode
+      }
+    });
+
+    // Guardar timestamp de la alerta
+    localStorage.setItem(alertKey, now.toString());
+  }
+
+  /**
    * Renderiza el indicador según el modo actual
    */
   render(ctx, bounds, visibleCandles) {
@@ -378,6 +437,9 @@ class OpenInterestIndicator extends IndicatorBase {
       console.log(`[${this.symbol}] ❌ RENDER: No data, exiting`);
       return;
     }
+
+    // 🔔 NUEVO: Verificar alertas de OI
+    this.checkOpenInterestAlerts(visibleCandles);
 
     // Encontrar valor máximo para escala
     const deltas = data.map(d => d.delta);
@@ -470,6 +532,9 @@ class OpenInterestIndicator extends IndicatorBase {
     // Calcular datos
     const data = this.calculateCumulativeMode(visibleCandles);
     if (data.length === 0) return;
+
+    // 🔔 NUEVO: Verificar alertas de OI
+    this.checkOpenInterestAlerts(visibleCandles);
 
     // Encontrar rango
     const cumulativeValues = [];
@@ -573,6 +638,9 @@ class OpenInterestIndicator extends IndicatorBase {
     // Calcular datos
     const oiFlowData = this.calculateFlowMode(visibleCandles);
     if (oiFlowData.length === 0) return;
+
+    // 🔔 NUEVO: Verificar alertas de OI
+    this.checkOpenInterestAlerts(visibleCandles);
 
     // Calcular Price Sentiment si está habilitado
     let priceSentimentData = [];
