@@ -56,7 +56,7 @@
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.5119199522002251
+      "currentZScore": -0.4473839383253519
     }
   },
   "config": {
@@ -69,5 +69,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763418411.5476844
+  "timestamp": 1763421296.5576384
 }
