@@ -618,6 +618,44 @@ def calculate_proximity_score(current_price: float, target_price: float, toleran
     }
 
 
+def calculate_z_score(values: list, period: int = 50) -> list:
+    """
+    Calcula el z-score para una serie de valores usando una ventana móvil
+
+    Args:
+        values: Lista de valores numéricos
+        period: Tamaño de la ventana para calcular media y desviación estándar
+
+    Returns:
+        Lista de z-scores (uno por cada valor)
+    """
+    import statistics
+
+    z_scores = []
+
+    for i in range(len(values)):
+        # Usar ventana desde el inicio hasta el índice actual (máximo 'period' valores)
+        start_idx = max(0, i - period + 1)
+        window = values[start_idx:i + 1]
+
+        if len(window) < 2:
+            z_scores.append(0.0)
+            continue
+
+        # Calcular media y desviación estándar
+        mean = statistics.mean(window)
+        stdev = statistics.stdev(window)
+
+        # Evitar división por cero
+        if stdev == 0:
+            z_scores.append(0.0)
+        else:
+            z_score = (values[i] - mean) / stdev
+            z_scores.append(z_score)
+
+    return z_scores
+
+
 def calculate_volume_score(volumes: list, z_score_period: int = 50, threshold_zscore: float = 2.0) -> dict:
     """
     Calcula el score de volumen basado en z-score actual
