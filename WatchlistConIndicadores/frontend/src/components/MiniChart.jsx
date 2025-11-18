@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -1164,10 +1164,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
                 borderRadius: '3px',
                 cursor: 'pointer',
                 fontSize: '11px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                marginLeft: '4px'
               }}
             >
               🎯
+            </button>
+          )}
+          {onOpenSupportResistanceSettings && (
+            <button
+              className="sr-chart-settings-btn"
+              onClick={() => onOpenSupportResistanceSettings(indicatorManagerRef.current)}
+              title="Configurar Support & Resistance"
+              style={{
+                background: '#FF9800',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              ⚡
             </button>
           )}
           <button

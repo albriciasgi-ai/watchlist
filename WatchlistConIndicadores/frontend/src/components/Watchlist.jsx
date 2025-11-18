@@ -4,6 +4,7 @@ import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
+import SupportResistanceSettings from "./SupportResistanceSettings";
 import wsManager from "./WebSocketManager";
 import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
 
@@ -82,6 +83,10 @@ const Watchlist = () => {
   const [selectedSymbolForRP, setSelectedSymbolForRP] = useState(null);
   const [rejectionPatternConfigs, setRejectionPatternConfigs] = useState({});
 
+  // 📊 NUEVO: Estado para Support & Resistance Settings
+  const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
+  const [selectedSymbolForSR, setSelectedSymbolForSR] = useState(null);
+
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
     const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
@@ -152,6 +157,21 @@ const Watchlist = () => {
     }
 
     setShowRejectionPatternSettings(true);
+  };
+
+  // 📊 NUEVO: Handler para abrir Support & Resistance Settings
+  const handleOpenSupportResistanceSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForSR(symbol);
+
+    // Guardar referencia del IndicatorManager
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+
+    setShowSupportResistanceSettings(true);
   };
 
   // 🔔 NUEVO: Handler para cambio de config de patrones
@@ -259,6 +279,7 @@ const Watchlist = () => {
             onOpenVpSettings={() => handleOpenVpSettings(sym)}
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
+            onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
           />
         ))}
@@ -318,6 +339,18 @@ const Watchlist = () => {
             setSelectedSymbolForRP(null);
           }}
           initialConfig={rejectionPatternConfigs[selectedSymbolForRP]}
+        />
+      )}
+
+      {/* 📊 NUEVO: Modal de Support & Resistance Settings */}
+      {showSupportResistanceSettings && selectedSymbolForSR && (
+        <SupportResistanceSettings
+          symbol={selectedSymbolForSR}
+          indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
+          onClose={() => {
+            setShowSupportResistanceSettings(false);
+            setSelectedSymbolForSR(null);
+          }}
         />
       )}
     </div>
