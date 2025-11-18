@@ -278,6 +278,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         width: chartWidth,
         height: priceChartHeight
       };
+
+      // 🎯 NUEVO: Función para convertir precio a coordenada Y en el canvas
+      const priceToY = (price) => {
+        return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+      };
+
       // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
       const priceContext = {
         minPrice,
@@ -285,7 +291,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         priceRange,
         verticalZoom,
         verticalOffset,
-        yScale
+        yScale,
+        priceToY  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
     }
