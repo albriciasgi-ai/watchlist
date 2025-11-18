@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import "./AlertConfigModal.css";
 
-const API_BASE_URL = "http://localhost:8000";
-
 /**
  * AlertConfigModal - Modal para configurar alertas de proximidad
  *
@@ -13,7 +11,7 @@ const API_BASE_URL = "http://localhost:8000";
  * - Seleccionar precio manual o desde S/R / Range Detector
  * - Configurar tolerancia y umbral de volumen
  */
-const AlertConfigModal = ({ alert, symbols, onSave, onDelete, onClose }) => {
+const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDelete, onClose }) => {
   const isEditing = Boolean(alert?.id && !alert.id.includes("disabled"));
 
   // Estado del formulario
@@ -42,36 +40,100 @@ const AlertConfigModal = ({ alert, symbols, onSave, onDelete, onClose }) => {
     if (formData.referenceSource !== "manual" && formData.symbol) {
       loadAvailableLevels();
     }
-  }, [formData.symbol, formData.referenceSource]);
+  }, [formData.symbol, formData.referenceSource, indicatorManagers]);
 
   const loadAvailableLevels = async () => {
     setLoadingLevels(true);
     try {
       if (formData.referenceSource === "support_resistance") {
-        // Cargar niveles de S/R
-        const response = await fetch(
-          `${API_BASE_URL}/api/support-resistance/${formData.symbol}?interval=15&days=30`
-        );
-        const data = await response.json();
+        // Obtener niveles directamente del indicador SwingBasedRangeDetector
+        const manager = indicatorManagers[formData.symbol]?.manager;
 
-        if (data.success) {
+        if (manager && manager.swingRangeDetector) {
+          const detector = manager.swingRangeDetector;
+
+          // Obtener swing lows (soportes) y swing highs (resistencias)
+          const supports = (detector.swingLows || []).map((swing, idx) => ({
+            price: swing.price,
+            strength: 1, // Podrías calcular strength basándote en otros factores
+            id: `support-${idx}`,
+            timestamp: swing.timestamp
+          }));
+
+          const resistances = (detector.swingHighs || []).map((swing, idx) => ({
+            price: swing.price,
+            strength: 1,
+            id: `resistance-${idx}`,
+            timestamp: swing.timestamp
+          }));
+
+          // Ordenar por precio (supports de menor a mayor, resistances de mayor a menor)
+          supports.sort((a, b) => b.price - a.price);
+          resistances.sort((a, b) => b.price - a.price);
+
           setAvailableLevels({
-            supports: data.data.supports || [],
-            resistances: data.data.resistances || [],
+            supports,
+            resistances,
+            ranges: [],
+          });
+
+          console.log('[AlertConfigModal] Niveles cargados:', {
+            supports: supports.length,
+            resistances: resistances.length
+          });
+        } else {
+          console.warn('[AlertConfigModal] No se encontró SwingRangeDetector para', formData.symbol);
+          setAvailableLevels({
+            supports: [],
+            resistances: [],
             ranges: [],
           });
         }
       } else if (formData.referenceSource === "range_detector") {
-        // TODO: Implementar carga de niveles de Range Detector
-        // Por ahora, dejar vacío
-        setAvailableLevels({
-          supports: [],
-          resistances: [],
-          ranges: [],
-        });
+        // Obtener niveles del Range Detector
+        const manager = indicatorManagers[formData.symbol]?.manager;
+
+        if (manager && manager.swingRangeDetector) {
+          const detector = manager.swingRangeDetector;
+          const ranges = detector.detectedRanges || [];
+
+          // Convertir rangos a niveles de soporte/resistencia
+          const supports = ranges.map((range, idx) => ({
+            price: range.low,
+            strength: 2, // Rangos tienen mayor strength
+            id: `range-low-${idx}`,
+            rangeId: range.id
+          }));
+
+          const resistances = ranges.map((range, idx) => ({
+            price: range.high,
+            strength: 2,
+            id: `range-high-${idx}`,
+            rangeId: range.id
+          }));
+
+          setAvailableLevels({
+            supports,
+            resistances,
+            ranges,
+          });
+
+          console.log('[AlertConfigModal] Rangos cargados:', ranges.length);
+        } else {
+          setAvailableLevels({
+            supports: [],
+            resistances: [],
+            ranges: [],
+          });
+        }
       }
     } catch (error) {
       console.error("Error loading levels:", error);
+      setAvailableLevels({
+        supports: [],
+        resistances: [],
+        ranges: [],
+      });
     } finally {
       setLoadingLevels(false);
     }

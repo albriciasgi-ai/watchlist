@@ -10,7 +10,7 @@ import "./ProximityAlertDashboard.css";
  *
  * Se ubica arriba de los minicharts y muestra el estado de todas las alertas configuradas
  */
-const ProximityAlertDashboard = ({ symbols }) => {
+const ProximityAlertDashboard = ({ symbols, indicatorManagers = {} }) => {
   const {
     alerts,
     alertStates,
@@ -150,6 +150,7 @@ const ProximityAlertDashboard = ({ symbols }) => {
         <AlertConfigModal
           alert={editingAlert}
           symbols={symbols}
+          indicatorManagers={indicatorManagers}
           onSave={handleSaveAlert}
           onDelete={handleDeleteAlert}
           onClose={handleCloseModal}
