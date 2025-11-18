@@ -180,7 +180,7 @@ class IndicatorManager {
         }
 
         // Renderizar el indicador normalmente
-        indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles);
+        indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
       }
     });
 

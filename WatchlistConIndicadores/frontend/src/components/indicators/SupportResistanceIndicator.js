@@ -104,11 +104,23 @@ class SupportResistanceIndicator extends IndicatorBase {
       return;
     }
 
+    // DEBUG: Solo log una vez
+    if (!this._renderLoggedOnce) {
+      console.log(`[${this.symbol}] 🎨 renderOverlay called with:`, {
+        resistances: this.resistances.length,
+        supports: this.supports.length,
+        hasPriceToY: !!priceContext?.priceToY,
+        bounds
+      });
+      this._renderLoggedOnce = true;
+    }
+
     const { x, y, width, height } = bounds;
 
     // Extract priceToY function from priceContext
     const priceToY = priceContext ? priceContext.priceToY : null;
     if (!priceToY) {
+      console.warn(`[${this.symbol}] ❌ No priceToY function in priceContext!`);
       return;
     }
 
