@@ -1,0 +1,196 @@
+/* src/components/ProximityAlerts/AlertCircle.css */
+
+.alert-circle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  padding: 10px;
+  transition: transform 0.2s ease;
+}
+
+.alert-circle-container:hover {
+  transform: scale(1.05);
+}
+
+.alert-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.alert-circle.disabled {
+  background-color: #333 !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+  width: 40px;
+  height: 40px;
+}
+
+/* Animación pulse para alertas activas */
+.alert-circle.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.alert-circle-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+.alert-symbol {
+  font-size: 10px;
+  opacity: 0.9;
+  letter-spacing: -0.5px;
+}
+
+.alert-score {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.alert-status {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.volume-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.volume-arrow {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Tooltip */
+.alert-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(20, 20, 20, 0.98);
+  border: 2px solid #4a9eff;
+  border-radius: 6px;
+  padding: 12px 14px;
+  min-width: 220px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10000;
+  margin-top: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.alert-circle-container:hover .alert-tooltip {
+  opacity: 1;
+}
+
+.tooltip-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a9eff;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 6px;
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.tooltip-label {
+  color: #aaa;
+  font-weight: 600;
+}
+
+.tooltip-value {
+  color: #fff;
+  font-weight: 700;
+}
+
+.tooltip-phase {
+  text-transform: uppercase;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: #444;
+}
+
+/* Label debajo del círculo */
+.alert-label {
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.alert-circle-container:hover .alert-label {
+  color: #4a9eff;
+}
+
+/* Fases específicas */
+.alert-circle.idle {
+  border: 2px solid #444;
+}
+
+.alert-circle.approaching {
+  border: 2px solid #4a9eff;
+}
+
+.alert-circle.in_zone {
+  border: 2px solid #ffb74d;
+}
+
+.alert-circle.active {
+  border: 2px solid #fff;
+}

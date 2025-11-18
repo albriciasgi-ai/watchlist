@@ -10,6 +10,8 @@ import RangeDetectionIndicator from "./RangeDetectionIndicator";
 import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
+import SupportResistanceIndicator from "./SupportResistanceIndicator";
+import OpenInterestIndicator from "./OpenInterestIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -25,15 +27,29 @@ class IndicatorManager {
     this.rangeDetector = null;       // Detector de rangos (solo si está habilitado)
     this.autoRangeProfiles = [];     // Rangos auto-detectados
 
+    // 📊 NUEVO: Support & Resistance Indicator
+    this.supportResistanceIndicator = null; // Indicador de S/R (solo si está habilitado)
+
+    // 📊 NUEVO: Open Interest Indicator
+    this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
+
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
   async initialize() {
+    // Crear el indicador de S/R
+    this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+
+    // Crear el indicador de Open Interest
+    this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       new VolumeIndicator(this.symbol, this.interval, this.days),
       new CVDIndicator(this.symbol, this.interval, this.days),
-      new RejectionPatternIndicator(this.symbol, this.interval, this.days)
+      this.openInterestIndicator,
+      new RejectionPatternIndicator(this.symbol, this.interval, this.days),
+      this.supportResistanceIndicator
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -44,10 +60,10 @@ class IndicatorManager {
     }
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile si es necesario
+    // Solo cargar Volume Profile y Open Interest si es necesario
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile") {
+        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
           return ind.fetchData();
         }
         return Promise.resolve();
@@ -90,20 +106,20 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh solo para Volume Profile
+  // ✅ SIMPLIFICADO: refresh solo para Volume Profile y Open Interest
   async refresh() {
     const startTime = Date.now();
-    console.log(`[${this.symbol}] 🔄 Refrescando Volume Profile...`);
-    
+    console.log(`[${this.symbol}] 🔄 Refrescando indicadores...`);
+
     try {
       await Promise.all(
         this.indicators.map(async (indicator) => {
-          if (indicator.enabled && indicator.name === "Volume Profile") {
+          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest")) {
             await indicator.fetchData();
           }
         })
       );
-      
+
       const duration = Date.now() - startTime;
       console.log(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
     } catch (error) {
@@ -172,7 +188,7 @@ class IndicatorManager {
         }
 
         // Renderizar el indicador normalmente
-        indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles);
+        indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
       }
     });
 

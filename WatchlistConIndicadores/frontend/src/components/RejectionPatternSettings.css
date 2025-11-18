@@ -500,3 +500,139 @@
 .add-button:hover {
   background: #3a8eef;
 }
+
+/* Support & Resistance Settings (indicator-settings) */
+.indicator-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.indicator-settings-modal {
+  position: relative;
+  background: #1e1e1e;
+  border: 2px solid #333;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #252525;
+  border-top: 1px solid #333;
+}
+
+.settings-footer button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #555 !important;
+  color: #aaa;
+}
+
+.btn-secondary:hover {
+  background: #333;
+  border-color: #666 !important;
+  color: #fff;
+}
+
+.btn-primary {
+  background: #4a9eff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #3a8eef;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.setting-row {
+  margin-bottom: 16px;
+}
+
+.setting-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.setting-row input[type="number"],
+.setting-row select {
+  padding: 10px;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.setting-row input[type="number"]:focus,
+.setting-row select:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.hint {
+  color: #666;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.info-box {
+  padding: 12px;
+  background: rgba(74, 158, 255, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(74, 158, 255, 0.3);
+}
+
+.info-box p {
+  margin: 0;
+  color: #4a9eff;
+  font-size: 13px;
+}

@@ -99,7 +99,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     this.localPatterns = this.localDetector.detectPatterns(candles, this.config);
-    console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
+    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
   }
 
   async fetchData() {

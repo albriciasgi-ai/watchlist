@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -129,7 +129,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   const [mousePos, setMousePos] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
+
+  // Actualizar fullscreenOiMode cuando cambia oiMode del padre
+  useEffect(() => {
+    if (oiMode) {
+      setFullscreenOiMode(oiMode);
+    }
+  }, [oiMode]);
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
@@ -278,6 +286,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         width: chartWidth,
         height: priceChartHeight
       };
+
+      // 🎯 NUEVO: Función para convertir precio a coordenada Y en el canvas
+      const priceToY = (price) => {
+        return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+      };
+
       // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
       const priceContext = {
         minPrice,
@@ -285,7 +299,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         priceRange,
         verticalZoom,
         verticalOffset,
-        yScale
+        yScale,
+        priceToY  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
     }
@@ -794,7 +809,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // Zoom horizontal normal (zoom in/out de velas)
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
-    const newZoom = Math.max(0.5, Math.min(5, oldZoom * zoomFactor));
+    // Permitir más compresión (min 0.1) para ver más velas y más contexto
+    const newZoom = Math.max(0.1, Math.min(5, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
 
     const canvas = canvasRef.current;
@@ -935,14 +951,22 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     if (indicatorManagerRef.current && vpFixedRange) {
       if (vpFixedRange.applyToAll || vpFixedRange.symbol === symbol) {
         indicatorManagerRef.current.setFixedRange(
-          "Volume Profile", 
-          vpFixedRange.start, 
+          "Volume Profile",
+          vpFixedRange.start,
           vpFixedRange.end
         );
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
       }
     }
   }, [vpFixedRange, symbol]);
+
+  // 📊 Efecto para actualizar modo de Open Interest cuando cambie
+  useEffect(() => {
+    if (indicatorManagerRef.current && oiMode) {
+      indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  }, [oiMode]);
 
   // ==================== MAIN EFFECT ====================
   
@@ -954,7 +978,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const initIndicators = async () => {
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       await indicatorManagerRef.current.initialize();
-      
+
+      // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
+      indicatorManagerRef.current.requestRedraw = () => {
+        if (candlesRef.current && candlesRef.current.length > 0) {
+          console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      };
+
       if (indicatorStates) {
         Object.entries(indicatorStates).forEach(([name, enabled]) => {
           indicatorManagerRef.current.toggleIndicator(name, enabled);
@@ -965,6 +997,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         indicatorManagerRef.current.applyConfig("Volume Profile", vpConfig);
         indicatorManagerRef.current.setIndicatorMode("Volume Profile", vpConfig.mode);
       }
+
+      // 📊 Configurar modo de Open Interest
+      if (oiMode && indicatorManagerRef.current) {
+        indicatorManagerRef.current.applyConfig("Open Interest", { mode: oiMode });
+      }
+
       if (indicatorManagerRef.current) {
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
@@ -1164,10 +1202,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
                 borderRadius: '3px',
                 cursor: 'pointer',
                 fontSize: '11px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                marginLeft: '4px'
               }}
             >
               🎯
+            </button>
+          )}
+          {onOpenSupportResistanceSettings && (
+            <button
+              className="sr-chart-settings-btn"
+              onClick={() => onOpenSupportResistanceSettings(indicatorManagerRef.current)}
+              title="Configurar Support & Resistance"
+              style={{
+                background: '#FF9800',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              ⚡
             </button>
           )}
           <button
@@ -1235,12 +1294,49 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       {isFullscreen && (
         <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
           <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
-            <button 
+            <button
               className="close-fullscreen-btn"
               onClick={() => setIsFullscreen(false)}
             >
               ✕
             </button>
+
+            {/* Selector de modo de Open Interest en fullscreen */}
+            {indicatorStates["Open Interest"] && (
+              <div style={{
+                position: 'absolute',
+                top: '15px',
+                left: '15px',
+                zIndex: 1000,
+                background: 'white',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
+                  Open Interest Mode:
+                </label>
+                <select
+                  value={fullscreenOiMode}
+                  onChange={(e) => setFullscreenOiMode(e.target.value)}
+                  style={{
+                    padding: '4px 8px',
+                    fontSize: '11px',
+                    border: '1px solid #ddd',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="histogram">Histogram</option>
+                  <option value="cumulative">Cumulative</option>
+                  <option value="flow">Flow</option>
+                </select>
+              </div>
+            )}
+
             <MiniChart
               symbol={symbol}
               interval={interval}
@@ -1248,9 +1344,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               indicatorStates={indicatorStates}
               vpConfig={vpConfig}
               vpFixedRange={vpFixedRange}
+              oiMode={fullscreenOiMode}
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
+              onOpenSupportResistanceSettings={onOpenSupportResistanceSettings}
               rejectionPatternConfig={rejectionPatternConfig}
             />
           </div>

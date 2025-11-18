@@ -4,7 +4,9 @@ import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
+import SupportResistanceSettings from "./SupportResistanceSettings";
 import wsManager from "./WebSocketManager";
+import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
 
 const symbols = [
   "BTCUSDT", "ETHUSDT", "TRXUSDT", "XRPUSDT", "SOLUSDT", "AAVEUSDT",
@@ -43,7 +45,8 @@ const Watchlist = () => {
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
-    "Volume Profile": false
+    "Volume Profile": false,
+    "Open Interest": false
   });
   
   const [vpConfig, setVpConfig] = useState({
@@ -71,6 +74,9 @@ const Watchlist = () => {
   const [showVpSettings, setShowVpSettings] = useState(false);
   const [selectedSymbolForVp, setSelectedSymbolForVp] = useState(null);
 
+  // 📊 NUEVO: Estado para modo de Open Interest
+  const [oiMode, setOiMode] = useState("histogram");
+
   // 🎯 NUEVO: Estado para Range Detection Settings
   const [showRangeDetectionSettings, setShowRangeDetectionSettings] = useState(false);
   const [selectedSymbolForRD, setSelectedSymbolForRD] = useState(null);
@@ -80,6 +86,10 @@ const Watchlist = () => {
   const [showRejectionPatternSettings, setShowRejectionPatternSettings] = useState(false);
   const [selectedSymbolForRP, setSelectedSymbolForRP] = useState(null);
   const [rejectionPatternConfigs, setRejectionPatternConfigs] = useState({});
+
+  // 📊 NUEVO: Estado para Support & Resistance Settings
+  const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
+  const [selectedSymbolForSR, setSelectedSymbolForSR] = useState(null);
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -153,6 +163,21 @@ const Watchlist = () => {
     setShowRejectionPatternSettings(true);
   };
 
+  // 📊 NUEVO: Handler para abrir Support & Resistance Settings
+  const handleOpenSupportResistanceSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForSR(symbol);
+
+    // Guardar referencia del IndicatorManager
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+
+    setShowSupportResistanceSettings(true);
+  };
+
   // 🔔 NUEVO: Handler para cambio de config de patrones
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfigs(prev => ({
@@ -221,8 +246,8 @@ const Watchlist = () => {
             </label>
 
             <label>
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={indicatorStates["Volume Profile"]}
                 onChange={() => toggleIndicator("Volume Profile")}
               />
@@ -230,7 +255,7 @@ const Watchlist = () => {
             </label>
 
             {indicatorStates["Volume Profile"] && (
-              <button 
+              <button
                 onClick={() => handleOpenVpSettings(null)}
                 className="vp-settings-btn"
                 title="Configurar Volume Profile"
@@ -238,9 +263,21 @@ const Watchlist = () => {
                 ⚙ Config VP
               </button>
             )}
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Open Interest"]}
+                onChange={() => toggleIndicator("Open Interest")}
+              />
+              Open Interest
+            </label>
           </div>
         </div>
       </div>
+
+      {/* 🎯 NUEVO: Proximity Alert Dashboard */}
+      <ProximityAlertDashboard symbols={symbols} indicatorManagers={indicatorManagers} />
 
       <div className="grid-container">
         {symbols.map((sym) => (
@@ -252,9 +289,11 @@ const Watchlist = () => {
             indicatorStates={indicatorStates}
             vpConfig={vpConfig}
             vpFixedRange={vpFixedRange}
+            oiMode={oiMode}
             onOpenVpSettings={() => handleOpenVpSettings(sym)}
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
+            onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
           />
         ))}
@@ -314,6 +353,18 @@ const Watchlist = () => {
             setSelectedSymbolForRP(null);
           }}
           initialConfig={rejectionPatternConfigs[selectedSymbolForRP]}
+        />
+      )}
+
+      {/* 📊 NUEVO: Modal de Support & Resistance Settings */}
+      {showSupportResistanceSettings && selectedSymbolForSR && (
+        <SupportResistanceSettings
+          symbol={selectedSymbolForSR}
+          indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
+          onClose={() => {
+            setShowSupportResistanceSettings(false);
+            setSelectedSymbolForSR(null);
+          }}
         />
       )}
     </div>
