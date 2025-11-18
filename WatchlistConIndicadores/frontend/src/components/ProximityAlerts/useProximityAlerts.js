@@ -168,7 +168,8 @@ const useProximityAlerts = () => {
         console.log('[useProximityAlerts] Processing', data.results.length, 'results');
         // Actualizar estados
         const newStates = {};
-        data.results.forEach((result) => {
+        data.results.forEach((result, index) => {
+          console.log(`[useProximityAlerts] Result ${index}:`, result);
           if (result.success) {
             console.log('[useProximityAlerts] Alert', result.id, 'score:', result.totalScore);
             newStates[result.id] = {
