@@ -1287,6 +1287,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
+              onOpenSupportResistanceSettings={onOpenSupportResistanceSettings}
               rejectionPatternConfig={rejectionPatternConfig}
             />
           </div>
