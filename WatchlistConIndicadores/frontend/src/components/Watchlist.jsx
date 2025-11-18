@@ -74,6 +74,9 @@ const Watchlist = () => {
   const [showVpSettings, setShowVpSettings] = useState(false);
   const [selectedSymbolForVp, setSelectedSymbolForVp] = useState(null);
 
+  // 📊 NUEVO: Estado para modo de Open Interest
+  const [oiMode, setOiMode] = useState("histogram");
+
   // 🎯 NUEVO: Estado para Range Detection Settings
   const [showRangeDetectionSettings, setShowRangeDetectionSettings] = useState(false);
   const [selectedSymbolForRD, setSelectedSymbolForRD] = useState(null);
@@ -286,6 +289,7 @@ const Watchlist = () => {
             indicatorStates={indicatorStates}
             vpConfig={vpConfig}
             vpFixedRange={vpFixedRange}
+            oiMode={oiMode}
             onOpenVpSettings={() => handleOpenVpSettings(sym)}
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
