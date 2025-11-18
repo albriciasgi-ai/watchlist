@@ -11,13 +11,20 @@ import './RejectionPatternSettings.css';
  */
 const SupportResistanceSettings = ({
   symbol,
+  indicatorManager,
   onConfigChange,
   onClose,
   initialConfig
 }) => {
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    // Check if indicator is enabled
+    if (indicatorManager && indicatorManager.supportResistanceIndicator) {
+      setEnabled(indicatorManager.supportResistanceIndicator.enabled || false);
+    }
+
     // Load config from localStorage
     const savedConfig = localStorage.getItem(`support_resistance_config_${symbol}`);
     if (savedConfig) {
@@ -28,16 +35,50 @@ const SupportResistanceSettings = ({
         console.error('Failed to load S/R config:', e);
       }
     }
-  }, [symbol]);
+  }, [symbol, indicatorManager]);
 
   const handleChange = (key, value) => {
     const newConfig = { ...config, [key]: value };
     setConfig(newConfig);
   };
 
-  const handleSave = () => {
-    // Save to localStorage
+  const handleToggleEnabled = async () => {
+    if (!indicatorManager || !indicatorManager.supportResistanceIndicator) {
+      console.warn('Support & Resistance Indicator not found');
+      return;
+    }
+
+    const srIndicator = indicatorManager.supportResistanceIndicator;
+    const newEnabled = !enabled;
+
+    setEnabled(newEnabled);
+    srIndicator.enabled = newEnabled;
+
+    if (newEnabled) {
+      // Fetch data when enabling
+      console.log(`[${symbol}] Enabling Support & Resistance indicator`);
+      await srIndicator.fetchData();
+    } else {
+      console.log(`[${symbol}] Disabling Support & Resistance indicator`);
+      srIndicator.clearData();
+    }
+  };
+
+  const handleSave = async () => {
+    // Save config to localStorage
     localStorage.setItem(`support_resistance_config_${symbol}`, JSON.stringify(config));
+
+    // Apply config to indicator
+    if (indicatorManager && indicatorManager.supportResistanceIndicator) {
+      const srIndicator = indicatorManager.supportResistanceIndicator;
+      srIndicator.updateConfig(config);
+
+      // Refresh data with new config if enabled
+      if (enabled) {
+        console.log(`[${symbol}] Refreshing S/R data with new config`);
+        await srIndicator.fetchData();
+      }
+    }
 
     // Notify parent
     if (onConfigChange) {
@@ -64,6 +105,28 @@ const SupportResistanceSettings = ({
         </div>
 
         <div className="settings-content">
+          {/* Enable/Disable Toggle */}
+          <div className="settings-section">
+            <div className="setting-row">
+              <label className="checkbox-label" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                <input
+                  type="checkbox"
+                  checked={enabled}
+                  onChange={handleToggleEnabled}
+                  style={{ width: '20px', height: '20px' }}
+                />
+                Enable Support & Resistance Indicator
+              </label>
+            </div>
+            {!enabled && (
+              <div className="info-box" style={{ marginTop: '10px', background: '#ffeaa7' }}>
+                <p style={{ color: '#2d3436', margin: 0 }}>
+                  ⚠️ Indicator is disabled. Enable it to see support and resistance levels on the chart.
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Detection Parameters */}
           <div className="settings-section">
             <h4>🔍 Detection Parameters</h4>
