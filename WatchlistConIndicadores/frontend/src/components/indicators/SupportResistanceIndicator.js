@@ -98,22 +98,17 @@ class SupportResistanceIndicator extends IndicatorBase {
    */
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled) {
-      console.log(`[${this.symbol}] S/R indicator not enabled, skipping render`);
       return;
     }
     if (this.resistances.length === 0 && this.supports.length === 0) {
-      console.log(`[${this.symbol}] S/R no levels to render (resistances: ${this.resistances.length}, supports: ${this.supports.length})`);
       return;
     }
-
-    console.log(`[${this.symbol}] 🎨 Rendering S/R levels: ${this.resistances.length} resistances, ${this.supports.length} supports`);
 
     const { x, y, width, height } = bounds;
 
     // Extract priceToY function from priceContext
     const priceToY = priceContext ? priceContext.priceToY : null;
     if (!priceToY) {
-      console.warn(`[${this.symbol}] No priceToY function available, cannot render S/R`);
       return;
     }
 

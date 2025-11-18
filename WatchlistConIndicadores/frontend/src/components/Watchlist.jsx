@@ -161,7 +161,6 @@ const Watchlist = () => {
 
   // 📊 NUEVO: Handler para abrir Support & Resistance Settings
   const handleOpenSupportResistanceSettings = (symbol, indicatorManagerRef) => {
-    console.log(`[Watchlist] handleOpenSupportResistanceSettings called for ${symbol}`, indicatorManagerRef);
     setSelectedSymbolForSR(symbol);
 
     // Guardar referencia del IndicatorManager
@@ -172,7 +171,6 @@ const Watchlist = () => {
       }));
     }
 
-    console.log(`[Watchlist] Setting showSupportResistanceSettings to true`);
     setShowSupportResistanceSettings(true);
   };
 
@@ -346,18 +344,14 @@ const Watchlist = () => {
 
       {/* 📊 NUEVO: Modal de Support & Resistance Settings */}
       {showSupportResistanceSettings && selectedSymbolForSR && (
-        <>
-          {console.log(`[Watchlist] Rendering SupportResistanceSettings modal for ${selectedSymbolForSR}`, indicatorManagers[selectedSymbolForSR]?.manager)}
-          <SupportResistanceSettings
-            symbol={selectedSymbolForSR}
-            indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
-            onClose={() => {
-              console.log(`[Watchlist] Closing SupportResistanceSettings modal`);
-              setShowSupportResistanceSettings(false);
-              setSelectedSymbolForSR(null);
-            }}
-          />
-        </>
+        <SupportResistanceSettings
+          symbol={selectedSymbolForSR}
+          indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
+          onClose={() => {
+            setShowSupportResistanceSettings(false);
+            setSelectedSymbolForSR(null);
+          }}
+        />
       )}
     </div>
   );

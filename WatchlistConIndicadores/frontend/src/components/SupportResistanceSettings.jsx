@@ -16,21 +16,14 @@ const SupportResistanceSettings = ({
   onClose,
   initialConfig
 }) => {
-  console.log(`[SupportResistanceSettings] Component mounted for ${symbol}`, indicatorManager);
-
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    console.log(`[SupportResistanceSettings] useEffect triggered for ${symbol}`, indicatorManager);
-
     // Check if indicator is enabled
     if (indicatorManager && indicatorManager.supportResistanceIndicator) {
       const isEnabled = indicatorManager.supportResistanceIndicator.enabled || false;
-      console.log(`[SupportResistanceSettings] Indicator enabled state:`, isEnabled);
       setEnabled(isEnabled);
-    } else {
-      console.warn(`[SupportResistanceSettings] No indicatorManager or supportResistanceIndicator found`);
     }
 
     // Load config from localStorage
@@ -39,7 +32,6 @@ const SupportResistanceSettings = ({
       try {
         const parsed = JSON.parse(savedConfig);
         setConfig(parsed);
-        console.log(`[SupportResistanceSettings] Loaded config from localStorage:`, parsed);
       } catch (e) {
         console.error('Failed to load S/R config:', e);
       }
@@ -60,28 +52,18 @@ const SupportResistanceSettings = ({
     const srIndicator = indicatorManager.supportResistanceIndicator;
     const newEnabled = !enabled;
 
-    console.log(`[${symbol}] Toggling S/R indicator: ${enabled} -> ${newEnabled}`);
     setEnabled(newEnabled);
     srIndicator.enabled = newEnabled;
 
     if (newEnabled) {
       // Fetch data when enabling
-      console.log(`[${symbol}] Enabling Support & Resistance indicator, fetching data...`);
       const success = await srIndicator.fetchData();
-      console.log(`[${symbol}] S/R fetchData result:`, success);
-      console.log(`[${symbol}] S/R data after fetch:`, {
-        resistances: srIndicator.resistances.length,
-        supports: srIndicator.supports.length,
-        enabled: srIndicator.enabled
-      });
 
       // Force chart redraw
       if (indicatorManager.requestRedraw) {
-        console.log(`[${symbol}] Requesting chart redraw...`);
         indicatorManager.requestRedraw();
       }
     } else {
-      console.log(`[${symbol}] Disabling Support & Resistance indicator`);
       srIndicator.clearData();
 
       // Force chart redraw
@@ -92,7 +74,6 @@ const SupportResistanceSettings = ({
   };
 
   const handleSave = async () => {
-    console.log(`[${symbol}] Saving S/R config...`, config);
     // Save config to localStorage
     localStorage.setItem(`support_resistance_config_${symbol}`, JSON.stringify(config));
 
@@ -100,21 +81,13 @@ const SupportResistanceSettings = ({
     if (indicatorManager && indicatorManager.supportResistanceIndicator) {
       const srIndicator = indicatorManager.supportResistanceIndicator;
       srIndicator.updateConfig(config);
-      console.log(`[${symbol}] Config updated on indicator`);
 
       // Refresh data with new config if enabled
       if (enabled) {
-        console.log(`[${symbol}] Refreshing S/R data with new config...`);
-        const success = await srIndicator.fetchData();
-        console.log(`[${symbol}] S/R refresh result:`, success);
-        console.log(`[${symbol}] S/R data after refresh:`, {
-          resistances: srIndicator.resistances.length,
-          supports: srIndicator.supports.length
-        });
+        await srIndicator.fetchData();
 
         // Force chart redraw
         if (indicatorManager.requestRedraw) {
-          console.log(`[${symbol}] Requesting chart redraw after config save...`);
           indicatorManager.requestRedraw();
         }
       }
