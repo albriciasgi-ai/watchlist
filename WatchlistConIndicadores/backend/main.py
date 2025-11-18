@@ -1442,6 +1442,250 @@ async def calculate_proximity_alerts_batch(request: Request):
         }
 
 
+@app.get("/api/open-interest/{symbol}")
+async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
+    """
+    Endpoint para obtener Open Interest de Bybit Futures
+    Calcula OI Flow Sentiment siguiendo el patrón LuxAlgo
+    """
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # Aplicar límite máximo por timeframe
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # Intentar cargar del cache
+        cached_data = load_cache(symbol, interval_final, "openinterest")
+
+        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed
+            }
+
+        # Bybit Open Interest usa intervalos específicos
+        # Disponibles: 5min, 15min, 30min, 1h, 4h, 1d
+        # NOTA: 2h NO está disponible, usar 1h en su lugar
+        oi_interval_map = {
+            "5": "5min",
+            "15": "15min",
+            "30": "30min",
+            "60": "1h",
+            "120": "1h",  # 2h no disponible, usar 1h
+            "240": "4h",
+            "D": "1d"
+        }
+
+        # Mapeo inverso: de Bybit interval a minutos
+        oi_interval_to_minutes = {
+            "5min": 5,
+            "15min": 15,
+            "30min": 30,
+            "1h": 60,
+            "4h": 240,
+            "1d": 1440
+        }
+
+        oi_interval = oi_interval_map.get(interval_final, "15min")
+        oi_interval_minutes = oi_interval_to_minutes.get(oi_interval, 15)
+
+        # CRÍTICO: Calcular puntos necesarios basándose en el intervalo de OI, NO el de las velas
+        # Porque podemos tener velas de 2h pero OI de 1h (el doble de puntos)
+        minutes_in_period = days_to_fetch * 24 * 60
+        total_points_needed = int(minutes_in_period / oi_interval_minutes)
+
+        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
+        print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
+
+        # Bybit devuelve máximo 200 puntos por request
+        limit_per_request = 200
+
+        # Calcular timestamps
+        now_ms = int(time.time() * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos al futuro
+        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        all_oi_data = []
+        current_end = end_ms
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            request_count = 0
+            max_requests = 10
+
+            # Hacer múltiples requests hasta obtener todos los datos necesarios
+            while len(all_oi_data) < total_points_needed and request_count < max_requests:
+                request_count += 1
+
+                url = (
+                    "https://api.bybit.com/v5/market/open-interest?"
+                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
+                    f"&limit={limit_per_request}&endTime={current_end}"
+                )
+
+                # Convertir timestamp a fecha para debug
+                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                    if request_count == 1:  # Solo error si es el primer request
+                        return {
+                            "symbol": symbol,
+                            "interval": interval_final,
+                            "indicator": "openInterest",
+                            "data": [],
+                            "success": False,
+                            "error": data.get('retMsg', 'Unknown error')
+                        }
+                    break
+
+                oi_batch = data["result"]["list"]
+
+                if not oi_batch:
+                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                    break
+
+                # Log del batch recibido
+                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+
+                # oi_batch viene en orden descendente (más reciente primero)
+                # Agregar al inicio de all_oi_data para mantener orden cronológico
+                all_oi_data = oi_batch + all_oi_data
+
+                # Actualizar current_end para el siguiente batch
+                # El más antiguo de este batch es el último elemento
+                oldest_item = oi_batch[-1]
+                oldest_ts = int(oldest_item["timestamp"])
+
+                # Si ya llegamos al inicio del periodo, salir
+                if oldest_ts <= start_ms:
+                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                    break
+
+                # Siguiente request debe terminar justo antes del más antiguo de este batch
+                current_end = oldest_ts - 1
+
+                # Si ya tenemos suficientes puntos, salir
+                if len(all_oi_data) >= total_points_needed:
+                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                    break
+
+                # Pequeña pausa entre requests
+                await asyncio.sleep(0.1)
+
+            if not all_oi_data:
+                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "openInterest",
+                    "data": [],
+                    "success": False,
+                    "error": "No Open Interest data available"
+                }
+
+            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
+
+            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+            # porque Bybit devuelve descendente y agregamos al inicio
+            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+            all_oi_data.reverse()
+
+            # Verificar orden
+            if len(all_oi_data) >= 2:
+                first_ts = int(all_oi_data[0]["timestamp"])
+                last_ts = int(all_oi_data[-1]["timestamp"])
+                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
+            # Procesar datos
+            # all_oi_data ahora sí está en orden cronológico ascendente
+            processed_data = []
+
+            for item in all_oi_data:
+                ts_ms = int(item["timestamp"])
+                oi_value = float(item["openInterest"])
+
+                # Convertir timestamp a datetime Colombia
+                ts_seconds = ts_ms / 1000
+                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+                processed_data.append({
+                    "timestamp": ts_ms,
+                    "openInterest": oi_value,
+                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+                })
+
+            # Guardar en cache
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data
+            }
+            save_cache(symbol, interval_final, "openinterest", cache_data)
+            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
+
+            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data,
+                "success": True,
+                "from_cache": False,
+                "calculated": True,
+                "total_points": len(processed_data),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed,
+                "api_requests_made": request_count
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": [],
+            "success": False,
+            "error": str(e)
+        }
+
+@app.post("/api/clear-cache")
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""

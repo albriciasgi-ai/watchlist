@@ -11,6 +11,7 @@ import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
 import SupportResistanceIndicator from "./SupportResistanceIndicator";
+import OpenInterestIndicator from "./OpenInterestIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -29,6 +30,9 @@ class IndicatorManager {
     // 📊 NUEVO: Support & Resistance Indicator
     this.supportResistanceIndicator = null; // Indicador de S/R (solo si está habilitado)
 
+    // 📊 NUEVO: Open Interest Indicator
+    this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
+
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -36,10 +40,14 @@ class IndicatorManager {
     // Crear el indicador de S/R
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
 
+    // Crear el indicador de Open Interest
+    this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       new VolumeIndicator(this.symbol, this.interval, this.days),
       new CVDIndicator(this.symbol, this.interval, this.days),
+      this.openInterestIndicator,
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
       this.supportResistanceIndicator
     ];
