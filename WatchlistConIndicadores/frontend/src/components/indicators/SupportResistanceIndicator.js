@@ -94,31 +94,47 @@ class SupportResistanceIndicator extends IndicatorBase {
 
   /**
    * Renderiza los niveles de S/R sobre el precio (main chart)
+   * IMPORTANTE: Este método se llama desde IndicatorManager.renderOverlays()
    */
-  renderOnPriceChart(ctx, bounds, visibleCandles, priceToY, xScale) {
-    if (!this.enabled) return;
-    if (this.resistances.length === 0 && this.supports.length === 0) return;
+  renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    if (!this.enabled) {
+      console.log(`[${this.symbol}] S/R indicator not enabled, skipping render`);
+      return;
+    }
+    if (this.resistances.length === 0 && this.supports.length === 0) {
+      console.log(`[${this.symbol}] S/R no levels to render (resistances: ${this.resistances.length}, supports: ${this.supports.length})`);
+      return;
+    }
+
+    console.log(`[${this.symbol}] 🎨 Rendering S/R levels: ${this.resistances.length} resistances, ${this.supports.length} supports`);
 
     const { x, y, width, height } = bounds;
+
+    // Extract priceToY function from priceContext
+    const priceToY = priceContext ? priceContext.priceToY : null;
+    if (!priceToY) {
+      console.warn(`[${this.symbol}] No priceToY function available, cannot render S/R`);
+      return;
+    }
 
     // Dibujar zonas de consolidación primero (fondo)
     if (this.showConsolidationZones) {
       this.consolidationZones.forEach(zone => {
-        this.renderConsolidationZone(ctx, zone, bounds, priceToY, xScale);
+        this.renderConsolidationZone(ctx, zone, bounds, priceToY);
       });
     }
 
     // Dibujar resistencias
     if (this.showResistances) {
       this.resistances.forEach(level => {
-        this.renderLevel(ctx, level, bounds, priceToY, xScale, 'resistance');
+        this.renderLevel(ctx, level, bounds, priceToY, 'resistance');
       });
     }
 
     // Dibujar soportes
     if (this.showSupports) {
       this.supports.forEach(level => {
-        this.renderLevel(ctx, level, bounds, priceToY, xScale, 'support');
+        this.renderLevel(ctx, level, bounds, priceToY, 'support');
       });
     }
   }
@@ -126,7 +142,7 @@ class SupportResistanceIndicator extends IndicatorBase {
   /**
    * Renderiza una zona de consolidación
    */
-  renderConsolidationZone(ctx, zone, bounds, priceToY, xScale) {
+  renderConsolidationZone(ctx, zone, bounds, priceToY) {
     const { x, y, width, height } = bounds;
 
     const minPriceY = priceToY(zone.minPrice);
@@ -166,7 +182,7 @@ class SupportResistanceIndicator extends IndicatorBase {
   /**
    * Renderiza un nivel de soporte o resistencia
    */
-  renderLevel(ctx, level, bounds, priceToY, xScale, type) {
+  renderLevel(ctx, level, bounds, priceToY, type) {
     const { x, y, width, height } = bounds;
 
     const priceY = priceToY(level.price);

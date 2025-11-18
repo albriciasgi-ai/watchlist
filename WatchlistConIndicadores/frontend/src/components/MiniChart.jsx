@@ -954,7 +954,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const initIndicators = async () => {
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       await indicatorManagerRef.current.initialize();
-      
+
+      // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
+      indicatorManagerRef.current.requestRedraw = () => {
+        if (candlesRef.current && candlesRef.current.length > 0) {
+          console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      };
+
       if (indicatorStates) {
         Object.entries(indicatorStates).forEach(([name, enabled]) => {
           indicatorManagerRef.current.toggleIndicator(name, enabled);
