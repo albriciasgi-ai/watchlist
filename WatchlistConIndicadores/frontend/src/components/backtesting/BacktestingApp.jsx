@@ -175,9 +175,33 @@ const BacktestingApp = () => {
       const firstCandle = timeframeData.main[0];
       const lastCandle = timeframeData.main[timeframeData.main.length - 1];
 
-      // Crear TimeController
+      // Determinar el startTime del TimeController
+      // Si el usuario especificó una fecha de inicio, usar esa como startTime
+      // De lo contrario, usar el primer dato del historial
+      let controllerStartTime;
+      if (startDate) {
+        const startTimestamp = new Date(startDate).getTime();
+        // Verificar que la fecha de inicio esté dentro del rango de datos
+        if (startTimestamp < firstCandle.timestamp) {
+          console.warn('[BacktestingApp] Fecha de inicio anterior al historial, usando primer dato');
+          controllerStartTime = firstCandle.timestamp;
+        } else if (startTimestamp > lastCandle.timestamp) {
+          console.warn('[BacktestingApp] Fecha de inicio posterior al historial, usando primer dato');
+          controllerStartTime = firstCandle.timestamp;
+        } else {
+          controllerStartTime = startTimestamp;
+          console.log('[BacktestingApp] Usando fecha de inicio seleccionada:', new Date(controllerStartTime).toISOString());
+        }
+      } else {
+        controllerStartTime = firstCandle.timestamp;
+        console.log('[BacktestingApp] Sin fecha de inicio especificada, usando primer dato');
+      }
+
+      // Crear TimeController con el startTime calculado
+      // IMPORTANTE: El startTime ahora es la fecha desde la cual se SIMULA,
+      // pero la gráfica mostrará TODO el historial anterior para contexto
       const controller = new TimeController(
-        firstCandle.timestamp,
+        controllerStartTime,
         lastCandle.timestamp,
         selectedTimeframe,
         handleTimeUpdate
@@ -195,40 +219,22 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] OrderManager creado');
       }
 
-      // Si se especificó una fecha de inicio, saltar a ella
-      if (startDate) {
-        const startTimestamp = new Date(startDate).getTime();
-        console.log('[BacktestingApp] Saltando a fecha de inicio:', new Date(startTimestamp));
-        controller.jumpTo(startTimestamp);
-        setCurrentTime(startTimestamp);
+      // El currentTime ya está en controllerStartTime, solo necesitamos actualizar el precio
+      setCurrentTime(controller.currentTime);
 
-        // IMPORTANTE: Actualizar el precio ANTES de marcar como initialized
-        // para que los botones de comprar/vender funcionen correctamente
-        const visibleCandles = timeframeData.main.filter(c => c.timestamp <= startTimestamp);
-        if (visibleCandles.length > 0) {
-          const lastCandle = visibleCandles[visibleCandles.length - 1];
-          setCurrentPrice(lastCandle.close);
-          console.log('[BacktestingApp] Precio inicial establecido:', lastCandle.close);
-        }
-
-        handleTimeUpdate(startTimestamp);
-      } else {
-        setCurrentTime(controller.currentTime);
-
-        // IMPORTANTE: Establecer precio inicial para currentTime
-        const visibleCandles = timeframeData.main.filter(c => c.timestamp <= controller.currentTime);
-        if (visibleCandles.length > 0) {
-          const lastCandle = visibleCandles[visibleCandles.length - 1];
-          setCurrentPrice(lastCandle.close);
-          console.log('[BacktestingApp] Precio inicial establecido:', lastCandle.close);
-        }
-
-        handleTimeUpdate(controller.currentTime);
+      // IMPORTANTE: Establecer precio inicial para currentTime
+      const visibleCandles = timeframeData.main.filter(c => c.timestamp <= controller.currentTime);
+      if (visibleCandles.length > 0) {
+        const lastCandleAtStart = visibleCandles[visibleCandles.length - 1];
+        setCurrentPrice(lastCandleAtStart.close);
+        console.log('[BacktestingApp] Precio inicial establecido:', lastCandleAtStart.close);
       }
+
+      handleTimeUpdate(controller.currentTime);
 
       setInitialized(true);
 
-      console.log('[BacktestingApp] ✅ Inicializado');
+      console.log('[BacktestingApp] ✅ Inicializado - Mostrando historial completo hasta:', new Date(controller.currentTime).toISOString());
     }
   };
 

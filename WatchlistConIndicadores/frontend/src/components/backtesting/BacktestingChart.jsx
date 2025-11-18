@@ -24,8 +24,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
   // Configuración de visualización
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
-  // Mostrar TODO el historial hasta currentTime (no limitar)
-  const VISIBLE_HISTORY = Infinity; // Mostrar todas las velas históricas
+
+  // CRÍTICO PARA ENTRENAMIENTO: Mostrar TODO el historial hasta currentTime
+  // Esto permite que el usuario vea el contexto completo antes de la fecha de inicio
+  // NO CAMBIAR este valor a un número finito o se perderá el contexto histórico
+  const VISIBLE_HISTORY = Infinity; // Mostrar TODAS las velas históricas para contexto
 
   /**
    * Ir a la última vela - resetea el paneo manual y reactiva auto-scroll
@@ -89,7 +92,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
 
   /**
    * Actualizar velas visibles según currentTime
-   * IMPORTANTE: Ahora muestra historial previo + velas hasta currentTime
+   * IMPORTANTE: Muestra TODO el historial previo hasta currentTime para dar contexto
+   * - VISIBLE_HISTORY = Infinity garantiza que se muestren TODAS las velas históricas
+   * - currentTime marca la última vela visible (fecha de inicio de simulación)
+   * - Cuando el usuario presiona play, currentTime avanza desde la fecha de inicio
+   * - Las velas anteriores permanecen visibles para contexto de entrenamiento
    */
   useEffect(() => {
     if (!marketData) return;
@@ -113,9 +120,11 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     const lastVisibleIndex = currentIndex === -1 ? timeframeData.main.length : currentIndex;
 
     // Calcular índice de inicio (incluir historial previo)
+    // Con VISIBLE_HISTORY = Infinity, startIndex siempre será 0, mostrando TODO el historial
     const startIndex = Math.max(0, lastVisibleIndex - VISIBLE_HISTORY);
 
-    // Obtener velas desde startIndex hasta lastVisibleIndex
+    // Obtener velas desde el inicio del historial (startIndex = 0) hasta lastVisibleIndex
+    // Esto garantiza que se vea todo el contexto histórico antes de la fecha de inicio
     const candles = timeframeData.main.slice(startIndex, lastVisibleIndex);
 
     // Obtener subdivisiones de la última vela en progreso
