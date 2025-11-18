@@ -175,36 +175,40 @@ const BacktestingApp = () => {
       const firstCandle = timeframeData.main[0];
       const lastCandle = timeframeData.main[timeframeData.main.length - 1];
 
-      // Determinar el startTime del TimeController
-      // Si el usuario especificó una fecha de inicio, usar esa como startTime
+      // Determinar el simulationStartTime
+      // Si el usuario especificó una fecha de inicio, usar esa como simulationStartTime
       // De lo contrario, usar el primer dato del historial
-      let controllerStartTime;
+      let simulationStartTime;
       if (startDate) {
         const startTimestamp = new Date(startDate).getTime();
         // Verificar que la fecha de inicio esté dentro del rango de datos
         if (startTimestamp < firstCandle.timestamp) {
           console.warn('[BacktestingApp] Fecha de inicio anterior al historial, usando primer dato');
-          controllerStartTime = firstCandle.timestamp;
+          simulationStartTime = firstCandle.timestamp;
         } else if (startTimestamp > lastCandle.timestamp) {
           console.warn('[BacktestingApp] Fecha de inicio posterior al historial, usando primer dato');
-          controllerStartTime = firstCandle.timestamp;
+          simulationStartTime = firstCandle.timestamp;
         } else {
-          controllerStartTime = startTimestamp;
-          console.log('[BacktestingApp] Usando fecha de inicio seleccionada:', new Date(controllerStartTime).toISOString());
+          simulationStartTime = startTimestamp;
+          console.log('[BacktestingApp] Usando fecha de inicio seleccionada:', new Date(simulationStartTime).toISOString());
         }
       } else {
-        controllerStartTime = firstCandle.timestamp;
+        simulationStartTime = firstCandle.timestamp;
         console.log('[BacktestingApp] Sin fecha de inicio especificada, usando primer dato');
       }
 
-      // Crear TimeController con el startTime calculado
-      // IMPORTANTE: El startTime ahora es la fecha desde la cual se SIMULA,
-      // pero la gráfica mostrará TODO el historial anterior para contexto
+      // Crear TimeController
+      // IMPORTANTE:
+      // - startTime = firstCandle.timestamp (para mostrar TODO el historial)
+      // - simulationStartTime = fecha donde empieza la simulación
+      // - endTime = lastCandle.timestamp
+      // - currentTime se inicializará en simulationStartTime
       const controller = new TimeController(
-        controllerStartTime,
-        lastCandle.timestamp,
-        selectedTimeframe,
-        handleTimeUpdate
+        firstCandle.timestamp,     // startTime: inicio del historial (para mostrar todo)
+        lastCandle.timestamp,       // endTime: fin del historial
+        selectedTimeframe,          // timeframe
+        handleTimeUpdate,           // callback
+        simulationStartTime         // simulationStartTime: donde empieza la simulación
       );
 
       // Inicializar sincronización multi-pestaña
@@ -219,7 +223,7 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] OrderManager creado');
       }
 
-      // El currentTime ya está en controllerStartTime, solo necesitamos actualizar el precio
+      // El currentTime está en simulationStartTime
       setCurrentTime(controller.currentTime);
 
       // IMPORTANTE: Establecer precio inicial para currentTime
@@ -234,7 +238,9 @@ const BacktestingApp = () => {
 
       setInitialized(true);
 
-      console.log('[BacktestingApp] ✅ Inicializado - Mostrando historial completo hasta:', new Date(controller.currentTime).toISOString());
+      console.log('[BacktestingApp] ✅ Inicializado');
+      console.log(`  - Mostrando historial desde: ${new Date(firstCandle.timestamp).toISOString()}`);
+      console.log(`  - Simulación inicia en: ${new Date(controller.currentTime).toISOString()}`);
     }
   };
 

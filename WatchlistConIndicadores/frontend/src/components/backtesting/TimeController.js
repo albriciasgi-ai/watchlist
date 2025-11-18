@@ -9,10 +9,11 @@
  */
 
 class TimeController {
-  constructor(startTime, endTime, timeframe, onTimeUpdate) {
-    this.startTime = startTime; // timestamp en ms
+  constructor(startTime, endTime, timeframe, onTimeUpdate, simulationStartTime = null) {
+    this.startTime = startTime; // timestamp en ms - INICIO DEL HISTORIAL (para mostrar todo)
     this.endTime = endTime; // timestamp en ms
-    this.currentTime = startTime;
+    this.simulationStartTime = simulationStartTime || startTime; // timestamp donde EMPIEZA la simulación
+    this.currentTime = this.simulationStartTime; // Inicializar en simulationStartTime, no en startTime
     this.timeframe = timeframe; // "15m", "1h", "4h"
     this.playbackSpeed = 1; // 1x, 2x, 5x, etc.
     this.isPlaying = false;
@@ -40,7 +41,10 @@ class TimeController {
     this.syncChannel = null;
     this.isMaster = false; // Solo una pestaña es master
 
-    console.log(`[TimeController] Inicializado: ${new Date(startTime).toISOString()} → ${new Date(endTime).toISOString()}`);
+    console.log(`[TimeController] Inicializado:`);
+    console.log(`  - Historial: ${new Date(startTime).toISOString()} → ${new Date(endTime).toISOString()}`);
+    console.log(`  - Simulación inicia: ${new Date(this.simulationStartTime).toISOString()}`);
+    console.log(`  - CurrentTime: ${new Date(this.currentTime).toISOString()}`);
   }
 
   /**
@@ -143,10 +147,10 @@ class TimeController {
       return;
     }
 
-    // Si estamos al final, resetear automáticamente al inicio para poder reproducir
+    // Si estamos al final, resetear automáticamente al inicio de la simulación para poder reproducir
     if (this.currentTime >= this.endTime) {
-      console.log('[TimeController] Estamos al final, reseteando al inicio para reproducir...');
-      this.currentTime = this.startTime;
+      console.log('[TimeController] Estamos al final, reseteando al inicio de la simulación para reproducir...');
+      this.currentTime = this.simulationStartTime;
       if (this.onTimeUpdate) {
         this.onTimeUpdate(this.currentTime);
       }
@@ -231,22 +235,22 @@ class TimeController {
   }
 
   /**
-   * Resetea al inicio del historial
+   * Resetea al inicio de la simulación (NO al inicio del historial)
    */
   reset() {
     this.pause();
-    this.currentTime = this.startTime;
+    this.currentTime = this.simulationStartTime;
 
     if (this.onTimeUpdate) {
       this.onTimeUpdate(this.currentTime);
     }
 
     this.broadcastState();
-    console.log('[TimeController] 🔄 Reset al inicio');
+    console.log('[TimeController] 🔄 Reset al inicio de la simulación');
   }
 
   /**
-   * Salta a una fecha específica
+   * Salta a una fecha específica (solo dentro del rango de simulación)
    */
   jumpTo(timestamp) {
     const wasPlaying = this.isPlaying;
@@ -255,7 +259,8 @@ class TimeController {
       this.pause();
     }
 
-    this.currentTime = Math.max(this.startTime, Math.min(timestamp, this.endTime));
+    // Permitir saltar solo entre simulationStartTime y endTime
+    this.currentTime = Math.max(this.simulationStartTime, Math.min(timestamp, this.endTime));
 
     if (this.onTimeUpdate) {
       this.onTimeUpdate(this.currentTime);
@@ -302,11 +307,11 @@ class TimeController {
   }
 
   /**
-   * Obtiene el progreso actual (0-100%)
+   * Obtiene el progreso actual (0-100%) basado en el rango de simulación
    */
   getProgress() {
-    const totalDuration = this.endTime - this.startTime;
-    const elapsed = this.currentTime - this.startTime;
+    const totalDuration = this.endTime - this.simulationStartTime;
+    const elapsed = this.currentTime - this.simulationStartTime;
     return (elapsed / totalDuration) * 100;
   }
 
@@ -338,6 +343,7 @@ class TimeController {
     return {
       startTime: this.startTime,
       endTime: this.endTime,
+      simulationStartTime: this.simulationStartTime,
       currentTime: this.currentTime,
       timeframe: this.timeframe,
       playbackSpeed: this.playbackSpeed,
@@ -358,6 +364,7 @@ class TimeController {
 
     this.startTime = state.startTime;
     this.endTime = state.endTime;
+    this.simulationStartTime = state.simulationStartTime || state.startTime; // Retrocompatibilidad
     this.currentTime = state.currentTime;
     this.timeframe = state.timeframe;
     this.playbackSpeed = state.playbackSpeed;

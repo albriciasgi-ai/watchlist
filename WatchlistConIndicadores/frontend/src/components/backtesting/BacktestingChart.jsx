@@ -25,9 +25,12 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
 
-  // CRÍTICO PARA ENTRENAMIENTO: Mostrar TODO el historial hasta currentTime
-  // Esto permite que el usuario vea el contexto completo antes de la fecha de inicio
-  // NO CAMBIAR este valor a un número finito o se perderá el contexto histórico
+  // CRÍTICO: Mostrar TODO el historial hasta currentTime
+  // Esto permite que el usuario vea el contexto completo antes de la simulación
+  // - TimeController.startTime = inicio del historial completo
+  // - TimeController.simulationStartTime = donde empieza la simulación
+  // - TimeController.currentTime = posición actual (inicia en simulationStartTime)
+  // - El chart muestra TODAS las velas desde startTime hasta currentTime
   const VISIBLE_HISTORY = Infinity; // Mostrar TODAS las velas históricas para contexto
 
   /**
@@ -92,11 +95,12 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
 
   /**
    * Actualizar velas visibles según currentTime
-   * IMPORTANTE: Muestra TODO el historial previo hasta currentTime para dar contexto
+   * IMPORTANTE: Muestra TODO el historial desde el inicio hasta currentTime
    * - VISIBLE_HISTORY = Infinity garantiza que se muestren TODAS las velas históricas
-   * - currentTime marca la última vela visible (fecha de inicio de simulación)
-   * - Cuando el usuario presiona play, currentTime avanza desde la fecha de inicio
-   * - Las velas anteriores permanecen visibles para contexto de entrenamiento
+   * - currentTime inicia en simulationStartTime (la fecha donde empieza la simulación)
+   * - Al dar play, currentTime avanza desde simulationStartTime hacia adelante
+   * - TODAS las velas anteriores a simulationStartTime permanecen visibles para contexto
+   * - Esto permite ver el historial completo sin importar donde empiece la simulación
    */
   useEffect(() => {
     if (!marketData) return;
