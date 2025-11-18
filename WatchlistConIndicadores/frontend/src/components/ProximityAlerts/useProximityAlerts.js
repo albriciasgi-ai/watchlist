@@ -28,10 +28,14 @@ const useProximityAlerts = () => {
   // Iniciar polling cuando hay alertas habilitadas
   useEffect(() => {
     const enabledAlerts = alerts.filter((a) => a.enabled);
+    console.log('[useProximityAlerts] Alerts changed:', alerts.length, 'alerts total');
+    console.log('[useProximityAlerts] Enabled alerts:', enabledAlerts.length);
 
     if (enabledAlerts.length > 0) {
+      console.log('[useProximityAlerts] Starting polling...');
       startPolling();
     } else {
+      console.log('[useProximityAlerts] No enabled alerts, stopping polling');
       stopPolling();
     }
 
@@ -128,11 +132,14 @@ const useProximityAlerts = () => {
    * Fetch de estados para todas las alertas habilitadas
    */
   const fetchAllAlertStates = async (enabledAlerts) => {
+    console.log('[useProximityAlerts] fetchAllAlertStates called with', enabledAlerts?.length, 'alerts');
     if (!enabledAlerts || enabledAlerts.length === 0) {
+      console.log('[useProximityAlerts] No enabled alerts, skipping fetch');
       return;
     }
 
     setIsPolling(true);
+    console.log('[useProximityAlerts] Fetching from:', `${API_BASE_URL}/api/proximity-alerts/batch`);
 
     try {
       // Usar endpoint batch para mejor performance
@@ -155,12 +162,15 @@ const useProximityAlerts = () => {
       });
 
       const data = await response.json();
+      console.log('[useProximityAlerts] Response received:', data);
 
       if (data.success && data.results) {
+        console.log('[useProximityAlerts] Processing', data.results.length, 'results');
         // Actualizar estados
         const newStates = {};
         data.results.forEach((result) => {
           if (result.success) {
+            console.log('[useProximityAlerts] Alert', result.id, 'score:', result.totalScore);
             newStates[result.id] = {
               totalScore: result.totalScore,
               proximityScore: result.proximityScore,
@@ -176,7 +186,14 @@ const useProximityAlerts = () => {
           }
         });
 
-        setAlertStates((prev) => ({ ...prev, ...newStates }));
+        console.log('[useProximityAlerts] Updating alert states:', newStates);
+        setAlertStates((prev) => {
+          const updated = { ...prev, ...newStates };
+          console.log('[useProximityAlerts] New alertStates:', updated);
+          return updated;
+        });
+      } else {
+        console.log('[useProximityAlerts] Response not successful or no results');
       }
     } catch (error) {
       console.error("Error fetching alert states:", error);
@@ -188,26 +205,33 @@ const useProximityAlerts = () => {
   /**
    * Iniciar polling automático
    */
-  const startPolling = () => {
+  const startPolling = useCallback(() => {
+    console.log('[useProximityAlerts] startPolling called');
     // Limpiar interval existente
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
+      console.log('[useProximityAlerts] Cleared existing interval');
     }
 
     // Hacer fetch inmediato
     const enabledAlerts = alerts.filter((a) => a.enabled);
+    console.log('[useProximityAlerts] startPolling - enabled alerts:', enabledAlerts.length);
     if (enabledAlerts.length > 0) {
+      console.log('[useProximityAlerts] Making immediate fetch...');
       fetchAllAlertStates(enabledAlerts);
     }
 
     // Configurar interval
+    console.log('[useProximityAlerts] Setting up interval...');
     pollIntervalRef.current = setInterval(() => {
+      console.log('[useProximityAlerts] Interval tick - fetching alerts...');
       const enabledAlerts = alerts.filter((a) => a.enabled);
       if (enabledAlerts.length > 0) {
         fetchAllAlertStates(enabledAlerts);
       }
     }, POLL_INTERVAL);
-  };
+    console.log('[useProximityAlerts] Interval set with ID:', pollIntervalRef.current);
+  }, [alerts]);
 
   /**
    * Detener polling
