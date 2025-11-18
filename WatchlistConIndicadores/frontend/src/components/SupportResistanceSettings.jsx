@@ -16,13 +16,21 @@ const SupportResistanceSettings = ({
   onClose,
   initialConfig
 }) => {
+  console.log(`[SupportResistanceSettings] Component mounted for ${symbol}`, indicatorManager);
+
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    console.log(`[SupportResistanceSettings] useEffect triggered for ${symbol}`, indicatorManager);
+
     // Check if indicator is enabled
     if (indicatorManager && indicatorManager.supportResistanceIndicator) {
-      setEnabled(indicatorManager.supportResistanceIndicator.enabled || false);
+      const isEnabled = indicatorManager.supportResistanceIndicator.enabled || false;
+      console.log(`[SupportResistanceSettings] Indicator enabled state:`, isEnabled);
+      setEnabled(isEnabled);
+    } else {
+      console.warn(`[SupportResistanceSettings] No indicatorManager or supportResistanceIndicator found`);
     }
 
     // Load config from localStorage
@@ -31,6 +39,7 @@ const SupportResistanceSettings = ({
       try {
         const parsed = JSON.parse(savedConfig);
         setConfig(parsed);
+        console.log(`[SupportResistanceSettings] Loaded config from localStorage:`, parsed);
       } catch (e) {
         console.error('Failed to load S/R config:', e);
       }
