@@ -45,87 +45,55 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
   const loadAvailableLevels = async () => {
     setLoadingLevels(true);
     try {
-      if (formData.referenceSource === "support_resistance") {
-        // Obtener niveles directamente del indicador SwingBasedRangeDetector
-        const manager = indicatorManagers[formData.symbol]?.manager;
+      const manager = indicatorManagers[formData.symbol]?.manager;
 
-        if (manager && manager.swingRangeDetector) {
-          const detector = manager.swingRangeDetector;
+      if (!manager || !manager.rangeDetector || !manager.rangeDetector.enabled) {
+        console.warn('[AlertConfigModal] No se encontró Range Detector activo para', formData.symbol);
+        setAvailableLevels({
+          supports: [],
+          resistances: [],
+          ranges: [],
+        });
+        setLoadingLevels(false);
+        return;
+      }
 
-          // Obtener swing lows (soportes) y swing highs (resistencias)
-          const supports = (detector.swingLows || []).map((swing, idx) => ({
-            price: swing.price,
-            strength: 1, // Podrías calcular strength basándote en otros factores
-            id: `support-${idx}`,
-            timestamp: swing.timestamp
-          }));
+      const detector = manager.rangeDetector;
+      const ranges = detector.detectedRanges || [];
 
-          const resistances = (detector.swingHighs || []).map((swing, idx) => ({
-            price: swing.price,
-            strength: 1,
-            id: `resistance-${idx}`,
-            timestamp: swing.timestamp
-          }));
+      if (formData.referenceSource === "support_resistance" || formData.referenceSource === "range_detector") {
+        // Convertir rangos a niveles de soporte/resistencia
+        const supports = ranges.map((range, idx) => ({
+          price: range.low,
+          strength: 2,
+          id: `range-low-${idx}`,
+          rangeId: range.id,
+          timestamp: range.startTimestamp
+        }));
 
-          // Ordenar por precio (supports de menor a mayor, resistances de mayor a menor)
-          supports.sort((a, b) => b.price - a.price);
-          resistances.sort((a, b) => b.price - a.price);
+        const resistances = ranges.map((range, idx) => ({
+          price: range.high,
+          strength: 2,
+          id: `range-high-${idx}`,
+          rangeId: range.id,
+          timestamp: range.startTimestamp
+        }));
 
-          setAvailableLevels({
-            supports,
-            resistances,
-            ranges: [],
-          });
+        // Ordenar por precio (de mayor a menor para mostrar primero los más cercanos al precio actual)
+        supports.sort((a, b) => b.price - a.price);
+        resistances.sort((a, b) => b.price - a.price);
 
-          console.log('[AlertConfigModal] Niveles cargados:', {
-            supports: supports.length,
-            resistances: resistances.length
-          });
-        } else {
-          console.warn('[AlertConfigModal] No se encontró SwingRangeDetector para', formData.symbol);
-          setAvailableLevels({
-            supports: [],
-            resistances: [],
-            ranges: [],
-          });
-        }
-      } else if (formData.referenceSource === "range_detector") {
-        // Obtener niveles del Range Detector
-        const manager = indicatorManagers[formData.symbol]?.manager;
+        setAvailableLevels({
+          supports,
+          resistances,
+          ranges,
+        });
 
-        if (manager && manager.swingRangeDetector) {
-          const detector = manager.swingRangeDetector;
-          const ranges = detector.detectedRanges || [];
-
-          // Convertir rangos a niveles de soporte/resistencia
-          const supports = ranges.map((range, idx) => ({
-            price: range.low,
-            strength: 2, // Rangos tienen mayor strength
-            id: `range-low-${idx}`,
-            rangeId: range.id
-          }));
-
-          const resistances = ranges.map((range, idx) => ({
-            price: range.high,
-            strength: 2,
-            id: `range-high-${idx}`,
-            rangeId: range.id
-          }));
-
-          setAvailableLevels({
-            supports,
-            resistances,
-            ranges,
-          });
-
-          console.log('[AlertConfigModal] Rangos cargados:', ranges.length);
-        } else {
-          setAvailableLevels({
-            supports: [],
-            resistances: [],
-            ranges: [],
-          });
-        }
+        console.log('[AlertConfigModal] Niveles cargados:', {
+          supports: supports.length,
+          resistances: resistances.length,
+          ranges: ranges.length
+        });
       }
     } catch (error) {
       console.error("Error loading levels:", error);
@@ -237,9 +205,12 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
               onChange={handleInputChange}
             >
               <option value="manual">Manual</option>
-              <option value="support_resistance">Support/Resistance</option>
-              <option value="range_detector">Range Detector</option>
+              <option value="support_resistance">Range Detector (Límites)</option>
+              <option value="range_detector">Range Detector (Límites)</option>
             </select>
+            <small style={{ color: '#888', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+              Nota: Range Detector debe estar activo en el símbolo seleccionado
+            </small>
           </div>
 
           {/* Selector de niveles si no es manual */}
