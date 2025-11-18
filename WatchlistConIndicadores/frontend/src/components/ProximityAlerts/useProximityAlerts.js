@@ -37,9 +37,7 @@ const useProximityAlerts = () => {
       if (stored) {
         const parsedAlerts = JSON.parse(stored);
         setAlerts(parsedAlerts);
-
-        // Hacer fetch inicial de estados
-        fetchAllAlertStates(parsedAlerts.filter((a) => a.enabled));
+        // El fetch se hará automáticamente por el useEffect que escucha cambios en alerts
       }
     } catch (error) {
       console.error("Error loading alerts from storage:", error);
@@ -59,21 +57,6 @@ const useProximityAlerts = () => {
       console.error("Error loading timeframe from storage:", error);
     }
   };
-
-  /**
-   * Cambiar timeframe y guardarlo
-   */
-  const changeTimeframe = useCallback((newTimeframe) => {
-    console.log('[useProximityAlerts] Changing timeframe from', timeframe, 'to', newTimeframe);
-    setTimeframe(newTimeframe);
-    localStorage.setItem(TIMEFRAME_STORAGE_KEY, newTimeframe);
-
-    // Refrescar alertas con nuevo timeframe
-    const enabledAlerts = alerts.filter((a) => a.enabled);
-    if (enabledAlerts.length > 0) {
-      fetchAllAlertStates(enabledAlerts);
-    }
-  }, [alerts, timeframe, fetchAllAlertStates]);
 
   /**
    * Guardar alertas en localStorage
@@ -218,6 +201,21 @@ const useProximityAlerts = () => {
       setIsPolling(false);
     }
   }, [timeframe]);
+
+  /**
+   * Cambiar timeframe y guardarlo
+   */
+  const changeTimeframe = useCallback((newTimeframe) => {
+    console.log('[useProximityAlerts] Changing timeframe from', timeframe, 'to', newTimeframe);
+    setTimeframe(newTimeframe);
+    localStorage.setItem(TIMEFRAME_STORAGE_KEY, newTimeframe);
+
+    // Refrescar alertas con nuevo timeframe
+    const enabledAlerts = alerts.filter((a) => a.enabled);
+    if (enabledAlerts.length > 0) {
+      fetchAllAlertStates(enabledAlerts);
+    }
+  }, [alerts, timeframe, fetchAllAlertStates]);
 
   /**
    * Iniciar polling automático
