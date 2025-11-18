@@ -86,6 +86,7 @@
   max-width: 100%;
   overflow-x: auto;
   padding: 8px 0;
+  min-height: 200px;
 }
 
 /* Scrollbar personalizado */
