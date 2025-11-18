@@ -45,7 +45,8 @@ const Watchlist = () => {
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
-    "Volume Profile": false
+    "Volume Profile": false,
+    "Open Interest": false
   });
   
   const [vpConfig, setVpConfig] = useState({
@@ -242,8 +243,8 @@ const Watchlist = () => {
             </label>
 
             <label>
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={indicatorStates["Volume Profile"]}
                 onChange={() => toggleIndicator("Volume Profile")}
               />
@@ -251,7 +252,7 @@ const Watchlist = () => {
             </label>
 
             {indicatorStates["Volume Profile"] && (
-              <button 
+              <button
                 onClick={() => handleOpenVpSettings(null)}
                 className="vp-settings-btn"
                 title="Configurar Volume Profile"
@@ -259,6 +260,15 @@ const Watchlist = () => {
                 ⚙ Config VP
               </button>
             )}
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Open Interest"]}
+                onChange={() => toggleIndicator("Open Interest")}
+              />
+              Open Interest
+            </label>
           </div>
         </div>
       </div>
