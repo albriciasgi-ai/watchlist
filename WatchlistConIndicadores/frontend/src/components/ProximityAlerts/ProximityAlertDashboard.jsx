@@ -18,6 +18,8 @@ const ProximityAlertDashboard = ({ symbols }) => {
     updateAlert,
     deleteAlert,
     isPolling,
+    timeframe,
+    changeTimeframe,
   } = useProximityAlerts();
 
   const [showConfigModal, setShowConfigModal] = useState(false);
@@ -124,6 +126,16 @@ const ProximityAlertDashboard = ({ symbols }) => {
         </div>
 
         <div className="dashboard-actions">
+          <select
+            className="timeframe-selector"
+            value={timeframe}
+            onChange={(e) => changeTimeframe(e.target.value)}
+            title="Selecciona el timeframe para los cálculos"
+          >
+            <option value="5">5 minutos</option>
+            <option value="15">15 minutos</option>
+          </select>
+
           <button className="btn-add-alert" onClick={handleAddNewAlert}>
             + Nueva Alerta
           </button>

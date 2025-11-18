@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 const API_BASE_URL = "http://localhost:8000";
 const STORAGE_KEY = "proximityAlerts";
+const TIMEFRAME_STORAGE_KEY = "proximityAlertsTimeframe";
 const POLL_INTERVAL = 90000; // 90 segundos (1.5 minutos)
 
 /**
@@ -18,11 +19,13 @@ const useProximityAlerts = () => {
   const [alerts, setAlerts] = useState([]);
   const [alertStates, setAlertStates] = useState({});
   const [isPolling, setIsPolling] = useState(false);
+  const [timeframe, setTimeframe] = useState("15"); // "5" o "15"
   const pollIntervalRef = useRef(null);
 
-  // Cargar alertas desde localStorage al iniciar
+  // Cargar alertas y timeframe desde localStorage al iniciar
   useEffect(() => {
     loadAlertsFromStorage();
+    loadTimeframeFromStorage();
   }, []);
 
   // Iniciar polling cuando hay alertas habilitadas
@@ -59,6 +62,34 @@ const useProximityAlerts = () => {
       console.error("Error loading alerts from storage:", error);
     }
   };
+
+  /**
+   * Cargar timeframe desde localStorage
+   */
+  const loadTimeframeFromStorage = () => {
+    try {
+      const stored = localStorage.getItem(TIMEFRAME_STORAGE_KEY);
+      if (stored) {
+        setTimeframe(stored);
+      }
+    } catch (error) {
+      console.error("Error loading timeframe from storage:", error);
+    }
+  };
+
+  /**
+   * Cambiar timeframe y guardarlo
+   */
+  const changeTimeframe = useCallback((newTimeframe) => {
+    setTimeframe(newTimeframe);
+    localStorage.setItem(TIMEFRAME_STORAGE_KEY, newTimeframe);
+
+    // Refrescar alertas con nuevo timeframe
+    const enabledAlerts = alerts.filter((a) => a.enabled);
+    if (enabledAlerts.length > 0) {
+      fetchAllAlertStates(enabledAlerts);
+    }
+  }, [alerts]);
 
   /**
    * Guardar alertas en localStorage
@@ -152,7 +183,7 @@ const useProximityAlerts = () => {
           alerts: enabledAlerts.map((alert) => ({
             id: alert.id,
             symbol: alert.symbol,
-            interval: "15", // Fijo en 15min como especificaste
+            interval: timeframe, // Timeframe dinámico (5 o 15)
             targetPrice: alert.targetPrice,
             tolerancePct: alert.tolerancePct,
             volumeThresholdZScore: alert.volumeThresholdZScore,
@@ -258,6 +289,8 @@ const useProximityAlerts = () => {
     alerts,
     alertStates,
     isPolling,
+    timeframe,
+    changeTimeframe,
     addAlert,
     updateAlert,
     deleteAlert,
