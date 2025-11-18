@@ -47,21 +47,69 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
     try {
       const manager = indicatorManagers[formData.symbol]?.manager;
 
-      if (!manager || !manager.rangeDetector || !manager.rangeDetector.enabled) {
-        console.warn('[AlertConfigModal] No se encontró Range Detector activo para', formData.symbol);
-        setAvailableLevels({
-          supports: [],
-          resistances: [],
-          ranges: [],
-        });
+      if (!manager) {
+        console.warn('[AlertConfigModal] No se encontró IndicatorManager para', formData.symbol);
+        setAvailableLevels({ supports: [], resistances: [], ranges: [] });
         setLoadingLevels(false);
         return;
       }
 
-      const detector = manager.rangeDetector;
-      const ranges = detector.detectedRanges || [];
+      if (formData.referenceSource === "support_resistance") {
+        // Cargar niveles de Support & Resistance Indicator
+        const srIndicator = manager.supportResistanceIndicator;
 
-      if (formData.referenceSource === "support_resistance" || formData.referenceSource === "range_detector") {
+        if (!srIndicator || !srIndicator.enabled) {
+          console.warn('[AlertConfigModal] Support & Resistance Indicator no está activo');
+          setAvailableLevels({ supports: [], resistances: [], ranges: [] });
+          setLoadingLevels(false);
+          return;
+        }
+
+        // Leer los niveles directamente del indicador
+        const supports = (srIndicator.supports || []).map((level, idx) => ({
+          price: level.price,
+          strength: level.strength || 1,
+          id: `support-${idx}`,
+          touches: level.touches,
+          status: level.status
+        }));
+
+        const resistances = (srIndicator.resistances || []).map((level, idx) => ({
+          price: level.price,
+          strength: level.strength || 1,
+          id: `resistance-${idx}`,
+          touches: level.touches,
+          status: level.status
+        }));
+
+        // Ordenar por strength (más fuerte primero)
+        supports.sort((a, b) => b.strength - a.strength);
+        resistances.sort((a, b) => b.strength - a.strength);
+
+        setAvailableLevels({
+          supports,
+          resistances,
+          ranges: [],
+        });
+
+        console.log('[AlertConfigModal] S/R Levels loaded:', {
+          supports: supports.length,
+          resistances: resistances.length
+        });
+
+      } else if (formData.referenceSource === "range_detector") {
+        // Cargar niveles de Range Detector
+        const detector = manager.rangeDetector;
+
+        if (!detector || !detector.enabled) {
+          console.warn('[AlertConfigModal] Range Detector no está activo');
+          setAvailableLevels({ supports: [], resistances: [], ranges: [] });
+          setLoadingLevels(false);
+          return;
+        }
+
+        const ranges = detector.detectedRanges || [];
+
         // Convertir rangos a niveles de soporte/resistencia
         const supports = ranges.map((range, idx) => ({
           price: range.low,
@@ -79,7 +127,6 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           timestamp: range.startTimestamp
         }));
 
-        // Ordenar por precio (de mayor a menor para mostrar primero los más cercanos al precio actual)
         supports.sort((a, b) => b.price - a.price);
         resistances.sort((a, b) => b.price - a.price);
 
@@ -89,7 +136,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           ranges,
         });
 
-        console.log('[AlertConfigModal] Niveles cargados:', {
+        console.log('[AlertConfigModal] Range Detector levels loaded:', {
           supports: supports.length,
           resistances: resistances.length,
           ranges: ranges.length
@@ -205,11 +252,11 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
               onChange={handleInputChange}
             >
               <option value="manual">Manual</option>
-              <option value="support_resistance">Range Detector (Límites)</option>
-              <option value="range_detector">Range Detector (Límites)</option>
+              <option value="support_resistance">Support & Resistance</option>
+              <option value="range_detector">Range Detector</option>
             </select>
             <small style={{ color: '#888', fontSize: '11px', marginTop: '4px', display: 'block' }}>
-              Nota: Range Detector debe estar activo en el símbolo seleccionado
+              Nota: El indicador seleccionado debe estar activo en el símbolo
             </small>
           </div>
 

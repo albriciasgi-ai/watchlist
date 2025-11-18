@@ -10,6 +10,7 @@ import RangeDetectionIndicator from "./RangeDetectionIndicator";
 import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
+import SupportResistanceIndicator from "./SupportResistanceIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -25,15 +26,22 @@ class IndicatorManager {
     this.rangeDetector = null;       // Detector de rangos (solo si está habilitado)
     this.autoRangeProfiles = [];     // Rangos auto-detectados
 
+    // 📊 NUEVO: Support & Resistance Indicator
+    this.supportResistanceIndicator = null; // Indicador de S/R (solo si está habilitado)
+
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
   async initialize() {
+    // Crear el indicador de S/R
+    this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       new VolumeIndicator(this.symbol, this.interval, this.days),
       new CVDIndicator(this.symbol, this.interval, this.days),
-      new RejectionPatternIndicator(this.symbol, this.interval, this.days)
+      new RejectionPatternIndicator(this.symbol, this.interval, this.days),
+      this.supportResistanceIndicator
     ];
 
     // Habilitar el indicador de patrones por defecto
