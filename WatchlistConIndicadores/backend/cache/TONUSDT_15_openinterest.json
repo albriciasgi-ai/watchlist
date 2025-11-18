@@ -4,321 +4,6 @@
   "indicator": "openInterest",
   "data": [
     {
-      "timestamp": 1763241300000,
-      "openInterest": 19421132.2,
-      "datetime_colombia": "2025-11-15 16:15:00"
-    },
-    {
-      "timestamp": 1763242200000,
-      "openInterest": 19412839.1,
-      "datetime_colombia": "2025-11-15 16:30:00"
-    },
-    {
-      "timestamp": 1763243100000,
-      "openInterest": 19410304.6,
-      "datetime_colombia": "2025-11-15 16:45:00"
-    },
-    {
-      "timestamp": 1763244000000,
-      "openInterest": 19431380.1,
-      "datetime_colombia": "2025-11-15 17:00:00"
-    },
-    {
-      "timestamp": 1763244900000,
-      "openInterest": 19451520.5,
-      "datetime_colombia": "2025-11-15 17:15:00"
-    },
-    {
-      "timestamp": 1763245800000,
-      "openInterest": 19443149.8,
-      "datetime_colombia": "2025-11-15 17:30:00"
-    },
-    {
-      "timestamp": 1763246700000,
-      "openInterest": 19431244.6,
-      "datetime_colombia": "2025-11-15 17:45:00"
-    },
-    {
-      "timestamp": 1763247600000,
-      "openInterest": 19427150.39999999,
-      "datetime_colombia": "2025-11-15 18:00:00"
-    },
-    {
-      "timestamp": 1763248500000,
-      "openInterest": 19406440.2,
-      "datetime_colombia": "2025-11-15 18:15:00"
-    },
-    {
-      "timestamp": 1763249400000,
-      "openInterest": 19413046.39999999,
-      "datetime_colombia": "2025-11-15 18:30:00"
-    },
-    {
-      "timestamp": 1763250300000,
-      "openInterest": 19403339.6,
-      "datetime_colombia": "2025-11-15 18:45:00"
-    },
-    {
-      "timestamp": 1763251200000,
-      "openInterest": 19402525.8,
-      "datetime_colombia": "2025-11-15 19:00:00"
-    },
-    {
-      "timestamp": 1763252100000,
-      "openInterest": 19414759.6,
-      "datetime_colombia": "2025-11-15 19:15:00"
-    },
-    {
-      "timestamp": 1763253000000,
-      "openInterest": 19398676.0,
-      "datetime_colombia": "2025-11-15 19:30:00"
-    },
-    {
-      "timestamp": 1763253900000,
-      "openInterest": 19387998.39999999,
-      "datetime_colombia": "2025-11-15 19:45:00"
-    },
-    {
-      "timestamp": 1763254800000,
-      "openInterest": 19367821.8,
-      "datetime_colombia": "2025-11-15 20:00:00"
-    },
-    {
-      "timestamp": 1763255700000,
-      "openInterest": 19367828.39999999,
-      "datetime_colombia": "2025-11-15 20:15:00"
-    },
-    {
-      "timestamp": 1763256600000,
-      "openInterest": 19374083.89999999,
-      "datetime_colombia": "2025-11-15 20:30:00"
-    },
-    {
-      "timestamp": 1763257500000,
-      "openInterest": 19427430.39999999,
-      "datetime_colombia": "2025-11-15 20:45:00"
-    },
-    {
-      "timestamp": 1763258400000,
-      "openInterest": 19404012.6,
-      "datetime_colombia": "2025-11-15 21:00:00"
-    },
-    {
-      "timestamp": 1763259300000,
-      "openInterest": 19344843.2,
-      "datetime_colombia": "2025-11-15 21:15:00"
-    },
-    {
-      "timestamp": 1763260200000,
-      "openInterest": 19264461.39999999,
-      "datetime_colombia": "2025-11-15 21:30:00"
-    },
-    {
-      "timestamp": 1763261100000,
-      "openInterest": 19259293.5,
-      "datetime_colombia": "2025-11-15 21:45:00"
-    },
-    {
-      "timestamp": 1763262000000,
-      "openInterest": 19271916.0,
-      "datetime_colombia": "2025-11-15 22:00:00"
-    },
-    {
-      "timestamp": 1763262900000,
-      "openInterest": 19260014.0,
-      "datetime_colombia": "2025-11-15 22:15:00"
-    },
-    {
-      "timestamp": 1763263800000,
-      "openInterest": 19246082.8,
-      "datetime_colombia": "2025-11-15 22:30:00"
-    },
-    {
-      "timestamp": 1763264700000,
-      "openInterest": 19239389.39999999,
-      "datetime_colombia": "2025-11-15 22:45:00"
-    },
-    {
-      "timestamp": 1763265600000,
-      "openInterest": 19256740.2,
-      "datetime_colombia": "2025-11-15 23:00:00"
-    },
-    {
-      "timestamp": 1763266500000,
-      "openInterest": 19243148.0,
-      "datetime_colombia": "2025-11-15 23:15:00"
-    },
-    {
-      "timestamp": 1763267400000,
-      "openInterest": 19241213.6,
-      "datetime_colombia": "2025-11-15 23:30:00"
-    },
-    {
-      "timestamp": 1763268300000,
-      "openInterest": 19244361.0,
-      "datetime_colombia": "2025-11-15 23:45:00"
-    },
-    {
-      "timestamp": 1763269200000,
-      "openInterest": 19243615.89999999,
-      "datetime_colombia": "2025-11-16 00:00:00"
-    },
-    {
-      "timestamp": 1763270100000,
-      "openInterest": 19243035.39999999,
-      "datetime_colombia": "2025-11-16 00:15:00"
-    },
-    {
-      "timestamp": 1763271000000,
-      "openInterest": 19237584.5,
-      "datetime_colombia": "2025-11-16 00:30:00"
-    },
-    {
-      "timestamp": 1763271900000,
-      "openInterest": 19226485.0,
-      "datetime_colombia": "2025-11-16 00:45:00"
-    },
-    {
-      "timestamp": 1763272800000,
-      "openInterest": 19226741.8,
-      "datetime_colombia": "2025-11-16 01:00:00"
-    },
-    {
-      "timestamp": 1763273700000,
-      "openInterest": 19227845.8,
-      "datetime_colombia": "2025-11-16 01:15:00"
-    },
-    {
-      "timestamp": 1763274600000,
-      "openInterest": 19237334.39999999,
-      "datetime_colombia": "2025-11-16 01:30:00"
-    },
-    {
-      "timestamp": 1763275500000,
-      "openInterest": 19257714.39999999,
-      "datetime_colombia": "2025-11-16 01:45:00"
-    },
-    {
-      "timestamp": 1763276400000,
-      "openInterest": 19265552.8,
-      "datetime_colombia": "2025-11-16 02:00:00"
-    },
-    {
-      "timestamp": 1763277300000,
-      "openInterest": 19301623.6,
-      "datetime_colombia": "2025-11-16 02:15:00"
-    },
-    {
-      "timestamp": 1763278200000,
-      "openInterest": 19290548.2,
-      "datetime_colombia": "2025-11-16 02:30:00"
-    },
-    {
-      "timestamp": 1763279100000,
-      "openInterest": 19306581.1,
-      "datetime_colombia": "2025-11-16 02:45:00"
-    },
-    {
-      "timestamp": 1763280000000,
-      "openInterest": 19308025.2,
-      "datetime_colombia": "2025-11-16 03:00:00"
-    },
-    {
-      "timestamp": 1763280900000,
-      "openInterest": 19317649.8,
-      "datetime_colombia": "2025-11-16 03:15:00"
-    },
-    {
-      "timestamp": 1763281800000,
-      "openInterest": 19332158.2,
-      "datetime_colombia": "2025-11-16 03:30:00"
-    },
-    {
-      "timestamp": 1763282700000,
-      "openInterest": 19345542.8,
-      "datetime_colombia": "2025-11-16 03:45:00"
-    },
-    {
-      "timestamp": 1763283600000,
-      "openInterest": 19351891.0,
-      "datetime_colombia": "2025-11-16 04:00:00"
-    },
-    {
-      "timestamp": 1763284500000,
-      "openInterest": 19365628.2,
-      "datetime_colombia": "2025-11-16 04:15:00"
-    },
-    {
-      "timestamp": 1763285400000,
-      "openInterest": 19388472.39999999,
-      "datetime_colombia": "2025-11-16 04:30:00"
-    },
-    {
-      "timestamp": 1763286300000,
-      "openInterest": 19391038.2,
-      "datetime_colombia": "2025-11-16 04:45:00"
-    },
-    {
-      "timestamp": 1763287200000,
-      "openInterest": 19369158.39999999,
-      "datetime_colombia": "2025-11-16 05:00:00"
-    },
-    {
-      "timestamp": 1763288100000,
-      "openInterest": 19393303.0,
-      "datetime_colombia": "2025-11-16 05:15:00"
-    },
-    {
-      "timestamp": 1763289000000,
-      "openInterest": 19515825.8,
-      "datetime_colombia": "2025-11-16 05:30:00"
-    },
-    {
-      "timestamp": 1763289900000,
-      "openInterest": 19507114.2,
-      "datetime_colombia": "2025-11-16 05:45:00"
-    },
-    {
-      "timestamp": 1763290800000,
-      "openInterest": 19465912.39999999,
-      "datetime_colombia": "2025-11-16 06:00:00"
-    },
-    {
-      "timestamp": 1763291700000,
-      "openInterest": 19456844.8,
-      "datetime_colombia": "2025-11-16 06:15:00"
-    },
-    {
-      "timestamp": 1763292600000,
-      "openInterest": 19414597.39999999,
-      "datetime_colombia": "2025-11-16 06:30:00"
-    },
-    {
-      "timestamp": 1763293500000,
-      "openInterest": 19489419.6,
-      "datetime_colombia": "2025-11-16 06:45:00"
-    },
-    {
-      "timestamp": 1763294400000,
-      "openInterest": 19452233.6,
-      "datetime_colombia": "2025-11-16 07:00:00"
-    },
-    {
-      "timestamp": 1763295300000,
-      "openInterest": 19484130.3,
-      "datetime_colombia": "2025-11-16 07:15:00"
-    },
-    {
-      "timestamp": 1763296200000,
-      "openInterest": 19461615.3,
-      "datetime_colombia": "2025-11-16 07:30:00"
-    },
-    {
-      "timestamp": 1763297100000,
-      "openInterest": 19443865.2,
-      "datetime_colombia": "2025-11-16 07:45:00"
-    },
-    {
       "timestamp": 1763298000000,
       "openInterest": 19444981.89999999,
       "datetime_colombia": "2025-11-16 08:00:00"
@@ -1004,319 +689,319 @@
       "datetime_colombia": "2025-11-17 18:00:00"
     },
     {
-      "timestamp": 1763061300000,
-      "openInterest": 17814396.2,
-      "datetime_colombia": "2025-11-13 14:15:00"
+      "timestamp": 1763421300000,
+      "openInterest": 19326594.6,
+      "datetime_colombia": "2025-11-17 18:15:00"
     },
     {
-      "timestamp": 1763062200000,
-      "openInterest": 17717224.39999999,
-      "datetime_colombia": "2025-11-13 14:30:00"
+      "timestamp": 1763422200000,
+      "openInterest": 19322540.8,
+      "datetime_colombia": "2025-11-17 18:30:00"
     },
     {
-      "timestamp": 1763063100000,
-      "openInterest": 17629687.7,
-      "datetime_colombia": "2025-11-13 14:45:00"
+      "timestamp": 1763423100000,
+      "openInterest": 19342707.2,
+      "datetime_colombia": "2025-11-17 18:45:00"
     },
     {
-      "timestamp": 1763064000000,
-      "openInterest": 17657071.39999999,
-      "datetime_colombia": "2025-11-13 15:00:00"
+      "timestamp": 1763424000000,
+      "openInterest": 19378739.3,
+      "datetime_colombia": "2025-11-17 19:00:00"
     },
     {
-      "timestamp": 1763064900000,
-      "openInterest": 17652795.8,
-      "datetime_colombia": "2025-11-13 15:15:00"
+      "timestamp": 1763424900000,
+      "openInterest": 19375707.0,
+      "datetime_colombia": "2025-11-17 19:15:00"
     },
     {
-      "timestamp": 1763065800000,
-      "openInterest": 17617469.8,
-      "datetime_colombia": "2025-11-13 15:30:00"
+      "timestamp": 1763425800000,
+      "openInterest": 19327585.6,
+      "datetime_colombia": "2025-11-17 19:30:00"
     },
     {
-      "timestamp": 1763066700000,
-      "openInterest": 17679313.39999999,
-      "datetime_colombia": "2025-11-13 15:45:00"
+      "timestamp": 1763426700000,
+      "openInterest": 19624498.2,
+      "datetime_colombia": "2025-11-17 19:45:00"
     },
     {
-      "timestamp": 1763067600000,
-      "openInterest": 17676234.2,
-      "datetime_colombia": "2025-11-13 16:00:00"
+      "timestamp": 1763427600000,
+      "openInterest": 19636313.6,
+      "datetime_colombia": "2025-11-17 20:00:00"
     },
     {
-      "timestamp": 1763068500000,
-      "openInterest": 17652340.2,
-      "datetime_colombia": "2025-11-13 16:15:00"
+      "timestamp": 1763428500000,
+      "openInterest": 19597052.2,
+      "datetime_colombia": "2025-11-17 20:15:00"
     },
     {
-      "timestamp": 1763069400000,
-      "openInterest": 17712338.6,
-      "datetime_colombia": "2025-11-13 16:30:00"
+      "timestamp": 1763429400000,
+      "openInterest": 19575833.7,
+      "datetime_colombia": "2025-11-17 20:30:00"
     },
     {
-      "timestamp": 1763070300000,
-      "openInterest": 17714690.1,
-      "datetime_colombia": "2025-11-13 16:45:00"
+      "timestamp": 1763430300000,
+      "openInterest": 19566057.0,
+      "datetime_colombia": "2025-11-17 20:45:00"
     },
     {
-      "timestamp": 1763071200000,
-      "openInterest": 17735279.0,
-      "datetime_colombia": "2025-11-13 17:00:00"
+      "timestamp": 1763431200000,
+      "openInterest": 19568706.6,
+      "datetime_colombia": "2025-11-17 21:00:00"
     },
     {
-      "timestamp": 1763072100000,
-      "openInterest": 17679867.39999999,
-      "datetime_colombia": "2025-11-13 17:15:00"
+      "timestamp": 1763432100000,
+      "openInterest": 19565080.8,
+      "datetime_colombia": "2025-11-17 21:15:00"
     },
     {
-      "timestamp": 1763073000000,
-      "openInterest": 17684404.8,
-      "datetime_colombia": "2025-11-13 17:30:00"
+      "timestamp": 1763433000000,
+      "openInterest": 19538593.5,
+      "datetime_colombia": "2025-11-17 21:30:00"
     },
     {
-      "timestamp": 1763073900000,
-      "openInterest": 17693551.8,
-      "datetime_colombia": "2025-11-13 17:45:00"
+      "timestamp": 1763433900000,
+      "openInterest": 19507071.8,
+      "datetime_colombia": "2025-11-17 21:45:00"
     },
     {
-      "timestamp": 1763074800000,
-      "openInterest": 17700163.0,
-      "datetime_colombia": "2025-11-13 18:00:00"
+      "timestamp": 1763434800000,
+      "openInterest": 19463560.3,
+      "datetime_colombia": "2025-11-17 22:00:00"
     },
     {
-      "timestamp": 1763075700000,
-      "openInterest": 17692324.1,
-      "datetime_colombia": "2025-11-13 18:15:00"
+      "timestamp": 1763435700000,
+      "openInterest": 19489923.2,
+      "datetime_colombia": "2025-11-17 22:15:00"
     },
     {
-      "timestamp": 1763076600000,
-      "openInterest": 17696444.0,
-      "datetime_colombia": "2025-11-13 18:30:00"
+      "timestamp": 1763436600000,
+      "openInterest": 19458886.8,
+      "datetime_colombia": "2025-11-17 22:30:00"
     },
     {
-      "timestamp": 1763077500000,
-      "openInterest": 17685208.0,
-      "datetime_colombia": "2025-11-13 18:45:00"
+      "timestamp": 1763437500000,
+      "openInterest": 19391519.8,
+      "datetime_colombia": "2025-11-17 22:45:00"
     },
     {
-      "timestamp": 1763078400000,
-      "openInterest": 17690081.6,
-      "datetime_colombia": "2025-11-13 19:00:00"
+      "timestamp": 1763438400000,
+      "openInterest": 19411352.2,
+      "datetime_colombia": "2025-11-17 23:00:00"
     },
     {
-      "timestamp": 1763079300000,
-      "openInterest": 17668995.8,
-      "datetime_colombia": "2025-11-13 19:15:00"
+      "timestamp": 1763439300000,
+      "openInterest": 19416355.6,
+      "datetime_colombia": "2025-11-17 23:15:00"
     },
     {
-      "timestamp": 1763080200000,
-      "openInterest": 17655601.39999999,
-      "datetime_colombia": "2025-11-13 19:30:00"
+      "timestamp": 1763440200000,
+      "openInterest": 19673948.6,
+      "datetime_colombia": "2025-11-17 23:30:00"
     },
     {
-      "timestamp": 1763081100000,
-      "openInterest": 17654699.5,
-      "datetime_colombia": "2025-11-13 19:45:00"
+      "timestamp": 1763441100000,
+      "openInterest": 19937123.2,
+      "datetime_colombia": "2025-11-17 23:45:00"
     },
     {
-      "timestamp": 1763082000000,
-      "openInterest": 17678353.39999999,
-      "datetime_colombia": "2025-11-13 20:00:00"
+      "timestamp": 1763442000000,
+      "openInterest": 19915618.6,
+      "datetime_colombia": "2025-11-18 00:00:00"
     },
     {
-      "timestamp": 1763082900000,
-      "openInterest": 17670682.89999999,
-      "datetime_colombia": "2025-11-13 20:15:00"
+      "timestamp": 1763442900000,
+      "openInterest": 19872400.8,
+      "datetime_colombia": "2025-11-18 00:15:00"
     },
     {
-      "timestamp": 1763083800000,
-      "openInterest": 17688791.6,
-      "datetime_colombia": "2025-11-13 20:30:00"
+      "timestamp": 1763443800000,
+      "openInterest": 19864578.0,
+      "datetime_colombia": "2025-11-18 00:30:00"
     },
     {
-      "timestamp": 1763084700000,
-      "openInterest": 17690320.0,
-      "datetime_colombia": "2025-11-13 20:45:00"
+      "timestamp": 1763444700000,
+      "openInterest": 19844282.39999999,
+      "datetime_colombia": "2025-11-18 00:45:00"
     },
     {
-      "timestamp": 1763085600000,
-      "openInterest": 17727464.39999999,
-      "datetime_colombia": "2025-11-13 21:00:00"
+      "timestamp": 1763445600000,
+      "openInterest": 19821346.2,
+      "datetime_colombia": "2025-11-18 01:00:00"
     },
     {
-      "timestamp": 1763086500000,
-      "openInterest": 17735128.2,
-      "datetime_colombia": "2025-11-13 21:15:00"
+      "timestamp": 1763446500000,
+      "openInterest": 19835921.3,
+      "datetime_colombia": "2025-11-18 01:15:00"
     },
     {
-      "timestamp": 1763087400000,
-      "openInterest": 17738110.7,
-      "datetime_colombia": "2025-11-13 21:30:00"
+      "timestamp": 1763447400000,
+      "openInterest": 19817882.0,
+      "datetime_colombia": "2025-11-18 01:30:00"
     },
     {
-      "timestamp": 1763088300000,
-      "openInterest": 17751536.39999999,
-      "datetime_colombia": "2025-11-13 21:45:00"
+      "timestamp": 1763448300000,
+      "openInterest": 19786004.8,
+      "datetime_colombia": "2025-11-18 01:45:00"
     },
     {
-      "timestamp": 1763089200000,
-      "openInterest": 17754514.0,
-      "datetime_colombia": "2025-11-13 22:00:00"
+      "timestamp": 1763449200000,
+      "openInterest": 19530857.2,
+      "datetime_colombia": "2025-11-18 02:00:00"
     },
     {
-      "timestamp": 1763090100000,
-      "openInterest": 17761976.39999999,
-      "datetime_colombia": "2025-11-13 22:15:00"
+      "timestamp": 1763450100000,
+      "openInterest": 19498851.6,
+      "datetime_colombia": "2025-11-18 02:15:00"
     },
     {
-      "timestamp": 1763091000000,
-      "openInterest": 17788601.39999999,
-      "datetime_colombia": "2025-11-13 22:30:00"
+      "timestamp": 1763451000000,
+      "openInterest": 19742456.39999999,
+      "datetime_colombia": "2025-11-18 02:30:00"
     },
     {
-      "timestamp": 1763091900000,
-      "openInterest": 17770710.39999999,
-      "datetime_colombia": "2025-11-13 22:45:00"
+      "timestamp": 1763451900000,
+      "openInterest": 19905027.6,
+      "datetime_colombia": "2025-11-18 02:45:00"
     },
     {
-      "timestamp": 1763092800000,
-      "openInterest": 17754330.2,
-      "datetime_colombia": "2025-11-13 23:00:00"
+      "timestamp": 1763452800000,
+      "openInterest": 19968813.8,
+      "datetime_colombia": "2025-11-18 03:00:00"
     },
     {
-      "timestamp": 1763093700000,
-      "openInterest": 17731240.39999999,
-      "datetime_colombia": "2025-11-13 23:15:00"
+      "timestamp": 1763453700000,
+      "openInterest": 20055128.6,
+      "datetime_colombia": "2025-11-18 03:15:00"
     },
     {
-      "timestamp": 1763094600000,
-      "openInterest": 17723465.8,
-      "datetime_colombia": "2025-11-13 23:30:00"
+      "timestamp": 1763454600000,
+      "openInterest": 20071516.8,
+      "datetime_colombia": "2025-11-18 03:30:00"
     },
     {
-      "timestamp": 1763095500000,
-      "openInterest": 17276408.1,
-      "datetime_colombia": "2025-11-13 23:45:00"
+      "timestamp": 1763455500000,
+      "openInterest": 20342331.0,
+      "datetime_colombia": "2025-11-18 03:45:00"
     },
     {
-      "timestamp": 1763096400000,
-      "openInterest": 17223226.2,
-      "datetime_colombia": "2025-11-14 00:00:00"
+      "timestamp": 1763456400000,
+      "openInterest": 20293548.5,
+      "datetime_colombia": "2025-11-18 04:00:00"
     },
     {
-      "timestamp": 1763097300000,
-      "openInterest": 17274678.0,
-      "datetime_colombia": "2025-11-14 00:15:00"
+      "timestamp": 1763457300000,
+      "openInterest": 20410569.6,
+      "datetime_colombia": "2025-11-18 04:15:00"
     },
     {
-      "timestamp": 1763098200000,
-      "openInterest": 17266929.5,
-      "datetime_colombia": "2025-11-14 00:30:00"
+      "timestamp": 1763458200000,
+      "openInterest": 20401514.2,
+      "datetime_colombia": "2025-11-18 04:30:00"
     },
     {
-      "timestamp": 1763099100000,
-      "openInterest": 17283547.3,
-      "datetime_colombia": "2025-11-14 00:45:00"
+      "timestamp": 1763459100000,
+      "openInterest": 20411796.39999999,
+      "datetime_colombia": "2025-11-18 04:45:00"
     },
     {
-      "timestamp": 1763100000000,
-      "openInterest": 17246557.0,
-      "datetime_colombia": "2025-11-14 01:00:00"
+      "timestamp": 1763460000000,
+      "openInterest": 20413925.0,
+      "datetime_colombia": "2025-11-18 05:00:00"
     },
     {
-      "timestamp": 1763100900000,
-      "openInterest": 17267622.8,
-      "datetime_colombia": "2025-11-14 01:15:00"
+      "timestamp": 1763460900000,
+      "openInterest": 20501127.5,
+      "datetime_colombia": "2025-11-18 05:15:00"
     },
     {
-      "timestamp": 1763101800000,
-      "openInterest": 17272108.0,
-      "datetime_colombia": "2025-11-14 01:30:00"
+      "timestamp": 1763461800000,
+      "openInterest": 20535296.0,
+      "datetime_colombia": "2025-11-18 05:30:00"
     },
     {
-      "timestamp": 1763102700000,
-      "openInterest": 17265660.0,
-      "datetime_colombia": "2025-11-14 01:45:00"
+      "timestamp": 1763462700000,
+      "openInterest": 20554740.39999999,
+      "datetime_colombia": "2025-11-18 05:45:00"
     },
     {
-      "timestamp": 1763103600000,
-      "openInterest": 17238908.7,
-      "datetime_colombia": "2025-11-14 02:00:00"
+      "timestamp": 1763463600000,
+      "openInterest": 20621814.8,
+      "datetime_colombia": "2025-11-18 06:00:00"
     },
     {
-      "timestamp": 1763104500000,
-      "openInterest": 17231083.0,
-      "datetime_colombia": "2025-11-14 02:15:00"
+      "timestamp": 1763464500000,
+      "openInterest": 20594032.2,
+      "datetime_colombia": "2025-11-18 06:15:00"
     },
     {
-      "timestamp": 1763105400000,
-      "openInterest": 17826872.0,
-      "datetime_colombia": "2025-11-14 02:30:00"
+      "timestamp": 1763465400000,
+      "openInterest": 20563237.2,
+      "datetime_colombia": "2025-11-18 06:30:00"
     },
     {
-      "timestamp": 1763106300000,
-      "openInterest": 17866122.2,
-      "datetime_colombia": "2025-11-14 02:45:00"
+      "timestamp": 1763466300000,
+      "openInterest": 20524372.6,
+      "datetime_colombia": "2025-11-18 06:45:00"
     },
     {
-      "timestamp": 1763107200000,
-      "openInterest": 17805624.0,
-      "datetime_colombia": "2025-11-14 03:00:00"
+      "timestamp": 1763467200000,
+      "openInterest": 20503082.6,
+      "datetime_colombia": "2025-11-18 07:00:00"
     },
     {
-      "timestamp": 1763108100000,
-      "openInterest": 17802974.39999999,
-      "datetime_colombia": "2025-11-14 03:15:00"
+      "timestamp": 1763468100000,
+      "openInterest": 20484721.6,
+      "datetime_colombia": "2025-11-18 07:15:00"
     },
     {
-      "timestamp": 1763109000000,
-      "openInterest": 17772360.6,
-      "datetime_colombia": "2025-11-14 03:30:00"
+      "timestamp": 1763469000000,
+      "openInterest": 20454239.39999999,
+      "datetime_colombia": "2025-11-18 07:30:00"
     },
     {
-      "timestamp": 1763109900000,
-      "openInterest": 17776349.89999999,
-      "datetime_colombia": "2025-11-14 03:45:00"
+      "timestamp": 1763469900000,
+      "openInterest": 20455126.6,
+      "datetime_colombia": "2025-11-18 07:45:00"
     },
     {
-      "timestamp": 1763110800000,
-      "openInterest": 17788242.2,
-      "datetime_colombia": "2025-11-14 04:00:00"
+      "timestamp": 1763470800000,
+      "openInterest": 20494249.2,
+      "datetime_colombia": "2025-11-18 08:00:00"
     },
     {
-      "timestamp": 1763111700000,
-      "openInterest": 17761556.0,
-      "datetime_colombia": "2025-11-14 04:15:00"
+      "timestamp": 1763471700000,
+      "openInterest": 20583769.0,
+      "datetime_colombia": "2025-11-18 08:15:00"
     },
     {
-      "timestamp": 1763112600000,
-      "openInterest": 17810670.3,
-      "datetime_colombia": "2025-11-14 04:30:00"
+      "timestamp": 1763472600000,
+      "openInterest": 20726080.8,
+      "datetime_colombia": "2025-11-18 08:30:00"
     },
     {
-      "timestamp": 1763113500000,
-      "openInterest": 17810185.6,
-      "datetime_colombia": "2025-11-14 04:45:00"
+      "timestamp": 1763473500000,
+      "openInterest": 20703980.0,
+      "datetime_colombia": "2025-11-18 08:45:00"
     },
     {
-      "timestamp": 1763114400000,
-      "openInterest": 17783099.0,
-      "datetime_colombia": "2025-11-14 05:00:00"
+      "timestamp": 1763474400000,
+      "openInterest": 20680910.2,
+      "datetime_colombia": "2025-11-18 09:00:00"
     },
     {
-      "timestamp": 1763115300000,
-      "openInterest": 17794285.39999999,
-      "datetime_colombia": "2025-11-14 05:15:00"
+      "timestamp": 1763475300000,
+      "openInterest": 20641954.39999999,
+      "datetime_colombia": "2025-11-18 09:15:00"
     },
     {
-      "timestamp": 1763116200000,
-      "openInterest": 17821991.6,
-      "datetime_colombia": "2025-11-14 05:30:00"
+      "timestamp": 1763476200000,
+      "openInterest": 20708475.8,
+      "datetime_colombia": "2025-11-18 09:30:00"
     },
     {
-      "timestamp": 1763117100000,
-      "openInterest": 17830543.0,
-      "datetime_colombia": "2025-11-14 05:45:00"
+      "timestamp": 1763477100000,
+      "openInterest": 20682529.8,
+      "datetime_colombia": "2025-11-18 09:45:00"
     },
     {
       "timestamp": 1763118000000,
@@ -2004,319 +1689,319 @@
       "datetime_colombia": "2025-11-15 16:00:00"
     },
     {
-      "timestamp": 1762881300000,
-      "openInterest": 15658881.4,
-      "datetime_colombia": "2025-11-11 12:15:00"
+      "timestamp": 1763241300000,
+      "openInterest": 19421132.2,
+      "datetime_colombia": "2025-11-15 16:15:00"
     },
     {
-      "timestamp": 1762882200000,
-      "openInterest": 15673322.0,
-      "datetime_colombia": "2025-11-11 12:30:00"
+      "timestamp": 1763242200000,
+      "openInterest": 19412839.1,
+      "datetime_colombia": "2025-11-15 16:30:00"
     },
     {
-      "timestamp": 1762883100000,
-      "openInterest": 15763413.6,
-      "datetime_colombia": "2025-11-11 12:45:00"
+      "timestamp": 1763243100000,
+      "openInterest": 19410304.6,
+      "datetime_colombia": "2025-11-15 16:45:00"
     },
     {
-      "timestamp": 1762884000000,
-      "openInterest": 15762983.8,
-      "datetime_colombia": "2025-11-11 13:00:00"
+      "timestamp": 1763244000000,
+      "openInterest": 19431380.1,
+      "datetime_colombia": "2025-11-15 17:00:00"
     },
     {
-      "timestamp": 1762884900000,
-      "openInterest": 15753073.4,
-      "datetime_colombia": "2025-11-11 13:15:00"
+      "timestamp": 1763244900000,
+      "openInterest": 19451520.5,
+      "datetime_colombia": "2025-11-15 17:15:00"
     },
     {
-      "timestamp": 1762885800000,
-      "openInterest": 15739507.4,
-      "datetime_colombia": "2025-11-11 13:30:00"
+      "timestamp": 1763245800000,
+      "openInterest": 19443149.8,
+      "datetime_colombia": "2025-11-15 17:30:00"
     },
     {
-      "timestamp": 1762886700000,
-      "openInterest": 15735397.8,
-      "datetime_colombia": "2025-11-11 13:45:00"
+      "timestamp": 1763246700000,
+      "openInterest": 19431244.6,
+      "datetime_colombia": "2025-11-15 17:45:00"
     },
     {
-      "timestamp": 1762887600000,
-      "openInterest": 15711232.6,
-      "datetime_colombia": "2025-11-11 14:00:00"
+      "timestamp": 1763247600000,
+      "openInterest": 19427150.39999999,
+      "datetime_colombia": "2025-11-15 18:00:00"
     },
     {
-      "timestamp": 1762888500000,
-      "openInterest": 15734716.8,
-      "datetime_colombia": "2025-11-11 14:15:00"
+      "timestamp": 1763248500000,
+      "openInterest": 19406440.2,
+      "datetime_colombia": "2025-11-15 18:15:00"
     },
     {
-      "timestamp": 1762889400000,
-      "openInterest": 15747996.2,
-      "datetime_colombia": "2025-11-11 14:30:00"
+      "timestamp": 1763249400000,
+      "openInterest": 19413046.39999999,
+      "datetime_colombia": "2025-11-15 18:30:00"
     },
     {
-      "timestamp": 1762890300000,
-      "openInterest": 15803069.4,
-      "datetime_colombia": "2025-11-11 14:45:00"
+      "timestamp": 1763250300000,
+      "openInterest": 19403339.6,
+      "datetime_colombia": "2025-11-15 18:45:00"
     },
     {
-      "timestamp": 1762891200000,
-      "openInterest": 15795094.8,
-      "datetime_colombia": "2025-11-11 15:00:00"
+      "timestamp": 1763251200000,
+      "openInterest": 19402525.8,
+      "datetime_colombia": "2025-11-15 19:00:00"
     },
     {
-      "timestamp": 1762892100000,
-      "openInterest": 15791443.0,
-      "datetime_colombia": "2025-11-11 15:15:00"
+      "timestamp": 1763252100000,
+      "openInterest": 19414759.6,
+      "datetime_colombia": "2025-11-15 19:15:00"
     },
     {
-      "timestamp": 1762893000000,
-      "openInterest": 15873907.4,
-      "datetime_colombia": "2025-11-11 15:30:00"
+      "timestamp": 1763253000000,
+      "openInterest": 19398676.0,
+      "datetime_colombia": "2025-11-15 19:30:00"
     },
     {
-      "timestamp": 1762893900000,
-      "openInterest": 15852488.6,
-      "datetime_colombia": "2025-11-11 15:45:00"
+      "timestamp": 1763253900000,
+      "openInterest": 19387998.39999999,
+      "datetime_colombia": "2025-11-15 19:45:00"
     },
     {
-      "timestamp": 1762894800000,
-      "openInterest": 15841927.6,
-      "datetime_colombia": "2025-11-11 16:00:00"
+      "timestamp": 1763254800000,
+      "openInterest": 19367821.8,
+      "datetime_colombia": "2025-11-15 20:00:00"
     },
     {
-      "timestamp": 1762895700000,
-      "openInterest": 15832529.3,
-      "datetime_colombia": "2025-11-11 16:15:00"
+      "timestamp": 1763255700000,
+      "openInterest": 19367828.39999999,
+      "datetime_colombia": "2025-11-15 20:15:00"
     },
     {
-      "timestamp": 1762896600000,
-      "openInterest": 15842492.4,
-      "datetime_colombia": "2025-11-11 16:30:00"
+      "timestamp": 1763256600000,
+      "openInterest": 19374083.89999999,
+      "datetime_colombia": "2025-11-15 20:30:00"
     },
     {
-      "timestamp": 1762897500000,
-      "openInterest": 15839624.2,
-      "datetime_colombia": "2025-11-11 16:45:00"
+      "timestamp": 1763257500000,
+      "openInterest": 19427430.39999999,
+      "datetime_colombia": "2025-11-15 20:45:00"
     },
     {
-      "timestamp": 1762898400000,
-      "openInterest": 15849969.2,
-      "datetime_colombia": "2025-11-11 17:00:00"
+      "timestamp": 1763258400000,
+      "openInterest": 19404012.6,
+      "datetime_colombia": "2025-11-15 21:00:00"
     },
     {
-      "timestamp": 1762899300000,
-      "openInterest": 15674424.0,
-      "datetime_colombia": "2025-11-11 17:15:00"
+      "timestamp": 1763259300000,
+      "openInterest": 19344843.2,
+      "datetime_colombia": "2025-11-15 21:15:00"
     },
     {
-      "timestamp": 1762900200000,
-      "openInterest": 15664517.7,
-      "datetime_colombia": "2025-11-11 17:30:00"
+      "timestamp": 1763260200000,
+      "openInterest": 19264461.39999999,
+      "datetime_colombia": "2025-11-15 21:30:00"
     },
     {
-      "timestamp": 1762901100000,
-      "openInterest": 15652855.6,
-      "datetime_colombia": "2025-11-11 17:45:00"
+      "timestamp": 1763261100000,
+      "openInterest": 19259293.5,
+      "datetime_colombia": "2025-11-15 21:45:00"
     },
     {
-      "timestamp": 1762902000000,
-      "openInterest": 15662472.0,
-      "datetime_colombia": "2025-11-11 18:00:00"
+      "timestamp": 1763262000000,
+      "openInterest": 19271916.0,
+      "datetime_colombia": "2025-11-15 22:00:00"
     },
     {
-      "timestamp": 1762902900000,
-      "openInterest": 15682523.8,
-      "datetime_colombia": "2025-11-11 18:15:00"
+      "timestamp": 1763262900000,
+      "openInterest": 19260014.0,
+      "datetime_colombia": "2025-11-15 22:15:00"
     },
     {
-      "timestamp": 1762903800000,
-      "openInterest": 15695729.0,
-      "datetime_colombia": "2025-11-11 18:30:00"
+      "timestamp": 1763263800000,
+      "openInterest": 19246082.8,
+      "datetime_colombia": "2025-11-15 22:30:00"
     },
     {
-      "timestamp": 1762904700000,
-      "openInterest": 15675097.2,
-      "datetime_colombia": "2025-11-11 18:45:00"
+      "timestamp": 1763264700000,
+      "openInterest": 19239389.39999999,
+      "datetime_colombia": "2025-11-15 22:45:00"
     },
     {
-      "timestamp": 1762905600000,
-      "openInterest": 15697503.6,
-      "datetime_colombia": "2025-11-11 19:00:00"
+      "timestamp": 1763265600000,
+      "openInterest": 19256740.2,
+      "datetime_colombia": "2025-11-15 23:00:00"
     },
     {
-      "timestamp": 1762906500000,
-      "openInterest": 15685087.0,
-      "datetime_colombia": "2025-11-11 19:15:00"
+      "timestamp": 1763266500000,
+      "openInterest": 19243148.0,
+      "datetime_colombia": "2025-11-15 23:15:00"
     },
     {
-      "timestamp": 1762907400000,
-      "openInterest": 15701128.6,
-      "datetime_colombia": "2025-11-11 19:30:00"
+      "timestamp": 1763267400000,
+      "openInterest": 19241213.6,
+      "datetime_colombia": "2025-11-15 23:30:00"
     },
     {
-      "timestamp": 1762908300000,
-      "openInterest": 15711926.0,
-      "datetime_colombia": "2025-11-11 19:45:00"
+      "timestamp": 1763268300000,
+      "openInterest": 19244361.0,
+      "datetime_colombia": "2025-11-15 23:45:00"
     },
     {
-      "timestamp": 1762909200000,
-      "openInterest": 15722898.0,
-      "datetime_colombia": "2025-11-11 20:00:00"
+      "timestamp": 1763269200000,
+      "openInterest": 19243615.89999999,
+      "datetime_colombia": "2025-11-16 00:00:00"
     },
     {
-      "timestamp": 1762910100000,
-      "openInterest": 15734320.6,
-      "datetime_colombia": "2025-11-11 20:15:00"
+      "timestamp": 1763270100000,
+      "openInterest": 19243035.39999999,
+      "datetime_colombia": "2025-11-16 00:15:00"
     },
     {
-      "timestamp": 1762911000000,
-      "openInterest": 15743426.2,
-      "datetime_colombia": "2025-11-11 20:30:00"
+      "timestamp": 1763271000000,
+      "openInterest": 19237584.5,
+      "datetime_colombia": "2025-11-16 00:30:00"
     },
     {
-      "timestamp": 1762911900000,
-      "openInterest": 15743619.0,
-      "datetime_colombia": "2025-11-11 20:45:00"
+      "timestamp": 1763271900000,
+      "openInterest": 19226485.0,
+      "datetime_colombia": "2025-11-16 00:45:00"
     },
     {
-      "timestamp": 1762912800000,
-      "openInterest": 15752220.4,
-      "datetime_colombia": "2025-11-11 21:00:00"
+      "timestamp": 1763272800000,
+      "openInterest": 19226741.8,
+      "datetime_colombia": "2025-11-16 01:00:00"
     },
     {
-      "timestamp": 1762913700000,
-      "openInterest": 15767362.4,
-      "datetime_colombia": "2025-11-11 21:15:00"
+      "timestamp": 1763273700000,
+      "openInterest": 19227845.8,
+      "datetime_colombia": "2025-11-16 01:15:00"
     },
     {
-      "timestamp": 1762914600000,
-      "openInterest": 15764418.4,
-      "datetime_colombia": "2025-11-11 21:30:00"
+      "timestamp": 1763274600000,
+      "openInterest": 19237334.39999999,
+      "datetime_colombia": "2025-11-16 01:30:00"
     },
     {
-      "timestamp": 1762915500000,
-      "openInterest": 15787932.5,
-      "datetime_colombia": "2025-11-11 21:45:00"
+      "timestamp": 1763275500000,
+      "openInterest": 19257714.39999999,
+      "datetime_colombia": "2025-11-16 01:45:00"
     },
     {
-      "timestamp": 1762916400000,
-      "openInterest": 15793811.8,
-      "datetime_colombia": "2025-11-11 22:00:00"
+      "timestamp": 1763276400000,
+      "openInterest": 19265552.8,
+      "datetime_colombia": "2025-11-16 02:00:00"
     },
     {
-      "timestamp": 1762917300000,
-      "openInterest": 15838234.9,
-      "datetime_colombia": "2025-11-11 22:15:00"
+      "timestamp": 1763277300000,
+      "openInterest": 19301623.6,
+      "datetime_colombia": "2025-11-16 02:15:00"
     },
     {
-      "timestamp": 1762918200000,
-      "openInterest": 15794361.6,
-      "datetime_colombia": "2025-11-11 22:30:00"
+      "timestamp": 1763278200000,
+      "openInterest": 19290548.2,
+      "datetime_colombia": "2025-11-16 02:30:00"
     },
     {
-      "timestamp": 1762919100000,
-      "openInterest": 15789449.2,
-      "datetime_colombia": "2025-11-11 22:45:00"
+      "timestamp": 1763279100000,
+      "openInterest": 19306581.1,
+      "datetime_colombia": "2025-11-16 02:45:00"
     },
     {
-      "timestamp": 1762920000000,
-      "openInterest": 15789726.8,
-      "datetime_colombia": "2025-11-11 23:00:00"
+      "timestamp": 1763280000000,
+      "openInterest": 19308025.2,
+      "datetime_colombia": "2025-11-16 03:00:00"
     },
     {
-      "timestamp": 1762920900000,
-      "openInterest": 15790129.2,
-      "datetime_colombia": "2025-11-11 23:15:00"
+      "timestamp": 1763280900000,
+      "openInterest": 19317649.8,
+      "datetime_colombia": "2025-11-16 03:15:00"
     },
     {
-      "timestamp": 1762921800000,
-      "openInterest": 15791187.3,
-      "datetime_colombia": "2025-11-11 23:30:00"
+      "timestamp": 1763281800000,
+      "openInterest": 19332158.2,
+      "datetime_colombia": "2025-11-16 03:30:00"
     },
     {
-      "timestamp": 1762922700000,
-      "openInterest": 15797376.8,
-      "datetime_colombia": "2025-11-11 23:45:00"
+      "timestamp": 1763282700000,
+      "openInterest": 19345542.8,
+      "datetime_colombia": "2025-11-16 03:45:00"
     },
     {
-      "timestamp": 1762923600000,
-      "openInterest": 15802346.6,
-      "datetime_colombia": "2025-11-12 00:00:00"
+      "timestamp": 1763283600000,
+      "openInterest": 19351891.0,
+      "datetime_colombia": "2025-11-16 04:00:00"
     },
     {
-      "timestamp": 1762924500000,
-      "openInterest": 15798904.8,
-      "datetime_colombia": "2025-11-12 00:15:00"
+      "timestamp": 1763284500000,
+      "openInterest": 19365628.2,
+      "datetime_colombia": "2025-11-16 04:15:00"
     },
     {
-      "timestamp": 1762925400000,
-      "openInterest": 15810219.4,
-      "datetime_colombia": "2025-11-12 00:30:00"
+      "timestamp": 1763285400000,
+      "openInterest": 19388472.39999999,
+      "datetime_colombia": "2025-11-16 04:30:00"
     },
     {
-      "timestamp": 1762926300000,
-      "openInterest": 15803842.2,
-      "datetime_colombia": "2025-11-12 00:45:00"
+      "timestamp": 1763286300000,
+      "openInterest": 19391038.2,
+      "datetime_colombia": "2025-11-16 04:45:00"
     },
     {
-      "timestamp": 1762927200000,
-      "openInterest": 15806192.0,
-      "datetime_colombia": "2025-11-12 01:00:00"
+      "timestamp": 1763287200000,
+      "openInterest": 19369158.39999999,
+      "datetime_colombia": "2025-11-16 05:00:00"
     },
     {
-      "timestamp": 1762928100000,
-      "openInterest": 15750792.0,
-      "datetime_colombia": "2025-11-12 01:15:00"
+      "timestamp": 1763288100000,
+      "openInterest": 19393303.0,
+      "datetime_colombia": "2025-11-16 05:15:00"
     },
     {
-      "timestamp": 1762929000000,
-      "openInterest": 15753877.0,
-      "datetime_colombia": "2025-11-12 01:30:00"
+      "timestamp": 1763289000000,
+      "openInterest": 19515825.8,
+      "datetime_colombia": "2025-11-16 05:30:00"
     },
     {
-      "timestamp": 1762929900000,
-      "openInterest": 15759073.6,
-      "datetime_colombia": "2025-11-12 01:45:00"
+      "timestamp": 1763289900000,
+      "openInterest": 19507114.2,
+      "datetime_colombia": "2025-11-16 05:45:00"
     },
     {
-      "timestamp": 1762930800000,
-      "openInterest": 15772741.0,
-      "datetime_colombia": "2025-11-12 02:00:00"
+      "timestamp": 1763290800000,
+      "openInterest": 19465912.39999999,
+      "datetime_colombia": "2025-11-16 06:00:00"
     },
     {
-      "timestamp": 1762931700000,
-      "openInterest": 15776570.2,
-      "datetime_colombia": "2025-11-12 02:15:00"
+      "timestamp": 1763291700000,
+      "openInterest": 19456844.8,
+      "datetime_colombia": "2025-11-16 06:15:00"
     },
     {
-      "timestamp": 1762932600000,
-      "openInterest": 15774918.4,
-      "datetime_colombia": "2025-11-12 02:30:00"
+      "timestamp": 1763292600000,
+      "openInterest": 19414597.39999999,
+      "datetime_colombia": "2025-11-16 06:30:00"
     },
     {
-      "timestamp": 1762933500000,
-      "openInterest": 15766951.0,
-      "datetime_colombia": "2025-11-12 02:45:00"
+      "timestamp": 1763293500000,
+      "openInterest": 19489419.6,
+      "datetime_colombia": "2025-11-16 06:45:00"
     },
     {
-      "timestamp": 1762934400000,
-      "openInterest": 15757270.6,
-      "datetime_colombia": "2025-11-12 03:00:00"
+      "timestamp": 1763294400000,
+      "openInterest": 19452233.6,
+      "datetime_colombia": "2025-11-16 07:00:00"
     },
     {
-      "timestamp": 1762935300000,
-      "openInterest": 15738564.4,
-      "datetime_colombia": "2025-11-12 03:15:00"
+      "timestamp": 1763295300000,
+      "openInterest": 19484130.3,
+      "datetime_colombia": "2025-11-16 07:15:00"
     },
     {
-      "timestamp": 1762936200000,
-      "openInterest": 15734236.3,
-      "datetime_colombia": "2025-11-12 03:30:00"
+      "timestamp": 1763296200000,
+      "openInterest": 19461615.3,
+      "datetime_colombia": "2025-11-16 07:30:00"
     },
     {
-      "timestamp": 1762937100000,
-      "openInterest": 15720293.8,
-      "datetime_colombia": "2025-11-12 03:45:00"
+      "timestamp": 1763297100000,
+      "openInterest": 19443865.2,
+      "datetime_colombia": "2025-11-16 07:45:00"
     },
     {
       "timestamp": 1762938000000,
@@ -3004,319 +2689,319 @@
       "datetime_colombia": "2025-11-13 14:00:00"
     },
     {
-      "timestamp": 1762701300000,
-      "openInterest": 15919109.9,
-      "datetime_colombia": "2025-11-09 10:15:00"
+      "timestamp": 1763061300000,
+      "openInterest": 17814396.2,
+      "datetime_colombia": "2025-11-13 14:15:00"
     },
     {
-      "timestamp": 1762702200000,
-      "openInterest": 15904354.1,
-      "datetime_colombia": "2025-11-09 10:30:00"
+      "timestamp": 1763062200000,
+      "openInterest": 17717224.39999999,
+      "datetime_colombia": "2025-11-13 14:30:00"
     },
     {
-      "timestamp": 1762703100000,
-      "openInterest": 15995963.8,
-      "datetime_colombia": "2025-11-09 10:45:00"
+      "timestamp": 1763063100000,
+      "openInterest": 17629687.7,
+      "datetime_colombia": "2025-11-13 14:45:00"
     },
     {
-      "timestamp": 1762704000000,
-      "openInterest": 15991407.4,
-      "datetime_colombia": "2025-11-09 11:00:00"
+      "timestamp": 1763064000000,
+      "openInterest": 17657071.39999999,
+      "datetime_colombia": "2025-11-13 15:00:00"
     },
     {
-      "timestamp": 1762704900000,
-      "openInterest": 15962143.6,
-      "datetime_colombia": "2025-11-09 11:15:00"
+      "timestamp": 1763064900000,
+      "openInterest": 17652795.8,
+      "datetime_colombia": "2025-11-13 15:15:00"
     },
     {
-      "timestamp": 1762705800000,
-      "openInterest": 15964516.6,
-      "datetime_colombia": "2025-11-09 11:30:00"
+      "timestamp": 1763065800000,
+      "openInterest": 17617469.8,
+      "datetime_colombia": "2025-11-13 15:30:00"
     },
     {
-      "timestamp": 1762706700000,
-      "openInterest": 15953527.0,
-      "datetime_colombia": "2025-11-09 11:45:00"
+      "timestamp": 1763066700000,
+      "openInterest": 17679313.39999999,
+      "datetime_colombia": "2025-11-13 15:45:00"
     },
     {
-      "timestamp": 1762707600000,
-      "openInterest": 15964183.8,
-      "datetime_colombia": "2025-11-09 12:00:00"
+      "timestamp": 1763067600000,
+      "openInterest": 17676234.2,
+      "datetime_colombia": "2025-11-13 16:00:00"
     },
     {
-      "timestamp": 1762708500000,
-      "openInterest": 15978235.4,
-      "datetime_colombia": "2025-11-09 12:15:00"
+      "timestamp": 1763068500000,
+      "openInterest": 17652340.2,
+      "datetime_colombia": "2025-11-13 16:15:00"
     },
     {
-      "timestamp": 1762709400000,
-      "openInterest": 15812720.4,
-      "datetime_colombia": "2025-11-09 12:30:00"
+      "timestamp": 1763069400000,
+      "openInterest": 17712338.6,
+      "datetime_colombia": "2025-11-13 16:30:00"
     },
     {
-      "timestamp": 1762710300000,
-      "openInterest": 15811884.1,
-      "datetime_colombia": "2025-11-09 12:45:00"
+      "timestamp": 1763070300000,
+      "openInterest": 17714690.1,
+      "datetime_colombia": "2025-11-13 16:45:00"
     },
     {
-      "timestamp": 1762711200000,
-      "openInterest": 15811273.3,
-      "datetime_colombia": "2025-11-09 13:00:00"
+      "timestamp": 1763071200000,
+      "openInterest": 17735279.0,
+      "datetime_colombia": "2025-11-13 17:00:00"
     },
     {
-      "timestamp": 1762712100000,
-      "openInterest": 15802395.9,
-      "datetime_colombia": "2025-11-09 13:15:00"
+      "timestamp": 1763072100000,
+      "openInterest": 17679867.39999999,
+      "datetime_colombia": "2025-11-13 17:15:00"
     },
     {
-      "timestamp": 1762713000000,
-      "openInterest": 15770558.6,
-      "datetime_colombia": "2025-11-09 13:30:00"
+      "timestamp": 1763073000000,
+      "openInterest": 17684404.8,
+      "datetime_colombia": "2025-11-13 17:30:00"
     },
     {
-      "timestamp": 1762713900000,
-      "openInterest": 15771687.8,
-      "datetime_colombia": "2025-11-09 13:45:00"
+      "timestamp": 1763073900000,
+      "openInterest": 17693551.8,
+      "datetime_colombia": "2025-11-13 17:45:00"
     },
     {
-      "timestamp": 1762714800000,
-      "openInterest": 15773129.2,
-      "datetime_colombia": "2025-11-09 14:00:00"
+      "timestamp": 1763074800000,
+      "openInterest": 17700163.0,
+      "datetime_colombia": "2025-11-13 18:00:00"
     },
     {
-      "timestamp": 1762715700000,
-      "openInterest": 15825020.0,
-      "datetime_colombia": "2025-11-09 14:15:00"
+      "timestamp": 1763075700000,
+      "openInterest": 17692324.1,
+      "datetime_colombia": "2025-11-13 18:15:00"
     },
     {
-      "timestamp": 1762716600000,
-      "openInterest": 15864170.3,
-      "datetime_colombia": "2025-11-09 14:30:00"
+      "timestamp": 1763076600000,
+      "openInterest": 17696444.0,
+      "datetime_colombia": "2025-11-13 18:30:00"
     },
     {
-      "timestamp": 1762717500000,
-      "openInterest": 15857304.2,
-      "datetime_colombia": "2025-11-09 14:45:00"
+      "timestamp": 1763077500000,
+      "openInterest": 17685208.0,
+      "datetime_colombia": "2025-11-13 18:45:00"
     },
     {
-      "timestamp": 1762718400000,
-      "openInterest": 15837105.1,
-      "datetime_colombia": "2025-11-09 15:00:00"
+      "timestamp": 1763078400000,
+      "openInterest": 17690081.6,
+      "datetime_colombia": "2025-11-13 19:00:00"
     },
     {
-      "timestamp": 1762719300000,
-      "openInterest": 15837002.8,
-      "datetime_colombia": "2025-11-09 15:15:00"
+      "timestamp": 1763079300000,
+      "openInterest": 17668995.8,
+      "datetime_colombia": "2025-11-13 19:15:00"
     },
     {
-      "timestamp": 1762720200000,
-      "openInterest": 15797380.8,
-      "datetime_colombia": "2025-11-09 15:30:00"
+      "timestamp": 1763080200000,
+      "openInterest": 17655601.39999999,
+      "datetime_colombia": "2025-11-13 19:30:00"
     },
     {
-      "timestamp": 1762721100000,
-      "openInterest": 15798906.4,
-      "datetime_colombia": "2025-11-09 15:45:00"
+      "timestamp": 1763081100000,
+      "openInterest": 17654699.5,
+      "datetime_colombia": "2025-11-13 19:45:00"
     },
     {
-      "timestamp": 1762722000000,
-      "openInterest": 15793213.2,
-      "datetime_colombia": "2025-11-09 16:00:00"
+      "timestamp": 1763082000000,
+      "openInterest": 17678353.39999999,
+      "datetime_colombia": "2025-11-13 20:00:00"
     },
     {
-      "timestamp": 1762722900000,
-      "openInterest": 15819495.4,
-      "datetime_colombia": "2025-11-09 16:15:00"
+      "timestamp": 1763082900000,
+      "openInterest": 17670682.89999999,
+      "datetime_colombia": "2025-11-13 20:15:00"
     },
     {
-      "timestamp": 1762723800000,
-      "openInterest": 15797519.2,
-      "datetime_colombia": "2025-11-09 16:30:00"
+      "timestamp": 1763083800000,
+      "openInterest": 17688791.6,
+      "datetime_colombia": "2025-11-13 20:30:00"
     },
     {
-      "timestamp": 1762724700000,
-      "openInterest": 15795053.6,
-      "datetime_colombia": "2025-11-09 16:45:00"
+      "timestamp": 1763084700000,
+      "openInterest": 17690320.0,
+      "datetime_colombia": "2025-11-13 20:45:00"
     },
     {
-      "timestamp": 1762725600000,
-      "openInterest": 15785430.4,
-      "datetime_colombia": "2025-11-09 17:00:00"
+      "timestamp": 1763085600000,
+      "openInterest": 17727464.39999999,
+      "datetime_colombia": "2025-11-13 21:00:00"
     },
     {
-      "timestamp": 1762726500000,
-      "openInterest": 15759410.7,
-      "datetime_colombia": "2025-11-09 17:15:00"
+      "timestamp": 1763086500000,
+      "openInterest": 17735128.2,
+      "datetime_colombia": "2025-11-13 21:15:00"
     },
     {
-      "timestamp": 1762727400000,
-      "openInterest": 15767340.0,
-      "datetime_colombia": "2025-11-09 17:30:00"
+      "timestamp": 1763087400000,
+      "openInterest": 17738110.7,
+      "datetime_colombia": "2025-11-13 21:30:00"
     },
     {
-      "timestamp": 1762728300000,
-      "openInterest": 15776124.8,
-      "datetime_colombia": "2025-11-09 17:45:00"
+      "timestamp": 1763088300000,
+      "openInterest": 17751536.39999999,
+      "datetime_colombia": "2025-11-13 21:45:00"
     },
     {
-      "timestamp": 1762729200000,
-      "openInterest": 15782012.0,
-      "datetime_colombia": "2025-11-09 18:00:00"
+      "timestamp": 1763089200000,
+      "openInterest": 17754514.0,
+      "datetime_colombia": "2025-11-13 22:00:00"
     },
     {
-      "timestamp": 1762730100000,
-      "openInterest": 15807120.6,
-      "datetime_colombia": "2025-11-09 18:15:00"
+      "timestamp": 1763090100000,
+      "openInterest": 17761976.39999999,
+      "datetime_colombia": "2025-11-13 22:15:00"
     },
     {
-      "timestamp": 1762731000000,
-      "openInterest": 15800537.8,
-      "datetime_colombia": "2025-11-09 18:30:00"
+      "timestamp": 1763091000000,
+      "openInterest": 17788601.39999999,
+      "datetime_colombia": "2025-11-13 22:30:00"
     },
     {
-      "timestamp": 1762731900000,
-      "openInterest": 15792026.6,
-      "datetime_colombia": "2025-11-09 18:45:00"
+      "timestamp": 1763091900000,
+      "openInterest": 17770710.39999999,
+      "datetime_colombia": "2025-11-13 22:45:00"
     },
     {
-      "timestamp": 1762732800000,
-      "openInterest": 15791326.2,
-      "datetime_colombia": "2025-11-09 19:00:00"
+      "timestamp": 1763092800000,
+      "openInterest": 17754330.2,
+      "datetime_colombia": "2025-11-13 23:00:00"
     },
     {
-      "timestamp": 1762733700000,
-      "openInterest": 15742613.8,
-      "datetime_colombia": "2025-11-09 19:15:00"
+      "timestamp": 1763093700000,
+      "openInterest": 17731240.39999999,
+      "datetime_colombia": "2025-11-13 23:15:00"
     },
     {
-      "timestamp": 1762734600000,
-      "openInterest": 15735835.1,
-      "datetime_colombia": "2025-11-09 19:30:00"
+      "timestamp": 1763094600000,
+      "openInterest": 17723465.8,
+      "datetime_colombia": "2025-11-13 23:30:00"
     },
     {
-      "timestamp": 1762735500000,
-      "openInterest": 15736085.8,
-      "datetime_colombia": "2025-11-09 19:45:00"
+      "timestamp": 1763095500000,
+      "openInterest": 17276408.1,
+      "datetime_colombia": "2025-11-13 23:45:00"
     },
     {
-      "timestamp": 1762736400000,
-      "openInterest": 15757146.6,
-      "datetime_colombia": "2025-11-09 20:00:00"
+      "timestamp": 1763096400000,
+      "openInterest": 17223226.2,
+      "datetime_colombia": "2025-11-14 00:00:00"
     },
     {
-      "timestamp": 1762737300000,
-      "openInterest": 15741907.9,
-      "datetime_colombia": "2025-11-09 20:15:00"
+      "timestamp": 1763097300000,
+      "openInterest": 17274678.0,
+      "datetime_colombia": "2025-11-14 00:15:00"
     },
     {
-      "timestamp": 1762738200000,
-      "openInterest": 15739048.8,
-      "datetime_colombia": "2025-11-09 20:30:00"
+      "timestamp": 1763098200000,
+      "openInterest": 17266929.5,
+      "datetime_colombia": "2025-11-14 00:30:00"
     },
     {
-      "timestamp": 1762739100000,
-      "openInterest": 15730277.0,
-      "datetime_colombia": "2025-11-09 20:45:00"
+      "timestamp": 1763099100000,
+      "openInterest": 17283547.3,
+      "datetime_colombia": "2025-11-14 00:45:00"
     },
     {
-      "timestamp": 1762740000000,
-      "openInterest": 15735641.5,
-      "datetime_colombia": "2025-11-09 21:00:00"
+      "timestamp": 1763100000000,
+      "openInterest": 17246557.0,
+      "datetime_colombia": "2025-11-14 01:00:00"
     },
     {
-      "timestamp": 1762740900000,
-      "openInterest": 15740784.4,
-      "datetime_colombia": "2025-11-09 21:15:00"
+      "timestamp": 1763100900000,
+      "openInterest": 17267622.8,
+      "datetime_colombia": "2025-11-14 01:15:00"
     },
     {
-      "timestamp": 1762741800000,
-      "openInterest": 15757817.8,
-      "datetime_colombia": "2025-11-09 21:30:00"
+      "timestamp": 1763101800000,
+      "openInterest": 17272108.0,
+      "datetime_colombia": "2025-11-14 01:30:00"
     },
     {
-      "timestamp": 1762742700000,
-      "openInterest": 15762216.9,
-      "datetime_colombia": "2025-11-09 21:45:00"
+      "timestamp": 1763102700000,
+      "openInterest": 17265660.0,
+      "datetime_colombia": "2025-11-14 01:45:00"
     },
     {
-      "timestamp": 1762743600000,
-      "openInterest": 15763483.3,
-      "datetime_colombia": "2025-11-09 22:00:00"
+      "timestamp": 1763103600000,
+      "openInterest": 17238908.7,
+      "datetime_colombia": "2025-11-14 02:00:00"
     },
     {
-      "timestamp": 1762744500000,
-      "openInterest": 15764529.9,
-      "datetime_colombia": "2025-11-09 22:15:00"
+      "timestamp": 1763104500000,
+      "openInterest": 17231083.0,
+      "datetime_colombia": "2025-11-14 02:15:00"
     },
     {
-      "timestamp": 1762745400000,
-      "openInterest": 15750098.6,
-      "datetime_colombia": "2025-11-09 22:30:00"
+      "timestamp": 1763105400000,
+      "openInterest": 17826872.0,
+      "datetime_colombia": "2025-11-14 02:30:00"
     },
     {
-      "timestamp": 1762746300000,
-      "openInterest": 15812924.1,
-      "datetime_colombia": "2025-11-09 22:45:00"
+      "timestamp": 1763106300000,
+      "openInterest": 17866122.2,
+      "datetime_colombia": "2025-11-14 02:45:00"
     },
     {
-      "timestamp": 1762747200000,
-      "openInterest": 15808520.8,
-      "datetime_colombia": "2025-11-09 23:00:00"
+      "timestamp": 1763107200000,
+      "openInterest": 17805624.0,
+      "datetime_colombia": "2025-11-14 03:00:00"
     },
     {
-      "timestamp": 1762748100000,
-      "openInterest": 15812460.8,
-      "datetime_colombia": "2025-11-09 23:15:00"
+      "timestamp": 1763108100000,
+      "openInterest": 17802974.39999999,
+      "datetime_colombia": "2025-11-14 03:15:00"
     },
     {
-      "timestamp": 1762749000000,
-      "openInterest": 15789046.8,
-      "datetime_colombia": "2025-11-09 23:30:00"
+      "timestamp": 1763109000000,
+      "openInterest": 17772360.6,
+      "datetime_colombia": "2025-11-14 03:30:00"
     },
     {
-      "timestamp": 1762749900000,
-      "openInterest": 15784016.2,
-      "datetime_colombia": "2025-11-09 23:45:00"
+      "timestamp": 1763109900000,
+      "openInterest": 17776349.89999999,
+      "datetime_colombia": "2025-11-14 03:45:00"
     },
     {
-      "timestamp": 1762750800000,
-      "openInterest": 15776062.6,
-      "datetime_colombia": "2025-11-10 00:00:00"
+      "timestamp": 1763110800000,
+      "openInterest": 17788242.2,
+      "datetime_colombia": "2025-11-14 04:00:00"
     },
     {
-      "timestamp": 1762751700000,
-      "openInterest": 15769562.8,
-      "datetime_colombia": "2025-11-10 00:15:00"
+      "timestamp": 1763111700000,
+      "openInterest": 17761556.0,
+      "datetime_colombia": "2025-11-14 04:15:00"
     },
     {
-      "timestamp": 1762752600000,
-      "openInterest": 15836922.2,
-      "datetime_colombia": "2025-11-10 00:30:00"
+      "timestamp": 1763112600000,
+      "openInterest": 17810670.3,
+      "datetime_colombia": "2025-11-14 04:30:00"
     },
     {
-      "timestamp": 1762753500000,
-      "openInterest": 15838088.8,
-      "datetime_colombia": "2025-11-10 00:45:00"
+      "timestamp": 1763113500000,
+      "openInterest": 17810185.6,
+      "datetime_colombia": "2025-11-14 04:45:00"
     },
     {
-      "timestamp": 1762754400000,
-      "openInterest": 15834836.2,
-      "datetime_colombia": "2025-11-10 01:00:00"
+      "timestamp": 1763114400000,
+      "openInterest": 17783099.0,
+      "datetime_colombia": "2025-11-14 05:00:00"
     },
     {
-      "timestamp": 1762755300000,
-      "openInterest": 15856832.8,
-      "datetime_colombia": "2025-11-10 01:15:00"
+      "timestamp": 1763115300000,
+      "openInterest": 17794285.39999999,
+      "datetime_colombia": "2025-11-14 05:15:00"
     },
     {
-      "timestamp": 1762756200000,
-      "openInterest": 15858760.6,
-      "datetime_colombia": "2025-11-10 01:30:00"
+      "timestamp": 1763116200000,
+      "openInterest": 17821991.6,
+      "datetime_colombia": "2025-11-14 05:30:00"
     },
     {
-      "timestamp": 1762757100000,
-      "openInterest": 15855779.1,
-      "datetime_colombia": "2025-11-10 01:45:00"
+      "timestamp": 1763117100000,
+      "openInterest": 17830543.0,
+      "datetime_colombia": "2025-11-14 05:45:00"
     },
     {
       "timestamp": 1762758000000,
@@ -4004,319 +3689,319 @@
       "datetime_colombia": "2025-11-11 12:00:00"
     },
     {
-      "timestamp": 1762521300000,
-      "openInterest": 17094265.8,
-      "datetime_colombia": "2025-11-07 08:15:00"
+      "timestamp": 1762881300000,
+      "openInterest": 15658881.4,
+      "datetime_colombia": "2025-11-11 12:15:00"
     },
     {
-      "timestamp": 1762522200000,
-      "openInterest": 17107914.7,
-      "datetime_colombia": "2025-11-07 08:30:00"
+      "timestamp": 1762882200000,
+      "openInterest": 15673322.0,
+      "datetime_colombia": "2025-11-11 12:30:00"
     },
     {
-      "timestamp": 1762523100000,
-      "openInterest": 17102896.39999999,
-      "datetime_colombia": "2025-11-07 08:45:00"
+      "timestamp": 1762883100000,
+      "openInterest": 15763413.6,
+      "datetime_colombia": "2025-11-11 12:45:00"
     },
     {
-      "timestamp": 1762524000000,
-      "openInterest": 17140128.3,
-      "datetime_colombia": "2025-11-07 09:00:00"
+      "timestamp": 1762884000000,
+      "openInterest": 15762983.8,
+      "datetime_colombia": "2025-11-11 13:00:00"
     },
     {
-      "timestamp": 1762524900000,
-      "openInterest": 17135515.6,
-      "datetime_colombia": "2025-11-07 09:15:00"
+      "timestamp": 1762884900000,
+      "openInterest": 15753073.4,
+      "datetime_colombia": "2025-11-11 13:15:00"
     },
     {
-      "timestamp": 1762525800000,
-      "openInterest": 17112438.39999999,
-      "datetime_colombia": "2025-11-07 09:30:00"
+      "timestamp": 1762885800000,
+      "openInterest": 15739507.4,
+      "datetime_colombia": "2025-11-11 13:30:00"
     },
     {
-      "timestamp": 1762526700000,
-      "openInterest": 17097062.39999999,
-      "datetime_colombia": "2025-11-07 09:45:00"
+      "timestamp": 1762886700000,
+      "openInterest": 15735397.8,
+      "datetime_colombia": "2025-11-11 13:45:00"
     },
     {
-      "timestamp": 1762527600000,
-      "openInterest": 17142285.8,
-      "datetime_colombia": "2025-11-07 10:00:00"
+      "timestamp": 1762887600000,
+      "openInterest": 15711232.6,
+      "datetime_colombia": "2025-11-11 14:00:00"
     },
     {
-      "timestamp": 1762528500000,
-      "openInterest": 17017064.0,
-      "datetime_colombia": "2025-11-07 10:15:00"
+      "timestamp": 1762888500000,
+      "openInterest": 15734716.8,
+      "datetime_colombia": "2025-11-11 14:15:00"
     },
     {
-      "timestamp": 1762529400000,
-      "openInterest": 17000309.5,
-      "datetime_colombia": "2025-11-07 10:30:00"
+      "timestamp": 1762889400000,
+      "openInterest": 15747996.2,
+      "datetime_colombia": "2025-11-11 14:30:00"
     },
     {
-      "timestamp": 1762530300000,
-      "openInterest": 17014107.8,
-      "datetime_colombia": "2025-11-07 10:45:00"
+      "timestamp": 1762890300000,
+      "openInterest": 15803069.4,
+      "datetime_colombia": "2025-11-11 14:45:00"
     },
     {
-      "timestamp": 1762531200000,
-      "openInterest": 17016191.39999999,
-      "datetime_colombia": "2025-11-07 11:00:00"
+      "timestamp": 1762891200000,
+      "openInterest": 15795094.8,
+      "datetime_colombia": "2025-11-11 15:00:00"
     },
     {
-      "timestamp": 1762532100000,
-      "openInterest": 16972847.39999999,
-      "datetime_colombia": "2025-11-07 11:15:00"
+      "timestamp": 1762892100000,
+      "openInterest": 15791443.0,
+      "datetime_colombia": "2025-11-11 15:15:00"
     },
     {
-      "timestamp": 1762533000000,
-      "openInterest": 16919026.0,
-      "datetime_colombia": "2025-11-07 11:30:00"
+      "timestamp": 1762893000000,
+      "openInterest": 15873907.4,
+      "datetime_colombia": "2025-11-11 15:30:00"
     },
     {
-      "timestamp": 1762533900000,
-      "openInterest": 17063430.8,
-      "datetime_colombia": "2025-11-07 11:45:00"
+      "timestamp": 1762893900000,
+      "openInterest": 15852488.6,
+      "datetime_colombia": "2025-11-11 15:45:00"
     },
     {
-      "timestamp": 1762534800000,
-      "openInterest": 16853734.0,
-      "datetime_colombia": "2025-11-07 12:00:00"
+      "timestamp": 1762894800000,
+      "openInterest": 15841927.6,
+      "datetime_colombia": "2025-11-11 16:00:00"
     },
     {
-      "timestamp": 1762535700000,
-      "openInterest": 16855063.7,
-      "datetime_colombia": "2025-11-07 12:15:00"
+      "timestamp": 1762895700000,
+      "openInterest": 15832529.3,
+      "datetime_colombia": "2025-11-11 16:15:00"
     },
     {
-      "timestamp": 1762536600000,
-      "openInterest": 17137792.39999999,
-      "datetime_colombia": "2025-11-07 12:30:00"
+      "timestamp": 1762896600000,
+      "openInterest": 15842492.4,
+      "datetime_colombia": "2025-11-11 16:30:00"
     },
     {
-      "timestamp": 1762537500000,
-      "openInterest": 17076197.2,
-      "datetime_colombia": "2025-11-07 12:45:00"
+      "timestamp": 1762897500000,
+      "openInterest": 15839624.2,
+      "datetime_colombia": "2025-11-11 16:45:00"
     },
     {
-      "timestamp": 1762538400000,
-      "openInterest": 17006836.6,
-      "datetime_colombia": "2025-11-07 13:00:00"
+      "timestamp": 1762898400000,
+      "openInterest": 15849969.2,
+      "datetime_colombia": "2025-11-11 17:00:00"
     },
     {
-      "timestamp": 1762539300000,
-      "openInterest": 17008508.89999999,
-      "datetime_colombia": "2025-11-07 13:15:00"
+      "timestamp": 1762899300000,
+      "openInterest": 15674424.0,
+      "datetime_colombia": "2025-11-11 17:15:00"
     },
     {
-      "timestamp": 1762540200000,
-      "openInterest": 16966382.39999999,
-      "datetime_colombia": "2025-11-07 13:30:00"
+      "timestamp": 1762900200000,
+      "openInterest": 15664517.7,
+      "datetime_colombia": "2025-11-11 17:30:00"
     },
     {
-      "timestamp": 1762541100000,
-      "openInterest": 17022515.2,
-      "datetime_colombia": "2025-11-07 13:45:00"
+      "timestamp": 1762901100000,
+      "openInterest": 15652855.6,
+      "datetime_colombia": "2025-11-11 17:45:00"
     },
     {
-      "timestamp": 1762542000000,
-      "openInterest": 16945635.2,
-      "datetime_colombia": "2025-11-07 14:00:00"
+      "timestamp": 1762902000000,
+      "openInterest": 15662472.0,
+      "datetime_colombia": "2025-11-11 18:00:00"
     },
     {
-      "timestamp": 1762542900000,
-      "openInterest": 16923365.2,
-      "datetime_colombia": "2025-11-07 14:15:00"
+      "timestamp": 1762902900000,
+      "openInterest": 15682523.8,
+      "datetime_colombia": "2025-11-11 18:15:00"
     },
     {
-      "timestamp": 1762543800000,
-      "openInterest": 16929750.39999999,
-      "datetime_colombia": "2025-11-07 14:30:00"
+      "timestamp": 1762903800000,
+      "openInterest": 15695729.0,
+      "datetime_colombia": "2025-11-11 18:30:00"
     },
     {
-      "timestamp": 1762544700000,
-      "openInterest": 16900512.6,
-      "datetime_colombia": "2025-11-07 14:45:00"
+      "timestamp": 1762904700000,
+      "openInterest": 15675097.2,
+      "datetime_colombia": "2025-11-11 18:45:00"
     },
     {
-      "timestamp": 1762545600000,
-      "openInterest": 16916952.6,
-      "datetime_colombia": "2025-11-07 15:00:00"
+      "timestamp": 1762905600000,
+      "openInterest": 15697503.6,
+      "datetime_colombia": "2025-11-11 19:00:00"
     },
     {
-      "timestamp": 1762546500000,
-      "openInterest": 16908268.2,
-      "datetime_colombia": "2025-11-07 15:15:00"
+      "timestamp": 1762906500000,
+      "openInterest": 15685087.0,
+      "datetime_colombia": "2025-11-11 19:15:00"
     },
     {
-      "timestamp": 1762547400000,
-      "openInterest": 16874023.6,
-      "datetime_colombia": "2025-11-07 15:30:00"
+      "timestamp": 1762907400000,
+      "openInterest": 15701128.6,
+      "datetime_colombia": "2025-11-11 19:30:00"
     },
     {
-      "timestamp": 1762548300000,
-      "openInterest": 16868109.8,
-      "datetime_colombia": "2025-11-07 15:45:00"
+      "timestamp": 1762908300000,
+      "openInterest": 15711926.0,
+      "datetime_colombia": "2025-11-11 19:45:00"
     },
     {
-      "timestamp": 1762549200000,
-      "openInterest": 16872864.39999999,
-      "datetime_colombia": "2025-11-07 16:00:00"
+      "timestamp": 1762909200000,
+      "openInterest": 15722898.0,
+      "datetime_colombia": "2025-11-11 20:00:00"
     },
     {
-      "timestamp": 1762550100000,
-      "openInterest": 16855990.39999999,
-      "datetime_colombia": "2025-11-07 16:15:00"
+      "timestamp": 1762910100000,
+      "openInterest": 15734320.6,
+      "datetime_colombia": "2025-11-11 20:15:00"
     },
     {
-      "timestamp": 1762551000000,
-      "openInterest": 16830463.39999999,
-      "datetime_colombia": "2025-11-07 16:30:00"
+      "timestamp": 1762911000000,
+      "openInterest": 15743426.2,
+      "datetime_colombia": "2025-11-11 20:30:00"
     },
     {
-      "timestamp": 1762551900000,
-      "openInterest": 16840350.6,
-      "datetime_colombia": "2025-11-07 16:45:00"
+      "timestamp": 1762911900000,
+      "openInterest": 15743619.0,
+      "datetime_colombia": "2025-11-11 20:45:00"
     },
     {
-      "timestamp": 1762552800000,
-      "openInterest": 16847436.8,
-      "datetime_colombia": "2025-11-07 17:00:00"
+      "timestamp": 1762912800000,
+      "openInterest": 15752220.4,
+      "datetime_colombia": "2025-11-11 21:00:00"
     },
     {
-      "timestamp": 1762553700000,
-      "openInterest": 16927102.5,
-      "datetime_colombia": "2025-11-07 17:15:00"
+      "timestamp": 1762913700000,
+      "openInterest": 15767362.4,
+      "datetime_colombia": "2025-11-11 21:15:00"
     },
     {
-      "timestamp": 1762554600000,
-      "openInterest": 16938132.39999999,
-      "datetime_colombia": "2025-11-07 17:30:00"
+      "timestamp": 1762914600000,
+      "openInterest": 15764418.4,
+      "datetime_colombia": "2025-11-11 21:30:00"
     },
     {
-      "timestamp": 1762555500000,
-      "openInterest": 16925515.8,
-      "datetime_colombia": "2025-11-07 17:45:00"
+      "timestamp": 1762915500000,
+      "openInterest": 15787932.5,
+      "datetime_colombia": "2025-11-11 21:45:00"
     },
     {
-      "timestamp": 1762556400000,
-      "openInterest": 16945749.39999999,
-      "datetime_colombia": "2025-11-07 18:00:00"
+      "timestamp": 1762916400000,
+      "openInterest": 15793811.8,
+      "datetime_colombia": "2025-11-11 22:00:00"
     },
     {
-      "timestamp": 1762557300000,
-      "openInterest": 16869309.6,
-      "datetime_colombia": "2025-11-07 18:15:00"
+      "timestamp": 1762917300000,
+      "openInterest": 15838234.9,
+      "datetime_colombia": "2025-11-11 22:15:00"
     },
     {
-      "timestamp": 1762558200000,
-      "openInterest": 16857926.8,
-      "datetime_colombia": "2025-11-07 18:30:00"
+      "timestamp": 1762918200000,
+      "openInterest": 15794361.6,
+      "datetime_colombia": "2025-11-11 22:30:00"
     },
     {
-      "timestamp": 1762559100000,
-      "openInterest": 16834145.6,
-      "datetime_colombia": "2025-11-07 18:45:00"
+      "timestamp": 1762919100000,
+      "openInterest": 15789449.2,
+      "datetime_colombia": "2025-11-11 22:45:00"
     },
     {
-      "timestamp": 1762560000000,
-      "openInterest": 16835604.39999999,
-      "datetime_colombia": "2025-11-07 19:00:00"
+      "timestamp": 1762920000000,
+      "openInterest": 15789726.8,
+      "datetime_colombia": "2025-11-11 23:00:00"
     },
     {
-      "timestamp": 1762560900000,
-      "openInterest": 16778441.0,
-      "datetime_colombia": "2025-11-07 19:15:00"
+      "timestamp": 1762920900000,
+      "openInterest": 15790129.2,
+      "datetime_colombia": "2025-11-11 23:15:00"
     },
     {
-      "timestamp": 1762561800000,
-      "openInterest": 16544424.6,
-      "datetime_colombia": "2025-11-07 19:30:00"
+      "timestamp": 1762921800000,
+      "openInterest": 15791187.3,
+      "datetime_colombia": "2025-11-11 23:30:00"
     },
     {
-      "timestamp": 1762562700000,
-      "openInterest": 16463079.9,
-      "datetime_colombia": "2025-11-07 19:45:00"
+      "timestamp": 1762922700000,
+      "openInterest": 15797376.8,
+      "datetime_colombia": "2025-11-11 23:45:00"
     },
     {
-      "timestamp": 1762563600000,
-      "openInterest": 16388531.1,
-      "datetime_colombia": "2025-11-07 20:00:00"
+      "timestamp": 1762923600000,
+      "openInterest": 15802346.6,
+      "datetime_colombia": "2025-11-12 00:00:00"
     },
     {
-      "timestamp": 1762564500000,
-      "openInterest": 16350844.2,
-      "datetime_colombia": "2025-11-07 20:15:00"
+      "timestamp": 1762924500000,
+      "openInterest": 15798904.8,
+      "datetime_colombia": "2025-11-12 00:15:00"
     },
     {
-      "timestamp": 1762565400000,
-      "openInterest": 16349851.9,
-      "datetime_colombia": "2025-11-07 20:30:00"
+      "timestamp": 1762925400000,
+      "openInterest": 15810219.4,
+      "datetime_colombia": "2025-11-12 00:30:00"
     },
     {
-      "timestamp": 1762566300000,
-      "openInterest": 16310630.7,
-      "datetime_colombia": "2025-11-07 20:45:00"
+      "timestamp": 1762926300000,
+      "openInterest": 15803842.2,
+      "datetime_colombia": "2025-11-12 00:45:00"
     },
     {
-      "timestamp": 1762567200000,
-      "openInterest": 16290853.5,
-      "datetime_colombia": "2025-11-07 21:00:00"
+      "timestamp": 1762927200000,
+      "openInterest": 15806192.0,
+      "datetime_colombia": "2025-11-12 01:00:00"
     },
     {
-      "timestamp": 1762568100000,
-      "openInterest": 16238905.6,
-      "datetime_colombia": "2025-11-07 21:15:00"
+      "timestamp": 1762928100000,
+      "openInterest": 15750792.0,
+      "datetime_colombia": "2025-11-12 01:15:00"
     },
     {
-      "timestamp": 1762569000000,
-      "openInterest": 16181292.5,
-      "datetime_colombia": "2025-11-07 21:30:00"
+      "timestamp": 1762929000000,
+      "openInterest": 15753877.0,
+      "datetime_colombia": "2025-11-12 01:30:00"
     },
     {
-      "timestamp": 1762569900000,
-      "openInterest": 16161412.6,
-      "datetime_colombia": "2025-11-07 21:45:00"
+      "timestamp": 1762929900000,
+      "openInterest": 15759073.6,
+      "datetime_colombia": "2025-11-12 01:45:00"
     },
     {
-      "timestamp": 1762570800000,
-      "openInterest": 16192049.1,
-      "datetime_colombia": "2025-11-07 22:00:00"
+      "timestamp": 1762930800000,
+      "openInterest": 15772741.0,
+      "datetime_colombia": "2025-11-12 02:00:00"
     },
     {
-      "timestamp": 1762571700000,
-      "openInterest": 16176244.2,
-      "datetime_colombia": "2025-11-07 22:15:00"
+      "timestamp": 1762931700000,
+      "openInterest": 15776570.2,
+      "datetime_colombia": "2025-11-12 02:15:00"
     },
     {
-      "timestamp": 1762572600000,
-      "openInterest": 16170000.4,
-      "datetime_colombia": "2025-11-07 22:30:00"
+      "timestamp": 1762932600000,
+      "openInterest": 15774918.4,
+      "datetime_colombia": "2025-11-12 02:30:00"
     },
     {
-      "timestamp": 1762573500000,
-      "openInterest": 16212223.0,
-      "datetime_colombia": "2025-11-07 22:45:00"
+      "timestamp": 1762933500000,
+      "openInterest": 15766951.0,
+      "datetime_colombia": "2025-11-12 02:45:00"
     },
     {
-      "timestamp": 1762574400000,
-      "openInterest": 16214680.4,
-      "datetime_colombia": "2025-11-07 23:00:00"
+      "timestamp": 1762934400000,
+      "openInterest": 15757270.6,
+      "datetime_colombia": "2025-11-12 03:00:00"
     },
     {
-      "timestamp": 1762575300000,
-      "openInterest": 16180210.4,
-      "datetime_colombia": "2025-11-07 23:15:00"
+      "timestamp": 1762935300000,
+      "openInterest": 15738564.4,
+      "datetime_colombia": "2025-11-12 03:15:00"
     },
     {
-      "timestamp": 1762576200000,
-      "openInterest": 16150826.8,
-      "datetime_colombia": "2025-11-07 23:30:00"
+      "timestamp": 1762936200000,
+      "openInterest": 15734236.3,
+      "datetime_colombia": "2025-11-12 03:30:00"
     },
     {
-      "timestamp": 1762577100000,
-      "openInterest": 16130457.3,
-      "datetime_colombia": "2025-11-07 23:45:00"
+      "timestamp": 1762937100000,
+      "openInterest": 15720293.8,
+      "datetime_colombia": "2025-11-12 03:45:00"
     },
     {
       "timestamp": 1762578000000,
@@ -5004,319 +4689,319 @@
       "datetime_colombia": "2025-11-09 10:00:00"
     },
     {
-      "timestamp": 1762341300000,
-      "openInterest": 17780239.89999999,
-      "datetime_colombia": "2025-11-05 06:15:00"
+      "timestamp": 1762701300000,
+      "openInterest": 15919109.9,
+      "datetime_colombia": "2025-11-09 10:15:00"
     },
     {
-      "timestamp": 1762342200000,
-      "openInterest": 17833033.39999999,
-      "datetime_colombia": "2025-11-05 06:30:00"
+      "timestamp": 1762702200000,
+      "openInterest": 15904354.1,
+      "datetime_colombia": "2025-11-09 10:30:00"
     },
     {
-      "timestamp": 1762343100000,
-      "openInterest": 17865881.39999999,
-      "datetime_colombia": "2025-11-05 06:45:00"
+      "timestamp": 1762703100000,
+      "openInterest": 15995963.8,
+      "datetime_colombia": "2025-11-09 10:45:00"
     },
     {
-      "timestamp": 1762344000000,
-      "openInterest": 17886240.2,
-      "datetime_colombia": "2025-11-05 07:00:00"
+      "timestamp": 1762704000000,
+      "openInterest": 15991407.4,
+      "datetime_colombia": "2025-11-09 11:00:00"
     },
     {
-      "timestamp": 1762344900000,
-      "openInterest": 17861307.0,
-      "datetime_colombia": "2025-11-05 07:15:00"
+      "timestamp": 1762704900000,
+      "openInterest": 15962143.6,
+      "datetime_colombia": "2025-11-09 11:15:00"
     },
     {
-      "timestamp": 1762345800000,
-      "openInterest": 18007653.6,
-      "datetime_colombia": "2025-11-05 07:30:00"
+      "timestamp": 1762705800000,
+      "openInterest": 15964516.6,
+      "datetime_colombia": "2025-11-09 11:30:00"
     },
     {
-      "timestamp": 1762346700000,
-      "openInterest": 18013783.8,
-      "datetime_colombia": "2025-11-05 07:45:00"
+      "timestamp": 1762706700000,
+      "openInterest": 15953527.0,
+      "datetime_colombia": "2025-11-09 11:45:00"
     },
     {
-      "timestamp": 1762347600000,
-      "openInterest": 17980678.0,
-      "datetime_colombia": "2025-11-05 08:00:00"
+      "timestamp": 1762707600000,
+      "openInterest": 15964183.8,
+      "datetime_colombia": "2025-11-09 12:00:00"
     },
     {
-      "timestamp": 1762348500000,
-      "openInterest": 18007236.39999999,
-      "datetime_colombia": "2025-11-05 08:15:00"
+      "timestamp": 1762708500000,
+      "openInterest": 15978235.4,
+      "datetime_colombia": "2025-11-09 12:15:00"
     },
     {
-      "timestamp": 1762349400000,
-      "openInterest": 18025255.6,
-      "datetime_colombia": "2025-11-05 08:30:00"
+      "timestamp": 1762709400000,
+      "openInterest": 15812720.4,
+      "datetime_colombia": "2025-11-09 12:30:00"
     },
     {
-      "timestamp": 1762350300000,
-      "openInterest": 18049416.89999999,
-      "datetime_colombia": "2025-11-05 08:45:00"
+      "timestamp": 1762710300000,
+      "openInterest": 15811884.1,
+      "datetime_colombia": "2025-11-09 12:45:00"
     },
     {
-      "timestamp": 1762351200000,
-      "openInterest": 18126989.3,
-      "datetime_colombia": "2025-11-05 09:00:00"
+      "timestamp": 1762711200000,
+      "openInterest": 15811273.3,
+      "datetime_colombia": "2025-11-09 13:00:00"
     },
     {
-      "timestamp": 1762352100000,
-      "openInterest": 18081604.2,
-      "datetime_colombia": "2025-11-05 09:15:00"
+      "timestamp": 1762712100000,
+      "openInterest": 15802395.9,
+      "datetime_colombia": "2025-11-09 13:15:00"
     },
     {
-      "timestamp": 1762353000000,
-      "openInterest": 18069454.39999999,
-      "datetime_colombia": "2025-11-05 09:30:00"
+      "timestamp": 1762713000000,
+      "openInterest": 15770558.6,
+      "datetime_colombia": "2025-11-09 13:30:00"
     },
     {
-      "timestamp": 1762353900000,
-      "openInterest": 18164109.0,
-      "datetime_colombia": "2025-11-05 09:45:00"
+      "timestamp": 1762713900000,
+      "openInterest": 15771687.8,
+      "datetime_colombia": "2025-11-09 13:45:00"
     },
     {
-      "timestamp": 1762354800000,
-      "openInterest": 18153876.89999999,
-      "datetime_colombia": "2025-11-05 10:00:00"
+      "timestamp": 1762714800000,
+      "openInterest": 15773129.2,
+      "datetime_colombia": "2025-11-09 14:00:00"
     },
     {
-      "timestamp": 1762355700000,
-      "openInterest": 18166793.2,
-      "datetime_colombia": "2025-11-05 10:15:00"
+      "timestamp": 1762715700000,
+      "openInterest": 15825020.0,
+      "datetime_colombia": "2025-11-09 14:15:00"
     },
     {
-      "timestamp": 1762356600000,
-      "openInterest": 18194078.7,
-      "datetime_colombia": "2025-11-05 10:30:00"
+      "timestamp": 1762716600000,
+      "openInterest": 15864170.3,
+      "datetime_colombia": "2025-11-09 14:30:00"
     },
     {
-      "timestamp": 1762357500000,
-      "openInterest": 18252074.6,
-      "datetime_colombia": "2025-11-05 10:45:00"
+      "timestamp": 1762717500000,
+      "openInterest": 15857304.2,
+      "datetime_colombia": "2025-11-09 14:45:00"
     },
     {
-      "timestamp": 1762358400000,
-      "openInterest": 18273909.39999999,
-      "datetime_colombia": "2025-11-05 11:00:00"
+      "timestamp": 1762718400000,
+      "openInterest": 15837105.1,
+      "datetime_colombia": "2025-11-09 15:00:00"
     },
     {
-      "timestamp": 1762359300000,
-      "openInterest": 18221606.39999999,
-      "datetime_colombia": "2025-11-05 11:15:00"
+      "timestamp": 1762719300000,
+      "openInterest": 15837002.8,
+      "datetime_colombia": "2025-11-09 15:15:00"
     },
     {
-      "timestamp": 1762360200000,
-      "openInterest": 18151646.5,
-      "datetime_colombia": "2025-11-05 11:30:00"
+      "timestamp": 1762720200000,
+      "openInterest": 15797380.8,
+      "datetime_colombia": "2025-11-09 15:30:00"
     },
     {
-      "timestamp": 1762361100000,
-      "openInterest": 18022223.39999999,
-      "datetime_colombia": "2025-11-05 11:45:00"
+      "timestamp": 1762721100000,
+      "openInterest": 15798906.4,
+      "datetime_colombia": "2025-11-09 15:45:00"
     },
     {
-      "timestamp": 1762362000000,
-      "openInterest": 17947490.6,
-      "datetime_colombia": "2025-11-05 12:00:00"
+      "timestamp": 1762722000000,
+      "openInterest": 15793213.2,
+      "datetime_colombia": "2025-11-09 16:00:00"
     },
     {
-      "timestamp": 1762362900000,
-      "openInterest": 17950817.0,
-      "datetime_colombia": "2025-11-05 12:15:00"
+      "timestamp": 1762722900000,
+      "openInterest": 15819495.4,
+      "datetime_colombia": "2025-11-09 16:15:00"
     },
     {
-      "timestamp": 1762363800000,
-      "openInterest": 18107873.3,
-      "datetime_colombia": "2025-11-05 12:30:00"
+      "timestamp": 1762723800000,
+      "openInterest": 15797519.2,
+      "datetime_colombia": "2025-11-09 16:30:00"
     },
     {
-      "timestamp": 1762364700000,
-      "openInterest": 18135410.5,
-      "datetime_colombia": "2025-11-05 12:45:00"
+      "timestamp": 1762724700000,
+      "openInterest": 15795053.6,
+      "datetime_colombia": "2025-11-09 16:45:00"
     },
     {
-      "timestamp": 1762365600000,
-      "openInterest": 18153251.8,
-      "datetime_colombia": "2025-11-05 13:00:00"
+      "timestamp": 1762725600000,
+      "openInterest": 15785430.4,
+      "datetime_colombia": "2025-11-09 17:00:00"
     },
     {
-      "timestamp": 1762366500000,
-      "openInterest": 18116856.8,
-      "datetime_colombia": "2025-11-05 13:15:00"
+      "timestamp": 1762726500000,
+      "openInterest": 15759410.7,
+      "datetime_colombia": "2025-11-09 17:15:00"
     },
     {
-      "timestamp": 1762367400000,
-      "openInterest": 18110231.39999999,
-      "datetime_colombia": "2025-11-05 13:30:00"
+      "timestamp": 1762727400000,
+      "openInterest": 15767340.0,
+      "datetime_colombia": "2025-11-09 17:30:00"
     },
     {
-      "timestamp": 1762368300000,
-      "openInterest": 18126440.6,
-      "datetime_colombia": "2025-11-05 13:45:00"
+      "timestamp": 1762728300000,
+      "openInterest": 15776124.8,
+      "datetime_colombia": "2025-11-09 17:45:00"
     },
     {
-      "timestamp": 1762369200000,
-      "openInterest": 18107801.8,
-      "datetime_colombia": "2025-11-05 14:00:00"
+      "timestamp": 1762729200000,
+      "openInterest": 15782012.0,
+      "datetime_colombia": "2025-11-09 18:00:00"
     },
     {
-      "timestamp": 1762370100000,
-      "openInterest": 18081874.0,
-      "datetime_colombia": "2025-11-05 14:15:00"
+      "timestamp": 1762730100000,
+      "openInterest": 15807120.6,
+      "datetime_colombia": "2025-11-09 18:15:00"
     },
     {
-      "timestamp": 1762371000000,
-      "openInterest": 18091712.3,
-      "datetime_colombia": "2025-11-05 14:30:00"
+      "timestamp": 1762731000000,
+      "openInterest": 15800537.8,
+      "datetime_colombia": "2025-11-09 18:30:00"
     },
     {
-      "timestamp": 1762371900000,
-      "openInterest": 18098116.3,
-      "datetime_colombia": "2025-11-05 14:45:00"
+      "timestamp": 1762731900000,
+      "openInterest": 15792026.6,
+      "datetime_colombia": "2025-11-09 18:45:00"
     },
     {
-      "timestamp": 1762372800000,
-      "openInterest": 18034717.8,
-      "datetime_colombia": "2025-11-05 15:00:00"
+      "timestamp": 1762732800000,
+      "openInterest": 15791326.2,
+      "datetime_colombia": "2025-11-09 19:00:00"
     },
     {
-      "timestamp": 1762373700000,
-      "openInterest": 18027570.39999999,
-      "datetime_colombia": "2025-11-05 15:15:00"
+      "timestamp": 1762733700000,
+      "openInterest": 15742613.8,
+      "datetime_colombia": "2025-11-09 19:15:00"
     },
     {
-      "timestamp": 1762374600000,
-      "openInterest": 18018232.6,
-      "datetime_colombia": "2025-11-05 15:30:00"
+      "timestamp": 1762734600000,
+      "openInterest": 15735835.1,
+      "datetime_colombia": "2025-11-09 19:30:00"
     },
     {
-      "timestamp": 1762375500000,
-      "openInterest": 17987405.8,
-      "datetime_colombia": "2025-11-05 15:45:00"
+      "timestamp": 1762735500000,
+      "openInterest": 15736085.8,
+      "datetime_colombia": "2025-11-09 19:45:00"
     },
     {
-      "timestamp": 1762376400000,
-      "openInterest": 17968768.0,
-      "datetime_colombia": "2025-11-05 16:00:00"
+      "timestamp": 1762736400000,
+      "openInterest": 15757146.6,
+      "datetime_colombia": "2025-11-09 20:00:00"
     },
     {
-      "timestamp": 1762377300000,
-      "openInterest": 17959655.2,
-      "datetime_colombia": "2025-11-05 16:15:00"
+      "timestamp": 1762737300000,
+      "openInterest": 15741907.9,
+      "datetime_colombia": "2025-11-09 20:15:00"
     },
     {
-      "timestamp": 1762378200000,
-      "openInterest": 17971872.8,
-      "datetime_colombia": "2025-11-05 16:30:00"
+      "timestamp": 1762738200000,
+      "openInterest": 15739048.8,
+      "datetime_colombia": "2025-11-09 20:30:00"
     },
     {
-      "timestamp": 1762379100000,
-      "openInterest": 17960440.0,
-      "datetime_colombia": "2025-11-05 16:45:00"
+      "timestamp": 1762739100000,
+      "openInterest": 15730277.0,
+      "datetime_colombia": "2025-11-09 20:45:00"
     },
     {
-      "timestamp": 1762380000000,
-      "openInterest": 17949793.0,
-      "datetime_colombia": "2025-11-05 17:00:00"
+      "timestamp": 1762740000000,
+      "openInterest": 15735641.5,
+      "datetime_colombia": "2025-11-09 21:00:00"
     },
     {
-      "timestamp": 1762380900000,
-      "openInterest": 17932826.5,
-      "datetime_colombia": "2025-11-05 17:15:00"
+      "timestamp": 1762740900000,
+      "openInterest": 15740784.4,
+      "datetime_colombia": "2025-11-09 21:15:00"
     },
     {
-      "timestamp": 1762381800000,
-      "openInterest": 17926001.0,
-      "datetime_colombia": "2025-11-05 17:30:00"
+      "timestamp": 1762741800000,
+      "openInterest": 15757817.8,
+      "datetime_colombia": "2025-11-09 21:30:00"
     },
     {
-      "timestamp": 1762382700000,
-      "openInterest": 17917433.39999999,
-      "datetime_colombia": "2025-11-05 17:45:00"
+      "timestamp": 1762742700000,
+      "openInterest": 15762216.9,
+      "datetime_colombia": "2025-11-09 21:45:00"
     },
     {
-      "timestamp": 1762383600000,
-      "openInterest": 17928026.0,
-      "datetime_colombia": "2025-11-05 18:00:00"
+      "timestamp": 1762743600000,
+      "openInterest": 15763483.3,
+      "datetime_colombia": "2025-11-09 22:00:00"
     },
     {
-      "timestamp": 1762384500000,
-      "openInterest": 17927206.2,
-      "datetime_colombia": "2025-11-05 18:15:00"
+      "timestamp": 1762744500000,
+      "openInterest": 15764529.9,
+      "datetime_colombia": "2025-11-09 22:15:00"
     },
     {
-      "timestamp": 1762385400000,
-      "openInterest": 17927174.6,
-      "datetime_colombia": "2025-11-05 18:30:00"
+      "timestamp": 1762745400000,
+      "openInterest": 15750098.6,
+      "datetime_colombia": "2025-11-09 22:30:00"
     },
     {
-      "timestamp": 1762386300000,
-      "openInterest": 17937778.2,
-      "datetime_colombia": "2025-11-05 18:45:00"
+      "timestamp": 1762746300000,
+      "openInterest": 15812924.1,
+      "datetime_colombia": "2025-11-09 22:45:00"
     },
     {
-      "timestamp": 1762387200000,
-      "openInterest": 17916697.39999999,
-      "datetime_colombia": "2025-11-05 19:00:00"
+      "timestamp": 1762747200000,
+      "openInterest": 15808520.8,
+      "datetime_colombia": "2025-11-09 23:00:00"
     },
     {
-      "timestamp": 1762388100000,
-      "openInterest": 17874388.8,
-      "datetime_colombia": "2025-11-05 19:15:00"
+      "timestamp": 1762748100000,
+      "openInterest": 15812460.8,
+      "datetime_colombia": "2025-11-09 23:15:00"
     },
     {
-      "timestamp": 1762389000000,
-      "openInterest": 17880514.39999999,
-      "datetime_colombia": "2025-11-05 19:30:00"
+      "timestamp": 1762749000000,
+      "openInterest": 15789046.8,
+      "datetime_colombia": "2025-11-09 23:30:00"
     },
     {
-      "timestamp": 1762389900000,
-      "openInterest": 17885150.3,
-      "datetime_colombia": "2025-11-05 19:45:00"
+      "timestamp": 1762749900000,
+      "openInterest": 15784016.2,
+      "datetime_colombia": "2025-11-09 23:45:00"
     },
     {
-      "timestamp": 1762390800000,
-      "openInterest": 17844726.2,
-      "datetime_colombia": "2025-11-05 20:00:00"
+      "timestamp": 1762750800000,
+      "openInterest": 15776062.6,
+      "datetime_colombia": "2025-11-10 00:00:00"
     },
     {
-      "timestamp": 1762391700000,
-      "openInterest": 17781344.6,
-      "datetime_colombia": "2025-11-05 20:15:00"
+      "timestamp": 1762751700000,
+      "openInterest": 15769562.8,
+      "datetime_colombia": "2025-11-10 00:15:00"
     },
     {
-      "timestamp": 1762392600000,
-      "openInterest": 17731707.8,
-      "datetime_colombia": "2025-11-05 20:30:00"
+      "timestamp": 1762752600000,
+      "openInterest": 15836922.2,
+      "datetime_colombia": "2025-11-10 00:30:00"
     },
     {
-      "timestamp": 1762393500000,
-      "openInterest": 17697042.0,
-      "datetime_colombia": "2025-11-05 20:45:00"
+      "timestamp": 1762753500000,
+      "openInterest": 15838088.8,
+      "datetime_colombia": "2025-11-10 00:45:00"
     },
     {
-      "timestamp": 1762394400000,
-      "openInterest": 17687277.6,
-      "datetime_colombia": "2025-11-05 21:00:00"
+      "timestamp": 1762754400000,
+      "openInterest": 15834836.2,
+      "datetime_colombia": "2025-11-10 01:00:00"
     },
     {
-      "timestamp": 1762395300000,
-      "openInterest": 17710793.39999999,
-      "datetime_colombia": "2025-11-05 21:15:00"
+      "timestamp": 1762755300000,
+      "openInterest": 15856832.8,
+      "datetime_colombia": "2025-11-10 01:15:00"
     },
     {
-      "timestamp": 1762396200000,
-      "openInterest": 17771681.2,
-      "datetime_colombia": "2025-11-05 21:30:00"
+      "timestamp": 1762756200000,
+      "openInterest": 15858760.6,
+      "datetime_colombia": "2025-11-10 01:30:00"
     },
     {
-      "timestamp": 1762397100000,
-      "openInterest": 17778570.0,
-      "datetime_colombia": "2025-11-05 21:45:00"
+      "timestamp": 1762757100000,
+      "openInterest": 15855779.1,
+      "datetime_colombia": "2025-11-10 01:45:00"
     },
     {
       "timestamp": 1762398000000,
@@ -6004,319 +5689,319 @@
       "datetime_colombia": "2025-11-07 08:00:00"
     },
     {
-      "timestamp": 1762161300000,
-      "openInterest": 16307535.8,
-      "datetime_colombia": "2025-11-03 04:15:00"
+      "timestamp": 1762521300000,
+      "openInterest": 17094265.8,
+      "datetime_colombia": "2025-11-07 08:15:00"
     },
     {
-      "timestamp": 1762162200000,
-      "openInterest": 16284740.0,
-      "datetime_colombia": "2025-11-03 04:30:00"
+      "timestamp": 1762522200000,
+      "openInterest": 17107914.7,
+      "datetime_colombia": "2025-11-07 08:30:00"
     },
     {
-      "timestamp": 1762163100000,
-      "openInterest": 16273896.5,
-      "datetime_colombia": "2025-11-03 04:45:00"
+      "timestamp": 1762523100000,
+      "openInterest": 17102896.39999999,
+      "datetime_colombia": "2025-11-07 08:45:00"
     },
     {
-      "timestamp": 1762164000000,
-      "openInterest": 16257980.4,
-      "datetime_colombia": "2025-11-03 05:00:00"
+      "timestamp": 1762524000000,
+      "openInterest": 17140128.3,
+      "datetime_colombia": "2025-11-07 09:00:00"
     },
     {
-      "timestamp": 1762164900000,
-      "openInterest": 16244290.0,
-      "datetime_colombia": "2025-11-03 05:15:00"
+      "timestamp": 1762524900000,
+      "openInterest": 17135515.6,
+      "datetime_colombia": "2025-11-07 09:15:00"
     },
     {
-      "timestamp": 1762165800000,
-      "openInterest": 16246958.0,
-      "datetime_colombia": "2025-11-03 05:30:00"
+      "timestamp": 1762525800000,
+      "openInterest": 17112438.39999999,
+      "datetime_colombia": "2025-11-07 09:30:00"
     },
     {
-      "timestamp": 1762166700000,
-      "openInterest": 16240357.4,
-      "datetime_colombia": "2025-11-03 05:45:00"
+      "timestamp": 1762526700000,
+      "openInterest": 17097062.39999999,
+      "datetime_colombia": "2025-11-07 09:45:00"
     },
     {
-      "timestamp": 1762167600000,
-      "openInterest": 16228766.3,
-      "datetime_colombia": "2025-11-03 06:00:00"
+      "timestamp": 1762527600000,
+      "openInterest": 17142285.8,
+      "datetime_colombia": "2025-11-07 10:00:00"
     },
     {
-      "timestamp": 1762168500000,
-      "openInterest": 16272874.3,
-      "datetime_colombia": "2025-11-03 06:15:00"
+      "timestamp": 1762528500000,
+      "openInterest": 17017064.0,
+      "datetime_colombia": "2025-11-07 10:15:00"
     },
     {
-      "timestamp": 1762169400000,
-      "openInterest": 16243990.0,
-      "datetime_colombia": "2025-11-03 06:30:00"
+      "timestamp": 1762529400000,
+      "openInterest": 17000309.5,
+      "datetime_colombia": "2025-11-07 10:30:00"
     },
     {
-      "timestamp": 1762170300000,
-      "openInterest": 16240672.5,
-      "datetime_colombia": "2025-11-03 06:45:00"
+      "timestamp": 1762530300000,
+      "openInterest": 17014107.8,
+      "datetime_colombia": "2025-11-07 10:45:00"
     },
     {
-      "timestamp": 1762171200000,
-      "openInterest": 16239613.4,
-      "datetime_colombia": "2025-11-03 07:00:00"
+      "timestamp": 1762531200000,
+      "openInterest": 17016191.39999999,
+      "datetime_colombia": "2025-11-07 11:00:00"
     },
     {
-      "timestamp": 1762172100000,
-      "openInterest": 16243108.6,
-      "datetime_colombia": "2025-11-03 07:15:00"
+      "timestamp": 1762532100000,
+      "openInterest": 16972847.39999999,
+      "datetime_colombia": "2025-11-07 11:15:00"
     },
     {
-      "timestamp": 1762173000000,
-      "openInterest": 16456232.6,
-      "datetime_colombia": "2025-11-03 07:30:00"
+      "timestamp": 1762533000000,
+      "openInterest": 16919026.0,
+      "datetime_colombia": "2025-11-07 11:30:00"
     },
     {
-      "timestamp": 1762173900000,
-      "openInterest": 16475072.2,
-      "datetime_colombia": "2025-11-03 07:45:00"
+      "timestamp": 1762533900000,
+      "openInterest": 17063430.8,
+      "datetime_colombia": "2025-11-07 11:45:00"
     },
     {
-      "timestamp": 1762174800000,
-      "openInterest": 16433352.6,
-      "datetime_colombia": "2025-11-03 08:00:00"
+      "timestamp": 1762534800000,
+      "openInterest": 16853734.0,
+      "datetime_colombia": "2025-11-07 12:00:00"
     },
     {
-      "timestamp": 1762175700000,
-      "openInterest": 16594385.2,
-      "datetime_colombia": "2025-11-03 08:15:00"
+      "timestamp": 1762535700000,
+      "openInterest": 16855063.7,
+      "datetime_colombia": "2025-11-07 12:15:00"
     },
     {
-      "timestamp": 1762176600000,
-      "openInterest": 16585609.0,
-      "datetime_colombia": "2025-11-03 08:30:00"
+      "timestamp": 1762536600000,
+      "openInterest": 17137792.39999999,
+      "datetime_colombia": "2025-11-07 12:30:00"
     },
     {
-      "timestamp": 1762177500000,
-      "openInterest": 16580032.1,
-      "datetime_colombia": "2025-11-03 08:45:00"
+      "timestamp": 1762537500000,
+      "openInterest": 17076197.2,
+      "datetime_colombia": "2025-11-07 12:45:00"
     },
     {
-      "timestamp": 1762178400000,
-      "openInterest": 16571814.4,
-      "datetime_colombia": "2025-11-03 09:00:00"
+      "timestamp": 1762538400000,
+      "openInterest": 17006836.6,
+      "datetime_colombia": "2025-11-07 13:00:00"
     },
     {
-      "timestamp": 1762179300000,
-      "openInterest": 16562294.4,
-      "datetime_colombia": "2025-11-03 09:15:00"
+      "timestamp": 1762539300000,
+      "openInterest": 17008508.89999999,
+      "datetime_colombia": "2025-11-07 13:15:00"
     },
     {
-      "timestamp": 1762180200000,
-      "openInterest": 16545562.2,
-      "datetime_colombia": "2025-11-03 09:30:00"
+      "timestamp": 1762540200000,
+      "openInterest": 16966382.39999999,
+      "datetime_colombia": "2025-11-07 13:30:00"
     },
     {
-      "timestamp": 1762181100000,
-      "openInterest": 16551741.0,
-      "datetime_colombia": "2025-11-03 09:45:00"
+      "timestamp": 1762541100000,
+      "openInterest": 17022515.2,
+      "datetime_colombia": "2025-11-07 13:45:00"
     },
     {
-      "timestamp": 1762182000000,
-      "openInterest": 16532849.8,
-      "datetime_colombia": "2025-11-03 10:00:00"
+      "timestamp": 1762542000000,
+      "openInterest": 16945635.2,
+      "datetime_colombia": "2025-11-07 14:00:00"
     },
     {
-      "timestamp": 1762182900000,
-      "openInterest": 16483121.3,
-      "datetime_colombia": "2025-11-03 10:15:00"
+      "timestamp": 1762542900000,
+      "openInterest": 16923365.2,
+      "datetime_colombia": "2025-11-07 14:15:00"
     },
     {
-      "timestamp": 1762183800000,
-      "openInterest": 16353053.8,
-      "datetime_colombia": "2025-11-03 10:30:00"
+      "timestamp": 1762543800000,
+      "openInterest": 16929750.39999999,
+      "datetime_colombia": "2025-11-07 14:30:00"
     },
     {
-      "timestamp": 1762184700000,
-      "openInterest": 14913205.8,
-      "datetime_colombia": "2025-11-03 10:45:00"
+      "timestamp": 1762544700000,
+      "openInterest": 16900512.6,
+      "datetime_colombia": "2025-11-07 14:45:00"
     },
     {
-      "timestamp": 1762185600000,
-      "openInterest": 14900875.3,
-      "datetime_colombia": "2025-11-03 11:00:00"
+      "timestamp": 1762545600000,
+      "openInterest": 16916952.6,
+      "datetime_colombia": "2025-11-07 15:00:00"
     },
     {
-      "timestamp": 1762186500000,
-      "openInterest": 15114406.5,
-      "datetime_colombia": "2025-11-03 11:15:00"
+      "timestamp": 1762546500000,
+      "openInterest": 16908268.2,
+      "datetime_colombia": "2025-11-07 15:15:00"
     },
     {
-      "timestamp": 1762187400000,
-      "openInterest": 15183560.4,
-      "datetime_colombia": "2025-11-03 11:30:00"
+      "timestamp": 1762547400000,
+      "openInterest": 16874023.6,
+      "datetime_colombia": "2025-11-07 15:30:00"
     },
     {
-      "timestamp": 1762188300000,
-      "openInterest": 15211270.9,
-      "datetime_colombia": "2025-11-03 11:45:00"
+      "timestamp": 1762548300000,
+      "openInterest": 16868109.8,
+      "datetime_colombia": "2025-11-07 15:45:00"
     },
     {
-      "timestamp": 1762189200000,
-      "openInterest": 15217814.5,
-      "datetime_colombia": "2025-11-03 12:00:00"
+      "timestamp": 1762549200000,
+      "openInterest": 16872864.39999999,
+      "datetime_colombia": "2025-11-07 16:00:00"
     },
     {
-      "timestamp": 1762190100000,
-      "openInterest": 15203073.0,
-      "datetime_colombia": "2025-11-03 12:15:00"
+      "timestamp": 1762550100000,
+      "openInterest": 16855990.39999999,
+      "datetime_colombia": "2025-11-07 16:15:00"
     },
     {
-      "timestamp": 1762191000000,
-      "openInterest": 15183801.1,
-      "datetime_colombia": "2025-11-03 12:30:00"
+      "timestamp": 1762551000000,
+      "openInterest": 16830463.39999999,
+      "datetime_colombia": "2025-11-07 16:30:00"
     },
     {
-      "timestamp": 1762191900000,
-      "openInterest": 15145612.3,
-      "datetime_colombia": "2025-11-03 12:45:00"
+      "timestamp": 1762551900000,
+      "openInterest": 16840350.6,
+      "datetime_colombia": "2025-11-07 16:45:00"
     },
     {
-      "timestamp": 1762192800000,
-      "openInterest": 15089140.4,
-      "datetime_colombia": "2025-11-03 13:00:00"
+      "timestamp": 1762552800000,
+      "openInterest": 16847436.8,
+      "datetime_colombia": "2025-11-07 17:00:00"
     },
     {
-      "timestamp": 1762193700000,
-      "openInterest": 15038689.3,
-      "datetime_colombia": "2025-11-03 13:15:00"
+      "timestamp": 1762553700000,
+      "openInterest": 16927102.5,
+      "datetime_colombia": "2025-11-07 17:15:00"
     },
     {
-      "timestamp": 1762194600000,
-      "openInterest": 14980190.6,
-      "datetime_colombia": "2025-11-03 13:30:00"
+      "timestamp": 1762554600000,
+      "openInterest": 16938132.39999999,
+      "datetime_colombia": "2025-11-07 17:30:00"
     },
     {
-      "timestamp": 1762195500000,
-      "openInterest": 14981740.4,
-      "datetime_colombia": "2025-11-03 13:45:00"
+      "timestamp": 1762555500000,
+      "openInterest": 16925515.8,
+      "datetime_colombia": "2025-11-07 17:45:00"
     },
     {
-      "timestamp": 1762196400000,
-      "openInterest": 15005364.6,
-      "datetime_colombia": "2025-11-03 14:00:00"
+      "timestamp": 1762556400000,
+      "openInterest": 16945749.39999999,
+      "datetime_colombia": "2025-11-07 18:00:00"
     },
     {
-      "timestamp": 1762197300000,
-      "openInterest": 15003518.7,
-      "datetime_colombia": "2025-11-03 14:15:00"
+      "timestamp": 1762557300000,
+      "openInterest": 16869309.6,
+      "datetime_colombia": "2025-11-07 18:15:00"
     },
     {
-      "timestamp": 1762198200000,
-      "openInterest": 14742550.8,
-      "datetime_colombia": "2025-11-03 14:30:00"
+      "timestamp": 1762558200000,
+      "openInterest": 16857926.8,
+      "datetime_colombia": "2025-11-07 18:30:00"
     },
     {
-      "timestamp": 1762199100000,
-      "openInterest": 14658747.8,
-      "datetime_colombia": "2025-11-03 14:45:00"
+      "timestamp": 1762559100000,
+      "openInterest": 16834145.6,
+      "datetime_colombia": "2025-11-07 18:45:00"
     },
     {
-      "timestamp": 1762200000000,
-      "openInterest": 14575381.3,
-      "datetime_colombia": "2025-11-03 15:00:00"
+      "timestamp": 1762560000000,
+      "openInterest": 16835604.39999999,
+      "datetime_colombia": "2025-11-07 19:00:00"
     },
     {
-      "timestamp": 1762200900000,
-      "openInterest": 14554308.0,
-      "datetime_colombia": "2025-11-03 15:15:00"
+      "timestamp": 1762560900000,
+      "openInterest": 16778441.0,
+      "datetime_colombia": "2025-11-07 19:15:00"
     },
     {
-      "timestamp": 1762201800000,
-      "openInterest": 14513298.0,
-      "datetime_colombia": "2025-11-03 15:30:00"
+      "timestamp": 1762561800000,
+      "openInterest": 16544424.6,
+      "datetime_colombia": "2025-11-07 19:30:00"
     },
     {
-      "timestamp": 1762202700000,
-      "openInterest": 14611365.2,
-      "datetime_colombia": "2025-11-03 15:45:00"
+      "timestamp": 1762562700000,
+      "openInterest": 16463079.9,
+      "datetime_colombia": "2025-11-07 19:45:00"
     },
     {
-      "timestamp": 1762203600000,
-      "openInterest": 14676342.0,
-      "datetime_colombia": "2025-11-03 16:00:00"
+      "timestamp": 1762563600000,
+      "openInterest": 16388531.1,
+      "datetime_colombia": "2025-11-07 20:00:00"
     },
     {
-      "timestamp": 1762204500000,
-      "openInterest": 14678727.8,
-      "datetime_colombia": "2025-11-03 16:15:00"
+      "timestamp": 1762564500000,
+      "openInterest": 16350844.2,
+      "datetime_colombia": "2025-11-07 20:15:00"
     },
     {
-      "timestamp": 1762205400000,
-      "openInterest": 14501793.4,
-      "datetime_colombia": "2025-11-03 16:30:00"
+      "timestamp": 1762565400000,
+      "openInterest": 16349851.9,
+      "datetime_colombia": "2025-11-07 20:30:00"
     },
     {
-      "timestamp": 1762206300000,
-      "openInterest": 14489030.9,
-      "datetime_colombia": "2025-11-03 16:45:00"
+      "timestamp": 1762566300000,
+      "openInterest": 16310630.7,
+      "datetime_colombia": "2025-11-07 20:45:00"
     },
     {
-      "timestamp": 1762207200000,
-      "openInterest": 14510426.6,
-      "datetime_colombia": "2025-11-03 17:00:00"
+      "timestamp": 1762567200000,
+      "openInterest": 16290853.5,
+      "datetime_colombia": "2025-11-07 21:00:00"
     },
     {
-      "timestamp": 1762208100000,
-      "openInterest": 14511556.6,
-      "datetime_colombia": "2025-11-03 17:15:00"
+      "timestamp": 1762568100000,
+      "openInterest": 16238905.6,
+      "datetime_colombia": "2025-11-07 21:15:00"
     },
     {
-      "timestamp": 1762209000000,
-      "openInterest": 14650373.6,
-      "datetime_colombia": "2025-11-03 17:30:00"
+      "timestamp": 1762569000000,
+      "openInterest": 16181292.5,
+      "datetime_colombia": "2025-11-07 21:30:00"
     },
     {
-      "timestamp": 1762209900000,
-      "openInterest": 14613335.6,
-      "datetime_colombia": "2025-11-03 17:45:00"
+      "timestamp": 1762569900000,
+      "openInterest": 16161412.6,
+      "datetime_colombia": "2025-11-07 21:45:00"
     },
     {
-      "timestamp": 1762210800000,
-      "openInterest": 14602523.6,
-      "datetime_colombia": "2025-11-03 18:00:00"
+      "timestamp": 1762570800000,
+      "openInterest": 16192049.1,
+      "datetime_colombia": "2025-11-07 22:00:00"
     },
     {
-      "timestamp": 1762211700000,
-      "openInterest": 14629896.8,
-      "datetime_colombia": "2025-11-03 18:15:00"
+      "timestamp": 1762571700000,
+      "openInterest": 16176244.2,
+      "datetime_colombia": "2025-11-07 22:15:00"
     },
     {
-      "timestamp": 1762212600000,
-      "openInterest": 14615571.2,
-      "datetime_colombia": "2025-11-03 18:30:00"
+      "timestamp": 1762572600000,
+      "openInterest": 16170000.4,
+      "datetime_colombia": "2025-11-07 22:30:00"
     },
     {
-      "timestamp": 1762213500000,
-      "openInterest": 14641290.5,
-      "datetime_colombia": "2025-11-03 18:45:00"
+      "timestamp": 1762573500000,
+      "openInterest": 16212223.0,
+      "datetime_colombia": "2025-11-07 22:45:00"
     },
     {
-      "timestamp": 1762214400000,
-      "openInterest": 14622961.1,
-      "datetime_colombia": "2025-11-03 19:00:00"
+      "timestamp": 1762574400000,
+      "openInterest": 16214680.4,
+      "datetime_colombia": "2025-11-07 23:00:00"
     },
     {
-      "timestamp": 1762215300000,
-      "openInterest": 14669527.4,
-      "datetime_colombia": "2025-11-03 19:15:00"
+      "timestamp": 1762575300000,
+      "openInterest": 16180210.4,
+      "datetime_colombia": "2025-11-07 23:15:00"
     },
     {
-      "timestamp": 1762216200000,
-      "openInterest": 14688691.4,
-      "datetime_colombia": "2025-11-03 19:30:00"
+      "timestamp": 1762576200000,
+      "openInterest": 16150826.8,
+      "datetime_colombia": "2025-11-07 23:30:00"
     },
     {
-      "timestamp": 1762217100000,
-      "openInterest": 14674429.6,
-      "datetime_colombia": "2025-11-03 19:45:00"
+      "timestamp": 1762577100000,
+      "openInterest": 16130457.3,
+      "datetime_colombia": "2025-11-07 23:45:00"
     },
     {
       "timestamp": 1762218000000,
@@ -7004,319 +6689,319 @@
       "datetime_colombia": "2025-11-05 06:00:00"
     },
     {
-      "timestamp": 1761981300000,
-      "openInterest": 18860400.5,
-      "datetime_colombia": "2025-11-01 02:15:00"
+      "timestamp": 1762341300000,
+      "openInterest": 17780239.89999999,
+      "datetime_colombia": "2025-11-05 06:15:00"
     },
     {
-      "timestamp": 1761982200000,
-      "openInterest": 18849108.6,
-      "datetime_colombia": "2025-11-01 02:30:00"
+      "timestamp": 1762342200000,
+      "openInterest": 17833033.39999999,
+      "datetime_colombia": "2025-11-05 06:30:00"
     },
     {
-      "timestamp": 1761983100000,
-      "openInterest": 18804938.39999999,
-      "datetime_colombia": "2025-11-01 02:45:00"
+      "timestamp": 1762343100000,
+      "openInterest": 17865881.39999999,
+      "datetime_colombia": "2025-11-05 06:45:00"
     },
     {
-      "timestamp": 1761984000000,
-      "openInterest": 18769307.0,
-      "datetime_colombia": "2025-11-01 03:00:00"
+      "timestamp": 1762344000000,
+      "openInterest": 17886240.2,
+      "datetime_colombia": "2025-11-05 07:00:00"
     },
     {
-      "timestamp": 1761984900000,
-      "openInterest": 18733221.39999999,
-      "datetime_colombia": "2025-11-01 03:15:00"
+      "timestamp": 1762344900000,
+      "openInterest": 17861307.0,
+      "datetime_colombia": "2025-11-05 07:15:00"
     },
     {
-      "timestamp": 1761985800000,
-      "openInterest": 18656086.89999999,
-      "datetime_colombia": "2025-11-01 03:30:00"
+      "timestamp": 1762345800000,
+      "openInterest": 18007653.6,
+      "datetime_colombia": "2025-11-05 07:30:00"
     },
     {
-      "timestamp": 1761986700000,
-      "openInterest": 18728365.0,
-      "datetime_colombia": "2025-11-01 03:45:00"
+      "timestamp": 1762346700000,
+      "openInterest": 18013783.8,
+      "datetime_colombia": "2025-11-05 07:45:00"
     },
     {
-      "timestamp": 1761987600000,
-      "openInterest": 18691760.7,
-      "datetime_colombia": "2025-11-01 04:00:00"
+      "timestamp": 1762347600000,
+      "openInterest": 17980678.0,
+      "datetime_colombia": "2025-11-05 08:00:00"
     },
     {
-      "timestamp": 1761988500000,
-      "openInterest": 18824514.6,
-      "datetime_colombia": "2025-11-01 04:15:00"
+      "timestamp": 1762348500000,
+      "openInterest": 18007236.39999999,
+      "datetime_colombia": "2025-11-05 08:15:00"
     },
     {
-      "timestamp": 1761989400000,
-      "openInterest": 18944246.39999999,
-      "datetime_colombia": "2025-11-01 04:30:00"
+      "timestamp": 1762349400000,
+      "openInterest": 18025255.6,
+      "datetime_colombia": "2025-11-05 08:30:00"
     },
     {
-      "timestamp": 1761990300000,
-      "openInterest": 18903897.5,
-      "datetime_colombia": "2025-11-01 04:45:00"
+      "timestamp": 1762350300000,
+      "openInterest": 18049416.89999999,
+      "datetime_colombia": "2025-11-05 08:45:00"
     },
     {
-      "timestamp": 1761991200000,
-      "openInterest": 18848766.2,
-      "datetime_colombia": "2025-11-01 05:00:00"
+      "timestamp": 1762351200000,
+      "openInterest": 18126989.3,
+      "datetime_colombia": "2025-11-05 09:00:00"
     },
     {
-      "timestamp": 1761992100000,
-      "openInterest": 18869325.1,
-      "datetime_colombia": "2025-11-01 05:15:00"
+      "timestamp": 1762352100000,
+      "openInterest": 18081604.2,
+      "datetime_colombia": "2025-11-05 09:15:00"
     },
     {
-      "timestamp": 1761993000000,
-      "openInterest": 18901988.5,
-      "datetime_colombia": "2025-11-01 05:30:00"
+      "timestamp": 1762353000000,
+      "openInterest": 18069454.39999999,
+      "datetime_colombia": "2025-11-05 09:30:00"
     },
     {
-      "timestamp": 1761993900000,
-      "openInterest": 18944510.6,
-      "datetime_colombia": "2025-11-01 05:45:00"
+      "timestamp": 1762353900000,
+      "openInterest": 18164109.0,
+      "datetime_colombia": "2025-11-05 09:45:00"
     },
     {
-      "timestamp": 1761994800000,
-      "openInterest": 18959718.6,
-      "datetime_colombia": "2025-11-01 06:00:00"
+      "timestamp": 1762354800000,
+      "openInterest": 18153876.89999999,
+      "datetime_colombia": "2025-11-05 10:00:00"
     },
     {
-      "timestamp": 1761995700000,
-      "openInterest": 18951486.39999999,
-      "datetime_colombia": "2025-11-01 06:15:00"
+      "timestamp": 1762355700000,
+      "openInterest": 18166793.2,
+      "datetime_colombia": "2025-11-05 10:15:00"
     },
     {
-      "timestamp": 1761996600000,
-      "openInterest": 18868977.1,
-      "datetime_colombia": "2025-11-01 06:30:00"
+      "timestamp": 1762356600000,
+      "openInterest": 18194078.7,
+      "datetime_colombia": "2025-11-05 10:30:00"
     },
     {
-      "timestamp": 1761997500000,
-      "openInterest": 18803321.89999999,
-      "datetime_colombia": "2025-11-01 06:45:00"
+      "timestamp": 1762357500000,
+      "openInterest": 18252074.6,
+      "datetime_colombia": "2025-11-05 10:45:00"
     },
     {
-      "timestamp": 1761998400000,
-      "openInterest": 18774142.8,
-      "datetime_colombia": "2025-11-01 07:00:00"
+      "timestamp": 1762358400000,
+      "openInterest": 18273909.39999999,
+      "datetime_colombia": "2025-11-05 11:00:00"
     },
     {
-      "timestamp": 1761999300000,
-      "openInterest": 18702506.1,
-      "datetime_colombia": "2025-11-01 07:15:00"
+      "timestamp": 1762359300000,
+      "openInterest": 18221606.39999999,
+      "datetime_colombia": "2025-11-05 11:15:00"
     },
     {
-      "timestamp": 1762000200000,
-      "openInterest": 18672076.8,
-      "datetime_colombia": "2025-11-01 07:30:00"
+      "timestamp": 1762360200000,
+      "openInterest": 18151646.5,
+      "datetime_colombia": "2025-11-05 11:30:00"
     },
     {
-      "timestamp": 1762001100000,
-      "openInterest": 18688829.8,
-      "datetime_colombia": "2025-11-01 07:45:00"
+      "timestamp": 1762361100000,
+      "openInterest": 18022223.39999999,
+      "datetime_colombia": "2025-11-05 11:45:00"
     },
     {
-      "timestamp": 1762002000000,
-      "openInterest": 18604702.89999999,
-      "datetime_colombia": "2025-11-01 08:00:00"
+      "timestamp": 1762362000000,
+      "openInterest": 17947490.6,
+      "datetime_colombia": "2025-11-05 12:00:00"
     },
     {
-      "timestamp": 1762002900000,
-      "openInterest": 18546841.0,
-      "datetime_colombia": "2025-11-01 08:15:00"
+      "timestamp": 1762362900000,
+      "openInterest": 17950817.0,
+      "datetime_colombia": "2025-11-05 12:15:00"
     },
     {
-      "timestamp": 1762003800000,
-      "openInterest": 18482597.6,
-      "datetime_colombia": "2025-11-01 08:30:00"
+      "timestamp": 1762363800000,
+      "openInterest": 18107873.3,
+      "datetime_colombia": "2025-11-05 12:30:00"
     },
     {
-      "timestamp": 1762004700000,
-      "openInterest": 18331400.39999999,
-      "datetime_colombia": "2025-11-01 08:45:00"
+      "timestamp": 1762364700000,
+      "openInterest": 18135410.5,
+      "datetime_colombia": "2025-11-05 12:45:00"
     },
     {
-      "timestamp": 1762005600000,
-      "openInterest": 18320900.8,
-      "datetime_colombia": "2025-11-01 09:00:00"
+      "timestamp": 1762365600000,
+      "openInterest": 18153251.8,
+      "datetime_colombia": "2025-11-05 13:00:00"
     },
     {
-      "timestamp": 1762006500000,
-      "openInterest": 18269778.0,
-      "datetime_colombia": "2025-11-01 09:15:00"
+      "timestamp": 1762366500000,
+      "openInterest": 18116856.8,
+      "datetime_colombia": "2025-11-05 13:15:00"
     },
     {
-      "timestamp": 1762007400000,
-      "openInterest": 18305167.0,
-      "datetime_colombia": "2025-11-01 09:30:00"
+      "timestamp": 1762367400000,
+      "openInterest": 18110231.39999999,
+      "datetime_colombia": "2025-11-05 13:30:00"
     },
     {
-      "timestamp": 1762008300000,
-      "openInterest": 18332443.2,
-      "datetime_colombia": "2025-11-01 09:45:00"
+      "timestamp": 1762368300000,
+      "openInterest": 18126440.6,
+      "datetime_colombia": "2025-11-05 13:45:00"
     },
     {
-      "timestamp": 1762009200000,
-      "openInterest": 18318039.39999999,
-      "datetime_colombia": "2025-11-01 10:00:00"
+      "timestamp": 1762369200000,
+      "openInterest": 18107801.8,
+      "datetime_colombia": "2025-11-05 14:00:00"
     },
     {
-      "timestamp": 1762010100000,
-      "openInterest": 18227687.8,
-      "datetime_colombia": "2025-11-01 10:15:00"
+      "timestamp": 1762370100000,
+      "openInterest": 18081874.0,
+      "datetime_colombia": "2025-11-05 14:15:00"
     },
     {
-      "timestamp": 1762011000000,
-      "openInterest": 18235732.6,
-      "datetime_colombia": "2025-11-01 10:30:00"
+      "timestamp": 1762371000000,
+      "openInterest": 18091712.3,
+      "datetime_colombia": "2025-11-05 14:30:00"
     },
     {
-      "timestamp": 1762011900000,
-      "openInterest": 18238200.5,
-      "datetime_colombia": "2025-11-01 10:45:00"
+      "timestamp": 1762371900000,
+      "openInterest": 18098116.3,
+      "datetime_colombia": "2025-11-05 14:45:00"
     },
     {
-      "timestamp": 1762012800000,
-      "openInterest": 18234413.0,
-      "datetime_colombia": "2025-11-01 11:00:00"
+      "timestamp": 1762372800000,
+      "openInterest": 18034717.8,
+      "datetime_colombia": "2025-11-05 15:00:00"
     },
     {
-      "timestamp": 1762013700000,
-      "openInterest": 18255771.2,
-      "datetime_colombia": "2025-11-01 11:15:00"
+      "timestamp": 1762373700000,
+      "openInterest": 18027570.39999999,
+      "datetime_colombia": "2025-11-05 15:15:00"
     },
     {
-      "timestamp": 1762014600000,
-      "openInterest": 18253304.0,
-      "datetime_colombia": "2025-11-01 11:30:00"
+      "timestamp": 1762374600000,
+      "openInterest": 18018232.6,
+      "datetime_colombia": "2025-11-05 15:30:00"
     },
     {
-      "timestamp": 1762015500000,
-      "openInterest": 18250666.6,
-      "datetime_colombia": "2025-11-01 11:45:00"
+      "timestamp": 1762375500000,
+      "openInterest": 17987405.8,
+      "datetime_colombia": "2025-11-05 15:45:00"
     },
     {
-      "timestamp": 1762016400000,
-      "openInterest": 18236994.7,
-      "datetime_colombia": "2025-11-01 12:00:00"
+      "timestamp": 1762376400000,
+      "openInterest": 17968768.0,
+      "datetime_colombia": "2025-11-05 16:00:00"
     },
     {
-      "timestamp": 1762017300000,
-      "openInterest": 18225040.8,
-      "datetime_colombia": "2025-11-01 12:15:00"
+      "timestamp": 1762377300000,
+      "openInterest": 17959655.2,
+      "datetime_colombia": "2025-11-05 16:15:00"
     },
     {
-      "timestamp": 1762018200000,
-      "openInterest": 18191073.39999999,
-      "datetime_colombia": "2025-11-01 12:30:00"
+      "timestamp": 1762378200000,
+      "openInterest": 17971872.8,
+      "datetime_colombia": "2025-11-05 16:30:00"
     },
     {
-      "timestamp": 1762019100000,
-      "openInterest": 18201633.39999999,
-      "datetime_colombia": "2025-11-01 12:45:00"
+      "timestamp": 1762379100000,
+      "openInterest": 17960440.0,
+      "datetime_colombia": "2025-11-05 16:45:00"
     },
     {
-      "timestamp": 1762020000000,
-      "openInterest": 18149113.8,
-      "datetime_colombia": "2025-11-01 13:00:00"
+      "timestamp": 1762380000000,
+      "openInterest": 17949793.0,
+      "datetime_colombia": "2025-11-05 17:00:00"
     },
     {
-      "timestamp": 1762020900000,
-      "openInterest": 18124253.1,
-      "datetime_colombia": "2025-11-01 13:15:00"
+      "timestamp": 1762380900000,
+      "openInterest": 17932826.5,
+      "datetime_colombia": "2025-11-05 17:15:00"
     },
     {
-      "timestamp": 1762021800000,
-      "openInterest": 18113522.39999999,
-      "datetime_colombia": "2025-11-01 13:30:00"
+      "timestamp": 1762381800000,
+      "openInterest": 17926001.0,
+      "datetime_colombia": "2025-11-05 17:30:00"
     },
     {
-      "timestamp": 1762022700000,
-      "openInterest": 18111016.2,
-      "datetime_colombia": "2025-11-01 13:45:00"
+      "timestamp": 1762382700000,
+      "openInterest": 17917433.39999999,
+      "datetime_colombia": "2025-11-05 17:45:00"
     },
     {
-      "timestamp": 1762023600000,
-      "openInterest": 18114902.2,
-      "datetime_colombia": "2025-11-01 14:00:00"
+      "timestamp": 1762383600000,
+      "openInterest": 17928026.0,
+      "datetime_colombia": "2025-11-05 18:00:00"
     },
     {
-      "timestamp": 1762024500000,
-      "openInterest": 18099989.8,
-      "datetime_colombia": "2025-11-01 14:15:00"
+      "timestamp": 1762384500000,
+      "openInterest": 17927206.2,
+      "datetime_colombia": "2025-11-05 18:15:00"
     },
     {
-      "timestamp": 1762025400000,
-      "openInterest": 18134354.6,
-      "datetime_colombia": "2025-11-01 14:30:00"
+      "timestamp": 1762385400000,
+      "openInterest": 17927174.6,
+      "datetime_colombia": "2025-11-05 18:30:00"
     },
     {
-      "timestamp": 1762026300000,
-      "openInterest": 18073740.6,
-      "datetime_colombia": "2025-11-01 14:45:00"
+      "timestamp": 1762386300000,
+      "openInterest": 17937778.2,
+      "datetime_colombia": "2025-11-05 18:45:00"
     },
     {
-      "timestamp": 1762027200000,
-      "openInterest": 18066969.8,
-      "datetime_colombia": "2025-11-01 15:00:00"
+      "timestamp": 1762387200000,
+      "openInterest": 17916697.39999999,
+      "datetime_colombia": "2025-11-05 19:00:00"
     },
     {
-      "timestamp": 1762028100000,
-      "openInterest": 18062347.89999999,
-      "datetime_colombia": "2025-11-01 15:15:00"
+      "timestamp": 1762388100000,
+      "openInterest": 17874388.8,
+      "datetime_colombia": "2025-11-05 19:15:00"
     },
     {
-      "timestamp": 1762029000000,
-      "openInterest": 18055332.2,
-      "datetime_colombia": "2025-11-01 15:30:00"
+      "timestamp": 1762389000000,
+      "openInterest": 17880514.39999999,
+      "datetime_colombia": "2025-11-05 19:30:00"
     },
     {
-      "timestamp": 1762029900000,
-      "openInterest": 18417180.8,
-      "datetime_colombia": "2025-11-01 15:45:00"
+      "timestamp": 1762389900000,
+      "openInterest": 17885150.3,
+      "datetime_colombia": "2025-11-05 19:45:00"
     },
     {
-      "timestamp": 1762030800000,
-      "openInterest": 18370578.6,
-      "datetime_colombia": "2025-11-01 16:00:00"
+      "timestamp": 1762390800000,
+      "openInterest": 17844726.2,
+      "datetime_colombia": "2025-11-05 20:00:00"
     },
     {
-      "timestamp": 1762031700000,
-      "openInterest": 18202193.3,
-      "datetime_colombia": "2025-11-01 16:15:00"
+      "timestamp": 1762391700000,
+      "openInterest": 17781344.6,
+      "datetime_colombia": "2025-11-05 20:15:00"
     },
     {
-      "timestamp": 1762032600000,
-      "openInterest": 18163871.39999999,
-      "datetime_colombia": "2025-11-01 16:30:00"
+      "timestamp": 1762392600000,
+      "openInterest": 17731707.8,
+      "datetime_colombia": "2025-11-05 20:30:00"
     },
     {
-      "timestamp": 1762033500000,
-      "openInterest": 18131171.39999999,
-      "datetime_colombia": "2025-11-01 16:45:00"
+      "timestamp": 1762393500000,
+      "openInterest": 17697042.0,
+      "datetime_colombia": "2025-11-05 20:45:00"
     },
     {
-      "timestamp": 1762034400000,
-      "openInterest": 18060174.6,
-      "datetime_colombia": "2025-11-01 17:00:00"
+      "timestamp": 1762394400000,
+      "openInterest": 17687277.6,
+      "datetime_colombia": "2025-11-05 21:00:00"
     },
     {
-      "timestamp": 1762035300000,
-      "openInterest": 18042772.0,
-      "datetime_colombia": "2025-11-01 17:15:00"
+      "timestamp": 1762395300000,
+      "openInterest": 17710793.39999999,
+      "datetime_colombia": "2025-11-05 21:15:00"
     },
     {
-      "timestamp": 1762036200000,
-      "openInterest": 18028567.2,
-      "datetime_colombia": "2025-11-01 17:30:00"
+      "timestamp": 1762396200000,
+      "openInterest": 17771681.2,
+      "datetime_colombia": "2025-11-05 21:30:00"
     },
     {
-      "timestamp": 1762037100000,
-      "openInterest": 18023464.8,
-      "datetime_colombia": "2025-11-01 17:45:00"
+      "timestamp": 1762397100000,
+      "openInterest": 17778570.0,
+      "datetime_colombia": "2025-11-05 21:45:00"
     },
     {
       "timestamp": 1762038000000,
@@ -8002,7 +7687,322 @@
       "timestamp": 1762160400000,
       "openInterest": 16357643.2,
       "datetime_colombia": "2025-11-03 04:00:00"
+    },
+    {
+      "timestamp": 1762161300000,
+      "openInterest": 16307535.8,
+      "datetime_colombia": "2025-11-03 04:15:00"
+    },
+    {
+      "timestamp": 1762162200000,
+      "openInterest": 16284740.0,
+      "datetime_colombia": "2025-11-03 04:30:00"
+    },
+    {
+      "timestamp": 1762163100000,
+      "openInterest": 16273896.5,
+      "datetime_colombia": "2025-11-03 04:45:00"
+    },
+    {
+      "timestamp": 1762164000000,
+      "openInterest": 16257980.4,
+      "datetime_colombia": "2025-11-03 05:00:00"
+    },
+    {
+      "timestamp": 1762164900000,
+      "openInterest": 16244290.0,
+      "datetime_colombia": "2025-11-03 05:15:00"
+    },
+    {
+      "timestamp": 1762165800000,
+      "openInterest": 16246958.0,
+      "datetime_colombia": "2025-11-03 05:30:00"
+    },
+    {
+      "timestamp": 1762166700000,
+      "openInterest": 16240357.4,
+      "datetime_colombia": "2025-11-03 05:45:00"
+    },
+    {
+      "timestamp": 1762167600000,
+      "openInterest": 16228766.3,
+      "datetime_colombia": "2025-11-03 06:00:00"
+    },
+    {
+      "timestamp": 1762168500000,
+      "openInterest": 16272874.3,
+      "datetime_colombia": "2025-11-03 06:15:00"
+    },
+    {
+      "timestamp": 1762169400000,
+      "openInterest": 16243990.0,
+      "datetime_colombia": "2025-11-03 06:30:00"
+    },
+    {
+      "timestamp": 1762170300000,
+      "openInterest": 16240672.5,
+      "datetime_colombia": "2025-11-03 06:45:00"
+    },
+    {
+      "timestamp": 1762171200000,
+      "openInterest": 16239613.4,
+      "datetime_colombia": "2025-11-03 07:00:00"
+    },
+    {
+      "timestamp": 1762172100000,
+      "openInterest": 16243108.6,
+      "datetime_colombia": "2025-11-03 07:15:00"
+    },
+    {
+      "timestamp": 1762173000000,
+      "openInterest": 16456232.6,
+      "datetime_colombia": "2025-11-03 07:30:00"
+    },
+    {
+      "timestamp": 1762173900000,
+      "openInterest": 16475072.2,
+      "datetime_colombia": "2025-11-03 07:45:00"
+    },
+    {
+      "timestamp": 1762174800000,
+      "openInterest": 16433352.6,
+      "datetime_colombia": "2025-11-03 08:00:00"
+    },
+    {
+      "timestamp": 1762175700000,
+      "openInterest": 16594385.2,
+      "datetime_colombia": "2025-11-03 08:15:00"
+    },
+    {
+      "timestamp": 1762176600000,
+      "openInterest": 16585609.0,
+      "datetime_colombia": "2025-11-03 08:30:00"
+    },
+    {
+      "timestamp": 1762177500000,
+      "openInterest": 16580032.1,
+      "datetime_colombia": "2025-11-03 08:45:00"
+    },
+    {
+      "timestamp": 1762178400000,
+      "openInterest": 16571814.4,
+      "datetime_colombia": "2025-11-03 09:00:00"
+    },
+    {
+      "timestamp": 1762179300000,
+      "openInterest": 16562294.4,
+      "datetime_colombia": "2025-11-03 09:15:00"
+    },
+    {
+      "timestamp": 1762180200000,
+      "openInterest": 16545562.2,
+      "datetime_colombia": "2025-11-03 09:30:00"
+    },
+    {
+      "timestamp": 1762181100000,
+      "openInterest": 16551741.0,
+      "datetime_colombia": "2025-11-03 09:45:00"
+    },
+    {
+      "timestamp": 1762182000000,
+      "openInterest": 16532849.8,
+      "datetime_colombia": "2025-11-03 10:00:00"
+    },
+    {
+      "timestamp": 1762182900000,
+      "openInterest": 16483121.3,
+      "datetime_colombia": "2025-11-03 10:15:00"
+    },
+    {
+      "timestamp": 1762183800000,
+      "openInterest": 16353053.8,
+      "datetime_colombia": "2025-11-03 10:30:00"
+    },
+    {
+      "timestamp": 1762184700000,
+      "openInterest": 14913205.8,
+      "datetime_colombia": "2025-11-03 10:45:00"
+    },
+    {
+      "timestamp": 1762185600000,
+      "openInterest": 14900875.3,
+      "datetime_colombia": "2025-11-03 11:00:00"
+    },
+    {
+      "timestamp": 1762186500000,
+      "openInterest": 15114406.5,
+      "datetime_colombia": "2025-11-03 11:15:00"
+    },
+    {
+      "timestamp": 1762187400000,
+      "openInterest": 15183560.4,
+      "datetime_colombia": "2025-11-03 11:30:00"
+    },
+    {
+      "timestamp": 1762188300000,
+      "openInterest": 15211270.9,
+      "datetime_colombia": "2025-11-03 11:45:00"
+    },
+    {
+      "timestamp": 1762189200000,
+      "openInterest": 15217814.5,
+      "datetime_colombia": "2025-11-03 12:00:00"
+    },
+    {
+      "timestamp": 1762190100000,
+      "openInterest": 15203073.0,
+      "datetime_colombia": "2025-11-03 12:15:00"
+    },
+    {
+      "timestamp": 1762191000000,
+      "openInterest": 15183801.1,
+      "datetime_colombia": "2025-11-03 12:30:00"
+    },
+    {
+      "timestamp": 1762191900000,
+      "openInterest": 15145612.3,
+      "datetime_colombia": "2025-11-03 12:45:00"
+    },
+    {
+      "timestamp": 1762192800000,
+      "openInterest": 15089140.4,
+      "datetime_colombia": "2025-11-03 13:00:00"
+    },
+    {
+      "timestamp": 1762193700000,
+      "openInterest": 15038689.3,
+      "datetime_colombia": "2025-11-03 13:15:00"
+    },
+    {
+      "timestamp": 1762194600000,
+      "openInterest": 14980190.6,
+      "datetime_colombia": "2025-11-03 13:30:00"
+    },
+    {
+      "timestamp": 1762195500000,
+      "openInterest": 14981740.4,
+      "datetime_colombia": "2025-11-03 13:45:00"
+    },
+    {
+      "timestamp": 1762196400000,
+      "openInterest": 15005364.6,
+      "datetime_colombia": "2025-11-03 14:00:00"
+    },
+    {
+      "timestamp": 1762197300000,
+      "openInterest": 15003518.7,
+      "datetime_colombia": "2025-11-03 14:15:00"
+    },
+    {
+      "timestamp": 1762198200000,
+      "openInterest": 14742550.8,
+      "datetime_colombia": "2025-11-03 14:30:00"
+    },
+    {
+      "timestamp": 1762199100000,
+      "openInterest": 14658747.8,
+      "datetime_colombia": "2025-11-03 14:45:00"
+    },
+    {
+      "timestamp": 1762200000000,
+      "openInterest": 14575381.3,
+      "datetime_colombia": "2025-11-03 15:00:00"
+    },
+    {
+      "timestamp": 1762200900000,
+      "openInterest": 14554308.0,
+      "datetime_colombia": "2025-11-03 15:15:00"
+    },
+    {
+      "timestamp": 1762201800000,
+      "openInterest": 14513298.0,
+      "datetime_colombia": "2025-11-03 15:30:00"
+    },
+    {
+      "timestamp": 1762202700000,
+      "openInterest": 14611365.2,
+      "datetime_colombia": "2025-11-03 15:45:00"
+    },
+    {
+      "timestamp": 1762203600000,
+      "openInterest": 14676342.0,
+      "datetime_colombia": "2025-11-03 16:00:00"
+    },
+    {
+      "timestamp": 1762204500000,
+      "openInterest": 14678727.8,
+      "datetime_colombia": "2025-11-03 16:15:00"
+    },
+    {
+      "timestamp": 1762205400000,
+      "openInterest": 14501793.4,
+      "datetime_colombia": "2025-11-03 16:30:00"
+    },
+    {
+      "timestamp": 1762206300000,
+      "openInterest": 14489030.9,
+      "datetime_colombia": "2025-11-03 16:45:00"
+    },
+    {
+      "timestamp": 1762207200000,
+      "openInterest": 14510426.6,
+      "datetime_colombia": "2025-11-03 17:00:00"
+    },
+    {
+      "timestamp": 1762208100000,
+      "openInterest": 14511556.6,
+      "datetime_colombia": "2025-11-03 17:15:00"
+    },
+    {
+      "timestamp": 1762209000000,
+      "openInterest": 14650373.6,
+      "datetime_colombia": "2025-11-03 17:30:00"
+    },
+    {
+      "timestamp": 1762209900000,
+      "openInterest": 14613335.6,
+      "datetime_colombia": "2025-11-03 17:45:00"
+    },
+    {
+      "timestamp": 1762210800000,
+      "openInterest": 14602523.6,
+      "datetime_colombia": "2025-11-03 18:00:00"
+    },
+    {
+      "timestamp": 1762211700000,
+      "openInterest": 14629896.8,
+      "datetime_colombia": "2025-11-03 18:15:00"
+    },
+    {
+      "timestamp": 1762212600000,
+      "openInterest": 14615571.2,
+      "datetime_colombia": "2025-11-03 18:30:00"
+    },
+    {
+      "timestamp": 1762213500000,
+      "openInterest": 14641290.5,
+      "datetime_colombia": "2025-11-03 18:45:00"
+    },
+    {
+      "timestamp": 1762214400000,
+      "openInterest": 14622961.1,
+      "datetime_colombia": "2025-11-03 19:00:00"
+    },
+    {
+      "timestamp": 1762215300000,
+      "openInterest": 14669527.4,
+      "datetime_colombia": "2025-11-03 19:15:00"
+    },
+    {
+      "timestamp": 1762216200000,
+      "openInterest": 14688691.4,
+      "datetime_colombia": "2025-11-03 19:30:00"
+    },
+    {
+      "timestamp": 1762217100000,
+      "openInterest": 14674429.6,
+      "datetime_colombia": "2025-11-03 19:45:00"
     }
   ],
-  "timestamp": 1763421305.8043435
+  "timestamp": 1763477620.2515793
 }
