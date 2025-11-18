@@ -25,13 +25,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
 
-  // CRÍTICO: Mostrar TODO el historial hasta currentTime
-  // Esto permite que el usuario vea el contexto completo antes de la simulación
+  // CRÍTICO: Mostrar contexto histórico razonable antes de currentTime
+  // Esto permite que el usuario vea contexto sin cargar demasiadas velas
   // - TimeController.startTime = inicio del historial completo
   // - TimeController.simulationStartTime = donde empieza la simulación
   // - TimeController.currentTime = posición actual (inicia en simulationStartTime)
-  // - El chart muestra TODAS las velas desde startTime hasta currentTime
-  const VISIBLE_HISTORY = Infinity; // Mostrar TODAS las velas históricas para contexto
+  // - El chart muestra las últimas N velas antes de currentTime para contexto
+  const VISIBLE_HISTORY = 200; // Mostrar máximo 200 velas históricas para contexto
 
   /**
    * Ir a la última vela - resetea el paneo manual y reactiva auto-scroll
@@ -193,15 +193,15 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         // Si estamos al inicio de la simulación (no reproduciendo), mostrar contexto histórico
         // Mostrar las últimas velas del historial previo + la posición actual
         if (!isPlaying) {
-          // Mostrar el 70% del historial reciente antes de currentTime
-          const contextCandles = Math.floor(maxVisibleCandles * 0.7);
+          // Mostrar contexto limitado: máximo 50 velas antes de currentTime
+          const contextCandles = Math.min(50, candlesBeforeCurrent, Math.floor(maxVisibleCandles * 0.4));
           const startCandle = Math.max(0, candlesBeforeCurrent - contextCandles);
           const newOffsetX = -startCandle * totalCandleWidth;
           setOffsetX(newOffsetX);
           console.log('[BacktestingChart] Posicionando chart con contexto histórico:');
           console.log(`  - maxVisibleCandles: ${maxVisibleCandles}`);
           console.log(`  - candlesBeforeCurrent: ${candlesBeforeCurrent}`);
-          console.log(`  - Mostrando desde vela: ${startCandle}`);
+          console.log(`  - Mostrando desde vela: ${startCandle} (contexto: ${contextCandles} velas)`);
         } else {
           // Durante reproducción, hacer auto-scroll normal para seguir el precio actual
           const rightPadding = Math.floor(maxVisibleCandles * 0.3); // 30% del espacio a la derecha

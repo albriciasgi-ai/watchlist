@@ -247,11 +247,24 @@ const BacktestingApp = () => {
       setCurrentTime(controller.currentTime);
 
       // IMPORTANTE: Establecer precio inicial para currentTime
-      const visibleCandles = timeframeData.main.filter(c => c.timestamp <= controller.currentTime);
-      if (visibleCandles.length > 0) {
-        const lastCandleAtStart = visibleCandles[visibleCandles.length - 1];
-        setCurrentPrice(lastCandleAtStart.close);
-        console.log('[BacktestingApp] Precio inicial establecido:', lastCandleAtStart.close);
+      // Buscar la vela que corresponde exactamente a simulationStartTime
+      const startCandleIndex = timeframeData.main.findIndex(c => c.timestamp >= controller.currentTime);
+
+      if (startCandleIndex !== -1) {
+        // Usar la vela en simulationStartTime o la inmediatamente anterior
+        const candleIndex = startCandleIndex > 0 ? startCandleIndex - 1 : 0;
+        const startCandle = timeframeData.main[candleIndex];
+        setCurrentPrice(startCandle.close);
+        console.log('[BacktestingApp] ✅ Precio inicial establecido:');
+        console.log(`  - Precio: ${startCandle.close}`);
+        console.log(`  - Fecha de la vela: ${new Date(startCandle.timestamp).toISOString()}`);
+        console.log(`  - SimulationStartTime: ${new Date(controller.currentTime).toISOString()}`);
+        console.log(`  - Índice de vela: ${candleIndex} de ${timeframeData.main.length}`);
+      } else {
+        // Fallback: usar la última vela disponible
+        const lastCandle = timeframeData.main[timeframeData.main.length - 1];
+        setCurrentPrice(lastCandle.close);
+        console.log('[BacktestingApp] ⚠️ Precio inicial (fallback - última vela):', lastCandle.close);
       }
 
       handleTimeUpdate(controller.currentTime);
