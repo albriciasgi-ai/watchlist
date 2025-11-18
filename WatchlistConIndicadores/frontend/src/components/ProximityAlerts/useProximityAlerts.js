@@ -28,10 +28,10 @@ const useProximityAlerts = () => {
     loadTimeframeFromStorage();
   }, []);
 
-  // Iniciar polling cuando hay alertas habilitadas
+  // Iniciar polling cuando hay alertas habilitadas o cambia el timeframe
   useEffect(() => {
     const enabledAlerts = alerts.filter((a) => a.enabled);
-    console.log('[useProximityAlerts] Alerts changed:', alerts.length, 'alerts total');
+    console.log('[useProximityAlerts] Alerts or timeframe changed:', alerts.length, 'alerts total, timeframe:', timeframe);
     console.log('[useProximityAlerts] Enabled alerts:', enabledAlerts.length);
 
     if (enabledAlerts.length > 0) {
@@ -43,7 +43,7 @@ const useProximityAlerts = () => {
     }
 
     return () => stopPolling();
-  }, [alerts]);
+  }, [alerts, timeframe, startPolling]);
 
   /**
    * Cargar alertas desde localStorage
@@ -81,6 +81,7 @@ const useProximityAlerts = () => {
    * Cambiar timeframe y guardarlo
    */
   const changeTimeframe = useCallback((newTimeframe) => {
+    console.log('[useProximityAlerts] Changing timeframe from', timeframe, 'to', newTimeframe);
     setTimeframe(newTimeframe);
     localStorage.setItem(TIMEFRAME_STORAGE_KEY, newTimeframe);
 
@@ -89,7 +90,7 @@ const useProximityAlerts = () => {
     if (enabledAlerts.length > 0) {
       fetchAllAlertStates(enabledAlerts);
     }
-  }, [alerts]);
+  }, [alerts, timeframe, fetchAllAlertStates]);
 
   /**
    * Guardar alertas en localStorage
@@ -162,8 +163,9 @@ const useProximityAlerts = () => {
   /**
    * Fetch de estados para todas las alertas habilitadas
    */
-  const fetchAllAlertStates = async (enabledAlerts) => {
+  const fetchAllAlertStates = useCallback(async (enabledAlerts) => {
     console.log('[useProximityAlerts] fetchAllAlertStates called with', enabledAlerts?.length, 'alerts');
+    console.log('[useProximityAlerts] Using timeframe:', timeframe);
     if (!enabledAlerts || enabledAlerts.length === 0) {
       console.log('[useProximityAlerts] No enabled alerts, skipping fetch');
       return;
@@ -232,7 +234,7 @@ const useProximityAlerts = () => {
     } finally {
       setIsPolling(false);
     }
-  };
+  }, [timeframe]);
 
   /**
    * Iniciar polling automático
@@ -263,7 +265,7 @@ const useProximityAlerts = () => {
       }
     }, POLL_INTERVAL);
     console.log('[useProximityAlerts] Interval set with ID:', pollIntervalRef.current);
-  }, [alerts]);
+  }, [alerts, fetchAllAlertStates]);
 
   /**
    * Detener polling
@@ -283,7 +285,7 @@ const useProximityAlerts = () => {
     if (enabledAlerts.length > 0) {
       fetchAllAlertStates(enabledAlerts);
     }
-  }, [alerts]);
+  }, [alerts, fetchAllAlertStates]);
 
   return {
     alerts,
