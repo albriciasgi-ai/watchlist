@@ -143,10 +143,13 @@ class TimeController {
       return;
     }
 
-    // Si estamos al final, NO hacer nada (no resetear al inicio automáticamente)
+    // Si estamos al final, resetear automáticamente al inicio para poder reproducir
     if (this.currentTime >= this.endTime) {
-      console.log('[TimeController] Ya estamos al final del historial. No se puede reproducir más.');
-      return; // No permitir reproducir si ya estamos al final
+      console.log('[TimeController] Estamos al final, reseteando al inicio para reproducir...');
+      this.currentTime = this.startTime;
+      if (this.onTimeUpdate) {
+        this.onTimeUpdate(this.currentTime);
+      }
     }
 
     this.isPlaying = true;
@@ -217,9 +220,20 @@ class TimeController {
   }
 
   /**
-   * Detiene y resetea al inicio
+   * Detiene la reproducción (igual que pause, NO resetea al inicio)
+   * Para resetear manualmente, usar jumpTo(startTime) o reset()
    */
   stop() {
+    this.pause();
+    // NO resetear currentTime - mantener posición actual
+    // Si el usuario quiere volver al inicio, puede usar el método reset()
+    console.log('[TimeController] ⏹️ Stop (mantiene posición actual)');
+  }
+
+  /**
+   * Resetea al inicio del historial
+   */
+  reset() {
     this.pause();
     this.currentTime = this.startTime;
 
@@ -228,7 +242,7 @@ class TimeController {
     }
 
     this.broadcastState();
-    console.log('[TimeController] ⏹️ Stop');
+    console.log('[TimeController] 🔄 Reset al inicio');
   }
 
   /**

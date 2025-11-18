@@ -209,12 +209,23 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
 
     // Determinar qué velas están realmente visibles en pantalla basándonos en offsetX
-    const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
-    const maxVisibleCandlesCalc = Math.floor(chartWidth / totalCandleWidthCalc);
-    const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandlesCalc + 5);
+    // Protección: si totalCandleWidthCalc es muy pequeño, usar todas las velas
+    let candlesForScale;
+    if (totalCandleWidthCalc < 1) {
+      // Si el zoom es extremo, usar todas las velas disponibles
+      candlesForScale = visibleCandles.main;
+    } else {
+      const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
+      const maxVisibleCandlesCalc = Math.ceil(chartWidth / totalCandleWidthCalc);
+      const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandlesCalc + 5);
 
-    // Usar solo las velas que están en pantalla
-    const candlesForScale = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
+      // Validar índices
+      if (firstVisibleIndex >= visibleCandles.main.length || lastVisibleIndex <= firstVisibleIndex) {
+        candlesForScale = visibleCandles.main; // Fallback: usar todas
+      } else {
+        candlesForScale = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
+      }
+    }
 
     const allPrices = [];
     candlesForScale.forEach(c => {
@@ -712,14 +723,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         // Ctrl + wheel: zoom horizontal (más suave)
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso (más suave)
         setScaleX(prev => {
-          const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor));
+          const newScale = Math.max(0.3, Math.min(10, prev * zoomFactor)); // Límite mínimo 0.3 para evitar problemas
           setManualPan(true); // El zoom también desactiva auto-scroll
           return newScale;
         });
       } else {
         // Wheel normal: zoom vertical (precio) - también más suave
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
-        setScaleY(prev => Math.max(0.1, Math.min(10, prev * zoomFactor)));
+        setScaleY(prev => Math.max(0.3, Math.min(10, prev * zoomFactor))); // Límite mínimo 0.3
       }
     };
 

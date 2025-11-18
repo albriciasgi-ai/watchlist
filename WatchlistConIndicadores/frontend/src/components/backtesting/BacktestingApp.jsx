@@ -287,9 +287,8 @@ const BacktestingApp = () => {
     if (timeControllerRef.current) {
       timeControllerRef.current.stop();
       setIsPlaying(false);
-      setCurrentTime(timeControllerRef.current.currentTime);
-      // Actualizar el precio actual cuando se detiene
-      handleTimeUpdate(timeControllerRef.current.currentTime);
+      // Stop ya no resetea el tiempo, solo pausa
+      // El currentTime se mantiene en la posición actual
     }
   };
 
