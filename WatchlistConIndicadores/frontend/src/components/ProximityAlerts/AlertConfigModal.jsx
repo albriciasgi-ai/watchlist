@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import "./AlertConfigModal.css";
 
-const API_BASE_URL = "http://localhost:8000";
-
 /**
  * AlertConfigModal - Modal para configurar alertas de proximidad
  *
@@ -13,7 +11,7 @@ const API_BASE_URL = "http://localhost:8000";
  * - Seleccionar precio manual o desde S/R / Range Detector
  * - Configurar tolerancia y umbral de volumen
  */
-const AlertConfigModal = ({ alert, symbols, onSave, onDelete, onClose }) => {
+const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDelete, onClose }) => {
   const isEditing = Boolean(alert?.id && !alert.id.includes("disabled"));
 
   // Estado del formulario
@@ -42,36 +40,68 @@ const AlertConfigModal = ({ alert, symbols, onSave, onDelete, onClose }) => {
     if (formData.referenceSource !== "manual" && formData.symbol) {
       loadAvailableLevels();
     }
-  }, [formData.symbol, formData.referenceSource]);
+  }, [formData.symbol, formData.referenceSource, indicatorManagers]);
 
   const loadAvailableLevels = async () => {
     setLoadingLevels(true);
     try {
-      if (formData.referenceSource === "support_resistance") {
-        // Cargar niveles de S/R
-        const response = await fetch(
-          `${API_BASE_URL}/api/support-resistance/${formData.symbol}?interval=15&days=30`
-        );
-        const data = await response.json();
+      const manager = indicatorManagers[formData.symbol]?.manager;
 
-        if (data.success) {
-          setAvailableLevels({
-            supports: data.data.supports || [],
-            resistances: data.data.resistances || [],
-            ranges: [],
-          });
-        }
-      } else if (formData.referenceSource === "range_detector") {
-        // TODO: Implementar carga de niveles de Range Detector
-        // Por ahora, dejar vacío
+      if (!manager || !manager.rangeDetector || !manager.rangeDetector.enabled) {
+        console.warn('[AlertConfigModal] No se encontró Range Detector activo para', formData.symbol);
         setAvailableLevels({
           supports: [],
           resistances: [],
           ranges: [],
         });
+        setLoadingLevels(false);
+        return;
+      }
+
+      const detector = manager.rangeDetector;
+      const ranges = detector.detectedRanges || [];
+
+      if (formData.referenceSource === "support_resistance" || formData.referenceSource === "range_detector") {
+        // Convertir rangos a niveles de soporte/resistencia
+        const supports = ranges.map((range, idx) => ({
+          price: range.low,
+          strength: 2,
+          id: `range-low-${idx}`,
+          rangeId: range.id,
+          timestamp: range.startTimestamp
+        }));
+
+        const resistances = ranges.map((range, idx) => ({
+          price: range.high,
+          strength: 2,
+          id: `range-high-${idx}`,
+          rangeId: range.id,
+          timestamp: range.startTimestamp
+        }));
+
+        // Ordenar por precio (de mayor a menor para mostrar primero los más cercanos al precio actual)
+        supports.sort((a, b) => b.price - a.price);
+        resistances.sort((a, b) => b.price - a.price);
+
+        setAvailableLevels({
+          supports,
+          resistances,
+          ranges,
+        });
+
+        console.log('[AlertConfigModal] Niveles cargados:', {
+          supports: supports.length,
+          resistances: resistances.length,
+          ranges: ranges.length
+        });
       }
     } catch (error) {
       console.error("Error loading levels:", error);
+      setAvailableLevels({
+        supports: [],
+        resistances: [],
+        ranges: [],
+      });
     } finally {
       setLoadingLevels(false);
     }
@@ -175,9 +205,12 @@ const AlertConfigModal = ({ alert, symbols, onSave, onDelete, onClose }) => {
               onChange={handleInputChange}
             >
               <option value="manual">Manual</option>
-              <option value="support_resistance">Support/Resistance</option>
-              <option value="range_detector">Range Detector</option>
+              <option value="support_resistance">Range Detector (Límites)</option>
+              <option value="range_detector">Range Detector (Límites)</option>
             </select>
+            <small style={{ color: '#888', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+              Nota: Range Detector debe estar activo en el símbolo seleccionado
+            </small>
           </div>
 
           {/* Selector de niveles si no es manual */}

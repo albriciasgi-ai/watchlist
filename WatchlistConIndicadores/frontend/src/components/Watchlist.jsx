@@ -244,7 +244,7 @@ const Watchlist = () => {
       </div>
 
       {/* 🎯 NUEVO: Proximity Alert Dashboard */}
-      <ProximityAlertDashboard symbols={symbols} />
+      <ProximityAlertDashboard symbols={symbols} indicatorManagers={indicatorManagers} />
 
       <div className="grid-container">
         {symbols.map((sym) => (
