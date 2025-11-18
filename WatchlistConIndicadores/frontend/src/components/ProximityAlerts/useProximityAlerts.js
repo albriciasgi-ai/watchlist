@@ -28,23 +28,6 @@ const useProximityAlerts = () => {
     loadTimeframeFromStorage();
   }, []);
 
-  // Iniciar polling cuando hay alertas habilitadas o cambia el timeframe
-  useEffect(() => {
-    const enabledAlerts = alerts.filter((a) => a.enabled);
-    console.log('[useProximityAlerts] Alerts or timeframe changed:', alerts.length, 'alerts total, timeframe:', timeframe);
-    console.log('[useProximityAlerts] Enabled alerts:', enabledAlerts.length);
-
-    if (enabledAlerts.length > 0) {
-      console.log('[useProximityAlerts] Starting polling...');
-      startPolling();
-    } else {
-      console.log('[useProximityAlerts] No enabled alerts, stopping polling');
-      stopPolling();
-    }
-
-    return () => stopPolling();
-  }, [alerts, timeframe, startPolling]);
-
   /**
    * Cargar alertas desde localStorage
    */
@@ -286,6 +269,23 @@ const useProximityAlerts = () => {
       fetchAllAlertStates(enabledAlerts);
     }
   }, [alerts, fetchAllAlertStates]);
+
+  // Iniciar polling cuando hay alertas habilitadas o cambia el timeframe
+  useEffect(() => {
+    const enabledAlerts = alerts.filter((a) => a.enabled);
+    console.log('[useProximityAlerts] Alerts or timeframe changed:', alerts.length, 'alerts total, timeframe:', timeframe);
+    console.log('[useProximityAlerts] Enabled alerts:', enabledAlerts.length);
+
+    if (enabledAlerts.length > 0) {
+      console.log('[useProximityAlerts] Starting polling...');
+      startPolling();
+    } else {
+      console.log('[useProximityAlerts] No enabled alerts, stopping polling');
+      stopPolling();
+    }
+
+    return () => stopPolling();
+  }, [alerts, timeframe, startPolling]);
 
   return {
     alerts,
