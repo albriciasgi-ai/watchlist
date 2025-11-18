@@ -34,11 +34,15 @@ const ProximityAlertDashboard = ({ symbols }) => {
   };
 
   const handleSaveAlert = (alertData) => {
-    if (editingAlert) {
+    console.log('[Dashboard] handleSaveAlert called with:', alertData);
+    console.log('[Dashboard] editingAlert:', editingAlert);
+    if (editingAlert && !editingAlert.id.includes('disabled')) {
       // Actualizar alerta existente
+      console.log('[Dashboard] Updating existing alert');
       updateAlert(editingAlert.id, alertData);
     } else {
       // Crear nueva alerta
+      console.log('[Dashboard] Creating new alert');
       addAlert(alertData);
     }
     setShowConfigModal(false);

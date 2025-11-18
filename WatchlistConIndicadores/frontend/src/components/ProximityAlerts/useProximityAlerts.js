@@ -61,7 +61,11 @@ const useProximityAlerts = () => {
    */
   const saveAlertsToStorage = useCallback((alertsToSave) => {
     try {
+      console.log('[useProximityAlerts] Saving to localStorage:', alertsToSave);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(alertsToSave));
+      console.log('[useProximityAlerts] Saved successfully. Verifying...');
+      const verified = localStorage.getItem(STORAGE_KEY);
+      console.log('[useProximityAlerts] Verified from localStorage:', verified);
     } catch (error) {
       console.error("Error saving alerts to storage:", error);
     }
@@ -72,8 +76,10 @@ const useProximityAlerts = () => {
    */
   const addAlert = useCallback(
     (alertData) => {
+      console.log('[useProximityAlerts] Adding alert:', alertData);
       setAlerts((prev) => {
         const newAlerts = [...prev, alertData];
+        console.log('[useProximityAlerts] New alerts array:', newAlerts);
         saveAlertsToStorage(newAlerts);
         return newAlerts;
       });
