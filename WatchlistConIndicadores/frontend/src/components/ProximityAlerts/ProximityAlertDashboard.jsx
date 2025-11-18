@@ -36,7 +36,11 @@ const ProximityAlertDashboard = ({ symbols }) => {
   const handleSaveAlert = (alertData) => {
     console.log('[Dashboard] handleSaveAlert called with:', alertData);
     console.log('[Dashboard] editingAlert:', editingAlert);
-    if (editingAlert && !editingAlert.id.includes('disabled')) {
+
+    // Si editingAlert tiene un id válido (no undefined y no "disabled"), es una edición
+    const isEditing = editingAlert?.id && !editingAlert.id.includes('disabled');
+
+    if (isEditing) {
       // Actualizar alerta existente
       console.log('[Dashboard] Updating existing alert');
       updateAlert(editingAlert.id, alertData);
