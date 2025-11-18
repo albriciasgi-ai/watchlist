@@ -131,6 +131,18 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     // Esto garantiza que se vea todo el contexto histórico antes de la fecha de inicio
     const candles = timeframeData.main.slice(startIndex, lastVisibleIndex);
 
+    // DEBUG: Mostrar información sobre las velas visibles
+    console.log('[BacktestingChart] Velas visibles:');
+    console.log(`  - Total de velas en datos: ${timeframeData.main.length}`);
+    console.log(`  - currentTime: ${new Date(currentTime).toISOString()}`);
+    console.log(`  - lastVisibleIndex: ${lastVisibleIndex}`);
+    console.log(`  - startIndex: ${startIndex}`);
+    console.log(`  - Velas a mostrar: ${candles.length}`);
+    if (candles.length > 0) {
+      console.log(`  - Primera vela: ${new Date(candles[0].timestamp).toISOString()}`);
+      console.log(`  - Última vela: ${new Date(candles[candles.length - 1].timestamp).toISOString()}`);
+    }
+
     // Obtener subdivisiones de la última vela en progreso
     const lastCandleTime = candles.length > 0 ? candles[candles.length - 1].timestamp : 0;
 
@@ -164,7 +176,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       });
     }
 
-    // Auto-scroll: mantener las velas más recientes visibles
+    // Auto-scroll: posicionar el chart adecuadamente
     // Durante la reproducción (isPlaying), siempre hacer auto-scroll
     // Si está pausado, solo hacer auto-scroll si el usuario no ha hecho paneo manual
     const shouldAutoScroll = chartDimensions.width > 0 && candles.length > 0 && (isPlaying || !manualPan);
@@ -174,10 +186,28 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
 
       if (candles.length > maxVisibleCandles) {
-        // Desplazar para que las últimas velas estén más centradas, dejando ~30% de espacio a la derecha
-        const rightPadding = Math.floor(maxVisibleCandles * 0.3); // 30% del espacio visible
-        const newOffsetX = Math.min(0, -(candles.length - maxVisibleCandles + rightPadding) * totalCandleWidth);
-        setOffsetX(newOffsetX);
+        // Calcular cuántas velas hay antes de currentTime
+        // Esto nos permite posicionar el chart para mostrar contexto
+        const candlesBeforeCurrent = candles.filter(c => c.timestamp < currentTime).length;
+
+        // Si estamos al inicio de la simulación (no reproduciendo), mostrar contexto histórico
+        // Mostrar las últimas velas del historial previo + la posición actual
+        if (!isPlaying) {
+          // Mostrar el 70% del historial reciente antes de currentTime
+          const contextCandles = Math.floor(maxVisibleCandles * 0.7);
+          const startCandle = Math.max(0, candlesBeforeCurrent - contextCandles);
+          const newOffsetX = -startCandle * totalCandleWidth;
+          setOffsetX(newOffsetX);
+          console.log('[BacktestingChart] Posicionando chart con contexto histórico:');
+          console.log(`  - maxVisibleCandles: ${maxVisibleCandles}`);
+          console.log(`  - candlesBeforeCurrent: ${candlesBeforeCurrent}`);
+          console.log(`  - Mostrando desde vela: ${startCandle}`);
+        } else {
+          // Durante reproducción, hacer auto-scroll normal para seguir el precio actual
+          const rightPadding = Math.floor(maxVisibleCandles * 0.3); // 30% del espacio a la derecha
+          const newOffsetX = Math.min(0, -(candles.length - maxVisibleCandles + rightPadding) * totalCandleWidth);
+          setOffsetX(newOffsetX);
+        }
       } else {
         // Si hay pocas velas, centrarlas
         const centerOffset = (chartDimensions.width - (candles.length * totalCandleWidth)) / 2;

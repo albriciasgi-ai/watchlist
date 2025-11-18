@@ -179,22 +179,42 @@ const BacktestingApp = () => {
       // Si el usuario especificó una fecha de inicio, usar esa como simulationStartTime
       // De lo contrario, usar el primer dato del historial
       let simulationStartTime;
-      if (startDate) {
-        const startTimestamp = new Date(startDate).getTime();
-        // Verificar que la fecha de inicio esté dentro del rango de datos
-        if (startTimestamp < firstCandle.timestamp) {
-          console.warn('[BacktestingApp] Fecha de inicio anterior al historial, usando primer dato');
-          simulationStartTime = firstCandle.timestamp;
-        } else if (startTimestamp > lastCandle.timestamp) {
-          console.warn('[BacktestingApp] Fecha de inicio posterior al historial, usando primer dato');
+
+      console.log('[BacktestingApp] DEBUG - startDate:', startDate);
+      console.log('[BacktestingApp] DEBUG - firstCandle.timestamp:', firstCandle.timestamp, new Date(firstCandle.timestamp).toISOString());
+      console.log('[BacktestingApp] DEBUG - lastCandle.timestamp:', lastCandle.timestamp, new Date(lastCandle.timestamp).toISOString());
+
+      if (startDate && startDate.trim() !== '') {
+        // Crear fecha en hora local del navegador (medianoche)
+        const startTimestamp = new Date(startDate + 'T00:00:00').getTime();
+
+        console.log('[BacktestingApp] DEBUG - startDate input:', startDate);
+        console.log('[BacktestingApp] DEBUG - startTimestamp calculado:', startTimestamp, new Date(startTimestamp).toISOString());
+
+        // Buscar la primera vela que sea >= a la fecha seleccionada
+        const startCandleIndex = timeframeData.main.findIndex(c => c.timestamp >= startTimestamp);
+
+        if (startCandleIndex === -1) {
+          // No hay velas después de la fecha seleccionada - usar última vela
+          console.warn('[BacktestingApp] Fecha de inicio posterior al historial, usando última vela');
+          simulationStartTime = lastCandle.timestamp;
+        } else if (startCandleIndex === 0 && timeframeData.main[0].timestamp > startTimestamp + (30 * 24 * 60 * 60 * 1000)) {
+          // La primera vela es mucho más tarde que la fecha seleccionada (>30 días)
+          console.warn('[BacktestingApp] Fecha de inicio muy anterior al historial, usando primer dato');
           simulationStartTime = firstCandle.timestamp;
         } else {
-          simulationStartTime = startTimestamp;
-          console.log('[BacktestingApp] Usando fecha de inicio seleccionada:', new Date(simulationStartTime).toISOString());
+          // Usar la vela encontrada
+          simulationStartTime = timeframeData.main[startCandleIndex].timestamp;
+          console.log('[BacktestingApp] ✅ Usando fecha de inicio seleccionada:');
+          console.log(`  - Fecha ingresada: ${startDate}`);
+          console.log(`  - Timestamp: ${simulationStartTime}`);
+          console.log(`  - Fecha real: ${new Date(simulationStartTime).toISOString()}`);
+          console.log(`  - Índice de vela: ${startCandleIndex} de ${timeframeData.main.length}`);
         }
       } else {
+        // Sin fecha de inicio - usar primer dato del historial
         simulationStartTime = firstCandle.timestamp;
-        console.log('[BacktestingApp] Sin fecha de inicio especificada, usando primer dato');
+        console.log('[BacktestingApp] Sin fecha de inicio especificada, usando primer dato:', new Date(simulationStartTime).toISOString());
       }
 
       // Crear TimeController
