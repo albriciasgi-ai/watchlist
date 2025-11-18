@@ -801,7 +801,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // Zoom horizontal normal (zoom in/out de velas)
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
-    const newZoom = Math.max(0.5, Math.min(5, oldZoom * zoomFactor));
+    // Permitir más compresión (min 0.1) para ver más velas y más contexto
+    const newZoom = Math.max(0.1, Math.min(5, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
 
     const canvas = canvasRef.current;
