@@ -6,7 +6,7 @@
       {
         "price": 2.5713,
         "type": "resistance",
-        "strength": 5.48,
+        "strength": 5.47,
         "touches": 2,
         "avgVolume": 1.8648231139373066,
         "firstTouch": 1762772400000,
@@ -73,12 +73,12 @@
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 2.2053,
+    "currentPrice": 2.2018,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.6586032530085225
+      "currentZScore": -0.8462042951860441
     }
   },
   "config": {
@@ -91,5 +91,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763510958.2590442
+  "timestamp": 1763514311.8590333
 }
