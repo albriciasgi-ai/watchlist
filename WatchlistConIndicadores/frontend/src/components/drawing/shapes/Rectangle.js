@@ -69,7 +69,7 @@ class Rectangle {
     this.style = styles[this.label] || styles['Zone'];
   }
 
-  hitTest(x, y, scaleConverter, tolerance = 0) {
+  hitTest(x, y, scaleConverter, tolerance = 10) {
     const x1 = scaleConverter.timeToX(this.timeStart);
     const x2 = scaleConverter.timeToX(this.timeEnd);
     const y1 = scaleConverter.priceToY(this.priceHigh);
@@ -77,10 +77,10 @@ class Rectangle {
 
     if (!x1 || !x2) return false;
 
-    const minX = Math.min(x1, x2);
-    const maxX = Math.max(x1, x2);
-    const minY = Math.min(y1, y2);
-    const maxY = Math.max(y1, y2);
+    const minX = Math.min(x1, x2) - tolerance;
+    const maxX = Math.max(x1, x2) + tolerance;
+    const minY = Math.min(y1, y2) - tolerance;
+    const maxY = Math.max(y1, y2) + tolerance;
 
     return x >= minX && x <= maxX && y >= minY && y <= maxY;
   }

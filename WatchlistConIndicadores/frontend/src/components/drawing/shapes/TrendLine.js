@@ -37,7 +37,7 @@ class TrendLine {
   }
 
   // Hit testing - detectar click cerca de la línea
-  hitTest(x, y, scaleConverter, tolerance = 8) {
+  hitTest(x, y, scaleConverter, tolerance = 15) {
     const x1 = scaleConverter.timeToX(this.time1);
     const y1 = scaleConverter.priceToY(this.price1);
     const x2 = scaleConverter.timeToX(this.time2);
