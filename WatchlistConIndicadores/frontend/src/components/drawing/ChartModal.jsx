@@ -8,7 +8,7 @@ import DrawingToolbar from "./DrawingToolbar";
 import MeasurementTool from "./MeasurementTool";
 import "./ChartModal.css";
 
-const ChartModal = ({ symbol, interval, days, onClose }) => {
+const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onClose }) => {
   const canvasRef = useRef(null);
   const drawingManagerRef = useRef(null);
   const measurementToolRef = useRef(null);
@@ -172,8 +172,11 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
 
       // Cambiar cursor basado en el estado
       if (selectedTool === 'select') {
-        if (drawingManagerRef.current.hoveredShape) {
-          canvas.style.cursor = 'move';
+        const selectedShape = drawingManagerRef.current.selectedShape;
+        if (selectedShape && (selectedShape.isDragging || selectedShape.isResizing)) {
+          canvas.style.cursor = 'grabbing';
+        } else if (drawingManagerRef.current.hoveredShape) {
+          canvas.style.cursor = 'grab';
         } else {
           canvas.style.cursor = 'default';
         }
@@ -228,6 +231,12 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
 
   const handleWheel = useCallback((e) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    // No hacer zoom si estamos en medio de una medición
+    if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
+      return;
+    }
 
     if (e.ctrlKey) {
       // Vertical zoom
@@ -241,7 +250,8 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
       viewStateRef.current.zoom = Math.max(0.5, Math.min(5, viewStateRef.current.zoom));
     }
 
-    setNeedsRedraw(true);
+    // Forzar redibujado inmediato
+    drawChart();
   }, []);
 
   const handleKeyDown = useCallback((e) => {
@@ -250,6 +260,8 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
       // Limpiar medición si existe
       if (measurementToolRef.current && measurementToolRef.current.startPoint) {
         measurementToolRef.current.clear();
+        // Asegurarse de limpiar el estado de drag también
+        dragStateRef.current.isDragging = false;
         setNeedsRedraw(true);
         return;
       }
@@ -439,6 +451,25 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
       ctx.moveTo(marginLeft, y);
       ctx.lineTo(marginLeft + chartWidth, y);
       ctx.stroke();
+    }
+
+    // Renderizar indicadores (si están disponibles)
+    if (indicatorManagerRef && indicatorManagerRef.current) {
+      const overlayBounds = {
+        x: marginLeft,
+        y: marginTop,
+        width: chartWidth,
+        height: chartHeight
+      };
+      const priceContext = {
+        minPrice: scaleConverter.minPrice,
+        maxPrice: scaleConverter.maxPrice,
+        priceRange: scaleConverter.priceRange,
+        verticalZoom: scaleConverter.verticalZoom,
+        verticalOffset: scaleConverter.verticalOffset,
+        yScale: scaleConverter.priceRange > 0 ? chartHeight / scaleConverter.priceRange : 1
+      };
+      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, candles, priceContext);
     }
 
     // Renderizar DIBUJOS (debajo de las velas según tu preferencia)

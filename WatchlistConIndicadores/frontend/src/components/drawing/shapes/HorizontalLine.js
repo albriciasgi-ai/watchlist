@@ -20,7 +20,7 @@ class HorizontalLine {
     this.dragStartPrice = 0;
   }
 
-  hitTest(x, y, scaleConverter, tolerance = 8) {
+  hitTest(x, y, scaleConverter, tolerance = 15) {
     const yPos = scaleConverter.priceToY(this.price);
     return Math.abs(y - yPos) <= tolerance;
   }

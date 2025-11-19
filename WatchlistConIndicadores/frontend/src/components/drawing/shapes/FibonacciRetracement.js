@@ -41,7 +41,7 @@ class FibonacciRetracement {
     this.time2 = time;
   }
 
-  hitTest(x, y, scaleConverter, tolerance = 8) {
+  hitTest(x, y, scaleConverter, tolerance = 15) {
     const x1 = scaleConverter.timeToX(this.time1);
     const x2 = scaleConverter.timeToX(this.time2);
 

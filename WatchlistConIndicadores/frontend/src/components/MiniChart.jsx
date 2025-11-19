@@ -1468,6 +1468,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           symbol={symbol}
           interval={interval}
           days={days}
+          indicatorManagerRef={indicatorManagerRef}
+          indicatorStates={indicatorStates}
           onClose={() => {
             setShowChartModal(false);
             loadDrawings(); // Reload drawings to show new ones
