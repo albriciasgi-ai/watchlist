@@ -8,6 +8,10 @@ import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
 import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
 import ChartModal from "./drawing/ChartModal";
+import TrendLine from "./drawing/shapes/TrendLine";
+import HorizontalLine from "./drawing/shapes/HorizontalLine";
+import Rectangle from "./drawing/shapes/Rectangle";
+import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
@@ -124,7 +128,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const animationFrameRef = useRef(null);
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
-  
+  const drawingsRef = useRef([]);
+
   // ✅ NUEVO: Referencia para chequeo de gaps
   const gapCheckIntervalRef = useRef(null);
   
@@ -144,6 +149,42 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       "60": "60", "120": "120", "240": "240", "D": "D", "W": "W"
     };
     return map[interval] || "15";
+  };
+
+  // ==================== DRAWINGS ====================
+
+  const deserializeShape = (data) => {
+    switch (data.type) {
+      case 'trendline':
+        return TrendLine.deserialize(data);
+      case 'horizontal':
+        return HorizontalLine.deserialize(data);
+      case 'rectangle':
+        return Rectangle.deserialize(data);
+      case 'fibonacci':
+        return FibonacciRetracement.deserialize(data);
+      default:
+        console.warn('Unknown shape type:', data.type);
+        return null;
+    }
+  };
+
+  const loadDrawings = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      const data = await response.json();
+
+      if (data.shapes && Array.isArray(data.shapes)) {
+        drawingsRef.current = data.shapes
+          .map(shapeData => deserializeShape(shapeData))
+          .filter(shape => shape !== null);
+      } else {
+        drawingsRef.current = [];
+      }
+    } catch (error) {
+      console.error(`Error loading drawings for ${symbol}:`, error);
+      drawingsRef.current = [];
+    }
   };
 
   // ==================== DRAW CHART ====================
@@ -290,6 +331,60 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         yScale
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
+    }
+
+    // Render saved drawings (readonly, below candles)
+    if (drawingsRef.current.length > 0) {
+      const scaleConverter = {
+        candles: displayCandles,
+        visibleCandles,
+        startIdx,
+        endIdx,
+        minPrice,
+        maxPrice,
+        priceRange,
+        verticalZoom,
+        verticalOffset,
+        chartWidth,
+        chartHeight: priceChartHeight,
+        marginLeft,
+        marginTop,
+        interval,
+
+        priceToY: (price) => {
+          return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+        },
+
+        yToPrice: (y) => {
+          const relativeY = y - marginTop - verticalOffset;
+          return minPrice + (priceChartHeight - relativeY) / yScale;
+        },
+
+        timeToX: (timestamp) => {
+          const candleIndex = displayCandles.findIndex(c => c.timestamp === timestamp);
+          if (candleIndex === -1) return null;
+          const relativeIndex = candleIndex - startIdx;
+          if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
+          return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+        },
+
+        xToTime: (x) => {
+          const relativeX = x - marginLeft;
+          const candleIndex = startIdx + Math.floor(relativeX / barWidth);
+          return displayCandles[candleIndex]?.timestamp || null;
+        }
+      };
+
+      // Render each drawing with reduced opacity for readonly
+      ctx.globalAlpha = 0.5;
+      drawingsRef.current.forEach(shape => {
+        try {
+          shape.render(ctx, scaleConverter, false, false, false);
+        } catch (error) {
+          console.error('Error rendering shape:', error);
+        }
+      });
+      ctx.globalAlpha = 1.0;
     }
 
     ctx.lineWidth = 1;
@@ -980,8 +1075,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     };
     
     loadHistoricalData();
+    loadDrawings(); // Load saved drawings for this symbol
     initIndicators();
-    
+
     const bybitInterval = getBybitInterval(interval);
     wsManager.connect(bybitInterval);
     wsManager.subscribe(symbol, handleWebSocketMessage);
@@ -1268,7 +1364,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           symbol={symbol}
           interval={interval}
           days={days}
-          onClose={() => setShowChartModal(false)}
+          onClose={() => {
+            setShowChartModal(false);
+            loadDrawings(); // Reload drawings to show new ones
+            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          }}
         />
       )}
     </>

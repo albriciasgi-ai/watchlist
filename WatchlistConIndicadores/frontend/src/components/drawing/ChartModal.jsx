@@ -340,7 +340,7 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
         const baseYScale = priceRange > 0 ? chartHeight / priceRange : 1;
         const yScale = baseYScale * viewStateRef.current.verticalZoom;
         const relativeY = y - marginTop - viewStateRef.current.verticalOffset;
-        return maxPrice - (relativeY / yScale);
+        return minPrice + (chartHeight - relativeY) / yScale;
       },
 
       timeToX: (timestamp) => {
