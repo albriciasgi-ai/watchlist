@@ -80,7 +80,7 @@ class DrawingToolManager {
       const line = new HorizontalLine(price, time);
       this.addShape(line);
       this.saveToHistory();
-      this.currentTool = 'select';
+      // NO cambiar tool, permitir dibujar múltiples líneas
       return true;
     }
 

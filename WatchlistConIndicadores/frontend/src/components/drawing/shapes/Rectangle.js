@@ -6,6 +6,12 @@ class Rectangle {
     this.type = 'rectangle';
     this.id = `rectangle_${Date.now()}_${Math.random()}`;
 
+    // Guardar precios y tiempos iniciales
+    this.price1 = price1;
+    this.time1 = time1;
+    this.price2 = price2;
+    this.time2 = time2;
+
     this.priceHigh = Math.max(price1, price2);
     this.priceLow = Math.min(price1, price2);
     this.timeStart = Math.min(time1, time2);
@@ -33,10 +39,12 @@ class Rectangle {
   }
 
   setEnd(price, time) {
-    this.priceHigh = Math.max(this.priceLow, price);
-    this.priceLow = Math.min(this.priceLow, price);
-    this.timeEnd = Math.max(this.timeStart, time);
-    this.timeStart = Math.min(this.timeStart, time);
+    this.price2 = price;
+    this.time2 = time;
+    this.priceHigh = Math.max(this.price1, price);
+    this.priceLow = Math.min(this.price1, price);
+    this.timeStart = Math.min(this.time1, time);
+    this.timeEnd = Math.max(this.time1, time);
   }
 
   updateStyle() {
@@ -281,17 +289,17 @@ class Rectangle {
     return {
       type: this.type,
       id: this.id,
-      priceHigh: this.priceHigh,
-      priceLow: this.priceLow,
-      timeStart: this.timeStart,
-      timeEnd: this.timeEnd,
+      price1: this.price1,
+      time1: this.time1,
+      price2: this.price2,
+      time2: this.time2,
       label: this.label,
       style: { ...this.style }
     };
   }
 
   static deserialize(data) {
-    const rect = new Rectangle(data.priceHigh, data.timeStart, data.priceLow, data.timeEnd, data.label);
+    const rect = new Rectangle(data.price1, data.time1, data.price2, data.time2, data.label);
     rect.id = data.id;
     if (data.style) {
       rect.style = { ...data.style };
