@@ -56,11 +56,13 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
       const response = await fetch(
         `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}`
       );
-      const data = await response.json();
-      setCandles(data);
+      const result = await response.json();
+      // El API devuelve { data: [...], success: true, ... }
+      setCandles(result.data || []);
       setLoading(false);
     } catch (error) {
       console.error('Error loading historical data:', error);
+      setCandles([]);
       setLoading(false);
     }
   };
@@ -290,7 +292,7 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
   // Función helper para calcular conversión de escalas
   const calculateScaleConverter = () => {
     const canvas = canvasRef.current;
-    if (!canvas || candles.length === 0) return null;
+    if (!canvas || !Array.isArray(candles) || candles.length === 0) return null;
 
     const width = canvas.width;
     const height = canvas.height;
