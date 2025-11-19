@@ -27,12 +27,13 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
     referenceId: alert?.referenceId || null,
   });
 
-  // Estado para niveles de S/R y Range Detector
+  // Estado para niveles de S/R, Range Detector y Volume Profile
   const [loadingLevels, setLoadingLevels] = useState(false);
   const [availableLevels, setAvailableLevels] = useState({
     supports: [],
     resistances: [],
     ranges: [],
+    volumeProfile: [], // POC, VAH, VAL del VP dinámico y Fixed Ranges
   });
 
   // Cargar niveles cuando cambia el símbolo o la fuente de referencia
@@ -49,7 +50,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
 
       if (!manager) {
         console.warn('[AlertConfigModal] No se encontró IndicatorManager para', formData.symbol);
-        setAvailableLevels({ supports: [], resistances: [], ranges: [] });
+        setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
         setLoadingLevels(false);
         return;
       }
@@ -60,7 +61,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
 
         if (!srIndicator || !srIndicator.enabled) {
           console.warn('[AlertConfigModal] Support & Resistance Indicator no está activo');
-          setAvailableLevels({ supports: [], resistances: [], ranges: [] });
+          setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
           setLoadingLevels(false);
           return;
         }
@@ -90,6 +91,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           supports,
           resistances,
           ranges: [],
+          volumeProfile: [],
         });
 
         console.log('[AlertConfigModal] S/R Levels loaded:', {
@@ -103,7 +105,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
 
         if (!detector || !detector.enabled) {
           console.warn('[AlertConfigModal] Range Detector no está activo');
-          setAvailableLevels({ supports: [], resistances: [], ranges: [] });
+          setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
           setLoadingLevels(false);
           return;
         }
@@ -134,12 +136,87 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           supports,
           resistances,
           ranges,
+          volumeProfile: [],
         });
 
         console.log('[AlertConfigModal] Range Detector levels loaded:', {
           supports: supports.length,
           resistances: resistances.length,
           ranges: ranges.length
+        });
+
+      } else if (formData.referenceSource === "volume_profile") {
+        // Cargar niveles de Volume Profile (POC, VAH, VAL)
+        const vpIndicator = manager.getVolumeProfileIndicator();
+
+        if (!vpIndicator || !vpIndicator.enabled) {
+          console.warn('[AlertConfigModal] Volume Profile no está activo');
+          setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
+          setLoadingLevels(false);
+          return;
+        }
+
+        const volumeProfile = [];
+
+        // Agregar POC, VAH, VAL del Volume Profile dinámico
+        if (vpIndicator.poc !== undefined && vpIndicator.poc !== null) {
+          volumeProfile.push({
+            price: vpIndicator.poc,
+            type: 'POC',
+            label: 'POC (Point of Control)',
+            id: 'vp-poc',
+            strength: 3,
+          });
+        }
+
+        if (vpIndicator.vah !== undefined && vpIndicator.vah !== null) {
+          volumeProfile.push({
+            price: vpIndicator.vah,
+            type: 'VAH',
+            label: 'VAH (Value Area High)',
+            id: 'vp-vah',
+            strength: 2,
+          });
+        }
+
+        if (vpIndicator.val !== undefined && vpIndicator.val !== null) {
+          volumeProfile.push({
+            price: vpIndicator.val,
+            type: 'VAL',
+            label: 'VAL (Value Area Low)',
+            id: 'vp-val',
+            strength: 2,
+          });
+        }
+
+        // Agregar POCs de Fixed Ranges
+        const fixedRangeIndicators = manager.fixedRangeIndicators || [];
+        fixedRangeIndicators.forEach((fixedRange, idx) => {
+          if (fixedRange.poc !== undefined && fixedRange.poc !== null) {
+            const label = fixedRange.rangeLabel || `Range ${idx + 1}`;
+            volumeProfile.push({
+              price: fixedRange.poc,
+              type: 'Fixed POC',
+              label: `${label} POC`,
+              id: `fixed-poc-${idx}`,
+              strength: 2,
+              rangeId: fixedRange.rangeId,
+            });
+          }
+        });
+
+        // Ordenar por precio (descendente)
+        volumeProfile.sort((a, b) => b.price - a.price);
+
+        setAvailableLevels({
+          supports: [],
+          resistances: [],
+          ranges: [],
+          volumeProfile,
+        });
+
+        console.log('[AlertConfigModal] Volume Profile levels loaded:', {
+          volumeProfile: volumeProfile.length
         });
       }
     } catch (error) {
@@ -148,6 +225,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
         supports: [],
         resistances: [],
         ranges: [],
+        volumeProfile: [],
       });
     } finally {
       setLoadingLevels(false);
@@ -254,6 +332,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
               <option value="manual">Manual</option>
               <option value="support_resistance">Support & Resistance</option>
               <option value="range_detector">Range Detector</option>
+              <option value="volume_profile">Volume Profile (POC/VAH/VAL)</option>
             </select>
             <small style={{ color: '#888', fontSize: '11px', marginTop: '4px', display: 'block' }}>
               Nota: El indicador seleccionado debe estar activo en el símbolo
@@ -314,8 +393,30 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
                     </div>
                   )}
 
+                  {availableLevels.volumeProfile && availableLevels.volumeProfile.length > 0 && (
+                    <div className="levels-group">
+                      <h4>Volume Profile</h4>
+                      {availableLevels.volumeProfile.map((level, idx) => (
+                        <button
+                          key={`vp-${idx}`}
+                          type="button"
+                          className={`level-option ${
+                            formData.targetPrice === level.price ? "selected" : ""
+                          }`}
+                          onClick={() =>
+                            handleSelectLevel(level.price, level.type, level.id)
+                          }
+                        >
+                          <span className="level-price">${level.price.toLocaleString()}</span>
+                          <span className="level-label">{level.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   {availableLevels.supports.length === 0 &&
-                    availableLevels.resistances.length === 0 && (
+                    availableLevels.resistances.length === 0 &&
+                    availableLevels.volumeProfile.length === 0 && (
                       <div className="no-levels">
                         No se encontraron niveles. Usa precio manual.
                       </div>

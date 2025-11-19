@@ -209,6 +209,12 @@
   color: #888;
 }
 
+.level-label {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
 .no-levels {
   padding: 20px;
   text-align: center;
