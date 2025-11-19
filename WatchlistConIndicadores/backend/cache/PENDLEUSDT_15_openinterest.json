@@ -4,6 +4,29 @@
   "indicator": "openInterest",
   "data": [
     {
+<<<<<<< Updated upstream
+=======
+      "timestamp": 1763331300000,
+      "openInterest": 5981690.0,
+      "datetime_colombia": "2025-11-16 17:15:00"
+    },
+    {
+      "timestamp": 1763332200000,
+      "openInterest": 5978214.0,
+      "datetime_colombia": "2025-11-16 17:30:00"
+    },
+    {
+      "timestamp": 1763333100000,
+      "openInterest": 5982380.0,
+      "datetime_colombia": "2025-11-16 17:45:00"
+    },
+    {
+      "timestamp": 1763334000000,
+      "openInterest": 5991456.0,
+      "datetime_colombia": "2025-11-16 18:00:00"
+    },
+    {
+>>>>>>> Stashed changes
       "timestamp": 1763334900000,
       "openInterest": 5998258.0,
       "datetime_colombia": "2025-11-16 18:15:00"
@@ -7982,6 +8005,7 @@
       "timestamp": 1762250400000,
       "openInterest": 5287097.0,
       "datetime_colombia": "2025-11-04 05:00:00"
+<<<<<<< Updated upstream
     },
     {
       "timestamp": 1762251300000,
@@ -8005,4 +8029,9 @@
     }
   ],
   "timestamp": 1763514332.6557617
+=======
+    }
+  ],
+  "timestamp": 1763510967.327801
+>>>>>>> Stashed changes
 }

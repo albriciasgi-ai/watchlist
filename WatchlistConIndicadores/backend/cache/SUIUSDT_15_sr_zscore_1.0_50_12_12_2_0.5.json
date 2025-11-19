@@ -30,7 +30,11 @@
       {
         "price": 1.7641499999999999,
         "type": "support",
+<<<<<<< Updated upstream
         "strength": 7.83,
+=======
+        "strength": 7.84,
+>>>>>>> Stashed changes
         "touches": 2,
         "avgVolume": 3.283821391816103,
         "firstTouch": 1763094600000,
@@ -41,7 +45,11 @@
       {
         "price": 1.6406,
         "type": "support",
+<<<<<<< Updated upstream
         "strength": 7.25,
+=======
+        "strength": 7.26,
+>>>>>>> Stashed changes
         "touches": 2,
         "avgVolume": 1.946897636133304,
         "firstTouch": 1763315100000,
@@ -62,12 +70,20 @@
       }
     ],
     "consolidationZones": [],
+<<<<<<< Updated upstream
     "currentPrice": 1.6598,
+=======
+    "currentPrice": 1.652,
+>>>>>>> Stashed changes
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
+<<<<<<< Updated upstream
       "currentZScore": -0.8808836323392789
+=======
+      "currentZScore": -0.32189000810208157
+>>>>>>> Stashed changes
     }
   },
   "config": {
@@ -80,5 +96,9 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
+<<<<<<< Updated upstream
   "timestamp": 1763514322.0670927
+=======
+  "timestamp": 1763510966.9803877
+>>>>>>> Stashed changes
 }

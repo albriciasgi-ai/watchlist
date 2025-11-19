@@ -6,7 +6,11 @@
       {
         "price": 948.65,
         "type": "resistance",
+<<<<<<< Updated upstream
         "strength": 5.83,
+=======
+        "strength": 5.84,
+>>>>>>> Stashed changes
         "touches": 2,
         "avgVolume": 1.598510291710403,
         "firstTouch": 1763272800000,
@@ -17,7 +21,11 @@
       {
         "price": 1005.4666666666667,
         "type": "resistance",
+<<<<<<< Updated upstream
         "strength": 4.45,
+=======
+        "strength": 4.46,
+>>>>>>> Stashed changes
         "touches": 3,
         "avgVolume": 1.8411904741487854,
         "firstTouch": 1762628400000,
@@ -41,7 +49,11 @@
       {
         "price": 973.5333333333333,
         "type": "support",
+<<<<<<< Updated upstream
         "strength": 8.13,
+=======
+        "strength": 8.14,
+>>>>>>> Stashed changes
         "touches": 3,
         "avgVolume": 3.989719596302423,
         "firstTouch": 1762658100000,
@@ -52,7 +64,11 @@
       {
         "price": 924.6,
         "type": "support",
+<<<<<<< Updated upstream
         "strength": 4.91,
+=======
+        "strength": 4.92,
+>>>>>>> Stashed changes
         "touches": 2,
         "avgVolume": 1.9826589184781132,
         "firstTouch": 1762446600000,
@@ -63,7 +79,11 @@
       {
         "price": 908.1333333333333,
         "type": "support",
+<<<<<<< Updated upstream
         "strength": 3.82,
+=======
+        "strength": 3.83,
+>>>>>>> Stashed changes
         "touches": 3,
         "avgVolume": 1.3701633372639666,
         "firstTouch": 1763161200000,
@@ -116,12 +136,20 @@
         "avgStrength": 2.23
       }
     ],
+<<<<<<< Updated upstream
     "currentPrice": 929.9,
+=======
+    "currentPrice": 929.8,
+>>>>>>> Stashed changes
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
+<<<<<<< Updated upstream
       "currentZScore": -0.6748858172661415
+=======
+      "currentZScore": -0.6365972950177103
+>>>>>>> Stashed changes
     }
   },
   "config": {
@@ -134,5 +162,9 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
+<<<<<<< Updated upstream
   "timestamp": 1763514338.5673141
+=======
+  "timestamp": 1763510983.627738
+>>>>>>> Stashed changes
 }
