@@ -46,18 +46,34 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
   const loadAvailableLevels = async () => {
     setLoadingLevels(true);
     try {
+      console.log('[AlertConfigModal] Loading levels for:', {
+        symbol: formData.symbol,
+        referenceSource: formData.referenceSource,
+        indicatorManagers: Object.keys(indicatorManagers)
+      });
+
       const manager = indicatorManagers[formData.symbol]?.manager;
 
       if (!manager) {
         console.warn('[AlertConfigModal] No se encontró IndicatorManager para', formData.symbol);
+        console.log('[AlertConfigModal] Available managers:', Object.keys(indicatorManagers));
         setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
         setLoadingLevels(false);
         return;
       }
 
+      console.log('[AlertConfigModal] Manager found:', manager);
+
       if (formData.referenceSource === "support_resistance") {
         // Cargar niveles de Support & Resistance Indicator
         const srIndicator = manager.supportResistanceIndicator;
+
+        console.log('[AlertConfigModal] S/R Indicator:', {
+          exists: !!srIndicator,
+          enabled: srIndicator?.enabled,
+          supports: srIndicator?.supports?.length,
+          resistances: srIndicator?.resistances?.length
+        });
 
         if (!srIndicator || !srIndicator.enabled) {
           console.warn('[AlertConfigModal] Support & Resistance Indicator no está activo');
@@ -148,6 +164,15 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
       } else if (formData.referenceSource === "volume_profile") {
         // Cargar niveles de Volume Profile (POC, VAH, VAL)
         const vpIndicator = manager.getVolumeProfileIndicator();
+
+        console.log('[AlertConfigModal] VP Indicator:', {
+          exists: !!vpIndicator,
+          enabled: vpIndicator?.enabled,
+          poc: vpIndicator?.poc,
+          vah: vpIndicator?.vah,
+          val: vpIndicator?.val,
+          fixedRanges: manager.fixedRangeIndicators?.length
+        });
 
         if (!vpIndicator || !vpIndicator.enabled) {
           console.warn('[AlertConfigModal] Volume Profile no está activo');
