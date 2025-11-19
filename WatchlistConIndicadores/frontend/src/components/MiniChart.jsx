@@ -113,7 +113,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onRegisterIndicatorManager, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -1007,7 +1007,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
 		console.log(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
-	  } 
+	  }
+
+      // 📊 NUEVO: Registrar IndicatorManager en Watchlist para alertas
+      if (onRegisterIndicatorManager && indicatorManagerRef.current) {
+        onRegisterIndicatorManager(indicatorManagerRef.current);
+      }
+
       log.indicator(symbol, '✅ Indicadores inicializados');
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     };

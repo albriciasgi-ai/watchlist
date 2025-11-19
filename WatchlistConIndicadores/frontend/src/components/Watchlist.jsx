@@ -193,6 +193,17 @@ const Watchlist = () => {
     }
   };
 
+  // 📊 NUEVO: Handler para registrar IndicatorManager automáticamente desde MiniChart
+  const handleRegisterIndicatorManager = (symbol, indicatorManagerRef) => {
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+      console.log(`[Watchlist] Registered IndicatorManager for ${symbol}`);
+    }
+  };
+
   // Obtener opciones de días disponibles según el timeframe actual
   const getAvailableDaysOptions = () => {
     return DAYS_OPTIONS_BY_INTERVAL[interval] || [1, 2, 5, 10, 30];
@@ -294,6 +305,7 @@ const Watchlist = () => {
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
             onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
+            onRegisterIndicatorManager={(indicatorManagerRef) => handleRegisterIndicatorManager(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
           />
         ))}
