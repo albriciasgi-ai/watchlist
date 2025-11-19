@@ -211,7 +211,7 @@ class Rectangle {
     ctx.strokeRect(x1, y1, width, height);
 
     // Label
-    this.renderLabel(ctx, x1, y1, width);
+    this.renderLabel(ctx, x1, y1, x2, y2, width, scaleConverter);
 
     // Línea del precio inferior (punteada)
     ctx.strokeStyle = this.style.stroke;
@@ -239,13 +239,13 @@ class Rectangle {
     ctx.restore();
   }
 
-  renderLabel(ctx, x, y, width) {
+  renderLabel(ctx, x1, y1, x2, y2, width, scaleConverter) {
     const labelText = `${this.label}: ${this.priceHigh.toFixed(2)}`;
     ctx.font = 'bold 12px Arial';
     const textWidth = ctx.measureText(labelText).width;
 
-    const labelX = x + 5;
-    const labelY = y + 15;
+    const labelX = x1 + 5;
+    const labelY = y1 + 15;
 
     // Fondo del label
     ctx.fillStyle = this.style.labelBg;
@@ -255,10 +255,10 @@ class Rectangle {
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText(labelText, labelX, labelY);
 
-    // Precio inferior
+    // Precio inferior (label en el borde derecho)
     ctx.fillStyle = this.style.stroke;
     ctx.font = '11px Arial';
-    ctx.fillText(this.priceLow.toFixed(2), x + width + 5, y + (y - scaleConverter.priceToY(this.priceLow)) + 4);
+    ctx.fillText(this.priceLow.toFixed(2), x2 + 5, y2 + 4);
   }
 
   renderHandles(ctx, x1, y1, x2, y2) {
