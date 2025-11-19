@@ -7,7 +7,11 @@
         "price": 0.3977,
         "type": "resistance",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 7.7,
+=======
+        "strength": 7.71,
+>>>>>>> Stashed changes
 =======
         "strength": 7.71,
 >>>>>>> Stashed changes
@@ -22,7 +26,11 @@
         "price": 0.4298,
         "type": "resistance",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 3.86,
+=======
+        "strength": 3.87,
+>>>>>>> Stashed changes
 =======
         "strength": 3.87,
 >>>>>>> Stashed changes
@@ -61,7 +69,11 @@
         "price": 0.36565000000000003,
         "type": "support",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 5.42,
+=======
+        "strength": 5.43,
+>>>>>>> Stashed changes
 =======
         "strength": 5.43,
 >>>>>>> Stashed changes
@@ -104,7 +116,11 @@
         "numLevels": 3,
         "totalTouches": 7,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "avgStrength": 3.31
+=======
+        "avgStrength": 3.32
+>>>>>>> Stashed changes
 =======
         "avgStrength": 3.32
 >>>>>>> Stashed changes
@@ -116,7 +132,11 @@
       "zScoreThreshold": 1.0,
       "period": 50,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "currentZScore": -0.5994459012112454
+=======
+      "currentZScore": -0.8183969765378796
+>>>>>>> Stashed changes
 =======
       "currentZScore": -0.8183969765378796
 >>>>>>> Stashed changes
@@ -133,7 +153,11 @@
     "maxLevels": 20
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "timestamp": 1763514320.510084
+=======
+  "timestamp": 1763510962.3479652
+>>>>>>> Stashed changes
 =======
   "timestamp": 1763510962.3479652
 >>>>>>> Stashed changes

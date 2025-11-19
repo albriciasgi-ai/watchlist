@@ -35,7 +35,11 @@
       "zScoreThreshold": 1.0,
       "period": 50,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "currentZScore": -0.6945056327424071
+=======
+      "currentZScore": -0.7444703212591262
+>>>>>>> Stashed changes
 =======
       "currentZScore": -0.7444703212591262
 >>>>>>> Stashed changes
@@ -52,7 +56,11 @@
     "maxLevels": 20
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "timestamp": 1763514331.406927
+=======
+  "timestamp": 1763510972.7933786
+>>>>>>> Stashed changes
 =======
   "timestamp": 1763510972.7933786
 >>>>>>> Stashed changes

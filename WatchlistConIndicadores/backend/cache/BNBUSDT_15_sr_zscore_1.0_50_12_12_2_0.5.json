@@ -7,7 +7,11 @@
         "price": 948.65,
         "type": "resistance",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 5.83,
+=======
+        "strength": 5.84,
+>>>>>>> Stashed changes
 =======
         "strength": 5.84,
 >>>>>>> Stashed changes
@@ -22,7 +26,11 @@
         "price": 1005.4666666666667,
         "type": "resistance",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 4.45,
+=======
+        "strength": 4.46,
+>>>>>>> Stashed changes
 =======
         "strength": 4.46,
 >>>>>>> Stashed changes
@@ -50,7 +58,11 @@
         "price": 973.5333333333333,
         "type": "support",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 8.13,
+=======
+        "strength": 8.14,
+>>>>>>> Stashed changes
 =======
         "strength": 8.14,
 >>>>>>> Stashed changes
@@ -65,7 +77,11 @@
         "price": 924.6,
         "type": "support",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 4.91,
+=======
+        "strength": 4.92,
+>>>>>>> Stashed changes
 =======
         "strength": 4.92,
 >>>>>>> Stashed changes
@@ -80,7 +96,11 @@
         "price": 908.1333333333333,
         "type": "support",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 3.82,
+=======
+        "strength": 3.83,
+>>>>>>> Stashed changes
 =======
         "strength": 3.83,
 >>>>>>> Stashed changes
@@ -137,7 +157,11 @@
       }
     ],
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "currentPrice": 929.9,
+=======
+    "currentPrice": 929.8,
+>>>>>>> Stashed changes
 =======
     "currentPrice": 929.8,
 >>>>>>> Stashed changes
@@ -146,7 +170,11 @@
       "zScoreThreshold": 1.0,
       "period": 50,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "currentZScore": -0.6748858172661415
+=======
+      "currentZScore": -0.6365972950177103
+>>>>>>> Stashed changes
 =======
       "currentZScore": -0.6365972950177103
 >>>>>>> Stashed changes
@@ -163,7 +191,11 @@
     "maxLevels": 20
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "timestamp": 1763514338.5673141
+=======
+  "timestamp": 1763510983.627738
+>>>>>>> Stashed changes
 =======
   "timestamp": 1763510983.627738
 >>>>>>> Stashed changes

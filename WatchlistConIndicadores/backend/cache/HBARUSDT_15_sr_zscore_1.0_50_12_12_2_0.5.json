@@ -29,7 +29,11 @@
     ],
     "consolidationZones": [],
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "currentPrice": 0.15067,
+=======
+    "currentPrice": 0.14954,
+>>>>>>> Stashed changes
 =======
     "currentPrice": 0.14954,
 >>>>>>> Stashed changes
@@ -38,7 +42,11 @@
       "zScoreThreshold": 1.0,
       "period": 50,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "currentZScore": -0.6409043238808398
+=======
+      "currentZScore": -0.619430748712267
+>>>>>>> Stashed changes
 =======
       "currentZScore": -0.619430748712267
 >>>>>>> Stashed changes
@@ -55,7 +63,11 @@
     "maxLevels": 20
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "timestamp": 1763514341.798494
+=======
+  "timestamp": 1763510984.3784053
+>>>>>>> Stashed changes
 =======
   "timestamp": 1763510984.3784053
 >>>>>>> Stashed changes

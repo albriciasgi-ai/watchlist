@@ -5,7 +5,10 @@
   "data": [
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
       "timestamp": 1763331300000,
       "openInterest": 7316674.4,
       "datetime_colombia": "2025-11-16 17:15:00"
@@ -8006,6 +8009,7 @@
       "openInterest": 4714018.59999999,
       "datetime_colombia": "2025-11-04 05:00:00"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     },
     {
       "timestamp": 1762251300000,
@@ -8029,6 +8033,11 @@
     }
   ],
   "timestamp": 1763514335.8212125
+=======
+    }
+  ],
+  "timestamp": 1763510968.014943
+>>>>>>> Stashed changes
 =======
     }
   ],

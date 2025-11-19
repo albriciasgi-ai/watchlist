@@ -7,7 +7,11 @@
         "price": 16.808999999999997,
         "type": "resistance",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         "strength": 2.11,
+=======
+        "strength": 2.12,
+>>>>>>> Stashed changes
 =======
         "strength": 2.12,
 >>>>>>> Stashed changes
@@ -22,7 +26,11 @@
     "supports": [],
     "consolidationZones": [],
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "currentPrice": 14.524,
+=======
+    "currentPrice": 14.487,
+>>>>>>> Stashed changes
 =======
     "currentPrice": 14.487,
 >>>>>>> Stashed changes
@@ -31,7 +39,11 @@
       "zScoreThreshold": 1.0,
       "period": 50,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "currentZScore": -0.8601549701422313
+=======
+      "currentZScore": -0.3624112380476495
+>>>>>>> Stashed changes
 =======
       "currentZScore": -0.3624112380476495
 >>>>>>> Stashed changes
@@ -48,7 +60,11 @@
     "maxLevels": 20
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "timestamp": 1763514337.3789794
+=======
+  "timestamp": 1763510982.21798
+>>>>>>> Stashed changes
 =======
   "timestamp": 1763510982.21798
 >>>>>>> Stashed changes
