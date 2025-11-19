@@ -247,6 +247,14 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
         const volumeProfile = [];
 
         fixedRangeIndicators.forEach((fixedRange, idx) => {
+          console.log(`[AlertConfigModal] Fixed Range ${idx}:`, {
+            hasPOC: fixedRange.poc !== undefined && fixedRange.poc !== null,
+            poc: fixedRange.poc,
+            rangeLabel: fixedRange.rangeLabel,
+            rangeId: fixedRange.rangeId,
+            keys: Object.keys(fixedRange)
+          });
+
           if (fixedRange.poc !== undefined && fixedRange.poc !== null) {
             const label = fixedRange.rangeLabel || `Range ${idx + 1}`;
             volumeProfile.push({
