@@ -689,10 +689,6 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   };
 
-  const handleDoubleClick = () => {
-    setShowChartModal(true);
-  };
-
   const handleWheel = (e) => {
     // 🎯 BLOQUEADO: No permitir zoom mientras se está haciendo paneo (arrastrando)
     if (dragStateRef.current.isDragging) {
@@ -848,6 +844,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       viewStateRef.current.verticalOffset = 0;
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    } else {
+      // 🎯 Doble click en cualquier otra parte del chart: abrir modal de dibujo
+      setShowChartModal(true);
     }
   };
 
