@@ -166,12 +166,12 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
         const vpIndicator = manager.getVolumeProfileIndicator();
 
         console.log('[AlertConfigModal] VP Indicator:', {
+          managerHasMethod: typeof manager.getVolumeProfileIndicator === 'function',
           exists: !!vpIndicator,
           enabled: vpIndicator?.enabled,
           poc: vpIndicator?.poc,
           vah: vpIndicator?.vah,
-          val: vpIndicator?.val,
-          fixedRanges: manager.fixedRangeIndicators?.length
+          val: vpIndicator?.val
         });
 
         if (!vpIndicator || !vpIndicator.enabled) {
@@ -214,8 +214,38 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           });
         }
 
-        // Agregar POCs de Fixed Ranges
+        // Ordenar por precio (descendente)
+        volumeProfile.sort((a, b) => b.price - a.price);
+
+        setAvailableLevels({
+          supports: [],
+          resistances: [],
+          ranges: [],
+          volumeProfile,
+        });
+
+        console.log('[AlertConfigModal] Volume Profile levels loaded:', {
+          volumeProfile: volumeProfile.length
+        });
+
+      } else if (formData.referenceSource === "volume_profile_fixed") {
+        // Cargar niveles de Fixed Ranges (POCs)
         const fixedRangeIndicators = manager.fixedRangeIndicators || [];
+
+        console.log('[AlertConfigModal] Fixed Ranges:', {
+          exists: !!manager.fixedRangeIndicators,
+          count: fixedRangeIndicators.length
+        });
+
+        if (fixedRangeIndicators.length === 0) {
+          console.warn('[AlertConfigModal] No hay Fixed Ranges configurados');
+          setAvailableLevels({ supports: [], resistances: [], ranges: [], volumeProfile: [] });
+          setLoadingLevels(false);
+          return;
+        }
+
+        const volumeProfile = [];
+
         fixedRangeIndicators.forEach((fixedRange, idx) => {
           if (fixedRange.poc !== undefined && fixedRange.poc !== null) {
             const label = fixedRange.rangeLabel || `Range ${idx + 1}`;
@@ -240,7 +270,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
           volumeProfile,
         });
 
-        console.log('[AlertConfigModal] Volume Profile levels loaded:', {
+        console.log('[AlertConfigModal] Fixed Range POCs loaded:', {
           volumeProfile: volumeProfile.length
         });
       }
@@ -358,6 +388,7 @@ const AlertConfigModal = ({ alert, symbols, indicatorManagers = {}, onSave, onDe
               <option value="support_resistance">Support & Resistance</option>
               <option value="range_detector">Range Detector</option>
               <option value="volume_profile">Volume Profile (POC/VAH/VAL)</option>
+              <option value="volume_profile_fixed">Volume Profile Fixed Ranges (POCs)</option>
             </select>
             <small style={{ color: '#888', fontSize: '11px', marginTop: '4px', display: 'block' }}>
               Nota: El indicador seleccionado debe estar activo en el símbolo
