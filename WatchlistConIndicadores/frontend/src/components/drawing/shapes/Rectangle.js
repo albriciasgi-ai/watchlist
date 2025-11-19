@@ -152,6 +152,14 @@ class Rectangle {
       this.priceLow = this.dragStartPriceLow + deltaPrice;
       this.timeStart = this.dragStartTimeStart + deltaTime;
       this.timeEnd = this.dragStartTimeEnd + deltaTime;
+
+      // Actualizar también price1/time1 y price2/time2
+      const priceDiff = this.dragStartPriceHigh - this.dragStartPriceLow;
+      const timeDiff = this.dragStartTimeEnd - this.dragStartTimeStart;
+      this.price1 = this.priceHigh;
+      this.time1 = this.timeStart;
+      this.price2 = this.priceLow;
+      this.time2 = this.timeEnd;
     } else if (this.isResizing) {
       const newPrice = scaleConverter.yToPrice(y);
       const newTime = scaleConverter.xToTime(x);

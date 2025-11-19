@@ -16,6 +16,11 @@ import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
 
+// ==================== CONFIGURACIÓN ====================
+// Opacidad de los dibujos en el minichart (0.0 = transparente, 1.0 = opaco)
+// Ajusta este valor si los dibujos no se ven bien en el minichart
+const DRAWING_OPACITY = 0.7;
+
 const log = {
   candle: (symbol, message, data = null) => {
     if (!DEBUG_MODE) return;
@@ -375,8 +380,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
       };
 
-      // Render each drawing with reduced opacity for readonly
-      ctx.globalAlpha = 0.5;
+      // Render each drawing with configurable opacity for readonly
+      ctx.globalAlpha = DRAWING_OPACITY;
       drawingsRef.current.forEach(shape => {
         try {
           shape.render(ctx, scaleConverter, false, false, false);
