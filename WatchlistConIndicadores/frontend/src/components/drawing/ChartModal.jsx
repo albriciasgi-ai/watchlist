@@ -151,10 +151,17 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Measurement tool
+    // Measurement tool - usar requestAnimationFrame para evitar bloqueos
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
-      setNeedsRedraw(true);
+      // Cancelar frame anterior si existe
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      // Programar redibujado
+      animationFrameRef.current = requestAnimationFrame(() => {
+        drawChart();
+      });
       return;
     }
 
@@ -162,6 +169,17 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
     if (drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
       const consumed = drawingManagerRef.current.handleMouseMove(x, y, scaleConverter);
+
+      // Cambiar cursor basado en el estado
+      if (selectedTool === 'select') {
+        if (drawingManagerRef.current.hoveredShape) {
+          canvas.style.cursor = 'move';
+        } else {
+          canvas.style.cursor = 'default';
+        }
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
 
       if (consumed) {
         setNeedsRedraw(true);
@@ -188,6 +206,12 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
   }, []);
 
   const handleMouseUp = useCallback((e) => {
+    // Limpiar animation frame si existe
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
     if (measurementToolRef.current) {
       measurementToolRef.current.handleMouseUp(e);
     }
@@ -223,6 +247,13 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
   const handleKeyDown = useCallback((e) => {
     // Esc - Cancelar/Cerrar
     if (e.key === 'Escape') {
+      // Limpiar medición si existe
+      if (measurementToolRef.current && measurementToolRef.current.startPoint) {
+        measurementToolRef.current.clear();
+        setNeedsRedraw(true);
+        return;
+      }
+
       if (drawingManagerRef.current && drawingManagerRef.current.isDrawing()) {
         drawingManagerRef.current.cancelDrawing();
         setNeedsRedraw(true);
@@ -232,11 +263,26 @@ const ChartModal = ({ symbol, interval, days, onClose }) => {
     }
 
     // Shortcuts de herramientas
-    if (e.key === 't' || e.key === 'T') setSelectedTool('trendline');
-    if (e.key === 'h' || e.key === 'H') setSelectedTool('horizontal');
-    if (e.key === 'r' || e.key === 'R') setSelectedTool('rectangle');
-    if (e.key === 'f' || e.key === 'F') setSelectedTool('fibonacci');
-    if (e.key === 'v' || e.key === 'V') setSelectedTool('select');
+    if (e.key === 't' || e.key === 'T') {
+      setSelectedTool('trendline');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('trendline');
+    }
+    if (e.key === 'h' || e.key === 'H') {
+      setSelectedTool('horizontal');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('horizontal');
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      setSelectedTool('rectangle');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('rectangle');
+    }
+    if (e.key === 'f' || e.key === 'F') {
+      setSelectedTool('fibonacci');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('fibonacci');
+    }
+    if (e.key === 'v' || e.key === 'V') {
+      setSelectedTool('select');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
+    }
 
     // Delete - Borrar seleccionado
     if (e.key === 'Delete' && drawingManagerRef.current) {

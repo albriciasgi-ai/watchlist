@@ -15,6 +15,11 @@ class MeasurementTool {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // Limpiar medición anterior si existe
+    if (this.startPoint && !this.isMeasuring) {
+      this.clear();
+    }
+
     this.isMeasuring = true;
     this.startPoint = { x, y };
     this.endPoint = { x, y };
@@ -55,7 +60,11 @@ class MeasurementTool {
     const time1 = scaleConverter.xToTime(this.startPoint.x);
     const time2 = scaleConverter.xToTime(this.endPoint.x);
 
-    if (!time1 || !time2) return null;
+    // Validar que tengamos datos válidos
+    if (!time1 || !time2 || !price1 || !price2 || price1 === 0) {
+      console.warn('MeasurementTool: Invalid data', { price1, price2, time1, time2 });
+      return null;
+    }
 
     // Cálculos
     const priceDiff = price2 - price1;
