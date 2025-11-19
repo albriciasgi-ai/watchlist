@@ -59,8 +59,13 @@ class TrendLine {
     const maxY = Math.max(y1, y2) + tolerance;
 
     const isInRange = x >= minX && x <= maxX && y >= minY && y <= maxY;
+    const hit = distance <= tolerance && isInRange;
 
-    return distance <= tolerance && isInRange;
+    if (hit) {
+      console.log('[TrendLine] hitTest SUCCESS:', { distance: distance.toFixed(2), tolerance, id: this.id });
+    }
+
+    return hit;
   }
 
   // Hit testing para handles (puntos de edición)

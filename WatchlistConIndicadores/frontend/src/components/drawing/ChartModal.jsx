@@ -115,6 +115,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Measurement tool (middle click)
     if (e.button === 1 && measurementToolRef.current) {
       e.preventDefault();
+      e.stopPropagation();
+      // Asegurarse de que no estamos en modo drag
+      dragStateRef.current.isDragging = false;
       measurementToolRef.current.handleMouseDown(e, canvas);
       setNeedsRedraw(true);
       return;
@@ -128,12 +131,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       );
 
       if (consumed) {
+        // Un shape fue seleccionado o estamos dibujando
         setNeedsRedraw(true);
         return;
       }
 
-      // Pan mode (si no hay herramienta activa)
-      if (selectedTool === 'select') {
+      // Pan mode SOLO si no se consumió el click (no hay shape seleccionado)
+      // Y SOLO si estamos en modo select
+      if (selectedTool === 'select' && !consumed) {
         dragStateRef.current = {
           isDragging: true,
           startX: x,
@@ -192,8 +197,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
     }
 
-    // Pan mode
-    if (dragStateRef.current.isDragging) {
+    // Pan mode - SOLO si no estamos arrastrando un shape
+    const isShapeDragging = drawingManagerRef.current?.selectedShape?.isDragging ||
+                            drawingManagerRef.current?.selectedShape?.isResizing;
+
+    if (dragStateRef.current.isDragging && !isShapeDragging) {
       const deltaX = x - dragStateRef.current.startX;
       const chartWidth = canvas.width - 75; // margins
       const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
@@ -208,7 +216,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
       setNeedsRedraw(true);
     }
-  }, []);
+  }, [selectedTool]);
 
   const handleMouseUp = useCallback((e) => {
     // Limpiar animation frame si existe
@@ -252,8 +260,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       viewStateRef.current.zoom = Math.max(0.5, Math.min(5, viewStateRef.current.zoom));
     }
 
-    // Forzar redibujado inmediato
-    drawChart();
+    // Usar setNeedsRedraw en lugar de llamar drawChart directamente
+    setNeedsRedraw(true);
   }, []);
 
   const handleKeyDown = useCallback((e) => {
