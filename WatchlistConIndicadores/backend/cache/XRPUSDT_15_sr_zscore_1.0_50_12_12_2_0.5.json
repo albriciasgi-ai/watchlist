@@ -6,7 +6,7 @@
       {
         "price": 2.5713,
         "type": "resistance",
-        "strength": 5.58,
+        "strength": 5.48,
         "touches": 2,
         "avgVolume": 1.8648231139373066,
         "firstTouch": 1762772400000,
@@ -17,7 +17,7 @@
       {
         "price": 2.41465,
         "type": "resistance",
-        "strength": 1.41,
+        "strength": 1.38,
         "touches": 2,
         "avgVolume": 2.671006174134084,
         "firstTouch": 1762397100000,
@@ -41,7 +41,7 @@
       {
         "price": 2.2401,
         "type": "support",
-        "strength": 3.24,
+        "strength": 3.19,
         "touches": 3,
         "avgVolume": 3.5108175789166136,
         "firstTouch": 1762615800000,
@@ -50,35 +50,35 @@
         "breakVolume": null
       },
       {
-        "price": 2.1566666666666667,
-        "type": "support",
-        "strength": 1.11,
-        "touches": 3,
-        "avgVolume": 1.8450049071085541,
-        "firstTouch": 1762519500000,
-        "lastTouch": 1763334000000,
-        "status": "broken",
-        "breakVolume": null
-      },
-      {
         "price": 2.18255,
         "type": "support",
-        "strength": 0.95,
+        "strength": 0.94,
         "touches": 2,
         "avgVolume": 2.399832753784078,
         "firstTouch": 1762461900000,
         "lastTouch": 1763257500000,
         "status": "broken",
         "breakVolume": null
+      },
+      {
+        "price": 2.1519666666666666,
+        "type": "support",
+        "strength": 0.92,
+        "touches": 3,
+        "avgVolume": 1.7139352822994305,
+        "firstTouch": 1762519500000,
+        "lastTouch": 1763472600000,
+        "status": "active",
+        "breakVolume": null
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 2.1777,
+    "currentPrice": 2.2053,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.5679456753543489
+      "currentZScore": -0.6586032530085225
     }
   },
   "config": {
@@ -91,5 +91,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763477599.002874
+  "timestamp": 1763510958.2590442
 }
