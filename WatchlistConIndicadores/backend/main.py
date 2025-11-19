@@ -587,3 +587,118 @@ async def shutdown_event():
     from alert_sender import shutdown_alert_sender
     await shutdown_alert_sender()
     print("[SHUTDOWN] Backend shutdown complete")
+
+
+# ==================== DRAWING TOOLS ENDPOINTS ====================
+
+DRAWINGS_DIR = Path("drawings")
+DRAWINGS_DIR.mkdir(exist_ok=True)
+
+
+@app.get("/api/drawings/{symbol}")
+async def get_drawings(symbol: str):
+    """
+    Obtiene los dibujos guardados para un símbolo
+    Los dibujos son globales para el símbolo (no por timeframe)
+    """
+    try:
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        if drawings_file.exists():
+            with open(drawings_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol}")
+                return data
+        else:
+            print(f"[DRAWINGS] No drawings found for {symbol}")
+            return {
+                "symbol": symbol,
+                "shapes": [],
+                "updated_at": None
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Loading drawings for {symbol}: {str(e)}")
+        return {
+            "symbol": symbol,
+            "shapes": [],
+            "error": str(e)
+        }
+
+
+@app.post("/api/drawings/{symbol}")
+async def save_drawings(symbol: str, request: Request):
+    """
+    Guarda los dibujos para un símbolo
+
+    Body:
+    {
+      "interval": "15",
+      "shapes": [...]
+    }
+
+    Los dibujos se guardan globalmente para el símbolo (no por timeframe)
+    pero se puede usar el campo interval para referencia
+    """
+    try:
+        body = await request.json()
+        shapes = body.get('shapes', [])
+        interval = body.get('interval', '')
+
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        data = {
+            "symbol": symbol,
+            "interval": interval,  # Solo para referencia
+            "shapes": shapes,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "total_shapes": len(shapes)
+        }
+
+        with open(drawings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "shapes_saved": len(shapes),
+            "updated_at": data['updated_at']
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Saving drawings for {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.delete("/api/drawings/{symbol}")
+async def delete_drawings(symbol: str):
+    """Elimina todos los dibujos de un símbolo"""
+    try:
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        if drawings_file.exists():
+            drawings_file.unlink()
+            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol}")
+            return {
+                "success": True,
+                "message": f"Drawings deleted for {symbol}"
+            }
+        else:
+            return {
+                "success": True,
+                "message": f"No drawings to delete for {symbol}"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Deleting drawings for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }

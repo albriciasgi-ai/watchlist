@@ -7,6 +7,7 @@ import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
 import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
+import ChartModal from "./drawing/ChartModal";
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
@@ -133,6 +134,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
+  const [showChartModal, setShowChartModal] = useState(false);
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
 
@@ -687,6 +689,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   };
 
+  const handleDoubleClick = () => {
+    setShowChartModal(true);
+  };
+
   const handleWheel = (e) => {
     // 🎯 BLOQUEADO: No permitir zoom mientras se está haciendo paneo (arrastrando)
     if (dragStateRef.current.isDragging) {
@@ -1188,12 +1194,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             📊
           </button>
         </div>
-        <canvas 
+        <canvas
           ref={canvasRef}
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleDoubleClick}
           style={{ cursor: 'crosshair', display: 'block', touchAction: 'none' }}
         />
       </div>
@@ -1235,7 +1242,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       {isFullscreen && (
         <div className="fullscreen-modal" onClick={() => setIsFullscreen(false)}>
           <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
-            <button 
+            <button
               className="close-fullscreen-btn"
               onClick={() => setIsFullscreen(false)}
             >
@@ -1255,6 +1262,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             />
           </div>
         </div>
+      )}
+
+      {showChartModal && (
+        <ChartModal
+          symbol={symbol}
+          interval={interval}
+          days={days}
+          onClose={() => setShowChartModal(false)}
+        />
       )}
     </>
   );
