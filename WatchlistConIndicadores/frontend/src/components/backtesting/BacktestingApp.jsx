@@ -107,6 +107,7 @@ const BacktestingApp = () => {
 
   /**
    * Carga datos desde IndexedDB
+   * Retorna un objeto con { data, savedAt } o null si no hay datos
    */
   const loadFromIndexedDB = async (symbol) => {
     return new Promise((resolve, reject) => {
@@ -129,8 +130,12 @@ const BacktestingApp = () => {
 
         getRequest.onsuccess = () => {
           if (getRequest.result) {
-            console.log(`[IndexedDB] Datos cargados para ${symbol}`);
-            resolve(getRequest.result.data);
+            console.log(`[IndexedDB] Datos encontrados para ${symbol}`);
+            // Retornar tanto los datos como el timestamp de cuándo se guardaron
+            resolve({
+              data: getRequest.result.data,
+              savedAt: getRequest.result.savedAt
+            });
           } else {
             resolve(null);
           }
@@ -199,14 +204,48 @@ const BacktestingApp = () => {
     }
 
     // Intentar cargar desde IndexedDB primero
-    const cachedData = await loadFromIndexedDB(symbol);
+    const cachedResult = await loadFromIndexedDB(symbol);
 
     let data;
-    if (cachedData) {
-      console.log('[BacktestingApp] Usando datos de IndexedDB');
-      setMarketData(cachedData);
-      data = cachedData;
-    } else {
+    let shouldUseCachedData = false;
+
+    if (cachedResult && cachedResult.data) {
+      const now = Date.now();
+      const cacheAge = now - cachedResult.savedAt;
+      const cacheAgeHours = cacheAge / (1000 * 60 * 60);
+
+      console.log(`[BacktestingApp] Datos encontrados en IndexedDB, guardados hace ${cacheAgeHours.toFixed(2)} horas`);
+
+      // Validar edad del caché (24 horas)
+      if (cacheAgeHours < 24) {
+        // Validar también que los datos no sean muy antiguos
+        // Verificar el timestamp de la última vela
+        const timeframeData = cachedResult.data.timeframes?.[selectedTimeframe];
+        if (timeframeData && timeframeData.main && timeframeData.main.length > 0) {
+          const lastCandle = timeframeData.main[timeframeData.main.length - 1];
+          const lastCandleAge = now - lastCandle.timestamp;
+          const lastCandleAgeDays = lastCandleAge / (1000 * 60 * 60 * 24);
+
+          console.log(`[BacktestingApp] Última vela del caché: ${new Date(lastCandle.timestamp).toISOString()}`);
+          console.log(`[BacktestingApp] Edad de la última vela: ${lastCandleAgeDays.toFixed(2)} días`);
+
+          // Si la última vela es de hace menos de 2 días, usar el caché
+          if (lastCandleAgeDays < 2) {
+            console.log('[BacktestingApp] ✅ Caché válido, usando datos de IndexedDB');
+            shouldUseCachedData = true;
+            data = cachedResult.data;
+            setMarketData(data);
+          } else {
+            console.log('[BacktestingApp] ❌ Datos del caché muy antiguos, descargando datos frescos...');
+          }
+        }
+      } else {
+        console.log('[BacktestingApp] ❌ Caché expirado (>24h), descargando datos frescos...');
+      }
+    }
+
+    // Si no hay caché válido, descargar datos frescos
+    if (!shouldUseCachedData) {
       console.log('[BacktestingApp] Descargando datos del servidor...');
       data = await loadBacktestingData(symbol);
     }
