@@ -15,20 +15,23 @@ class MeasurementTool {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Limpiar medición anterior si existe
-    if (this.startPoint && !this.isMeasuring) {
-      this.clear();
+    if (!this.isMeasuring) {
+      // Primer click: iniciar medición
+      this.isMeasuring = true;
+      this.startPoint = { x, y };
+      this.endPoint = { x, y };
+    } else {
+      // Segundo click: finalizar medición (dejar fija)
+      this.isMeasuring = false;
+      this.endPoint = { x, y };
     }
-
-    this.isMeasuring = true;
-    this.startPoint = { x, y };
-    this.endPoint = { x, y };
 
     return true;
   }
 
   handleMouseMove(e, canvas) {
-    if (!this.isMeasuring) return false;
+    // Actualizar endPoint siempre que haya una medición activa
+    if (!this.isMeasuring || !this.startPoint) return false;
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -39,11 +42,7 @@ class MeasurementTool {
   }
 
   handleMouseUp(e) {
-    if (this.isMeasuring) {
-      // Mantener la medición visible (no limpiar)
-      // Para limpiar, el usuario puede hacer Esc o nuevo measurement
-      this.isMeasuring = false;
-    }
+    // No hacer nada en mouseUp - la medición se completa con segundo middle click
   }
 
   clear() {

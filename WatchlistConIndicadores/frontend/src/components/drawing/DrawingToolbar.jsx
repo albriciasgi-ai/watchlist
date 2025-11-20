@@ -9,6 +9,7 @@ const DrawingToolbar = ({ selectedTool, onToolChange, onUndo, onRedo, onClearAll
     { id: 'select', label: 'Cursor', icon: '↖', shortcut: 'V' },
     { id: 'trendline', label: 'Línea de Tendencia', icon: '📈', shortcut: 'T' },
     { id: 'horizontal', label: 'Línea Horizontal', icon: '—', shortcut: 'H' },
+    { id: 'vertical', label: 'Línea Vertical', icon: '|', shortcut: 'L' },
     { id: 'rectangle', label: 'Rectángulo', icon: '▭', shortcut: 'R' },
     { id: 'fibonacci', label: 'Fibonacci', icon: 'φ', shortcut: 'F' }
   ];
