@@ -34,14 +34,15 @@ const BacktestingApp = () => {
   /**
    * Carga datos de backtesting desde el backend
    */
-  const loadBacktestingData = async (symbolToLoad) => {
+  const loadBacktestingData = async (symbolToLoad, forceRefresh = false) => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log(`[BacktestingApp] Cargando datos para ${symbolToLoad}...`);
+      console.log(`[BacktestingApp] Cargando datos para ${symbolToLoad}... (force_refresh: ${forceRefresh})`);
 
-      const response = await fetch(`${API_BASE_URL}/api/backtesting/bulk-data/${symbolToLoad}`);
+      const url = `${API_BASE_URL}/api/backtesting/bulk-data/${symbolToLoad}${forceRefresh ? '?force_refresh=true' : ''}`;
+      const response = await fetch(url);
       const data = await response.json();
 
       if (!data.success) {
@@ -472,6 +473,33 @@ const BacktestingApp = () => {
       <div className="backtesting-header">
         <div className="header-info">
           <h2>{symbol} - {selectedTimeframe}</h2>
+          {marketData && marketData.metadata && (
+            <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+              📅 Datos: {new Date(marketData.metadata.date_range.start).toLocaleDateString('es-CO')} - {new Date(marketData.metadata.date_range.end).toLocaleDateString('es-CO')}
+              <button
+                onClick={async () => {
+                  const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos.');
+                  if (confirmed) {
+                    await loadBacktestingData(symbol, true);
+                    window.location.reload(); // Recargar para aplicar nuevos datos
+                  }
+                }}
+                style={{
+                  marginLeft: '8px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  background: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+                title="Descargar datos actualizados desde Bybit"
+              >
+                🔄 Actualizar
+              </button>
+            </div>
+          )}
           <div className="current-time">
             {currentTime && new Date(currentTime).toLocaleString('es-CO', {
               timeZone: 'America/Bogota',

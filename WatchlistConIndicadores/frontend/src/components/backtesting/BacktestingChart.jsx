@@ -740,15 +740,16 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
     };
 
-    // Mouse move - arrastrar
+    // Mouse move - arrastrar (solo horizontal, no vertical para evitar cambios de escala)
     const handleMouseMove = (e) => {
       if (!isDragging) return;
 
       const newOffsetX = e.clientX - dragStart.x;
-      const newOffsetY = e.clientY - dragStart.y;
+      // NO cambiar offsetY - el paneo vertical puede causar que los precios se salgan de escala
+      // El usuario debe usar zoom vertical (wheel sin ctrl) en lugar de paneo vertical
 
       setOffsetX(newOffsetX);
-      setOffsetY(newOffsetY);
+      // setOffsetY NO se modifica - permanece en 0 o en su valor de zoom
       setManualPan(true); // Marcar que el usuario hizo paneo manual
     };
 
@@ -765,16 +766,16 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal (más suave)
-        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso (más suave)
+        // Ctrl + wheel: zoom horizontal (muy suave - 2% por paso)
+        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso para zoom suave
         setScaleX(prev => {
           const newScale = Math.max(0.3, Math.min(10, prev * zoomFactor)); // Límite mínimo 0.3 para evitar problemas
           setManualPan(true); // El zoom también desactiva auto-scroll
           return newScale;
         });
       } else {
-        // Wheel normal: zoom vertical (precio) - también más suave
-        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
+        // Wheel normal: zoom vertical (precio) - muy suave 2% por paso
+        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso
         setScaleY(prev => Math.max(0.3, Math.min(10, prev * zoomFactor))); // Límite mínimo 0.3
       }
     };

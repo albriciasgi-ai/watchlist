@@ -1591,11 +1591,20 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
         if not force_refresh:
             cached_data = load_backtesting_cache(symbol)
             if cached_data:
-                return {
-                    "success": True,
-                    "from_cache": True,
-                    **cached_data
-                }
+                # Verificar si el caché es muy viejo (más de 1 día)
+                cached_at = cached_data.get("metadata", {}).get("cached_at", 0)
+                now_ms = int(time.time() * 1000)
+                age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
+
+                if age_hours < 24:  # Caché válido por 24 horas
+                    print(f"[BACKTESTING CACHE] Usando caché de {age_hours:.1f} horas de antigüedad")
+                    return {
+                        "success": True,
+                        "from_cache": True,
+                        **cached_data
+                    }
+                else:
+                    print(f"[BACKTESTING CACHE] Caché muy viejo ({age_hours:.1f} horas), refrescando datos...")
 
         print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
 

@@ -2,12 +2,14 @@
 
 .backtesting-container {
   width: 100%;
-  height: 100%;
+  height: 100vh; /* Usar viewport height para ocupar toda la pantalla */
+  max-height: 100vh; /* Evitar overflow */
   background: #ffffff;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Evitar scroll externo */
 }
 
 /* ==================== SETUP SCREEN ==================== */
