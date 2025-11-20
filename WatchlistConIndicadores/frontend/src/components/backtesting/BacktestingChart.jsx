@@ -25,13 +25,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
 
-  // CRÍTICO: Mostrar contexto histórico razonable antes de currentTime
-  // Esto permite que el usuario vea contexto sin cargar demasiadas velas
+  // CRÍTICO: Mostrar TODO el historial antes de currentTime
+  // Esto permite que el usuario vea TODO el contexto histórico para entrenamiento
   // - TimeController.startTime = inicio del historial completo
   // - TimeController.simulationStartTime = donde empieza la simulación
   // - TimeController.currentTime = posición actual (inicia en simulationStartTime)
-  // - El chart muestra las últimas N velas antes de currentTime para contexto
-  const VISIBLE_HISTORY = 200; // Mostrar máximo 200 velas históricas para contexto
+  // - El chart muestra TODAS las velas desde el inicio hasta currentTime
+  const VISIBLE_HISTORY = Infinity; // Mostrar TODO el historial para contexto completo
 
   /**
    * Ir a la última vela - resetea el paneo manual y reactiva auto-scroll
@@ -100,7 +100,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
    * - currentTime inicia en simulationStartTime (la fecha donde empieza la simulación)
    * - Al dar play, currentTime avanza desde simulationStartTime hacia adelante
    * - TODAS las velas anteriores a simulationStartTime permanecen visibles para contexto
-   * - Esto permite ver el historial completo sin importar donde empiece la simulación
+   * - Esto es CRÍTICO para entrenamiento: el usuario necesita ver el historial completo
+   * - El auto-scroll posiciona el chart para mostrar contexto antes de simulationStartTime
    */
   useEffect(() => {
     if (!marketData) return;
@@ -193,15 +194,20 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         // Si estamos al inicio de la simulación (no reproduciendo), mostrar contexto histórico
         // Mostrar las últimas velas del historial previo + la posición actual
         if (!isPlaying) {
-          // Mostrar contexto limitado: máximo 50 velas antes de currentTime
-          const contextCandles = Math.min(50, candlesBeforeCurrent, Math.floor(maxVisibleCandles * 0.4));
+          // Mostrar contexto histórico: posicionar para que currentTime esté visible
+          // con suficiente contexto histórico a la izquierda (40% del espacio visible)
+          // Esto permite ver de dónde viene el precio antes de iniciar la simulación
+          const contextRatio = 0.4; // 40% del espacio para contexto histórico
+          const contextCandles = Math.floor(maxVisibleCandles * contextRatio);
           const startCandle = Math.max(0, candlesBeforeCurrent - contextCandles);
           const newOffsetX = -startCandle * totalCandleWidth;
           setOffsetX(newOffsetX);
           console.log('[BacktestingChart] Posicionando chart con contexto histórico:');
           console.log(`  - maxVisibleCandles: ${maxVisibleCandles}`);
           console.log(`  - candlesBeforeCurrent: ${candlesBeforeCurrent}`);
-          console.log(`  - Mostrando desde vela: ${startCandle} (contexto: ${contextCandles} velas)`);
+          console.log(`  - contextCandles (40%): ${contextCandles}`);
+          console.log(`  - Mostrando desde vela índice: ${startCandle}`);
+          console.log(`  - CurrentTime: ${new Date(currentTime).toISOString()}`);
         } else {
           // Durante reproducción, hacer auto-scroll normal para seguir el precio actual
           const rightPadding = Math.floor(maxVisibleCandles * 0.3); // 30% del espacio a la derecha

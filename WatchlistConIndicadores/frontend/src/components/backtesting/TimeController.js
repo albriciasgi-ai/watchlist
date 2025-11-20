@@ -174,7 +174,8 @@ class TimeController {
 
     console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - interval: ${updateIntervalMs}ms - subdivisiones: ${subdivisions.count} - currentTime: ${new Date(this.currentTime).toISOString()}`);
 
-    this.interval = setInterval(() => {
+    // Definir la función de tick para reutilizarla
+    const tick = () => {
       const increment = this.getTimeIncrement();
       this.currentTime += increment;
 
@@ -191,6 +192,7 @@ class TimeController {
         this.currentTime = this.endTime;
         console.log('[TimeController] Llegamos al final');
         this.pause();
+        return; // Detener ejecución
       }
 
       // Notificar cambio
@@ -202,8 +204,15 @@ class TimeController {
 
       // Sincronizar con otras pestañas
       this.broadcastState();
+    };
 
-    }, updateIntervalMs);
+    // CRÍTICO: Ejecutar el primer tick inmediatamente para feedback visual instantáneo
+    // Sin esto, el usuario tiene que esperar el intervalo completo (ej: 5 min con 1x)
+    // y da la impresión de que "no pasa nada"
+    tick();
+
+    // Iniciar el intervalo para los siguientes ticks
+    this.interval = setInterval(tick, updateIntervalMs);
   }
 
   /**
