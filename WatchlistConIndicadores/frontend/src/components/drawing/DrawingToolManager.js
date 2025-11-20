@@ -24,7 +24,6 @@ class DrawingToolManager {
   }
 
   setTool(tool) {
-    console.log('[DrawingManager] setTool called:', tool);
     this.currentTool = tool;
     this.selectedShape = null;
     this.drawingInProgress = null;
@@ -40,22 +39,18 @@ class DrawingToolManager {
       const clickedShape = this.findShapeAt(x, y, scaleConverter);
 
       if (clickedShape) {
-        console.log('[DrawingManager] Shape clicked:', clickedShape.type, clickedShape.id);
         this.selectedShape = clickedShape;
 
         // Detectar si clickeó un handle
         const handle = clickedShape.hitTestHandle(x, y, scaleConverter);
         if (handle) {
-          console.log('[DrawingManager] Starting resize from handle:', handle);
           clickedShape.startResize(handle, x, y, scaleConverter);
         } else {
-          console.log('[DrawingManager] Starting drag');
           clickedShape.startDrag(x, y, scaleConverter);
         }
 
         return true;
       } else {
-        console.log('[DrawingManager] No shape found at click position');
         this.selectedShape = null;
         return false;
       }

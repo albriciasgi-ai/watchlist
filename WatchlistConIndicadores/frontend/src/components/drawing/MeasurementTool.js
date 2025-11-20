@@ -62,7 +62,6 @@ class MeasurementTool {
 
     // Validar que tengamos datos válidos
     if (!time1 || !time2 || !price1 || !price2 || price1 === 0) {
-      console.warn('MeasurementTool: Invalid data', { price1, price2, time1, time2 });
       return null;
     }
 
