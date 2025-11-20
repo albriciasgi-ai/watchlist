@@ -5,51 +5,24 @@
     "resistances": [],
     "supports": [
       {
-        "price": 0.14619500000000002,
+        "price": 0.14598666666666668,
         "type": "support",
-        "strength": 10.0,
-        "touches": 2,
-        "avgVolume": 2.8155381073510766,
+        "strength": 6.92,
+        "touches": 3,
+        "avgVolume": 3.029334265724436,
         "firstTouch": 1763315100000,
-        "lastTouch": 1763387100000,
-        "status": "broken",
-        "breakVolume": null
-      },
-      {
-        "price": 0.159005,
-        "type": "support",
-        "strength": 1.94,
-        "touches": 2,
-        "avgVolume": 2.069989564970573,
-        "firstTouch": 1762291800000,
-        "lastTouch": 1762519500000,
+        "lastTouch": 1763531100000,
         "status": "broken",
         "breakVolume": null
       }
     ],
     "consolidationZones": [],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    "currentPrice": 0.15067,
-=======
-    "currentPrice": 0.14954,
->>>>>>> Stashed changes
-=======
-    "currentPrice": 0.14954,
->>>>>>> Stashed changes
+    "currentPrice": 0.13778,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      "currentZScore": -0.6409043238808398
-=======
-      "currentZScore": -0.619430748712267
->>>>>>> Stashed changes
-=======
-      "currentZScore": -0.619430748712267
->>>>>>> Stashed changes
+      "currentZScore": 0.3439562254347352
     }
   },
   "config": {
@@ -62,13 +35,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "timestamp": 1763514341.798494
-=======
-  "timestamp": 1763510984.3784053
->>>>>>> Stashed changes
-=======
-  "timestamp": 1763510984.3784053
->>>>>>> Stashed changes
+  "timestamp": 1763657431.1892571
 }

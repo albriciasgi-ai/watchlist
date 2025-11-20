@@ -6,15 +6,7 @@
       {
         "price": 0.30305,
         "type": "resistance",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 8.57,
-=======
-        "strength": 8.59,
->>>>>>> Stashed changes
-=======
-        "strength": 8.59,
->>>>>>> Stashed changes
+        "strength": 7.88,
         "touches": 2,
         "avgVolume": 3.5507459908996344,
         "firstTouch": 1762600500000,
@@ -27,15 +19,7 @@
       {
         "price": 0.2722,
         "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 9.63,
-=======
-        "strength": 9.65,
->>>>>>> Stashed changes
-=======
-        "strength": 9.65,
->>>>>>> Stashed changes
+        "strength": 8.95,
         "touches": 2,
         "avgVolume": 3.103934257842065,
         "firstTouch": 1762914600000,
@@ -44,40 +28,35 @@
         "breakVolume": null
       },
       {
+        "price": 0.2276,
+        "type": "support",
+        "strength": 4.36,
+        "touches": 2,
+        "avgVolume": 2.866010735693667,
+        "firstTouch": 1763315100000,
+        "lastTouch": 1763531100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
         "price": 0.23054999999999998,
         "type": "support",
-        "strength": 3.43,
+        "strength": 3.23,
         "touches": 2,
         "avgVolume": 3.8541721668528792,
         "firstTouch": 1763094600000,
         "lastTouch": 1763478000000,
-        "status": "active",
+        "status": "broken",
         "breakVolume": null
       }
     ],
     "consolidationZones": [],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    "currentPrice": 0.236,
-=======
-    "currentPrice": 0.2357,
->>>>>>> Stashed changes
-=======
-    "currentPrice": 0.2357,
->>>>>>> Stashed changes
+    "currentPrice": 0.2223,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      "currentZScore": -0.9209871139481715
-=======
-      "currentZScore": -0.4929494162317993
->>>>>>> Stashed changes
-=======
-      "currentZScore": -0.4929494162317993
->>>>>>> Stashed changes
+      "currentZScore": 0.2990582889282366
     }
   },
   "config": {
@@ -90,13 +69,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "timestamp": 1763514334.564107
-=======
-  "timestamp": 1763510981.037699
->>>>>>> Stashed changes
-=======
-  "timestamp": 1763510981.037699
->>>>>>> Stashed changes
+  "timestamp": 1763657422.2136986
 }

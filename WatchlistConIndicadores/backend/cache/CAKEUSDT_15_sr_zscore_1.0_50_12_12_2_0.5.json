@@ -17,12 +17,23 @@
       {
         "price": 2.5970000000000004,
         "type": "resistance",
-        "strength": 1.6,
+        "strength": 1.49,
         "touches": 2,
         "avgVolume": 1.637666714739269,
         "firstTouch": 1762669800000,
         "lastTouch": 1762946100000,
         "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 2.319,
+        "type": "resistance",
+        "strength": 0.91,
+        "touches": 2,
+        "avgVolume": 2.996658994579696,
+        "firstTouch": 1762484400000,
+        "lastTouch": 1763586900000,
+        "status": "broken",
         "breakVolume": null
       }
     ],
@@ -39,36 +50,9 @@
         "breakVolume": null
       },
       {
-        "price": 2.3705,
-        "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 5.65,
-=======
-        "strength": 5.66,
->>>>>>> Stashed changes
-=======
-        "strength": 5.66,
->>>>>>> Stashed changes
-        "touches": 2,
-        "avgVolume": 2.008748653131887,
-        "firstTouch": 1763145900000,
-        "lastTouch": 1763256600000,
-        "status": "broken",
-        "breakVolume": null
-      },
-      {
         "price": 2.3155,
         "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 5.46,
-=======
-        "strength": 5.47,
->>>>>>> Stashed changes
-=======
-        "strength": 5.47,
->>>>>>> Stashed changes
+        "strength": 5.14,
         "touches": 2,
         "avgVolume": 3.7768975820837607,
         "firstTouch": 1763094600000,
@@ -79,15 +63,7 @@
       {
         "price": 2.4923333333333333,
         "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 4.03,
-=======
-        "strength": 4.04,
->>>>>>> Stashed changes
-=======
-        "strength": 4.04,
->>>>>>> Stashed changes
+        "strength": 3.74,
         "touches": 3,
         "avgVolume": 2.267380692437589,
         "firstTouch": 1762682400000,
@@ -96,48 +72,46 @@
         "breakVolume": null
       },
       {
+        "price": 2.3676666666666666,
+        "type": "support",
+        "strength": 2.51,
+        "touches": 3,
+        "avgVolume": 1.8730973613318918,
+        "firstTouch": 1763145900000,
+        "lastTouch": 1763511300000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
         "price": 2.4525,
         "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 1.88,
-=======
-        "strength": 1.89,
->>>>>>> Stashed changes
-=======
-        "strength": 1.89,
->>>>>>> Stashed changes
+        "strength": 1.75,
         "touches": 2,
         "avgVolume": 1.4362392780020108,
         "firstTouch": 1762792200000,
         "lastTouch": 1763003700000,
         "status": "broken",
         "breakVolume": null
+      },
+      {
+        "price": 2.2649999999999997,
+        "type": "support",
+        "strength": 0.84,
+        "touches": 2,
+        "avgVolume": 1.247025471629144,
+        "firstTouch": 1763123400000,
+        "lastTouch": 1763632800000,
+        "status": "broken",
+        "breakVolume": null
       }
     ],
     "consolidationZones": [],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    "currentPrice": 2.381,
-=======
-    "currentPrice": 2.377,
->>>>>>> Stashed changes
-=======
-    "currentPrice": 2.377,
->>>>>>> Stashed changes
+    "currentPrice": 2.207,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      "currentZScore": -0.9829786796387835
-=======
-      "currentZScore": -0.46759924976827133
->>>>>>> Stashed changes
-=======
-      "currentZScore": -0.46759924976827133
->>>>>>> Stashed changes
+      "currentZScore": 0.019611508244186025
     }
   },
   "config": {
@@ -150,13 +124,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "timestamp": 1763514328.1412473
-=======
-  "timestamp": 1763510970.6746156
->>>>>>> Stashed changes
-=======
-  "timestamp": 1763510970.6746156
->>>>>>> Stashed changes
+  "timestamp": 1763657415.9929428
 }

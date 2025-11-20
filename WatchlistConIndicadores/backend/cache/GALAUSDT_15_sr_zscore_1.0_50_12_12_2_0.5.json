@@ -16,9 +16,20 @@
         "breakVolume": null
       },
       {
+        "price": 0.008262,
+        "type": "support",
+        "strength": 3.29,
+        "touches": 2,
+        "avgVolume": 2.1340011035356845,
+        "firstTouch": 1763317800000,
+        "lastTouch": 1763531100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
         "price": 0.009787333333333334,
         "type": "support",
-        "strength": 1.78,
+        "strength": 1.66,
         "touches": 3,
         "avgVolume": 1.7486071883859102,
         "firstTouch": 1762611300000,
@@ -29,15 +40,7 @@
       {
         "price": 0.0086915,
         "type": "support",
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        "strength": 1.41,
-=======
-        "strength": 1.42,
->>>>>>> Stashed changes
-=======
-        "strength": 1.42,
->>>>>>> Stashed changes
+        "strength": 1.32,
         "touches": 2,
         "avgVolume": 3.394351735052794,
         "firstTouch": 1762418700000,
@@ -47,28 +50,12 @@
       }
     ],
     "consolidationZones": [],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    "currentPrice": 0.00861,
-=======
-    "currentPrice": 0.00862,
->>>>>>> Stashed changes
-=======
-    "currentPrice": 0.00862,
->>>>>>> Stashed changes
+    "currentPrice": 0.008167,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      "currentZScore": -0.8744413913287273
-=======
-      "currentZScore": -0.292675514519966
->>>>>>> Stashed changes
-=======
-      "currentZScore": -0.292675514519966
->>>>>>> Stashed changes
+      "currentZScore": -0.10368403330589025
     }
   },
   "config": {
@@ -81,13 +68,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "timestamp": 1763514317.791329
-=======
-  "timestamp": 1763510960.4598122
->>>>>>> Stashed changes
-=======
-  "timestamp": 1763510960.4598122
->>>>>>> Stashed changes
+  "timestamp": 1763657408.527799
 }
