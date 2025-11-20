@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import httpx
 import asyncio
 import time
@@ -8,10 +9,36 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
+# Configuración global
+COLOMBIA_TZ = timezone(timedelta(hours=-5))
+CACHE_DIR = Path("cache")
+CACHE_DIR.mkdir(exist_ok=True)
+BACKTESTING_CACHE_DIR = Path("backtesting_cache")
+BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    from alert_sender import initialize_alert_sender
+    await initialize_alert_sender()
+    print("[STARTUP] Backend started successfully")
+    print("[STARTUP] Alert sender initialized")
+    print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
+
+    yield
+
+    # Shutdown
+    from alert_sender import shutdown_alert_sender
+    await shutdown_alert_sender()
+    print("[SHUTDOWN] Backend shutdown complete")
+
+
 app = FastAPI(
     title="Crypto Watchlist Backend",
     description="Servidor backend para la Watchlist de criptomonedas con Bybit Futures",
     version="2.5.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -21,10 +48,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-COLOMBIA_TZ = timezone(timedelta(hours=-5))
-CACHE_DIR = Path("cache")
-CACHE_DIR.mkdir(exist_ok=True)
 
 # Cache reducido a 30 minutos para datos más frescos
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
@@ -411,6 +434,248 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
             "success": False
         }
 
+@app.get("/api/open-interest/{symbol}")
+async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
+    """
+    Endpoint para obtener Open Interest de Bybit Futures
+    Calcula OI Flow Sentiment siguiendo el patrón LuxAlgo
+    """
+    try:
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # Aplicar límite máximo por timeframe
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # Intentar cargar del cache
+        cached_data = load_cache(symbol, interval_final, "openinterest")
+
+        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed
+            }
+
+        # Bybit Open Interest usa intervalos específicos
+        # Disponibles: 5min, 15min, 30min, 1h, 4h, 1d
+        # NOTA: 2h NO está disponible, usar 1h en su lugar
+        oi_interval_map = {
+            "5": "5min",
+            "15": "15min",
+            "30": "30min",
+            "60": "1h",
+            "120": "1h",  # 2h no disponible, usar 1h
+            "240": "4h",
+            "D": "1d"
+        }
+
+        # Mapeo inverso: de Bybit interval a minutos
+        oi_interval_to_minutes = {
+            "5min": 5,
+            "15min": 15,
+            "30min": 30,
+            "1h": 60,
+            "4h": 240,
+            "1d": 1440
+        }
+
+        oi_interval = oi_interval_map.get(interval_final, "15min")
+        oi_interval_minutes = oi_interval_to_minutes.get(oi_interval, 15)
+
+        # CRÍTICO: Calcular puntos necesarios basándose en el intervalo de OI, NO el de las velas
+        # Porque podemos tener velas de 2h pero OI de 1h (el doble de puntos)
+        minutes_in_period = days_to_fetch * 24 * 60
+        total_points_needed = int(minutes_in_period / oi_interval_minutes)
+
+        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
+        print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
+
+        # Bybit devuelve máximo 200 puntos por request
+        limit_per_request = 200
+
+        # Calcular timestamps
+        now_ms = int(time.time() * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos al futuro
+        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        all_oi_data = []
+        current_end = end_ms
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            request_count = 0
+            max_requests = 10
+
+            # Hacer múltiples requests hasta obtener todos los datos necesarios
+            while len(all_oi_data) < total_points_needed and request_count < max_requests:
+                request_count += 1
+
+                url = (
+                    "https://api.bybit.com/v5/market/open-interest?"
+                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
+                    f"&limit={limit_per_request}&endTime={current_end}"
+                )
+
+                # Convertir timestamp a fecha para debug
+                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                    if request_count == 1:  # Solo error si es el primer request
+                        return {
+                            "symbol": symbol,
+                            "interval": interval_final,
+                            "indicator": "openInterest",
+                            "data": [],
+                            "success": False,
+                            "error": data.get('retMsg', 'Unknown error')
+                        }
+                    break
+
+                oi_batch = data["result"]["list"]
+
+                if not oi_batch:
+                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                    break
+
+                # Log del batch recibido
+                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+
+                # oi_batch viene en orden descendente (más reciente primero)
+                # Agregar al inicio de all_oi_data para mantener orden cronológico
+                all_oi_data = oi_batch + all_oi_data
+
+                # Actualizar current_end para el siguiente batch
+                # El más antiguo de este batch es el último elemento
+                oldest_item = oi_batch[-1]
+                oldest_ts = int(oldest_item["timestamp"])
+
+                # Si ya llegamos al inicio del periodo, salir
+                if oldest_ts <= start_ms:
+                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                    break
+
+                # Siguiente request debe terminar justo antes del más antiguo de este batch
+                current_end = oldest_ts - 1
+
+                # Si ya tenemos suficientes puntos, salir
+                if len(all_oi_data) >= total_points_needed:
+                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                    break
+
+                # Pequeña pausa entre requests
+                await asyncio.sleep(0.1)
+
+            if not all_oi_data:
+                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "openInterest",
+                    "data": [],
+                    "success": False,
+                    "error": "No Open Interest data available"
+                }
+
+            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
+
+            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+            # porque Bybit devuelve descendente y agregamos al inicio
+            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+            all_oi_data.reverse()
+
+            # Verificar orden
+            if len(all_oi_data) >= 2:
+                first_ts = int(all_oi_data[0]["timestamp"])
+                last_ts = int(all_oi_data[-1]["timestamp"])
+                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
+            # Procesar datos
+            # all_oi_data ahora sí está en orden cronológico ascendente
+            processed_data = []
+
+            for item in all_oi_data:
+                ts_ms = int(item["timestamp"])
+                oi_value = float(item["openInterest"])
+
+                # Convertir timestamp a datetime Colombia
+                ts_seconds = ts_ms / 1000
+                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+                processed_data.append({
+                    "timestamp": ts_ms,
+                    "openInterest": oi_value,
+                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+                })
+
+            # Guardar en cache
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data
+            }
+            save_cache(symbol, interval_final, "openinterest", cache_data)
+            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
+
+            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data,
+                "success": True,
+                "from_cache": False,
+                "calculated": True,
+                "total_points": len(processed_data),
+                "days_requested": days,
+                "days_fetched": days_to_fetch,
+                "max_days_allowed": max_days_allowed,
+                "api_requests_made": request_count
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": [],
+            "success": False,
+            "error": str(e)
+        }
+
 @app.post("/api/clear-cache")
 async def clear_cache():
     """Endpoint para limpiar el cache manualmente"""
@@ -452,128 +717,44 @@ async def upload_cache(symbol: str, interval: str, data: dict):
         return {"success": False, "error": str(e)}
 
 
-# ==================== REJECTION PATTERN ENDPOINTS ====================
+# ==================== SUPPORT/RESISTANCE FUNCTIONS ====================
 
-from fastapi import Request
-from rejection_detector import RejectionDetector, serialize_pattern
-from alert_sender import send_pattern_alert
-
-rejection_detector = RejectionDetector()
-
-
-@app.post("/api/rejection-patterns/detect")
-async def detect_rejection_patterns(request: Request):
+def calculate_z_score(values: list, period: int = 50):
     """
-    Detects rejection patterns based on user configuration
+    Calcula el Z-Score para cada valor en la lista
+    Z-Score = (valor - media) / desviación estándar
 
-    Body:
-    {
-      "symbol": "BTCUSDT",
-      "interval": "4h",
-      "days": 7,
-      "config": { ... },  # Pattern configuration
-      "referenceContexts": [ ... ]  # Reference contexts
-    }
+    Args:
+        values: Lista de valores (ej: volúmenes)
+        period: Período para calcular media y desviación estándar
+
+    Returns:
+        Lista de z-scores
     """
-    try:
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '4h')
-        days = body.get('days', 7)
-        config = body.get('config', {})
-        reference_contexts = body.get('referenceContexts', [])
+    import statistics
 
-        if not symbol:
-            return {
-                "success": False,
-                "error": "Symbol is required"
-            }
+    z_scores = []
 
-        print(f"[REJECTION PATTERNS] Detecting patterns for {symbol} {interval}")
-        print(f"  - Active contexts: {len([c for c in reference_contexts if c.get('enabled', False)])}")
+    for i in range(len(values)):
+        # Tomar ventana de 'period' valores anteriores (incluyendo el actual)
+        start_idx = max(0, i - period + 1)
+        window = values[start_idx:i + 1]
 
-        # Get historical candles
-        historical = await get_historical(symbol, interval, days)
+        if len(window) < 2:
+            z_scores.append(0.0)
+            continue
 
-        if not historical.get('success') or not historical.get('data'):
-            return {
-                "success": False,
-                "error": "Could not fetch historical data"
-            }
+        mean = statistics.mean(window)
+        stdev = statistics.stdev(window)
 
-        candles = historical['data']
+        if stdev == 0:
+            z_scores.append(0.0)
+        else:
+            z_score = (values[i] - mean) / stdev
+            z_scores.append(z_score)
 
-        # Detect patterns
-        patterns = rejection_detector.detect_patterns(
-            symbol,
-            candles,
-            config,
-            reference_contexts
-        )
+    return z_scores
 
-        # Serialize patterns
-        serialized_patterns = [serialize_pattern(p) for p in patterns]
-
-        print(f"[REJECTION PATTERNS] ✅ Detected {len(patterns)} patterns for {symbol}")
-
-        # Send alerts for high-confidence patterns
-        if config.get('alertsEnabled', False):
-            for pattern_data in serialized_patterns:
-                if pattern_data['confidence'] >= config.get('filters', {}).get('minConfidence', 60):
-                    await send_pattern_alert(
-                        symbol,
-                        interval,
-                        pattern_data,
-                        config
-                    )
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "interval": interval,
-            "patterns": serialized_patterns,
-            "totalPatterns": len(patterns),
-            "activeContexts": len([c for c in reference_contexts if c.get('enabled', False)])
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Rejection patterns detection: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {
-            "success": False,
-            "error": str(e)
-        }
-
-
-@app.get("/api/rejection-patterns/available-contexts/{symbol}")
-async def get_available_contexts(symbol: str, interval: str = "4h"):
-    """
-    Returns all available reference contexts for a symbol
-
-    This is a placeholder implementation. In production, this would:
-    1. Query active Volume Profiles from frontend state or cache
-    2. Query fixed ranges from localStorage or database
-    3. Query active ranges from Range Detector
-
-    For now, we return a sample structure that the frontend can populate.
-    """
-    contexts = []
-
-    # Note: This would need to integrate with your Volume Profile and Range Detector data
-    # For now, returning empty to let frontend manage the contexts
-
-    return {
-        "success": True,
-        "symbol": symbol,
-        "interval": interval,
-        "contexts": contexts,
-        "message": "Frontend should populate contexts from active indicators"
-    }
-
-
-
-# ==================== SUPPORT & RESISTANCE ENDPOINTS ====================
 
 def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
                   z_scores: list = None, z_threshold: float = 1.5):
@@ -1117,191 +1298,41 @@ from rejection_detector import RejectionDetector, serialize_pattern
 from alert_sender import send_pattern_alert
 
 rejection_detector = RejectionDetector()
-# ==================== PROXIMITY ALERTS ENDPOINTS ====================
 
-def calculate_proximity_score(current_price: float, target_price: float, tolerance_pct: float = 1.0) -> dict:
+
+@app.post("/api/rejection-patterns/detect")
+async def detect_rejection_patterns(request: Request):
     """
-    Calcula el score de proximidad basado en la distancia al precio objetivo
-
-    Args:
-        current_price: Precio actual
-        target_price: Precio objetivo
-        tolerance_pct: Tolerancia en porcentaje (default 1.0%)
-
-    Returns:
-        dict con score (0-70), distance_pct, phase
-    """
-    distance_pct = abs(current_price - target_price) / target_price * 100
-
-    # Definir zonas de proximidad (PRIORIZADO - hasta 70 puntos)
-    if distance_pct <= 0.3:
-        # Ultra Close
-        score = 70
-        phase = "active"
-    elif distance_pct <= 0.5:
-        # Close
-        score = 55
-        phase = "in_zone"
-    elif distance_pct <= tolerance_pct:
-        # Near (dentro de tolerancia)
-        score = 40
-        phase = "in_zone"
-    elif distance_pct <= 2.0:
-        # Approaching
-        # Escala lineal de 40 a 25
-        score = 40 - ((distance_pct - tolerance_pct) / (2.0 - tolerance_pct)) * 15
-        phase = "approaching"
-    else:
-        # Far - escala descendente hasta 0
-        score = max(0, 25 - (distance_pct - 2.0) * 2)
-        phase = "idle"
-
-    return {
-        "score": round(score, 2),
-        "distancePct": round(distance_pct, 4),
-        "phase": phase
-    }
-
-
-def calculate_z_score(values: list, period: int = 50) -> list:
-    """
-    Calcula el z-score para una serie de valores usando una ventana móvil
-
-    Args:
-        values: Lista de valores numéricos
-        period: Tamaño de la ventana para calcular media y desviación estándar
-
-    Returns:
-        Lista de z-scores (uno por cada valor)
-    """
-    import statistics
-
-    z_scores = []
-
-    for i in range(len(values)):
-        # Usar ventana desde el inicio hasta el índice actual (máximo 'period' valores)
-        start_idx = max(0, i - period + 1)
-        window = values[start_idx:i + 1]
-
-        if len(window) < 2:
-            z_scores.append(0.0)
-            continue
-
-        # Calcular media y desviación estándar
-        mean = statistics.mean(window)
-        stdev = statistics.stdev(window)
-
-        # Evitar división por cero
-        if stdev == 0:
-            z_scores.append(0.0)
-        else:
-            z_score = (values[i] - mean) / stdev
-            z_scores.append(z_score)
-
-    return z_scores
-
-
-def calculate_volume_score(volumes: list, z_score_period: int = 50, threshold_zscore: float = 2.0) -> dict:
-    """
-    Calcula el score de volumen basado en z-score actual
-
-    Args:
-        volumes: Lista de volúmenes (últimas N velas)
-        z_score_period: Período para calcular z-score
-        threshold_zscore: Umbral de z-score configurado por usuario
-
-    Returns:
-        dict con score (0-30), current_zscore, trend
-    """
-    if len(volumes) < 2:
-        return {
-            "score": 0,
-            "currentZScore": 0,
-            "trend": "neutral"
-        }
-
-    # Calcular z-scores
-    z_scores = calculate_z_score(volumes, z_score_period)
-    current_zscore = z_scores[-1] if z_scores else 0
-
-    # Calcular score basado en umbral (hasta 30 puntos)
-    if current_zscore >= threshold_zscore:
-        score = 30
-    elif current_zscore >= threshold_zscore * 0.75:
-        score = 22
-    elif current_zscore >= threshold_zscore * 0.5:
-        score = 15
-    else:
-        # Escala proporcional
-        score = (current_zscore / (threshold_zscore * 0.5)) * 15
-        score = max(0, min(15, score))
-
-    # Detectar tendencia (últimas 3 velas)
-    if len(z_scores) >= 3:
-        recent_z = z_scores[-3:]
-        if recent_z[-1] > recent_z[-2] > recent_z[-3]:
-            trend = "increasing"
-        elif recent_z[-1] < recent_z[-2] < recent_z[-3]:
-            trend = "decreasing"
-        else:
-            trend = "neutral"
-    else:
-        trend = "neutral"
-
-    return {
-        "score": round(score, 2),
-        "currentZScore": round(current_zscore, 2),
-        "trend": trend
-    }
-
-
-@app.post("/api/proximity-alerts/calculate")
-async def calculate_proximity_alert(request: Request):
-    """
-    Calcula el score de proximidad para una alerta específica
+    Detects rejection patterns based on user configuration
 
     Body:
     {
       "symbol": "BTCUSDT",
-      "interval": "15",
-      "targetPrice": 95000,
-      "tolerancePct": 1.0,
-      "volumeThresholdZScore": 2.0,
-      "zScorePeriod": 50
-    }
-
-    Returns:
-    {
-      "success": true,
-      "symbol": "BTCUSDT",
-      "currentPrice": 95123.45,
-      "targetPrice": 95000,
-      "totalScore": 85,
-      "proximityScore": 55,
-      "volumeScore": 30,
-      "phase": "in_zone",
-      "distancePct": 0.13,
-      "currentZScore": 2.5,
-      "volumeTrend": "increasing"
+      "interval": "4h",
+      "days": 7,
+      "config": { ... },  # Pattern configuration
+      "referenceContexts": [ ... ]  # Reference contexts
     }
     """
     try:
         body = await request.json()
         symbol = body.get('symbol')
-        interval = body.get('interval', '15')
-        target_price = body.get('targetPrice')
-        tolerance_pct = body.get('tolerancePct', 1.0)
-        volume_threshold_zscore = body.get('volumeThresholdZScore', 2.0)
-        z_score_period = body.get('zScorePeriod', 50)
+        interval = body.get('interval', '4h')
+        days = body.get('days', 7)
+        config = body.get('config', {})
+        reference_contexts = body.get('referenceContexts', [])
 
-        if not symbol or target_price is None:
+        if not symbol:
             return {
                 "success": False,
-                "error": "symbol and targetPrice are required"
+                "error": "Symbol is required"
             }
 
-        # Obtener datos históricos (últimos 2 días en 15min = 192 velas, suficiente para z-score)
-        historical = await get_historical(symbol, interval, days=2)
+        print(f"[REJECTION PATTERNS] Detecting patterns for {symbol} {interval}")
+        print(f"  - Active contexts: {len([c for c in reference_contexts if c.get('enabled', False)])}")
+
+        # Get historical candles
+        historical = await get_historical(symbol, interval, days)
 
         if not historical.get('success') or not historical.get('data'):
             return {
@@ -1310,43 +1341,42 @@ async def calculate_proximity_alert(request: Request):
             }
 
         candles = historical['data']
-        current_price = candles[-1]['close']
-        volumes = [c['volume'] for c in candles]
 
-        # Calcular proximity score
-        proximity_result = calculate_proximity_score(current_price, target_price, tolerance_pct)
+        # Detect patterns
+        patterns = rejection_detector.detect_patterns(
+            symbol,
+            candles,
+            config,
+            reference_contexts
+        )
 
-        # Calcular volume score
-        volume_result = calculate_volume_score(volumes, z_score_period, volume_threshold_zscore)
+        # Serialize patterns
+        serialized_patterns = [serialize_pattern(p) for p in patterns]
 
-        # Score total
-        total_score = proximity_result['score'] + volume_result['score']
+        print(f"[REJECTION PATTERNS] ✅ Detected {len(patterns)} patterns for {symbol}")
 
-        # Determinar fase final (puede upgradearse si volumen es muy alto)
-        phase = proximity_result['phase']
-        if total_score >= 75:
-            phase = "active"
-        elif total_score >= 50:
-            if phase == "idle":
-                phase = "approaching"
+        # Send alerts for high-confidence patterns
+        if config.get('alertsEnabled', False):
+            for pattern_data in serialized_patterns:
+                if pattern_data['confidence'] >= config.get('filters', {}).get('minConfidence', 60):
+                    await send_pattern_alert(
+                        symbol,
+                        interval,
+                        pattern_data,
+                        config
+                    )
 
         return {
             "success": True,
             "symbol": symbol,
-            "currentPrice": round(current_price, 2),
-            "targetPrice": target_price,
-            "totalScore": round(total_score, 2),
-            "proximityScore": proximity_result['score'],
-            "volumeScore": volume_result['score'],
-            "phase": phase,
-            "distancePct": proximity_result['distancePct'],
-            "currentZScore": volume_result['currentZScore'],
-            "volumeTrend": volume_result['trend'],
-            "timestamp": int(time.time() * 1000)
+            "interval": interval,
+            "patterns": serialized_patterns,
+            "totalPatterns": len(patterns),
+            "activeContexts": len([c for c in reference_contexts if c.get('enabled', False)])
         }
 
     except Exception as e:
-        print(f"[ERROR] Proximity alert calculation: {str(e)}")
+        print(f"[ERROR] Rejection patterns detection: {str(e)}")
         import traceback
         traceback.print_exc()
         return {
@@ -1355,350 +1385,337 @@ async def calculate_proximity_alert(request: Request):
         }
 
 
-@app.post("/api/proximity-alerts/batch")
-async def calculate_proximity_alerts_batch(request: Request):
+@app.get("/api/rejection-patterns/available-contexts/{symbol}")
+async def get_available_contexts(symbol: str, interval: str = "4h"):
     """
-    Calcula scores para múltiples alertas en paralelo
+    Returns all available reference contexts for a symbol
 
-    Body:
-    {
-      "alerts": [
-        {
-          "id": "uuid-1",
-          "symbol": "BTCUSDT",
-          "interval": "15",
-          "targetPrice": 95000,
-          "tolerancePct": 1.0,
-          "volumeThresholdZScore": 2.0
-        },
-        ...
-      ]
+    This is a placeholder implementation. In production, this would:
+    1. Query active Volume Profiles from frontend state or cache
+    2. Query fixed ranges from localStorage or database
+    3. Query active ranges from Range Detector
+
+    For now, we return a sample structure that the frontend can populate.
+    """
+    contexts = []
+
+    # Note: This would need to integrate with your Volume Profile and Range Detector data
+    # For now, returning empty to let frontend manage the contexts
+
+    return {
+        "success": True,
+        "symbol": symbol,
+        "interval": interval,
+        "contexts": contexts,
+        "message": "Frontend should populate contexts from active indicators"
     }
+
+
+# ==================== BACKTESTING ENGINE ENDPOINTS ====================
+
+# Configuración de timeframes y subdivisiones para backtesting
+BACKTESTING_CONFIG = {
+    "15m": {
+        "interval": "15",
+        "subdivisions": {
+            "interval": "5",
+            "count": 3  # 3 velas de 5 minutos forman 1 vela de 15 minutos
+        }
+    },
+    "1h": {
+        "interval": "60",
+        "subdivisions": {
+            "interval": "15",
+            "count": 4  # 4 velas de 15 minutos forman 1 vela de 1 hora
+        }
+    },
+    "4h": {
+        "interval": "240",
+        "subdivisions": {
+            "interval": "60",
+            "count": 4  # 4 velas de 1 hora forman 1 vela de 4 horas
+        }
+    }
+}
+
+
+def save_backtesting_cache(symbol: str, data: dict):
+    """Guarda datos de backtesting en caché permanente"""
+    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    with open(cache_file, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print(f"[BACKTESTING CACHE] Guardado {symbol} - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+
+
+def load_backtesting_cache(symbol: str):
+    """Carga datos de backtesting del caché"""
+    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    if cache_file.exists():
+        try:
+            with open(cache_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                print(f"[BACKTESTING CACHE] Cargado {symbol} desde caché - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+                return data
+        except Exception as e:
+            print(f"[BACKTESTING CACHE ERROR] {symbol}: {str(e)}")
+    return None
+
+
+async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 1095):
+    """
+    Descarga datos históricos para un timeframe específico
+
+    Args:
+        symbol: Par de trading (ej: BTCUSDT)
+        interval: Intervalo (5, 15, 60, 240)
+        days: Días a descargar (default 1095 = 3 años)
 
     Returns:
-    {
-      "success": true,
-      "results": [
-        {
-          "id": "uuid-1",
-          "success": true,
-          "totalScore": 85,
-          ...
-        },
-        ...
-      ]
-    }
+        Lista de velas o None si hay error
     """
     try:
-        body = await request.json()
-        alerts = body.get('alerts', [])
+        interval_minutes = get_interval_minutes(interval)
+        minutes_in_period = days * 24 * 60
+        total_candles_needed = int(minutes_in_period / interval_minutes)
 
-        if not alerts:
-            return {
-                "success": False,
-                "error": "No alerts provided"
-            }
+        print(f"[BACKTESTING] {symbol} @ {interval}m - Necesitamos {total_candles_needed} velas para {days} días")
 
-        # Procesar todas las alertas
-        results = []
-
-        for alert_config in alerts:
-            alert_id = alert_config.get('id')
-
-            try:
-                # Crear request simulado para reutilizar función
-                class FakeRequest:
-                    async def json(self):
-                        return alert_config
-
-                fake_req = FakeRequest()
-                result = await calculate_proximity_alert(fake_req)
-
-                result['id'] = alert_id
-                results.append(result)
-
-            except Exception as e:
-                print(f"[ERROR] Processing alert {alert_id}: {str(e)}")
-                results.append({
-                    "id": alert_id,
-                    "success": False,
-                    "error": str(e)
-                })
-
-        return {
-            "success": True,
-            "results": results,
-            "total": len(alerts),
-            "timestamp": int(time.time() * 1000)
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Batch proximity alerts: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {
-            "success": False,
-            "error": str(e)
-        }
-
-
-@app.get("/api/open-interest/{symbol}")
-async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
-    """
-    Endpoint para obtener Open Interest de Bybit Futures
-    Calcula OI Flow Sentiment siguiendo el patrón LuxAlgo
-    """
-    try:
-        interval_clean = (
-            interval.replace("m", "")
-            .replace("h", "")
-            .replace("d", "D")
-            .replace("w", "W")
-        )
-
-        if "h" in interval.lower() and interval_clean.isdigit():
-            interval_clean = str(int(interval_clean) * 60)
-
-        interval_final = INTERVAL_MAP.get(interval_clean, "15")
-
-        # Aplicar límite máximo por timeframe
-        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
-        days_to_fetch = min(days, max_days_allowed)
-
-        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
-
-        # Intentar cargar del cache
-        cached_data = load_cache(symbol, interval_final, "openinterest")
-
-        if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
-            cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
-
-            return {
-                "symbol": symbol,
-                "interval": interval_final,
-                "indicator": "openInterest",
-                "data": cached_data.get("data", []),
-                "success": True,
-                "from_cache": True,
-                "cache_age_seconds": int(cache_age),
-                "days_requested": days,
-                "days_fetched": days_to_fetch,
-                "max_days_allowed": max_days_allowed
-            }
-
-        # Bybit Open Interest usa intervalos específicos
-        # Disponibles: 5min, 15min, 30min, 1h, 4h, 1d
-        # NOTA: 2h NO está disponible, usar 1h en su lugar
-        oi_interval_map = {
-            "5": "5min",
-            "15": "15min",
-            "30": "30min",
-            "60": "1h",
-            "120": "1h",  # 2h no disponible, usar 1h
-            "240": "4h",
-            "D": "1d"
-        }
-
-        # Mapeo inverso: de Bybit interval a minutos
-        oi_interval_to_minutes = {
-            "5min": 5,
-            "15min": 15,
-            "30min": 30,
-            "1h": 60,
-            "4h": 240,
-            "1d": 1440
-        }
-
-        oi_interval = oi_interval_map.get(interval_final, "15min")
-        oi_interval_minutes = oi_interval_to_minutes.get(oi_interval, 15)
-
-        # CRÍTICO: Calcular puntos necesarios basándose en el intervalo de OI, NO el de las velas
-        # Porque podemos tener velas de 2h pero OI de 1h (el doble de puntos)
-        minutes_in_period = days_to_fetch * 24 * 60
-        total_points_needed = int(minutes_in_period / oi_interval_minutes)
-
-        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
-        print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
-
-        # Bybit devuelve máximo 200 puntos por request
-        limit_per_request = 200
-
-        # Calcular timestamps
         now_ms = int(time.time() * 1000)
-        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos al futuro
-        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+        end_ms = now_ms + (10 * 60 * 1000)  # Buffer de 10 minutos
+        start_ms = now_ms - (days * 24 * 60 * 60 * 1000)
 
-        all_oi_data = []
-        current_end = end_ms
+        all_candles = []
+        current_start = start_ms
 
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             request_count = 0
-            max_requests = 10
+            max_requests = 50  # Más requests permitidos para 3 años de datos
 
-            # Hacer múltiples requests hasta obtener todos los datos necesarios
-            while len(all_oi_data) < total_points_needed and request_count < max_requests:
+            while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
+                candles_remaining = total_candles_needed - len(all_candles)
+                fetch_limit = min(1000, candles_remaining)  # Bybit limit = 1000
 
                 url = (
-                    "https://api.bybit.com/v5/market/open-interest?"
-                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
-                    f"&limit={limit_per_request}&endTime={current_end}"
+                    "https://api.bybit.com/v5/market/kline?"
+                    f"category=linear&symbol={symbol}&interval={interval}"
+                    f"&start={current_start}&limit={fetch_limit}"
                 )
 
-                # Convertir timestamp a fecha para debug
-                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
                 r = await client.get(url)
                 data = r.json()
 
                 if data.get("retCode") != 0:
-                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
-                    if request_count == 1:  # Solo error si es el primer request
-                        return {
-                            "symbol": symbol,
-                            "interval": interval_final,
-                            "indicator": "openInterest",
-                            "data": [],
-                            "success": False,
-                            "error": data.get('retMsg', 'Unknown error')
-                        }
+                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
                     break
 
-                oi_batch = data["result"]["list"]
-
-                if not oi_batch:
-                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                batch_candles = data["result"]["list"]
+                if not batch_candles:
+                    print(f"[INFO {symbol}] No más datos disponibles")
                     break
 
-                # Log del batch recibido
-                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+                batch_candles.reverse()
+                all_candles.extend(batch_candles)
 
-                # oi_batch viene en orden descendente (más reciente primero)
-                # Agregar al inicio de all_oi_data para mantener orden cronológico
-                all_oi_data = oi_batch + all_oi_data
+                last_candle_ts = int(batch_candles[-1][0])
+                current_start = last_candle_ts + (interval_minutes * 60 * 1000)
 
-                # Actualizar current_end para el siguiente batch
-                # El más antiguo de este batch es el último elemento
-                oldest_item = oi_batch[-1]
-                oldest_ts = int(oldest_item["timestamp"])
+                if request_count % 10 == 0:
+                    print(f"[BACKTESTING] {symbol} @ {interval}m - Descargadas {len(all_candles)}/{total_candles_needed} velas ({request_count} requests)")
 
-                # Si ya llegamos al inicio del periodo, salir
-                if oldest_ts <= start_ms:
-                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                if current_start >= end_ms:
                     break
 
-                # Siguiente request debe terminar justo antes del más antiguo de este batch
-                current_end = oldest_ts - 1
-
-                # Si ya tenemos suficientes puntos, salir
-                if len(all_oi_data) >= total_points_needed:
-                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                if len(all_candles) >= total_candles_needed:
                     break
 
-                # Pequeña pausa entre requests
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.1)  # Rate limiting
 
-            if not all_oi_data:
-                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
-                return {
-                    "symbol": symbol,
-                    "interval": interval_final,
-                    "indicator": "openInterest",
-                    "data": [],
-                    "success": False,
-                    "error": "No Open Interest data available"
-                }
+        # Procesar velas
+        candles = []
+        for c in all_candles:
+            ts_ms = int(c[0])
+            candles.append({
+                "timestamp": ts_ms,
+                "open": float(c[1]),
+                "high": float(c[2]),
+                "low": float(c[3]),
+                "close": float(c[4]),
+                "volume": float(c[5])
+            })
 
-            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
-
-            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
-            # porque Bybit devuelve descendente y agregamos al inicio
-            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
-            all_oi_data.reverse()
-
-            # Verificar orden
-            if len(all_oi_data) >= 2:
-                first_ts = int(all_oi_data[0]["timestamp"])
-                last_ts = int(all_oi_data[-1]["timestamp"])
-                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
-
-            # Procesar datos
-            # all_oi_data ahora sí está en orden cronológico ascendente
-            processed_data = []
-
-            for item in all_oi_data:
-                ts_ms = int(item["timestamp"])
-                oi_value = float(item["openInterest"])
-
-                # Convertir timestamp a datetime Colombia
-                ts_seconds = ts_ms / 1000
-                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
-                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
-
-                processed_data.append({
-                    "timestamp": ts_ms,
-                    "openInterest": oi_value,
-                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
-                })
-
-            # Guardar en cache
-            cache_data = {
-                "symbol": symbol,
-                "interval": interval_final,
-                "indicator": "openInterest",
-                "data": processed_data
-            }
-            save_cache(symbol, interval_final, "openinterest", cache_data)
-            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
-
-            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
-
-            return {
-                "symbol": symbol,
-                "interval": interval_final,
-                "indicator": "openInterest",
-                "data": processed_data,
-                "success": True,
-                "from_cache": False,
-                "calculated": True,
-                "total_points": len(processed_data),
-                "days_requested": days,
-                "days_fetched": days_to_fetch,
-                "max_days_allowed": max_days_allowed,
-                "api_requests_made": request_count
-            }
+        print(f"[BACKTESTING] ✅ {symbol} @ {interval}m - {len(candles)} velas descargadas")
+        return candles
 
     except Exception as e:
-        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        print(f"[ERROR] Backtesting fetch {symbol} @ {interval}m: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
+@app.get("/api/backtesting/bulk-data/{symbol}")
+async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
+    """
+    Descarga y cachea 3 años de datos para backtesting
+
+    Retorna:
+    {
+        "symbol": "BTCUSDT",
+        "timeframes": {
+            "15m": {
+                "main": [...],  // Velas de 15 minutos
+                "subdivisions": [...]  // Velas de 5 minutos
+            },
+            "1h": {
+                "main": [...],
+                "subdivisions": [...]  // Velas de 15 minutos
+            },
+            "4h": {
+                "main": [...],
+                "subdivisions": [...]  // Velas de 1 hora
+            }
+        },
+        "metadata": {
+            "cached_at": timestamp,
+            "total_size_mb": float,
+            "date_range": {
+                "start": datetime,
+                "end": datetime
+            }
+        }
+    }
+    """
+    try:
+        # Intentar cargar del caché si existe
+        if not force_refresh:
+            cached_data = load_backtesting_cache(symbol)
+            if cached_data:
+                return {
+                    "success": True,
+                    "from_cache": True,
+                    **cached_data
+                }
+
+        print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
+
+        timeframes_data = {}
+        days = 1095  # 3 años
+
+        # Descargar datos para cada timeframe
+        for tf_name, config in BACKTESTING_CONFIG.items():
+            print(f"\n[BACKTESTING] ===== Procesando {tf_name} =====")
+
+            # Descargar velas principales
+            main_interval = config["interval"]
+            main_candles = await fetch_backtesting_timeframe(symbol, main_interval, days)
+
+            if not main_candles:
+                print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
+                continue
+
+            # Descargar subdivisiones
+            subdivision_interval = config["subdivisions"]["interval"]
+            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, days)
+
+            if not subdivision_candles:
+                print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
+                continue
+
+            timeframes_data[tf_name] = {
+                "main": main_candles,
+                "subdivisions": subdivision_candles,
+                "subdivision_count": config["subdivisions"]["count"]
+            }
+
+            print(f"[BACKTESTING] {tf_name} completado:")
+            print(f"  - Main: {len(main_candles)} velas de {main_interval}m")
+            print(f"  - Subdivisions: {len(subdivision_candles)} velas de {subdivision_interval}m")
+
+        # Calcular metadata
+        all_timestamps = []
+        for tf_data in timeframes_data.values():
+            all_timestamps.extend([c["timestamp"] for c in tf_data["main"]])
+
+        if all_timestamps:
+            min_ts = min(all_timestamps)
+            max_ts = max(all_timestamps)
+
+            start_date = datetime.fromtimestamp(min_ts / 1000, tz=COLOMBIA_TZ)
+            end_date = datetime.fromtimestamp(max_ts / 1000, tz=COLOMBIA_TZ)
+        else:
+            start_date = end_date = datetime.now(COLOMBIA_TZ)
+
+        metadata = {
+            "cached_at": int(time.time() * 1000),
+            "cached_at_colombia": datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_range": {
+                "start": start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "end": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "days": days
+            }
+        }
+
+        # Preparar respuesta
+        response_data = {
+            "symbol": symbol,
+            "timeframes": timeframes_data,
+            "metadata": metadata
+        }
+
+        # Guardar en caché
+        save_backtesting_cache(symbol, response_data)
+
+        print(f"\n[BACKTESTING] ✅ Datos completos para {symbol} listos")
+        print(f"  - Timeframes: {list(timeframes_data.keys())}")
+        print(f"  - Rango: {metadata['date_range']['start']} → {metadata['date_range']['end']}")
+
+        return {
+            "success": True,
+            "from_cache": False,
+            **response_data
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Backtesting bulk data {symbol}: {str(e)}")
         import traceback
         traceback.print_exc()
         return {
-            "symbol": symbol,
-            "interval": interval_final,
-            "indicator": "openInterest",
-            "data": [],
             "success": False,
             "error": str(e)
         }
 
-@app.post("/api/clear-cache")
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup"""
-    from alert_sender import initialize_alert_sender
-    await initialize_alert_sender()
-    print("[STARTUP] Backend started successfully")
-    print("[STARTUP] Alert sender initialized")
-    print("[STARTUP] Proximity alerts system ready")
+@app.delete("/api/backtesting/cache/{symbol}")
+async def delete_backtesting_cache(symbol: str):
+    """Elimina el caché de backtesting para un símbolo específico"""
+    try:
+        cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+        if cache_file.exists():
+            cache_file.unlink()
+            return {
+                "success": True,
+                "message": f"Caché de backtesting eliminado para {symbol}"
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"No existe caché para {symbol}"
+            }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    from alert_sender import shutdown_alert_sender
-    await shutdown_alert_sender()
-    print("[SHUTDOWN] Backend shutdown complete")
+# ==================== MAIN ====================
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_level="info"
+    )
