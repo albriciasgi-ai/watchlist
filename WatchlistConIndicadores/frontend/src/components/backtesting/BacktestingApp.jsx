@@ -191,26 +191,50 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] DEBUG - startDate input:', startDate);
         console.log('[BacktestingApp] DEBUG - startTimestamp calculado:', startTimestamp, new Date(startTimestamp).toISOString());
 
+        // VALIDACIÓN 1: Verificar que la fecha esté dentro del rango de datos disponibles
+        const minDataBuffer = 7 * 24 * 60 * 60 * 1000; // Mínimo 7 días de datos después de la fecha
+        const maxAllowedStart = lastCandle.timestamp - minDataBuffer;
+
+        if (startTimestamp < firstCandle.timestamp) {
+          setError(`❌ Fecha muy antigua. Los datos inician el ${new Date(firstCandle.timestamp).toLocaleDateString('es-CO')}. Por favor selecciona una fecha posterior.`);
+          return;
+        }
+
+        if (startTimestamp > maxAllowedStart) {
+          const maxDate = new Date(maxAllowedStart).toLocaleDateString('es-CO');
+          const lastDate = new Date(lastCandle.timestamp).toLocaleDateString('es-CO');
+          setError(`❌ Fecha muy reciente. Los datos terminan el ${lastDate}. Por favor selecciona una fecha anterior al ${maxDate} para tener suficientes datos de simulación.`);
+          return;
+        }
+
         // Buscar la primera vela que sea >= a la fecha seleccionada
         const startCandleIndex = timeframeData.main.findIndex(c => c.timestamp >= startTimestamp);
 
         if (startCandleIndex === -1) {
-          // No hay velas después de la fecha seleccionada - usar última vela
-          console.warn('[BacktestingApp] Fecha de inicio posterior al historial, usando última vela');
-          simulationStartTime = lastCandle.timestamp;
-        } else if (startCandleIndex === 0 && timeframeData.main[0].timestamp > startTimestamp + (30 * 24 * 60 * 60 * 1000)) {
-          // La primera vela es mucho más tarde que la fecha seleccionada (>30 días)
-          console.warn('[BacktestingApp] Fecha de inicio muy anterior al historial, usando primer dato');
-          simulationStartTime = firstCandle.timestamp;
-        } else {
-          // Usar la vela encontrada
-          simulationStartTime = timeframeData.main[startCandleIndex].timestamp;
-          console.log('[BacktestingApp] ✅ Usando fecha de inicio seleccionada:');
-          console.log(`  - Fecha ingresada: ${startDate}`);
-          console.log(`  - Timestamp: ${simulationStartTime}`);
-          console.log(`  - Fecha real: ${new Date(simulationStartTime).toISOString()}`);
-          console.log(`  - Índice de vela: ${startCandleIndex} de ${timeframeData.main.length}`);
+          // Este caso no debería ocurrir gracias a la validación anterior
+          setError('❌ No se encontraron datos para la fecha seleccionada.');
+          return;
         }
+
+        // Verificar que haya suficientes velas después de la fecha de inicio
+        const remainingCandles = timeframeData.main.length - startCandleIndex;
+        const minRequiredCandles = 100; // Mínimo 100 velas para simular
+
+        if (remainingCandles < minRequiredCandles) {
+          const suggestedIndex = Math.max(0, timeframeData.main.length - minRequiredCandles - 100);
+          const suggestedDate = new Date(timeframeData.main[suggestedIndex].timestamp).toLocaleDateString('es-CO');
+          setError(`❌ Solo hay ${remainingCandles} velas disponibles después de esta fecha. Por favor selecciona una fecha anterior (sugerida: ${suggestedDate}).`);
+          return;
+        }
+
+        // Usar la vela encontrada
+        simulationStartTime = timeframeData.main[startCandleIndex].timestamp;
+        console.log('[BacktestingApp] ✅ Usando fecha de inicio seleccionada:');
+        console.log(`  - Fecha ingresada: ${startDate}`);
+        console.log(`  - Timestamp: ${simulationStartTime}`);
+        console.log(`  - Fecha real: ${new Date(simulationStartTime).toISOString()}`);
+        console.log(`  - Índice de vela: ${startCandleIndex} de ${timeframeData.main.length}`);
+        console.log(`  - Velas disponibles para simular: ${remainingCandles}`);
       } else {
         // Sin fecha de inicio - usar una fecha razonable por defecto
         // Buscar la vela más cercana a hace 1 año desde la última vela disponible
@@ -414,6 +438,9 @@ const BacktestingApp = () => {
                 onChange={(e) => setStartDate(e.target.value)}
                 disabled={loading}
               />
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+                📅 Sin fecha = inicia hace ~1 año. Los datos históricos cubren ~3 años de información.
+              </small>
             </div>
 
             <button
