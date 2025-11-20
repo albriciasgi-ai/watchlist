@@ -281,6 +281,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       setSelectedTool('horizontal');
       if (drawingManagerRef.current) drawingManagerRef.current.setTool('horizontal');
     }
+    if (e.key === 'l' || e.key === 'L') {
+      setSelectedTool('vertical');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('vertical');
+    }
     if (e.key === 'r' || e.key === 'R') {
       setSelectedTool('rectangle');
       if (drawingManagerRef.current) drawingManagerRef.current.setTool('rectangle');

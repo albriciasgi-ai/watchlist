@@ -3,6 +3,7 @@
 
 import TrendLine from './shapes/TrendLine';
 import HorizontalLine from './shapes/HorizontalLine';
+import VerticalLine from './shapes/VerticalLine';
 import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
 
@@ -73,15 +74,21 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
-        // Volver a modo select después de completar
-        this.setTool('select');
-        if (this.onToolChange) this.onToolChange('select');
+        // NO cambiar tool, permitir dibujar múltiples líneas
       }
       return true;
     }
 
     if (this.currentTool === 'horizontal') {
       const line = new HorizontalLine(price, time);
+      this.addShape(line);
+      this.saveToHistory();
+      // NO cambiar tool, permitir dibujar múltiples líneas
+      return true;
+    }
+
+    if (this.currentTool === 'vertical') {
+      const line = new VerticalLine(price, time);
       this.addShape(line);
       this.saveToHistory();
       // NO cambiar tool, permitir dibujar múltiples líneas
@@ -98,9 +105,7 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
-        // Volver a modo select después de completar
-        this.setTool('select');
-        if (this.onToolChange) this.onToolChange('select');
+        // NO cambiar tool, permitir dibujar múltiples rectángulos
       }
       return true;
     }
@@ -115,9 +120,7 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
-        // Volver a modo select después de completar
-        this.setTool('select');
-        if (this.onToolChange) this.onToolChange('select');
+        // NO cambiar tool, permitir dibujar múltiples fibonacci
       }
       return true;
     }
@@ -248,6 +251,8 @@ class DrawingToolManager {
         return TrendLine.deserialize(data);
       case 'horizontal':
         return HorizontalLine.deserialize(data);
+      case 'vertical':
+        return VerticalLine.deserialize(data);
       case 'rectangle':
         return Rectangle.deserialize(data);
       case 'fibonacci':
