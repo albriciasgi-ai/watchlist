@@ -7,7 +7,7 @@ import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
 
 class DrawingToolManager {
-  constructor(symbol, interval) {
+  constructor(symbol, interval, onToolChange = null) {
     this.symbol = symbol;
     this.interval = interval;
     this.shapes = [];
@@ -16,6 +16,7 @@ class DrawingToolManager {
     this.currentTool = 'select';
     this.drawingInProgress = null;
     this.tempPoints = [];
+    this.onToolChange = onToolChange; // Callback para notificar cambios de herramienta
 
     // Undo/Redo system
     this.history = [];
@@ -73,7 +74,8 @@ class DrawingToolManager {
         this.tempPoints = [];
         this.saveToHistory();
         // Volver a modo select después de completar
-        this.currentTool = 'select';
+        this.setTool('select');
+        if (this.onToolChange) this.onToolChange('select');
       }
       return true;
     }
@@ -97,7 +99,8 @@ class DrawingToolManager {
         this.tempPoints = [];
         this.saveToHistory();
         // Volver a modo select después de completar
-        this.currentTool = 'select';
+        this.setTool('select');
+        if (this.onToolChange) this.onToolChange('select');
       }
       return true;
     }
@@ -113,7 +116,8 @@ class DrawingToolManager {
         this.tempPoints = [];
         this.saveToHistory();
         // Volver a modo select después de completar
-        this.currentTool = 'select';
+        this.setTool('select');
+        if (this.onToolChange) this.onToolChange('select');
       }
       return true;
     }

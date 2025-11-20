@@ -39,7 +39,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   // Inicializar managers
   useEffect(() => {
-    drawingManagerRef.current = new DrawingToolManager(symbol, interval);
+    drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
     measurementToolRef.current = new MeasurementTool();
 
     // Cargar dibujos guardados
