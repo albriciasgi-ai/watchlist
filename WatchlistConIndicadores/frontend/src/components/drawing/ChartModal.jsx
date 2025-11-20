@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../../config";
 import DrawingToolManager from "./DrawingToolManager";
 import DrawingToolbar from "./DrawingToolbar";
 import MeasurementTool from "./MeasurementTool";
+import MeasurementShape from "./shapes/MeasurementShape";
 import "./ChartModal.css";
 
 const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onClose }) => {
@@ -13,6 +14,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const drawingManagerRef = useRef(null);
   const measurementToolRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const lastClickTimeRef = useRef(0);
   const [candles, setCandles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
@@ -134,9 +136,81 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       return;
     }
 
+    // Detectar doble click sobre measurement para hacerlo permanente
+    if (e.button === 0 && measurementToolRef.current) {
+      const measurement = measurementToolRef.current;
+
+      // Si hay una medición finalizada (no está midiendo pero tiene puntos)
+      if (!measurement.isMeasuring && measurement.startPoint && measurement.endPoint) {
+        const now = Date.now();
+        const timeSinceLastClick = now - lastClickTimeRef.current;
+        lastClickTimeRef.current = now;
+
+        // Doble click detectado (menos de 300ms)
+        if (timeSinceLastClick < 300) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const scaleConverter = calculateScaleConverter();
+          if (scaleConverter && drawingManagerRef.current) {
+            // Convertir medición a MeasurementShape permanente
+            const price1 = scaleConverter.yToPrice(measurement.startPoint.y);
+            const price2 = scaleConverter.yToPrice(measurement.endPoint.y);
+            const time1 = scaleConverter.xToTime(measurement.startPoint.x);
+            const time2 = scaleConverter.xToTime(measurement.endPoint.x);
+
+            if (time1 && time2) {
+              const measurementShape = new MeasurementShape(price1, time1, price2, time2);
+              drawingManagerRef.current.addShape(measurementShape);
+              drawingManagerRef.current.saveToHistory();
+
+              // Guardar en servidor
+              saveDrawings();
+
+              // Limpiar measurement tool
+              measurement.clear();
+
+              // Re-renderizar
+              requestAnimationFrame(() => drawChart());
+
+              console.log('✅ Medición guardada permanentemente');
+              return;
+            }
+          }
+        }
+      }
+    }
+
     // Drawing tools
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
+
+      // Detectar doble click en TextBox para editar texto
+      if (drawingManagerRef.current.selectedShape &&
+          drawingManagerRef.current.selectedShape.type === 'textbox') {
+        const now = Date.now();
+        const timeSinceLastClick = now - lastClickTimeRef.current;
+
+        if (timeSinceLastClick < 300) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Editar texto con prompt
+          const textbox = drawingManagerRef.current.selectedShape;
+          const newText = prompt('Editar texto:', textbox.text);
+
+          if (newText !== null) { // null significa cancelado
+            textbox.setText(newText);
+            drawingManagerRef.current.saveToHistory();
+            saveDrawings();
+            requestAnimationFrame(() => drawChart());
+          }
+
+          lastClickTimeRef.current = 0; // Reset para evitar triple click
+          return;
+        }
+      }
+
       const consumed = drawingManagerRef.current.handleMouseDown(
         x, y, scaleConverter, selectedTool
       );
@@ -360,6 +434,18 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (e.key === 'f' || e.key === 'F') {
       setSelectedTool('fibonacci');
       if (drawingManagerRef.current) drawingManagerRef.current.setTool('fibonacci');
+    }
+    if (e.key === 'p' || e.key === 'P') {
+      setSelectedTool('tp');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('tp');
+    }
+    if (e.key === 's' || e.key === 'S') {
+      setSelectedTool('sl');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('sl');
+    }
+    if (e.key === 'n' || e.key === 'N') {
+      setSelectedTool('textbox');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('textbox');
     }
     if (e.key === 'v' || e.key === 'V') {
       setSelectedTool('select');

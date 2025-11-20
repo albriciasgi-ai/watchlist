@@ -6,6 +6,9 @@ import HorizontalLine from './shapes/HorizontalLine';
 import VerticalLine from './shapes/VerticalLine';
 import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
+import MeasurementShape from './shapes/MeasurementShape';
+import TPSLBox from './shapes/TPSLBox';
+import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
   constructor(symbol, interval, onToolChange = null) {
@@ -122,6 +125,22 @@ class DrawingToolManager {
         this.saveToHistory();
         // NO cambiar tool, permitir dibujar múltiples fibonacci
       }
+      return true;
+    }
+
+    if (this.currentTool === 'tp' || this.currentTool === 'sl') {
+      const box = new TPSLBox(price, time, this.currentTool);
+      this.addShape(box);
+      this.saveToHistory();
+      // NO cambiar tool, permitir dibujar múltiples cajas
+      return true;
+    }
+
+    if (this.currentTool === 'textbox') {
+      const textbox = new TextBox(price, time, 'Escribe aquí...');
+      this.addShape(textbox);
+      this.saveToHistory();
+      // NO cambiar tool, permitir dibujar múltiples textboxes
       return true;
     }
 
@@ -257,6 +276,12 @@ class DrawingToolManager {
         return Rectangle.deserialize(data);
       case 'fibonacci':
         return FibonacciRetracement.deserialize(data);
+      case 'measurement':
+        return MeasurementShape.deserialize(data);
+      case 'tpsl':
+        return TPSLBox.deserialize(data);
+      case 'textbox':
+        return TextBox.deserialize(data);
       default:
         console.warn('Unknown shape type:', data.type);
         return null;
