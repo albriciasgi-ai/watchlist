@@ -1,7 +1,36 @@
 {
   "symbol": "ETHUSDT",
   "interval": "15",
-  "shapes": [],
-  "updated_at": "2025-11-19T05:15:40.606608+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763529977561_0.441798865591862",
+      "price": 3387.5444691512903,
+      "time": 1763424900000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763529981046_0.4024072099522811",
+      "price": 3340.402860903868,
+      "time": 1763465400000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2025-11-19T05:26:40.901850+00:00",
+  "total_shapes": 2
 }
