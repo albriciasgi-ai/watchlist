@@ -37,6 +37,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       DOJI_DRAGONFLY: '🐉',
       DOJI_GRAVESTONE: '🪦'
     };
+    // Cache para evitar recalcular patrones en cada render
+    this.lastCandlesLength = 0;
+    this.lastCandleTimestamp = null;
   }
 
   loadConfig() {
@@ -99,7 +102,6 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     this.localPatterns = this.localDetector.detectPatterns(candles, this.config);
-    console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
   }
 
   async fetchData() {
@@ -156,8 +158,25 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     // Detectar patrones localmente si está en modo "all"
+    // OPTIMIZACIÓN: Solo recalcular si las velas han cambiado
     if (this.showMode === 'all' && allCandles && allCandles.length > 0) {
-      this.detectLocalPatterns(allCandles);
+      const currentLength = allCandles.length;
+      const currentTimestamp = allCandles[allCandles.length - 1]?.timestamp;
+
+      // Solo recalcular si:
+      // 1. No tenemos patrones calculados aún
+      // 2. El número de velas cambió
+      // 3. La última vela cambió (nuevo cierre)
+      const shouldRecalculate =
+        this.localPatterns.length === 0 ||
+        currentLength !== this.lastCandlesLength ||
+        currentTimestamp !== this.lastCandleTimestamp;
+
+      if (shouldRecalculate) {
+        this.detectLocalPatterns(allCandles);
+        this.lastCandlesLength = currentLength;
+        this.lastCandleTimestamp = currentTimestamp;
+      }
     }
 
     // Elegir qué patrones mostrar según el modo
