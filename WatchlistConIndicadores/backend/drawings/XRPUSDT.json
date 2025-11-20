@@ -1,0 +1,48 @@
+{
+  "symbol": "XRPUSDT",
+  "interval": "15",
+  "shapes": [
+    {
+      "type": "trendline",
+      "id": "trendline_1763653385435_0.4893119159003432",
+      "price1": 2.087907246376812,
+      "time1": 1763582400000,
+      "price2": 2.2058782608695653,
+      "time2": 1763605800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763653390408_0.1933228199601399",
+      "price1": 2.148233333333333,
+      "time1": 1763634600000,
+      "price2": 2.3117840579710145,
+      "time2": 1763629200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763657050857_0.43393971173028467",
+      "price": 2.301059420289855,
+      "time": 1763590500000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2025-11-20T16:44:11.357115+00:00",
+  "total_shapes": 3
+}
