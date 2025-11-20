@@ -770,7 +770,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso para zoom suave
         setScaleX(prev => {
           const newScale = Math.max(0.3, Math.min(10, prev * zoomFactor)); // Límite mínimo 0.3 para evitar problemas
-          setManualPan(true); // El zoom también desactiva auto-scroll
+          // NO establecer manualPan = true aquí
+          // Permitir que el auto-scroll ajuste el offsetX automáticamente basándose en el nuevo scale
           return newScale;
         });
       } else {

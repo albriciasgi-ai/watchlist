@@ -150,6 +150,46 @@ const BacktestingApp = () => {
   };
 
   /**
+   * Elimina datos de IndexedDB para un símbolo específico
+   */
+  const deleteFromIndexedDB = async (symbol) => {
+    return new Promise((resolve, reject) => {
+      const dbName = 'backtestingCache';
+      const request = indexedDB.open(dbName, 1);
+
+      request.onerror = () => reject(request.error);
+
+      request.onsuccess = () => {
+        const db = request.result;
+
+        if (!db.objectStoreNames.contains('marketData')) {
+          resolve();
+          return;
+        }
+
+        const transaction = db.transaction(['marketData'], 'readwrite');
+        const store = transaction.objectStore('marketData');
+        const deleteRequest = store.delete(symbol);
+
+        deleteRequest.onsuccess = () => {
+          console.log(`[IndexedDB] Datos eliminados para ${symbol}`);
+          resolve();
+        };
+
+        deleteRequest.onerror = () => reject(deleteRequest.error);
+      };
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('marketData')) {
+          const store = db.createObjectStore('marketData', { keyPath: 'symbol' });
+          store.createIndex('savedAt', 'savedAt', { unique: false });
+        }
+      };
+    });
+  };
+
+  /**
    * Inicializa el backtesting con un símbolo
    */
   const handleInitialize = async () => {
@@ -480,8 +520,26 @@ const BacktestingApp = () => {
                 onClick={async () => {
                   const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos.');
                   if (confirmed) {
-                    await loadBacktestingData(symbol, true);
-                    window.location.reload(); // Recargar para aplicar nuevos datos
+                    try {
+                      setLoading(true);
+                      setError(null);
+
+                      // 1. Eliminar datos de IndexedDB
+                      console.log('[BacktestingApp] Eliminando caché de IndexedDB...');
+                      await deleteFromIndexedDB(symbol);
+
+                      // 2. Descargar datos frescos desde Bybit con force_refresh
+                      console.log('[BacktestingApp] Descargando datos frescos desde Bybit...');
+                      await loadBacktestingData(symbol, true);
+
+                      // 3. Recargar página para aplicar cambios
+                      console.log('[BacktestingApp] Recargando página...');
+                      window.location.reload();
+                    } catch (err) {
+                      console.error('[BacktestingApp] Error al actualizar:', err);
+                      setError('Error al actualizar datos: ' + err.message);
+                      setLoading(false);
+                    }
                   }
                 }}
                 style={{
