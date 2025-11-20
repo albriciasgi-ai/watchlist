@@ -117,8 +117,17 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (e.button === 1 && measurementToolRef.current) {
       e.preventDefault();
       e.stopPropagation();
-      // Asegurarse de que no estamos en modo drag
+
+      // Limpiar TODOS los estados de drag/resize antes de iniciar measurement
       dragStateRef.current.isDragging = false;
+
+      if (drawingManagerRef.current && drawingManagerRef.current.selectedShape) {
+        const shape = drawingManagerRef.current.selectedShape;
+        if (shape.isDragging || shape.isResizing) {
+          shape.endDrag();
+        }
+      }
+
       measurementToolRef.current.handleMouseDown(e, canvas);
       setNeedsRedraw(true);
       return;
@@ -163,6 +172,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
       setNeedsRedraw(true);
+      // Log para depuración
+      console.log('[DEBUG] Measurement tool activo - bloqueando otros eventos');
       return;
     }
 
@@ -210,6 +221,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
       setNeedsRedraw(true);
     }
+
+    // Log para depuración si hay shape siendo arrastrado
+    if (isShapeDragging) {
+      console.log('[DEBUG] Shape siendo arrastrado/resized');
+    }
   }, [selectedTool]);
 
   const handleMouseUp = useCallback((e) => {
@@ -253,23 +269,75 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   }, []);
 
   const handleKeyDown = useCallback((e) => {
+    // Ctrl+Shift+Esc - Limpieza forzada de TODOS los estados (modo pánico)
+    if (e.key === 'Escape' && e.ctrlKey && e.shiftKey) {
+      console.log('[DEBUG] ⚠️ LIMPIEZA FORZADA DE ESTADOS - Modo pánico activado');
+
+      // Forzar limpieza de TODO sin preguntar
+      if (measurementToolRef.current) {
+        measurementToolRef.current.clear();
+      }
+
+      if (drawingManagerRef.current) {
+        drawingManagerRef.current.cancelDrawing();
+        if (drawingManagerRef.current.selectedShape) {
+          drawingManagerRef.current.selectedShape.endDrag();
+          drawingManagerRef.current.selectedShape = null;
+        }
+      }
+
+      dragStateRef.current.isDragging = false;
+
+      console.log('[DEBUG] ✅ Todos los estados limpiados');
+      setNeedsRedraw(true);
+      return;
+    }
+
     // Esc - Cancelar/Cerrar
     if (e.key === 'Escape') {
+      let somethingWasCancelled = false;
+
       // Limpiar medición si existe
-      if (measurementToolRef.current && measurementToolRef.current.startPoint) {
+      if (measurementToolRef.current && (measurementToolRef.current.isMeasuring || measurementToolRef.current.startPoint)) {
         measurementToolRef.current.clear();
-        // Asegurarse de limpiar el estado de drag también
+        console.log('[DEBUG] Limpiado measurement tool');
+        somethingWasCancelled = true;
+      }
+
+      // Limpiar dibujo en progreso
+      if (drawingManagerRef.current && drawingManagerRef.current.isDrawing()) {
+        drawingManagerRef.current.cancelDrawing();
+        console.log('[DEBUG] Limpiado drawing in progress');
+        somethingWasCancelled = true;
+      }
+
+      // Limpiar shape seleccionado y estados de drag
+      if (drawingManagerRef.current && drawingManagerRef.current.selectedShape) {
+        const shape = drawingManagerRef.current.selectedShape;
+        if (shape.isDragging || shape.isResizing) {
+          shape.endDrag();
+          console.log('[DEBUG] Limpiado shape drag/resize');
+          somethingWasCancelled = true;
+        }
+        drawingManagerRef.current.selectedShape = null;
+        console.log('[DEBUG] Limpiado selected shape');
+        somethingWasCancelled = true;
+      }
+
+      // Limpiar estado de pan/drag
+      if (dragStateRef.current.isDragging) {
         dragStateRef.current.isDragging = false;
+        console.log('[DEBUG] Limpiado pan/drag state');
+        somethingWasCancelled = true;
+      }
+
+      if (somethingWasCancelled) {
         setNeedsRedraw(true);
         return;
       }
 
-      if (drawingManagerRef.current && drawingManagerRef.current.isDrawing()) {
-        drawingManagerRef.current.cancelDrawing();
-        setNeedsRedraw(true);
-      } else {
-        onClose();
-      }
+      // Si no había nada que cancelar, cerrar el modal
+      onClose();
     }
 
     // Shortcuts de herramientas
@@ -331,6 +399,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     canvas.addEventListener('wheel', handleWheel, { passive: false });
     document.addEventListener('keydown', handleKeyDown);
 
+    // Listener global de mouseup para capturar cuando sueltan fuera del canvas
+    document.addEventListener('mouseup', handleMouseUp);
+
     // Prevenir comportamiento default del middle click
     const handleAuxClick = (e) => {
       if (e.button === 1) e.preventDefault();
@@ -344,6 +415,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       canvas.removeEventListener('wheel', handleWheel);
       canvas.removeEventListener('auxclick', handleAuxClick);
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handleMouseDown, handleMouseMove, handleMouseUp, handleWheel, handleKeyDown]);
 
