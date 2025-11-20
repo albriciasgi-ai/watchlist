@@ -1489,7 +1489,10 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
 
         async with httpx.AsyncClient(timeout=60) as client:
             request_count = 0
-            max_requests = 50  # Más requests permitidos para 3 años de datos
+            # Calcular max_requests basado en las velas necesarias
+            # Cada request trae máximo 1000 velas
+            max_requests = min(200, (total_candles_needed // 1000) + 10)
+            print(f"[BACKTESTING] Permitiendo hasta {max_requests} requests para descargar todas las velas")
 
             while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
