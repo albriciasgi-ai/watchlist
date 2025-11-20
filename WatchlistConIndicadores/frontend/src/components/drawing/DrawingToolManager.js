@@ -72,6 +72,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // Volver a modo select después de completar
+        this.currentTool = 'select';
       }
       return true;
     }
@@ -94,6 +96,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // Volver a modo select después de completar
+        this.currentTool = 'select';
       }
       return true;
     }
@@ -108,6 +112,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // Volver a modo select después de completar
+        this.currentTool = 'select';
       }
       return true;
     }
