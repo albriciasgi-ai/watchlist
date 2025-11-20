@@ -250,30 +250,10 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     }
 
     // Calcular escala de precios con padding (5% arriba y abajo)
-    // Usar TODAS las velas visibles en pantalla para escala dinámica
-    const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
-
-    // Determinar qué velas están realmente visibles en pantalla basándonos en offsetX
-    // Protección: si totalCandleWidthCalc es muy pequeño, usar todas las velas
-    let candlesForScale;
-    if (totalCandleWidthCalc < 1) {
-      // Si el zoom es extremo, usar todas las velas disponibles
-      candlesForScale = visibleCandles.main;
-    } else {
-      const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
-      const maxVisibleCandlesCalc = Math.ceil(chartWidth / totalCandleWidthCalc);
-      const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandlesCalc + 5);
-
-      // Validar índices
-      if (firstVisibleIndex >= visibleCandles.main.length || lastVisibleIndex <= firstVisibleIndex) {
-        candlesForScale = visibleCandles.main; // Fallback: usar todas
-      } else {
-        candlesForScale = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
-      }
-    }
-
+    // IMPORTANTE: Usar TODAS las velas disponibles para mantener contexto constante
+    // Esto evita que la escala cambie automáticamente durante la simulación
     const allPrices = [];
-    candlesForScale.forEach(c => {
+    visibleCandles.main.forEach(c => {
       allPrices.push(c.high, c.low);
     });
 
@@ -284,11 +264,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       });
     }
 
-    // Si no hay precios para calcular, usar todas las velas como fallback
     if (allPrices.length === 0) {
-      visibleCandles.main.forEach(c => {
-        allPrices.push(c.high, c.low);
-      });
+      // No hay datos
+      ctx.fillStyle = '#666';
+      ctx.font = '14px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('No hay precios para calcular', width / 2, height / 2);
+      return;
     }
 
     const maxPriceRaw = Math.max(...allPrices);
@@ -296,10 +278,15 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     const priceRangeRaw = maxPriceRaw - minPriceRaw;
     const padding = priceRangeRaw * 0.05; // 5% padding
 
-    const maxPrice = maxPriceRaw + padding;
-    const minPrice = minPriceRaw - padding;
+    // Aplicar zoom vertical ajustando el rango de precios visible
+    // scaleY > 1 = zoom in = ver menos rango de precios
+    // scaleY < 1 = zoom out = ver más rango de precios
+    const priceCenter = (maxPriceRaw + minPriceRaw) / 2;
+    const zoomedRange = (priceRangeRaw + padding * 2) / scaleY;
+    const maxPrice = priceCenter + zoomedRange / 2;
+    const minPrice = priceCenter - zoomedRange / 2;
     const priceRange = maxPrice - minPrice;
-    const priceScale = (chartHeight / priceRange) * scaleY; // Aplicar zoom vertical
+    const priceScale = chartHeight / priceRange;
 
     // Función para convertir precio a coordenada Y (con offset)
     const priceToY = (price) => {
@@ -744,7 +731,22 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     const handleMouseMove = (e) => {
       if (!isDragging) return;
 
-      const newOffsetX = e.clientX - dragStart.x;
+      let newOffsetX = e.clientX - dragStart.x;
+
+      // Limitar el paneo horizontal para mantener las velas dentro del canvas
+      const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+      const chartWidth = canvas.width - margin.left - margin.right;
+      const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+      const totalWidth = visibleCandles.main.length * totalCandleWidth;
+
+      // Límite derecho: no mover más allá del inicio
+      const maxOffsetX = 0;
+      // Límite izquierdo: mostrar al menos la última vela
+      const minOffsetX = Math.min(0, -(totalWidth - chartWidth));
+
+      // Aplicar límites
+      newOffsetX = Math.max(minOffsetX, Math.min(maxOffsetX, newOffsetX));
+
       // NO cambiar offsetY - el paneo vertical puede causar que los precios se salgan de escala
       // El usuario debe usar zoom vertical (wheel sin ctrl) en lugar de paneo vertical
 
@@ -766,18 +768,18 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal (muy suave - 2% por paso)
-        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso para zoom suave
+        // Ctrl + wheel: zoom horizontal (ultra suave - 0.5% por paso)
+        const zoomFactor = e.deltaY > 0 ? 0.995 : 1.005; // 0.5% por paso para zoom ultra suave
         setScaleX(prev => {
-          const newScale = Math.max(0.3, Math.min(10, prev * zoomFactor)); // Límite mínimo 0.3 para evitar problemas
+          const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor)); // Límite: 0.1x a 10x
           // NO establecer manualPan = true aquí
           // Permitir que el auto-scroll ajuste el offsetX automáticamente basándose en el nuevo scale
           return newScale;
         });
       } else {
-        // Wheel normal: zoom vertical (precio) - muy suave 2% por paso
-        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso
-        setScaleY(prev => Math.max(0.3, Math.min(10, prev * zoomFactor))); // Límite mínimo 0.3
+        // Wheel normal: zoom vertical (precio) - suave 1% por paso
+        const zoomFactor = e.deltaY > 0 ? 0.99 : 1.01; // 1% por paso
+        setScaleY(prev => Math.max(0.5, Math.min(5, prev * zoomFactor))); // Límite: 0.5x a 5x
       }
     };
 
