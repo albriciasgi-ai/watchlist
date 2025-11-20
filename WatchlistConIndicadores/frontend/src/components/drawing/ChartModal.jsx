@@ -129,7 +129,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
 
       measurementToolRef.current.handleMouseDown(e, canvas);
-      setNeedsRedraw(true);
+      // Renderizar inmediatamente para mostrar el punto inicial
+      requestAnimationFrame(() => drawChart());
       return;
     }
 
@@ -141,8 +142,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       );
 
       if (consumed) {
-        // Un shape fue seleccionado o estamos dibujando
-        setNeedsRedraw(true);
+        // Un shape fue seleccionado o estamos dibujando - renderizar inmediatamente
+        requestAnimationFrame(() => drawChart());
         return;
       }
 
@@ -171,9 +172,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
-      setNeedsRedraw(true);
-      // Log para depuración
-      console.log('[DEBUG] Measurement tool activo - bloqueando otros eventos');
+      // Renderizar inmediatamente durante medición
+      requestAnimationFrame(() => drawChart());
       return;
     }
 
@@ -197,7 +197,16 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
 
       if (consumed) {
-        setNeedsRedraw(true);
+        // Si hay un dibujo en progreso o shape siendo arrastrado, renderizar inmediatamente
+        const isDrawingOrDragging = drawingManagerRef.current.isDrawing() ||
+                                     drawingManagerRef.current.selectedShape?.isDragging ||
+                                     drawingManagerRef.current.selectedShape?.isResizing;
+
+        if (isDrawingOrDragging) {
+          requestAnimationFrame(() => drawChart());
+        } else {
+          setNeedsRedraw(true);
+        }
         return;
       }
     }
@@ -219,12 +228,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const deltaY = y - dragStateRef.current.startY;
       viewStateRef.current.verticalOffset = dragStateRef.current.startVerticalOffset + deltaY;
 
-      setNeedsRedraw(true);
-    }
-
-    // Log para depuración si hay shape siendo arrastrado
-    if (isShapeDragging) {
-      console.log('[DEBUG] Shape siendo arrastrado/resized');
+      // Renderizar inmediatamente durante pan
+      requestAnimationFrame(() => drawChart());
     }
   }, [selectedTool]);
 
@@ -300,14 +305,12 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       // Limpiar medición si existe
       if (measurementToolRef.current && (measurementToolRef.current.isMeasuring || measurementToolRef.current.startPoint)) {
         measurementToolRef.current.clear();
-        console.log('[DEBUG] Limpiado measurement tool');
         somethingWasCancelled = true;
       }
 
       // Limpiar dibujo en progreso
       if (drawingManagerRef.current && drawingManagerRef.current.isDrawing()) {
         drawingManagerRef.current.cancelDrawing();
-        console.log('[DEBUG] Limpiado drawing in progress');
         somethingWasCancelled = true;
       }
 
@@ -316,18 +319,15 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         const shape = drawingManagerRef.current.selectedShape;
         if (shape.isDragging || shape.isResizing) {
           shape.endDrag();
-          console.log('[DEBUG] Limpiado shape drag/resize');
           somethingWasCancelled = true;
         }
         drawingManagerRef.current.selectedShape = null;
-        console.log('[DEBUG] Limpiado selected shape');
         somethingWasCancelled = true;
       }
 
       // Limpiar estado de pan/drag
       if (dragStateRef.current.isDragging) {
         dragStateRef.current.isDragging = false;
-        console.log('[DEBUG] Limpiado pan/drag state');
         somethingWasCancelled = true;
       }
 
@@ -494,9 +494,24 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   // Renderizado del chart
   useEffect(() => {
     if (needsRedraw || candles.length > 0) {
-      drawChart();
-      setNeedsRedraw(false);
+      // Usar requestAnimationFrame para asegurar que el render ocurra
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+
+      animationFrameRef.current = requestAnimationFrame(() => {
+        drawChart();
+        setNeedsRedraw(false);
+        animationFrameRef.current = null;
+      });
     }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
   }, [candles, needsRedraw]);
 
   const drawChart = () => {
