@@ -518,25 +518,48 @@ const BacktestingApp = () => {
               📅 Datos: {new Date(marketData.metadata.date_range.start).toLocaleDateString('es-CO')} - {new Date(marketData.metadata.date_range.end).toLocaleDateString('es-CO')}
               <button
                 onClick={async () => {
-                  const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos.');
+                  const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos y eliminará todos los cachés.');
                   if (confirmed) {
                     try {
                       setLoading(true);
                       setError(null);
 
-                      // 1. Eliminar datos de IndexedDB
-                      console.log('[BacktestingApp] Eliminando caché de IndexedDB...');
+                      console.log('[BacktestingApp] ====== INICIANDO ACTUALIZACIÓN COMPLETA ======');
+
+                      // 1. Eliminar caché del backend
+                      console.log('[BacktestingApp] Paso 1/4: Eliminando caché del backend...');
+                      const deleteResponse = await fetch(`${API_BASE_URL}/api/backtesting/cache/${symbol}`, {
+                        method: 'DELETE'
+                      });
+                      const deleteResult = await deleteResponse.json();
+                      console.log('[BacktestingApp] Backend caché eliminado:', deleteResult);
+
+                      // 2. Eliminar datos de IndexedDB
+                      console.log('[BacktestingApp] Paso 2/4: Eliminando caché de IndexedDB...');
                       await deleteFromIndexedDB(symbol);
 
-                      // 2. Descargar datos frescos desde Bybit con force_refresh
-                      console.log('[BacktestingApp] Descargando datos frescos desde Bybit...');
-                      await loadBacktestingData(symbol, true);
+                      // 3. Limpiar localStorage también
+                      console.log('[BacktestingApp] Paso 3/4: Limpiando localStorage...');
+                      localStorage.removeItem(`backtesting_${symbol}`);
 
-                      // 3. Recargar página para aplicar cambios
-                      console.log('[BacktestingApp] Recargando página...');
-                      window.location.reload();
+                      // 4. Descargar datos frescos desde Bybit con force_refresh
+                      console.log('[BacktestingApp] Paso 4/4: Descargando datos frescos desde Bybit...');
+                      const freshData = await loadBacktestingData(symbol, true);
+
+                      if (freshData && freshData.metadata) {
+                        console.log('[BacktestingApp] ✅ DATOS ACTUALIZADOS:');
+                        console.log(`  - Inicio: ${freshData.metadata.date_range.start}`);
+                        console.log(`  - Fin: ${freshData.metadata.date_range.end}`);
+                        console.log(`  - Cached at: ${freshData.metadata.cached_at_colombia}`);
+                      }
+
+                      // 5. Recargar página para aplicar cambios
+                      console.log('[BacktestingApp] Recargando página en 2 segundos...');
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 2000);
                     } catch (err) {
-                      console.error('[BacktestingApp] Error al actualizar:', err);
+                      console.error('[BacktestingApp] ❌ Error al actualizar:', err);
                       setError('Error al actualizar datos: ' + err.message);
                       setLoading(false);
                     }
