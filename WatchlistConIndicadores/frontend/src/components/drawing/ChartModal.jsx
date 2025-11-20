@@ -12,6 +12,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const canvasRef = useRef(null);
   const drawingManagerRef = useRef(null);
   const measurementToolRef = useRef(null);
+  const animationFrameRef = useRef(null);
   const [candles, setCandles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
@@ -158,17 +159,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Measurement tool - usar requestAnimationFrame para evitar bloqueos
+    // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
-      // Cancelar frame anterior si existe
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      // Programar redibujado
-      animationFrameRef.current = requestAnimationFrame(() => {
-        drawChart();
-      });
+      setNeedsRedraw(true);
       return;
     }
 
@@ -219,12 +213,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   }, [selectedTool]);
 
   const handleMouseUp = useCallback((e) => {
-    // Limpiar animation frame si existe
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-
     if (measurementToolRef.current) {
       measurementToolRef.current.handleMouseUp(e);
     }
