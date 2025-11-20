@@ -13,7 +13,9 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
   // Actualizar precio de entrada con el precio actual
   useEffect(() => {
     if (useCurrentPrice && currentPrice) {
-      setEntryPrice(currentPrice.toFixed(2));
+      const newPrice = currentPrice.toFixed(2);
+      setEntryPrice(newPrice);
+      console.log(`[TradingControls] Precio actualizado automáticamente: ${newPrice}`);
     }
   }, [currentPrice, useCurrentPrice]);
 
@@ -87,6 +89,14 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
     }
 
     // Crear orden
+    console.log('[TradingControls] Creando orden con:', {
+      entryPrice: price,
+      currentPrice: currentPrice,
+      currentTime: new Date(currentTime).toISOString(),
+      side: orderSide,
+      quantity: qty
+    });
+
     const order = orderManager.createOrder({
       type: orderType,
       side: orderSide,
