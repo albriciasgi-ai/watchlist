@@ -533,8 +533,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const endIdx = Math.min(candles.length, startIdx + candlesPerScreen);
     const visibleCandles = candles.slice(startIdx, endIdx);
 
-    const minPrice = Math.min(...candles.map(c => c.low));
-    const maxPrice = Math.max(...candles.map(c => c.high));
+    // Calcular min/max SOLO de velas visibles para evitar offset
+    const minPrice = Math.min(...visibleCandles.map(c => c.low));
+    const maxPrice = Math.max(...visibleCandles.map(c => c.high));
     const priceRange = maxPrice - minPrice;
 
     return {
