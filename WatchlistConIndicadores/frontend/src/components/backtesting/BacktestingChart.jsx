@@ -185,6 +185,23 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
       const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
 
+      // NUEVO: Al inicio (no reproduciendo), ajustar scaleX para mostrar al menos 200 velas
+      if (!isPlaying && scaleX === 1 && candles.length >= 200) {
+        // Calcular el scaleX necesario para mostrar 200 velas
+        const targetVisibleCandles = 200;
+        const availableWidth = chartDimensions.width - 100;
+        const requiredCandleWidth = availableWidth / targetVisibleCandles;
+        const baseCandleWidth = CANDLE_WIDTH + CANDLE_SPACING;
+        const newScaleX = Math.max(0.1, Math.min(1, requiredCandleWidth / baseCandleWidth));
+
+        console.log('[BacktestingChart] Ajustando zoom inicial para mostrar 200 velas:');
+        console.log(`  - scaleX ajustado: ${newScaleX.toFixed(3)} (era 1.0)`);
+        console.log(`  - Velas visibles estimadas: ${Math.floor(availableWidth / (baseCandleWidth * newScaleX))}`);
+
+        setScaleX(newScaleX);
+        return; // Esperar a que se actualice scaleX
+      }
+
       if (candles.length > maxVisibleCandles) {
         // Calcular cuántas velas hay antes de currentTime
         // Esto nos permite posicionar el chart para mostrar contexto
@@ -792,14 +809,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal (ultra suave - 0.5% por paso)
-        const zoomFactor = e.deltaY > 0 ? 0.995 : 1.005; // 0.5% por paso para zoom ultra suave
+        // Ctrl + wheel: zoom horizontal (2% por paso - más rápido y perceptible)
+        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso
         setScaleX(prev => {
           const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor)); // Límite: 0.1x a 10x
-          // NO establecer manualPan = true aquí
-          // Permitir que el auto-scroll ajuste el offsetX automáticamente basándose en el nuevo scale
           return newScale;
         });
+        // Marcar paneo manual para evitar que el auto-scroll interfiera con el zoom del usuario
+        setManualPan(true);
       } else {
         // Wheel normal: zoom vertical (precio) - simple y directo
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
