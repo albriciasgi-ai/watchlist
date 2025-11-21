@@ -60,7 +60,7 @@ class TPSLBox {
            y <= yBottom + tolerance;
   }
 
-  hitTestHandle(x, y, scaleConverter, handleRadius = 8) {
+  hitTestHandle(x, y, scaleConverter, handleRadius = 12) {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return null;
 
@@ -74,31 +74,35 @@ class TPSLBox {
     const xLeft = xCenter - boxWidth / 2;
     const xRight = xCenter + boxWidth / 2;
 
-    // Handle de TP (arriba)
-    const distTp = Math.sqrt((x - xCenter) ** 2 + (y - yTp) ** 2);
-    if (distTp <= handleRadius) return 'tp';
+    // Prioridad a handles más específicos primero (izq/der, luego tp/sl, luego entry)
 
-    // Handle de Entry (centro)
-    const distEntry = Math.sqrt((x - xCenter) ** 2 + (y - yEntry) ** 2);
-    if (distEntry <= handleRadius) return 'entry';
-
-    // Handle de SL (abajo)
-    const distSl = Math.sqrt((x - xCenter) ** 2 + (y - ySl) ** 2);
-    if (distSl <= handleRadius) return 'sl';
-
-    // Handles de ancho (izquierda y derecha en el entry)
+    // Handles de ancho (izquierda y derecha en el entry) - MÁS PRIORITARIOS
     const distLeft = Math.sqrt((x - xLeft) ** 2 + (y - yEntry) ** 2);
     if (distLeft <= handleRadius) return 'left';
 
     const distRight = Math.sqrt((x - xRight) ** 2 + (y - yEntry) ** 2);
     if (distRight <= handleRadius) return 'right';
 
+    // Handle de TP (arriba)
+    const distTp = Math.sqrt((x - xCenter) ** 2 + (y - yTp) ** 2);
+    if (distTp <= handleRadius) return 'tp';
+
+    // Handle de SL (abajo)
+    const distSl = Math.sqrt((x - xCenter) ** 2 + (y - ySl) ** 2);
+    if (distSl <= handleRadius) return 'sl';
+
+    // Handle de Entry (centro) - MENOS PRIORITARIO
+    const distEntry = Math.sqrt((x - xCenter) ** 2 + (y - yEntry) ** 2);
+    if (distEntry <= handleRadius + 4) return 'entry'; // Un poco más grande porque es central
+
     return null;
   }
 
   startDrag(x, y, scaleConverter) {
     this.isDragging = true;
+    this.dragStartX = x;
     this.dragStartY = y;
+    this.dragStartTime = this.time;
     this.dragStartEntryPrice = this.entryPrice;
     this.dragStartTpPrice = this.tpPrice;
     this.dragStartSlPrice = this.slPrice;
@@ -117,12 +121,19 @@ class TPSLBox {
 
   updateDrag(x, y, scaleConverter) {
     if (this.isDragging) {
-      // Mover toda la caja verticalmente
+      // Mover toda la caja verticalmente Y horizontalmente
       const deltaPrice = scaleConverter.yToPrice(y) - scaleConverter.yToPrice(this.dragStartY);
+      const currentTime = scaleConverter.xToTime(x);
+      const startTime = scaleConverter.xToTime(this.dragStartX);
 
       this.entryPrice = this.dragStartEntryPrice + deltaPrice;
       this.tpPrice = this.dragStartTpPrice + deltaPrice;
       this.slPrice = this.dragStartSlPrice + deltaPrice;
+
+      if (currentTime && startTime) {
+        const deltaTime = currentTime - startTime;
+        this.time = this.dragStartTime + deltaTime;
+      }
     } else if (this.isResizing) {
       if (this.dragHandle === 'tp') {
         // Ajustar solo TP

@@ -14,7 +14,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const drawingManagerRef = useRef(null);
   const measurementToolRef = useRef(null);
   const animationFrameRef = useRef(null);
-  const lastClickTimeRef = useRef(0);
+  const lastMeasurementClickTimeRef = useRef(0);
+  const lastTextBoxClickTimeRef = useRef(0);
+  const lastTextBoxClickedIdRef = useRef(null);
+  const redrawPendingRef = useRef(false);
   const [candles, setCandles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
@@ -143,8 +146,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       // Si hay una medición finalizada (no está midiendo pero tiene puntos)
       if (!measurement.isMeasuring && measurement.startPoint && measurement.endPoint) {
         const now = Date.now();
-        const timeSinceLastClick = now - lastClickTimeRef.current;
-        lastClickTimeRef.current = now;
+        const timeSinceLastClick = now - lastMeasurementClickTimeRef.current;
+        lastMeasurementClickTimeRef.current = now;
 
         // Doble click detectado (menos de 300ms)
         if (timeSinceLastClick < 300) {
@@ -190,10 +193,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
       if (clickedShape && clickedShape.type === 'textbox') {
         const now = Date.now();
-        const timeSinceLastClick = now - lastClickTimeRef.current;
-        lastClickTimeRef.current = now;
+        const timeSinceLastClick = now - lastTextBoxClickTimeRef.current;
+        const isSameTextBox = lastTextBoxClickedIdRef.current === clickedShape.id;
 
-        if (timeSinceLastClick < 300) {
+        lastTextBoxClickTimeRef.current = now;
+        lastTextBoxClickedIdRef.current = clickedShape.id;
+
+        // Double-click: must be within 300ms AND on the same textbox
+        if (timeSinceLastClick < 300 && isSameTextBox) {
           e.preventDefault();
           e.stopPropagation();
 
@@ -246,8 +253,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
-      // Renderizar inmediatamente durante medición
-      setNeedsRedraw(true);
+      // Renderizar con throttling para evitar exceso de redraws
+      requestRedraw();
       return;
     }
 
@@ -271,8 +278,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
 
       if (consumed) {
-        // Renderizar con needsRedraw para evitar conflictos de timing
-        setNeedsRedraw(true);
+        // Renderizar con throttling para evitar exceso de redraws
+        requestRedraw();
         return;
       }
     }
@@ -294,10 +301,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const deltaY = y - dragStateRef.current.startY;
       viewStateRef.current.verticalOffset = dragStateRef.current.startVerticalOffset + deltaY;
 
-      // Renderizar con needsRedraw para evitar conflictos de timing
-      setNeedsRedraw(true);
+      // Renderizar con throttling para evitar exceso de redraws
+      requestRedraw();
     }
-  }, [selectedTool]);
+  }, [selectedTool, requestRedraw]);
 
   const handleMouseUp = useCallback((e) => {
     if (measurementToolRef.current) {
@@ -559,11 +566,25 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       xToTime: (x) => {
         const relativeX = x - marginLeft;
         const barWidth = chartWidth / visibleCandles.length;
-        const candleIndex = startIdx + Math.floor(relativeX / barWidth);
+
+        // Snap to nearest candle center instead of flooring to containing candle
+        // This prevents offset when drawing trendlines
+        const fractionalIndex = (relativeX - barWidth / 2) / barWidth;
+        const nearestIndex = Math.round(fractionalIndex);
+        const candleIndex = startIdx + nearestIndex;
+
         return candles[candleIndex]?.timestamp || null;
       }
     };
   };
+
+  // Helper to request redraw with throttling
+  const requestRedraw = useCallback(() => {
+    if (!redrawPendingRef.current) {
+      redrawPendingRef.current = true;
+      setNeedsRedraw(true);
+    }
+  }, []);
 
   // Renderizado del chart
   useEffect(() => {
@@ -576,6 +597,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       animationFrameRef.current = requestAnimationFrame(() => {
         drawChart();
         setNeedsRedraw(false);
+        redrawPendingRef.current = false;
         animationFrameRef.current = null;
       });
     }
