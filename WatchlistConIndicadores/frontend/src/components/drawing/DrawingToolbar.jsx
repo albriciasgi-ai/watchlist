@@ -12,8 +12,7 @@ const DrawingToolbar = ({ selectedTool, onToolChange, onUndo, onRedo, onClearAll
     { id: 'vertical', label: 'Línea Vertical', icon: '|', shortcut: 'L' },
     { id: 'rectangle', label: 'Rectángulo', icon: '▭', shortcut: 'R' },
     { id: 'fibonacci', label: 'Fibonacci', icon: 'φ', shortcut: 'F' },
-    { id: 'tp', label: 'Take Profit', icon: '🎯', shortcut: 'P' },
-    { id: 'sl', label: 'Stop Loss', icon: '🛑', shortcut: 'S' },
+    { id: 'tpsl', label: 'TP/SL', icon: '🎯', shortcut: 'P' },
     { id: 'textbox', label: 'Texto', icon: '📝', shortcut: 'N' }
   ];
 

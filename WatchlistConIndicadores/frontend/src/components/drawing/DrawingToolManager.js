@@ -128,8 +128,8 @@ class DrawingToolManager {
       return true;
     }
 
-    if (this.currentTool === 'tp' || this.currentTool === 'sl') {
-      const box = new TPSLBox(price, time, this.currentTool);
+    if (this.currentTool === 'tpsl') {
+      const box = new TPSLBox(price, time);
       this.addShape(box);
       this.saveToHistory();
       // NO cambiar tool, permitir dibujar múltiples cajas

@@ -132,7 +132,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
       measurementToolRef.current.handleMouseDown(e, canvas);
       // Renderizar inmediatamente para mostrar el punto inicial
-      requestAnimationFrame(() => drawChart());
+      setNeedsRedraw(true);
       return;
     }
 
@@ -171,7 +171,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
               measurement.clear();
 
               // Re-renderizar
-              requestAnimationFrame(() => drawChart());
+              setNeedsRedraw(true);
 
               console.log('✅ Medición guardada permanentemente');
               return;
@@ -186,27 +186,27 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const scaleConverter = calculateScaleConverter();
 
       // Detectar doble click en TextBox para editar texto
-      if (drawingManagerRef.current.selectedShape &&
-          drawingManagerRef.current.selectedShape.type === 'textbox') {
+      const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
+
+      if (clickedShape && clickedShape.type === 'textbox') {
         const now = Date.now();
         const timeSinceLastClick = now - lastClickTimeRef.current;
+        lastClickTimeRef.current = now;
 
         if (timeSinceLastClick < 300) {
           e.preventDefault();
           e.stopPropagation();
 
           // Editar texto con prompt
-          const textbox = drawingManagerRef.current.selectedShape;
-          const newText = prompt('Editar texto:', textbox.text);
+          const newText = prompt('Editar texto:', clickedShape.text);
 
           if (newText !== null) { // null significa cancelado
-            textbox.setText(newText);
+            clickedShape.setText(newText);
             drawingManagerRef.current.saveToHistory();
             saveDrawings();
-            requestAnimationFrame(() => drawChart());
+            setNeedsRedraw(true);
           }
 
-          lastClickTimeRef.current = 0; // Reset para evitar triple click
           return;
         }
       }
@@ -217,7 +217,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
       if (consumed) {
         // Un shape fue seleccionado o estamos dibujando - renderizar inmediatamente
-        requestAnimationFrame(() => drawChart());
+        setNeedsRedraw(true);
         return;
       }
 
@@ -247,7 +247,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
       // Renderizar inmediatamente durante medición
-      requestAnimationFrame(() => drawChart());
+      setNeedsRedraw(true);
       return;
     }
 
@@ -271,16 +271,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
 
       if (consumed) {
-        // Si hay un dibujo en progreso o shape siendo arrastrado, renderizar inmediatamente
-        const isDrawingOrDragging = drawingManagerRef.current.isDrawing() ||
-                                     drawingManagerRef.current.selectedShape?.isDragging ||
-                                     drawingManagerRef.current.selectedShape?.isResizing;
-
-        if (isDrawingOrDragging) {
-          requestAnimationFrame(() => drawChart());
-        } else {
-          setNeedsRedraw(true);
-        }
+        // Renderizar con needsRedraw para evitar conflictos de timing
+        setNeedsRedraw(true);
         return;
       }
     }
@@ -302,8 +294,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const deltaY = y - dragStateRef.current.startY;
       viewStateRef.current.verticalOffset = dragStateRef.current.startVerticalOffset + deltaY;
 
-      // Renderizar inmediatamente durante pan
-      requestAnimationFrame(() => drawChart());
+      // Renderizar con needsRedraw para evitar conflictos de timing
+      setNeedsRedraw(true);
     }
   }, [selectedTool]);
 
@@ -436,12 +428,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       if (drawingManagerRef.current) drawingManagerRef.current.setTool('fibonacci');
     }
     if (e.key === 'p' || e.key === 'P') {
-      setSelectedTool('tp');
-      if (drawingManagerRef.current) drawingManagerRef.current.setTool('tp');
-    }
-    if (e.key === 's' || e.key === 'S') {
-      setSelectedTool('sl');
-      if (drawingManagerRef.current) drawingManagerRef.current.setTool('sl');
+      setSelectedTool('tpsl');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('tpsl');
     }
     if (e.key === 'n' || e.key === 'N') {
       setSelectedTool('textbox');
