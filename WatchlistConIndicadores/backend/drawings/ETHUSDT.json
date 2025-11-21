@@ -5,10 +5,10 @@
     {
       "type": "tpsl",
       "id": "tpsl_1763692756654_0.3438053874099125",
-      "entryPrice": 2966.941062801932,
-      "tpPrice": 3088.979478260869,
-      "slPrice": 2905.921855072463,
-      "time": 1763600400000,
+      "entryPrice": 2973.044734299516,
+      "tpPrice": 3134.1931159420287,
+      "slPrice": 2912.0255265700475,
+      "time": 1763606700000,
       "width": 100
     },
     {
@@ -28,8 +28,130 @@
       "slPrice": 3298.712193236715,
       "time": 1763514000000,
       "width": 100
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763701526317_0.2246584668484365",
+      "price1": 3077.5138164251207,
+      "time1": 1763587800000,
+      "price2": 2917.773961352657,
+      "time2": 1763650800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763701534352_0.33147236375251377",
+      "price": 3035.5830917874396,
+      "time": 1763648100000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763701544752_0.7219974796981744",
+      "price": 2872.56652173913,
+      "time": 1763655300000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763701548760_0.04317795066583041",
+      "price": 2815.8021739130436,
+      "time": 1763651700000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763701580601_0.13342148903546058",
+      "price": 3077.095652173913,
+      "time": 1763559000000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763701583203_0.2635717887082524",
+      "price": 3041.288768115942,
+      "time": 1763530200000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763701585465_0.8300778517174345",
+      "price": 3097.4184782608695,
+      "time": 1763476200000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763701771109_0.4598708016507643",
+      "price": 3005.481884057971,
+      "time": 1763493300000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "measurement",
+      "id": "measurement_1763701843149_0.07464119180453965",
+      "price1": 2946.448913043478,
+      "time1": 1763662500000,
+      "price2": 3083.869927536232,
+      "time2": 1763676000000
     }
   ],
-  "updated_at": "2025-11-21T02:39:36.312931+00:00",
-  "total_shapes": 3
+  "updated_at": "2025-11-21T05:10:51.179837+00:00",
+  "total_shapes": 12
 }
