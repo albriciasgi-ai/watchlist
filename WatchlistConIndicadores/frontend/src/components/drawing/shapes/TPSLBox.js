@@ -60,7 +60,7 @@ class TPSLBox {
            y <= yBottom + tolerance;
   }
 
-  hitTestHandle(x, y, scaleConverter, handleRadius = 12) {
+  hitTestHandle(x, y, scaleConverter, handleRadius = 18) {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return null;
 
@@ -74,26 +74,26 @@ class TPSLBox {
     const xLeft = xCenter - boxWidth / 2;
     const xRight = xCenter + boxWidth / 2;
 
-    // Prioridad a handles más específicos primero (izq/der, luego tp/sl, luego entry)
+    // Prioridad: TP/SL primero (más importantes), luego width, luego entry
 
-    // Handles de ancho (izquierda y derecha en el entry) - MÁS PRIORITARIOS
+    // Handle de TP (arriba) - MÁS PRIORITARIO
+    const distTp = Math.sqrt((x - xCenter) ** 2 + (y - yTp) ** 2);
+    if (distTp <= handleRadius) return 'tp';
+
+    // Handle de SL (abajo) - MÁS PRIORITARIO
+    const distSl = Math.sqrt((x - xCenter) ** 2 + (y - ySl) ** 2);
+    if (distSl <= handleRadius) return 'sl';
+
+    // Handles de ancho (izquierda y derecha en el entry)
     const distLeft = Math.sqrt((x - xLeft) ** 2 + (y - yEntry) ** 2);
     if (distLeft <= handleRadius) return 'left';
 
     const distRight = Math.sqrt((x - xRight) ** 2 + (y - yEntry) ** 2);
     if (distRight <= handleRadius) return 'right';
 
-    // Handle de TP (arriba)
-    const distTp = Math.sqrt((x - xCenter) ** 2 + (y - yTp) ** 2);
-    if (distTp <= handleRadius) return 'tp';
-
-    // Handle de SL (abajo)
-    const distSl = Math.sqrt((x - xCenter) ** 2 + (y - ySl) ** 2);
-    if (distSl <= handleRadius) return 'sl';
-
     // Handle de Entry (centro) - MENOS PRIORITARIO
     const distEntry = Math.sqrt((x - xCenter) ** 2 + (y - yEntry) ** 2);
-    if (distEntry <= handleRadius + 4) return 'entry'; // Un poco más grande porque es central
+    if (distEntry <= handleRadius) return 'entry';
 
     return null;
   }
@@ -220,34 +220,7 @@ class TPSLBox {
     ctx.lineWidth = isSelected ? 3 : this.style.lineWidth;
     ctx.strokeRect(xStart, yEntry, boxWidth, ySl - yEntry);
 
-    // 3. LÍNEAS HORIZONTALES EXTENDIDAS
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]);
-
-    // Línea TP
-    ctx.strokeStyle = this.style.tpColor;
-    ctx.beginPath();
-    ctx.moveTo(scaleConverter.marginLeft, yTp);
-    ctx.lineTo(scaleConverter.marginLeft + scaleConverter.chartWidth, yTp);
-    ctx.stroke();
-
-    // Línea Entry
-    ctx.strokeStyle = this.style.entryColor;
-    ctx.beginPath();
-    ctx.moveTo(scaleConverter.marginLeft, yEntry);
-    ctx.lineTo(scaleConverter.marginLeft + scaleConverter.chartWidth, yEntry);
-    ctx.stroke();
-
-    // Línea SL
-    ctx.strokeStyle = this.style.slColor;
-    ctx.beginPath();
-    ctx.moveTo(scaleConverter.marginLeft, ySl);
-    ctx.lineTo(scaleConverter.marginLeft + scaleConverter.chartWidth, ySl);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    // 4. LABELS Y PRECIOS
+    // 3. LABELS Y PRECIOS
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -278,45 +251,69 @@ class TPSLBox {
     const rr = this.getRiskRewardRatio();
     ctx.fillText(`R/R: ${rr}`, xCenter, yEntry - 18);
 
-    // 5. HANDLES (si está seleccionado)
+    // 4. HANDLES (si está seleccionado)
     if (isSelected && !isPreview) {
-      // Handle TP
+      // Handle TP - más grande y visible
       ctx.fillStyle = '#FFFFFF';
       ctx.strokeStyle = this.style.tpColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(xCenter, yTp, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Punto interior del handle TP
+      ctx.fillStyle = this.style.tpColor;
+      ctx.beginPath();
+      ctx.arc(xCenter, yTp, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Handle SL - más grande y visible
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = this.style.slColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(xCenter, ySl, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Punto interior del handle SL
+      ctx.fillStyle = this.style.slColor;
+      ctx.beginPath();
+      ctx.arc(xCenter, ySl, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Handle Entry - mantener tamaño medio
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = this.style.entryColor;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(xCenter, yTp, 6, 0, Math.PI * 2);
+      ctx.arc(xCenter, yEntry, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // Handle Entry
+      // Punto interior del handle Entry
+      ctx.fillStyle = this.style.entryColor;
+      ctx.beginPath();
+      ctx.arc(xCenter, yEntry, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Handles de ancho (izquierda y derecha) - más grandes
+      ctx.fillStyle = '#FFFFFF';
       ctx.strokeStyle = this.style.entryColor;
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(xCenter, yEntry, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Handle SL
-      ctx.strokeStyle = this.style.slColor;
-      ctx.beginPath();
-      ctx.arc(xCenter, ySl, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Handles de ancho (izquierda y derecha)
-      ctx.strokeStyle = this.style.entryColor;
-      ctx.beginPath();
-      ctx.arc(xStart, yEntry, 5, 0, Math.PI * 2);
+      ctx.arc(xStart, yEntry, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(xStart + boxWidth, yEntry, 5, 0, Math.PI * 2);
+      ctx.arc(xStart + boxWidth, yEntry, 7, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
     }
 
-    // 6. Efecto hover
+    // 5. Efecto hover
     if (isHovered && !isSelected && !isPreview) {
       ctx.strokeStyle = 'rgba(59, 130, 246, 0.5)';
       ctx.lineWidth = 4;
