@@ -40,7 +40,6 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     setManualPan(false); // Reactivar auto-scroll
     setScaleX(1); // Resetear zoom horizontal
     setScaleY(1); // Resetear zoom vertical
-    setOffsetY(0); // Resetear offset vertical
     console.log('[BacktestingChart] Navegando a última vela');
   };
 
@@ -276,21 +275,26 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     const maxPriceRaw = Math.max(...allPrices);
     const minPriceRaw = Math.min(...allPrices);
     const priceRangeRaw = maxPriceRaw - minPriceRaw;
-    const padding = priceRangeRaw * 0.05; // 5% padding
+
+    // Protección: Si el rango es 0 (todas las velas al mismo precio), usar un rango mínimo
+    const effectivePriceRange = priceRangeRaw > 0 ? priceRangeRaw : maxPriceRaw * 0.01;
+    const padding = effectivePriceRange * 0.05; // 5% padding
 
     // Aplicar zoom vertical ajustando el rango de precios visible
     // scaleY > 1 = zoom in = ver menos rango de precios
     // scaleY < 1 = zoom out = ver más rango de precios
     const priceCenter = (maxPriceRaw + minPriceRaw) / 2;
-    const zoomedRange = (priceRangeRaw + padding * 2) / scaleY;
+    const zoomedRange = (effectivePriceRange + padding * 2) / scaleY;
     const maxPrice = priceCenter + zoomedRange / 2;
     const minPrice = priceCenter - zoomedRange / 2;
     const priceRange = maxPrice - minPrice;
-    const priceScale = chartHeight / priceRange;
 
-    // Función para convertir precio a coordenada Y (con offset)
+    // Protección: Evitar división por cero
+    const priceScale = priceRange > 0 ? (chartHeight / priceRange) : 1;
+
+    // Función para convertir precio a coordenada Y
     const priceToY = (price) => {
-      return margin.top + (maxPrice - price) * priceScale + offsetY;
+      return margin.top + (maxPrice - price) * priceScale;
     };
 
     // Usar ancho de vela con zoom aplicado
@@ -579,7 +583,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       }
     }
 
-  }, [visibleCandles, chartDimensions, offsetX, offsetY, scaleX, scaleY, orders]);
+  }, [visibleCandles, chartDimensions, offsetX, scaleX, scaleY, orders]);
 
   /**
    * Herramientas de dibujo con Fabric.js
@@ -792,9 +796,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       // Verificar si el click fue en el área del eje vertical (derecha)
       // El eje de precios está en los últimos 80px a la derecha
       if (x > width - 80) {
-        // Resetear zoom vertical y offset vertical
+        // Resetear zoom vertical
         setScaleY(1);
-        setOffsetY(0);
         console.log('[BacktestingChart] Fit screen - zoom vertical reseteado');
       }
     };
@@ -814,7 +817,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       canvas.removeEventListener('wheel', handleWheel);
       canvas.removeEventListener('dblclick', handleDoubleClick);
     };
-  }, [isDragging, dragStart, offsetX, offsetY]);
+  }, [isDragging, dragStart, offsetX]);
 
   /**
    * Guardar dibujos automáticamente cuando cambian
