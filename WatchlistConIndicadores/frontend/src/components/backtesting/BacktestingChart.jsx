@@ -249,10 +249,24 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     }
 
     // Calcular escala de precios con padding (5% arriba y abajo)
-    // IMPORTANTE: Usar TODAS las velas disponibles para mantener contexto constante
-    // Esto evita que la escala cambie automáticamente durante la simulación
+    // IMPORTANTE: Usar solo el último mes de velas para la escala
+    // Esto mantiene la acción del precio reciente visible y evita compresión vertical
+
+    // Determinar cuántas velas hay en un mes según el timeframe
+    const candlesPerMonth = {
+      "15m": 2880,  // 30 días * 96 velas/día
+      "1h": 720,    // 30 días * 24 velas/día
+      "4h": 180     // 30 días * 6 velas/día
+    };
+
+    const monthWindow = candlesPerMonth[timeframe] || 720;
+
+    // Usar solo las últimas N velas para calcular la escala de precios
+    const startIndexForScale = Math.max(0, visibleCandles.main.length - monthWindow);
+    const candlesForScale = visibleCandles.main.slice(startIndexForScale);
+
     const allPrices = [];
-    visibleCandles.main.forEach(c => {
+    candlesForScale.forEach(c => {
       allPrices.push(c.high, c.low);
     });
 
