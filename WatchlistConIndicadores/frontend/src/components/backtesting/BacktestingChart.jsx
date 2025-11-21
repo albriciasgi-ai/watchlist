@@ -809,45 +809,47 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal CENTRADO (mantiene la vela del centro en el centro)
+        // Ctrl + wheel: zoom horizontal centrado en el CENTRO del canvas
         const canvas = canvasRef.current;
         if (!canvas || !visibleCandles.main || visibleCandles.main.length === 0) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-
-        // Calcular qué vela está en la posición del mouse ANTES del zoom
         const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+        const chartWidth = canvas.width - margin.left - margin.right;
+
+        // Calcular el centro del canvas
+        const centerX = chartWidth / 2;
+
         const oldScaleX = scaleX;
         const oldOffsetX = offsetX;
-        const oldTotalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * oldScaleX;
+        const oldCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * oldScaleX;
 
-        // Calcular el índice de la vela en la posición del mouse
-        // Formula: candleIndex = (mouseX - margin.left - offsetX) / totalCandleWidth
-        const candleIndexAtMouse = (mouseX - margin.left - oldOffsetX) / oldTotalCandleWidth;
+        // Calcular qué vela está en el centro ANTES del zoom
+        // centerX = candleIndexAtCenter * oldCandleWidth + oldOffsetX
+        const candleIndexAtCenter = (centerX - oldOffsetX) / oldCandleWidth;
 
         // Aplicar zoom
-        const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso para que sea más notorio
         const newScaleX = Math.max(0.1, Math.min(10, oldScaleX * zoomFactor));
-        const newTotalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * newScaleX;
+        const newCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * newScaleX;
 
-        // Calcular nuevo offsetX para mantener la misma vela en la misma posición X
-        // Queremos: mouseX = margin.left + candleIndexAtMouse * newTotalCandleWidth + newOffsetX
-        // Despejando: newOffsetX = mouseX - margin.left - candleIndexAtMouse * newTotalCandleWidth
-        const newOffsetX = mouseX - margin.left - candleIndexAtMouse * newTotalCandleWidth;
+        // Calcular nuevo offsetX para mantener la misma vela en el centro
+        // Queremos: centerX = candleIndexAtCenter * newCandleWidth + newOffsetX
+        // Despejando: newOffsetX = centerX - candleIndexAtCenter * newCandleWidth
+        const newOffsetX = centerX - candleIndexAtCenter * newCandleWidth;
 
-        console.log('[BacktestingChart] Zoom horizontal centrado:', {
+        console.log('[BacktestingChart] Zoom horizontal (centro del canvas):', {
           oldScaleX: oldScaleX.toFixed(3),
           newScaleX: newScaleX.toFixed(3),
-          candleAtMouse: candleIndexAtMouse.toFixed(1),
+          candleAtCenter: candleIndexAtCenter.toFixed(1),
           oldOffsetX: oldOffsetX.toFixed(1),
-          newOffsetX: newOffsetX.toFixed(1)
+          newOffsetX: newOffsetX.toFixed(1),
+          delta: (newOffsetX - oldOffsetX).toFixed(1)
         });
 
-        // Actualizar AMBOS estados a la vez
+        // Actualizar AMBOS estados
         setScaleX(newScaleX);
         setOffsetX(newOffsetX);
-        setManualPan(true); // Evitar que auto-scroll interfiera
+        setManualPan(true);
       } else {
         // Wheel normal: zoom vertical (precio) - simple y directo
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
