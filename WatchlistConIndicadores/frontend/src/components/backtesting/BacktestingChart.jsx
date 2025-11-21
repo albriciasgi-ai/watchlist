@@ -40,6 +40,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     setManualPan(false); // Reactivar auto-scroll
     setScaleX(1); // Resetear zoom horizontal
     setScaleY(1); // Resetear zoom vertical
+    setOffsetY(0); // Resetear offset vertical
     console.log('[BacktestingChart] Navegando a última vela');
   };
 
@@ -249,72 +250,42 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     }
 
     // Calcular escala de precios con padding (5% arriba y abajo)
-    // IMPORTANTE: Usar solo el último mes de velas para la escala
-    // Esto mantiene la acción del precio reciente visible y evita compresión vertical
+    // IMPORTANTE: Usar TODAS las velas disponibles para mantener contexto constante
+    // Este enfoque (igual que MiniChart) evita auto-zoom y mantiene perspectiva completa
 
-    // Determinar cuántas velas hay en un mes según el timeframe
-    const candlesPerMonth = {
-      "15m": 2880,  // 30 días * 96 velas/día
-      "1h": 720,    // 30 días * 24 velas/día
-      "4h": 180     // 30 días * 6 velas/día
-    };
+    // Recolectar todos los precios de TODAS las velas (no solo las visibles)
+    let minPriceRaw = visibleCandles.main[0]?.low || 0;
+    let maxPriceRaw = visibleCandles.main[0]?.high || 0;
 
-    const monthWindow = candlesPerMonth[timeframe] || 720;
-
-    // Usar solo las últimas N velas para calcular la escala de precios
-    const startIndexForScale = Math.max(0, visibleCandles.main.length - monthWindow);
-    const candlesForScale = visibleCandles.main.slice(startIndexForScale);
-
-    const allPrices = [];
-    candlesForScale.forEach(c => {
-      allPrices.push(c.high, c.low);
+    visibleCandles.main.forEach(c => {
+      if (c.high > maxPriceRaw) maxPriceRaw = c.high;
+      if (c.low < minPriceRaw) minPriceRaw = c.low;
     });
 
     // Si hay subdivisiones, incluirlas en el cálculo
     if (visibleCandles.currentSubdivisions && visibleCandles.currentSubdivisions.length > 0) {
       visibleCandles.currentSubdivisions.forEach(sub => {
-        allPrices.push(sub.high, sub.low);
+        if (sub.high > maxPriceRaw) maxPriceRaw = sub.high;
+        if (sub.low < minPriceRaw) minPriceRaw = sub.low;
       });
     }
 
-    if (allPrices.length === 0) {
-      // No hay datos
-      ctx.fillStyle = '#666';
-      ctx.font = '14px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('No hay precios para calcular', width / 2, height / 2);
-      return;
-    }
-
-    // Calcular min/max sin spread operator (para evitar stack overflow con arrays grandes)
-    let maxPriceRaw = allPrices[0];
-    let minPriceRaw = allPrices[0];
-    for (let i = 1; i < allPrices.length; i++) {
-      if (allPrices[i] > maxPriceRaw) maxPriceRaw = allPrices[i];
-      if (allPrices[i] < minPriceRaw) minPriceRaw = allPrices[i];
-    }
-
-    const priceRangeRaw = maxPriceRaw - minPriceRaw;
+    const priceRange = maxPriceRaw - minPriceRaw;
 
     // Protección: Si el rango es 0 (todas las velas al mismo precio), usar un rango mínimo
-    const effectivePriceRange = priceRangeRaw > 0 ? priceRangeRaw : maxPriceRaw * 0.01;
-    const padding = effectivePriceRange * 0.05; // 5% padding
+    const effectivePriceRange = priceRange > 0 ? priceRange : maxPriceRaw * 0.01;
 
-    // Aplicar zoom vertical ajustando el rango de precios visible
-    // scaleY > 1 = zoom in = ver menos rango de precios
-    // scaleY < 1 = zoom out = ver más rango de precios
-    const priceCenter = (maxPriceRaw + minPriceRaw) / 2;
-    const zoomedRange = (effectivePriceRange + padding * 2) / scaleY;
-    const maxPrice = priceCenter + zoomedRange / 2;
-    const minPrice = priceCenter - zoomedRange / 2;
-    const priceRange = maxPrice - minPrice;
+    // Calcular escala BASE (sin zoom) - SIEMPRE constante
+    const baseYScale = effectivePriceRange > 0 ? (chartHeight / effectivePriceRange) : 1;
 
-    // Protección: Evitar división por cero
-    const priceScale = priceRange > 0 ? (chartHeight / priceRange) : 1;
+    // Aplicar zoom vertical multiplicando la escala base
+    // scaleY > 1 = zoom in = magnifica (2x, 3x, etc.)
+    // scaleY < 1 = zoom out = reduce (0.5x, etc.)
+    const yScale = baseYScale * scaleY;
 
-    // Función para convertir precio a coordenada Y
+    // Función para convertir precio a coordenada Y (con zoom y paneo vertical)
     const priceToY = (price) => {
-      return margin.top + (maxPrice - price) * priceScale;
+      return margin.top + (maxPriceRaw - price) * yScale + offsetY;
     };
 
     // Usar ancho de vela con zoom aplicado
@@ -401,7 +372,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
 
     const priceSteps = 8;
     for (let i = 0; i <= priceSteps; i++) {
-      const price = minPrice + (priceRange / priceSteps) * i;
+      const price = minPriceRaw + (effectivePriceRange / priceSteps) * i;
       const y = priceToY(price);
 
       // Línea de guía (gris claro)
@@ -445,8 +416,8 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     // Dibujar órdenes (líneas de entrada, SL, TP)
     if (orders && orders.length > 0) {
       orders.forEach(order => {
-        // Solo dibujar órdenes que están en el rango de precios visible
-        if (order.entryPrice < minPrice || order.entryPrice > maxPrice) return;
+        // Con el nuevo sistema de zoom/paneo, priceToY maneja cualquier precio
+        // No necesitamos validar si está en rango visible
 
         const isOpen = order.status === 'open';
         const isClosed = order.status === 'closed';
@@ -472,7 +443,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         ctx.fillText(`#${order.id}`, margin.left + 2, entryY + 3);
 
         // Dibujar Stop Loss si existe
-        if (order.stopLoss && order.stopLoss >= minPrice && order.stopLoss <= maxPrice) {
+        if (order.stopLoss) {
           const slY = priceToY(order.stopLoss);
           ctx.strokeStyle = '#ef5350';
           ctx.lineWidth = 1;
@@ -493,7 +464,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         }
 
         // Dibujar Take Profit si existe
-        if (order.takeProfit && order.takeProfit >= minPrice && order.takeProfit <= maxPrice) {
+        if (order.takeProfit) {
           const tpY = priceToY(order.takeProfit);
           ctx.strokeStyle = '#26a69a';
           ctx.lineWidth = 1;
@@ -603,7 +574,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       }
     }
 
-  }, [visibleCandles, chartDimensions, offsetX, scaleX, scaleY, orders]);
+  }, [visibleCandles, chartDimensions, offsetX, offsetY, scaleX, scaleY, orders]);
 
   /**
    * Herramientas de dibujo con Fabric.js
@@ -751,11 +722,12 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
     };
 
-    // Mouse move - arrastrar (solo horizontal, no vertical para evitar cambios de escala)
+    // Mouse move - arrastrar (horizontal y vertical con límites)
     const handleMouseMove = (e) => {
       if (!isDragging) return;
 
       let newOffsetX = e.clientX - dragStart.x;
+      let newOffsetY = e.clientY - dragStart.y;
 
       // Limitar el paneo horizontal para mantener las velas dentro del canvas
       const margin = { top: 20, right: 80, bottom: 40, left: 10 };
@@ -768,14 +740,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       // Límite izquierdo: mostrar al menos la última vela
       const minOffsetX = Math.min(0, -(totalWidth - chartWidth));
 
-      // Aplicar límites
+      // Aplicar límites horizontales
       newOffsetX = Math.max(minOffsetX, Math.min(maxOffsetX, newOffsetX));
 
-      // NO cambiar offsetY - el paneo vertical puede causar que los precios se salgan de escala
-      // El usuario debe usar zoom vertical (wheel sin ctrl) en lugar de paneo vertical
+      // Paneo vertical: permitir movimiento libre (el zoom maneja la escala)
+      // El paneo vertical mueve el viewport sin cambiar la escala de precios
 
       setOffsetX(newOffsetX);
-      // setOffsetY NO se modifica - permanece en 0 o en su valor de zoom
+      setOffsetY(newOffsetY);
       setManualPan(true); // Marcar que el usuario hizo paneo manual
     };
 
@@ -801,9 +773,51 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
           return newScale;
         });
       } else {
-        // Wheel normal: zoom vertical (precio) - suave 1% por paso
-        const zoomFactor = e.deltaY > 0 ? 0.99 : 1.01; // 1% por paso
-        setScaleY(prev => Math.max(0.5, Math.min(5, prev * zoomFactor))); // Límite: 0.5x a 5x
+        // Wheel normal: zoom vertical (precio) - zoom centrado en la posición del mouse
+        const canvas = canvasRef.current;
+        if (!canvas || !visibleCandles.main || visibleCandles.main.length === 0) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseY = e.clientY - rect.top;
+
+        // Calcular dimensiones (igual que en drawChart)
+        const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+        const chartHeight = rect.height - margin.top - margin.bottom;
+
+        // Obtener los mismos valores que usa drawChart
+        let minPriceRaw = visibleCandles.main[0]?.low || 0;
+        let maxPriceRaw = visibleCandles.main[0]?.high || 0;
+
+        visibleCandles.main.forEach(c => {
+          if (c.high > maxPriceRaw) maxPriceRaw = c.high;
+          if (c.low < minPriceRaw) minPriceRaw = c.low;
+        });
+
+        const priceRange = maxPriceRaw - minPriceRaw;
+        const effectivePriceRange = priceRange > 0 ? priceRange : maxPriceRaw * 0.01;
+
+        // Escala y offset actuales
+        const oldScaleY = scaleY;
+        const oldOffsetY = offsetY;
+        const baseYScale = effectivePriceRange > 0 ? (chartHeight / effectivePriceRange) : 1;
+        const oldYScale = baseYScale * oldScaleY;
+
+        // Calcular precio en la posición del mouse ANTES del zoom
+        // Fórmula inversa de priceToY: price = maxPriceRaw - (y - margin.top - offsetY) / yScale
+        const priceAtMouse = maxPriceRaw - (mouseY - margin.top - oldOffsetY) / oldYScale;
+
+        // Aplicar nuevo zoom
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso (más rápido que antes)
+        const newScaleY = Math.max(0.5, Math.min(6, oldScaleY * zoomFactor)); // Límite: 0.5x a 6x
+        const newYScale = baseYScale * newScaleY;
+
+        // Calcular nuevo offset para mantener el precio en la misma posición Y
+        // Queremos: mouseY = margin.top + (maxPriceRaw - priceAtMouse) * newYScale + newOffsetY
+        // Despejando: newOffsetY = mouseY - margin.top - (maxPriceRaw - priceAtMouse) * newYScale
+        const newOffsetY = mouseY - margin.top - (maxPriceRaw - priceAtMouse) * newYScale;
+
+        setScaleY(newScaleY);
+        setOffsetY(newOffsetY);
       }
     };
 
@@ -816,9 +830,10 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       // Verificar si el click fue en el área del eje vertical (derecha)
       // El eje de precios está en los últimos 80px a la derecha
       if (x > width - 80) {
-        // Resetear zoom vertical
+        // Resetear zoom vertical y offset vertical
         setScaleY(1);
-        console.log('[BacktestingChart] Fit screen - zoom vertical reseteado');
+        setOffsetY(0);
+        console.log('[BacktestingChart] Fit screen - zoom y paneo vertical reseteados');
       }
     };
 
@@ -837,7 +852,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       canvas.removeEventListener('wheel', handleWheel);
       canvas.removeEventListener('dblclick', handleDoubleClick);
     };
-  }, [isDragging, dragStart, offsetX]);
+  }, [isDragging, dragStart, offsetX, offsetY]);
 
   /**
    * Guardar dibujos automáticamente cuando cambian
