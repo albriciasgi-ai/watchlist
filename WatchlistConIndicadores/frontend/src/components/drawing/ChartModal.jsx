@@ -56,35 +56,40 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     loadHistoricalData();
   }, [symbol, interval, days]);
 
-  // Ajustar canvas al contenedor (solución correcta para evitar offset sin pixelación)
+  // Ajustar canvas al contenedor (solución robusta usando ResizeObserver)
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
     const resizeCanvas = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      // Usar getBoundingClientRect() que es más confiable que offset
+      const rect = parent.getBoundingClientRect();
+      const width = Math.floor(rect.width);
+      const height = Math.floor(rect.height);
 
-      const parent = canvas.parentElement;
-      if (!parent) return;
-
-      // Usar offsetWidth/Height para obtener tamaño exacto sin borders
-      const width = parent.offsetWidth;
-      const height = parent.offsetHeight;
-
-      // Solo actualizar si cambió el tamaño
-      if (canvas.width !== width || canvas.height !== height) {
+      // Solo actualizar si hay tamaño válido y cambió
+      if (width > 0 && height > 0 && (canvas.width !== width || canvas.height !== height)) {
         canvas.width = width;
         canvas.height = height;
         setNeedsRedraw(true);
       }
     };
 
-    // Pequeño delay para asegurar que el layout esté listo
-    const timeout = setTimeout(resizeCanvas, 10);
+    // ResizeObserver es más confiable que setTimeout
+    const resizeObserver = new ResizeObserver(() => {
+      resizeCanvas();
+    });
 
-    window.addEventListener('resize', resizeCanvas);
+    resizeObserver.observe(parent);
+
+    // Llamar una vez inmediatamente
+    resizeCanvas();
 
     return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('resize', resizeCanvas);
+      resizeObserver.disconnect();
     };
   }, []);
 
