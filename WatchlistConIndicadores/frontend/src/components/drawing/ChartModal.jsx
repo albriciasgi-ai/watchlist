@@ -56,43 +56,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     loadHistoricalData();
   }, [symbol, interval, days]);
 
-  // Ajustar canvas al contenedor (solución robusta usando ResizeObserver)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const parent = canvas.parentElement;
-    if (!parent) return;
-
-    const resizeCanvas = () => {
-      // Usar getBoundingClientRect() que es más confiable que offset
-      const rect = parent.getBoundingClientRect();
-      const width = Math.floor(rect.width);
-      const height = Math.floor(rect.height);
-
-      // Solo actualizar si hay tamaño válido y cambió
-      if (width > 0 && height > 0 && (canvas.width !== width || canvas.height !== height)) {
-        canvas.width = width;
-        canvas.height = height;
-        setNeedsRedraw(true);
-      }
-    };
-
-    // ResizeObserver es más confiable que setTimeout
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
-    });
-
-    resizeObserver.observe(parent);
-
-    // Llamar una vez inmediatamente
-    resizeCanvas();
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
-
   const loadHistoricalData = async () => {
     try {
       setLoading(true);
@@ -859,7 +822,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           {loading ? (
             <div className="loading">Cargando datos...</div>
           ) : (
-            <canvas ref={canvasRef} />
+            <canvas
+              ref={canvasRef}
+              width={window.innerWidth}
+              height={window.innerHeight - 100}
+            />
           )}
         </div>
       </div>
