@@ -272,8 +272,14 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       return;
     }
 
-    const maxPriceRaw = Math.max(...allPrices);
-    const minPriceRaw = Math.min(...allPrices);
+    // Calcular min/max sin spread operator (para evitar stack overflow con arrays grandes)
+    let maxPriceRaw = allPrices[0];
+    let minPriceRaw = allPrices[0];
+    for (let i = 1; i < allPrices.length; i++) {
+      if (allPrices[i] > maxPriceRaw) maxPriceRaw = allPrices[i];
+      if (allPrices[i] < minPriceRaw) minPriceRaw = allPrices[i];
+    }
+
     const priceRangeRaw = maxPriceRaw - minPriceRaw;
 
     // Protección: Si el rango es 0 (todas las velas al mismo precio), usar un rango mínimo
