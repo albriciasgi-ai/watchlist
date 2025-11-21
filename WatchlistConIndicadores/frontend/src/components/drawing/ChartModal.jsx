@@ -109,6 +109,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     }
   };
 
+  // Helper to request redraw with throttling
+  const requestRedraw = useCallback(() => {
+    if (!redrawPendingRef.current) {
+      redrawPendingRef.current = true;
+      setNeedsRedraw(true);
+    }
+  }, []);
+
   // Manejo de eventos del mouse
   const handleMouseDown = useCallback((e) => {
     const canvas = canvasRef.current;
@@ -577,14 +585,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
     };
   };
-
-  // Helper to request redraw with throttling
-  const requestRedraw = useCallback(() => {
-    if (!redrawPendingRef.current) {
-      redrawPendingRef.current = true;
-      setNeedsRedraw(true);
-    }
-  }, []);
 
   // Renderizado del chart
   useEffect(() => {
