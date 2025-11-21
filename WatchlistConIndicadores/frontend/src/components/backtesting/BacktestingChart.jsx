@@ -809,14 +809,45 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       if (isDragging) return;
 
       if (e.ctrlKey) {
-        // Ctrl + wheel: zoom horizontal (2% por paso - más rápido y perceptible)
+        // Ctrl + wheel: zoom horizontal CENTRADO (mantiene la vela del centro en el centro)
+        const canvas = canvasRef.current;
+        if (!canvas || !visibleCandles.main || visibleCandles.main.length === 0) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+
+        // Calcular qué vela está en la posición del mouse ANTES del zoom
+        const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+        const oldScaleX = scaleX;
+        const oldOffsetX = offsetX;
+        const oldTotalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * oldScaleX;
+
+        // Calcular el índice de la vela en la posición del mouse
+        // Formula: candleIndex = (mouseX - margin.left - offsetX) / totalCandleWidth
+        const candleIndexAtMouse = (mouseX - margin.left - oldOffsetX) / oldTotalCandleWidth;
+
+        // Aplicar zoom
         const zoomFactor = e.deltaY > 0 ? 0.98 : 1.02; // 2% por paso
-        setScaleX(prev => {
-          const newScale = Math.max(0.1, Math.min(10, prev * zoomFactor)); // Límite: 0.1x a 10x
-          return newScale;
+        const newScaleX = Math.max(0.1, Math.min(10, oldScaleX * zoomFactor));
+        const newTotalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * newScaleX;
+
+        // Calcular nuevo offsetX para mantener la misma vela en la misma posición X
+        // Queremos: mouseX = margin.left + candleIndexAtMouse * newTotalCandleWidth + newOffsetX
+        // Despejando: newOffsetX = mouseX - margin.left - candleIndexAtMouse * newTotalCandleWidth
+        const newOffsetX = mouseX - margin.left - candleIndexAtMouse * newTotalCandleWidth;
+
+        console.log('[BacktestingChart] Zoom horizontal centrado:', {
+          oldScaleX: oldScaleX.toFixed(3),
+          newScaleX: newScaleX.toFixed(3),
+          candleAtMouse: candleIndexAtMouse.toFixed(1),
+          oldOffsetX: oldOffsetX.toFixed(1),
+          newOffsetX: newOffsetX.toFixed(1)
         });
-        // Marcar paneo manual para evitar que el auto-scroll interfiera con el zoom del usuario
-        setManualPan(true);
+
+        // Actualizar AMBOS estados a la vez
+        setScaleX(newScaleX);
+        setOffsetX(newOffsetX);
+        setManualPan(true); // Evitar que auto-scroll interfiera
       } else {
         // Wheel normal: zoom vertical (precio) - simple y directo
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
