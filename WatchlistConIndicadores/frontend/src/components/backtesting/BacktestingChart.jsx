@@ -255,19 +255,29 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
 
     // Determinar qué velas están realmente visibles en el viewport horizontal
     const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
-    const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
-    const maxVisibleCandles = Math.ceil(chartWidth / totalCandleWidthCalc) + 5; // +5 buffer
-    const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandles);
 
-    // Obtener solo las velas visibles en pantalla
-    const visibleCandlesInViewport = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
+    // Protección: Si el ancho de vela es muy pequeño, usar todas las velas disponibles
+    let visibleCandlesInViewport;
+
+    if (totalCandleWidthCalc < 0.1) {
+      // Zoom out extremo - usar todas las velas disponibles
+      visibleCandlesInViewport = visibleCandles.main;
+    } else {
+      const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
+      const maxVisibleCandles = Math.ceil(chartWidth / totalCandleWidthCalc) + 10; // +10 buffer
+      const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandles);
+
+      // Protección: asegurar que hay velas
+      if (firstVisibleIndex >= visibleCandles.main.length || lastVisibleIndex <= firstVisibleIndex) {
+        visibleCandlesInViewport = visibleCandles.main;
+      } else {
+        visibleCandlesInViewport = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
+      }
+    }
 
     if (visibleCandlesInViewport.length === 0) {
-      ctx.fillStyle = '#666';
-      ctx.font = '14px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('No hay velas en viewport', width / 2, height / 2);
-      return;
+      // Fallback: usar todas las velas
+      visibleCandlesInViewport = visibleCandles.main;
     }
 
     // Calcular min/max SOLO de las velas visibles en viewport
@@ -793,7 +803,7 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
       } else {
         // Wheel normal: zoom vertical (precio) - simple y directo
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
-        setScaleY(prev => Math.max(0.5, Math.min(6, prev * zoomFactor))); // Límite: 0.5x a 6x
+        setScaleY(prev => Math.max(0.1, Math.min(6, prev * zoomFactor))); // Límite: 0.1x (muy zoom out) a 6x
       }
     };
 
