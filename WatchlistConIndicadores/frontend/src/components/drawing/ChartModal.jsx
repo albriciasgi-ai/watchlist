@@ -56,6 +56,38 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     loadHistoricalData();
   }, [symbol, interval, days]);
 
+  // Ajustar canvas al contenedor (solución correcta para evitar offset sin pixelación)
+  useEffect(() => {
+    const resizeCanvas = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const parent = canvas.parentElement;
+      if (!parent) return;
+
+      // Usar offsetWidth/Height para obtener tamaño exacto sin borders
+      const width = parent.offsetWidth;
+      const height = parent.offsetHeight;
+
+      // Solo actualizar si cambió el tamaño
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        setNeedsRedraw(true);
+      }
+    };
+
+    // Pequeño delay para asegurar que el layout esté listo
+    const timeout = setTimeout(resizeCanvas, 10);
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
   const loadHistoricalData = async () => {
     try {
       setLoading(true);
@@ -822,12 +854,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           {loading ? (
             <div className="loading">Cargando datos...</div>
           ) : (
-            <canvas
-              ref={canvasRef}
-              width={window.innerWidth}
-              height={window.innerHeight - 100}
-              style={{ display: 'block' }}
-            />
+            <canvas ref={canvasRef} />
           )}
         </div>
       </div>
