@@ -56,29 +56,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     loadHistoricalData();
   }, [symbol, interval, days]);
 
-  // Ajustar tamaño del canvas dinámicamente para evitar scaling
-  useEffect(() => {
-    const resizeCanvas = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const container = canvas.parentElement;
-      if (!container) return;
-
-      const rect = container.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      setNeedsRedraw(true);
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []);
-
   const loadHistoricalData = async () => {
     try {
       setLoading(true);
@@ -227,14 +204,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         const timeSinceLastClick = now - lastTextBoxClickTimeRef.current;
         const isSameTextBox = lastTextBoxClickedIdRef.current === clickedShape.id;
 
-        console.log('[TextBox] Click detected:', { timeSinceLastClick, isSameTextBox, id: clickedShape.id });
-
         // Double-click: must be within 300ms AND on the same textbox
         if (timeSinceLastClick < 300 && isSameTextBox) {
           e.preventDefault();
           e.stopPropagation();
-
-          console.log('[TextBox] Double-click detected, showing prompt');
 
           // Editar texto con prompt
           const newText = prompt('Editar texto:', clickedShape.text);
@@ -244,7 +217,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
             drawingManagerRef.current.saveToHistory();
             saveDrawings();
             setNeedsRedraw(true);
-            console.log('[TextBox] Text updated:', newText);
           }
 
           // Reset refs after editing
@@ -801,7 +773,12 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           {loading ? (
             <div className="loading">Cargando datos...</div>
           ) : (
-            <canvas ref={canvasRef} />
+            <canvas
+              ref={canvasRef}
+              width={window.innerWidth}
+              height={window.innerHeight - 100}
+              style={{ display: 'block' }}
+            />
           )}
         </div>
       </div>
