@@ -196,7 +196,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
 
-      // Detectar doble click en TextBox para editar texto
+      // TEMPORALMENTE DESACTIVADO: Doble click en TextBox causaba bloqueo
+      // TODO: Implementar modal de React en lugar de prompt() nativo
+      /*
       const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
 
       if (clickedShape && clickedShape.type === 'textbox') {
@@ -204,32 +206,29 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         const timeSinceLastClick = now - lastTextBoxClickTimeRef.current;
         const isSameTextBox = lastTextBoxClickedIdRef.current === clickedShape.id;
 
-        // Double-click: must be within 300ms AND on the same textbox
         if (timeSinceLastClick < 300 && isSameTextBox) {
           e.preventDefault();
           e.stopPropagation();
 
-          // Editar texto con prompt
           const newText = prompt('Editar texto:', clickedShape.text);
 
-          if (newText !== null) { // null significa cancelado
+          if (newText !== null) {
             clickedShape.setText(newText);
             drawingManagerRef.current.saveToHistory();
             saveDrawings();
             setNeedsRedraw(true);
           }
 
-          // Reset refs after editing
           lastTextBoxClickTimeRef.current = 0;
           lastTextBoxClickedIdRef.current = null;
 
           return;
         }
 
-        // Update refs AFTER checking for double-click
         lastTextBoxClickTimeRef.current = now;
         lastTextBoxClickedIdRef.current = clickedShape.id;
       }
+      */
 
       const consumed = drawingManagerRef.current.handleMouseDown(
         x, y, scaleConverter, selectedTool
@@ -533,7 +532,56 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const endIdx = Math.min(candles.length, startIdx + candlesPerScreen);
     const visibleCandles = candles.slice(startIdx, endIdx);
 
-    // Calcular min/max SOLO de velas visibles para evitar offset
+    // Validar que haya velas visibles
+    if (visibleCandles.length === 0) {
+      console.warn('No visible candles, using all candles for price range');
+      const minPrice = Math.min(...candles.map(c => c.low));
+      const maxPrice = Math.max(...candles.map(c => c.high));
+      const priceRange = maxPrice - minPrice;
+      // Return early with all candles as visible
+      return {
+        candles,
+        visibleCandles: candles,
+        startIdx: 0,
+        endIdx: candles.length,
+        minPrice,
+        maxPrice,
+        priceRange,
+        verticalZoom: viewStateRef.current.verticalZoom,
+        verticalOffset: viewStateRef.current.verticalOffset,
+        chartWidth,
+        chartHeight,
+        marginLeft,
+        marginTop,
+        interval,
+        priceToY: (price) => {
+          const baseYScale = priceRange > 0 ? chartHeight / priceRange : 1;
+          const yScale = baseYScale * viewStateRef.current.verticalZoom;
+          return marginTop + chartHeight - (price - minPrice) * yScale + viewStateRef.current.verticalOffset;
+        },
+        yToPrice: (y) => {
+          const baseYScale = priceRange > 0 ? chartHeight / priceRange : 1;
+          const yScale = baseYScale * viewStateRef.current.verticalZoom;
+          const relativeY = y - marginTop - viewStateRef.current.verticalOffset;
+          return minPrice + (chartHeight - relativeY) / yScale;
+        },
+        timeToX: (timestamp) => {
+          const candleIndex = candles.findIndex(c => c.timestamp === timestamp);
+          if (candleIndex === -1) return null;
+          const barWidth = chartWidth / candles.length;
+          return marginLeft + (candleIndex * barWidth) + (barWidth / 2);
+        },
+        xToTime: (x) => {
+          const relativeX = x - marginLeft;
+          const barWidth = chartWidth / candles.length;
+          const fractionalIndex = (relativeX - barWidth / 2) / barWidth;
+          const nearestIndex = Math.round(fractionalIndex);
+          return candles[nearestIndex]?.timestamp || null;
+        }
+      };
+    }
+
+    // Calcular min/max de velas visibles
     const minPrice = Math.min(...visibleCandles.map(c => c.low));
     const maxPrice = Math.max(...visibleCandles.map(c => c.high));
     const priceRange = maxPrice - minPrice;

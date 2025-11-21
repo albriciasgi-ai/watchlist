@@ -136,19 +136,11 @@ class TPSLBox {
       }
     } else if (this.isResizing) {
       if (this.dragHandle === 'tp') {
-        // Ajustar solo TP
+        // Ajustar solo TP - sin restricciones por ahora
         this.tpPrice = scaleConverter.yToPrice(y);
-        // Asegurar que TP esté arriba del entry
-        if (this.tpPrice < this.entryPrice) {
-          this.tpPrice = this.entryPrice;
-        }
       } else if (this.dragHandle === 'sl') {
-        // Ajustar solo SL
+        // Ajustar solo SL - sin restricciones por ahora
         this.slPrice = scaleConverter.yToPrice(y);
-        // Asegurar que SL esté abajo del entry
-        if (this.slPrice > this.entryPrice) {
-          this.slPrice = this.entryPrice;
-        }
       } else if (this.dragHandle === 'entry') {
         // Mover entry manteniendo las distancias relativas
         const deltaPrice = scaleConverter.yToPrice(y) - scaleConverter.yToPrice(this.dragStartY);
