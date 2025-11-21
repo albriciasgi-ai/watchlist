@@ -21,6 +21,9 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [manualPan, setManualPan] = useState(false); // Usuario movió manualmente
 
+  // Ref para evitar que useEffect recalcule offsetX durante zoom manual
+  const isZoomingRef = useRef(false);
+
   // Configuración de visualización
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
@@ -180,6 +183,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     // Durante la reproducción (isPlaying), siempre hacer auto-scroll
     // Si está pausado, solo hacer auto-scroll si el usuario no ha hecho paneo manual
     const shouldAutoScroll = chartDimensions.width > 0 && candles.length > 0 && (isPlaying || !manualPan);
+
+    // CRÍTICO: Si estamos haciendo zoom manual, NO recalcular offsetX
+    if (isZoomingRef.current) {
+      console.log('[BacktestingChart] Saltando recalculo de offsetX durante zoom manual');
+      isZoomingRef.current = false; // Resetear para el próximo render
+      return;
+    }
 
     if (shouldAutoScroll) {
       const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
@@ -846,10 +856,13 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
           delta: (newOffsetX - oldOffsetX).toFixed(1)
         });
 
+        // CRÍTICO: Marcar que estamos haciendo zoom para evitar que useEffect recalcule offsetX
+        isZoomingRef.current = true;
+
         // Actualizar AMBOS estados
+        setManualPan(true); // Primero marcar como manual
         setScaleX(newScaleX);
         setOffsetX(newOffsetX);
-        setManualPan(true);
       } else {
         // Wheel normal: zoom vertical (precio) - simple y directo
         const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
