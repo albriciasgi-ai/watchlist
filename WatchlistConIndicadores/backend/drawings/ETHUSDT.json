@@ -288,8 +288,132 @@
         "lineWidth": 2,
         "dash": []
       }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763778298197_0.006265383925339485",
+      "price1": 2985.594052242774,
+      "time1": 1763684100000,
+      "price2": 2847.303340945703,
+      "time2": 1763722800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763778299523_0.6282740410322174",
+      "price1": 3001.757901615159,
+      "time1": 1763713800000,
+      "price2": 2867.9571484770836,
+      "time2": 1763740800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763778301338_0.06783636662637405",
+      "price": 2804.199742619343,
+      "time": 1763670600000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763778301710_0.8004074680737863",
+      "price": 2990.9820020335687,
+      "time": 1763700300000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763778302155_0.4628358687154881",
+      "price": 2863.467190318088,
+      "time": 1763715600000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763778303210_0.917370356742114",
+      "price": 2922.7346380168324,
+      "time": 1763697600000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763778303578_0.12254446930453322",
+      "price": 2964.042253079594,
+      "time": 1763726400000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763778303822_0.47009438922346525",
+      "price": 2974.818152661184,
+      "time": 1763749800000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1763778305099_0.36839094445512854",
+      "price1": 2980.206102451979,
+      "time1": 1763684100000,
+      "price2": 2892.202922535661,
+      "time2": 1763730000000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
     }
   ],
-  "updated_at": "2025-11-21T06:33:32.582783+00:00",
-  "total_shapes": 25
+  "updated_at": "2025-11-22T02:25:07.420202+00:00",
+  "total_shapes": 34
 }
