@@ -10,8 +10,11 @@ import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
 import ChartModal from "./drawing/ChartModal";
 import TrendLine from "./drawing/shapes/TrendLine";
 import HorizontalLine from "./drawing/shapes/HorizontalLine";
+import VerticalLine from "./drawing/shapes/VerticalLine";
 import Rectangle from "./drawing/shapes/Rectangle";
 import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
+import TPSLBox from "./drawing/shapes/TPSLBox";
+import MeasurementShape from "./drawing/shapes/MeasurementShape";
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
@@ -164,10 +167,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         return TrendLine.deserialize(data);
       case 'horizontal':
         return HorizontalLine.deserialize(data);
+      case 'vertical':
+        return VerticalLine.deserialize(data);
       case 'rectangle':
         return Rectangle.deserialize(data);
       case 'fibonacci':
         return FibonacciRetracement.deserialize(data);
+      case 'tpsl':
+        return TPSLBox.deserialize(data);
+      case 'measurement':
+        return MeasurementShape.deserialize(data);
       default:
         console.warn('Unknown shape type:', data.type);
         return null;

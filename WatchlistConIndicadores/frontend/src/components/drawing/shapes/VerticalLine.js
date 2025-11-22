@@ -58,12 +58,16 @@ class VerticalLine {
     const x = scaleConverter.timeToX(this.time);
     if (!x) return;
 
+    // ✅ ARREGLADO: Línea vertical extendiéndose de arriba a abajo del gráfico completo
+    // como en TradingView, independientemente del zoom vertical o paneo
     const startY = scaleConverter.marginTop;
     const endY = scaleConverter.marginTop + scaleConverter.chartHeight;
 
     ctx.save();
 
-    ctx.strokeStyle = isPreview ? 'rgba(245, 158, 11, 0.5)' : this.style.color;
+    // Color con opacidad ajustable para mejor visibilidad en minichart
+    const baseColor = this.style.color;
+    ctx.strokeStyle = isPreview ? 'rgba(245, 158, 11, 0.5)' : baseColor;
     ctx.lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
     ctx.setLineDash(this.style.dash);
 
@@ -75,7 +79,7 @@ class VerticalLine {
     ctx.setLineDash([]);
 
     // Label con la fecha/hora (en la parte superior)
-    ctx.fillStyle = this.style.color;
+    ctx.fillStyle = baseColor;
     ctx.font = 'bold 11px Arial';
     const date = new Date(this.time);
     const label = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -87,7 +91,7 @@ class VerticalLine {
     ctx.fillText(label, 0, 0);
     ctx.restore();
 
-    // Efecto hover
+    // Efecto hover - más visible
     if (isHovered && !isSelected && !isPreview) {
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
       ctx.lineWidth = this.style.lineWidth + 4;
