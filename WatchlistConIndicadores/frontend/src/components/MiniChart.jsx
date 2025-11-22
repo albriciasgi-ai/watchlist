@@ -369,7 +369,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           const candleIndex = displayCandles.findIndex(c => c.timestamp === timestamp);
           if (candleIndex === -1) return null;
           const relativeIndex = candleIndex - startIdx;
-          if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
+          
           return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
         },
 
