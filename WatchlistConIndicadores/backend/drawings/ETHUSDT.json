@@ -4,11 +4,11 @@
   "shapes": [
     {
       "type": "trendline",
-      "id": "trendline_1763787728768_0.18503212971005256",
-      "price1": 2907.956811594203,
-      "time1": 1763677800000,
-      "price2": 2805.3124637681162,
-      "time2": 1763746200000,
+      "id": "trendline_1763834204216_0.5962121448575034",
+      "price1": 2812.9682570159785,
+      "time1": 1763745300000,
+      "price2": 2770.1598888151416,
+      "time2": 1763794800000,
       "style": {
         "color": "#3B82F6",
         "lineWidth": 2,
@@ -17,11 +17,11 @@
     },
     {
       "type": "trendline",
-      "id": "trendline_1763787736165_0.6842446440346661",
-      "price1": 2618.6863768115945,
+      "id": "trendline_1763834211094_0.6051063829972289",
+      "price1": 2617.952357434389,
       "time1": 1763727300000,
-      "price2": 2723.4043478260874,
-      "time2": 1763785800000,
+      "price2": 2725.5678386059367,
+      "time2": 1763788500000,
       "style": {
         "color": "#3B82F6",
         "lineWidth": 2,
@@ -30,271 +30,11 @@
     },
     {
       "type": "horizontal",
-      "id": "horizontal_1763787745680_0.19151445545818468",
-      "price": 2907.956811594203,
-      "time": 1763677800000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    },
-    {
-      "type": "horizontal",
-      "id": "horizontal_1763787749747_0.9571267427680117",
-      "price": 2616.612753623189,
-      "time": 1763726400000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    },
-    {
-      "type": "vertical",
-      "id": "vertical_1763787761938_0.48854998294630847",
-      "price": 2628.0176811594206,
+      "id": "horizontal_1763834220237_0.8600472055351757",
+      "price": 2620.925160781669,
       "time": 1763727300000,
       "style": {
-        "color": "#F59E0B",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    },
-    {
-      "type": "rectangle",
-      "id": "rectangle_1763787772343_0.8670113486658564",
-      "price1": 2904.8463768115944,
-      "time1": 1763665200000,
-      "price2": 2787.686666666667,
-      "time2": 1763716500000,
-      "label": "Zone",
-      "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
-      }
-    },
-    {
-      "type": "fibonacci",
-      "id": "fibonacci_1763787802749_0.005880073362072968",
-      "price1": 2619.7231884057974,
-      "time1": 1763727300000,
-      "price2": 2781.4657971014494,
-      "time2": 1763766000000
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787864831_0.42675710471668993",
-      "price": 2958.760579710145,
-      "time": 1763699400000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787870843_0.1081417846185222",
-      "price": 2989.864927536232,
-      "time": 1763718300000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787871004_0.9554458270012595",
-      "price": 2989.864927536232,
-      "time": 1763718300000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787872711_0.08210134236258604",
-      "price": 2969.128695652174,
-      "time": 1763722800000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1763787938564_0.563204441562384",
-      "price1": 2987.791304347826,
-      "time1": 1763674200000,
-      "price2": 2940.097971014493,
-      "time2": 1763692200000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787952596_0.9740256091670001",
-      "price": 2966.0182608695654,
-      "time": 1763759700000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787954116_0.49692131125195393",
-      "price": 2932.8402898550726,
-      "time": 1763767800000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787956217_0.674568315442708",
-      "price": 2978.46,
-      "time": 1763773200000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763787956355_0.6469190670662462",
-      "price": 2978.46,
-      "time": 1763773200000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1763824546642_0.5442844935840131",
-      "price1": 2776.2817391304347,
-      "time1": 1763657100000,
-      "price2": 2625.944057971015,
-      "time2": 1763715600000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1763824549640_0.447299262862331",
-      "price1": 2805.3124637681162,
-      "time1": 1763658000000,
-      "price2": 2958.760579710145,
-      "time2": 1763672400000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1763824559012_0.8784976122866092",
-      "price1": 2725.477971014493,
-      "time1": 1763789400000,
-      "price2": 2703.704927536232,
-      "time2": 1763808300000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "fibonacci",
-      "id": "fibonacci_1763824567052_0.6820994899487054",
-      "price1": 2630.0913043478263,
-      "time1": 1763797500000,
-      "price2": 2784.576231884058,
-      "time2": 1763807400000
-    },
-    {
-      "type": "vertical",
-      "id": "vertical_1763824573661_0.9480288907817008",
-      "price": 2757.6191304347826,
-      "time": 1763694900000,
-      "style": {
-        "color": "#F59E0B",
+        "color": "#8B5CF6",
         "lineWidth": 2,
         "dash": [
           5,
@@ -304,9 +44,9 @@
     },
     {
       "type": "horizontal",
-      "id": "horizontal_1763824576179_0.3520228891613125",
-      "price": 2994.0121739130436,
-      "time": 1763704800000,
+      "id": "horizontal_1763834225990_0.3679872867360575",
+      "price": 2809.400892999242,
+      "time": 1763745300000,
       "style": {
         "color": "#8B5CF6",
         "lineWidth": 2,
@@ -317,108 +57,60 @@
       }
     },
     {
-      "type": "textbox",
-      "id": "textbox_1763824638887_0.8530755577655058",
-      "price": 2787.3197101449273,
-      "time": 1763767800000,
-      "text": "Escribe aquí...",
+      "type": "fibonacci",
+      "id": "fibonacci_1763834230748_0.47054087856210014",
+      "price1": 2618.5469181038447,
+      "time1": 1763727300000,
+      "price2": 2808.21177166033,
+      "time2": 1763750700000
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1763834236615_0.06875314928932552",
+      "entryPrice": 2726.756959944849,
+      "tpPrice": 2881.3427340034264,
+      "slPrice": 2667.300892999242,
+      "time": 1763772300000,
+      "width": 24
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763834276389_0.49545919815362516",
+      "price": 2784.429344882087,
+      "time": 1763800200000,
       "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
       }
     },
     {
-      "type": "textbox",
-      "id": "textbox_1763824658138_0.24196395163765483",
-      "price": 2793.7689855072463,
-      "time": 1763767800000,
-      "text": "Escribe aquí...",
+      "type": "vertical",
+      "id": "vertical_1763834277898_0.06262928797382061",
+      "price": 2851.614700530623,
+      "time": 1763717400000,
       "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
       }
     },
     {
-      "type": "textbox",
-      "id": "textbox_1763824659628_0.39904731591733866",
-      "price": 2692.5153623188403,
-      "time": 1763769600000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763824659804_0.8491968525094403",
-      "price": 2692.5153623188403,
-      "time": 1763769600000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763824660619_0.997901773770824",
-      "price": 2726.0515942028983,
-      "time": 1763775900000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1763824661328_0.8711179531533314",
-      "price": 2742.1747826086953,
-      "time": 1763775000000,
-      "text": "Escribe aquí...",
-      "style": {
-        "bgColor": "#FBBF24",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 60
-      }
+      "type": "tpsl",
+      "id": "tpsl_1763834285404_0.7886612001958951",
+      "entryPrice": 2756.4849934176523,
+      "tpPrice": 2866.7443931543585,
+      "slPrice": 2701.3552935492994,
+      "time": 1763814600000,
+      "width": 27
     }
   ],
-  "updated_at": "2025-11-22T15:17:41.411310+00:00",
-  "total_shapes": 28
+  "updated_at": "2025-11-22T17:58:14.482697+00:00",
+  "total_shapes": 9
 }
