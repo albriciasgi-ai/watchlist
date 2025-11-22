@@ -240,8 +240,185 @@
         "minWidth": 120,
         "minHeight": 60
       }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763824546642_0.5442844935840131",
+      "price1": 2776.2817391304347,
+      "time1": 1763657100000,
+      "price2": 2625.944057971015,
+      "time2": 1763715600000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763824549640_0.447299262862331",
+      "price1": 2805.3124637681162,
+      "time1": 1763658000000,
+      "price2": 2958.760579710145,
+      "time2": 1763672400000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763824559012_0.8784976122866092",
+      "price1": 2725.477971014493,
+      "time1": 1763789400000,
+      "price2": 2703.704927536232,
+      "time2": 1763808300000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1763824567052_0.6820994899487054",
+      "price1": 2630.0913043478263,
+      "time1": 1763797500000,
+      "price2": 2784.576231884058,
+      "time2": 1763807400000
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763824573661_0.9480288907817008",
+      "price": 2757.6191304347826,
+      "time": 1763694900000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763824576179_0.3520228891613125",
+      "price": 2994.0121739130436,
+      "time": 1763704800000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824638887_0.8530755577655058",
+      "price": 2787.3197101449273,
+      "time": 1763767800000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824658138_0.24196395163765483",
+      "price": 2793.7689855072463,
+      "time": 1763767800000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824659628_0.39904731591733866",
+      "price": 2692.5153623188403,
+      "time": 1763769600000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824659804_0.8491968525094403",
+      "price": 2692.5153623188403,
+      "time": 1763769600000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824660619_0.997901773770824",
+      "price": 2726.0515942028983,
+      "time": 1763775900000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763824661328_0.8711179531533314",
+      "price": 2742.1747826086953,
+      "time": 1763775000000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
     }
   ],
-  "updated_at": "2025-11-22T05:06:00.774800+00:00",
-  "total_shapes": 16
+  "updated_at": "2025-11-22T15:17:41.411310+00:00",
+  "total_shapes": 28
 }
