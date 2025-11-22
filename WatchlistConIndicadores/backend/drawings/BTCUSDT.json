@@ -36,8 +36,195 @@
       "slPrice": 80177.0268115942,
       "time": 1763737200000,
       "width": 20
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763784856795_0.8893821235785941",
+      "price1": 86324.15096618357,
+      "time1": 1763659800000,
+      "price2": 81326.02198067632,
+      "time2": 1763710200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1763784867432_0.7854357788878984",
+      "price1": 80698.7847826087,
+      "time1": 1763727300000,
+      "price2": 85636.85797101448,
+      "time2": 1763770500000
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763784894909_0.40690484763426316",
+      "price": 90968.76521739131,
+      "time": 1763667900000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763784898735_0.30489324741495527",
+      "price": 90544.63623188405,
+      "time": 1763676900000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763784907364_0.20236671991333166",
+      "price": 90393.1615942029,
+      "time": 1763705700000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763784909198_0.029504356117427633",
+      "price": 90150.80217391305,
+      "time": 1763700300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763784910905_0.8890628627747454",
+      "price": 90181.09710144927,
+      "time": 1763644500000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763784913913_0.792627118058428",
+      "price1": 91628.50942028985,
+      "time1": 1763660700000,
+      "price2": 86023.94782608694,
+      "time2": 1763688600000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763784916383_0.4902000818653378",
+      "price1": 91093.08502415458,
+      "time1": 1763696700000,
+      "price2": 84428.20096618356,
+      "time2": 1763727300000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763784974774_0.16128306965482686",
+      "price1": 91149.9306763285,
+      "time1": 1763689500000,
+      "price2": 90460.53357487923,
+      "time2": 1763697600000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763784989956_0.4045186832107205",
+      "price": 90345.63405797101,
+      "time": 1763717400000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763784992864_0.4669196872555029",
+      "price": 89541.33743961353,
+      "time": 1763722800000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763784994389_0.8592958789107876",
+      "price": 90345.63405797101,
+      "time": 1763722800000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
     }
   ],
-  "updated_at": "2025-11-22T04:03:29.773634+00:00",
-  "total_shapes": 3
+  "updated_at": "2025-11-22T04:16:57.622608+00:00",
+  "total_shapes": 16
 }
