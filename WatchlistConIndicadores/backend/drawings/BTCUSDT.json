@@ -1,7 +1,80 @@
 {
   "symbol": "BTCUSDT",
   "interval": "15",
-  "shapes": [],
-  "updated_at": "2025-11-22T05:01:25.900447+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "trendline",
+      "id": "trendline_1763788562559_0.5777963455183759",
+      "price1": 88219.99299516909,
+      "time1": 1763676900000,
+      "price2": 85462.40458937197,
+      "time2": 1763737200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763788569869_0.48948183440185467",
+      "price": 88507.2417874396,
+      "time": 1763728200000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763788576120_0.06408297957945885",
+      "price": 88449.79202898551,
+      "time": 1763718300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763788579446_0.9355543268199548",
+      "price": 88277.44275362318,
+      "time": 1763677800000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763788581258_0.8010934828558428",
+      "price": 80579.17512077294,
+      "time": 1763727300000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2025-11-22T05:16:27.739467+00:00",
+  "total_shapes": 5
 }

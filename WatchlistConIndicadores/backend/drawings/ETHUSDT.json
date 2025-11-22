@@ -159,8 +159,89 @@
         "minWidth": 120,
         "minHeight": 60
       }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763787938564_0.563204441562384",
+      "price1": 2987.791304347826,
+      "time1": 1763674200000,
+      "price2": 2940.097971014493,
+      "time2": 1763692200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763787952596_0.9740256091670001",
+      "price": 2966.0182608695654,
+      "time": 1763759700000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763787954116_0.49692131125195393",
+      "price": 2932.8402898550726,
+      "time": 1763767800000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763787956217_0.674568315442708",
+      "price": 2978.46,
+      "time": 1763773200000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763787956355_0.6469190670662462",
+      "price": 2978.46,
+      "time": 1763773200000,
+      "text": "Escribe aquí...",
+      "style": {
+        "bgColor": "#FBBF24",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
     }
   ],
-  "updated_at": "2025-11-22T05:04:47.584624+00:00",
-  "total_shapes": 11
+  "updated_at": "2025-11-22T05:06:00.774800+00:00",
+  "total_shapes": 16
 }
