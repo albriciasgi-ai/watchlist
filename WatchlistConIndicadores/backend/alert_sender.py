@@ -83,7 +83,9 @@ class AlertSender:
         user_config: Optional[Dict]
     ) -> Dict:
         """
-        Builds the alert payload in a standardized format
+        Builds the alert payload in a standardized format compatible with trading bot
+
+        Format expected by bot: [2025-09-16 10:12:00] [BTCUSDT] ABRIR LONG 45000.50
         """
         pattern_type = pattern.get('patternType', 'UNKNOWN')
         confidence = pattern.get('confidence', 0)
@@ -91,6 +93,9 @@ class AlertSender:
         timestamp = pattern.get('timestamp', 0)
         near_levels = pattern.get('nearLevels', [])
         metrics = pattern.get('metrics', {})
+
+        # Determine trading action based on pattern type
+        action = self._get_trading_action(pattern_type)
 
         # Determine alert severity based on confidence
         if confidence >= 80:
@@ -122,12 +127,22 @@ class AlertSender:
         dt = datetime.fromtimestamp(timestamp / 1000)
         formatted_time = dt.strftime("%Y-%m-%d %H:%M:%S")
 
+        # Build simple message for trading bot
+        simple_message = f"[{formatted_time}] [{symbol}] {action} {price:.2f}"
+
+        # Build payload with both formats: simple for bot, detailed for monitoring
         return {
-            "type": "REJECTION_PATTERN_ALERT",
-            "timestamp": timestamp,
-            "formattedTime": formatted_time,
+            # Simple format for trading bot execution
+            "message": simple_message,
+            "timestamp": formatted_time,
             "symbol": symbol,
+            "action": action,
+            "price": price,
+            "confidence": confidence,
             "interval": interval,
+
+            # Detailed format for monitoring/logging (optional, bot can ignore)
+            "type": "REJECTION_PATTERN_ALERT",
             "severity": severity,
             "priority": priority,
             "title": title,
@@ -143,6 +158,33 @@ class AlertSender:
             },
             "userConfig": user_config or {}
         }
+
+    def _get_trading_action(self, pattern_type: str) -> str:
+        """
+        Maps rejection pattern to trading action
+
+        Bullish patterns → ABRIR LONG
+        Bearish patterns → ABRIR SHORT
+        """
+        bullish_patterns = {
+            "HAMMER",              # Bullish pin bar reversal
+            "ENGULFING_BULLISH",   # Bullish engulfing
+            "DOJI_DRAGONFLY"       # Bullish doji
+        }
+
+        bearish_patterns = {
+            "SHOOTING_STAR",       # Bearish pin bar reversal
+            "ENGULFING_BEARISH",   # Bearish engulfing
+            "DOJI_GRAVESTONE"      # Bearish doji
+        }
+
+        if pattern_type in bullish_patterns:
+            return "ABRIR LONG"
+        elif pattern_type in bearish_patterns:
+            return "ABRIR SHORT"
+        else:
+            # Fallback for unknown patterns
+            return "ABRIR LONG"  # Default to long, but this shouldn't happen
 
     def _get_pattern_emoji(self, pattern_type: str) -> str:
         """Returns emoji for pattern type"""
