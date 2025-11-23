@@ -65,7 +65,7 @@ const DrawingToolbar = ({ selectedTool, onToolChange, onUndo, onRedo, onClearAll
       </div>
 
       <div className="toolbar-helper">
-        <span>💡 Rueda del mouse para medir | Esc para cancelar | Del para borrar</span>
+        <span>💡 Rueda del mouse para medir | C para cambiar color | Esc cancelar | Del borrar</span>
       </div>
     </div>
   );
