@@ -7,6 +7,8 @@ import DrawingToolManager from "./DrawingToolManager";
 import DrawingToolbar from "./DrawingToolbar";
 import MeasurementTool from "./MeasurementTool";
 import MeasurementShape from "./shapes/MeasurementShape";
+import TextEditModal from "./TextEditModal";
+import ColorPickerModal from "./ColorPickerModal";
 import "./ChartModal.css";
 
 const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onClose }) => {
@@ -22,6 +24,12 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
   const [needsRedraw, setNeedsRedraw] = useState(false);
+
+  // Estados para modales
+  const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
+  const [textBoxBeingEdited, setTextBoxBeingEdited] = useState(null);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [shapeBeingColored, setShapeBeingColored] = useState(null);
 
   // View state para pan y zoom
   const viewStateRef = useRef({
@@ -196,9 +204,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
 
-      // TEMPORALMENTE DESACTIVADO: Doble click en TextBox causaba bloqueo
-      // TODO: Implementar modal de React en lugar de prompt() nativo
-      /*
+      // ✅ NUEVO: Doble click en TextBox para editar (usando modal React)
       const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
 
       if (clickedShape && clickedShape.type === 'textbox') {
@@ -210,14 +216,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           e.preventDefault();
           e.stopPropagation();
 
-          const newText = prompt('Editar texto:', clickedShape.text);
-
-          if (newText !== null) {
-            clickedShape.setText(newText);
-            drawingManagerRef.current.saveToHistory();
-            saveDrawings();
-            setNeedsRedraw(true);
-          }
+          // Abrir modal de edición de texto (React, no bloqueante)
+          setTextBoxBeingEdited(clickedShape);
+          setIsTextEditModalOpen(true);
 
           lastTextBoxClickTimeRef.current = 0;
           lastTextBoxClickedIdRef.current = null;
@@ -228,13 +229,22 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         lastTextBoxClickTimeRef.current = now;
         lastTextBoxClickedIdRef.current = clickedShape.id;
       }
-      */
 
       const consumed = drawingManagerRef.current.handleMouseDown(
         x, y, scaleConverter, selectedTool
       );
 
       if (consumed) {
+        // Si se creó un TextBox nuevo, abrir modal inmediatamente
+        if (selectedTool === 'textbox') {
+          const shapes = drawingManagerRef.current.shapes;
+          const newTextBox = shapes[shapes.length - 1]; // El último shape agregado
+          if (newTextBox && newTextBox.type === 'textbox') {
+            setTextBoxBeingEdited(newTextBox);
+            setIsTextEditModalOpen(true);
+          }
+        }
+
         // Un shape fue seleccionado o estamos dibujando - renderizar inmediatamente
         setNeedsRedraw(true);
         return;
@@ -457,6 +467,18 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (e.key === 'v' || e.key === 'V') {
       setSelectedTool('select');
       if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
+    }
+
+    // C - Cambiar color de línea seleccionada
+    if (e.key === 'c' || e.key === 'C') {
+      if (drawingManagerRef.current && drawingManagerRef.current.selectedShape) {
+        const shape = drawingManagerRef.current.selectedShape;
+        // Solo para líneas que tienen color editable
+        if (['trendline', 'horizontal', 'vertical'].includes(shape.type)) {
+          setShapeBeingColored(shape);
+          setIsColorPickerOpen(true);
+        }
+      }
     }
 
     // Delete - Borrar seleccionado
@@ -800,6 +822,58 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     }
   };
 
+  // Handlers para TextEditModal
+  const handleTextSave = (newText) => {
+    if (textBoxBeingEdited && newText.trim()) {
+      textBoxBeingEdited.setText(newText);
+      drawingManagerRef.current.saveToHistory();
+      saveDrawings();
+      setNeedsRedraw(true);
+    } else if (textBoxBeingEdited && !newText.trim()) {
+      // Si el texto está vacío, eliminar el TextBox
+      const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
+      if (index !== -1) {
+        drawingManagerRef.current.shapes.splice(index, 1);
+        drawingManagerRef.current.saveToHistory();
+        saveDrawings();
+        setNeedsRedraw(true);
+      }
+    }
+    setIsTextEditModalOpen(false);
+    setTextBoxBeingEdited(null);
+  };
+
+  const handleTextCancel = () => {
+    // Si era un TextBox nuevo (sin texto o con texto por defecto), eliminarlo
+    if (textBoxBeingEdited &&
+        (textBoxBeingEdited.text === 'Escribe aquí...' || textBoxBeingEdited.text === 'Texto...')) {
+      const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
+      if (index !== -1) {
+        drawingManagerRef.current.shapes.splice(index, 1);
+        setNeedsRedraw(true);
+      }
+    }
+    setIsTextEditModalOpen(false);
+    setTextBoxBeingEdited(null);
+  };
+
+  // Handlers para ColorPickerModal
+  const handleColorSave = (newColor) => {
+    if (shapeBeingColored && shapeBeingColored.style) {
+      shapeBeingColored.style.color = newColor;
+      drawingManagerRef.current.saveToHistory();
+      saveDrawings();
+      setNeedsRedraw(true);
+    }
+    setIsColorPickerOpen(false);
+    setShapeBeingColored(null);
+  };
+
+  const handleColorCancel = () => {
+    setIsColorPickerOpen(false);
+    setShapeBeingColored(null);
+  };
+
   return (
     <div className="chart-modal-overlay">
       <div className="chart-modal-container">
@@ -830,6 +904,28 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           )}
         </div>
       </div>
+
+      {/* Modales */}
+      {isTextEditModalOpen && textBoxBeingEdited && (
+        <TextEditModal
+          initialText={textBoxBeingEdited.text}
+          onSave={handleTextSave}
+          onCancel={handleTextCancel}
+        />
+      )}
+
+      {isColorPickerOpen && shapeBeingColored && (
+        <ColorPickerModal
+          currentColor={shapeBeingColored.style.color}
+          shapeName={
+            shapeBeingColored.type === 'trendline' ? 'Línea de Tendencia' :
+            shapeBeingColored.type === 'horizontal' ? 'Línea Horizontal' :
+            shapeBeingColored.type === 'vertical' ? 'Línea Vertical' : 'Línea'
+          }
+          onSave={handleColorSave}
+          onCancel={handleColorCancel}
+        />
+      )}
     </div>
   );
 };

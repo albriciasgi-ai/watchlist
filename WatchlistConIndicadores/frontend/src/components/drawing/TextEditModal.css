@@ -1,0 +1,162 @@
+/* TextEditModal.css - Modal para editar texto sin bloquear */
+
+.text-edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001; /* Encima del ChartModal (z-index: 10000) */
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.text-edit-modal-content {
+  background: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.text-edit-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  border-radius: 8px 8px 0 0;
+}
+
+.text-edit-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.text-edit-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6B7280;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.text-edit-modal-close-btn:hover {
+  background: #E5E7EB;
+  color: #111827;
+}
+
+.text-edit-modal-body {
+  padding: 20px;
+}
+
+.text-edit-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  border: 2px solid #D1D5DB;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+}
+
+.text-edit-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.text-edit-input::placeholder {
+  color: #9CA3AF;
+}
+
+.text-edit-helper {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #6B7280;
+  padding: 8px 12px;
+  background: #F3F4F6;
+  border-radius: 4px;
+}
+
+.text-edit-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  border-radius: 0 0 8px 8px;
+}
+
+.text-edit-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.text-edit-btn-cancel {
+  background: #FFFFFF;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+}
+
+.text-edit-btn-cancel:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+.text-edit-btn-save {
+  background: #3B82F6;
+  color: #FFFFFF;
+}
+
+.text-edit-btn-save:hover {
+  background: #2563EB;
+}
+
+.text-edit-btn-save:active {
+  transform: scale(0.98);
+}
