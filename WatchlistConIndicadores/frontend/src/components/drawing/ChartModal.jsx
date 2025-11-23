@@ -475,9 +475,15 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         const shape = drawingManagerRef.current.selectedShape;
         // Solo para líneas que tienen color editable
         if (['trendline', 'horizontal', 'vertical'].includes(shape.type)) {
+          e.preventDefault();
           setShapeBeingColored(shape);
           setIsColorPickerOpen(true);
+          console.log('[Color Picker] Opening for shape:', shape.type, 'color:', shape.style.color);
+        } else {
+          console.log('[Color Picker] Shape type not supported:', shape.type);
         }
+      } else {
+        console.log('[Color Picker] No shape selected');
       }
     }
 
@@ -560,8 +566,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const marginRight = 65;
     const marginTop = 25;
     const timeAxisHeight = 25;
-    const baseVolumeHeight = 50;
-    const minPriceChartHeight = 180;
+    const baseVolumeHeight = 40; // Reducido de 50 a 40
+    const minPriceChartHeight = 120; // Reducido para dar más espacio a indicadores
 
     // Calcular altura de indicadores (similar a MiniChart)
     let desiredIndicatorsHeight = 0;
@@ -569,7 +575,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       desiredIndicatorsHeight = indicatorManagerRef.current.getTotalHeight();
     }
 
-    const availableHeight = height - marginTop - timeAxisHeight;
+    // Restar un poco más de espacio para padding entre secciones (15px adicionales)
+    const availableHeight = height - marginTop - timeAxisHeight - 15;
     const totalNeeded = minPriceChartHeight + baseVolumeHeight + desiredIndicatorsHeight;
 
     let priceChartHeight, volumeHeight, indicatorsHeight, heightScale;
@@ -614,6 +621,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const priceRange = maxPrice - minPrice;
       // Return early with all candles as visible
       return {
+        canvas,
         candles,
         visibleCandles: candles,
         startIdx: 0,
@@ -665,6 +673,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const priceRange = maxPrice - minPrice;
 
     return {
+      canvas,
       candles,
       visibleCandles,
       startIdx,
@@ -845,7 +854,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     // Renderizar volumen
     const { volumeHeight, indicatorsHeight, timeAxisHeight } = scaleConverter;
-    const volumeStartY = marginTop + chartHeight + 5;
+    const volumeStartY = marginTop + chartHeight;
 
     if (volumeHeight > 0) {
       const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
@@ -921,12 +930,25 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   };
 
   // Handlers para TextEditModal
-  const handleTextSave = (newText) => {
+  const handleTextSave = (newText, newStyles) => {
     if (textBoxBeingEdited && newText.trim()) {
       textBoxBeingEdited.setText(newText);
+
+      // Actualizar estilos si se proporcionaron
+      if (newStyles) {
+        textBoxBeingEdited.style = {
+          ...textBoxBeingEdited.style,
+          ...newStyles
+        };
+      }
+
       drawingManagerRef.current.saveToHistory();
       saveDrawings();
       setNeedsRedraw(true);
+
+      // IMPORTANTE: Cambiar automáticamente a modo select después de guardar
+      setSelectedTool('select');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
     } else if (textBoxBeingEdited && !newText.trim()) {
       // Si el texto está vacío, eliminar el TextBox
       const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
@@ -936,6 +958,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         saveDrawings();
         setNeedsRedraw(true);
       }
+
+      // Cambiar a modo select
+      setSelectedTool('select');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
     }
     setIsTextEditModalOpen(false);
     setTextBoxBeingEdited(null);
@@ -951,6 +977,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         setNeedsRedraw(true);
       }
     }
+
+    // IMPORTANTE: Cambiar a modo select al cancelar
+    setSelectedTool('select');
+    if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
+
     setIsTextEditModalOpen(false);
     setTextBoxBeingEdited(null);
   };
@@ -997,7 +1028,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
             <canvas
               ref={canvasRef}
               width={window.innerWidth}
-              height={window.innerHeight - 100}
+              height={window.innerHeight - 70}
             />
           )}
         </div>
@@ -1007,6 +1038,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       {isTextEditModalOpen && textBoxBeingEdited && (
         <TextEditModal
           initialText={textBoxBeingEdited.text}
+          initialStyle={textBoxBeingEdited.style}
           onSave={handleTextSave}
           onCancel={handleTextCancel}
         />
