@@ -205,7 +205,103 @@ El sistema calcula confidence basándose en 4 factores:
 
 ## 🧪 Testing
 
-### Test Manual con curl
+### Método 1: Script Automático de Prueba (RECOMENDADO) ⭐
+
+El sistema incluye un script de prueba completo que valida todo el flujo:
+
+```bash
+python test_send_alert.py
+```
+
+**Este script verifica:**
+- ✅ Conexión al backend (puerto 8000)
+- ✅ Envío de alerta via API
+- ✅ Recepción por el bot (puerto 5000)
+- ✅ Formato correcto del mensaje
+- ✅ Mapeo de patrones a acciones
+
+**Salida esperada:**
+
+```
+🤖 TRADING BOT ALERT SYSTEM TEST
+
+======================================================================
+🧪 TESTING ALERT SYSTEM
+======================================================================
+
+📡 Sending test alert via backend...
+   Endpoint: http://localhost:8000/api/test-alert
+
+✅ SUCCESS - Test alert sent!
+
+📊 Alert Details:
+   Pattern: HAMMER (ABRIR LONG)
+   Symbol: BTCUSDT
+   Price: $45000.5
+   Confidence: 85.5%
+   Target: http://localhost:5000
+
+Expected format sent to bot:
+   [2025-11-23 03:30:34] [BTCUSDT] ABRIR LONG 45000.50
+
+💡 Check your bot logs on port 5000 to confirm receipt!
+
+----------------------------------------------------------------------
+🔧 ALTERNATIVE: Testing direct connection to bot
+----------------------------------------------------------------------
+
+📡 Sending test alert directly to bot...
+   Endpoint: http://localhost:5000/api/alerts
+
+✅ SUCCESS - Bot received the alert!
+
+======================================================================
+📊 TEST SUMMARY
+======================================================================
+
+Backend API test: ✅ PASSED
+Direct bot test:  ✅ PASSED
+
+🎉 ALL TESTS PASSED - System is ready for production!
+```
+
+**Requisitos previos:**
+
+1. Backend corriendo en puerto 8000:
+   ```bash
+   cd WatchlistConIndicadores/backend
+   python -m uvicorn main:app --reload --port 8000
+   ```
+
+2. Tu bot de trading corriendo en puerto 5000
+
+---
+
+### Método 2: Test via API Endpoint
+
+Enviar alerta de prueba directamente via endpoint:
+
+```bash
+curl -X POST http://localhost:8000/api/test-alert
+```
+
+Respuesta:
+
+```json
+{
+  "success": true,
+  "message": "Test alert sent successfully",
+  "alert_service_url": "http://localhost:5000",
+  "pattern": "HAMMER (ABRIR LONG)",
+  "symbol": "BTCUSDT",
+  "price": 45000.50,
+  "confidence": 85.5
+}
+```
+
+---
+
+### Método 3: Test Manual con curl (Directo al Bot)
 
 ```bash
 curl -X POST http://localhost:5000/api/alerts \
@@ -219,9 +315,11 @@ curl -X POST http://localhost:5000/api/alerts \
   }'
 ```
 
-### Script de Prueba
+---
 
-Ejecutar:
+### Método 4: Validación de Formato (Sin envío)
+
+Valida únicamente el formato sin enviar al bot:
 
 ```bash
 python test_alert_format.py

@@ -1686,6 +1686,90 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
 
 @app.post("/api/clear-cache")
 
+
+# ==================== ALERT TESTING ENDPOINT ====================
+
+@app.post("/api/test-alert")
+async def send_test_alert():
+    """
+    Sends a test alert to verify the alert system is working
+
+    Returns:
+        Success/failure status and connection info
+    """
+    try:
+        from alert_sender import alert_sender
+        import time
+
+        # Create test pattern
+        test_pattern = {
+            "patternType": "HAMMER",
+            "confidence": 85.5,
+            "price": 45000.50,
+            "timestamp": int(time.time() * 1000),
+            "nearLevels": [
+                {
+                    "type": "POC",
+                    "price": 45020.0,
+                    "sourceType": "VOLUME_PROFILE_FIXED",
+                    "sourceId": "test_vp",
+                    "weight": 1.0
+                }
+            ],
+            "metrics": {
+                "pattern_quality": 0.85,
+                "proximity_score": 0.95,
+                "volume_score": 0.75,
+                "size_score": 0.80
+            },
+            "candle": {
+                "open": 44800,
+                "high": 45100,
+                "low": 44500,
+                "close": 45000.50,
+                "volume": 1250000
+            },
+            "contextScores": {
+                "VOLUME_PROFILE_FIXED_test_vp": 95.0
+            }
+        }
+
+        # Send test alert
+        success = await alert_sender.send_rejection_pattern_alert(
+            symbol="BTCUSDT",
+            interval="4h",
+            pattern=test_pattern,
+            user_config={"test_mode": True}
+        )
+
+        if success:
+            return {
+                "success": True,
+                "message": "Test alert sent successfully",
+                "alert_service_url": alert_sender.alert_service_url,
+                "pattern": "HAMMER (ABRIR LONG)",
+                "symbol": "BTCUSDT",
+                "price": 45000.50,
+                "confidence": 85.5
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Failed to send test alert",
+                "alert_service_url": alert_sender.alert_service_url
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Test alert failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "message": "Error sending test alert"
+        }
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
