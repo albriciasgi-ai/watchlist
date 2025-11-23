@@ -475,9 +475,15 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         const shape = drawingManagerRef.current.selectedShape;
         // Solo para líneas que tienen color editable
         if (['trendline', 'horizontal', 'vertical'].includes(shape.type)) {
+          e.preventDefault();
           setShapeBeingColored(shape);
           setIsColorPickerOpen(true);
+          console.log('[Color Picker] Opening for shape:', shape.type, 'color:', shape.style.color);
+        } else {
+          console.log('[Color Picker] Shape type not supported:', shape.type);
         }
+      } else {
+        console.log('[Color Picker] No shape selected');
       }
     }
 
@@ -825,9 +831,18 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   };
 
   // Handlers para TextEditModal
-  const handleTextSave = (newText) => {
+  const handleTextSave = (newText, newStyles) => {
     if (textBoxBeingEdited && newText.trim()) {
       textBoxBeingEdited.setText(newText);
+
+      // Actualizar estilos si se proporcionaron
+      if (newStyles) {
+        textBoxBeingEdited.style = {
+          ...textBoxBeingEdited.style,
+          ...newStyles
+        };
+      }
+
       drawingManagerRef.current.saveToHistory();
       saveDrawings();
       setNeedsRedraw(true);
@@ -924,6 +939,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       {isTextEditModalOpen && textBoxBeingEdited && (
         <TextEditModal
           initialText={textBoxBeingEdited.text}
+          initialStyle={textBoxBeingEdited.style}
           onSave={handleTextSave}
           onCancel={handleTextCancel}
         />

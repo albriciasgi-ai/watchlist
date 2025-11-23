@@ -15,6 +15,7 @@ import Rectangle from "./drawing/shapes/Rectangle";
 import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
 import TPSLBox from "./drawing/shapes/TPSLBox";
 import MeasurementShape from "./drawing/shapes/MeasurementShape";
+import TextBox from "./drawing/shapes/TextBox";
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
@@ -177,6 +178,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         return TPSLBox.deserialize(data);
       case 'measurement':
         return MeasurementShape.deserialize(data);
+      case 'textbox':
+        return TextBox.deserialize(data);
       default:
         console.warn('Unknown shape type:', data.type);
         return null;
