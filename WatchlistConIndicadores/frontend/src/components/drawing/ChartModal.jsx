@@ -540,6 +540,21 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     };
   }, [handleMouseDown, handleMouseMove, handleMouseUp, handleWheel, handleKeyDown]);
 
+  // Prevenir scroll en el modal overlay (evita que se haga scroll en minicharts de fondo)
+  useEffect(() => {
+    const preventScroll = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // Agregar listener al document para capturar TODOS los wheel events cuando el modal está abierto
+    document.addEventListener('wheel', preventScroll, { passive: false });
+
+    return () => {
+      document.removeEventListener('wheel', preventScroll);
+    };
+  }, []); // Solo se ejecuta al montar/desmontar el modal
+
   // Función helper para calcular conversión de escalas
   const calculateScaleConverter = () => {
     const canvas = canvasRef.current;
