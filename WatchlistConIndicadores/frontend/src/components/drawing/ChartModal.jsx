@@ -565,10 +565,47 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const marginLeft = 10;
     const marginRight = 65;
     const marginTop = 25;
-    const marginBottom = 100;
+    const timeAxisHeight = 25;
+    const baseVolumeHeight = 50;
+    const minPriceChartHeight = 180;
+
+    // Calcular altura de indicadores (similar a MiniChart)
+    let desiredIndicatorsHeight = 0;
+    if (indicatorManagerRef && indicatorManagerRef.current) {
+      desiredIndicatorsHeight = indicatorManagerRef.current.getTotalHeight();
+    }
+
+    const availableHeight = height - marginTop - timeAxisHeight;
+    const totalNeeded = minPriceChartHeight + baseVolumeHeight + desiredIndicatorsHeight;
+
+    let priceChartHeight, volumeHeight, indicatorsHeight, heightScale;
+
+    if (availableHeight >= totalNeeded) {
+      volumeHeight = baseVolumeHeight;
+      indicatorsHeight = desiredIndicatorsHeight;
+      heightScale = 1.0;
+      priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+    } else {
+      const scale = availableHeight / totalNeeded;
+      priceChartHeight = Math.floor(minPriceChartHeight * scale);
+      volumeHeight = Math.floor(baseVolumeHeight * scale);
+      indicatorsHeight = Math.floor(desiredIndicatorsHeight * scale);
+      heightScale = scale;
+
+      const actualTotal = priceChartHeight + volumeHeight + indicatorsHeight;
+      if (actualTotal > availableHeight) {
+        priceChartHeight -= (actualTotal - availableHeight);
+      }
+    }
+
+    if (indicatorManagerRef && indicatorManagerRef.current) {
+      indicatorManagerRef.current.setHeightScale(heightScale);
+    }
+
+    const marginBottom = volumeHeight + timeAxisHeight + indicatorsHeight;
 
     const chartWidth = width - marginLeft - marginRight;
-    const chartHeight = height - marginTop - marginBottom;
+    const chartHeight = priceChartHeight;
 
     const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
     const startIdx = Math.max(0, candles.length - candlesPerScreen - viewStateRef.current.offset);
@@ -597,6 +634,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         chartHeight,
         marginLeft,
         marginTop,
+        marginBottom,
+        volumeHeight,
+        indicatorsHeight,
+        timeAxisHeight,
         interval,
         priceToY: (price) => {
           const baseYScale = priceRange > 0 ? chartHeight / priceRange : 1;
@@ -645,6 +686,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       chartHeight,
       marginLeft,
       marginTop,
+      marginBottom,
+      volumeHeight,
+      indicatorsHeight,
+      timeAxisHeight,
       interval,
 
       // Conversiones
@@ -804,6 +849,44 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const price = scaleConverter.minPrice + (scaleConverter.priceRange * i / 4);
       const y = scaleConverter.priceToY(price);
       ctx.fillText(price.toFixed(2), marginLeft + chartWidth + 5, y + 4);
+    }
+
+    // Renderizar volumen
+    const { volumeHeight, indicatorsHeight, timeAxisHeight } = scaleConverter;
+    const volumeStartY = marginTop + chartHeight + 5;
+
+    if (volumeHeight > 0) {
+      const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
+      const volumeScale = maxVolume > 0 ? volumeHeight / maxVolume : 1;
+      const barWidth = chartWidth / visibleCandles.length;
+      const bullColor = '#10B981';
+      const bearColor = '#EF4444';
+
+      ctx.globalAlpha = 0.6;
+      visibleCandles.forEach((d, i) => {
+        const x = marginLeft + (i * barWidth);
+        const volHeight = d.volume * volumeScale;
+        const color = d.close >= d.open ? bullColor : bearColor;
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeight - volHeight, barWidth * 0.8, volHeight);
+      });
+      ctx.globalAlpha = 1.0;
+
+      ctx.fillStyle = '#666666';
+      ctx.font = '9px Arial';
+      ctx.fillText('Vol', marginLeft + 2, volumeStartY + 12);
+    }
+
+    // Renderizar indicadores debajo del volumen (si hay)
+    if (indicatorManagerRef && indicatorManagerRef.current && indicatorsHeight > 0) {
+      const indicatorsBounds = {
+        x: marginLeft,
+        y: marginTop + chartHeight + volumeHeight + timeAxisHeight,
+        width: chartWidth,
+        height: indicatorsHeight
+      };
+      indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
     }
 
     // Measurement tool (encima de todo)
