@@ -567,7 +567,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const marginTop = 25;
     const timeAxisHeight = 25;
     const baseVolumeHeight = 50;
-    const minPriceChartHeight = 180;
+    const minPriceChartHeight = 150; // Reducido para dar más espacio a indicadores
 
     // Calcular altura de indicadores (similar a MiniChart)
     let desiredIndicatorsHeight = 0;
@@ -1027,7 +1027,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
             <canvas
               ref={canvasRef}
               width={window.innerWidth}
-              height={window.innerHeight - 100}
+              height={window.innerHeight - 85}
             />
           )}
         </div>
