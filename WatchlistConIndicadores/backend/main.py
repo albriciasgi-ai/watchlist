@@ -1749,6 +1749,87 @@ async def send_test_alert():
         }
 
 
+@app.post("/api/test-alert-batch")
+async def send_test_alert_batch():
+    """
+    Sends multiple test alerts to simulate real trading scenario
+
+    Returns:
+        Success/failure status for each alert
+    """
+    try:
+        from alert_sender import alert_sender
+        import time
+        import asyncio
+
+        # Real trading data from user
+        test_alerts = [
+            {"symbol": "BTCUSDT", "price": 82500.0, "pattern": "HAMMER"},
+            {"symbol": "ETHUSDT", "price": 2800.0, "pattern": "HAMMER"},
+            {"symbol": "INJUSDT", "price": 12.46, "pattern": "ENGULFING_BULLISH"},
+            {"symbol": "IOTAUSDT", "price": 0.1709, "pattern": "HAMMER"},
+            {"symbol": "TRXUSDT", "price": 0.3385, "pattern": "DOJI_DRAGONFLY"},
+            {"symbol": "UNIUSDT", "price": 8.012, "pattern": "HAMMER"},
+            {"symbol": "XRPUSDT", "price": 2.956, "pattern": "ENGULFING_BULLISH"},
+            {"symbol": "CAKEUSDT", "price": 2.785, "pattern": "HAMMER"},
+            {"symbol": "POLUSDT", "price": 0.2258, "pattern": "HAMMER"},
+            {"symbol": "HIFIUSDT", "price": 0.089, "pattern": "DOJI_DRAGONFLY"},
+        ]
+
+        results = []
+        current_time = int(time.time() * 1000)
+
+        for i, alert_data in enumerate(test_alerts):
+            # Create pattern for each alert
+            test_pattern = {
+                "patternType": alert_data["pattern"],
+                "confidence": 75.0 + (i * 2),  # Varying confidence 75-93%
+                "price": alert_data["price"],
+                "timestamp": current_time + (i * 2000),  # 2 second intervals
+                "nearLevels": [],
+                "metrics": {}
+            }
+
+            # Send alert
+            success = await alert_sender.send_rejection_pattern_alert(
+                symbol=alert_data["symbol"],
+                interval="4h",
+                pattern=test_pattern,
+                user_config=None
+            )
+
+            results.append({
+                "symbol": alert_data["symbol"],
+                "price": alert_data["price"],
+                "success": success
+            })
+
+            # Small delay between alerts to avoid overwhelming the bot
+            await asyncio.sleep(0.5)
+
+        successful = sum(1 for r in results if r["success"])
+        total = len(results)
+
+        return {
+            "success": True,
+            "message": f"Sent {successful}/{total} test alerts successfully",
+            "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert",
+            "results": results,
+            "total_sent": successful,
+            "total_attempted": total
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Batch test alert failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "message": "Error sending batch test alerts"
+        }
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""

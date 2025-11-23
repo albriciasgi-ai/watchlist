@@ -231,6 +231,44 @@ const Watchlist = () => {
     }
   };
 
+  // 🚀 NUEVO: Handler para enviar múltiples alertas de prueba
+  const handleTestAlertBatch = async () => {
+    if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto simulará un escenario real con múltiples señales simultáneas.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8000/api/test-alert-batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const successful = result.total_sent;
+        const total = result.total_attempted;
+        const symbols = result.results.map(r => `${r.symbol}: $${r.price}`).join('\n');
+
+        alert(`✅ ${successful}/${total} alertas enviadas exitosamente!\n\n` +
+              `Endpoint: ${result.endpoint}\n\n` +
+              `Monedas enviadas:\n${symbols}\n\n` +
+              `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000 para ver todas las alertas.`);
+      } else {
+        alert(`❌ Error al enviar alertas de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
+              `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
+      }
+    } catch (error) {
+      alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
+            `Verifica que:\n` +
+            `1. El backend esté corriendo en puerto 8000\n` +
+            `2. Tu bot esté corriendo en puerto 5000`);
+      console.error('Error sending batch test alert:', error);
+    }
+  };
+
   // Obtener opciones de días disponibles según el timeframe actual
   const getAvailableDaysOptions = () => {
     return DAYS_OPTIONS_BY_INTERVAL[interval] || [1, 2, 5, 10, 30];
@@ -311,18 +349,18 @@ const Watchlist = () => {
               Open Interest
             </label>
 
-            {/* 🧪 Test Alert Button */}
+            {/* 🧪 Test Alert Buttons */}
             <button
               onClick={handleTestAlert}
               className="test-alert-btn"
-              title="Enviar alerta de prueba al bot de trading (puerto 5000)"
+              title="Enviar UNA alerta de prueba al bot de trading (puerto 5000)"
               style={{
                 marginLeft: '15px',
                 padding: '6px 12px',
                 background: '#4CAF50',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px',
+                borderRadius: '4px 0 0 4px',
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 'bold',
@@ -331,7 +369,28 @@ const Watchlist = () => {
               onMouseEnter={(e) => e.target.style.background = '#45a049'}
               onMouseLeave={(e) => e.target.style.background = '#4CAF50'}
             >
-              🧪 Test Alert
+              🧪 Test 1x
+            </button>
+            <button
+              onClick={handleTestAlertBatch}
+              className="test-alert-batch-btn"
+              title="Enviar MÚLTIPLES alertas de prueba (10 monedas) al bot de trading"
+              style={{
+                padding: '6px 12px',
+                background: '#FF9800',
+                color: 'white',
+                border: 'none',
+                borderLeft: '1px solid white',
+                borderRadius: '0 4px 4px 0',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#F57C00'}
+              onMouseLeave={(e) => e.target.style.background = '#FF9800'}
+            >
+              🚀 Test 10x
             </button>
           </div>
         </div>
