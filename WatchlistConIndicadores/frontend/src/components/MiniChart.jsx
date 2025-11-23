@@ -14,6 +14,7 @@ import VerticalLine from "./drawing/shapes/VerticalLine";
 import Rectangle from "./drawing/shapes/Rectangle";
 import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
 import TPSLBox from "./drawing/shapes/TPSLBox";
+import TPSLBoxShort from "./drawing/shapes/TPSLBoxShort";
 import MeasurementShape from "./drawing/shapes/MeasurementShape";
 import TextBox from "./drawing/shapes/TextBox";
 
@@ -184,6 +185,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         return FibonacciRetracement.deserialize(data);
       case 'tpsl':
         return TPSLBox.deserialize(data);
+      case 'tpsl-short':
+        return TPSLBoxShort.deserialize(data);
       case 'measurement':
         return MeasurementShape.deserialize(data);
       case 'textbox':

@@ -8,6 +8,7 @@ import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
 import MeasurementShape from './shapes/MeasurementShape';
 import TPSLBox from './shapes/TPSLBox';
+import TPSLBoxShort from './shapes/TPSLBoxShort';
 import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
@@ -133,6 +134,14 @@ class DrawingToolManager {
       this.addShape(box);
       this.saveToHistory();
       // NO cambiar tool, permitir dibujar múltiples cajas
+      return true;
+    }
+
+    if (this.currentTool === 'tpsl-short') {
+      const box = new TPSLBoxShort(price, time);
+      this.addShape(box);
+      this.saveToHistory();
+      // NO cambiar tool, permitir dibujar múltiples cajas SHORT
       return true;
     }
 
@@ -280,6 +289,8 @@ class DrawingToolManager {
         return MeasurementShape.deserialize(data);
       case 'tpsl':
         return TPSLBox.deserialize(data);
+      case 'tpsl-short':
+        return TPSLBoxShort.deserialize(data);
       case 'textbox':
         return TextBox.deserialize(data);
       default:
