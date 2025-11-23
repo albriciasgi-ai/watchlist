@@ -3,6 +3,7 @@
 
 import TrendLine from './shapes/TrendLine';
 import HorizontalLine from './shapes/HorizontalLine';
+import VerticalLine from './shapes/VerticalLine';
 import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
 import MeasurementShape from './shapes/MeasurementShape';
@@ -10,7 +11,7 @@ import TPSLBox from './shapes/TPSLBox';
 import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
-  constructor(symbol, interval) {
+  constructor(symbol, interval, onToolChange = null) {
     this.symbol = symbol;
     this.interval = interval;
     this.shapes = [];
@@ -19,6 +20,7 @@ class DrawingToolManager {
     this.currentTool = 'select';
     this.drawingInProgress = null;
     this.tempPoints = [];
+    this.onToolChange = onToolChange; // Callback para notificar cambios de herramienta
 
     // Undo/Redo system
     this.history = [];
@@ -75,6 +77,7 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // NO cambiar tool, permitir dibujar múltiples líneas
       }
       return true;
     }
@@ -83,7 +86,15 @@ class DrawingToolManager {
       const line = new HorizontalLine(price, time);
       this.addShape(line);
       this.saveToHistory();
-      this.currentTool = 'select';
+      // NO cambiar tool, permitir dibujar múltiples líneas
+      return true;
+    }
+
+    if (this.currentTool === 'vertical') {
+      const line = new VerticalLine(price, time);
+      this.addShape(line);
+      this.saveToHistory();
+      // NO cambiar tool, permitir dibujar múltiples líneas
       return true;
     }
 
@@ -97,6 +108,7 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // NO cambiar tool, permitir dibujar múltiples rectángulos
       }
       return true;
     }
@@ -111,6 +123,7 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // NO cambiar tool, permitir dibujar múltiples fibonacci
       }
       return true;
     }
@@ -257,6 +270,8 @@ class DrawingToolManager {
         return TrendLine.deserialize(data);
       case 'horizontal':
         return HorizontalLine.deserialize(data);
+      case 'vertical':
+        return VerticalLine.deserialize(data);
       case 'rectangle':
         return Rectangle.deserialize(data);
       case 'fibonacci':
