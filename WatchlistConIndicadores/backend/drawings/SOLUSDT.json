@@ -1,0 +1,218 @@
+{
+  "symbol": "SOLUSDT",
+  "interval": "15",
+  "shapes": [
+    {
+      "type": "trendline",
+      "id": "trendline_1763866146170_0.19551604776091247",
+      "price1": 120.62245486590653,
+      "time1": 1763714700000,
+      "price2": 126.72212013787306,
+      "time2": 1763767800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763866150047_0.1475385849830011",
+      "price1": 125.35140884080194,
+      "time1": 1763735400000,
+      "price2": 126.76781051444209,
+      "time2": 1763779500000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763866152672_0.7391397556930952",
+      "price1": 128.32128331778938,
+      "time1": 1763748000000,
+      "price2": 128.4583544474965,
+      "time2": 1763799300000,
+      "style": {
+        "color": "#84CC16",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763866156039_0.47367499850198014",
+      "price1": 128.04714105837513,
+      "time1": 1763775000000,
+      "price2": 126.90488164414921,
+      "time2": 1763828100000,
+      "style": {
+        "color": "#D946EF",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763866161953_0.31963760669378594",
+      "price": 121.42203645586468,
+      "time": 1763727300000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763866165419_0.2975727788810366",
+      "price": 126.01391930105297,
+      "time": 1763748000000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763866170277_0.01894820907861028",
+      "price": 125.53417034707807,
+      "time": 1763718300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763866172285_0.0565241903751289",
+      "price": 126.26521637218268,
+      "time": 1763735400000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763866174359_0.05057239827102844",
+      "price": 125.94538373619942,
+      "time": 1763763300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1763866177827_0.9055824155769873",
+      "price1": 121.76471428013248,
+      "time1": 1763761500000,
+      "price2": 124.04923310858436,
+      "time2": 1763799300000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1763866182899_0.29407067616953364",
+      "price1": 121.87894022155507,
+      "time1": 1763806500000,
+      "price2": 124.80312432197347,
+      "time2": 1763815500000
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1763866189223_0.9412718249576416",
+      "entryPrice": 125.35140884080192,
+      "tpPrice": 130.46872544548003,
+      "slPrice": 124.16345905000694,
+      "time": 1763804700000,
+      "width": 31
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1763866194779_0.43576012002202225",
+      "price": 130.72002808766382,
+      "time": 1763829900000,
+      "text": "SubhanAllah!!",
+      "style": {
+        "bgColor": "#43fa004dffff",
+        "textColor": "#0d0d0c",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763866339043_0.7392794136821865",
+      "price1": 131.2911577947768,
+      "time1": 1763776800000,
+      "price2": 131.3825385479149,
+      "time2": 1763783100000,
+      "style": {
+        "color": "#EF4444",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763866463528_0.7773184328196038",
+      "price1": 131.47391930105297,
+      "time1": 1763801100000,
+      "price2": 130.4001954516806,
+      "time2": 1763803800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1763866583823_0.4826051707278147",
+      "price1": 130.69718289937933,
+      "time1": 1763769600000,
+      "price2": 129.55492348515338,
+      "time2": 1763785800000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    }
+  ],
+  "updated_at": "2025-11-23T02:56:24.454353+00:00",
+  "total_shapes": 16
+}

@@ -1,0 +1,148 @@
+{
+  "symbol": "OPUSDT",
+  "interval": "15",
+  "shapes": [
+    {
+      "type": "textbox",
+      "id": "textbox_1763867435667_0.23884723115411288",
+      "price": 0.32543779756554,
+      "time": 1763775900000,
+      "text": "Allahu Akbar!!!",
+      "customWidth": 148,
+      "customHeight": 60,
+      "style": {
+        "bgColor": "#eae3d133",
+        "textColor": "#760f68",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 60
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763867475801_0.32593146416962504",
+      "price": 0.33063947120570736,
+      "time": 1763750700000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1763867476578_0.01339476426216546",
+      "price": 0.304490517230812,
+      "time": 1763757900000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763867479649_0.26080156251217357",
+      "price1": 0.3161591364776739,
+      "time1": 1763710200000,
+      "price2": 0.2870578812475484,
+      "time2": 1763789400000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763867485497_0.29909629119042536",
+      "price1": 0.35496081011784125,
+      "time1": 1763706600000,
+      "price2": 0.3009758728793475,
+      "time2": 1763793000000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1763867490312_0.7732908658287421",
+      "price1": 0.3389340318751634,
+      "time1": 1763784900000,
+      "price2": 0.33317001513876177,
+      "time2": 1763810100000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1763867493542_0.19504102717019844",
+      "price1": 0.2964771281094731,
+      "time1": 1763800200000,
+      "price2": 0.31067629128938934,
+      "time2": 1763826300000
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1763867498992_0.17146073281211593",
+      "entryPrice": 0.31840850886261113,
+      "tpPrice": 0.33114484921711557,
+      "slPrice": 0.3120403386853589,
+      "time": 1763852400000,
+      "width": 29
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763867523421_0.34852209836093995",
+      "price": 0.33748298661619053,
+      "time": 1763697600000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1763867524312_0.6896507452778292",
+      "price": 0.34048549707644155,
+      "time": 1763661600000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1763867535187_0.9606042040360435",
+      "price1": 0.3797490954028014,
+      "time1": 1763716500000,
+      "price2": 0.3589624845241403,
+      "time2": 1763759700000
+    }
+  ],
+  "updated_at": "2025-11-23T03:12:44.905013+00:00",
+  "total_shapes": 11
+}
