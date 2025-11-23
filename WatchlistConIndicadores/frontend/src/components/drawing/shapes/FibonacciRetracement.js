@@ -18,19 +18,19 @@ class FibonacciRetracement {
     // Niveles positivos = desde 0% hacia extensiones
     this.levels = [
       // Retrocesos negativos (desde 0% hacia el primer click)
-      { value: -0.789, color: '#94A3B8', label: '-78.9%' },
-      { value: -0.618, color: '#94A3B8', label: '-61.8%' },
-      { value: -0.5, color: '#94A3B8', label: '-50%' },
-      { value: -0.382, color: '#94A3B8', label: '-38.2%' },
-      { value: -0.236, color: '#94A3B8', label: '-23.6%' },
-      { value: 0, color: '#10B981', label: '0%' },      // Nivel base (segundo click)
+      { value: -0.789, color: '#EC4899', label: '-78.9%' },   // Rosa/magenta
+      { value: -0.618, color: '#8B5CF6', label: '-61.8%' },   // Morado
+      { value: -0.5, color: '#06B6D4', label: '-50%' },       // Cyan
+      { value: -0.382, color: '#10B981', label: '-38.2%' },   // Verde
+      { value: -0.236, color: '#F59E0B', label: '-23.6%' },   // Naranja
+      { value: 0, color: '#3B82F6', label: '0%' },            // Azul (nivel base - segundo click)
       // Extensiones (desde 0% hacia arriba/abajo según dirección)
-      { value: 0.27, color: '#3B82F6', label: '27%' },
-      { value: 0.618, color: '#8B5CF6', label: '61.8%' },
-      { value: 1, color: '#EF4444', label: '100%' },
-      { value: 1.618, color: '#14B8A6', label: '161.8%' },
-      { value: 2.414, color: '#A855F7', label: '241.4%' },
-      { value: 4.618, color: '#F59E0B', label: '461.8%' }
+      { value: 0.27, color: '#10B981', label: '27%' },        // Verde
+      { value: 0.618, color: '#8B5CF6', label: '61.8%' },     // Morado
+      { value: 1, color: '#EF4444', label: '100%' },          // Rojo
+      { value: 1.618, color: '#14B8A6', label: '161.8%' },    // Teal
+      { value: 2.414, color: '#A855F7', label: '241.4%' },    // Morado claro
+      { value: 4.618, color: '#F59E0B', label: '461.8%' }     // Naranja
     ];
 
     this.isDragging = false;
