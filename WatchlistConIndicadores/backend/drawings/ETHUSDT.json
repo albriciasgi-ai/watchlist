@@ -230,8 +230,21 @@
         "minWidth": 120,
         "minHeight": 60
       }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1763878341311_0.962963401622872",
+      "price1": 2833.032658063103,
+      "time1": 1763775900000,
+      "price2": 2814.882069827809,
+      "time2": 1763802000000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
     }
   ],
-  "updated_at": "2025-11-23T05:41:04.037598+00:00",
-  "total_shapes": 17
+  "updated_at": "2025-11-23T06:12:21.847109+00:00",
+  "total_shapes": 18
 }
