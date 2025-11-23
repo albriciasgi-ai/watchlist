@@ -11,24 +11,23 @@ class FibonacciRetracement {
     this.price2 = price2;
     this.time2 = time2;
 
-    // ✅ Niveles según TradingView
-    // price1 (primer click) = 0% (nivel base)
-    // price2 (segundo click) = 100% (nivel alto/bajo original)
-    // Niveles negativos = retrocesos desde 0% hacia el 100%
-    // Niveles entre 0-1 = niveles intermedios
-    // Niveles > 1 = extensiones más allá del 100%
+    // ✅ Niveles según TradingView (CORRECTO)
+    // price1 (primer click) = punto de inicio (sin nivel)
+    // price2 (segundo click) = 0% (nivel base)
+    // Niveles negativos = desde 0% hacia el primer click
+    // Niveles positivos = desde 0% hacia extensiones
     this.levels = [
-      // Retrocesos (desde 0% hacia 100%)
-      { value: 0, color: '#10B981', label: '0%' },      // Nivel base (primer click)
-      // Retrocesos (desde 0% hacia 100%)
-      { value: 0.236, color: '#94A3B8', label: '23.6%' },
-      { value: 0.382, color: '#94A3B8', label: '38.2%' },
-      { value: 0.5, color: '#94A3B8', label: '50%' },
+      // Retrocesos negativos (desde 0% hacia el primer click)
+      { value: -0.789, color: '#94A3B8', label: '-78.9%' },
+      { value: -0.618, color: '#94A3B8', label: '-61.8%' },
+      { value: -0.5, color: '#94A3B8', label: '-50%' },
+      { value: -0.382, color: '#94A3B8', label: '-38.2%' },
+      { value: -0.236, color: '#94A3B8', label: '-23.6%' },
+      { value: 0, color: '#10B981', label: '0%' },      // Nivel base (segundo click)
+      // Extensiones (desde 0% hacia arriba/abajo según dirección)
+      { value: 0.27, color: '#3B82F6', label: '27%' },
       { value: 0.618, color: '#8B5CF6', label: '61.8%' },
-      { value: 0.789, color: '#94A3B8', label: '78.9%' },
-      { value: 1, color: '#EF4444', label: '100%' },     // Nivel original (segundo click)
-      // Extensiones (más allá del 100%)
-      { value: 1.27, color: '#3B82F6', label: '127%' },
+      { value: 1, color: '#EF4444', label: '100%' },
       { value: 1.618, color: '#14B8A6', label: '161.8%' },
       { value: 2.414, color: '#A855F7', label: '241.4%' },
       { value: 4.618, color: '#F59E0B', label: '461.8%' }
@@ -56,7 +55,7 @@ class FibonacciRetracement {
 
     if (!x1 || !x2) return false;
 
-    // ✅ CORREGIDO: price1 = 0%, price2 = 100%
+    // ✅ CORREGIDO: price2 (segundo click) = 0%, niveles desde price2
     const priceRange = this.price2 - this.price1;
     const minX = Math.min(x1, x2);
     const maxX = Math.max(x1, x2);
@@ -66,7 +65,7 @@ class FibonacciRetracement {
 
     // Verificar si está cerca de algún nivel
     for (const level of this.levels) {
-      const price = this.price1 + (priceRange * level.value);
+      const price = this.price2 + (priceRange * level.value);
       const yLevel = scaleConverter.priceToY(price);
 
       if (Math.abs(y - yLevel) <= tolerance) {
@@ -161,20 +160,20 @@ class FibonacciRetracement {
 
     ctx.save();
 
-    // ✅ CORREGIDO: price1 = 0%, price2 = 100%
+    // ✅ CORREGIDO: price2 (segundo click) = 0%, niveles desde price2
     const priceRange = this.price2 - this.price1;
     const xStart = Math.min(x1, x2);
     const xEnd = Math.max(x1, x2);
 
     // Renderizar niveles
     this.levels.forEach((level, idx) => {
-      const price = this.price1 + (priceRange * level.value);
+      const price = this.price2 + (priceRange * level.value);
       const y = scaleConverter.priceToY(price);
 
       // Línea horizontal
       ctx.strokeStyle = isPreview ? `${level.color}80` : level.color;
-      // 61.8% más grueso si está seleccionado (ahora es índice 4)
-      ctx.lineWidth = isSelected && idx === 4 ? 2 : 1;
+      // 61.8% más grueso si está seleccionado (índice 7: 0.618)
+      ctx.lineWidth = isSelected && idx === 7 ? 2 : 1;
       ctx.setLineDash([5, 3]);
 
       ctx.beginPath();
@@ -193,7 +192,7 @@ class FibonacciRetracement {
       // Zona sombreada entre niveles
       if (idx > 0 && !isPreview) {
         const prevLevel = this.levels[idx - 1];
-        const prevPrice = this.price1 + (priceRange * prevLevel.value);
+        const prevPrice = this.price2 + (priceRange * prevLevel.value);
         const prevY = scaleConverter.priceToY(prevPrice);
 
         ctx.fillStyle = `${level.color}15`; // 15 = muy transparente
@@ -226,14 +225,14 @@ class FibonacciRetracement {
     ctx.fillStyle = arrowColor;
     ctx.lineWidth = 2;
 
-    // ✅ Flecha desde price1 (0%, primer click) hacia price2 (100%, segundo click)
-    // Línea vertical desde y1 (0%) hacia y2 (100%)
+    // ✅ Flecha desde price1 (primer click, sin nivel) hacia price2 (segundo click, 0%)
+    // Línea vertical conectando ambos puntos
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x1, y2);
     ctx.stroke();
 
-    // Punta de flecha apuntando hacia y2 (100%, el nivel objetivo)
+    // Punta de flecha apuntando hacia y2 (0%, el nivel base)
     const arrowSize = 8;
     const direction = y2 > y1 ? 1 : -1; // Hacia abajo o arriba
 
@@ -244,11 +243,10 @@ class FibonacciRetracement {
     ctx.closePath();
     ctx.fill();
 
-    // Etiquetas "0%" en y1 y "100%" en y2
+    // Etiqueta "0%" en y2 (segundo click)
     ctx.fillStyle = arrowColor;
     ctx.font = 'bold 10px Arial';
-    ctx.fillText('0%', x1 - 25, y1 + 4);
-    ctx.fillText('100%', x1 - 35, y2 + 4);
+    ctx.fillText('0%', x1 - 25, y2 + 4);
   }
 
   renderHandles(ctx, x1, y1, x2, y2) {
