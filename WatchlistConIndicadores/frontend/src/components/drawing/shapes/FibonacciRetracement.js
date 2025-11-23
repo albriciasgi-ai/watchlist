@@ -200,6 +200,26 @@ class FibonacciRetracement {
       }
     });
 
+    // Línea de referencia en el primer click (solo precio, sin nivel fibonacci)
+    if (!isPreview) {
+      const y1Price = scaleConverter.priceToY(this.price1);
+      ctx.strokeStyle = '#94A3B8'; // Gris
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]); // Punteado
+
+      ctx.beginPath();
+      ctx.moveTo(xStart, y1Price);
+      ctx.lineTo(xEnd, y1Price);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      // Label mostrando solo el precio (sin porcentaje)
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '11px Arial';
+      ctx.fillText(this.price1.toFixed(2), xEnd + 5, y1Price + 4);
+    }
+
     // Flecha indicando dirección
     this.renderArrow(ctx, x1, y1, x2, y2, isPreview);
 
