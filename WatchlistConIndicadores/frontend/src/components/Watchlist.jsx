@@ -233,7 +233,7 @@ const Watchlist = () => {
 
   // 🚀 NUEVO: Handler para enviar múltiples alertas de prueba
   const handleTestAlertBatch = async () => {
-    if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto simulará un escenario real con múltiples señales simultáneas.')) {
+    if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto tomará ~20 segundos (2s delay entre cada alerta).')) {
       return;
     }
 
@@ -245,26 +245,54 @@ const Watchlist = () => {
         }
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const result = await response.json();
 
-      if (result.success) {
+      if (result.success || result.total_sent > 0) {
         const successful = result.total_sent;
         const total = result.total_attempted;
-        const symbols = result.results.map(r => `${r.symbol}: $${r.price}`).join('\n');
+        const symbols = result.results
+          .filter(r => r.success)
+          .map(r => `✅ ${r.symbol}: $${r.price}`)
+          .join('\n');
 
-        alert(`✅ ${successful}/${total} alertas enviadas exitosamente!\n\n` +
-              `Endpoint: ${result.endpoint}\n\n` +
-              `Monedas enviadas:\n${symbols}\n\n` +
-              `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000 para ver todas las alertas.`);
+        const failed = result.results
+          .filter(r => !r.success)
+          .map(r => `❌ ${r.symbol}: ${r.error || 'Failed'}`)
+          .join('\n');
+
+        let message = `✅ ${successful}/${total} alertas enviadas exitosamente!\n\n`;
+        message += `Endpoint: ${result.endpoint}\n\n`;
+
+        if (symbols) {
+          message += `Alertas exitosas:\n${symbols}\n\n`;
+        }
+
+        if (failed) {
+          message += `Alertas fallidas:\n${failed}\n\n`;
+        }
+
+        if (result.errors && result.errors.length > 0) {
+          message += `Errores:\n${result.errors.join('\n')}\n\n`;
+        }
+
+        message += `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000.`;
+
+        alert(message);
       } else {
         alert(`❌ Error al enviar alertas de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
+              `Total enviado: ${result.total_sent || 0}/${result.total_attempted || 0}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {
       alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
             `Verifica que:\n` +
             `1. El backend esté corriendo en puerto 8000\n` +
-            `2. Tu bot esté corriendo en puerto 5000`);
+            `2. Tu bot esté corriendo en puerto 5000\n` +
+            `3. El backend haya terminado de procesar (toma ~20s)`);
       console.error('Error sending batch test alert:', error);
     }
   };

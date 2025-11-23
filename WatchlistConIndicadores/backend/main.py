@@ -1778,46 +1778,74 @@ async def send_test_alert_batch():
 
         results = []
         current_time = int(time.time() * 1000)
+        errors = []
+
+        print(f"[BATCH TEST] Starting to send {len(test_alerts)} test alerts...")
 
         for i, alert_data in enumerate(test_alerts):
-            # Create pattern for each alert
-            test_pattern = {
-                "patternType": alert_data["pattern"],
-                "confidence": 75.0 + (i * 2),  # Varying confidence 75-93%
-                "price": alert_data["price"],
-                "timestamp": current_time + (i * 2000),  # 2 second intervals
-                "nearLevels": [],
-                "metrics": {}
-            }
+            try:
+                # Create pattern for each alert
+                test_pattern = {
+                    "patternType": alert_data["pattern"],
+                    "confidence": 75.0 + (i * 2),  # Varying confidence 75-93%
+                    "price": alert_data["price"],
+                    "timestamp": current_time + (i * 2000),  # 2 second intervals
+                    "nearLevels": [],
+                    "metrics": {}
+                }
 
-            # Send alert
-            success = await alert_sender.send_rejection_pattern_alert(
-                symbol=alert_data["symbol"],
-                interval="4h",
-                pattern=test_pattern,
-                user_config=None
-            )
+                print(f"[BATCH TEST] Sending alert {i+1}/{len(test_alerts)}: {alert_data['symbol']} @ ${alert_data['price']}")
 
-            results.append({
-                "symbol": alert_data["symbol"],
-                "price": alert_data["price"],
-                "success": success
-            })
+                # Send alert
+                success = await alert_sender.send_rejection_pattern_alert(
+                    symbol=alert_data["symbol"],
+                    interval="4h",
+                    pattern=test_pattern,
+                    user_config=None
+                )
 
-            # Small delay between alerts to avoid overwhelming the bot
-            await asyncio.sleep(0.5)
+                results.append({
+                    "symbol": alert_data["symbol"],
+                    "price": alert_data["price"],
+                    "success": success
+                })
 
-        successful = sum(1 for r in results if r["success"])
+                if not success:
+                    errors.append(f"{alert_data['symbol']}: Failed to send")
+                    print(f"[BATCH TEST] ⚠️ Failed to send alert for {alert_data['symbol']}")
+                else:
+                    print(f"[BATCH TEST] ✅ Alert sent for {alert_data['symbol']}")
+
+                # Longer delay between alerts to give bot time to process (2s instead of 0.5s)
+                await asyncio.sleep(2.0)
+
+            except Exception as e:
+                error_msg = f"{alert_data['symbol']}: {str(e)}"
+                errors.append(error_msg)
+                results.append({
+                    "symbol": alert_data["symbol"],
+                    "price": alert_data["price"],
+                    "success": False,
+                    "error": str(e)
+                })
+                print(f"[BATCH TEST] ❌ Exception for {alert_data['symbol']}: {str(e)}")
+
+        successful = sum(1 for r in results if r.get("success", False))
         total = len(results)
 
-        return {
-            "success": True,
+        print(f"[BATCH TEST] Complete: {successful}/{total} alerts sent successfully")
+
+        response_data = {
+            "success": successful > 0,  # Success if at least one sent
             "message": f"Sent {successful}/{total} test alerts successfully",
             "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert",
             "results": results,
             "total_sent": successful,
-            "total_attempted": total
+            "total_attempted": total,
+            "errors": errors if errors else None
         }
+
+        return response_data
 
     except Exception as e:
         print(f"[ERROR] Batch test alert failed: {str(e)}")
@@ -1826,7 +1854,9 @@ async def send_test_alert_batch():
         return {
             "success": False,
             "error": str(e),
-            "message": "Error sending batch test alerts"
+            "message": f"Error sending batch test alerts: {str(e)}",
+            "total_sent": 0,
+            "total_attempted": 0
         }
 
 
