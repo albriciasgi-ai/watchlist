@@ -86,7 +86,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/drawings/${symbol}`
+        `${API_BASE_URL}/api/drawings/${symbol}/${interval}`
       );
       const data = await response.json();
 
@@ -104,11 +104,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     try {
       const shapes = drawingManagerRef.current.getShapes();
-      await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
+      await fetch(`${API_BASE_URL}/api/drawings/${symbol}/${interval}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          interval: interval,
           shapes: shapes
         })
       });

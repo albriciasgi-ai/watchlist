@@ -199,7 +199,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const loadDrawings = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}/${interval}`);
       const data = await response.json();
 
       if (data.shapes && Array.isArray(data.shapes)) {
@@ -210,7 +210,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         drawingsRef.current = [];
       }
     } catch (error) {
-      console.error(`Error loading drawings for ${symbol}:`, error);
+      console.error(`Error loading drawings for ${symbol} (${interval}):`, error);
       drawingsRef.current = [];
     }
   };
