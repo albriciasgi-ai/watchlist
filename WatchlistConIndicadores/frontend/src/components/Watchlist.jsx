@@ -193,6 +193,39 @@ const Watchlist = () => {
     }
   };
 
+  // 🧪 NUEVO: Handler para enviar alerta de prueba
+  const handleTestAlert = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/test-alert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`✅ Alerta de prueba enviada!\n\n` +
+              `Patrón: ${result.pattern}\n` +
+              `Símbolo: ${result.symbol}\n` +
+              `Precio: $${result.price}\n` +
+              `Confianza: ${result.confidence}%\n\n` +
+              `Enviada a: ${result.alert_service_url}\n\n` +
+              `Revisa los logs de tu bot en el puerto 5000 para confirmar que la recibió.`);
+      } else {
+        alert(`❌ Error al enviar alerta de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
+              `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
+      }
+    } catch (error) {
+      alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
+            `Verifica que:\n` +
+            `1. El backend esté corriendo en puerto 8000\n` +
+            `2. Tu bot esté corriendo en puerto 5000`);
+      console.error('Error sending test alert:', error);
+    }
+  };
+
   // Obtener opciones de días disponibles según el timeframe actual
   const getAvailableDaysOptions = () => {
     return DAYS_OPTIONS_BY_INTERVAL[interval] || [1, 2, 5, 10, 30];
@@ -272,6 +305,29 @@ const Watchlist = () => {
               />
               Open Interest
             </label>
+
+            {/* 🧪 Test Alert Button */}
+            <button
+              onClick={handleTestAlert}
+              className="test-alert-btn"
+              title="Enviar alerta de prueba al bot de trading (puerto 5000)"
+              style={{
+                marginLeft: '15px',
+                padding: '6px 12px',
+                background: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#45a049'}
+              onMouseLeave={(e) => e.target.style.background = '#4CAF50'}
+            >
+              🧪 Test Alert
+            </button>
           </div>
         </div>
       </div>
