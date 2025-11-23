@@ -816,10 +816,6 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   };
 
-  const handleDoubleClick = () => {
-    setShowChartModal(true);
-  };
-
   const handleWheel = (e) => {
     // 🎯 BLOQUEADO: No permitir zoom mientras se está haciendo paneo (arrastrando)
     if (dragStateRef.current.isDragging) {
@@ -950,7 +946,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const handleDoubleClick = (e) => {
     const canvas = canvasRef.current;
-    if (!canvas || !candlesRef.current || candlesRef.current.length === 0) return;
+    if (!canvas || !candlesRef.current || candlesRef.current.length === 0) {
+      // Si no hay canvas o datos, solo abrir ChartModal
+      setShowChartModal(true);
+      return;
+    }
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -976,6 +976,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       viewStateRef.current.verticalOffset = 0;
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    } else {
+      // 🎯 Doble click en cualquier otra área: abrir ChartModal
+      setShowChartModal(true);
     }
   };
 
