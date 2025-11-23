@@ -206,15 +206,20 @@ const Watchlist = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert(`✅ Alerta de prueba enviada!\n\n` +
-              `Patrón: ${result.pattern}\n` +
-              `Símbolo: ${result.symbol}\n` +
-              `Precio: $${result.price}\n` +
-              `Confianza: ${result.confidence}%\n\n` +
-              `Enviada a: ${result.alert_service_url}\n\n` +
-              `Revisa los logs de tu bot en el puerto 5000 para confirmar que la recibió.`);
+        const payload = result.payload;
+        alert(`✅ Alerta de prueba enviada al bot!\n\n` +
+              `Endpoint: ${result.endpoint}\n\n` +
+              `Payload enviado:\n` +
+              `{\n` +
+              `  "pattern": "${payload.pattern}",\n` +
+              `  "symbol": "${payload.symbol}",\n` +
+              `  "price": ${payload.price},\n` +
+              `  "confidence": ${payload.confidence}\n` +
+              `}\n\n` +
+              `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000 para confirmar que la recibió.`);
       } else {
         alert(`❌ Error al enviar alerta de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
+              `Endpoint: ${result.endpoint || 'http://localhost:5000/api/watchlist-alert'}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {

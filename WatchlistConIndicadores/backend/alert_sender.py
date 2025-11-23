@@ -83,80 +83,25 @@ class AlertSender:
         user_config: Optional[Dict]
     ) -> Dict:
         """
-        Builds the alert payload in a standardized format compatible with trading bot
+        Builds the alert payload compatible with trading bot
 
-        Format expected by bot: [2025-09-16 10:12:00] [BTCUSDT] ABRIR LONG 45000.50
+        Format: {"pattern": "HAMMER (ABRIR LONG)", "symbol": "BTCUSDT", "price": 45000.5, "confidence": 85.5}
         """
         pattern_type = pattern.get('patternType', 'UNKNOWN')
         confidence = pattern.get('confidence', 0)
         price = pattern.get('price', 0)
-        timestamp = pattern.get('timestamp', 0)
-        near_levels = pattern.get('nearLevels', [])
-        metrics = pattern.get('metrics', {})
 
-        # Determine trading action based on pattern type
+        # Get trading action and build pattern string
         action = self._get_trading_action(pattern_type)
+        pattern_name = self._format_pattern_name(pattern_type)
+        pattern_with_action = f"{pattern_name} ({action})"
 
-        # Determine alert severity based on confidence
-        if confidence >= 80:
-            severity = "HIGH"
-            priority = 1
-        elif confidence >= 65:
-            severity = "MEDIUM"
-            priority = 2
-        else:
-            severity = "LOW"
-            priority = 3
-
-        # Build human-readable title
-        pattern_emoji = self._get_pattern_emoji(pattern_type)
-        title = f"{pattern_emoji} {symbol} | {interval} - {self._format_pattern_name(pattern_type)}"
-
-        # Build description
-        description = self._build_description(
-            symbol,
-            interval,
-            pattern_type,
-            confidence,
-            price,
-            near_levels,
-            metrics
-        )
-
-        # Format timestamp
-        dt = datetime.fromtimestamp(timestamp / 1000)
-        formatted_time = dt.strftime("%Y-%m-%d %H:%M:%S")
-
-        # Build simple message for trading bot
-        simple_message = f"[{formatted_time}] [{symbol}] {action} {price:.2f}"
-
-        # Build payload with both formats: simple for bot, detailed for monitoring
+        # Simple payload format for trading bot
         return {
-            # Simple format for trading bot execution
-            "message": simple_message,
-            "timestamp": formatted_time,
+            "pattern": pattern_with_action,
             "symbol": symbol,
-            "action": action,
             "price": price,
-            "confidence": confidence,
-            "interval": interval,
-
-            # Detailed format for monitoring/logging (optional, bot can ignore)
-            "type": "REJECTION_PATTERN_ALERT",
-            "severity": severity,
-            "priority": priority,
-            "title": title,
-            "description": description,
-            "data": {
-                "patternType": pattern_type,
-                "confidence": confidence,
-                "price": price,
-                "nearLevels": near_levels,
-                "metrics": metrics,
-                "candle": pattern.get('candle', {}),
-                "contextScores": pattern.get('contextScores', {})
-            },
-            "userConfig": user_config or {}
+            "confidence": confidence
         }
 
     def _get_trading_action(self, pattern_type: str) -> str:
@@ -288,7 +233,7 @@ class AlertSender:
 
         try:
             response = await self.client.post(
-                f"{self.alert_service_url}/api/alerts",
+                f"{self.alert_service_url}/api/watchlist-alert",
                 json=alert
             )
 

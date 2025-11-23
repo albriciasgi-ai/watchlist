@@ -1707,31 +1707,8 @@ async def send_test_alert():
             "confidence": 85.5,
             "price": 45000.50,
             "timestamp": int(time.time() * 1000),
-            "nearLevels": [
-                {
-                    "type": "POC",
-                    "price": 45020.0,
-                    "sourceType": "VOLUME_PROFILE_FIXED",
-                    "sourceId": "test_vp",
-                    "weight": 1.0
-                }
-            ],
-            "metrics": {
-                "pattern_quality": 0.85,
-                "proximity_score": 0.95,
-                "volume_score": 0.75,
-                "size_score": 0.80
-            },
-            "candle": {
-                "open": 44800,
-                "high": 45100,
-                "low": 44500,
-                "close": 45000.50,
-                "volume": 1250000
-            },
-            "contextScores": {
-                "VOLUME_PROFILE_FIXED_test_vp": 95.0
-            }
+            "nearLevels": [],
+            "metrics": {}
         }
 
         # Send test alert
@@ -1739,24 +1716,26 @@ async def send_test_alert():
             symbol="BTCUSDT",
             interval="4h",
             pattern=test_pattern,
-            user_config={"test_mode": True}
+            user_config=None
         )
 
         if success:
             return {
                 "success": True,
-                "message": "Test alert sent successfully",
-                "alert_service_url": alert_sender.alert_service_url,
-                "pattern": "HAMMER (ABRIR LONG)",
-                "symbol": "BTCUSDT",
-                "price": 45000.50,
-                "confidence": 85.5
+                "message": "Test alert sent successfully to /api/watchlist-alert",
+                "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert",
+                "payload": {
+                    "pattern": "Hammer (ABRIR LONG)",
+                    "symbol": "BTCUSDT",
+                    "price": 45000.50,
+                    "confidence": 85.5
+                }
             }
         else:
             return {
                 "success": False,
                 "message": "Failed to send test alert",
-                "alert_service_url": alert_sender.alert_service_url
+                "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert"
             }
 
     except Exception as e:
