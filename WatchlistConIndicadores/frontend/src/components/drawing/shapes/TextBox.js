@@ -34,7 +34,17 @@ class TextBox {
 
     if (!xPos) return false;
 
-    const { width, height } = this.calculateDimensions(scaleConverter.canvas.getContext('2d'));
+    // CORREGIDO: Usar un canvas temporal para calcular dimensiones si no hay canvas en scaleConverter
+    let ctx;
+    if (scaleConverter.canvas) {
+      ctx = scaleConverter.canvas.getContext('2d');
+    } else {
+      // Crear canvas temporal para measureText
+      const tempCanvas = document.createElement('canvas');
+      ctx = tempCanvas.getContext('2d');
+    }
+
+    const { width, height } = this.calculateDimensions(ctx);
 
     return x >= xPos - tolerance &&
            x <= xPos + width + tolerance &&

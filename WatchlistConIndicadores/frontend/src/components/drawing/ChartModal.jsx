@@ -562,6 +562,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const priceRange = maxPrice - minPrice;
       // Return early with all candles as visible
       return {
+        canvas,
         candles,
         visibleCandles: candles,
         startIdx: 0,
@@ -609,6 +610,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const priceRange = maxPrice - minPrice;
 
     return {
+      canvas,
       candles,
       visibleCandles,
       startIdx,
@@ -829,6 +831,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       drawingManagerRef.current.saveToHistory();
       saveDrawings();
       setNeedsRedraw(true);
+
+      // IMPORTANTE: Cambiar automáticamente a modo select después de guardar
+      setSelectedTool('select');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
     } else if (textBoxBeingEdited && !newText.trim()) {
       // Si el texto está vacío, eliminar el TextBox
       const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
@@ -838,6 +844,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         saveDrawings();
         setNeedsRedraw(true);
       }
+
+      // Cambiar a modo select
+      setSelectedTool('select');
+      if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
     }
     setIsTextEditModalOpen(false);
     setTextBoxBeingEdited(null);
@@ -853,6 +863,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         setNeedsRedraw(true);
       }
     }
+
+    // IMPORTANTE: Cambiar a modo select al cancelar
+    setSelectedTool('select');
+    if (drawingManagerRef.current) drawingManagerRef.current.setTool('select');
+
     setIsTextEditModalOpen(false);
     setTextBoxBeingEdited(null);
   };
