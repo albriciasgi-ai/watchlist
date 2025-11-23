@@ -22,7 +22,7 @@ class TextBox {
       fontFamily: 'Arial',
       padding: 8,
       minWidth: 120,
-      minHeight: 60
+      minHeight: 30 // Reducido a la mitad para menos espacio
     };
 
     this.isDragging = false;

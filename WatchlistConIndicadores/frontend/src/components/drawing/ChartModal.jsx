@@ -566,8 +566,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const marginRight = 65;
     const marginTop = 25;
     const timeAxisHeight = 25;
-    const baseVolumeHeight = 50;
-    const minPriceChartHeight = 150; // Reducido para dar más espacio a indicadores
+    const baseVolumeHeight = 40; // Reducido de 50 a 40
+    const minPriceChartHeight = 120; // Reducido para dar más espacio a indicadores
 
     // Calcular altura de indicadores (similar a MiniChart)
     let desiredIndicatorsHeight = 0;
@@ -575,7 +575,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       desiredIndicatorsHeight = indicatorManagerRef.current.getTotalHeight();
     }
 
-    const availableHeight = height - marginTop - timeAxisHeight;
+    // Restar un poco más de espacio para padding entre secciones (15px adicionales)
+    const availableHeight = height - marginTop - timeAxisHeight - 15;
     const totalNeeded = minPriceChartHeight + baseVolumeHeight + desiredIndicatorsHeight;
 
     let priceChartHeight, volumeHeight, indicatorsHeight, heightScale;
@@ -853,7 +854,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     // Renderizar volumen
     const { volumeHeight, indicatorsHeight, timeAxisHeight } = scaleConverter;
-    const volumeStartY = marginTop + chartHeight + 5;
+    const volumeStartY = marginTop + chartHeight;
 
     if (volumeHeight > 0) {
       const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
@@ -1027,7 +1028,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
             <canvas
               ref={canvasRef}
               width={window.innerWidth}
-              height={window.innerHeight - 85}
+              height={window.innerHeight - 70}
             />
           )}
         </div>
