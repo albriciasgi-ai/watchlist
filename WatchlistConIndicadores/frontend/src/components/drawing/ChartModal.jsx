@@ -598,6 +598,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   // Prevenir scroll en el modal overlay (evita que se haga scroll en minicharts de fondo)
   useEffect(() => {
     const preventScroll = (e) => {
+      // NO prevenir el scroll si el evento viene del canvas (necesitamos el zoom)
+      if (e.target === canvasRef.current) {
+        return; // Dejar que el canvas maneje su propio wheel event
+      }
+
       e.preventDefault();
       e.stopPropagation();
     };
@@ -881,16 +886,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, candles, priceContext);
     }
 
-    // Renderizar DIBUJOS (debajo de las velas según tu preferencia)
-    if (drawingManagerRef.current) {
-      const shapesCount = drawingManagerRef.current.shapes.length;
-      const drawingInProgress = drawingManagerRef.current.drawingInProgress;
-      if (shapesCount > 0 || drawingInProgress) {
-        console.log('[ChartModal] Rendering', shapesCount, 'shapes, drawingInProgress:', !!drawingInProgress, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL');
-      }
-      drawingManagerRef.current.render(ctx, scaleConverter);
-    }
-
     // Candles
     const barWidth = chartWidth / visibleCandles.length;
     const bullColor = '#10B981'; // Verde más claro
@@ -972,6 +967,16 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         height: indicatorsHeight
       };
       indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
+    }
+
+    // Renderizar DIBUJOS (encima de velas, debajo de measurement tool)
+    if (drawingManagerRef.current) {
+      const shapesCount = drawingManagerRef.current.shapes.length;
+      const drawingInProgress = drawingManagerRef.current.drawingInProgress;
+      if (shapesCount > 0 || drawingInProgress) {
+        console.log('[ChartModal] Rendering', shapesCount, 'shapes, drawingInProgress:', !!drawingInProgress, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL');
+      }
+      drawingManagerRef.current.render(ctx, scaleConverter);
     }
 
     // Measurement tool (encima de todo)
