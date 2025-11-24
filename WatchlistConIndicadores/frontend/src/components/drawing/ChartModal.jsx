@@ -20,7 +20,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const lastTextBoxClickTimeRef = useRef(0);
   const lastTextBoxClickedIdRef = useRef(null);
   const redrawPendingRef = useRef(false);
-  const drawingsLoadedRef = useRef(false); // Track if initial drawings have been loaded
   const [candles, setCandles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
@@ -55,18 +54,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   // Inicializar managers
   useEffect(() => {
-    const initializeDrawingManager = async () => {
-      console.log('[ChartModal] Initializing DrawingToolManager for', symbol, interval);
-      drawingsLoadedRef.current = false; // Reset flag for new symbol/interval
-      drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
-      measurementToolRef.current = new MeasurementTool();
+    drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
+    measurementToolRef.current = new MeasurementTool();
 
-      // Cargar dibujos guardados (WAIT for completion to avoid race condition)
-      await loadDrawings();
-      console.log('[ChartModal] DrawingManager initialization complete');
-    };
-
-    initializeDrawingManager();
+    // Cargar dibujos guardados
+    loadDrawings();
   }, [symbol, interval]);
 
   // Cargar datos históricos
@@ -108,33 +100,17 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     if (!drawingManagerRef.current) return;
 
     try {
-      // If user has started drawing before initial load completed, merge instead of replace
-      const hasNewShapes = drawingManagerRef.current.shapes.length > 0 && !drawingsLoadedRef.current;
-
       const response = await fetch(
         `${API_BASE_URL}/api/drawings/${symbol}`
       );
       const data = await response.json();
 
       if (data.shapes) {
-        console.log('[ChartModal] Loading', data.shapes.length, 'drawings from server, hasNewShapes:', hasNewShapes);
-
-        if (hasNewShapes) {
-          // User created shapes before load completed - preserve them by not calling loadShapes()
-          console.warn('[ChartModal] User created shapes before load completed - keeping new shapes, discarding server shapes');
-        } else {
-          // Normal load - replace shapes with server data
-          drawingManagerRef.current.loadShapes(data.shapes);
-          setNeedsRedraw(true);
-        }
-        drawingsLoadedRef.current = true;
-      } else {
-        console.log('[ChartModal] No drawings found on server');
-        drawingsLoadedRef.current = true;
+        drawingManagerRef.current.loadShapes(data.shapes);
+        setNeedsRedraw(true);
       }
     } catch (error) {
       console.error('Error loading drawings:', error);
-      drawingsLoadedRef.current = true;
     }
   };
 
@@ -241,7 +217,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Drawing tools
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
-      console.log('[ChartModal] handleMouseDown - scaleConverter:', scaleConverter ? 'valid' : 'NULL', 'candles:', candles.length);
 
       // ✅ NUEVO: Doble click en TextBox para editar (usando modal React)
       const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
@@ -274,8 +249,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       );
 
       if (consumed) {
-        console.log('[ChartModal] handleMouseDown consumed, tool:', selectedTool, 'shapes:', drawingManagerRef.current.shapes.length);
-
         // Si se creó un TextBox nuevo, abrir modal inmediatamente
         if (selectedTool === 'textbox') {
           const shapes = drawingManagerRef.current.shapes;
@@ -971,11 +944,6 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     // Renderizar DIBUJOS (encima de velas, debajo de measurement tool)
     if (drawingManagerRef.current) {
-      const shapesCount = drawingManagerRef.current.shapes.length;
-      const drawingInProgress = drawingManagerRef.current.drawingInProgress;
-      if (shapesCount > 0 || drawingInProgress) {
-        console.log('[ChartModal] Rendering', shapesCount, 'shapes, drawingInProgress:', !!drawingInProgress, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL');
-      }
       drawingManagerRef.current.render(ctx, scaleConverter);
     }
 
