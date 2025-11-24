@@ -686,6 +686,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         chartWidth,
         chartHeight,
         marginLeft,
+        marginRight,
         marginTop,
         marginBottom,
         volumeHeight,
@@ -750,6 +751,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       chartWidth,
       chartHeight,
       marginLeft,
+      marginRight,
       marginTop,
       marginBottom,
       volumeHeight,
@@ -849,7 +851,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const scaleConverter = calculateScaleConverter();
     if (!scaleConverter) return;
 
-    const { visibleCandles, chartWidth, chartHeight, marginLeft, marginTop, marginBottom = 100 } = scaleConverter;
+    const { visibleCandles, chartWidth, chartHeight, marginLeft, marginRight, marginTop, marginBottom = 100 } = scaleConverter;
 
     // Grid
     ctx.strokeStyle = '#E0E0E0';
