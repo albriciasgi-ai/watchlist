@@ -25,6 +25,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const [selectedTool, setSelectedTool] = useState('select');
   const [needsRedraw, setNeedsRedraw] = useState(false);
   const [localDays, setLocalDays] = useState(days); // Local state for zoom period control
+  const [mousePosition, setMousePosition] = useState({ x: null, y: null }); // Track mouse for crosshair
 
   // Estados para modales
   const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
@@ -74,7 +75,20 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const result = await response.json();
       // El API devuelve { data: [...], success: true, ... }
       setCandles(result.data || []);
+
+      // Reset view state to default when changing zoom period
+      viewStateRef.current = {
+        offset: 0,
+        zoom: 1,
+        verticalZoom: 1,
+        verticalOffset: 0,
+        minPrice: 0,
+        maxPrice: 0,
+        priceRange: 0
+      };
+
       setLoading(false);
+      setNeedsRedraw(true); // Force redraw with new candles and drawings
     } catch (error) {
       console.error('Error loading historical data:', error);
       setCandles([]);
@@ -272,6 +286,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // Update mouse position for crosshair
+    setMousePosition({ x, y });
+
     // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
@@ -296,7 +313,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           canvas.style.cursor = 'default';
         }
       } else {
-        canvas.style.cursor = 'crosshair';
+        canvas.style.cursor = 'default'; // Use default cursor, crosshair will be drawn on canvas
       }
 
       if (consumed) {
@@ -341,6 +358,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     dragStateRef.current.isDragging = false;
     setNeedsRedraw(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    // Reset mouse position when leaving canvas
+    setMousePosition({ x: null, y: null });
   }, []);
 
   const handleWheel = useCallback((e) => {
@@ -517,6 +539,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     canvas.addEventListener('mousedown', handleMouseDown);
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
     canvas.addEventListener('wheel', handleWheel, { passive: false });
     document.addEventListener('keydown', handleKeyDown);
 
@@ -533,12 +556,13 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       canvas.removeEventListener('mousedown', handleMouseDown);
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
       canvas.removeEventListener('wheel', handleWheel);
       canvas.removeEventListener('auxclick', handleAuxClick);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [handleMouseDown, handleMouseMove, handleMouseUp, handleWheel, handleKeyDown]);
+  }, [handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave, handleWheel, handleKeyDown]);
 
   // Prevenir scroll en el modal overlay (evita que se haga scroll en minicharts de fondo)
   useEffect(() => {
@@ -753,7 +777,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         animationFrameRef.current = null;
       }
     };
-  }, [candles, needsRedraw]);
+  }, [candles, needsRedraw, mousePosition]);
 
   const drawChart = () => {
     const canvas = canvasRef.current;
@@ -893,6 +917,44 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Measurement tool (encima de todo)
     if (measurementToolRef.current) {
       measurementToolRef.current.render(ctx, scaleConverter);
+    }
+
+    // Black crosshair (on top of everything)
+    if (mousePosition.x !== null && mousePosition.y !== null) {
+      const { x: mouseX, y: mouseY } = mousePosition;
+
+      // Vertical line
+      if (mouseX >= marginLeft && mouseX <= width - marginRight) {
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(mouseX, marginTop);
+        ctx.lineTo(mouseX, height - marginBottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Horizontal line
+      if (mouseY >= marginTop && mouseY <= marginTop + chartHeight) {
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(marginLeft, mouseY);
+        ctx.lineTo(width - marginRight, mouseY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Price label on right axis
+        const price = scaleConverter.yToPrice(mouseY);
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(width - marginRight + 2, mouseY - 10, 58, 20);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 11px Arial";
+        ctx.textAlign = "left";
+        ctx.fillText(price.toFixed(2), width - marginRight + 6, mouseY + 4);
+      }
     }
   };
 

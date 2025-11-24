@@ -40,6 +40,9 @@ class TPSLBox {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return false;
 
+    // Safety check: avoid division by zero
+    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return false;
+
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
     const ySl = scaleConverter.priceToY(this.slPrice);
@@ -63,6 +66,9 @@ class TPSLBox {
   hitTestHandle(x, y, scaleConverter, handleRadius = 18) {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return null;
+
+    // Safety check: avoid division by zero
+    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return null;
 
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
@@ -182,6 +188,9 @@ class TPSLBox {
   render(ctx, scaleConverter, isSelected = false, isHovered = false, isPreview = false) {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return;
+
+    // Safety check: avoid division by zero
+    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return;
 
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
