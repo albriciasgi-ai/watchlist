@@ -54,6 +54,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   // Inicializar managers
   useEffect(() => {
+    console.log('[ChartModal] Initializing DrawingToolManager for', symbol, interval);
     drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
     measurementToolRef.current = new MeasurementTool();
 
@@ -220,6 +221,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Drawing tools
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
+      console.log('[ChartModal] handleMouseDown - scaleConverter:', scaleConverter ? 'valid' : 'NULL', 'candles:', candles.length);
 
       // ✅ NUEVO: Doble click en TextBox para editar (usando modal React)
       const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
