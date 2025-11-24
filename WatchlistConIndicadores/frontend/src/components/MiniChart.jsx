@@ -396,9 +396,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         },
 
         timeToX: (timestamp) => {
-          const candleIndex = displayCandles.findIndex(c => c.timestamp === timestamp);
-          if (candleIndex === -1) return null;
-          const relativeIndex = candleIndex - startIdx;
+          // Find closest candle instead of exact match (for multi-timeframe support)
+          if (displayCandles.length === 0) return null;
+
+          let closestIndex = 0;
+          let minDiff = Math.abs(displayCandles[0].timestamp - timestamp);
+
+          for (let i = 1; i < displayCandles.length; i++) {
+            const diff = Math.abs(displayCandles[i].timestamp - timestamp);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestIndex = i;
+            }
+          }
+
+          const relativeIndex = closestIndex - startIdx;
           if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
           return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
         },

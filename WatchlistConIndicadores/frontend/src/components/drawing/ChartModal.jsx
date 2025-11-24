@@ -25,7 +25,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const [selectedTool, setSelectedTool] = useState('select');
   const [needsRedraw, setNeedsRedraw] = useState(false);
   const [localDays, setLocalDays] = useState(days); // Local state for zoom period control
-  const [mousePosition, setMousePosition] = useState({ x: null, y: null }); // Track mouse for crosshair
+  const mousePositionRef = useRef({ x: null, y: null }); // Track mouse for crosshair (useRef to avoid re-renders)
 
   // Estados para modales
   const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
@@ -286,8 +286,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Update mouse position for crosshair
-    setMousePosition({ x, y });
+    // Update mouse position for crosshair (using ref to avoid re-renders)
+    mousePositionRef.current = { x, y };
 
     // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
@@ -362,7 +362,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   const handleMouseLeave = useCallback(() => {
     // Reset mouse position when leaving canvas
-    setMousePosition({ x: null, y: null });
+    mousePositionRef.current = { x: null, y: null };
+    setNeedsRedraw(true); // Request redraw to clear crosshair
   }, []);
 
   const handleWheel = useCallback((e) => {
@@ -676,10 +677,22 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           return minPrice + (chartHeight - relativeY) / yScale;
         },
         timeToX: (timestamp) => {
-          const candleIndex = candles.findIndex(c => c.timestamp === timestamp);
-          if (candleIndex === -1) return null;
+          // Find closest candle instead of exact match (for multi-timeframe support)
+          if (candles.length === 0) return null;
+
+          let closestIndex = 0;
+          let minDiff = Math.abs(candles[0].timestamp - timestamp);
+
+          for (let i = 1; i < candles.length; i++) {
+            const diff = Math.abs(candles[i].timestamp - timestamp);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestIndex = i;
+            }
+          }
+
           const barWidth = chartWidth / candles.length;
-          return marginLeft + (candleIndex * barWidth) + (barWidth / 2);
+          return marginLeft + (closestIndex * barWidth) + (barWidth / 2);
         },
         xToTime: (x) => {
           const relativeX = x - marginLeft;
@@ -732,9 +745,21 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       },
 
       timeToX: (timestamp) => {
-        const candleIndex = candles.findIndex(c => c.timestamp === timestamp);
-        if (candleIndex === -1) return null;
-        const relativeIndex = candleIndex - startIdx;
+        // Find closest candle instead of exact match (for multi-timeframe support)
+        if (candles.length === 0) return null;
+
+        let closestIndex = 0;
+        let minDiff = Math.abs(candles[0].timestamp - timestamp);
+
+        for (let i = 1; i < candles.length; i++) {
+          const diff = Math.abs(candles[i].timestamp - timestamp);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i;
+          }
+        }
+
+        const relativeIndex = closestIndex - startIdx;
         if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
         const barWidth = chartWidth / visibleCandles.length;
         return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
@@ -777,7 +802,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         animationFrameRef.current = null;
       }
     };
-  }, [candles, needsRedraw, mousePosition]);
+  }, [candles, needsRedraw]); // Removed mousePosition - now using ref
 
   const drawChart = () => {
     const canvas = canvasRef.current;
@@ -920,8 +945,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     }
 
     // Black crosshair (on top of everything)
-    if (mousePosition.x !== null && mousePosition.y !== null) {
-      const { x: mouseX, y: mouseY } = mousePosition;
+    if (mousePositionRef.current.x !== null && mousePositionRef.current.y !== null) {
+      const { x: mouseX, y: mouseY } = mousePositionRef.current;
 
       // Vertical line
       if (mouseX >= marginLeft && mouseX <= width - marginRight) {
