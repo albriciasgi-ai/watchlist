@@ -15,7 +15,8 @@ class TPSLBox {
     this.slPrice = entryPrice * (1 - defaultRiskPercent); // SL abajo
     this.tpPrice = entryPrice * (1 + defaultRiskPercent * 2); // TP arriba (doble)
 
-    this.width = 100; // Ancho en velas
+    // Ancho en tiempo (milisegundos) - por defecto 100 velas de 15 min = 90,000,000 ms
+    this.widthTime = 100 * 15 * 60 * 1000; // 90 minutos
 
     this.style = {
       entryColor: '#3B82F6', // Azul para entrada
@@ -40,18 +41,17 @@ class TPSLBox {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return false;
 
-    // Safety check: avoid division by zero
-    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return false;
-
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
     const ySl = scaleConverter.priceToY(this.slPrice);
 
-    const pixelsPerCandle = scaleConverter.chartWidth / scaleConverter.visibleCandles.length;
-    const boxWidth = this.width * pixelsPerCandle;
+    // Calcular ancho basado en tiempo en lugar de velas
+    const startTime = this.time - this.widthTime / 2;
+    const endTime = this.time + this.widthTime / 2;
+    const xStart = scaleConverter.timeToX(startTime);
+    const xEnd = scaleConverter.timeToX(endTime);
 
-    const xStart = xCenter - boxWidth / 2;
-    const xEnd = xCenter + boxWidth / 2;
+    if (!xStart || !xEnd) return false;
 
     // Hit test en toda el área (desde SL hasta TP)
     const yTop = Math.min(yTp, ySl, yEntry);
@@ -67,18 +67,17 @@ class TPSLBox {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return null;
 
-    // Safety check: avoid division by zero
-    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return null;
-
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
     const ySl = scaleConverter.priceToY(this.slPrice);
 
-    const pixelsPerCandle = scaleConverter.chartWidth / scaleConverter.visibleCandles.length;
-    const boxWidth = this.width * pixelsPerCandle;
+    // Calcular ancho basado en tiempo
+    const startTime = this.time - this.widthTime / 2;
+    const endTime = this.time + this.widthTime / 2;
+    const xLeft = scaleConverter.timeToX(startTime);
+    const xRight = scaleConverter.timeToX(endTime);
 
-    const xLeft = xCenter - boxWidth / 2;
-    const xRight = xCenter + boxWidth / 2;
+    if (!xLeft || !xRight) return null;
 
     // Prioridad: TP/SL primero (más importantes), luego width, luego entry
 
@@ -119,7 +118,8 @@ class TPSLBox {
     this.dragHandle = handle;
     this.dragStartX = x;
     this.dragStartY = y;
-    this.dragStartWidth = this.width;
+    this.dragStartWidthTime = this.widthTime;
+    this.dragStartTime = scaleConverter.xToTime(x);
     this.dragStartEntryPrice = this.entryPrice;
     this.dragStartTpPrice = this.tpPrice;
     this.dragStartSlPrice = this.slPrice;
@@ -155,15 +155,18 @@ class TPSLBox {
         this.tpPrice = this.dragStartTpPrice + deltaPrice;
         this.slPrice = this.dragStartSlPrice + deltaPrice;
       } else if (this.dragHandle === 'left' || this.dragHandle === 'right') {
-        // Ajustar ancho
-        const pixelsPerCandle = scaleConverter.chartWidth / scaleConverter.visibleCandles.length;
-        const deltaX = x - this.dragStartX;
-        const candleDelta = Math.round(deltaX / pixelsPerCandle);
+        // Ajustar ancho basado en tiempo
+        const currentTime = scaleConverter.xToTime(x);
+        if (currentTime && this.dragStartTime) {
+          const deltaTime = currentTime - this.dragStartTime;
 
-        if (this.dragHandle === 'left') {
-          this.width = Math.max(10, this.dragStartWidth - candleDelta);
-        } else {
-          this.width = Math.max(10, this.dragStartWidth + candleDelta);
+          if (this.dragHandle === 'left') {
+            // Expandir hacia la izquierda
+            this.widthTime = Math.max(60000, this.dragStartWidthTime - 2 * deltaTime); // Mínimo 1 minuto
+          } else {
+            // Expandir hacia la derecha
+            this.widthTime = Math.max(60000, this.dragStartWidthTime + 2 * deltaTime);
+          }
         }
       }
     }
@@ -189,17 +192,19 @@ class TPSLBox {
     const xCenter = scaleConverter.timeToX(this.time);
     if (!xCenter) return;
 
-    // Safety check: avoid division by zero
-    if (!scaleConverter.visibleCandles || scaleConverter.visibleCandles.length === 0) return;
-
     const yEntry = scaleConverter.priceToY(this.entryPrice);
     const yTp = scaleConverter.priceToY(this.tpPrice);
     const ySl = scaleConverter.priceToY(this.slPrice);
 
-    const pixelsPerCandle = scaleConverter.chartWidth / scaleConverter.visibleCandles.length;
-    const boxWidth = this.width * pixelsPerCandle;
+    // Calcular ancho basado en tiempo
+    const startTime = this.time - this.widthTime / 2;
+    const endTime = this.time + this.widthTime / 2;
+    const xStart = scaleConverter.timeToX(startTime);
+    const xEnd = scaleConverter.timeToX(endTime);
 
-    const xStart = xCenter - boxWidth / 2;
+    if (!xStart || !xEnd) return;
+
+    const boxWidth = xEnd - xStart;
 
     ctx.save();
 
@@ -332,7 +337,7 @@ class TPSLBox {
       tpPrice: this.tpPrice,
       slPrice: this.slPrice,
       time: this.time,
-      width: this.width
+      widthTime: this.widthTime
     };
   }
 
@@ -341,7 +346,16 @@ class TPSLBox {
     box.id = data.id;
     box.tpPrice = data.tpPrice;
     box.slPrice = data.slPrice;
-    box.width = data.width || 100;
+
+    // Retrocompatibilidad: convertir width (velas) a widthTime (ms)
+    if (data.widthTime) {
+      box.widthTime = data.widthTime;
+    } else if (data.width) {
+      // Asumir 15 min por vela si tenemos el formato antiguo
+      box.widthTime = data.width * 15 * 60 * 1000;
+    } else {
+      box.widthTime = 100 * 15 * 60 * 1000; // Default
+    }
 
     // Retrocompatibilidad con formato antiguo
     if (data.tpslType) {

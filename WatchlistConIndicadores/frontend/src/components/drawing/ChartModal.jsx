@@ -1027,10 +1027,17 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   };
 
   const handleToolChange = (tool) => {
+    // Limpiar medición temporal al cambiar de herramienta
+    if (measurementToolRef.current) {
+      measurementToolRef.current.clear();
+    }
+
     setSelectedTool(tool);
     if (drawingManagerRef.current) {
       drawingManagerRef.current.setTool(tool);
     }
+
+    setNeedsRedraw(true);
   };
 
   const handleUndo = () => {
