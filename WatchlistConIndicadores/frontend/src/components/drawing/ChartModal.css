@@ -89,3 +89,51 @@
   font-size: 16px;
   color: #6B7280;
 }
+
+/* Zoom Period Toolbar */
+.zoom-period-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.zoom-period-toolbar .toolbar-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  margin-right: 8px;
+}
+
+.zoom-btn {
+  padding: 6px 14px;
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.zoom-btn:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #111827;
+}
+
+.zoom-btn.active {
+  background: #3B82F6;
+  border-color: #3B82F6;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.zoom-btn.active:hover {
+  background: #2563EB;
+  border-color: #2563EB;
+}

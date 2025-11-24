@@ -24,6 +24,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
   const [needsRedraw, setNeedsRedraw] = useState(false);
+  const [localDays, setLocalDays] = useState(days); // Local state for zoom period control
 
   // Estados para modales
   const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
@@ -62,13 +63,13 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   // Cargar datos históricos
   useEffect(() => {
     loadHistoricalData();
-  }, [symbol, interval, days]);
+  }, [symbol, interval, localDays]);
 
   const loadHistoricalData = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}`
+        `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${localDays}`
       );
       const result = await response.json();
       // El API devuelve { data: [...], success: true, ... }
@@ -86,7 +87,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/drawings/${symbol}/${interval}`
+        `${API_BASE_URL}/api/drawings/${symbol}`
       );
       const data = await response.json();
 
@@ -104,7 +105,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     try {
       const shapes = drawingManagerRef.current.getShapes();
-      await fetch(`${API_BASE_URL}/api/drawings/${symbol}/${interval}`, {
+      await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1019,6 +1020,60 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           onRedo={handleRedo}
           onClearAll={handleClearAll}
         />
+
+        {/* Zoom Period Buttons */}
+        <div className="zoom-period-toolbar">
+          <span className="toolbar-label">Periodo:</span>
+          <button
+            className={`zoom-btn ${localDays === 1 ? 'active' : ''}`}
+            onClick={() => setLocalDays(1)}
+            title="1 día"
+          >
+            1D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === 5 ? 'active' : ''}`}
+            onClick={() => setLocalDays(5)}
+            title="5 días"
+          >
+            5D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === 15 ? 'active' : ''}`}
+            onClick={() => setLocalDays(15)}
+            title="15 días"
+          >
+            15D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === 30 ? 'active' : ''}`}
+            onClick={() => setLocalDays(30)}
+            title="30 días"
+          >
+            30D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === 90 ? 'active' : ''}`}
+            onClick={() => setLocalDays(90)}
+            title="90 días"
+          >
+            90D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === 180 ? 'active' : ''}`}
+            onClick={() => setLocalDays(180)}
+            title="180 días"
+          >
+            180D
+          </button>
+          <button
+            className={`zoom-btn ${localDays === days ? 'active' : ''}`}
+            onClick={() => setLocalDays(days)}
+            title="Todo el histórico"
+          >
+            Todo
+          </button>
+        </div>
 
         <div className="chart-canvas-container">
           {loading ? (

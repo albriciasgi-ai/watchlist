@@ -199,7 +199,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const loadDrawings = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}/${interval}`);
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
       const data = await response.json();
 
       if (data.shapes && Array.isArray(data.shapes)) {
@@ -210,7 +210,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         drawingsRef.current = [];
       }
     } catch (error) {
-      console.error(`Error loading drawings for ${symbol} (${interval}):`, error);
+      console.error(`Error loading drawings for ${symbol}:`, error);
       drawingsRef.current = [];
     }
   };
@@ -515,7 +515,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     if (mouseX !== null && mouseY !== null) {
       // Línea vertical del crosshair
       if (mouseX >= marginLeft && mouseX <= width - marginRight) {
-        ctx.strokeStyle = "#999";
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2; // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();
@@ -575,7 +575,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         // Calcular precio basado en la posición exacta del mouse
         const price = minPrice + ((marginTop + priceChartHeight - mouseY + verticalOffset) / yScale);
 
-        ctx.strokeStyle = "#999";
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2; // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();

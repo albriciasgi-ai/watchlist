@@ -1794,60 +1794,57 @@ DRAWINGS_DIR = Path("drawings")
 DRAWINGS_DIR.mkdir(exist_ok=True)
 
 
-@app.get("/api/drawings/{symbol}/{interval}")
-async def get_drawings(symbol: str, interval: str):
+@app.get("/api/drawings/{symbol}")
+async def get_drawings(symbol: str):
     """
-    Obtiene los dibujos guardados para un símbolo y timeframe específico
-    Los dibujos se guardan por (symbol, interval) para evitar conflictos
+    Obtiene los dibujos guardados para un símbolo
+    Los dibujos son globales para el símbolo (aparecen en todos los timeframes)
     """
     try:
-        drawings_file = DRAWINGS_DIR / f"{symbol}_{interval}.json"
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
         if drawings_file.exists():
             with open(drawings_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol} ({interval})")
+                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol}")
                 return data
         else:
-            print(f"[DRAWINGS] No drawings found for {symbol} ({interval})")
+            print(f"[DRAWINGS] No drawings found for {symbol}")
             return {
                 "symbol": symbol,
-                "interval": interval,
                 "shapes": [],
                 "updated_at": None
             }
 
     except Exception as e:
-        print(f"[ERROR] Loading drawings for {symbol} ({interval}): {str(e)}")
+        print(f"[ERROR] Loading drawings for {symbol}: {str(e)}")
         return {
             "symbol": symbol,
-            "interval": interval,
             "shapes": [],
             "error": str(e)
         }
 
 
-@app.post("/api/drawings/{symbol}/{interval}")
-async def save_drawings(symbol: str, interval: str, request: Request):
+@app.post("/api/drawings/{symbol}")
+async def save_drawings(symbol: str, request: Request):
     """
-    Guarda los dibujos para un símbolo y timeframe específico
+    Guarda los dibujos para un símbolo
 
     Body:
     {
       "shapes": [...]
     }
 
-    Los dibujos se guardan por (symbol, interval) para evitar conflictos entre timeframes
+    Los dibujos se guardan globalmente para el símbolo (aparecen en todos los timeframes)
     """
     try:
         body = await request.json()
         shapes = body.get('shapes', [])
 
-        drawings_file = DRAWINGS_DIR / f"{symbol}_{interval}.json"
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
         data = {
             "symbol": symbol,
-            "interval": interval,
             "shapes": shapes,
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "total_shapes": len(shapes)
@@ -1856,18 +1853,17 @@ async def save_drawings(symbol: str, interval: str, request: Request):
         with open(drawings_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol} ({interval})")
+        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol}")
 
         return {
             "success": True,
             "symbol": symbol,
-            "interval": interval,
             "shapes_saved": len(shapes),
             "updated_at": data['updated_at']
         }
 
     except Exception as e:
-        print(f"[ERROR] Saving drawings for {symbol} ({interval}): {str(e)}")
+        print(f"[ERROR] Saving drawings for {symbol}: {str(e)}")
         import traceback
         traceback.print_exc()
         return {
@@ -1876,27 +1872,27 @@ async def save_drawings(symbol: str, interval: str, request: Request):
         }
 
 
-@app.delete("/api/drawings/{symbol}/{interval}")
-async def delete_drawings(symbol: str, interval: str):
-    """Elimina todos los dibujos de un símbolo y timeframe específico"""
+@app.delete("/api/drawings/{symbol}")
+async def delete_drawings(symbol: str):
+    """Elimina todos los dibujos de un símbolo"""
     try:
-        drawings_file = DRAWINGS_DIR / f"{symbol}_{interval}.json"
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
         if drawings_file.exists():
             drawings_file.unlink()
-            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol} ({interval})")
+            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol}")
             return {
                 "success": True,
-                "message": f"Drawings deleted for {symbol} ({interval})"
+                "message": f"Drawings deleted for {symbol}"
             }
         else:
             return {
                 "success": True,
-                "message": f"No drawings to delete for {symbol} ({interval})"
+                "message": f"No drawings to delete for {symbol}"
             }
 
     except Exception as e:
-        print(f"[ERROR] Deleting drawings for {symbol} ({interval}): {str(e)}")
+        print(f"[ERROR] Deleting drawings for {symbol}: {str(e)}")
         return {
             "success": False,
             "error": str(e)
