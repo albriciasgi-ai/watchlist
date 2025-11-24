@@ -54,11 +54,16 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   // Inicializar managers
   useEffect(() => {
+    console.log('[ChartModal] 🔵 Initializing for', symbol, interval);
     drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
     measurementToolRef.current = new MeasurementTool();
 
     // Cargar dibujos guardados
     loadDrawings();
+
+    return () => {
+      console.log('[ChartModal] 🔴 Cleanup for', symbol);
+    };
   }, [symbol, interval]);
 
   // Cargar datos históricos
@@ -68,13 +73,16 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   const loadHistoricalData = async () => {
     try {
+      console.log('[ChartModal] 📊 Loading historical data:', symbol, interval, localDays, 'days');
       setLoading(true);
       const response = await fetch(
         `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${localDays}`
       );
       const result = await response.json();
       // El API devuelve { data: [...], success: true, ... }
-      setCandles(result.data || []);
+      const candleData = result.data || [];
+      setCandles(candleData);
+      console.log('[ChartModal] 📊 Loaded', candleData.length, 'candles');
 
       // Reset view state to default when changing zoom period
       viewStateRef.current = {
@@ -90,27 +98,35 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       setLoading(false);
       setNeedsRedraw(true); // Force redraw with new candles and drawings
     } catch (error) {
-      console.error('Error loading historical data:', error);
+      console.error('❌ Error loading historical data:', error);
       setCandles([]);
       setLoading(false);
     }
   };
 
   const loadDrawings = async () => {
-    if (!drawingManagerRef.current) return;
+    if (!drawingManagerRef.current) {
+      console.warn('[ChartModal] ⚠️ loadDrawings called but drawingManagerRef is null');
+      return;
+    }
 
     try {
+      console.log('[ChartModal] 🎨 Loading drawings for', symbol);
       const response = await fetch(
         `${API_BASE_URL}/api/drawings/${symbol}`
       );
       const data = await response.json();
 
       if (data.shapes) {
+        console.log('[ChartModal] 🎨 Found', data.shapes.length, 'drawings, loading...');
         drawingManagerRef.current.loadShapes(data.shapes);
+        console.log('[ChartModal] 🎨 Shapes loaded into manager, current count:', drawingManagerRef.current.shapes.length);
         setNeedsRedraw(true);
+      } else {
+        console.log('[ChartModal] 🎨 No drawings found on server');
       }
     } catch (error) {
-      console.error('Error loading drawings:', error);
+      console.error('❌ Error loading drawings:', error);
     }
   };
 
@@ -217,6 +233,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Drawing tools
     if (e.button === 0 && drawingManagerRef.current) {
       const scaleConverter = calculateScaleConverter();
+      console.log('[ChartModal] 🖱️ MouseDown - tool:', selectedTool, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL', 'candles:', candles.length);
 
       // ✅ NUEVO: Doble click en TextBox para editar (usando modal React)
       const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverter);
@@ -249,6 +266,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       );
 
       if (consumed) {
+        console.log('[ChartModal] ✅ MouseDown consumed by DrawingManager, shapes count:', drawingManagerRef.current.shapes.length);
+
         // Si se creó un TextBox nuevo, abrir modal inmediatamente
         if (selectedTool === 'textbox') {
           const shapes = drawingManagerRef.current.shapes;
@@ -791,12 +810,15 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   // Renderizado del chart
   useEffect(() => {
     if (needsRedraw || candles.length > 0) {
+      console.log('[ChartModal] 🎬 Scheduling redraw - needsRedraw:', needsRedraw, 'candles:', candles.length);
+
       // Usar requestAnimationFrame para asegurar que el render ocurra
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
 
       animationFrameRef.current = requestAnimationFrame(() => {
+        console.log('[ChartModal] 🎬 Executing drawChart()');
         drawChart();
         setNeedsRedraw(false);
         redrawPendingRef.current = false;
@@ -944,7 +966,18 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     // Renderizar DIBUJOS (encima de velas, debajo de measurement tool)
     if (drawingManagerRef.current) {
+      const shapesCount = drawingManagerRef.current.shapes.length;
+      const drawingInProgress = drawingManagerRef.current.drawingInProgress;
+      console.log('[ChartModal] 🖼️ Rendering drawings - shapes:', shapesCount, 'inProgress:', !!drawingInProgress, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL');
+
+      if (shapesCount === 0 && !drawingInProgress) {
+        console.log('[ChartModal] ⚠️ No drawings to render!');
+      }
+
       drawingManagerRef.current.render(ctx, scaleConverter);
+      console.log('[ChartModal] 🖼️ Render call completed');
+    } else {
+      console.warn('[ChartModal] ⚠️ drawingManagerRef is NULL during render!');
     }
 
     // Measurement tool (encima de todo)
