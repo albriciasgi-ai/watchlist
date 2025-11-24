@@ -660,7 +660,25 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const chartWidth = width - marginLeft - marginRight;
     const chartHeight = priceChartHeight;
 
-    const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+    // Calcular velas visibles con compresión automática
+    // Ancho mínimo de vela: 2px, máximo: 15px
+    const minCandleWidth = 2;
+    const maxCandleWidth = 15;
+
+    // Calcular cuántas velas podemos mostrar
+    let candlesPerScreen;
+    let candleWidth;
+
+    if (viewStateRef.current.offset === 0 && viewStateRef.current.zoom === 1) {
+      // Modo "mostrar todo" - comprimir automáticamente para mostrar todas las velas
+      candlesPerScreen = candles.length;
+      candleWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / candles.length));
+    } else {
+      // Modo zoom manual - usar el zoom del usuario
+      candleWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
+      candlesPerScreen = Math.floor(chartWidth / candleWidth);
+    }
+
     const startIdx = Math.max(0, candles.length - candlesPerScreen - viewStateRef.current.offset);
     const endIdx = Math.min(candles.length, startIdx + candlesPerScreen);
     const visibleCandles = candles.slice(startIdx, endIdx);
