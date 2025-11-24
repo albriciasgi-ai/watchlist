@@ -106,8 +106,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       const data = await response.json();
 
       if (data.shapes) {
+        console.log('[ChartModal] Loading', data.shapes.length, 'drawings from server');
         drawingManagerRef.current.loadShapes(data.shapes);
         setNeedsRedraw(true);
+      } else {
+        console.log('[ChartModal] No drawings found on server');
       }
     } catch (error) {
       console.error('Error loading drawings:', error);
@@ -249,6 +252,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       );
 
       if (consumed) {
+        console.log('[ChartModal] handleMouseDown consumed, tool:', selectedTool, 'shapes:', drawingManagerRef.current.shapes.length);
+
         // Si se creó un TextBox nuevo, abrir modal inmediatamente
         if (selectedTool === 'textbox') {
           const shapes = drawingManagerRef.current.shapes;
@@ -322,6 +327,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         return;
       }
     }
+
+    // Always redraw on mousemove to update crosshair (throttled by requestRedraw)
+    requestRedraw();
 
     // Pan mode - SOLO si no estamos arrastrando un shape
     const isShapeDragging = drawingManagerRef.current?.selectedShape?.isDragging ||
@@ -853,6 +861,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     // Renderizar DIBUJOS (debajo de las velas según tu preferencia)
     if (drawingManagerRef.current) {
+      const shapesCount = drawingManagerRef.current.shapes.length;
+      const drawingInProgress = drawingManagerRef.current.drawingInProgress;
+      if (shapesCount > 0 || drawingInProgress) {
+        console.log('[ChartModal] Rendering', shapesCount, 'shapes, drawingInProgress:', !!drawingInProgress);
+      }
       drawingManagerRef.current.render(ctx, scaleConverter);
     }
 
