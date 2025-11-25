@@ -52,6 +52,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     startVerticalOffset: 0
   });
 
+  const ctrlPanStateRef = useRef({
+    isPanning: false,
+    startX: 0,
+    startY: 0,
+    startOffset: 0,
+    startVerticalOffset: 0
+  });
+
   // Inicializar managers
   useEffect(() => {
     console.log('[ChartModal] 🔵 Initializing for', symbol, interval);
@@ -164,7 +172,24 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Measurement tool (middle click)
+    // Ctrl+Middle click = Pan mode
+    if (e.button === 1 && e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      ctrlPanStateRef.current = {
+        isPanning: true,
+        startX: x,
+        startY: y,
+        startOffset: viewStateRef.current.offset,
+        startVerticalOffset: viewStateRef.current.verticalOffset
+      };
+
+      canvas.style.cursor = 'grabbing';
+      return;
+    }
+
+    // Measurement tool (middle click sin Ctrl)
     if (e.button === 1 && measurementToolRef.current) {
       e.preventDefault();
       e.stopPropagation();
@@ -308,6 +333,26 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Update mouse position for crosshair (using ref to avoid re-renders)
     mousePositionRef.current = { x, y };
 
+    // Ctrl+Pan mode (tiene prioridad sobre todo)
+    if (ctrlPanStateRef.current.isPanning) {
+      const deltaX = x - ctrlPanStateRef.current.startX;
+      const deltaY = y - ctrlPanStateRef.current.startY;
+
+      const chartWidth = canvas.width - 75; // margins
+      const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+      const pixelsPerCandle = chartWidth / candlesPerScreen;
+      const candleDelta = Math.floor(deltaX / pixelsPerCandle);
+
+      // Horizontal pan
+      viewStateRef.current.offset = Math.max(0, ctrlPanStateRef.current.startOffset - candleDelta);
+
+      // Vertical pan
+      viewStateRef.current.verticalOffset = ctrlPanStateRef.current.startVerticalOffset + deltaY;
+
+      requestRedraw();
+      return;
+    }
+
     // Measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
@@ -368,6 +413,16 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   }, [selectedTool, requestRedraw]);
 
   const handleMouseUp = useCallback((e) => {
+    const canvas = canvasRef.current;
+
+    // Limpiar Ctrl+Pan state
+    if (ctrlPanStateRef.current.isPanning) {
+      ctrlPanStateRef.current.isPanning = false;
+      if (canvas) canvas.style.cursor = 'default';
+      setNeedsRedraw(true);
+      return;
+    }
+
     if (measurementToolRef.current) {
       measurementToolRef.current.handleMouseUp(e);
     }
@@ -385,6 +440,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const handleMouseLeave = useCallback(() => {
     // Reset mouse position when leaving canvas
     mousePositionRef.current = { x: null, y: null };
+
+    // Limpiar Ctrl+Pan si está activo
+    if (ctrlPanStateRef.current.isPanning) {
+      ctrlPanStateRef.current.isPanning = false;
+      const canvas = canvasRef.current;
+      if (canvas) canvas.style.cursor = 'default';
+    }
+
     setNeedsRedraw(true); // Request redraw to clear crosshair
   }, []);
 
@@ -806,8 +869,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           }
         }
 
+        // Calcular posición X incluso si está fuera de visibleCandles
+        // Esto permite que dibujos parcialmente visibles se rendericen
         const relativeIndex = closestIndex - startIdx;
-        if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
         const barWidth = chartWidth / visibleCandles.length;
         return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
       },
