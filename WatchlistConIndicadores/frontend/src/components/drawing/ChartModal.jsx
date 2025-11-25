@@ -197,10 +197,17 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       // Limpiar TODOS los estados de drag/resize antes de iniciar measurement
       dragStateRef.current.isDragging = false;
 
-      if (drawingManagerRef.current && drawingManagerRef.current.selectedShape) {
-        const shape = drawingManagerRef.current.selectedShape;
-        if (shape.isDragging || shape.isResizing) {
-          shape.endDrag();
+      if (drawingManagerRef.current) {
+        // Limpiar cualquier dibujo en progreso
+        drawingManagerRef.current.drawingInProgress = null;
+        drawingManagerRef.current.tempPoints = [];
+
+        // Limpiar shape seleccionada
+        if (drawingManagerRef.current.selectedShape) {
+          const shape = drawingManagerRef.current.selectedShape;
+          if (shape.isDragging || shape.isResizing) {
+            shape.endDrag();
+          }
         }
       }
 
