@@ -813,9 +813,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       };
     }
 
-    // Calcular min/max de velas visibles
-    const minPrice = Math.min(...visibleCandles.map(c => c.low));
-    const maxPrice = Math.max(...visibleCandles.map(c => c.high));
+    // Calcular min/max de TODAS las velas (no solo las visibles)
+    // Esto mantiene la escala fija durante pan, solo cambia con zoom o cambio de días
+    const minPrice = Math.min(...candles.map(c => c.low));
+    const maxPrice = Math.max(...candles.map(c => c.high));
     const priceRange = maxPrice - minPrice;
 
     return {
