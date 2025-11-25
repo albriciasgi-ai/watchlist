@@ -20,6 +20,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
   const lastTextBoxClickTimeRef = useRef(0);
   const lastTextBoxClickedIdRef = useRef(null);
   const redrawPendingRef = useRef(false);
+
+  // Refs para prevenir reinicialización innecesaria del DrawingManager
+  const prevSymbolRef = useRef(null);
+  const prevIntervalRef = useRef(null);
+
   const [candles, setCandles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
@@ -62,12 +67,20 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   // Inicializar managers
   useEffect(() => {
-    console.log('[ChartModal] 🔵 Initializing for', symbol, interval);
-    drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
-    measurementToolRef.current = new MeasurementTool();
+    // Solo reinicializar si symbol o interval realmente cambiaron
+    if (prevSymbolRef.current !== symbol || prevIntervalRef.current !== interval) {
+      console.log('[ChartModal] 🔵 Initializing for', symbol, interval);
+      drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
+      measurementToolRef.current = new MeasurementTool();
 
-    // Cargar dibujos guardados
-    loadDrawings();
+      // Cargar dibujos guardados
+      loadDrawings();
+
+      prevSymbolRef.current = symbol;
+      prevIntervalRef.current = interval;
+    } else {
+      console.log('[ChartModal] ⏭️ Skipping reinitialization, symbol/interval unchanged');
+    }
 
     return () => {
       console.log('[ChartModal] 🔴 Cleanup for', symbol);
