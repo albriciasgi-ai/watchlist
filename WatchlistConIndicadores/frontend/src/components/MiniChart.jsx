@@ -113,7 +113,21 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
+const MiniChart = ({
+  symbol,
+  interval,
+  days,
+  indicatorStates,
+  vpConfig,
+  vpFixedRange,
+  oiMode,
+  onOpenVpSettings,
+  onOpenRangeDetectionSettings,
+  onOpenRejectionPatternSettings,
+  onOpenSupportResistanceSettings,
+  rejectionPatternConfig,
+  isFullscreenInstance = false // 🎨 NUEVO: Indica si esta es la instancia dentro del fullscreen
+}) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -143,6 +157,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
+
+  // 🎨 NUEVO: Estados para herramientas de dibujo
+  const [drawingTool, setDrawingTool] = useState(null); // null, 'line', 'hline', 'vline', 'rect', 'fib', 'text'
+  const [drawings, setDrawings] = useState([]);
+  const [drawingHistory, setDrawingHistory] = useState([]);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawStart, setDrawStart] = useState(null);
+  const [toolbarCollapsed, setToolbarCollapsed] = useState(false);
+  const drawingCanvasRef = useRef(null);
 
   const getBybitInterval = (interval) => {
     const map = {
@@ -366,23 +389,29 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       ctx.fillText(timeText, x - textWidth / 2, timeY);
     }
 
+    // 🎨 OPTIMIZADO: Información del gráfico más compacta
     ctx.fillStyle = "#222";
     ctx.font = "bold 13px Inter, sans-serif";
     ctx.fillText(symbol, marginLeft + 5, 18);
 
-    ctx.fillStyle = "#666";
-    ctx.font = "10px Inter, sans-serif";
-    const candleInfo = `${visibleCandles.length}/${displayCandles.length} velas`;
-    ctx.fillText(candleInfo, marginLeft + 80, 18);
+    // 🎨 OPTIMIZADO: Mostrar info de velas solo si NO es fullscreen (para maximizar espacio)
+    if (!isFullscreenInstance) {
+      ctx.fillStyle = "#666";
+      ctx.font = "10px Inter, sans-serif";
+      const candleInfo = `${visibleCandles.length}/${displayCandles.length} velas`;
+      ctx.fillText(candleInfo, marginLeft + 80, 18);
+    }
 
-    // 🎯 NUEVO: Mostrar timeframe en la esquina superior derecha
-    ctx.fillStyle = "#2196F3";
-    ctx.font = "bold 14px Inter, sans-serif";
-    const timeframeText = interval;
-    const timeframeWidth = ctx.measureText(timeframeText).width;
-    ctx.fillRect(width - marginRight - timeframeWidth - 16, 6, timeframeWidth + 12, 20);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillText(timeframeText, width - marginRight - timeframeWidth - 10, 20);
+    // 🎯 OPTIMIZADO: Timeframe badge más compacto en fullscreen
+    if (!isFullscreenInstance) {
+      ctx.fillStyle = "#2196F3";
+      ctx.font = "bold 14px Inter, sans-serif";
+      const timeframeText = interval;
+      const timeframeWidth = ctx.measureText(timeframeText).width;
+      ctx.fillRect(width - marginRight - timeframeWidth - 16, 6, timeframeWidth + 12, 20);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText(timeframeText, width - marginRight - timeframeWidth - 10, 20);
+    }
 
     if (indicatorManagerRef.current && indicatorsHeight > 0) {
       const indicatorsBounds = {
@@ -392,6 +421,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         height: indicatorsHeight
       };
       indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
+    }
+
+    // 🎨 NUEVO: Renderizar dibujos (solo en fullscreen instance)
+    if (isFullscreenInstance && drawings.length > 0) {
+      renderDrawings(ctx);
     }
 
     // 🎯 NUEVO: Crosshair estilo TradingView - mostrar info en los ejes
@@ -639,12 +673,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const handleMouseMove = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
-    if (dragStateRef.current.isDragging) {
+
+    // 🎨 Modo dibujo tiene prioridad
+    if (isDrawing && drawingTool) {
+      handleDrawingMouseMove(e);
+      return;
+    }
+
+    if (dragStateRef.current.isDragging && !drawingTool) {
       // 🎯 Paneo horizontal
       const deltaX = x - dragStateRef.current.startX;
       const chartWidth = rect.width - 75;
@@ -676,6 +716,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // 🎨 Si hay herramienta de dibujo seleccionada, entrar en modo dibujo
+    if (drawingTool) {
+      handleDrawingMouseDown(e);
+      return;
+    }
+
     dragStateRef.current = {
       isDragging: true,
       startX: x,
@@ -686,10 +732,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     canvas.style.cursor = 'grabbing';
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
+    // 🎨 Si estamos dibujando, finalizar el dibujo
+    if (isDrawing && drawingTool) {
+      handleDrawingMouseUp(e);
+      return;
+    }
+
     dragStateRef.current.isDragging = false;
     if (canvasRef.current) {
-      canvasRef.current.style.cursor = 'crosshair';
+      canvasRef.current.style.cursor = drawingTool ? 'crosshair' : 'crosshair';
     }
   };
 
@@ -859,6 +911,166 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
+  };
+
+  // 🎨 ==================== DRAWING TOOLS HANDLERS ====================
+
+  const handleDrawingMouseDown = (e) => {
+    if (!drawingTool) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setIsDrawing(true);
+    setDrawStart({ x, y });
+  };
+
+  const handleDrawingMouseMove = (e) => {
+    if (!isDrawing || !drawStart || !drawingTool) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Redibujar el gráfico con la forma temporal
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+
+    // Dibujar la forma en progreso
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    if (drawingTool === 'line') {
+      ctx.beginPath();
+      ctx.moveTo(drawStart.x, drawStart.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    } else if (drawingTool === 'hline') {
+      ctx.beginPath();
+      ctx.moveTo(0, drawStart.y);
+      ctx.lineTo(canvas.width, drawStart.y);
+      ctx.stroke();
+    } else if (drawingTool === 'vline') {
+      ctx.beginPath();
+      ctx.moveTo(drawStart.x, 0);
+      ctx.lineTo(drawStart.x, canvas.height);
+      ctx.stroke();
+    } else if (drawingTool === 'rect') {
+      const width = x - drawStart.x;
+      const height = y - drawStart.y;
+      ctx.strokeRect(drawStart.x, drawStart.y, width, height);
+    } else if (drawingTool === 'fib') {
+      const fibLevels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+      const height = y - drawStart.y;
+
+      fibLevels.forEach(level => {
+        const fibY = drawStart.y + (height * level);
+        ctx.beginPath();
+        ctx.moveTo(drawStart.x, fibY);
+        ctx.lineTo(x, fibY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#2196F3';
+        ctx.font = '10px Inter';
+        ctx.fillText(`${(level * 100).toFixed(1)}%`, x + 5, fibY + 3);
+      });
+    }
+
+    ctx.setLineDash([]);
+  };
+
+  const handleDrawingMouseUp = (e) => {
+    if (!isDrawing || !drawStart || !drawingTool) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newDrawing = {
+      type: drawingTool,
+      start: drawStart,
+      end: { x, y },
+      color: '#2196F3',
+      timestamp: Date.now()
+    };
+
+    setDrawings(prev => [...prev, newDrawing]);
+    setDrawingHistory(prev => [...prev, newDrawing]);
+    setIsDrawing(false);
+    setDrawStart(null);
+
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+  };
+
+  const renderDrawings = (ctx) => {
+    drawings.forEach(drawing => {
+      ctx.strokeStyle = drawing.color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+
+      if (drawing.type === 'line') {
+        ctx.beginPath();
+        ctx.moveTo(drawing.start.x, drawing.start.y);
+        ctx.lineTo(drawing.end.x, drawing.end.y);
+        ctx.stroke();
+      } else if (drawing.type === 'hline') {
+        ctx.beginPath();
+        ctx.moveTo(0, drawing.start.y);
+        ctx.lineTo(ctx.canvas.width, drawing.start.y);
+        ctx.stroke();
+      } else if (drawing.type === 'vline') {
+        ctx.beginPath();
+        ctx.moveTo(drawing.start.x, 0);
+        ctx.lineTo(drawing.start.x, ctx.canvas.height);
+        ctx.stroke();
+      } else if (drawing.type === 'rect') {
+        const width = drawing.end.x - drawing.start.x;
+        const height = drawing.end.y - drawing.start.y;
+        ctx.strokeRect(drawing.start.x, drawing.start.y, width, height);
+      } else if (drawing.type === 'fib') {
+        const fibLevels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+        const height = drawing.end.y - drawing.start.y;
+
+        fibLevels.forEach(level => {
+          const fibY = drawing.start.y + (height * level);
+          ctx.beginPath();
+          ctx.moveTo(drawing.start.x, fibY);
+          ctx.lineTo(drawing.end.x, fibY);
+          ctx.stroke();
+
+          ctx.fillStyle = drawing.color;
+          ctx.font = '10px Inter';
+          ctx.fillText(`${(level * 100).toFixed(1)}%`, drawing.end.x + 5, fibY + 3);
+        });
+      }
+    });
+  };
+
+  const handleUndoDrawing = () => {
+    if (drawings.length === 0) return;
+    setDrawings(prev => prev.slice(0, -1));
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+  };
+
+  const handleClearDrawings = () => {
+    setDrawings([]);
+    setDrawingHistory([]);
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+  };
+
+  const selectDrawingTool = (tool) => {
+    setDrawingTool(drawingTool === tool ? null : tool);
   };
 
   // ==================== FIXED RANGE PROFILES ====================
@@ -1301,41 +1513,226 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               ✕
             </button>
 
-            {/* Selector de modo de Open Interest en fullscreen */}
-            {indicatorStates["Open Interest"] && (
+            {/* 🎨 NUEVO: Drawing Tools Toolbar - Compacto y Colapsable */}
+            <div style={{
+              position: 'absolute',
+              top: '15px',
+              left: '15px',
+              zIndex: 1000,
+              background: 'white',
+              borderRadius: '6px',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+              transition: 'all 0.3s ease'
+            }}>
+              {/* Botón de colapsar/expandir */}
               <div style={{
-                position: 'absolute',
-                top: '15px',
-                left: '15px',
-                zIndex: 1000,
-                background: 'white',
-                padding: '8px 12px',
-                borderRadius: '4px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '4px',
+                padding: '6px 8px',
+                borderBottom: toolbarCollapsed ? 'none' : '1px solid #eee'
               }}>
-                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#333' }}>
-                  Open Interest Mode:
-                </label>
-                <select
-                  value={fullscreenOiMode}
-                  onChange={(e) => setFullscreenOiMode(e.target.value)}
+                <button
+                  onClick={() => setToolbarCollapsed(!toolbarCollapsed)}
+                  title={toolbarCollapsed ? "Expandir herramientas" : "Colapsar herramientas"}
                   style={{
-                    padding: '4px 8px',
-                    fontSize: '11px',
-                    border: '1px solid #ddd',
+                    background: '#2196F3',
+                    color: 'white',
+                    border: 'none',
                     borderRadius: '3px',
-                    cursor: 'pointer'
+                    padding: '4px 8px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontWeight: 'bold'
                   }}
                 >
-                  <option value="histogram">Histogram</option>
-                  <option value="cumulative">Cumulative</option>
-                  <option value="flow">Flow</option>
-                </select>
+                  {toolbarCollapsed ? '☰' : '✕'} {!toolbarCollapsed && 'Herramientas'}
+                </button>
+
+                {/* Selector de Open Interest (siempre visible) */}
+                {indicatorStates["Open Interest"] && !toolbarCollapsed && (
+                  <>
+                    <div style={{ width: '1px', height: '20px', background: '#ddd', margin: '0 4px' }}></div>
+                    <label style={{ fontSize: '10px', fontWeight: 'bold', color: '#666' }}>
+                      OI:
+                    </label>
+                    <select
+                      value={fullscreenOiMode}
+                      onChange={(e) => setFullscreenOiMode(e.target.value)}
+                      style={{
+                        padding: '3px 6px',
+                        fontSize: '10px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="histogram">Histogram</option>
+                      <option value="cumulative">Cumulative</option>
+                      <option value="flow">Flow</option>
+                    </select>
+                  </>
+                )}
               </div>
-            )}
+
+              {/* Herramientas de dibujo (colapsables) */}
+              {!toolbarCollapsed && (
+                <div style={{
+                  display: 'flex',
+                  gap: '3px',
+                  padding: '6px',
+                  flexWrap: 'wrap',
+                  maxWidth: '420px'
+                }}>
+                  {/* Herramientas de dibujo */}
+                  <button
+                    onClick={() => selectDrawingTool('line')}
+                    title="Línea de tendencia"
+                    style={{
+                      background: drawingTool === 'line' ? '#4CAF50' : '#f5f5f5',
+                      color: drawingTool === 'line' ? 'white' : '#333',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    ╱ Línea
+                  </button>
+
+                  <button
+                    onClick={() => selectDrawingTool('hline')}
+                    title="Línea horizontal"
+                    style={{
+                      background: drawingTool === 'hline' ? '#4CAF50' : '#f5f5f5',
+                      color: drawingTool === 'hline' ? 'white' : '#333',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    ─ H-Line
+                  </button>
+
+                  <button
+                    onClick={() => selectDrawingTool('vline')}
+                    title="Línea vertical"
+                    style={{
+                      background: drawingTool === 'vline' ? '#4CAF50' : '#f5f5f5',
+                      color: drawingTool === 'vline' ? 'white' : '#333',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    │ V-Line
+                  </button>
+
+                  <button
+                    onClick={() => selectDrawingTool('rect')}
+                    title="Rectángulo"
+                    style={{
+                      background: drawingTool === 'rect' ? '#4CAF50' : '#f5f5f5',
+                      color: drawingTool === 'rect' ? 'white' : '#333',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    ▭ Rect
+                  </button>
+
+                  <button
+                    onClick={() => selectDrawingTool('fib')}
+                    title="Fibonacci Retracement"
+                    style={{
+                      background: drawingTool === 'fib' ? '#4CAF50' : '#f5f5f5',
+                      color: drawingTool === 'fib' ? 'white' : '#333',
+                      border: '1px solid #ddd',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    φ Fib
+                  </button>
+
+                  {/* Separador */}
+                  <div style={{ width: '1px', height: '24px', background: '#ddd', margin: '0 2px' }}></div>
+
+                  {/* Acciones */}
+                  <button
+                    onClick={handleUndoDrawing}
+                    title="Deshacer último dibujo"
+                    disabled={drawings.length === 0}
+                    style={{
+                      background: drawings.length > 0 ? '#FF9800' : '#e0e0e0',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: drawings.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      opacity: drawings.length > 0 ? 1 : 0.5
+                    }}
+                  >
+                    ↶ Deshacer
+                  </button>
+
+                  <button
+                    onClick={handleClearDrawings}
+                    title="Limpiar todos los dibujos"
+                    disabled={drawings.length === 0}
+                    style={{
+                      background: drawings.length > 0 ? '#F44336' : '#e0e0e0',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: drawings.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      opacity: drawings.length > 0 ? 1 : 0.5
+                    }}
+                  >
+                    ✕ Limpiar
+                  </button>
+
+                  <button
+                    onClick={() => setDrawingTool(null)}
+                    title="Detener dibujo"
+                    disabled={!drawingTool}
+                    style={{
+                      background: drawingTool ? '#9C27B0' : '#e0e0e0',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '3px',
+                      padding: '4px 6px',
+                      cursor: drawingTool ? 'pointer' : 'not-allowed',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      opacity: drawingTool ? 1 : 0.5
+                    }}
+                  >
+                    ⊗ Detener
+                  </button>
+                </div>
+              )}
+            </div>
 
             <MiniChart
               symbol={symbol}
@@ -1350,6 +1747,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
               onOpenSupportResistanceSettings={onOpenSupportResistanceSettings}
               rejectionPatternConfig={rejectionPatternConfig}
+              isFullscreenInstance={true}
             />
           </div>
         </div>
