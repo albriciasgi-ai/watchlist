@@ -1,6 +1,277 @@
 {
   "symbol": "XRPUSDT",
-  "shapes": [],
-  "updated_at": "2025-11-24T21:16:58.277647+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "trendline",
+      "id": "trendline_1764025951355_0.7037508769573378",
+      "price1": 2.3612812949640287,
+      "time1": 1763387100000,
+      "price2": 2.139929856115108,
+      "time2": 1763652600000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764025968242_0.5693072498693376",
+      "price1": 1.8235388489208633,
+      "time1": 1763727300000,
+      "price2": 1.888646402877698,
+      "time2": 1763819100000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764025984332_0.19197178850680563",
+      "price": 2.060288489208633,
+      "time": 1763740800000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764026002163_0.43878672309629585",
+      "price": 2.3011611510791368,
+      "time": 1762812000000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764026007242_0.8665041460814399",
+      "price": 2.344884892086331,
+      "time": 1762966800000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764026018897_0.8483061141699048",
+      "price": 2.1809208633093524,
+      "time": 1763315100000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764026026236_0.7481140771374507",
+      "price": 2.4104705035971223,
+      "time": 1762732800000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764026033866_0.6984534060522186",
+      "price1": 2.161791726618705,
+      "time1": 1763310600000,
+      "price2": 1.8202,
+      "time2": 1763727300000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764026040574_0.27972844747636394",
+      "price1": 2.1426625899280576,
+      "time1": 1763650800000,
+      "price2": 2.2847647482014386,
+      "time2": 1764018000000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764026046587_0.9657577287471462",
+      "price1": 2.364014028776978,
+      "time1": 1763386200000,
+      "price2": 2.344884892086331,
+      "time2": 1763071200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1764026051148_0.9049230027285255",
+      "price": 2.413203237410072,
+      "time": 1763453700000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1764026076715_0.33490064981545453",
+      "entryPrice": 2.2738338129496407,
+      "tpPrice": 2.3559331079136694,
+      "slPrice": 2.2327841654676264,
+      "time": 1763652600000,
+      "widthTime": 111600000
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1764026124634_0.5934413848419484",
+      "price1": 1.8202,
+      "time1": 1763725500000,
+      "price2": 2.2792992805755397,
+      "time2": 1764018000000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1764026130030_0.12856780120360178",
+      "price1": 2.153593525179856,
+      "time1": 1763309700000,
+      "price2": 2.3175575539568345,
+      "time2": 1763391600000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764026146885_0.9000562808511933",
+      "price1": 2.314824820143885,
+      "time1": 1762975800000,
+      "price2": 2.156326258992806,
+      "time2": 1763309700000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764037943626_0.4285095998419495",
+      "price1": 2.115335251798561,
+      "time1": 1762996500000,
+      "price2": 1.995094964028777,
+      "time2": 1763317800000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1764037950870_0.24182535122047188",
+      "price1": 1.8174672661870503,
+      "time1": 1763352000000,
+      "price2": 2.107137050359712,
+      "time2": 1763415900000
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1764037954825_0.34494328875113944",
+      "entryPrice": 1.8775874100719425,
+      "tpPrice": 2.1508607913669064,
+      "slPrice": 1.8400356618705036,
+      "time": 1763512200000,
+      "widthTime": 77400000
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1764037957338_0.013730573536308799",
+      "entryPrice": 2.0524823741007197,
+      "tpPrice": 1.9629500431654676,
+      "slPrice": 2.097248539568345,
+      "time": 1763190000000,
+      "widthTime": 90000000
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1764038037892_0.11506226971955658",
+      "price1": 2.5607708633093527,
+      "time1": 1763556300000,
+      "price2": 2.443263309352518,
+      "time2": 1763737200000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1764038041669_0.46456651766990775",
+      "price": 2.5033834532374097,
+      "time": 1763813700000,
+      "text": "qweqwe",
+      "customWidth": null,
+      "customHeight": null,
+      "style": {
+        "bgColor": "#FBBF24ff",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 30
+      }
+    }
+  ],
+  "updated_at": "2025-11-25T02:34:06.316054+00:00",
+  "total_shapes": 21
 }
