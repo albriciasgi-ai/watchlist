@@ -1701,6 +1701,11 @@ async def send_test_alert():
         from alert_sender import alert_sender
         import time
 
+        # 📝 DEBUG LOG: Test alert initiated
+        print("\n" + "="*80)
+        print("[TEST ALERT] 🧪 Initiating test alert to trading bot...")
+        print("="*80)
+
         # Create test pattern
         test_pattern = {
             "patternType": "HAMMER",
@@ -1711,6 +1716,14 @@ async def send_test_alert():
             "metrics": {}
         }
 
+        print(f"[TEST ALERT] Pattern Type: HAMMER (Bullish reversal)")
+        print(f"[TEST ALERT] Symbol: BTCUSDT")
+        print(f"[TEST ALERT] Price: $45,000.50")
+        print(f"[TEST ALERT] Confidence: 85.5%")
+        print(f"[TEST ALERT] Interval: 4h")
+        print(f"[TEST ALERT] Target Endpoint: {alert_sender.alert_service_url}/api/watchlist-alert")
+        print("-"*80)
+
         # Send test alert
         success = await alert_sender.send_rejection_pattern_alert(
             symbol="BTCUSDT",
@@ -1720,6 +1733,10 @@ async def send_test_alert():
         )
 
         if success:
+            print(f"[TEST ALERT] ✅ Test alert queued successfully")
+            print(f"[TEST ALERT] 💡 Check the alert_sender logs above for delivery status")
+            print("="*80 + "\n")
+
             return {
                 "success": True,
                 "message": "Test alert sent successfully to /api/watchlist-alert",
@@ -1729,9 +1746,13 @@ async def send_test_alert():
                     "symbol": "BTCUSDT",
                     "price": 45000.50,
                     "confidence": 85.5
-                }
+                },
+                "note": "Check server logs for delivery confirmation"
             }
         else:
+            print(f"[TEST ALERT] ❌ Failed to queue test alert")
+            print("="*80 + "\n")
+
             return {
                 "success": False,
                 "message": "Failed to send test alert",
@@ -1739,9 +1760,11 @@ async def send_test_alert():
             }
 
     except Exception as e:
-        print(f"[ERROR] Test alert failed: {str(e)}")
+        print(f"[TEST ALERT] ❌ ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
+        print("="*80 + "\n")
+
         return {
             "success": False,
             "error": str(e),
@@ -1780,7 +1803,10 @@ async def send_test_alert_batch():
         current_time = int(time.time() * 1000)
         errors = []
 
-        print(f"[BATCH TEST] Starting to send {len(test_alerts)} test alerts...")
+        # 📝 DEBUG LOG: Batch test initiated
+        print("\n" + "="*80)
+        print(f"[BATCH TEST] 🧪 Starting batch test: {len(test_alerts)} alerts")
+        print("="*80)
 
         for i, alert_data in enumerate(test_alerts):
             try:
@@ -1794,7 +1820,11 @@ async def send_test_alert_batch():
                     "metrics": {}
                 }
 
-                print(f"[BATCH TEST] Sending alert {i+1}/{len(test_alerts)}: {alert_data['symbol']} @ ${alert_data['price']}")
+                print(f"\n[BATCH TEST] Alert {i+1}/{len(test_alerts)}")
+                print(f"  Symbol: {alert_data['symbol']}")
+                print(f"  Price: ${alert_data['price']}")
+                print(f"  Pattern: {alert_data['pattern']}")
+                print(f"  Confidence: {75.0 + (i * 2):.1f}%")
 
                 # Send alert
                 success = await alert_sender.send_rejection_pattern_alert(

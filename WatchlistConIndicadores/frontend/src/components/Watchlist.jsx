@@ -195,7 +195,13 @@ const Watchlist = () => {
 
   // 🧪 NUEVO: Handler para enviar alerta de prueba
   const handleTestAlert = async () => {
+    console.log('\n' + '='.repeat(80));
+    console.log('[TEST ALERT] 🧪 Initiating test alert from frontend...');
+    console.log('='.repeat(80));
+    console.log('[TEST ALERT] Target: http://localhost:8000/api/test-alert');
+
     try {
+      console.log('[TEST ALERT] Sending POST request...');
       const response = await fetch('http://localhost:8000/api/test-alert', {
         method: 'POST',
         headers: {
@@ -203,10 +209,15 @@ const Watchlist = () => {
         }
       });
 
+      console.log(`[TEST ALERT] Response status: ${response.status}`);
       const result = await response.json();
+      console.log('[TEST ALERT] Response body:', result);
 
       if (result.success) {
         const payload = result.payload;
+        console.log('[TEST ALERT] ✅ Test alert sent successfully!');
+        console.log('[TEST ALERT] Payload sent to bot:', payload);
+
         alert(`✅ Alerta de prueba enviada al bot!\n\n` +
               `Endpoint: ${result.endpoint}\n\n` +
               `Payload enviado:\n` +
@@ -216,28 +227,45 @@ const Watchlist = () => {
               `  "price": ${payload.price},\n` +
               `  "confidence": ${payload.confidence}\n` +
               `}\n\n` +
+              `${result.note || ''}\n\n` +
               `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000 para confirmar que la recibió.`);
       } else {
+        console.error('[TEST ALERT] ❌ Failed:', result.message || result.error);
+
         alert(`❌ Error al enviar alerta de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
               `Endpoint: ${result.endpoint || 'http://localhost:5000/api/watchlist-alert'}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {
+      console.error('[TEST ALERT] ❌ Exception:', error);
+
       alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
             `Verifica que:\n` +
             `1. El backend esté corriendo en puerto 8000\n` +
             `2. Tu bot esté corriendo en puerto 5000`);
       console.error('Error sending test alert:', error);
     }
+
+    console.log('='.repeat(80) + '\n');
   };
 
   // 🚀 NUEVO: Handler para enviar múltiples alertas de prueba
   const handleTestAlertBatch = async () => {
     if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto tomará ~20 segundos (2s delay entre cada alerta).')) {
+      console.log('[BATCH TEST] User cancelled batch test');
       return;
     }
 
+    console.log('\n' + '='.repeat(80));
+    console.log('[BATCH TEST] 🚀 Starting batch test (10 alerts)...');
+    console.log('='.repeat(80));
+    console.log('[BATCH TEST] Target: http://localhost:8000/api/test-alert-batch');
+    console.log('[BATCH TEST] Expected duration: ~20 seconds');
+
     try {
+      console.log('[BATCH TEST] Sending POST request...');
+      const startTime = Date.now();
+
       const response = await fetch('http://localhost:8000/api/test-alert-batch', {
         method: 'POST',
         headers: {
@@ -245,11 +273,16 @@ const Watchlist = () => {
         }
       });
 
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      console.log(`[BATCH TEST] Response received after ${elapsed}s`);
+      console.log(`[BATCH TEST] Response status: ${response.status}`);
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
+      console.log('[BATCH TEST] Response body:', result);
 
       if (result.success || result.total_sent > 0) {
         const successful = result.total_sent;
@@ -281,13 +314,27 @@ const Watchlist = () => {
 
         message += `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000.`;
 
+        console.log(`[BATCH TEST] ✅ Batch complete: ${successful}/${total} successful`);
+        console.log(`[BATCH TEST] Successful alerts:`, result.results.filter(r => r.success));
+        if (failed) {
+          console.log(`[BATCH TEST] ❌ Failed alerts:`, result.results.filter(r => !r.success));
+        }
+        console.log('='.repeat(80) + '\n');
+
         alert(message);
       } else {
+        console.error(`[BATCH TEST] ❌ Batch failed: ${result.message || result.error}`);
+        console.error('[BATCH TEST] Results:', result);
+        console.log('='.repeat(80) + '\n');
+
         alert(`❌ Error al enviar alertas de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
               `Total enviado: ${result.total_sent || 0}/${result.total_attempted || 0}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {
+      console.error('[BATCH TEST] ❌ Exception:', error);
+      console.log('='.repeat(80) + '\n');
+
       alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
             `Verifica que:\n` +
             `1. El backend esté corriendo en puerto 8000\n` +

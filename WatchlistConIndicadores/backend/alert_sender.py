@@ -96,13 +96,21 @@ class AlertSender:
         pattern_name = self._format_pattern_name(pattern_type)
         pattern_with_action = f"{pattern_name} ({action})"
 
+        # 📝 DEBUG LOG: Building alert payload
+        logger.debug(f"[ALERT BUILD] Pattern: {pattern_type} → {pattern_with_action}")
+        logger.debug(f"[ALERT BUILD] Symbol: {symbol}, Price: {price}, Confidence: {confidence}%")
+
         # Simple payload format for trading bot
-        return {
+        payload = {
             "pattern": pattern_with_action,
             "symbol": symbol,
             "price": price,
             "confidence": confidence
         }
+
+        logger.info(f"[ALERT PAYLOAD] {symbol} | {pattern_with_action} @ ${price:.2f} (conf: {confidence}%)")
+
+        return payload
 
     def _get_trading_action(self, pattern_type: str) -> str:
         """
@@ -201,19 +209,28 @@ class AlertSender:
                     timeout=1.0
                 )
 
+                # 📝 DEBUG LOG: Processing alert from queue
+                alert_summary = f"{alert.get('symbol', 'UNKNOWN')} | {alert.get('pattern', 'UNKNOWN PATTERN')}"
+                logger.debug(f"[QUEUE] Processing alert: {alert_summary}")
+
                 # Try to send the alert
                 success = await self._send_to_service(alert)
 
                 if success:
-                    logger.info(f"✅ Alert sent: {alert['title']}")
+                    logger.info(f"✅ Alert sent successfully: {alert_summary}")
                 else:
-                    logger.warning(f"⚠️ Failed to send alert: {alert['title']}")
+                    logger.warning(f"⚠️ Failed to send alert: {alert_summary}")
+
+                # 📝 DEBUG LOG: Add delay between alerts to prevent overwhelming the bot
+                await asyncio.sleep(0.5)
 
             except asyncio.TimeoutError:
                 # No alerts in queue, continue
                 continue
             except Exception as e:
                 logger.error(f"❌ Error processing alert: {str(e)}")
+                import traceback
+                logger.error(f"[TRACEBACK] {traceback.format_exc()}")
 
         logger.info("📬 Alert queue processor stopped")
 
@@ -231,29 +248,46 @@ class AlertSender:
             logger.error("❌ Client not initialized")
             return False
 
+        endpoint = f"{self.alert_service_url}/api/watchlist-alert"
+
+        # 📝 DEBUG LOG: Sending alert details
+        logger.debug(f"[HTTP POST] Endpoint: {endpoint}")
+        logger.debug(f"[HTTP POST] Payload: {json.dumps(alert, indent=2)}")
+
         try:
-            response = await self.client.post(
-                f"{self.alert_service_url}/api/watchlist-alert",
-                json=alert
-            )
+            response = await self.client.post(endpoint, json=alert)
+
+            # 📝 DEBUG LOG: Response details
+            logger.debug(f"[HTTP RESPONSE] Status: {response.status_code}")
 
             if response.status_code == 200:
+                try:
+                    response_data = response.json()
+                    logger.debug(f"[HTTP RESPONSE] Body: {json.dumps(response_data, indent=2)}")
+                except:
+                    logger.debug(f"[HTTP RESPONSE] Body: {response.text}")
+
+                logger.info(f"✅ Alert successfully delivered to trading bot at {endpoint}")
                 return True
             else:
                 logger.warning(f"⚠️ Alert service returned status {response.status_code}")
+                logger.warning(f"⚠️ Response: {response.text}")
                 return False
 
         except httpx.ConnectError:
             logger.error(f"❌ Cannot connect to alert service at {self.alert_service_url}")
             logger.info("💡 Tip: Make sure alert listener is running on port 5000")
+            logger.info("💡 You can start it with: python alert_listener.py")
             return False
 
         except httpx.TimeoutException:
-            logger.error("❌ Alert service timeout")
+            logger.error(f"❌ Alert service timeout (>5s) at {endpoint}")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Error sending alert: {str(e)}")
+            logger.error(f"❌ Unexpected error sending alert: {str(e)}")
+            import traceback
+            logger.error(f"[TRACEBACK] {traceback.format_exc()}")
             return False
 
     async def test_connection(self) -> bool:
