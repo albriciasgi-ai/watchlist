@@ -20,7 +20,18 @@ const RejectionPatternSettings = ({
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [availableContexts, setAvailableContexts] = useState([]);
   const [showContextModal, setShowContextModal] = useState(false);
-  const [showMode, setShowMode] = useState('all'); // 'all' or 'validated'
+  const [showMode, setShowMode] = useState('validated'); // ✅ FIX: Default a 'validated' (consistente con indicador)
+
+  // ✅ NUEVO: Leer el modo actual del indicador al montar
+  useEffect(() => {
+    if (indicatorManager) {
+      const indicator = indicatorManager.getRejectionPatternIndicator();
+      if (indicator && indicator.showMode) {
+        setShowMode(indicator.showMode);
+        console.log(`[${symbol}] Show mode loaded from indicator: ${indicator.showMode}`);
+      }
+    }
+  }, [indicatorManager, symbol]);
 
   useEffect(() => {
     // Load config from localStorage

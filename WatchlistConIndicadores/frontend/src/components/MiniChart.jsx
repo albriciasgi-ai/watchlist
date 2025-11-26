@@ -296,17 +296,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     const chartWidth = width - marginLeft - marginRight;
 
-    // ✅ NUEVO: Auto-compress - Si está en posición inicial (offset=0, zoom=1), mostrar TODAS las velas
+    // ✅ FIX: Auto-compress solo cuando zoom < 0.2 (zoom out extremo) o cuando se solicita explícitamente
     const minCandleWidth = 2;
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
-    if (viewStateRef.current.offset === 0 && viewStateRef.current.zoom === 1) {
+    // Auto-compress solo si zoom out extremo
+    if (viewStateRef.current.zoom < 0.2) {
       // Modo "fit to screen" - Comprimir automáticamente para mostrar todas las velas
       candlesPerScreen = displayCandles.length;
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / displayCandles.length));
     } else {
-      // Modo zoom manual - Usar el zoom del usuario
+      // Modo normal - Usar el zoom del usuario (default 1 = 8px por vela)
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
       candlesPerScreen = Math.floor(chartWidth / barWidth);
     }

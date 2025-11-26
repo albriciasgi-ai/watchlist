@@ -377,6 +377,29 @@ const Watchlist = () => {
             </select>
           </label>
 
+          {/* ✅ NUEVO: Botones rápidos de días (visibles) */}
+          <div style={{ display: 'flex', gap: '5px', alignItems: 'center', marginLeft: '10px' }}>
+            <span style={{ fontSize: '11px', color: '#666', marginRight: '5px' }}>Quick:</span>
+            {[30, 60, 90, 120, 180].filter(d => getAvailableDaysOptions().includes(d)).map(d => (
+              <button
+                key={d}
+                onClick={() => setDays(String(d))}
+                style={{
+                  padding: '4px 10px',
+                  fontSize: '11px',
+                  background: days === String(d) ? '#4a9eff' : '#333',
+                  color: 'white',
+                  border: days === String(d) ? '2px solid #4a9eff' : '1px solid #555',
+                  borderRadius: '3px',
+                  cursor: 'pointer',
+                  fontWeight: days === String(d) ? 'bold' : 'normal'
+                }}
+              >
+                {d}D
+              </button>
+            ))}
+          </div>
+
           <div className="indicator-toggles">
             <label>
               <input 

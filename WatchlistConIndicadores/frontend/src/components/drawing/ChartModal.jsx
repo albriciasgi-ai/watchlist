@@ -1316,7 +1316,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
               <input
                 type="checkbox"
                 checked={indicatorStates?.["Volume Delta"] || false}
-                onChange={() => onToggleIndicator && onToggleIndicator("Volume Delta")}
+                onChange={() => {
+                  if (indicatorManagerRef?.current) {
+                    const newState = !indicatorStates?.["Volume Delta"];
+                    indicatorManagerRef.current.toggleIndicator("Volume Delta", newState);
+                    setNeedsRedraw(true);
+                    if (onToggleIndicator) onToggleIndicator("Volume Delta");
+                  }
+                }}
               />
               Volume Delta
             </label>
@@ -1324,7 +1331,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
               <input
                 type="checkbox"
                 checked={indicatorStates?.["CVD"] || false}
-                onChange={() => onToggleIndicator && onToggleIndicator("CVD")}
+                onChange={() => {
+                  if (indicatorManagerRef?.current) {
+                    const newState = !indicatorStates?.["CVD"];
+                    indicatorManagerRef.current.toggleIndicator("CVD", newState);
+                    setNeedsRedraw(true);
+                    if (onToggleIndicator) onToggleIndicator("CVD");
+                  }
+                }}
               />
               CVD
             </label>
@@ -1332,7 +1346,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
               <input
                 type="checkbox"
                 checked={indicatorStates?.["Volume Profile"] || false}
-                onChange={() => onToggleIndicator && onToggleIndicator("Volume Profile")}
+                onChange={() => {
+                  if (indicatorManagerRef?.current) {
+                    const newState = !indicatorStates?.["Volume Profile"];
+                    indicatorManagerRef.current.toggleIndicator("Volume Profile", newState);
+                    setNeedsRedraw(true);
+                    if (onToggleIndicator) onToggleIndicator("Volume Profile");
+                  }
+                }}
               />
               Volume Profile
             </label>
@@ -1340,7 +1361,14 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
               <input
                 type="checkbox"
                 checked={indicatorStates?.["Open Interest"] || false}
-                onChange={() => onToggleIndicator && onToggleIndicator("Open Interest")}
+                onChange={() => {
+                  if (indicatorManagerRef?.current) {
+                    const newState = !indicatorStates?.["Open Interest"];
+                    indicatorManagerRef.current.toggleIndicator("Open Interest", newState);
+                    setNeedsRedraw(true);
+                    if (onToggleIndicator) onToggleIndicator("Open Interest");
+                  }
+                }}
               />
               Open Interest
             </label>
