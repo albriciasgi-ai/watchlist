@@ -495,7 +495,19 @@ class VolumeProfileIndicator extends IndicatorBase {
         return y + height - ((price - visibleMinPrice) / visiblePriceRange) * height;
       };
     }
-      
+
+    // Dibujar barras del perfil
+    for (const level of this.profile.levels) {
+      // En modo fixed, solo dibujar niveles con volumen > 0 (precios que realmente se visitaron)
+      if (this.mode === "fixed" && level.volume === 0) {
+        continue;
+      }
+
+      const levelY = priceToY(level.price);
+      const volumeFraction = this.profile.maxVolume > 0
+        ? level.volume / this.profile.maxVolume
+        : 0;
+
       const barWidth = histogramMaxWidth * volumeFraction;
       
       // Calcular color
