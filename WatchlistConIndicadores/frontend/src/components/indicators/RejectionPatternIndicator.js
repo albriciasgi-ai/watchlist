@@ -20,7 +20,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.config = this.loadConfig();
     this.height = 0; // Overlay on main chart, no separate pane
     this.localDetector = new LocalPatternDetector();
-    this.showMode = 'all'; // 'all' or 'validated'
+    this.showMode = 'validated'; // 'all' or 'validated' - Cambiado a validated por default
     this.colors = {
       HAMMER: '#4CAF50',
       SHOOTING_STAR: '#f44336',

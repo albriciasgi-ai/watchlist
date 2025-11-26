@@ -295,10 +295,25 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     );
 
     const chartWidth = width - marginLeft - marginRight;
-    const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+
+    // ✅ NUEVO: Auto-compress - Si está en posición inicial (offset=0, zoom=1), mostrar TODAS las velas
+    const minCandleWidth = 2;
+    const maxCandleWidth = 15;
+    let candlesPerScreen, barWidth;
+
+    if (viewStateRef.current.offset === 0 && viewStateRef.current.zoom === 1) {
+      // Modo "fit to screen" - Comprimir automáticamente para mostrar todas las velas
+      candlesPerScreen = displayCandles.length;
+      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / displayCandles.length));
+    } else {
+      // Modo zoom manual - Usar el zoom del usuario
+      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
+      candlesPerScreen = Math.floor(chartWidth / barWidth);
+    }
+
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
     const offset = Math.min(viewStateRef.current.offset, maxOffset);
-    
+
     const startIdx = Math.max(0, displayCandles.length - candlesPerScreen - offset);
     const endIdx = Math.min(displayCandles.length, startIdx + candlesPerScreen);
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
@@ -323,7 +338,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
     const volumeScale = maxVolume > 0 ? volumeHeight / maxVolume : 1;
 
-    const barWidth = chartWidth / visibleCandles.length;
+    // ✅ barWidth ya fue calculado arriba con la lógica de auto-compress
 
     ctx.strokeStyle = axisColor;
     ctx.fillStyle = textColor;
@@ -462,6 +477,41 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         ctx.fillRect(x + (barWidth - bodyWidth) / 2, topY, bodyWidth, Math.max(bodyHeight, 2));
       }
     });
+
+    // ✅ NUEVO: Línea horizontal de precio actual
+    if (displayCandles.length > 0) {
+      const lastCandle = displayCandles[displayCandles.length - 1]; // Incluye velas en progreso
+      const currentPrice = lastCandle.close;
+      const priceY = marginTop + priceChartHeight - (currentPrice - minPrice) * yScale + verticalOffset;
+
+      // Color según dirección de la vela (verde si alcista, roja si bajista)
+      const priceLineColor = lastCandle.close >= lastCandle.open ? bullColor : bearColor;
+
+      // Línea punteada delgada
+      ctx.strokeStyle = priceLineColor;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, priceY);
+      ctx.lineTo(width - marginRight, priceY);
+      ctx.stroke();
+      ctx.setLineDash([]); // Resetear dash
+
+      // Label del precio en el eje derecho (opcional, pequeño)
+      const priceLabel = currentPrice.toFixed(2);
+      const labelPadding = 4;
+      const labelWidth = 58;
+      const labelHeight = 16;
+
+      ctx.fillStyle = priceLineColor;
+      ctx.fillRect(width - marginRight + 2, priceY - labelHeight / 2, labelWidth, labelHeight);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 10px Inter, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(priceLabel, width - marginRight + 2 + labelPadding, priceY);
+    }
 
     const volumeStartY = marginTop + priceChartHeight + 5;
     ctx.globalAlpha = 0.6;
@@ -999,11 +1049,29 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // ==================== FIXED RANGE PROFILES ====================
   
-  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp) => {
+  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp, applyToAll = false) => {
     if (indicatorManagerRef.current) {
       const rangeId = indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
       const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
       setFixedRangeProfiles(profiles);
+
+      // ✅ NUEVO: Si applyToAll es true, guardar en localStorage global
+      if (applyToAll) {
+        const globalRanges = JSON.parse(localStorage.getItem('vp_fixed_ranges_global') || '[]');
+        const newRange = {
+          startTimestamp,
+          endTimestamp,
+          id: `global_${Date.now()}`,
+          createdAt: Date.now()
+        };
+        globalRanges.push(newRange);
+        localStorage.setItem('vp_fixed_ranges_global', JSON.stringify(globalRanges));
+        console.log(`✅ Fixed Range guardado globalmente para todas las monedas:`, newRange);
+
+        // Forzar actualización en todos los componentes (esto se hace a través de un refresh global)
+        window.dispatchEvent(new CustomEvent('globalFixedRangeCreated', { detail: newRange }));
+      }
+
       indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
@@ -1016,6 +1084,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       setFixedRangeProfiles(profiles);
       indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  };
+
+  // ✅ NUEVO: Handler para borrar todos los Fixed Range Profiles
+  const handleDeleteAllFixedRangeProfiles = () => {
+    if (indicatorManagerRef.current) {
+      const count = indicatorManagerRef.current.deleteAllFixedRangeProfiles();
+      setFixedRangeProfiles([]); // Limpiar estado
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      console.log(`✅ ${count} Fixed Range Profiles eliminados para ${symbol}`);
     }
   };
 
@@ -1075,7 +1153,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   useEffect(() => {
     if (indicatorManagerRef.current && indicatorManagerRef.current.days !== parseInt(days)) {
       log.indicator(symbol, `Días cambiados de ${indicatorManagerRef.current.days} a ${days}`);
-      
+
+      // ✅ NUEVO: Limpiar rangos auto-detectados cuando cambia la selección de días
+      indicatorManagerRef.current.clearAutoDetectedRanges();
+
       indicatorManagerRef.current.days = parseInt(days);
       indicatorManagerRef.current.refresh().then(() => {
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
@@ -1140,10 +1221,27 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       }
 
       if (indicatorManagerRef.current) {
-		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
-		setFixedRangeProfiles(profiles);
-		console.log(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
-	  } 
+        const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
+        setFixedRangeProfiles(profiles);
+        console.log(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
+
+        // ✅ NUEVO: Cargar rangos globales (aplicados a todas las monedas)
+        const globalRanges = JSON.parse(localStorage.getItem('vp_fixed_ranges_global') || '[]');
+        if (globalRanges.length > 0) {
+          console.log(`[${symbol}] 📂 Cargando ${globalRanges.length} rangos globales`);
+          globalRanges.forEach(range => {
+            const existingProfile = profiles.find(p =>
+              p.startTimestamp === range.startTimestamp && p.endTimestamp === range.endTimestamp
+            );
+            if (!existingProfile) {
+              indicatorManagerRef.current.createFixedRangeProfile(range.startTimestamp, range.endTimestamp);
+            }
+          });
+          // Actualizar lista después de crear
+          const updatedProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
+          setFixedRangeProfiles(updatedProfiles);
+        }
+      }
       log.indicator(symbol, '✅ Indicadores inicializados');
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     };
@@ -1236,8 +1334,37 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     };
   }, [symbol, interval, days, indicatorStates]);
 
+  // ✅ NUEVO: Escuchar evento global para aplicar rangos a todas las monedas
+  useEffect(() => {
+    const handleGlobalRangeCreated = (event) => {
+      const { startTimestamp, endTimestamp } = event.detail;
+      if (indicatorManagerRef.current) {
+        // Verificar si ya existe este rango
+        const existingProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
+        const alreadyExists = existingProfiles.some(p =>
+          p.startTimestamp === startTimestamp && p.endTimestamp === endTimestamp
+        );
+
+        if (!alreadyExists) {
+          console.log(`[${symbol}] 📥 Creando Fixed Range desde evento global`);
+          indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
+          const updatedProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
+          setFixedRangeProfiles(updatedProfiles);
+          indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      }
+    };
+
+    window.addEventListener('globalFixedRangeCreated', handleGlobalRangeCreated);
+
+    return () => {
+      window.removeEventListener('globalFixedRangeCreated', handleGlobalRangeCreated);
+    };
+  }, [symbol]);
+
   // ==================== RENDER ====================
-  
+
   return (
     <>
       <div className="mini-chart">
@@ -1405,13 +1532,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             >
               ✕
             </button>
-            <FixedRangeProfilesManager 
+            <FixedRangeProfilesManager
               symbol={symbol}
               profiles={fixedRangeProfiles}
               onCreateProfile={handleCreateFixedRangeProfile}
               onDeleteProfile={handleDeleteFixedRangeProfile}
               onToggleProfile={handleToggleFixedRangeProfile}
               onConfigureProfile={handleConfigureFixedRangeProfile}
+              onDeleteAllProfiles={handleDeleteAllFixedRangeProfiles}
             />
           </div>
         </div>
@@ -1500,6 +1628,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           days={days}
           indicatorManagerRef={indicatorManagerRef}
           indicatorStates={indicatorStates}
+          onToggleIndicator={(name) => {
+            if (indicatorManagerRef.current) {
+              indicatorManagerRef.current.toggleIndicator(name, !indicatorStates[name]);
+              setIndicatorStates(prev => ({ ...prev, [name]: !prev[name] }));
+            }
+          }}
           onClose={() => {
             setShowChartModal(false);
             loadDrawings(); // Reload drawings to show new ones

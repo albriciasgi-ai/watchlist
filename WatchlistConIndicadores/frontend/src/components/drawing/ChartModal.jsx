@@ -11,7 +11,7 @@ import TextEditModal from "./TextEditModal";
 import ColorPickerModal from "./ColorPickerModal";
 import "./ChartModal.css";
 
-const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onClose }) => {
+const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onToggleIndicator, onClose }) => {
   const canvasRef = useRef(null);
   const drawingManagerRef = useRef(null);
   const measurementToolRef = useRef(null);
@@ -1021,6 +1021,43 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       }
     });
 
+    // ✅ NUEVO: Línea horizontal de precio actual
+    if (visibleCandles.length > 0) {
+      const lastCandle = visibleCandles[visibleCandles.length - 1]; // Incluye velas en progreso
+      const currentPrice = lastCandle.close;
+      const priceY = scaleConverter.priceToY(currentPrice);
+
+      // Color según dirección de la vela (verde si alcista, roja si bajista)
+      const bullColor = '#10B981';
+      const bearColor = '#EF4444';
+      const priceLineColor = lastCandle.close >= lastCandle.open ? bullColor : bearColor;
+
+      // Línea punteada delgada
+      ctx.strokeStyle = priceLineColor;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, priceY);
+      ctx.lineTo(marginLeft + chartWidth, priceY);
+      ctx.stroke();
+      ctx.setLineDash([]); // Resetear dash
+
+      // Label del precio en el eje derecho
+      const priceLabel = currentPrice.toFixed(2);
+      const labelPadding = 4;
+      const labelWidth = 58;
+      const labelHeight = 16;
+
+      ctx.fillStyle = priceLineColor;
+      ctx.fillRect(marginLeft + chartWidth + 2, priceY - labelHeight / 2, labelWidth, labelHeight);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 10px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(priceLabel, marginLeft + chartWidth + 2 + labelPadding, priceY);
+    }
+
     // Price axis labels
     ctx.fillStyle = '#666666';
     ctx.font = '11px Arial';
@@ -1260,6 +1297,55 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           onRedo={handleRedo}
           onClearAll={handleClearAll}
         />
+
+        {/* Indicator Toggles Panel */}
+        <div className="indicator-toggles-panel" style={{
+          position: 'absolute',
+          top: '60px',
+          right: '20px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          padding: '10px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          zIndex: 1000
+        }}>
+          <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '8px' }}>Indicadores:</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="checkbox"
+                checked={indicatorStates?.["Volume Delta"] || false}
+                onChange={() => onToggleIndicator && onToggleIndicator("Volume Delta")}
+              />
+              Volume Delta
+            </label>
+            <label style={{ fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="checkbox"
+                checked={indicatorStates?.["CVD"] || false}
+                onChange={() => onToggleIndicator && onToggleIndicator("CVD")}
+              />
+              CVD
+            </label>
+            <label style={{ fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="checkbox"
+                checked={indicatorStates?.["Volume Profile"] || false}
+                onChange={() => onToggleIndicator && onToggleIndicator("Volume Profile")}
+              />
+              Volume Profile
+            </label>
+            <label style={{ fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="checkbox"
+                checked={indicatorStates?.["Open Interest"] || false}
+                onChange={() => onToggleIndicator && onToggleIndicator("Open Interest")}
+              />
+              Open Interest
+            </label>
+          </div>
+        </div>
 
         {/* Zoom Period Buttons */}
         <div className="zoom-period-toolbar">

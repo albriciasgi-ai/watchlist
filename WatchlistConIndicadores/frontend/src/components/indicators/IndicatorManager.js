@@ -56,7 +56,7 @@ class IndicatorManager {
     const patternIndicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
     if (patternIndicator) {
       patternIndicator.enabled = true;
-      patternIndicator.setShowMode('all'); // Mostrar todos los patrones por defecto
+      patternIndicator.setShowMode('validated'); // Mostrar solo patrones validados por defecto
     }
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
@@ -306,13 +306,33 @@ class IndicatorManager {
 
   deleteFixedRangeProfile(rangeId) {
     this.fixedRangeProfiles = this.fixedRangeProfiles.filter(p => p.rangeId !== rangeId);
-    
+
     // ✅ NUEVO: Eliminar instancia también
     this.fixedRangeIndicators = this.fixedRangeIndicators.filter(
       ind => ind.rangeId !== rangeId
     );
-    
+
     console.log(`[${this.symbol}] 🗑️ Fixed Range eliminado: ${rangeId}`);
+  }
+
+  // ✅ NUEVO: Método para borrar todos los Fixed Range Profiles de este símbolo
+  deleteAllFixedRangeProfiles() {
+    const profilesToDelete = this.fixedRangeProfiles.filter(p => p.symbol === this.symbol);
+    const count = profilesToDelete.length;
+
+    // Eliminar todos los perfiles del símbolo actual
+    this.fixedRangeProfiles = this.fixedRangeProfiles.filter(p => p.symbol !== this.symbol);
+
+    // Eliminar todas las instancias del símbolo actual
+    this.fixedRangeIndicators = this.fixedRangeIndicators.filter(
+      ind => ind.symbol !== this.symbol
+    );
+
+    // Guardar en localStorage
+    this.saveFixedRangeProfilesToStorage();
+
+    console.log(`[${this.symbol}] 🗑️ TODOS los Fixed Ranges eliminados: ${count} perfiles`);
+    return count;
   }
 
   toggleFixedRangeProfile(rangeId, enabled) {
@@ -701,6 +721,11 @@ class IndicatorManager {
     autoRangeIds.forEach(rangeId => {
       this.deleteFixedRangeProfile(rangeId);
     });
+
+    // También limpiar el detector de rangos si existe
+    if (this.rangeDetector) {
+      this.rangeDetector.clearAllRanges();
+    }
 
     this.saveFixedRangeProfilesToStorage();
     console.log(`[${this.symbol}] 🗑️ ${autoRangeIds.length} rangos auto-detectados eliminados`);

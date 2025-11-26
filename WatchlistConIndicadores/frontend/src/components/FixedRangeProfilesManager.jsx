@@ -3,17 +3,19 @@
 
 import React, { useState } from "react";
 
-const FixedRangeProfilesManager = ({ 
+const FixedRangeProfilesManager = ({
   symbol,
   profiles = [],
   onCreateProfile,
   onDeleteProfile,
   onToggleProfile,
-  onConfigureProfile
+  onConfigureProfile,
+  onDeleteAllProfiles  // ✅ NUEVO: Handler para borrar todos
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [applyToAll, setApplyToAll] = useState(false); // ✅ NUEVO: Checkbox para aplicar a todas las monedas
 
   const handleCreate = () => {
     if (!startDate || !endDate) {
@@ -29,11 +31,12 @@ const FixedRangeProfilesManager = ({
       return;
     }
 
-    onCreateProfile(startTimestamp, endTimestamp);
-    
+    onCreateProfile(startTimestamp, endTimestamp, applyToAll); // ✅ Pasar applyToAll
+
     // Limpiar formulario y cerrar modal
     setStartDate("");
     setEndDate("");
+    setApplyToAll(false);
     setShowModal(false);
   };
 
@@ -51,13 +54,38 @@ const FixedRangeProfilesManager = ({
     <div className="fixed-range-profiles-manager">
       <div className="manager-header">
         <h4>VP Fixed Ranges ({symbol})</h4>
-        <button 
-          className="create-profile-btn"
-          onClick={() => setShowModal(true)}
-          title="Crear nuevo perfil de rango fijo"
-        >
-          + Nuevo Rango
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className="create-profile-btn"
+            onClick={() => setShowModal(true)}
+            title="Crear nuevo perfil de rango fijo"
+          >
+            + Nuevo Rango
+          </button>
+          {profiles.length > 0 && (
+            <button
+              className="delete-all-btn"
+              onClick={() => {
+                if (window.confirm(`¿Borrar TODOS los ${profiles.length} perfiles? Esta acción no se puede deshacer.`)) {
+                  onDeleteAllProfiles();
+                }
+              }}
+              title="Eliminar todos los perfiles de una vez"
+              style={{
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}
+            >
+              🗑️ Borrar Todos
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Lista de perfiles */}
@@ -133,18 +161,31 @@ const FixedRangeProfilesManager = ({
               
               <div className="form-group">
                 <label>Fecha final:</label>
-                <input 
-                  type="datetime-local" 
+                <input
+                  type="datetime-local"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
 
-              <button 
+              {/* ✅ NUEVO: Checkbox para aplicar a todas las monedas */}
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input
+                  type="checkbox"
+                  id="applyToAll"
+                  checked={applyToAll}
+                  onChange={(e) => setApplyToAll(e.target.checked)}
+                />
+                <label htmlFor="applyToAll" style={{ margin: 0, cursor: 'pointer' }}>
+                  Aplicar este rango a <strong>todas las monedas</strong>
+                </label>
+              </div>
+
+              <button
                 className="apply-range-btn"
                 onClick={handleCreate}
               >
-                Crear Perfil
+                Crear Perfil{applyToAll ? ' (Para Todas)' : ''}
               </button>
             </div>
           </div>

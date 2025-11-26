@@ -702,6 +702,20 @@ class RangeDetectionIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Limpia todos los rangos detectados y el estado
+   * Se usa cuando el usuario cambia el rango de fechas/días seleccionados
+   */
+  clearAllRanges() {
+    const count = this.detectedRanges.length;
+    this.detectedRanges = [];
+    this.currentCandidate = null;
+    this.lastAnalysisTimestamp = null;
+    this.profileCache.clear();
+    console.log(`[${this.symbol}] 🗑️ ${count} rangos limpiados por cambio de selección`);
+    return count;
+  }
+
+  /**
    * Exporta estado para debugging/localStorage
    */
   toJSON() {

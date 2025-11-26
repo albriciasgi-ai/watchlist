@@ -40,8 +40,8 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 };
 
 const Watchlist = () => {
-  const [interval, setInterval] = useState("15");
-  const [days, setDays] = useState("15");
+  const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
+  const [days, setDays] = useState("90");          // Cambiado a 90 días
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
