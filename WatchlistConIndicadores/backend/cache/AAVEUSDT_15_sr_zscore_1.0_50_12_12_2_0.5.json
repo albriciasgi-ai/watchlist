@@ -15,22 +15,33 @@
         "breakVolume": null
       },
       {
-        "price": 232.89999999999998,
+        "price": 171.77,
         "type": "resistance",
-        "strength": 1.01,
+        "strength": 9.44,
         "touches": 2,
-        "avgVolume": 2.6118279729757043,
-        "firstTouch": 1762128900000,
-        "lastTouch": 1762819200000,
-        "status": "active",
+        "avgVolume": 2.50913963792854,
+        "firstTouch": 1763934300000,
+        "lastTouch": 1763978400000,
+        "status": "broken",
         "breakVolume": null
       }
     ],
     "supports": [
       {
-        "price": 172.83499999999998,
+        "price": 174.155,
         "type": "support",
         "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 3.0033617670232946,
+        "firstTouch": 1764081900000,
+        "lastTouch": 1764098100000,
+        "status": "active",
+        "breakVolume": null
+      },
+      {
+        "price": 172.83499999999998,
+        "type": "support",
+        "strength": 7.18,
         "touches": 2,
         "avgVolume": 2.87078119336265,
         "firstTouch": 1763124300000,
@@ -39,35 +50,34 @@
         "breakVolume": null
       },
       {
-        "price": 192.74,
+        "price": 167.47333333333333,
         "type": "support",
-        "strength": 3.23,
-        "touches": 2,
-        "avgVolume": 3.9104557144783287,
-        "firstTouch": 1762183800000,
-        "lastTouch": 1762446600000,
-        "status": "broken",
-        "breakVolume": null
-      },
-      {
-        "price": 208.715,
-        "type": "support",
-        "strength": 2.61,
-        "touches": 2,
-        "avgVolume": 1.2556010623150862,
-        "firstTouch": 1762152300000,
-        "lastTouch": 1762166700000,
-        "status": "broken",
+        "strength": 1.32,
+        "touches": 3,
+        "avgVolume": 1.8269640576561006,
+        "firstTouch": 1763315100000,
+        "lastTouch": 1763995500000,
+        "status": "active",
         "breakVolume": null
       }
     ],
-    "consolidationZones": [],
-    "currentPrice": 166.06,
+    "consolidationZones": [
+      {
+        "centerPrice": 172.9625,
+        "minPrice": 171.77,
+        "maxPrice": 174.155,
+        "rangePct": 1.3884846015020031,
+        "numLevels": 3,
+        "totalTouches": 6,
+        "avgStrength": 8.87
+      }
+    ],
+    "currentPrice": 177.43,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.6463981856116536
+      "currentZScore": -0.9152163821612017
     }
   },
   "config": {
@@ -80,5 +90,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763411700.971223
+  "timestamp": 1764132611.1976147
 }

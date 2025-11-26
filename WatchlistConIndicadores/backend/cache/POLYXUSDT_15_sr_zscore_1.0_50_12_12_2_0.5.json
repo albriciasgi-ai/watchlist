@@ -4,6 +4,28 @@
   "data": {
     "resistances": [
       {
+        "price": 0.06563,
+        "type": "resistance",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 5.706294175256553,
+        "firstTouch": 1763887500000,
+        "lastTouch": 1763945100000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
+        "price": 0.067875,
+        "type": "resistance",
+        "strength": 10.0,
+        "touches": 2,
+        "avgVolume": 3.756414238027581,
+        "firstTouch": 1763564400000,
+        "lastTouch": 1763616600000,
+        "status": "broken",
+        "breakVolume": null
+      },
+      {
         "price": 0.07022500000000001,
         "type": "resistance",
         "strength": 10.0,
@@ -17,35 +39,35 @@
     ],
     "supports": [
       {
-        "price": 0.07816000000000001,
+        "price": 0.061454999999999996,
         "type": "support",
-        "strength": 3.31,
+        "strength": 10.0,
         "touches": 2,
-        "avgVolume": 2.5228395034289033,
-        "firstTouch": 1762586100000,
-        "lastTouch": 1762785900000,
+        "avgVolume": 3.9348266472169504,
+        "firstTouch": 1763710200000,
+        "lastTouch": 1763740800000,
         "status": "broken",
         "breakVolume": null
       },
       {
-        "price": 0.0674,
+        "price": 0.06725,
         "type": "support",
-        "strength": 1.53,
-        "touches": 3,
-        "avgVolume": 3.579555818919353,
-        "firstTouch": 1762183800000,
-        "lastTouch": 1763387100000,
+        "strength": 8.87,
+        "touches": 2,
+        "avgVolume": 4.190442922835175,
+        "firstTouch": 1763387100000,
+        "lastTouch": 1763511300000,
         "status": "broken",
         "breakVolume": null
       }
     ],
     "consolidationZones": [],
-    "currentPrice": 0.06647,
+    "currentPrice": 0.06642,
     "volumeStats": {
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.14711463686534423
+      "currentZScore": -0.5496226121116181
     }
   },
   "config": {
@@ -58,5 +80,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763411709.4632123
+  "timestamp": 1764132620.9864395
 }

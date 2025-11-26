@@ -2,38 +2,39 @@
   "symbol": "ASTRUSDT",
   "interval": "15",
   "data": {
-    "resistances": [],
+    "resistances": [
+      {
+        "price": 0.013569999999999999,
+        "type": "resistance",
+        "strength": 9.16,
+        "touches": 2,
+        "avgVolume": 4.26099321229095,
+        "firstTouch": 1763514900000,
+        "lastTouch": 1763645400000,
+        "status": "active",
+        "breakVolume": null
+      }
+    ],
     "supports": [
       {
-        "price": 0.01534,
+        "price": 0.012515,
         "type": "support",
-        "strength": 4.12,
+        "strength": 2.42,
         "touches": 2,
-        "avgVolume": 1.4208642965073317,
-        "firstTouch": 1762617600000,
-        "lastTouch": 1762696800000,
+        "avgVolume": 2.6323508499622243,
+        "firstTouch": 1763576100000,
+        "lastTouch": 1763920800000,
         "status": "broken",
         "breakVolume": null
       },
       {
-        "price": 0.015594,
+        "price": 0.013315,
         "type": "support",
-        "strength": 2.46,
-        "touches": 5,
-        "avgVolume": 2.5332182655162203,
-        "firstTouch": 1762152300000,
-        "lastTouch": 1762847100000,
-        "status": "broken",
-        "breakVolume": null
-      },
-      {
-        "price": 0.01323,
-        "type": "support",
-        "strength": 1.11,
-        "touches": 3,
-        "avgVolume": 2.054349748393507,
-        "firstTouch": 1762291800000,
-        "lastTouch": 1763161200000,
+        "strength": 2.2,
+        "touches": 2,
+        "avgVolume": 3.487262987684306,
+        "firstTouch": 1763094600000,
+        "lastTouch": 1763511300000,
         "status": "broken",
         "breakVolume": null
       }
@@ -44,7 +45,7 @@
       "method": "zscore",
       "zScoreThreshold": 1.0,
       "period": 50,
-      "currentZScore": -0.5476494890257236
+      "currentZScore": -0.4678886128516449
     }
   },
   "config": {
@@ -57,5 +58,5 @@
     "clusterDistance": 0.5,
     "maxLevels": 20
   },
-  "timestamp": 1763411724.6139562
+  "timestamp": 1764132635.446231
 }
