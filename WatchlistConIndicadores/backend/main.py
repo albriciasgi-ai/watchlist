@@ -1686,6 +1686,210 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
 
 @app.post("/api/clear-cache")
 
+
+# ==================== ALERT TESTING ENDPOINT ====================
+
+@app.post("/api/test-alert")
+async def send_test_alert():
+    """
+    Sends a test alert to verify the alert system is working
+
+    Returns:
+        Success/failure status and connection info
+    """
+    try:
+        from alert_sender import alert_sender
+        import time
+
+        # 📝 DEBUG LOG: Test alert initiated
+        print("\n" + "="*80)
+        print("[TEST ALERT] 🧪 Initiating test alert to trading bot...")
+        print("="*80)
+
+        # Create test pattern
+        test_pattern = {
+            "patternType": "HAMMER",
+            "confidence": 85.5,
+            "price": 45000.50,
+            "timestamp": int(time.time() * 1000),
+            "nearLevels": [],
+            "metrics": {}
+        }
+
+        print(f"[TEST ALERT] Pattern Type: HAMMER (Bullish reversal)")
+        print(f"[TEST ALERT] Symbol: BTCUSDT")
+        print(f"[TEST ALERT] Price: $45,000.50")
+        print(f"[TEST ALERT] Confidence: 85.5%")
+        print(f"[TEST ALERT] Interval: 4h")
+        print(f"[TEST ALERT] Target Endpoint: {alert_sender.alert_service_url}/api/watchlist-alert")
+        print("-"*80)
+
+        # Send test alert
+        success = await alert_sender.send_rejection_pattern_alert(
+            symbol="BTCUSDT",
+            interval="4h",
+            pattern=test_pattern,
+            user_config=None
+        )
+
+        if success:
+            print(f"[TEST ALERT] ✅ Test alert queued successfully")
+            print(f"[TEST ALERT] 💡 Check the alert_sender logs above for delivery status")
+            print("="*80 + "\n")
+
+            return {
+                "success": True,
+                "message": "Test alert sent successfully to /api/watchlist-alert",
+                "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert",
+                "payload": {
+                    "pattern": "Hammer (ABRIR LONG)",
+                    "symbol": "BTCUSDT",
+                    "price": 45000.50,
+                    "confidence": 85.5
+                },
+                "note": "Check server logs for delivery confirmation"
+            }
+        else:
+            print(f"[TEST ALERT] ❌ Failed to queue test alert")
+            print("="*80 + "\n")
+
+            return {
+                "success": False,
+                "message": "Failed to send test alert",
+                "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert"
+            }
+
+    except Exception as e:
+        print(f"[TEST ALERT] ❌ ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        print("="*80 + "\n")
+
+        return {
+            "success": False,
+            "error": str(e),
+            "message": "Error sending test alert"
+        }
+
+
+@app.post("/api/test-alert-batch")
+async def send_test_alert_batch():
+    """
+    Sends multiple test alerts to simulate real trading scenario
+
+    Returns:
+        Success/failure status for each alert
+    """
+    try:
+        from alert_sender import alert_sender
+        import time
+        import asyncio
+
+        # Real trading data from user
+        test_alerts = [
+            {"symbol": "BTCUSDT", "price": 82500.0, "pattern": "HAMMER"},
+            {"symbol": "ETHUSDT", "price": 2800.0, "pattern": "HAMMER"},
+            {"symbol": "INJUSDT", "price": 12.46, "pattern": "ENGULFING_BULLISH"},
+            {"symbol": "IOTAUSDT", "price": 0.1709, "pattern": "HAMMER"},
+            {"symbol": "TRXUSDT", "price": 0.3385, "pattern": "DOJI_DRAGONFLY"},
+            {"symbol": "UNIUSDT", "price": 8.012, "pattern": "HAMMER"},
+            {"symbol": "XRPUSDT", "price": 2.956, "pattern": "ENGULFING_BULLISH"},
+            {"symbol": "CAKEUSDT", "price": 2.785, "pattern": "HAMMER"},
+            {"symbol": "POLUSDT", "price": 0.2258, "pattern": "HAMMER"},
+            {"symbol": "HIFIUSDT", "price": 0.089, "pattern": "DOJI_DRAGONFLY"},
+        ]
+
+        results = []
+        current_time = int(time.time() * 1000)
+        errors = []
+
+        # 📝 DEBUG LOG: Batch test initiated
+        print("\n" + "="*80)
+        print(f"[BATCH TEST] 🧪 Starting batch test: {len(test_alerts)} alerts")
+        print("="*80)
+
+        for i, alert_data in enumerate(test_alerts):
+            try:
+                # Create pattern for each alert
+                test_pattern = {
+                    "patternType": alert_data["pattern"],
+                    "confidence": 75.0 + (i * 2),  # Varying confidence 75-93%
+                    "price": alert_data["price"],
+                    "timestamp": current_time + (i * 2000),  # 2 second intervals
+                    "nearLevels": [],
+                    "metrics": {}
+                }
+
+                print(f"\n[BATCH TEST] Alert {i+1}/{len(test_alerts)}")
+                print(f"  Symbol: {alert_data['symbol']}")
+                print(f"  Price: ${alert_data['price']}")
+                print(f"  Pattern: {alert_data['pattern']}")
+                print(f"  Confidence: {75.0 + (i * 2):.1f}%")
+
+                # Send alert
+                success = await alert_sender.send_rejection_pattern_alert(
+                    symbol=alert_data["symbol"],
+                    interval="4h",
+                    pattern=test_pattern,
+                    user_config=None
+                )
+
+                results.append({
+                    "symbol": alert_data["symbol"],
+                    "price": alert_data["price"],
+                    "success": success
+                })
+
+                if not success:
+                    errors.append(f"{alert_data['symbol']}: Failed to send")
+                    print(f"[BATCH TEST] ⚠️ Failed to send alert for {alert_data['symbol']}")
+                else:
+                    print(f"[BATCH TEST] ✅ Alert sent for {alert_data['symbol']}")
+
+                # Longer delay between alerts to give bot time to process (2s instead of 0.5s)
+                await asyncio.sleep(2.0)
+
+            except Exception as e:
+                error_msg = f"{alert_data['symbol']}: {str(e)}"
+                errors.append(error_msg)
+                results.append({
+                    "symbol": alert_data["symbol"],
+                    "price": alert_data["price"],
+                    "success": False,
+                    "error": str(e)
+                })
+                print(f"[BATCH TEST] ❌ Exception for {alert_data['symbol']}: {str(e)}")
+
+        successful = sum(1 for r in results if r.get("success", False))
+        total = len(results)
+
+        print(f"[BATCH TEST] Complete: {successful}/{total} alerts sent successfully")
+
+        response_data = {
+            "success": successful > 0,  # Success if at least one sent
+            "message": f"Sent {successful}/{total} test alerts successfully",
+            "endpoint": f"{alert_sender.alert_service_url}/api/watchlist-alert",
+            "results": results,
+            "total_sent": successful,
+            "total_attempted": total,
+            "errors": errors if errors else None
+        }
+
+        return response_data
+
+    except Exception as e:
+        print(f"[ERROR] Batch test alert failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "message": f"Error sending batch test alerts: {str(e)}",
+            "total_sent": 0,
+            "total_attempted": 0
+        }
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
@@ -1702,3 +1906,114 @@ async def shutdown_event():
     from alert_sender import shutdown_alert_sender
     await shutdown_alert_sender()
     print("[SHUTDOWN] Backend shutdown complete")
+
+
+# ==================== DRAWING TOOLS ENDPOINTS ====================
+
+DRAWINGS_DIR = Path("drawings")
+DRAWINGS_DIR.mkdir(exist_ok=True)
+
+
+@app.get("/api/drawings/{symbol}")
+async def get_drawings(symbol: str):
+    """
+    Obtiene los dibujos guardados para un símbolo
+    Los dibujos son globales para el símbolo (aparecen en todos los timeframes)
+    """
+    try:
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        if drawings_file.exists():
+            with open(drawings_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol}")
+                return data
+        else:
+            print(f"[DRAWINGS] No drawings found for {symbol}")
+            return {
+                "symbol": symbol,
+                "shapes": [],
+                "updated_at": None
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Loading drawings for {symbol}: {str(e)}")
+        return {
+            "symbol": symbol,
+            "shapes": [],
+            "error": str(e)
+        }
+
+
+@app.post("/api/drawings/{symbol}")
+async def save_drawings(symbol: str, request: Request):
+    """
+    Guarda los dibujos para un símbolo
+
+    Body:
+    {
+      "shapes": [...]
+    }
+
+    Los dibujos se guardan globalmente para el símbolo (aparecen en todos los timeframes)
+    """
+    try:
+        body = await request.json()
+        shapes = body.get('shapes', [])
+
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        data = {
+            "symbol": symbol,
+            "shapes": shapes,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "total_shapes": len(shapes)
+        }
+
+        with open(drawings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "shapes_saved": len(shapes),
+            "updated_at": data['updated_at']
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Saving drawings for {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.delete("/api/drawings/{symbol}")
+async def delete_drawings(symbol: str):
+    """Elimina todos los dibujos de un símbolo"""
+    try:
+        drawings_file = DRAWINGS_DIR / f"{symbol}.json"
+
+        if drawings_file.exists():
+            drawings_file.unlink()
+            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol}")
+            return {
+                "success": True,
+                "message": f"Drawings deleted for {symbol}"
+            }
+        else:
+            return {
+                "success": True,
+                "message": f"No drawings to delete for {symbol}"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Deleting drawings for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }

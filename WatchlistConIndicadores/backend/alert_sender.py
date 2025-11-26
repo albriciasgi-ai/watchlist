@@ -83,66 +83,61 @@ class AlertSender:
         user_config: Optional[Dict]
     ) -> Dict:
         """
-        Builds the alert payload in a standardized format
+        Builds the alert payload compatible with trading bot
+
+        Format: {"pattern": "HAMMER (ABRIR LONG)", "symbol": "BTCUSDT", "price": 45000.5, "confidence": 85.5}
         """
         pattern_type = pattern.get('patternType', 'UNKNOWN')
         confidence = pattern.get('confidence', 0)
         price = pattern.get('price', 0)
-        timestamp = pattern.get('timestamp', 0)
-        near_levels = pattern.get('nearLevels', [])
-        metrics = pattern.get('metrics', {})
 
-        # Determine alert severity based on confidence
-        if confidence >= 80:
-            severity = "HIGH"
-            priority = 1
-        elif confidence >= 65:
-            severity = "MEDIUM"
-            priority = 2
-        else:
-            severity = "LOW"
-            priority = 3
+        # Get trading action and build pattern string
+        action = self._get_trading_action(pattern_type)
+        pattern_name = self._format_pattern_name(pattern_type)
+        pattern_with_action = f"{pattern_name} ({action})"
 
-        # Build human-readable title
-        pattern_emoji = self._get_pattern_emoji(pattern_type)
-        title = f"{pattern_emoji} {symbol} | {interval} - {self._format_pattern_name(pattern_type)}"
+        # 📝 DEBUG LOG: Building alert payload
+        logger.debug(f"[ALERT BUILD] Pattern: {pattern_type} → {pattern_with_action}")
+        logger.debug(f"[ALERT BUILD] Symbol: {symbol}, Price: {price}, Confidence: {confidence}%")
 
-        # Build description
-        description = self._build_description(
-            symbol,
-            interval,
-            pattern_type,
-            confidence,
-            price,
-            near_levels,
-            metrics
-        )
-
-        # Format timestamp
-        dt = datetime.fromtimestamp(timestamp / 1000)
-        formatted_time = dt.strftime("%Y-%m-%d %H:%M:%S")
-
-        return {
-            "type": "REJECTION_PATTERN_ALERT",
-            "timestamp": timestamp,
-            "formattedTime": formatted_time,
+        # Simple payload format for trading bot
+        payload = {
+            "pattern": pattern_with_action,
             "symbol": symbol,
-            "interval": interval,
-            "severity": severity,
-            "priority": priority,
-            "title": title,
-            "description": description,
-            "data": {
-                "patternType": pattern_type,
-                "confidence": confidence,
-                "price": price,
-                "nearLevels": near_levels,
-                "metrics": metrics,
-                "candle": pattern.get('candle', {}),
-                "contextScores": pattern.get('contextScores', {})
-            },
-            "userConfig": user_config or {}
+            "price": price,
+            "confidence": confidence
         }
+
+        logger.info(f"[ALERT PAYLOAD] {symbol} | {pattern_with_action} @ ${price:.2f} (conf: {confidence}%)")
+
+        return payload
+
+    def _get_trading_action(self, pattern_type: str) -> str:
+        """
+        Maps rejection pattern to trading action
+
+        Bullish patterns → ABRIR LONG
+        Bearish patterns → ABRIR SHORT
+        """
+        bullish_patterns = {
+            "HAMMER",              # Bullish pin bar reversal
+            "ENGULFING_BULLISH",   # Bullish engulfing
+            "DOJI_DRAGONFLY"       # Bullish doji
+        }
+
+        bearish_patterns = {
+            "SHOOTING_STAR",       # Bearish pin bar reversal
+            "ENGULFING_BEARISH",   # Bearish engulfing
+            "DOJI_GRAVESTONE"      # Bearish doji
+        }
+
+        if pattern_type in bullish_patterns:
+            return "ABRIR LONG"
+        elif pattern_type in bearish_patterns:
+            return "ABRIR SHORT"
+        else:
+            # Fallback for unknown patterns
+            return "ABRIR LONG"  # Default to long, but this shouldn't happen
 
     def _get_pattern_emoji(self, pattern_type: str) -> str:
         """Returns emoji for pattern type"""
@@ -214,19 +209,28 @@ class AlertSender:
                     timeout=1.0
                 )
 
+                # 📝 DEBUG LOG: Processing alert from queue
+                alert_summary = f"{alert.get('symbol', 'UNKNOWN')} | {alert.get('pattern', 'UNKNOWN PATTERN')}"
+                logger.debug(f"[QUEUE] Processing alert: {alert_summary}")
+
                 # Try to send the alert
                 success = await self._send_to_service(alert)
 
                 if success:
-                    logger.info(f"✅ Alert sent: {alert['title']}")
+                    logger.info(f"✅ Alert sent successfully: {alert_summary}")
                 else:
-                    logger.warning(f"⚠️ Failed to send alert: {alert['title']}")
+                    logger.warning(f"⚠️ Failed to send alert: {alert_summary}")
+
+                # 📝 DEBUG LOG: Add delay between alerts to prevent overwhelming the bot
+                await asyncio.sleep(0.5)
 
             except asyncio.TimeoutError:
                 # No alerts in queue, continue
                 continue
             except Exception as e:
                 logger.error(f"❌ Error processing alert: {str(e)}")
+                import traceback
+                logger.error(f"[TRACEBACK] {traceback.format_exc()}")
 
         logger.info("📬 Alert queue processor stopped")
 
@@ -244,29 +248,46 @@ class AlertSender:
             logger.error("❌ Client not initialized")
             return False
 
+        endpoint = f"{self.alert_service_url}/api/watchlist-alert"
+
+        # 📝 DEBUG LOG: Sending alert details
+        logger.debug(f"[HTTP POST] Endpoint: {endpoint}")
+        logger.debug(f"[HTTP POST] Payload: {json.dumps(alert, indent=2)}")
+
         try:
-            response = await self.client.post(
-                f"{self.alert_service_url}/api/alerts",
-                json=alert
-            )
+            response = await self.client.post(endpoint, json=alert)
+
+            # 📝 DEBUG LOG: Response details
+            logger.debug(f"[HTTP RESPONSE] Status: {response.status_code}")
 
             if response.status_code == 200:
+                try:
+                    response_data = response.json()
+                    logger.debug(f"[HTTP RESPONSE] Body: {json.dumps(response_data, indent=2)}")
+                except:
+                    logger.debug(f"[HTTP RESPONSE] Body: {response.text}")
+
+                logger.info(f"✅ Alert successfully delivered to trading bot at {endpoint}")
                 return True
             else:
                 logger.warning(f"⚠️ Alert service returned status {response.status_code}")
+                logger.warning(f"⚠️ Response: {response.text}")
                 return False
 
         except httpx.ConnectError:
             logger.error(f"❌ Cannot connect to alert service at {self.alert_service_url}")
             logger.info("💡 Tip: Make sure alert listener is running on port 5000")
+            logger.info("💡 You can start it with: python alert_listener.py")
             return False
 
         except httpx.TimeoutException:
-            logger.error("❌ Alert service timeout")
+            logger.error(f"❌ Alert service timeout (>5s) at {endpoint}")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Error sending alert: {str(e)}")
+            logger.error(f"❌ Unexpected error sending alert: {str(e)}")
+            import traceback
+            logger.error(f"[TRACEBACK] {traceback.format_exc()}")
             return False
 
     async def test_connection(self) -> bool:

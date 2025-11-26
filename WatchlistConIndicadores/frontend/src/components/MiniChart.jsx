@@ -7,9 +7,24 @@ import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
 import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
+import ChartModal from "./drawing/ChartModal";
+import TrendLine from "./drawing/shapes/TrendLine";
+import HorizontalLine from "./drawing/shapes/HorizontalLine";
+import VerticalLine from "./drawing/shapes/VerticalLine";
+import Rectangle from "./drawing/shapes/Rectangle";
+import FibonacciRetracement from "./drawing/shapes/FibonacciRetracement";
+import TPSLBox from "./drawing/shapes/TPSLBox";
+import TPSLBoxShort from "./drawing/shapes/TPSLBoxShort";
+import MeasurementShape from "./drawing/shapes/MeasurementShape";
+import TextBox from "./drawing/shapes/TextBox";
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = true;
+
+// ==================== CONFIGURACIÓN ====================
+// Opacidad de los dibujos en el minichart (0.0 = transparente, 1.0 = opaco)
+// Ajusta este valor si los dibujos no se ven bien en el minichart
+const DRAWING_OPACITY = 0.7;
 
 const log = {
   candle: (symbol, message, data = null) => {
@@ -123,7 +138,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const animationFrameRef = useRef(null);
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
-  
+  const drawingsRef = useRef([]);
+
   // ✅ NUEVO: Referencia para chequeo de gaps
   const gapCheckIntervalRef = useRef(null);
   
@@ -141,6 +157,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
+  const [showChartModal, setShowChartModal] = useState(false);
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
 
@@ -150,6 +167,52 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       "60": "60", "120": "120", "240": "240", "D": "D", "W": "W"
     };
     return map[interval] || "15";
+  };
+
+  // ==================== DRAWINGS ====================
+
+  const deserializeShape = (data) => {
+    switch (data.type) {
+      case 'trendline':
+        return TrendLine.deserialize(data);
+      case 'horizontal':
+        return HorizontalLine.deserialize(data);
+      case 'vertical':
+        return VerticalLine.deserialize(data);
+      case 'rectangle':
+        return Rectangle.deserialize(data);
+      case 'fibonacci':
+        return FibonacciRetracement.deserialize(data);
+      case 'tpsl':
+        return TPSLBox.deserialize(data);
+      case 'tpsl-short':
+        return TPSLBoxShort.deserialize(data);
+      case 'measurement':
+        return MeasurementShape.deserialize(data);
+      case 'textbox':
+        return TextBox.deserialize(data);
+      default:
+        console.warn('Unknown shape type:', data.type);
+        return null;
+    }
+  };
+
+  const loadDrawings = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      const data = await response.json();
+
+      if (data.shapes && Array.isArray(data.shapes)) {
+        drawingsRef.current = data.shapes
+          .map(shapeData => deserializeShape(shapeData))
+          .filter(shape => shape !== null);
+      } else {
+        drawingsRef.current = [];
+      }
+    } catch (error) {
+      console.error(`Error loading drawings for ${symbol}:`, error);
+      drawingsRef.current = [];
+    }
   };
 
   // ==================== DRAW CHART ====================
@@ -305,6 +368,72 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
     }
 
+    // Render saved drawings (readonly, below candles)
+    if (drawingsRef.current.length > 0) {
+      const scaleConverter = {
+        candles: displayCandles,
+        visibleCandles,
+        startIdx,
+        endIdx,
+        minPrice,
+        maxPrice,
+        priceRange,
+        verticalZoom,
+        verticalOffset,
+        chartWidth,
+        chartHeight: priceChartHeight,
+        marginLeft,
+        marginTop,
+        interval,
+
+        priceToY: (price) => {
+          return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+        },
+
+        yToPrice: (y) => {
+          const relativeY = y - marginTop - verticalOffset;
+          return minPrice + (priceChartHeight - relativeY) / yScale;
+        },
+
+        timeToX: (timestamp) => {
+          // Find closest candle instead of exact match (for multi-timeframe support)
+          if (displayCandles.length === 0) return null;
+
+          let closestIndex = 0;
+          let minDiff = Math.abs(displayCandles[0].timestamp - timestamp);
+
+          for (let i = 1; i < displayCandles.length; i++) {
+            const diff = Math.abs(displayCandles[i].timestamp - timestamp);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestIndex = i;
+            }
+          }
+
+          const relativeIndex = closestIndex - startIdx;
+          if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
+          return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+        },
+
+        xToTime: (x) => {
+          const relativeX = x - marginLeft;
+          const candleIndex = startIdx + Math.floor(relativeX / barWidth);
+          return displayCandles[candleIndex]?.timestamp || null;
+        }
+      };
+
+      // Render each drawing with configurable opacity for readonly
+      ctx.globalAlpha = DRAWING_OPACITY;
+      drawingsRef.current.forEach(shape => {
+        try {
+          shape.render(ctx, scaleConverter, false, false, false);
+        } catch (error) {
+          console.error('Error rendering shape:', error);
+        }
+      });
+      ctx.globalAlpha = 1.0;
+    }
+
     ctx.lineWidth = 1;
     visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
@@ -398,7 +527,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     if (mouseX !== null && mouseY !== null) {
       // Línea vertical del crosshair
       if (mouseX >= marginLeft && mouseX <= width - marginRight) {
-        ctx.strokeStyle = "#999";
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2; // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();
@@ -458,7 +587,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         // Calcular precio basado en la posición exacta del mouse
         const price = minPrice + ((marginTop + priceChartHeight - mouseY + verticalOffset) / yScale);
 
-        ctx.strokeStyle = "#999";
+        ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2; // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();
@@ -832,7 +961,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const handleDoubleClick = (e) => {
     const canvas = canvasRef.current;
-    if (!canvas || !candlesRef.current || candlesRef.current.length === 0) return;
+    if (!canvas || !candlesRef.current || candlesRef.current.length === 0) {
+      // Si no hay canvas o datos, solo abrir ChartModal
+      setShowChartModal(true);
+      return;
+    }
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -858,6 +991,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       viewStateRef.current.verticalOffset = 0;
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    } else {
+      // 🎯 Doble click en cualquier otra área: abrir ChartModal
+      setShowChartModal(true);
     }
   };
 
@@ -1013,8 +1149,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     };
     
     loadHistoricalData();
+    loadDrawings(); // Load saved drawings for this symbol
     initIndicators();
-    
+
     const bybitInterval = getBybitInterval(interval);
     wsManager.connect(bybitInterval);
     wsManager.subscribe(symbol, handleWebSocketMessage);
@@ -1247,12 +1384,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             📊
           </button>
         </div>
-        <canvas 
+        <canvas
           ref={canvasRef}
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleDoubleClick}
           style={{ cursor: 'crosshair', display: 'block', touchAction: 'none' }}
         />
       </div>
@@ -1353,6 +1491,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             />
           </div>
         </div>
+      )}
+
+      {showChartModal && (
+        <ChartModal
+          symbol={symbol}
+          interval={interval}
+          days={days}
+          indicatorManagerRef={indicatorManagerRef}
+          indicatorStates={indicatorStates}
+          onClose={() => {
+            setShowChartModal(false);
+            loadDrawings(); // Reload drawings to show new ones
+            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          }}
+        />
       )}
     </>
   );

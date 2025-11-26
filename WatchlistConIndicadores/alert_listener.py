@@ -85,9 +85,20 @@ async def receive_alert(request: Request):
         print(f"\n{'='*60}")
         print(f"🔔 NEW ALERT RECEIVED")
         print(f"{'='*60}")
-        print(f"Time: {alert.get('formattedTime', alert.get('receivedAt'))}")
-        print(f"Title: {alert.get('title', 'No title')}")
-        print(f"Severity: {alert.get('severity', 'UNKNOWN')}")
+
+        # Show simple format for trading bot (primary)
+        if 'message' in alert:
+            print(f"📊 TRADING SIGNAL: {alert['message']}")
+            print(f"   Symbol: {alert.get('symbol', 'N/A')}")
+            print(f"   Action: {alert.get('action', 'N/A')}")
+            print(f"   Price: {alert.get('price', 'N/A')}")
+            print(f"   Confidence: {alert.get('confidence', 'N/A')}%")
+        else:
+            # Fallback to old format
+            print(f"Time: {alert.get('formattedTime', alert.get('receivedAt'))}")
+            print(f"Title: {alert.get('title', 'No title')}")
+            print(f"Severity: {alert.get('severity', 'UNKNOWN')}")
+
         print(f"\n{alert.get('description', '')}")
         print(f"{'='*60}\n")
 
@@ -313,19 +324,33 @@ def get_dashboard_html():
                 const time = new Date(alert.receivedAt).toLocaleString();
                 const severity = alert.severity || 'LOW';
 
+                // Build message display - prioritize simple format for trading bot
+                let messageDisplay = '';
+                if (alert.message) {
+                    messageDisplay = `
+                        <div style="background: rgba(74, 158, 255, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px; font-family: monospace;">
+                            <strong>📊 TRADING SIGNAL:</strong><br/>
+                            ${alert.message}
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="alert-card ${severity}">
                         <div class="alert-header">
                             <div class="alert-title">${alert.title || 'Alert'}</div>
                             <div class="alert-time">${time}</div>
                         </div>
+                        ${messageDisplay}
                         <div class="alert-description">${alert.description || 'No description'}</div>
                         <div class="alert-meta">
                             <span class="badge ${severity}">${severity}</span>
                             <span>${alert.symbol || 'Unknown'}</span>
                             <span>${alert.interval || 'Unknown'}</span>
-                            ${alert.data && alert.data.confidence ?
-                                `<span>Confidence: ${alert.data.confidence.toFixed(1)}%</span>` : ''}
+                            ${alert.action ? `<span><strong>${alert.action}</strong></span>` : ''}
+                            ${alert.price ? `<span>Price: $${alert.price.toFixed(2)}</span>` : ''}
+                            ${alert.confidence ? `<span>Confidence: ${alert.confidence.toFixed(1)}%</span>` :
+                              (alert.data && alert.data.confidence ? `<span>Confidence: ${alert.data.confidence.toFixed(1)}%</span>` : '')}
                         </div>
                     </div>
                 `;
