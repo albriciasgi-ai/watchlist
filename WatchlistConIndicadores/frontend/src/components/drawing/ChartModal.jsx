@@ -11,6 +11,26 @@ import TextEditModal from "./TextEditModal";
 import ColorPickerModal from "./ColorPickerModal";
 import "./ChartModal.css";
 
+// Helper function to format time labels on axis
+const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
+  if (!datetimeStr) return "";
+
+  const parts = datetimeStr.split(" ");
+  const datePart = parts[0];
+  const timePart = parts[1];
+
+  const [year, month, day] = datePart.split("-");
+  const [hours, minutes] = timePart.split(":");
+
+  const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+  if (!prevDatetimeStr || prevDatetimeStr.split(" ")[0] !== datePart) {
+    return `${day} ${monthNames[parseInt(month) - 1]} ${hours}:${minutes}`;
+  }
+
+  return `${hours}:${minutes}`;
+};
+
 const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStates, onClose }) => {
   const canvasRef = useRef(null);
   const drawingManagerRef = useRef(null);
@@ -973,7 +993,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         x: marginLeft,
         y: marginTop,
         width: chartWidth,
-        height: chartHeight
+        height: chartHeight + volumeHeight  // Include volume area for Fixed Range VP histogram
       };
       const priceContext = {
         minPrice: scaleConverter.minPrice,
@@ -1056,6 +1076,24 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
       ctx.fillStyle = '#666666';
       ctx.font = '9px Arial';
       ctx.fillText('Vol', marginLeft + 2, volumeStartY + 12);
+    }
+
+    // Renderizar eje de tiempo (time axis)
+    const timeStep = Math.max(Math.floor(visibleCandles.length / 6), 1);
+    const timeY = volumeStartY + volumeHeight + 15;
+
+    ctx.fillStyle = '#666666';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+
+    for (let i = 0; i < visibleCandles.length; i += timeStep) {
+      const candle = visibleCandles[i];
+      const prevCandle = i > 0 ? visibleCandles[i - timeStep] : null;
+      const barWidth = chartWidth / visibleCandles.length;
+      const candleX = marginLeft + (i * barWidth) + (barWidth / 2);
+
+      const timeText = formatAxisTime(candle.datetime_colombia, prevCandle?.datetime_colombia);
+      ctx.fillText(timeText, candleX, timeY);
     }
 
     // Renderizar indicadores debajo del volumen (si hay)

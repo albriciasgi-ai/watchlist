@@ -347,7 +347,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         x: marginLeft,
         y: marginTop,
         width: chartWidth,
-        height: priceChartHeight
+        height: priceChartHeight + volumeHeight  // Include volume area for Fixed Range VP histogram
       };
 
       // 🎯 NUEVO: Función para convertir precio a coordenada Y en el canvas
@@ -411,7 +411,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           }
 
           const relativeIndex = closestIndex - startIdx;
-          if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
+          // Allow rendering of drawings that are partially off-screen
+          // Canvas clipping will handle elements outside visible bounds
           return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
         },
 

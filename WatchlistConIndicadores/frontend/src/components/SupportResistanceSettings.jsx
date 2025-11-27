@@ -13,6 +13,7 @@ const SupportResistanceSettings = ({
   symbol,
   indicatorManager,
   onConfigChange,
+  onToggleIndicator,
   onClose,
   initialConfig
 }) => {
@@ -54,6 +55,11 @@ const SupportResistanceSettings = ({
 
     setEnabled(newEnabled);
     srIndicator.enabled = newEnabled;
+
+    // Update global indicator state in Watchlist
+    if (onToggleIndicator) {
+      onToggleIndicator('Support & Resistance');
+    }
 
     if (newEnabled) {
       // Fetch data when enabling

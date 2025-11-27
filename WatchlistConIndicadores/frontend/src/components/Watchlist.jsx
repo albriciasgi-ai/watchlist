@@ -46,7 +46,8 @@ const Watchlist = () => {
     "Volume Delta": true,
     "CVD": true,
     "Volume Profile": false,
-    "Open Interest": false
+    "Open Interest": false,
+    "Support & Resistance": false
   });
   
   const [vpConfig, setVpConfig] = useState({
@@ -556,6 +557,7 @@ const Watchlist = () => {
         <SupportResistanceSettings
           symbol={selectedSymbolForSR}
           indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
+          onToggleIndicator={toggleIndicator}
           onClose={() => {
             setShowSupportResistanceSettings(false);
             setSelectedSymbolForSR(null);
