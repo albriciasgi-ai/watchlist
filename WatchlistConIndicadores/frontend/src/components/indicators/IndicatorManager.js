@@ -775,8 +775,14 @@ class IndicatorManager {
   /**
    * Carga la configuración del detector desde localStorage
    * 🎯 MODIFICADO: Ahora carga por símbolo Y timeframe
+   * ✅ FIX: Deshabilitado por default - el usuario debe habilitarlo manualmente
    */
   loadRangeDetectionConfig() {
+    // ✅ FIX: Range Detector deshabilitado por default
+    // El usuario debe habilitarlo manualmente desde el settings modal
+    console.log(`[${this.symbol}] ⚪ Range Detection deshabilitado por default`);
+
+    /* ANTERIOR: Cargaba automáticamente desde localStorage
     try {
       const enabledSymbols = JSON.parse(
         localStorage.getItem('range_detection_enabled_symbols') || '[]'
@@ -798,6 +804,7 @@ class IndicatorManager {
     } catch (error) {
       console.error(`[${this.symbol}] ❌ Error cargando config:`, error);
     }
+    */
   }
 
   destroy() {

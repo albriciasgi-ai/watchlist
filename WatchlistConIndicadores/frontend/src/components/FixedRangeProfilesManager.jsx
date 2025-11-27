@@ -10,7 +10,8 @@ const FixedRangeProfilesManager = ({
   onDeleteProfile,
   onToggleProfile,
   onConfigureProfile,
-  onDeleteAllProfiles  // ✅ NUEVO: Handler para borrar todos
+  onDeleteAllProfiles,  // ✅ Handler para borrar todos en esta moneda
+  onDeleteAllProfilesGlobal  // ✅ NUEVO: Handler para borrar todos en TODAS las monedas
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -63,27 +64,54 @@ const FixedRangeProfilesManager = ({
             + Nuevo Rango
           </button>
           {profiles.length > 0 && (
-            <button
-              className="delete-all-btn"
-              onClick={() => {
-                if (window.confirm(`¿Borrar TODOS los ${profiles.length} perfiles? Esta acción no se puede deshacer.`)) {
-                  onDeleteAllProfiles();
-                }
-              }}
-              title="Eliminar todos los perfiles de una vez"
-              style={{
-                background: '#f44336',
-                color: 'white',
-                border: 'none',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: 'bold'
-              }}
-            >
-              🗑️ Borrar Todos
-            </button>
+            <>
+              <button
+                className="delete-all-btn"
+                onClick={() => {
+                  if (window.confirm(`¿Borrar TODOS los ${profiles.length} perfiles de ${symbol}? Esta acción no se puede deshacer.`)) {
+                    onDeleteAllProfiles();
+                  }
+                }}
+                title="Eliminar todos los perfiles de esta moneda"
+                style={{
+                  background: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}
+              >
+                🗑️ Borrar Todos ({symbol})
+              </button>
+
+              <button
+                className="delete-all-global-btn"
+                onClick={() => {
+                  if (window.confirm(`⚠️ ¿Borrar TODOS los VP Fixed Ranges en TODAS LAS MONEDAS?\n\nEsta acción eliminará todos los perfiles globalmente y no se puede deshacer.`)) {
+                    if (onDeleteAllProfilesGlobal) {
+                      onDeleteAllProfilesGlobal();
+                    }
+                  }
+                }}
+                title="Eliminar todos los perfiles en TODAS las monedas"
+                style={{
+                  background: '#c62828',
+                  color: 'white',
+                  border: 'none',
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  marginLeft: '5px'
+                }}
+              >
+                🗑️ Borrar TODOS (Global)
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -1123,6 +1123,24 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
     }
   };
 
+  // ✅ NUEVO: Handler para borrar todos los VP Fixed Ranges en TODAS las monedas
+  const handleDeleteAllFixedRangeProfilesGlobal = () => {
+    // Limpiar localStorage global
+    localStorage.removeItem('vp_fixed_ranges_global');
+
+    // Limpiar en este símbolo
+    if (indicatorManagerRef.current) {
+      indicatorManagerRef.current.deleteAllFixedRangeProfiles();
+      setFixedRangeProfiles([]);
+    }
+
+    // Notificar a todos los componentes para que limpien sus VP
+    window.dispatchEvent(new CustomEvent('globalFixedRangesDeleted'));
+
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    console.log(`✅ Todos los VP Fixed Ranges eliminados GLOBALMENTE`);
+  };
+
   const handleToggleFixedRangeProfile = (rangeId, enabled) => {
     if (indicatorManagerRef.current) {
       indicatorManagerRef.current.toggleFixedRangeProfile(rangeId, enabled);
@@ -1189,6 +1207,15 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       });
     }
   }, [days, symbol]);
+
+  // ✅ NUEVO: Efecto para manejar cambios en zoomDays
+  useEffect(() => {
+    if (zoomDays !== null && zoomDays !== undefined) {
+      // Resetear offset para mostrar las velas más recientes
+      viewStateRef.current.offset = 0;
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  }, [zoomDays]);
 
   useEffect(() => {
     if (indicatorManagerRef.current && vpFixedRange) {
@@ -1391,10 +1418,22 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       }
     };
 
+    // ✅ NUEVO: Handler para borrar todos los VP globalmente
+    const handleGlobalRangesDeleted = () => {
+      if (indicatorManagerRef.current) {
+        console.log(`[${symbol}] 🗑️ Eliminando todos los VP Fixed Ranges (evento global)`);
+        indicatorManagerRef.current.deleteAllFixedRangeProfiles();
+        setFixedRangeProfiles([]);
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      }
+    };
+
     window.addEventListener('globalFixedRangeCreated', handleGlobalRangeCreated);
+    window.addEventListener('globalFixedRangesDeleted', handleGlobalRangesDeleted);
 
     return () => {
       window.removeEventListener('globalFixedRangeCreated', handleGlobalRangeCreated);
+      window.removeEventListener('globalFixedRangesDeleted', handleGlobalRangesDeleted);
     };
   }, [symbol]);
 
@@ -1575,6 +1614,7 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
               onToggleProfile={handleToggleFixedRangeProfile}
               onConfigureProfile={handleConfigureFixedRangeProfile}
               onDeleteAllProfiles={handleDeleteAllFixedRangeProfiles}
+              onDeleteAllProfilesGlobal={handleDeleteAllFixedRangeProfilesGlobal}
             />
           </div>
         </div>
