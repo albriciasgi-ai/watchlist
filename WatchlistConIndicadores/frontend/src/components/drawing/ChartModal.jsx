@@ -70,7 +70,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     // Solo reinicializar si symbol o interval realmente cambiaron
     if (prevSymbolRef.current !== symbol || prevIntervalRef.current !== interval) {
       console.log('[ChartModal] 🔵 Initializing for', symbol, interval);
-      drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool);
+      // ✅ FIX: Pasar saveDrawings como callback para guardar automáticamente al completar dibujos
+      drawingManagerRef.current = new DrawingToolManager(symbol, interval, setSelectedTool, saveDrawings);
       measurementToolRef.current = new MeasurementTool();
 
       // Cargar dibujos guardados
@@ -1317,11 +1318,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
                 type="checkbox"
                 checked={indicatorStates?.["Volume Delta"] || false}
                 onChange={() => {
-                  if (indicatorManagerRef?.current) {
-                    const newState = !indicatorStates?.["Volume Delta"];
-                    indicatorManagerRef.current.toggleIndicator("Volume Delta", newState);
+                  // ✅ FIX: Solo llamar onToggleIndicator, no hacer toggle aquí
+                  // MiniChart maneja el toggle en su onToggleIndicator handler
+                  if (onToggleIndicator) {
+                    onToggleIndicator("Volume Delta");
                     setNeedsRedraw(true);
-                    if (onToggleIndicator) onToggleIndicator("Volume Delta");
                   }
                 }}
               />
@@ -1332,11 +1333,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
                 type="checkbox"
                 checked={indicatorStates?.["CVD"] || false}
                 onChange={() => {
-                  if (indicatorManagerRef?.current) {
-                    const newState = !indicatorStates?.["CVD"];
-                    indicatorManagerRef.current.toggleIndicator("CVD", newState);
+                  // ✅ FIX: Solo llamar onToggleIndicator, no hacer toggle aquí
+                  if (onToggleIndicator) {
+                    onToggleIndicator("CVD");
                     setNeedsRedraw(true);
-                    if (onToggleIndicator) onToggleIndicator("CVD");
                   }
                 }}
               />
@@ -1347,11 +1347,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
                 type="checkbox"
                 checked={indicatorStates?.["Volume Profile"] || false}
                 onChange={() => {
-                  if (indicatorManagerRef?.current) {
-                    const newState = !indicatorStates?.["Volume Profile"];
-                    indicatorManagerRef.current.toggleIndicator("Volume Profile", newState);
+                  // ✅ FIX: Solo llamar onToggleIndicator, no hacer toggle aquí
+                  if (onToggleIndicator) {
+                    onToggleIndicator("Volume Profile");
                     setNeedsRedraw(true);
-                    if (onToggleIndicator) onToggleIndicator("Volume Profile");
                   }
                 }}
               />
@@ -1362,11 +1361,10 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
                 type="checkbox"
                 checked={indicatorStates?.["Open Interest"] || false}
                 onChange={() => {
-                  if (indicatorManagerRef?.current) {
-                    const newState = !indicatorStates?.["Open Interest"];
-                    indicatorManagerRef.current.toggleIndicator("Open Interest", newState);
+                  // ✅ FIX: Solo llamar onToggleIndicator, no hacer toggle aquí
+                  if (onToggleIndicator) {
+                    onToggleIndicator("Open Interest");
                     setNeedsRedraw(true);
-                    if (onToggleIndicator) onToggleIndicator("Open Interest");
                   }
                 }}
               />

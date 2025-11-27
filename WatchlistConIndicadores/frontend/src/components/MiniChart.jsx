@@ -128,7 +128,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -296,13 +296,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     const chartWidth = width - marginLeft - marginRight;
 
+    // ✅ NUEVO: Calcular cuántas velas corresponden a zoomDays
+    const getCandlesPerDay = (interval) => {
+      const intervalMap = {
+        "5": 288,    // 24*60/5
+        "15": 96,    // 24*60/15
+        "30": 48,    // 24*60/30
+        "60": 24,    // 24*60/60
+        "240": 6,    // 24/4
+        "D": 1,      // 1 vela por día
+        "W": 1/7     // 1 vela por semana
+      };
+      return intervalMap[interval] || 24;
+    };
+
     // ✅ FIX: Auto-compress solo cuando zoom < 0.2 (zoom out extremo) o cuando se solicita explícitamente
     const minCandleWidth = 2;
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
-    // Auto-compress solo si zoom out extremo
-    if (viewStateRef.current.zoom < 0.2) {
+    // ✅ NUEVO: Si zoomDays está definido, calcular candlesPerScreen basado en eso
+    if (zoomDays !== null && zoomDays !== undefined) {
+      const candlesPerDay = getCandlesPerDay(interval);
+      candlesPerScreen = Math.floor(zoomDays * candlesPerDay);
+      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / candlesPerScreen));
+    } else if (viewStateRef.current.zoom < 0.2) {
       // Modo "fit to screen" - Comprimir automáticamente para mostrar todas las velas
       candlesPerScreen = displayCandles.length;
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / displayCandles.length));

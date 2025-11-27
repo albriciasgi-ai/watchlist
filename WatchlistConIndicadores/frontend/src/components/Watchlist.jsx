@@ -41,7 +41,8 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 
 const Watchlist = () => {
   const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
-  const [days, setDays] = useState("90");          // Cambiado a 90 días
+  const [days, setDays] = useState("90");          // Cambiado a 90 días (histórico cargado)
+  const [zoomDays, setZoomDays] = useState(null);  // ✅ NUEVO: Días visibles en ventana (null = todos)
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
@@ -400,6 +401,44 @@ const Watchlist = () => {
             ))}
           </div>
 
+          {/* ✅ NUEVO: Selector de Zoom Días (días visibles en ventana) */}
+          <div style={{ display: 'flex', gap: '5px', alignItems: 'center', marginLeft: '20px', borderLeft: '1px solid #444', paddingLeft: '15px' }}>
+            <span style={{ fontSize: '11px', color: '#666', marginRight: '5px' }}>Zoom Días:</span>
+            <button
+              onClick={() => setZoomDays(null)}
+              style={{
+                padding: '4px 10px',
+                fontSize: '11px',
+                background: zoomDays === null ? '#4a9eff' : '#333',
+                color: 'white',
+                border: zoomDays === null ? '2px solid #4a9eff' : '1px solid #555',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontWeight: zoomDays === null ? 'bold' : 'normal'
+              }}
+            >
+              Todos
+            </button>
+            {[7, 15, 30, 60, 90].filter(d => d <= parseInt(days)).map(d => (
+              <button
+                key={d}
+                onClick={() => setZoomDays(d)}
+                style={{
+                  padding: '4px 10px',
+                  fontSize: '11px',
+                  background: zoomDays === d ? '#4a9eff' : '#333',
+                  color: 'white',
+                  border: zoomDays === d ? '2px solid #4a9eff' : '1px solid #555',
+                  borderRadius: '3px',
+                  cursor: 'pointer',
+                  fontWeight: zoomDays === d ? 'bold' : 'normal'
+                }}
+              >
+                {d}D
+              </button>
+            ))}
+          </div>
+
           <div className="indicator-toggles">
             <label>
               <input 
@@ -504,6 +543,7 @@ const Watchlist = () => {
             symbol={sym}
             interval={interval}
             days={days}
+            zoomDays={zoomDays}
             indicatorStates={indicatorStates}
             vpConfig={vpConfig}
             vpFixedRange={vpFixedRange}
