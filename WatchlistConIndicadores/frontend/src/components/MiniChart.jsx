@@ -128,7 +128,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -301,39 +301,14 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
 
     const chartWidth = width - marginLeft - marginRight;
 
-    // ✅ NUEVO: Calcular cuántas velas corresponden a zoomDays
-    const getCandlesPerDay = (interval) => {
-      const intervalMap = {
-        "5": 288,    // 24*60/5
-        "15": 96,    // 24*60/15
-        "30": 48,    // 24*60/30
-        "60": 24,    // 24*60/60
-        "240": 6,    // 24/4
-        "D": 1,      // 1 vela por día
-        "W": 1/7     // 1 vela por semana
-      };
-      return intervalMap[interval] || 24;
-    };
-
-    // ✅ FIX: Zoom continuo sin saltos abruptos
-    const minCandleWidth = 1;  // Reducido de 2 a 1 para permitir más zoom out
+    // ✅ FIX: Zoom manual con rueda del mouse
+    const minCandleWidth = 1;  // Permitir zoom out hasta 1px por vela
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
-    // ✅ NUEVO: Si zoomDays está definido, calcular candlesPerScreen basado en eso
-    if (zoomDays !== null && zoomDays !== undefined) {
-      const candlesPerDay = getCandlesPerDay(interval);
-      candlesPerScreen = Math.floor(zoomDays * candlesPerDay);
-      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / candlesPerScreen));
-    } else {
-      // ✅ FIX: Zoom continuo - sin threshold abrupto
-      // Calcular barWidth basado en zoom, permitiendo que llegue hasta minCandleWidth
-      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
-      candlesPerScreen = Math.floor(chartWidth / barWidth);
-
-      // ✅ FIX: Removido auto-ajuste que causaba saltos al llegar nuevas velas
-      // El cálculo es ahora estable y no depende de displayCandles.length
-    }
+    // Calcular barWidth basado en zoom manual (rueda del mouse)
+    barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
+    candlesPerScreen = Math.floor(chartWidth / barWidth);
 
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
     const offset = Math.min(viewStateRef.current.offset, maxOffset);
@@ -1210,26 +1185,6 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
     }
   }, [days, symbol]);
 
-  // ✅ NUEVO: Efecto para manejar cambios en zoomDays
-  const prevZoomDaysRef = useRef(zoomDays);
-
-  useEffect(() => {
-    const wasNull = prevZoomDaysRef.current === null || prevZoomDaysRef.current === undefined;
-    const isNull = zoomDays === null || zoomDays === undefined;
-
-    // Solo resetear offset si cambiamos entre modo "Todos" (null) ↔ zoom específico (número)
-    // Esto evita el "baile" cuando solo cambia el valor numérico
-    if (wasNull !== isNull) {
-      viewStateRef.current.offset = 0;
-      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-    } else if (zoomDays !== null && zoomDays !== undefined) {
-      // Si solo cambió el número (7→30), redibujar sin resetear offset
-      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-    }
-
-    prevZoomDaysRef.current = zoomDays;
-  }, [zoomDays]);
-
   useEffect(() => {
     if (indicatorManagerRef.current && vpFixedRange) {
       if (vpFixedRange.applyToAll || vpFixedRange.symbol === symbol) {
@@ -1722,9 +1677,9 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
               setIndicatorStates(prev => ({ ...prev, [name]: !prev[name] }));
             }
           }}
-          onClose={() => {
+          onClose={async () => {
             setShowChartModal(false);
-            loadDrawings(); // Reload drawings to show new ones
+            await loadDrawings(); // ✅ FIX: await para asegurar que drawings carguen antes de redibujar
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
           }}
         />

@@ -106,7 +106,7 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh solo para Volume Profile y Open Interest
+  // ✅ SIMPLIFICADO: refresh para Volume Profile, Open Interest y Support & Resistance
   async refresh() {
     const startTime = Date.now();
     console.log(`[${this.symbol}] 🔄 Refrescando indicadores...`);
@@ -114,7 +114,7 @@ class IndicatorManager {
     try {
       await Promise.all(
         this.indicators.map(async (indicator) => {
-          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest")) {
+          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance")) {
             await indicator.fetchData();
           }
         })

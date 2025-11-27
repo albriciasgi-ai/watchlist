@@ -982,7 +982,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         priceRange: scaleConverter.priceRange,
         verticalZoom: scaleConverter.verticalZoom,
         verticalOffset: scaleConverter.verticalOffset,
-        yScale: scaleConverter.priceRange > 0 ? chartHeight / scaleConverter.priceRange : 1,
+        yScale: scaleConverter.priceRange > 0 ? (chartHeight / scaleConverter.priceRange) * scaleConverter.verticalZoom : 1,  // ✅ FIX: incluir verticalZoom en yScale
         priceToY: scaleConverter.priceToY  // ✅ FIX: Agregar priceToY para S&R indicator
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, candles, priceContext);
