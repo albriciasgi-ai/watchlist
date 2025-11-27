@@ -310,8 +310,8 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       return intervalMap[interval] || 24;
     };
 
-    // ✅ FIX: Auto-compress solo cuando zoom < 0.2 (zoom out extremo) o cuando se solicita explícitamente
-    const minCandleWidth = 2;
+    // ✅ FIX: Zoom continuo sin saltos abruptos
+    const minCandleWidth = 1;  // Reducido de 2 a 1 para permitir más zoom out
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
@@ -320,14 +320,17 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       const candlesPerDay = getCandlesPerDay(interval);
       candlesPerScreen = Math.floor(zoomDays * candlesPerDay);
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / candlesPerScreen));
-    } else if (viewStateRef.current.zoom < 0.2) {
-      // Modo "fit to screen" - Comprimir automáticamente para mostrar todas las velas
-      candlesPerScreen = displayCandles.length;
-      barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, chartWidth / displayCandles.length));
     } else {
-      // Modo normal - Usar el zoom del usuario (default 1 = 8px por vela)
+      // ✅ FIX: Zoom continuo - sin threshold abrupto
+      // Calcular barWidth basado en zoom, permitiendo que llegue hasta minCandleWidth
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
       candlesPerScreen = Math.floor(chartWidth / barWidth);
+
+      // Si candlesPerScreen > displayCandles.length, ajustar para que todas las velas quepan
+      if (candlesPerScreen > displayCandles.length) {
+        candlesPerScreen = displayCandles.length;
+        barWidth = Math.max(minCandleWidth, chartWidth / candlesPerScreen);
+      }
     }
 
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
