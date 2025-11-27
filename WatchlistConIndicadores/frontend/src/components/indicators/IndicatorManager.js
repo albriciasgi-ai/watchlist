@@ -482,8 +482,13 @@ class IndicatorManager {
       return [];
     }
 
+    // ✅ NUEVO: Filtrar velas según el rango de días seleccionado
+    const cutoffTime = Date.now() - (this.days * 24 * 60 * 60 * 1000);
+    const filteredCandles = allCandles.filter(c => c.timestamp >= cutoffTime);
+
+    console.log(`[${this.symbol}] ✅ Filtrando velas: ${allCandles.length} total → ${filteredCandles.length} en últimos ${this.days} días`);
     console.log(`[${this.symbol}] ✅ Llamando a rangeDetector.analyze()...`);
-    const detectedRanges = this.rangeDetector.analyze(allCandles);
+    const detectedRanges = this.rangeDetector.analyze(filteredCandles);
 
     // Procesar rangos confirmados y crear/actualizar Fixed Ranges automáticamente
     const confirmedRanges = this.rangeDetector.getDetectedRanges();

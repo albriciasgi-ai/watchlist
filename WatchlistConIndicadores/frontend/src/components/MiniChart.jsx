@@ -1073,6 +1073,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         window.dispatchEvent(new CustomEvent('globalFixedRangeCreated', { detail: newRange }));
       }
 
+      // ✅ FIX: Resetear escala vertical cuando se crea un VP para evitar desplazamientos
+      viewStateRef.current.verticalZoom = 1;
+      viewStateRef.current.verticalOffset = 0;
+
       indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
@@ -1241,6 +1245,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           // Actualizar lista después de crear
           const updatedProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
           setFixedRangeProfiles(updatedProfiles);
+
+          // ✅ FIX: Resetear escala vertical al cargar rangos globales
+          viewStateRef.current.verticalZoom = 1;
+          viewStateRef.current.verticalOffset = 0;
         }
       }
       log.indicator(symbol, '✅ Indicadores inicializados');
@@ -1351,6 +1359,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
           const updatedProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
           setFixedRangeProfiles(updatedProfiles);
+
+          // ✅ FIX: Resetear escala vertical al recibir un VP global
+          viewStateRef.current.verticalZoom = 1;
+          viewStateRef.current.verticalOffset = 0;
+
           indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
           drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         }
