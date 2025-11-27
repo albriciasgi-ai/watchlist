@@ -109,6 +109,14 @@ const Watchlist = () => {
     wsManager.changeInterval(interval);
   }, [interval]);
 
+  // ✅ FIX: Auto-ajustar zoomDays si excede days disponibles
+  useEffect(() => {
+    if (zoomDays && zoomDays > parseInt(days)) {
+      console.log(`[Watchlist] zoomDays ${zoomDays} excede days ${days}, reseteando a null`);
+      setZoomDays(null); // Volver a modo "Todos"
+    }
+  }, [days, zoomDays]);
+
   const toggleIndicator = (indicatorName) => {
     setIndicatorStates(prev => ({
       ...prev,

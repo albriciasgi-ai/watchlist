@@ -158,6 +158,7 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
   const [showChartModal, setShowChartModal] = useState(false);
+  const [drawingsVersion, setDrawingsVersion] = useState(0); // ✅ FIX: Estado para forzar re-render al cargar drawings
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
 
@@ -209,9 +210,13 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       } else {
         drawingsRef.current = [];
       }
+
+      // ✅ FIX: Incrementar versión para forzar re-render y mostrar trendlines
+      setDrawingsVersion(v => v + 1);
     } catch (error) {
       console.error(`Error loading drawings for ${symbol}:`, error);
       drawingsRef.current = [];
+      setDrawingsVersion(v => v + 1); // Forzar re-render incluso en error
     }
   };
 
@@ -326,11 +331,8 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
       barWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
       candlesPerScreen = Math.floor(chartWidth / barWidth);
 
-      // Si candlesPerScreen > displayCandles.length, ajustar para que todas las velas quepan
-      if (candlesPerScreen > displayCandles.length) {
-        candlesPerScreen = displayCandles.length;
-        barWidth = Math.max(minCandleWidth, chartWidth / candlesPerScreen);
-      }
+      // ✅ FIX: Removido auto-ajuste que causaba saltos al llegar nuevas velas
+      // El cálculo es ahora estable y no depende de displayCandles.length
     }
 
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
@@ -1209,12 +1211,23 @@ const MiniChart = ({ symbol, interval, days, zoomDays, indicatorStates, vpConfig
   }, [days, symbol]);
 
   // ✅ NUEVO: Efecto para manejar cambios en zoomDays
+  const prevZoomDaysRef = useRef(zoomDays);
+
   useEffect(() => {
-    if (zoomDays !== null && zoomDays !== undefined) {
-      // Resetear offset para mostrar las velas más recientes
+    const wasNull = prevZoomDaysRef.current === null || prevZoomDaysRef.current === undefined;
+    const isNull = zoomDays === null || zoomDays === undefined;
+
+    // Solo resetear offset si cambiamos entre modo "Todos" (null) ↔ zoom específico (número)
+    // Esto evita el "baile" cuando solo cambia el valor numérico
+    if (wasNull !== isNull) {
       viewStateRef.current.offset = 0;
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    } else if (zoomDays !== null && zoomDays !== undefined) {
+      // Si solo cambió el número (7→30), redibujar sin resetear offset
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
+
+    prevZoomDaysRef.current = zoomDays;
   }, [zoomDays]);
 
   useEffect(() => {
