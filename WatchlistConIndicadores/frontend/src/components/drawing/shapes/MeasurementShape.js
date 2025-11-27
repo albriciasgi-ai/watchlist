@@ -33,7 +33,8 @@ class MeasurementShape {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return false;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente para permitir coordenadas 0
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return false;
 
     // Distancia punto a línea
     const A = x - x1;
@@ -73,7 +74,8 @@ class MeasurementShape {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return null;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente para permitir coordenadas 0
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return null;
 
     const dist1 = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
     if (dist1 <= handleRadius) return 'start';
@@ -196,7 +198,8 @@ class MeasurementShape {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente para permitir coordenadas 0
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return;
 
     const measurements = this.calculateMeasurements(scaleConverter);
 

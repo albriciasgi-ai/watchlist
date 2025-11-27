@@ -275,21 +275,38 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     const { x, y, width, height } = bounds;
 
-    const startCandleIndex = this.findCandleIndex(this.startTimestamp, visibleCandles);
-    const endCandleIndex = this.findCandleIndex(this.endTimestamp, visibleCandles);
+    // ✅ FIX PROBLEMA 1: Buscar en allCandles para encontrar el rango incluso cuando no está visible
+    const startCandleIndex = this.findCandleIndex(this.startTimestamp, allCandles);
+    const endCandleIndex = this.findCandleIndex(this.endTimestamp, allCandles);
 
     if (startCandleIndex === -1 || endCandleIndex === -1) {
       ctx.restore();
       return;
     }
 
-    const rangeStartX = this.candleIndexToX(startCandleIndex, visibleCandles.length, x, width);
-    const rangeEndX = this.candleIndexToX(endCandleIndex, visibleCandles.length, x, width);
+    // ✅ FIX PROBLEMA 1: Calcular posición X relativa a visibleCandles
+    // Necesitamos saber qué velas están visibles (startIdx y endIdx en allCandles)
+    const firstVisibleTimestamp = visibleCandles[0]?.timestamp;
+    const lastVisibleTimestamp = visibleCandles[visibleCandles.length - 1]?.timestamp;
 
-    if (!rangeStartX || !rangeEndX) {
+    if (!firstVisibleTimestamp || !lastVisibleTimestamp) {
       ctx.restore();
       return;
     }
+
+    const firstVisibleIdx = this.findCandleIndex(firstVisibleTimestamp, allCandles);
+    const lastVisibleIdx = this.findCandleIndex(lastVisibleTimestamp, allCandles);
+
+    // Calcular posición X basándose en la posición relativa dentro de visibleCandles
+    const barWidth = width / visibleCandles.length;
+
+    // Índice relativo del rango start dentro de las velas visibles
+    const startRelativeIdx = startCandleIndex - firstVisibleIdx;
+    const endRelativeIdx = endCandleIndex - firstVisibleIdx;
+
+    const rangeStartX = x + (startRelativeIdx * barWidth) + (barWidth / 2);
+    const rangeEndX = x + (endRelativeIdx * barWidth) + (barWidth / 2);
+
     if (rangeStartX === rangeEndX) {
       ctx.restore();
       return;

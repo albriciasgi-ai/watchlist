@@ -1128,10 +1128,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     log.candle(symbol, '🚀 Componente montado, iniciando...');
 
-    // ✅ FIX PROBLEMA 4: Función async para inicializar todo en orden correcto
+    // ✅ FIX PROBLEMA 2 y 4: Función async para inicializar todo en orden correcto
     const initializeAll = async () => {
-      // 1. Cargar datos históricos
-      loadHistoricalData();
+      // 1. Cargar datos históricos (AWAIT para asegurar que termine antes de continuar)
+      await loadHistoricalData();
 
       // 2. Cargar dibujos guardados (AWAIT para asegurar que termine antes de dibujar)
       await loadDrawings();
@@ -1526,9 +1526,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           days={days}
           indicatorManagerRef={indicatorManagerRef}
           indicatorStates={indicatorStates}
-          onClose={() => {
+          onClose={async () => {
             setShowChartModal(false);
-            loadDrawings(); // Reload drawings to show new ones
+            // ✅ FIX PROBLEMA 4: Esperar a que loadDrawings() termine antes de dibujar
+            await loadDrawings(); // Reload drawings to show new ones
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
           }}
         />
