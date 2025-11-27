@@ -295,10 +295,27 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     );
 
     const chartWidth = width - marginLeft - marginRight;
-    const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+
+    // ✅ FIX PROBLEMA 5: Auto-compress completo para mostrar todas las velas
+    // Modo "fit all": cuando zoom=1 y offset=0, mostrar TODAS las velas comprimidas
+    // Modo "manual": cuando el usuario hace zoom o paneo, usar el cálculo tradicional
+    let candlesPerScreen, barWidth;
+    const minCandleWidth = 1;  // Permitir compresión hasta 1px por vela
+    const defaultCandleWidth = 8; // Ancho por defecto
+
+    if (viewStateRef.current.zoom === 1 && viewStateRef.current.offset === 0) {
+      // Modo "fit all": mostrar TODAS las velas disponibles
+      candlesPerScreen = displayCandles.length;
+      barWidth = Math.max(minCandleWidth, chartWidth / candlesPerScreen);
+    } else {
+      // Modo manual: usar zoom del usuario
+      barWidth = Math.max(minCandleWidth, defaultCandleWidth * viewStateRef.current.zoom);
+      candlesPerScreen = Math.floor(chartWidth / barWidth);
+    }
+
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
     const offset = Math.min(viewStateRef.current.offset, maxOffset);
-    
+
     const startIdx = Math.max(0, displayCandles.length - candlesPerScreen - offset);
     const endIdx = Math.min(displayCandles.length, startIdx + candlesPerScreen);
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
@@ -323,7 +340,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
     const volumeScale = maxVolume > 0 ? volumeHeight / maxVolume : 1;
 
-    const barWidth = chartWidth / visibleCandles.length;
+    // ✅ barWidth ya fue calculado arriba según el modo (fit all o manual)
 
     ctx.strokeStyle = axisColor;
     ctx.fillStyle = textColor;
@@ -1105,13 +1122,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   }, [oiMode]);
 
   // ==================== MAIN EFFECT ====================
-  
+
   useEffect(() => {
     mountedRef.current = true;
-    
+
     log.candle(symbol, '🚀 Componente montado, iniciando...');
-    
-    const initIndicators = async () => {
+
+    // ✅ FIX PROBLEMA 4: Función async para inicializar todo en orden correcto
+    const initializeAll = async () => {
+      // 1. Cargar datos históricos
+      loadHistoricalData();
+
+      // 2. Cargar dibujos guardados (AWAIT para asegurar que termine antes de dibujar)
+      await loadDrawings();
+
+      // 3. Inicializar indicadores
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       await indicatorManagerRef.current.initialize();
 
@@ -1143,14 +1168,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 		const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
 		setFixedRangeProfiles(profiles);
 		console.log(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
-	  } 
+	  }
       log.indicator(symbol, '✅ Indicadores inicializados');
+
+      // 4. Dibujar el chart DESPUÉS de que todo esté cargado
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     };
-    
-    loadHistoricalData();
-    loadDrawings(); // Load saved drawings for this symbol
-    initIndicators();
+
+    // Ejecutar la inicialización
+    initializeAll();
 
     const bybitInterval = getBybitInterval(interval);
     wsManager.connect(bybitInterval);

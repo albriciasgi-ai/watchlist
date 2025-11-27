@@ -43,7 +43,8 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return false;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return false;
 
     // Algoritmo de distancia punto-línea
     const A = y2 - y1;
@@ -70,7 +71,8 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return null;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return null;
 
     // Handle de inicio
     const dist1 = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
@@ -150,7 +152,9 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return;
+    // ✅ FIX PROBLEMA 3: Validar null/undefined específicamente, no valores falsy
+    // Esto permite renderizar dibujos parcialmente fuera de la visual (coordenadas negativas o 0)
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return;
 
     ctx.save();
 

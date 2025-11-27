@@ -270,24 +270,39 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     if (!this.profile) return;
 
+    // ✅ FIX PROBLEMA 1: Guardar estado del canvas antes de renderizar
+    ctx.save();
+
     const { x, y, width, height } = bounds;
 
     const startCandleIndex = this.findCandleIndex(this.startTimestamp, visibleCandles);
     const endCandleIndex = this.findCandleIndex(this.endTimestamp, visibleCandles);
 
-    if (startCandleIndex === -1 || endCandleIndex === -1) return;
+    if (startCandleIndex === -1 || endCandleIndex === -1) {
+      ctx.restore();
+      return;
+    }
 
     const rangeStartX = this.candleIndexToX(startCandleIndex, visibleCandles.length, x, width);
     const rangeEndX = this.candleIndexToX(endCandleIndex, visibleCandles.length, x, width);
 
-    if (!rangeStartX || !rangeEndX) return;
-    if (rangeStartX === rangeEndX) return;
+    if (!rangeStartX || !rangeEndX) {
+      ctx.restore();
+      return;
+    }
+    if (rangeStartX === rangeEndX) {
+      ctx.restore();
+      return;
+    }
 
     const clampedStartX = Math.max(x, rangeStartX);
     const clampedEndX = Math.min(x + width, rangeEndX);
     const rangeWidth = clampedEndX - clampedStartX;
 
-    if (rangeWidth <= 0) return;
+    if (rangeWidth <= 0) {
+      ctx.restore();
+      return;
+    }
 
     // 🎯 NUEVO: Usar priceContext si está disponible (incluye verticalZoom y verticalOffset)
     // Si no está disponible, calcular localmente como antes
@@ -378,7 +393,8 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       }
 
       ctx.fillStyle = color;
-      ctx.fillRect(clampedStartX, levelY - 1, barWidth, 2);
+      // ✅ FIX PROBLEMA 1: Aumentar altura del histograma de 2px a 4px para mejor visibilidad
+      ctx.fillRect(clampedStartX, levelY - 2, barWidth, 4);
     }
 
     const pocY = priceToY(this.profile.poc.price);
@@ -452,6 +468,9 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     ctx.fillStyle = this.pocColor;
     ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}`, labelX, labelY);
+
+    // ✅ FIX PROBLEMA 1: Restaurar estado del canvas
+    ctx.restore();
   }
 
   hexToRgba(hex, alpha) {

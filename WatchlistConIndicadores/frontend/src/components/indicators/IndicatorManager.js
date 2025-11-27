@@ -60,10 +60,10 @@ class IndicatorManager {
     }
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile y Open Interest si es necesario
+    // Solo cargar Volume Profile, Open Interest y Support & Resistance si es necesario
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
+        if (ind.name === "Volume Profile" || ind.name === "Open Interest" || ind.name === "Support & Resistance") {
           return ind.fetchData();
         }
         return Promise.resolve();
@@ -106,7 +106,7 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh solo para Volume Profile y Open Interest
+  // ✅ SIMPLIFICADO: refresh solo para Volume Profile, Open Interest y Support & Resistance
   async refresh() {
     const startTime = Date.now();
     console.log(`[${this.symbol}] 🔄 Refrescando indicadores...`);
@@ -114,7 +114,7 @@ class IndicatorManager {
     try {
       await Promise.all(
         this.indicators.map(async (indicator) => {
-          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest")) {
+          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance")) {
             await indicator.fetchData();
           }
         })
