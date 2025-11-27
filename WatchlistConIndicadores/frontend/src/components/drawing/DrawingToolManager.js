@@ -12,7 +12,7 @@ import TPSLBoxShort from './shapes/TPSLBoxShort';
 import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
-  constructor(symbol, interval, onToolChange = null) {
+  constructor(symbol, interval, onToolChange = null, onShapeAdded = null) {
     this.symbol = symbol;
     this.interval = interval;
     this.shapes = [];
@@ -22,6 +22,7 @@ class DrawingToolManager {
     this.drawingInProgress = null;
     this.tempPoints = [];
     this.onToolChange = onToolChange; // Callback para notificar cambios de herramienta
+    this.onShapeAdded = onShapeAdded; // ✅ NUEVO: Callback para notificar cuando se agrega un shape
 
     // Undo/Redo system
     this.history = [];
@@ -83,6 +84,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // ✅ NUEVO: Notificar que se agregó un shape
+        if (this.onShapeAdded) this.onShapeAdded();
         // NO cambiar tool, permitir dibujar múltiples líneas
       }
       return true;
@@ -93,6 +96,8 @@ class DrawingToolManager {
       this.addShape(line);
       console.log('[DrawingToolManager] ✅ Created horizontal line, total shapes:', this.shapes.length);
       this.saveToHistory();
+      // ✅ NUEVO: Notificar que se agregó un shape
+      if (this.onShapeAdded) this.onShapeAdded();
       // NO cambiar tool, permitir dibujar múltiples líneas
       return true;
     }
@@ -101,6 +106,8 @@ class DrawingToolManager {
       const line = new VerticalLine(price, time);
       this.addShape(line);
       this.saveToHistory();
+      // ✅ NUEVO: Notificar que se agregó un shape
+      if (this.onShapeAdded) this.onShapeAdded();
       // NO cambiar tool, permitir dibujar múltiples líneas
       return true;
     }
@@ -115,6 +122,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // ✅ NUEVO: Notificar que se agregó un shape
+        if (this.onShapeAdded) this.onShapeAdded();
         // NO cambiar tool, permitir dibujar múltiples rectángulos
       }
       return true;
@@ -130,6 +139,8 @@ class DrawingToolManager {
         this.drawingInProgress = null;
         this.tempPoints = [];
         this.saveToHistory();
+        // ✅ NUEVO: Notificar que se agregó un shape
+        if (this.onShapeAdded) this.onShapeAdded();
         // NO cambiar tool, permitir dibujar múltiples fibonacci
       }
       return true;
@@ -139,6 +150,8 @@ class DrawingToolManager {
       const box = new TPSLBox(price, time);
       this.addShape(box);
       this.saveToHistory();
+      // ✅ NUEVO: Notificar que se agregó un shape
+      if (this.onShapeAdded) this.onShapeAdded();
       // NO cambiar tool, permitir dibujar múltiples cajas
       return true;
     }
@@ -148,6 +161,8 @@ class DrawingToolManager {
       this.addShape(box);
       console.log('[DrawingToolManager] ✅ Created TP/SL SHORT box, total shapes:', this.shapes.length);
       this.saveToHistory();
+      // ✅ NUEVO: Notificar que se agregó un shape
+      if (this.onShapeAdded) this.onShapeAdded();
       // NO cambiar tool, permitir dibujar múltiples cajas SHORT
       return true;
     }
@@ -156,6 +171,8 @@ class DrawingToolManager {
       const textbox = new TextBox(price, time, 'Escribe aquí...');
       this.addShape(textbox);
       this.saveToHistory();
+      // ✅ NUEVO: Notificar que se agregó un shape
+      if (this.onShapeAdded) this.onShapeAdded();
       // NO cambiar tool, permitir dibujar múltiples textboxes
       return true;
     }

@@ -272,10 +272,22 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     const { x, y, width, height } = bounds;
 
-    const startCandleIndex = this.findCandleIndex(this.startTimestamp, visibleCandles);
-    const endCandleIndex = this.findCandleIndex(this.endTimestamp, visibleCandles);
+    // ✅ FIX: Buscar índice en allCandles para obtener posición absoluta
+    // Luego calcular posición relativa respecto a visibleCandles
+    const startCandleAbsIndex = this.findCandleIndex(this.startTimestamp, candlesToUse);
+    const endCandleAbsIndex = this.findCandleIndex(this.endTimestamp, candlesToUse);
 
-    if (startCandleIndex === -1 || endCandleIndex === -1) return;
+    if (startCandleAbsIndex === -1 || endCandleAbsIndex === -1) return;
+
+    // Encontrar el índice de la primera vela visible dentro de allCandles
+    const firstVisibleTimestamp = visibleCandles[0]?.timestamp;
+    const firstVisibleAbsIndex = candlesToUse.findIndex(c => c.timestamp === firstVisibleTimestamp);
+
+    if (firstVisibleAbsIndex === -1) return;
+
+    // Calcular índice relativo dentro de visibleCandles
+    const startCandleIndex = startCandleAbsIndex - firstVisibleAbsIndex;
+    const endCandleIndex = endCandleAbsIndex - firstVisibleAbsIndex;
 
     const rangeStartX = this.candleIndexToX(startCandleIndex, visibleCandles.length, x, width);
     const rangeEndX = this.candleIndexToX(endCandleIndex, visibleCandles.length, x, width);
