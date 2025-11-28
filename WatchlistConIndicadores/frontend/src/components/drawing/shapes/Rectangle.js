@@ -75,7 +75,8 @@ class Rectangle {
     const y1 = scaleConverter.priceToY(this.priceHigh);
     const y2 = scaleConverter.priceToY(this.priceLow);
 
-    if (!x1 || !x2) return false;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return false;
 
     const minX = Math.min(x1, x2) - tolerance;
     const maxX = Math.max(x1, x2) + tolerance;
@@ -91,7 +92,8 @@ class Rectangle {
     const y1 = scaleConverter.priceToY(this.priceHigh);
     const y2 = scaleConverter.priceToY(this.priceLow);
 
-    if (!x1 || !x2) return null;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return null;
 
     // Esquinas
     const corners = [
@@ -202,7 +204,8 @@ class Rectangle {
     const y1 = scaleConverter.priceToY(this.priceHigh);
     const y2 = scaleConverter.priceToY(this.priceLow);
 
-    if (!x1 || !x2) return;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return;
 
     const width = x2 - x1;
     const height = y2 - y1;

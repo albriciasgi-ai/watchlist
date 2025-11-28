@@ -115,6 +115,11 @@ class IndicatorManager {
       await Promise.all(
         this.indicators.map(async (indicator) => {
           if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance")) {
+            // ✅ FIX: Actualizar days del indicador antes de fetchData
+            if (indicator.days !== this.days) {
+              console.log(`[${this.symbol}] 🔄 Actualizando days de ${indicator.name}: ${indicator.days} → ${this.days}`);
+              indicator.days = this.days;
+            }
             await indicator.fetchData();
           }
         })

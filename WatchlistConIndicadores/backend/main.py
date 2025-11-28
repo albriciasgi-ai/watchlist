@@ -603,7 +603,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
         if z_scores and z_scores[i] < z_threshold:
             continue
 
-        # Detectar pivot high (resistencia)
+        # Detectar pivot high (máximo local)
         is_pivot_high = True
         for j in range(i - left_bars, i):
             if candles[j]['high'] >= high:
@@ -618,7 +618,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
 
         if is_pivot_high:
             pivots.append({
-                'type': 'resistance',
+                'type': 'pivot_high',  # ✅ FIX: Marcarlo como pivot_high, no como resistance aún
                 'price': high,
                 'timestamp': candle['timestamp'],
                 'volume': volume,
@@ -626,7 +626,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
                 'candle_index': i
             })
 
-        # Detectar pivot low (soporte)
+        # Detectar pivot low (mínimo local)
         is_pivot_low = True
         for j in range(i - left_bars, i):
             if candles[j]['low'] <= low:
@@ -641,7 +641,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
 
         if is_pivot_low:
             pivots.append({
-                'type': 'support',
+                'type': 'pivot_low',  # ✅ FIX: Marcarlo como pivot_low, no como support aún
                 'price': low,
                 'timestamp': candle['timestamp'],
                 'volume': volume,
@@ -666,9 +666,9 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
     if not pivots:
         return []
 
-    # Separar soportes y resistencias
-    supports = [p for p in pivots if p['type'] == 'support']
-    resistances = [p for p in pivots if p['type'] == 'resistance']
+    # ✅ FIX: Separar pivot highs y pivot lows
+    pivot_lows = [p for p in pivots if p['type'] == 'pivot_low']
+    pivot_highs = [p for p in pivots if p['type'] == 'pivot_high']
 
     def cluster_group(group):
         if not group:
@@ -700,19 +700,19 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
 
         return clusters
 
-    support_clusters = cluster_group(supports)
-    resistance_clusters = cluster_group(resistances)
+    pivot_low_clusters = cluster_group(pivot_lows)
+    pivot_high_clusters = cluster_group(pivot_highs)
 
     # Convertir clusters a niveles con metadata
     levels = []
 
-    for cluster in support_clusters:
+    for cluster in pivot_low_clusters:
         avg_price = sum(p['price'] for p in cluster) / len(cluster)
         avg_volume = sum(p['volume'] for p in cluster) / len(cluster)
         avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
 
         levels.append({
-            'type': 'support',
+            'type': 'pivot_low',  # ✅ FIX: Mantener como pivot_low por ahora
             'price': avg_price,
             'touches': len(cluster),
             'touch_timestamps': [p['timestamp'] for p in cluster],
@@ -723,13 +723,13 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
             'pivots': cluster
         })
 
-    for cluster in resistance_clusters:
+    for cluster in pivot_high_clusters:
         avg_price = sum(p['price'] for p in cluster) / len(cluster)
         avg_volume = sum(p['volume'] for p in cluster) / len(cluster)
         avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
 
         levels.append({
-            'type': 'resistance',
+            'type': 'pivot_high',  # ✅ FIX: Mantener como pivot_high por ahora
             'price': avg_price,
             'touches': len(cluster),
             'touch_timestamps': [p['timestamp'] for p in cluster],
@@ -739,6 +739,48 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
             'avg_z_score': avg_z_score,
             'pivots': cluster
         })
+
+    return levels
+
+
+def reclassify_levels_by_price(levels: list, current_price: float):
+    """
+    ✅ FIX: Reclasifica los niveles como soporte o resistencia basándose en el precio actual
+
+    Lógica:
+    - pivot_high (máximo local):
+        - Si precio actual < nivel → RESISTENCIA (precio está debajo, nivel resiste subidas)
+        - Si precio actual > nivel → SOPORTE (nivel roto, ahora actúa como soporte)
+
+    - pivot_low (mínimo local):
+        - Si precio actual > nivel → SOPORTE (precio está arriba, nivel soporta caídas)
+        - Si precio actual < nivel → RESISTENCIA (nivel roto, ahora actúa como resistencia)
+
+    Args:
+        levels: Lista de niveles con type='pivot_high' o 'pivot_low'
+        current_price: Precio actual del activo
+
+    Returns:
+        Lista de niveles con type='support' o 'resistance' correctamente clasificados
+    """
+    for level in levels:
+        level_price = level['price']
+        pivot_type = level['type']
+
+        # Reclasificar basándose en el precio actual
+        if pivot_type == 'pivot_high':
+            # Pivot high (máximo local)
+            if current_price < level_price:
+                level['type'] = 'resistance'  # Precio debajo = resistencia
+            else:
+                level['type'] = 'support'  # Precio arriba = soporte (nivel roto)
+
+        elif pivot_type == 'pivot_low':
+            # Pivot low (mínimo local)
+            if current_price > level_price:
+                level['type'] = 'support'  # Precio arriba = soporte
+            else:
+                level['type'] = 'resistance'  # Precio debajo = resistencia (nivel roto)
 
     return levels
 
@@ -937,7 +979,8 @@ async def get_support_resistance(
         print(f"[{symbol}] 📊 SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
 
         # Intentar cargar del cache
-        cache_key = f"sr_{volume_method}_{z_score_threshold}_{z_score_period}_{left_bars}_{right_bars}_{min_touches}_{cluster_distance}"
+        # ✅ FIX: Incluir 'days' en la cache key para evitar colisiones entre diferentes períodos
+        cache_key = f"sr_{days}_{volume_method}_{z_score_threshold}_{z_score_period}_{left_bars}_{right_bars}_{min_touches}_{cluster_distance}"
         cached_data = load_cache(symbol, interval_final, cache_key)
 
         if cached_data and cached_data.get("symbol") == symbol:
@@ -991,9 +1034,15 @@ async def get_support_resistance(
         levels = [l for l in levels if l['touches'] >= min_touches]
         print(f"[{symbol}] Niveles después de filtrar por min_touches: {len(levels)}")
 
-        # Calcular strength para cada nivel
+        # ✅ FIX: Obtener precio actual ANTES de reclasificar
         current_time_ms = int(time.time() * 1000)
         current_price = candles[-1]['close']
+
+        # ✅ FIX: Reclasificar niveles basándose en precio actual
+        levels = reclassify_levels_by_price(levels, current_price)
+        print(f"[{symbol}] ✅ Niveles reclasificados basándose en precio actual: ${current_price:.2f}")
+
+        # Calcular strength para cada nivel
 
         for level in levels:
             level['strength'] = calculate_level_strength(level, current_time_ms)

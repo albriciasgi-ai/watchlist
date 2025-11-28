@@ -110,6 +110,7 @@ class SupportResistanceIndicator extends IndicatorBase {
         resistances: this.resistances.length,
         supports: this.supports.length,
         hasPriceToY: !!priceContext?.priceToY,
+        hasTimeToX: !!priceContext?.timeToX,
         bounds
       });
       this._renderLoggedOnce = true;
@@ -117,10 +118,17 @@ class SupportResistanceIndicator extends IndicatorBase {
 
     const { x, y, width, height } = bounds;
 
-    // Extract priceToY function from priceContext
+    // Extract priceToY and timeToX functions from priceContext
     const priceToY = priceContext ? priceContext.priceToY : null;
+    const timeToX = priceContext ? priceContext.timeToX : null;
+
     if (!priceToY) {
       console.warn(`[${this.symbol}] ❌ No priceToY function in priceContext!`);
+      return;
+    }
+
+    if (!timeToX) {
+      console.warn(`[${this.symbol}] ❌ No timeToX function in priceContext!`);
       return;
     }
 
@@ -134,14 +142,14 @@ class SupportResistanceIndicator extends IndicatorBase {
     // Dibujar resistencias
     if (this.showResistances) {
       this.resistances.forEach(level => {
-        this.renderLevel(ctx, level, bounds, priceToY, 'resistance');
+        this.renderLevel(ctx, level, bounds, priceToY, timeToX, 'resistance');
       });
     }
 
     // Dibujar soportes
     if (this.showSupports) {
       this.supports.forEach(level => {
-        this.renderLevel(ctx, level, bounds, priceToY, 'support');
+        this.renderLevel(ctx, level, bounds, priceToY, timeToX, 'support');
       });
     }
   }
@@ -188,11 +196,26 @@ class SupportResistanceIndicator extends IndicatorBase {
 
   /**
    * Renderiza un nivel de soporte o resistencia
+   * ✅ FIX: Ahora dibuja desde el punto de detección (lastTouch) hacia adelante
    */
-  renderLevel(ctx, level, bounds, priceToY, type) {
+  renderLevel(ctx, level, bounds, priceToY, timeToX, type) {
     const { x, y, width, height } = bounds;
 
     const priceY = priceToY(level.price);
+
+    // ✅ FIX: Calcular coordenada X desde donde empieza el nivel (lastTouch)
+    let startX = x; // Default: inicio del chart
+
+    if (level.lastTouch) {
+      const levelStartX = timeToX(level.lastTouch);
+      // Si lastTouch está dentro del viewport visible, usar esa coordenada
+      // Si está fuera a la izquierda, extender desde el borde izquierdo
+      if (levelStartX !== null && levelStartX > x) {
+        startX = levelStartX;
+      }
+    }
+
+    const endX = x + width; // Siempre termina al final del chart
 
     // Color basado en tipo y estado
     let color, alpha, lineStyle;
@@ -214,15 +237,15 @@ class SupportResistanceIndicator extends IndicatorBase {
     // Grosor basado en strength
     const lineWidth = Math.max(1, Math.min(4, level.strength / 2));
 
-    // Dibujar línea
+    // ✅ FIX: Dibujar línea desde startX (lastTouch) hasta endX (final del chart)
     ctx.strokeStyle = color;
     ctx.globalAlpha = alpha;
     ctx.lineWidth = lineWidth;
     ctx.setLineDash(lineStyle);
 
     ctx.beginPath();
-    ctx.moveTo(x, priceY);
-    ctx.lineTo(x + width, priceY);
+    ctx.moveTo(startX, priceY);
+    ctx.lineTo(endX, priceY);
     ctx.stroke();
 
     ctx.setLineDash([]);
@@ -239,7 +262,7 @@ class SupportResistanceIndicator extends IndicatorBase {
       const metrics = ctx.measureText(labelText);
       const labelWidth = metrics.width + 8;
       const labelHeight = 16;
-      const labelX = x + width - labelWidth - 5;
+      const labelX = endX - labelWidth - 5;
       const labelY = priceY - labelHeight / 2;
 
       ctx.fillStyle = "rgba(255, 255, 255, 0.9)";

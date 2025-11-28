@@ -807,7 +807,7 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
           return minPrice + (chartHeight - relativeY) / yScale;
         },
         timeToX: (timestamp) => {
-          // Find closest candle instead of exact match (for multi-timeframe support)
+          // ✅ FIX: Permitir coordenadas fuera del viewport para que dibujos parcialmente visibles se rendericen
           if (candles.length === 0) return null;
 
           let closestIndex = 0;
@@ -821,15 +821,18 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
             }
           }
 
-          const barWidth = chartWidth / candles.length;
-          return marginLeft + (closestIndex * barWidth) + (barWidth / 2);
+          // Calcular índice relativo al viewport visible (puede ser negativo o > visibleCandles.length)
+          const relativeIndex = closestIndex - startIdx;
+          const barWidth = chartWidth / visibleCandles.length;
+          return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
         },
         xToTime: (x) => {
+          // ✅ FIX: Usar visibleCandles para consistencia con timeToX
           const relativeX = x - marginLeft;
-          const barWidth = chartWidth / candles.length;
+          const barWidth = chartWidth / visibleCandles.length;
           const fractionalIndex = (relativeX - barWidth / 2) / barWidth;
-          const nearestIndex = Math.round(fractionalIndex);
-          return candles[nearestIndex]?.timestamp || null;
+          const absoluteIndex = startIdx + Math.round(fractionalIndex);
+          return candles[absoluteIndex]?.timestamp || null;
         }
       };
     }
@@ -983,7 +986,8 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
         verticalZoom: scaleConverter.verticalZoom,
         verticalOffset: scaleConverter.verticalOffset,
         yScale: scaleConverter.priceRange > 0 ? (chartHeight / scaleConverter.priceRange) * scaleConverter.verticalZoom : 1,  // ✅ FIX: incluir verticalZoom en yScale
-        priceToY: scaleConverter.priceToY  // ✅ FIX: Agregar priceToY para S&R indicator
+        priceToY: scaleConverter.priceToY,  // ✅ FIX: Agregar priceToY para S&R indicator
+        timeToX: scaleConverter.timeToX     // ✅ FIX: Agregar timeToX para S&R line rendering desde detección
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, candles, priceContext);
     }

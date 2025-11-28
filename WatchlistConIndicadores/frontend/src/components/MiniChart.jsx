@@ -369,6 +369,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
       };
 
+      // ✅ FIX: Función para convertir timestamp a coordenada X en el canvas
+      const timeToX = (timestamp) => {
+        if (displayCandles.length === 0) return null;
+
+        let closestIndex = 0;
+        let minDiff = Math.abs(displayCandles[0].timestamp - timestamp);
+
+        for (let i = 1; i < displayCandles.length; i++) {
+          const diff = Math.abs(displayCandles[i].timestamp - timestamp);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i;
+          }
+        }
+
+        const relativeIndex = closestIndex - startIdx;
+        const barWidth = chartWidth / visibleCandles.length;
+        return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+      };
+
       // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
       const priceContext = {
         minPrice,
@@ -377,7 +397,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         verticalZoom,
         verticalOffset,
         yScale,
-        priceToY  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
+        priceToY,  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
+        timeToX    // ✅ FIX: Función para que los indicadores puedan convertir timestamps a coordenadas X
       };
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
     }
@@ -424,8 +445,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             }
           }
 
+          // ✅ FIX: Permitir coordenadas fuera del viewport para que dibujos parcialmente visibles se rendericen
           const relativeIndex = closestIndex - startIdx;
-          if (relativeIndex < 0 || relativeIndex >= visibleCandles.length) return null;
           return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
         },
 

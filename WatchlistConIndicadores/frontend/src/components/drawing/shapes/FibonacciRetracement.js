@@ -53,7 +53,8 @@ class FibonacciRetracement {
     const x1 = scaleConverter.timeToX(this.time1);
     const x2 = scaleConverter.timeToX(this.time2);
 
-    if (!x1 || !x2) return false;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return false;
 
     // ✅ CORREGIDO: price2 (segundo click) = 0%, niveles desde price2
     const priceRange = this.price2 - this.price1;
@@ -82,7 +83,8 @@ class FibonacciRetracement {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return null;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return null;
 
     const dist1 = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
     if (dist1 <= handleRadius) return 'start';
@@ -156,7 +158,8 @@ class FibonacciRetracement {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return;
 
     ctx.save();
 

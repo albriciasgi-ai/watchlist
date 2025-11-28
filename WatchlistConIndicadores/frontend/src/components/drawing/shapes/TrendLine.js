@@ -43,7 +43,8 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return false;
+    // ✅ FIX: Solo rechazar si es null/undefined, no si es 0 o coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return false;
 
     // Algoritmo de distancia punto-línea
     const A = y2 - y1;
@@ -70,7 +71,8 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return null;
+    // ✅ FIX: Solo rechazar si es null/undefined, no si es 0 o coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return null;
 
     // Handle de inicio
     const dist1 = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
@@ -150,7 +152,8 @@ class TrendLine {
     const x2 = scaleConverter.timeToX(this.time2);
     const y2 = scaleConverter.priceToY(this.price2);
 
-    if (!x1 || !x2) return;
+    // ✅ FIX: Solo rechazar si es null/undefined, permitir 0 y coordenadas fuera del canvas
+    if (x1 === null || x1 === undefined || x2 === null || x2 === undefined) return;
 
     ctx.save();
 
