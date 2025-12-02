@@ -400,7 +400,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         priceToY,  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
         timeToX    // ✅ FIX: Función para que los indicadores puedan convertir timestamps a coordenadas X
       };
-      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
+      // Pasar drawings como manualLevels para que RejectionPatternIndicator pueda usarlos
+      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext, drawingsRef.current);
     }
 
     // Render saved drawings (readonly, below candles)

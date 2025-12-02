@@ -1,34 +1,6 @@
 {
   "symbol": "ETHUSDT",
-  "shapes": [
-    {
-      "type": "trendline",
-      "id": "trendline_1764263095719_0.4376965226850643",
-      "price1": 3299.8509352517985,
-      "time1": 1760133600000,
-      "price2": 2613.043057553957,
-      "time2": 1763722800000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "horizontal",
-      "id": "horizontal_1764263102222_0.3148544348358424",
-      "price": 2613.043057553957,
-      "time": 1760850000000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    }
-  ],
-  "updated_at": "2025-11-27T17:05:06.100807+00:00",
-  "total_shapes": 2
+  "shapes": [],
+  "updated_at": "2025-12-02T01:11:00.404813+00:00",
+  "total_shapes": 0
 }

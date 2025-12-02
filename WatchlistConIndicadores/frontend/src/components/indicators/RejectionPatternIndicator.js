@@ -55,19 +55,63 @@ class RejectionPatternIndicator extends IndicatorBase {
     return {
       enabled: true,
       patterns: {
-        hammer: { enabled: true, minWickRatio: 2.0 },
-        shootingStar: { enabled: true, minWickRatio: 2.0 },
-        engulfing: { enabled: true },
-        doji: { enabled: false }
+        hammer: {
+          enabled: true,
+          minWickRatio: 1.5,           // Reducido de 2.0 - más permisivo
+          maxUpperWickRatio: 0.3,      // Aumentado de 0.2 - más permisivo
+          minBodyPosition: 0.5,        // Reducido de 0.6 - más permisivo
+          debug: false                 // Habilitar para ver por qué se rechazan patrones
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 1.5,           // Reducido de 2.0
+          maxLowerWickRatio: 0.3,      // Aumentado de 0.2
+          minBodyPosition: 0.5,        // Reducido de 0.6
+          debug: false
+        },
+        engulfing: {
+          enabled: true
+        },
+        doji: {
+          enabled: false,
+          maxBodyRatio: 0.08,          // Aumentado de 0.05 - más permisivo
+          minLongWick: 0.5,            // Reducido de 0.6
+          maxShortWick: 0.15,          // Aumentado de 0.1
+          debug: false
+        }
       },
       referenceContexts: [],
-      filters: {
-        minConfidence: 60,
-        requireNearLevel: true,
-        proximityPercent: 1.0,
-        requireVolumeSpike: true
+      // Nueva configuración de swing detection
+      swingDetection: {
+        enabled: true,
+        leftBars: 5,
+        rightBars: 5,
+        required: false  // Cambiado a false por defecto - más patrones visibles
       },
-      alertsEnabled: false
+      // Nueva configuración de fuentes de niveles
+      levelSources: {
+        volumeProfile: true,
+        fixedRanges: true,
+        clusters: true,
+        manualLevels: true,
+        supportResistance: true,
+        rangeDetection: true
+      },
+      // Configuración de volume Z-score
+      volumeZScore: {
+        enabled: false,
+        lookbackPeriod: 20,
+        minZScore: 1.0
+      },
+      filters: {
+        minConfidence: 50,             // Reducido de 60 - más permisivo
+        requireNearLevel: false,       // Cambiado a false - más patrones visibles
+        proximityPercent: 1.0,
+        requireVolumeSpike: false
+      },
+      alertsEnabled: false,
+      // Nuevo: Modo debug global
+      debugMode: false                  // Si true, muestra console.log de todos los patrones rechazados
     };
   }
 
@@ -89,17 +133,201 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * Clasifica niveles de referencia en highs, lows y pivots
+   * @param {Object} referenceLevels - Objeto con {importantHighs, importantLows, pivots}
+   * @returns {Object} {importantHighs, importantLows, allLevels}
+   */
+  classifyReferenceLevels(referenceLevels) {
+    if (!referenceLevels) {
+      return {
+        importantHighs: [],
+        importantLows: [],
+        allLevels: []
+      };
+    }
+
+    // Combinar pivots con ambos arrays (con strength reducido)
+    const importantHighs = [
+      ...referenceLevels.importantHighs,
+      ...referenceLevels.pivots.map(p => ({ ...p, strength: p.strength * 0.7 }))
+    ];
+
+    const importantLows = [
+      ...referenceLevels.importantLows,
+      ...referenceLevels.pivots.map(p => ({ ...p, strength: p.strength * 0.7 }))
+    ];
+
+    const allLevels = [
+      ...referenceLevels.importantHighs,
+      ...referenceLevels.importantLows,
+      ...referenceLevels.pivots
+    ];
+
+    return {
+      importantHighs,
+      importantLows,
+      allLevels
+    };
+  }
+
+  /**
+   * Calcula confidence score mejorado basado en múltiples factores
+   * @param {Object} pattern - Patrón detectado
+   * @param {Array} importantHighs - Niveles high importantes
+   * @param {Array} importantLows - Niveles low importantes
+   * @param {number} proximityPct - Porcentaje de proximidad (default 0.01 = 1%)
+   * @returns {Object} Pattern con confidence calculado
+   */
+  enhancePatternConfidence(pattern, importantHighs, importantLows, proximityPct = 0.01) {
+    let confidence = pattern.quality || 50; // Base: quality score del patrón
+    const boosts = {
+      swingPoint: 0,
+      proximity: 0,
+      volume: 0,
+      levelStrength: 0
+    };
+
+    // BOOST 1: Está en swing point (+20)
+    if (pattern.atSwingPoint) {
+      boosts.swingPoint = 20;
+      confidence += 20;
+    }
+
+    // BOOST 2: Cerca de nivel importante del tipo correcto (+30 + strength bonus)
+    const relevantLevels = pattern.swingType === 'low' ? importantLows : importantHighs;
+
+    let nearestLevel = null;
+    let minDistance = Infinity;
+
+    for (const level of relevantLevels) {
+      const distance = Math.abs(pattern.price - level.price) / pattern.price;
+      if (distance <= proximityPct && distance < minDistance) {
+        nearestLevel = level;
+        minDistance = distance;
+      }
+    }
+
+    if (nearestLevel) {
+      // Bonus proporcional a la cercanía (0-30 puntos)
+      const proximityBonus = (1 - minDistance / proximityPct) * 30;
+      boosts.proximity = proximityBonus;
+      confidence += proximityBonus;
+
+      // Bonus adicional por strength del nivel (0-10 puntos)
+      const strengthBonus = (nearestLevel.strength / 10) * 10;
+      boosts.levelStrength = strengthBonus;
+      confidence += strengthBonus;
+    }
+
+    // BOOST 3: Volume spike (+15)
+    if (pattern.volumeZScore && pattern.volumeZScore > 1.0) {
+      const volumeBonus = Math.min(15, pattern.volumeZScore * 7);
+      boosts.volume = volumeBonus;
+      confidence += volumeBonus;
+    }
+
+    // Normalizar a 0-100
+    confidence = Math.min(100, Math.max(0, confidence));
+
+    return {
+      ...pattern,
+      confidence: Math.round(confidence),
+      nearLevel: nearestLevel || null,
+      boosts: boosts
+    };
+  }
+
+  /**
    * Detecta patrones localmente en las velas dadas
    * @param {Array} candles - Array de velas OHLC
+   * @param {Object} indicatorManager - Referencia al IndicatorManager para obtener niveles
+   * @param {Array} manualLevels - Array de drawings/horizontal lines (opcional)
    */
-  detectLocalPatterns(candles) {
+  detectLocalPatterns(candles, indicatorManager = null, manualLevels = []) {
     if (!candles || candles.length === 0) {
       this.localPatterns = [];
       return;
     }
 
-    this.localPatterns = this.localDetector.detectPatterns(candles, this.config);
-    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found`);
+    // Obtener precio actual (última vela)
+    const currentPrice = candles[candles.length - 1]?.close || null;
+
+    // Configuración de swing detection
+    const swingConfig = this.config.swingDetection || {
+      enabled: true,
+      leftBars: 5,
+      rightBars: 5,
+      required: true  // Por defecto, requerir swing points
+    };
+
+    // Configuración de volume Z-score
+    const volumeConfig = this.config.volumeZScore || {
+      enabled: false,
+      lookbackPeriod: 20,
+      minZScore: 1.0
+    };
+
+    // Propagar debugMode a cada patrón si está habilitado globalmente
+    const patternsConfig = { ...this.config.patterns };
+    if (this.config.debugMode) {
+      Object.keys(patternsConfig).forEach(key => {
+        if (patternsConfig[key]) {
+          patternsConfig[key] = { ...patternsConfig[key], debug: true };
+        }
+      });
+    }
+
+    // Detectar patrones con swing detection
+    const detectedPatterns = this.localDetector.detectPatterns(candles, {
+      patterns: patternsConfig,
+      swingDetection: swingConfig,
+      volumeZScore: volumeConfig
+    });
+
+    // Si no hay IndicatorManager, solo retornar los patrones básicos
+    if (!indicatorManager) {
+      this.localPatterns = detectedPatterns;
+      return;
+    }
+
+    // Obtener niveles de referencia de todas las fuentes
+    const levelSources = this.config.levelSources || {
+      volumeProfile: true,
+      fixedRanges: true,
+      clusters: true,
+      manualLevels: true,
+      supportResistance: true,
+      rangeDetection: true
+    };
+
+    const referenceLevels = indicatorManager.getAllReferenceLevels({
+      manualLevels: manualLevels,
+      currentPrice: currentPrice,
+      sources: levelSources
+    });
+
+    // Clasificar niveles
+    const classifiedLevels = this.classifyReferenceLevels(referenceLevels);
+
+    // Calcular confidence para cada patrón
+    const proximityPct = (this.config.filters?.proximityPercent || 1.0) / 100;
+
+    this.localPatterns = detectedPatterns.map(pattern =>
+      this.enhancePatternConfidence(
+        pattern,
+        classifiedLevels.importantHighs,
+        classifiedLevels.importantLows,
+        proximityPct
+      )
+    );
+
+    // Filtrar por minConfidence si está configurado
+    const minConfidence = this.config.filters?.minConfidence || 0;
+    if (minConfidence > 0) {
+      this.localPatterns = this.localPatterns.filter(p => p.confidence >= minConfidence);
+    }
+
+    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before confidence filter)`);
   }
 
   async fetchData() {
@@ -150,14 +378,14 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   // Método para overlay (llamado por IndicatorManager)
-  renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+  renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext, indicatorManager = null, manualLevels = []) {
     if (!this.enabled || !this.config.enabled) {
       return;
     }
 
     // Detectar patrones localmente si está en modo "all"
     if (this.showMode === 'all' && allCandles && allCandles.length > 0) {
-      this.detectLocalPatterns(allCandles);
+      this.detectLocalPatterns(allCandles, indicatorManager, manualLevels);
     }
 
     // Elegir qué patrones mostrar según el modo

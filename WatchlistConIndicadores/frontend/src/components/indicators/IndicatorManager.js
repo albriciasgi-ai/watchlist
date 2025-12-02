@@ -168,7 +168,7 @@ class IndicatorManager {
     this.heightScale = scale;
   }
 
-  renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
+  renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null, manualLevels = []) {
     // ✅ SOLUCIÓN 1: Verificar si hay Fixed Range Profiles activos para este símbolo
     const activeFixedRanges = this.fixedRangeIndicators.filter(
       ind => ind.enabled && ind.symbol === this.symbol
@@ -193,7 +193,12 @@ class IndicatorManager {
         }
 
         // Renderizar el indicador normalmente
-        indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
+        // Para RejectionPatternIndicator, pasar el indicatorManager y manualLevels
+        if (indicator.name === "Rejection Patterns") {
+          indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext, this, manualLevels);
+        } else {
+          indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
+        }
       }
     });
 
@@ -901,6 +906,308 @@ class IndicatorManager {
       maxPrice: profile.maxPrice,
       startTimestamp: profile.startTimestamp,
       endTimestamp: profile.endTimestamp
+    };
+  }
+
+  /**
+   * Obtiene todos los niveles de referencia de todas las fuentes disponibles
+   * Clasificados en highs importantes, lows importantes, y pivots
+   *
+   * @param {Object} options - Opciones de configuración
+   * @param {Array} options.manualLevels - Array de drawings/horizontal lines
+   * @param {number} options.currentPrice - Precio actual para clasificar niveles ambiguos
+   * @param {Object} options.sources - Qué fuentes incluir {volumeProfile, fixedRanges, clusters, manualLevels, supportResistance, rangeDetection}
+   * @returns {Object} {importantHighs: [], importantLows: [], pivots: []}
+   */
+  getAllReferenceLevels(options = {}) {
+    const {
+      manualLevels = [],
+      currentPrice = null,
+      sources = {
+        volumeProfile: true,
+        fixedRanges: true,
+        clusters: true,
+        manualLevels: true,
+        supportResistance: true,
+        rangeDetection: true
+      }
+    } = options;
+
+    const importantHighs = [];
+    const importantLows = [];
+    const pivots = [];
+
+    // 1. VOLUME PROFILE DINÁMICO (POC/VAH/VAL)
+    if (sources.volumeProfile) {
+      const vpData = this.getDynamicVolumeProfileData();
+      if (vpData) {
+        // VAH siempre es un high importante (resistencia)
+        if (vpData.vah) {
+          importantHighs.push({
+            price: vpData.vah,
+            source: 'VP_Dynamic',
+            type: 'VAH',
+            strength: 10,
+            color: '#9C27B0'
+          });
+        }
+
+        // VAL siempre es un low importante (soporte)
+        if (vpData.val) {
+          importantLows.push({
+            price: vpData.val,
+            source: 'VP_Dynamic',
+            type: 'VAL',
+            strength: 10,
+            color: '#9C27B0'
+          });
+        }
+
+        // POC es ambiguo - agregarlo como pivot
+        if (vpData.poc) {
+          pivots.push({
+            price: vpData.poc,
+            source: 'VP_Dynamic',
+            type: 'POC',
+            strength: 10,
+            color: '#F44336'
+          });
+        }
+      }
+    }
+
+    // 2. FIXED RANGE PROFILES (POC/VAH/VAL + Clusters)
+    if (sources.fixedRanges || sources.clusters) {
+      this.fixedRangeIndicators.forEach(indicator => {
+        if (!indicator.enabled || !indicator.profile) return;
+
+        const rangeLabel = indicator.rangeLabel || indicator.rangeId;
+
+        // POC/VAH/VAL de fixed ranges
+        if (sources.fixedRanges) {
+          if (indicator.profile.poc?.price) {
+            pivots.push({
+              price: indicator.profile.poc.price,
+              source: 'VP_Fixed',
+              type: 'POC',
+              rangeId: indicator.rangeId,
+              rangeLabel: rangeLabel,
+              strength: 9,
+              color: indicator.pocColor || '#F44336'
+            });
+          }
+
+          if (indicator.profile.valueArea?.vahPrice) {
+            importantHighs.push({
+              price: indicator.profile.valueArea.vahPrice,
+              source: 'VP_Fixed',
+              type: 'VAH',
+              rangeId: indicator.rangeId,
+              rangeLabel: rangeLabel,
+              strength: 9,
+              color: indicator.vahValColor || '#9C27B0'
+            });
+          }
+
+          if (indicator.profile.valueArea?.valPrice) {
+            importantLows.push({
+              price: indicator.profile.valueArea.valPrice,
+              source: 'VP_Fixed',
+              type: 'VAL',
+              rangeId: indicator.rangeId,
+              rangeLabel: rangeLabel,
+              strength: 9,
+              color: indicator.vahValColor || '#9C27B0'
+            });
+          }
+        }
+
+        // Clusters de fixed ranges
+        if (sources.clusters) {
+          const clusters = indicator.getClusters();
+          clusters.forEach(cluster => {
+            // Clasificar cluster según posición relativa al precio actual
+            if (currentPrice) {
+              if (cluster.price > currentPrice * 1.001) {
+                // Cluster por encima → resistencia
+                importantHighs.push({
+                  price: cluster.price,
+                  source: 'VP_Cluster',
+                  type: 'CLUSTER',
+                  rangeId: indicator.rangeId,
+                  rangeLabel: rangeLabel,
+                  strength: cluster.strength,
+                  volume: cluster.volume,
+                  color: indicator.clusterColor || '#E65100'
+                });
+              } else if (cluster.price < currentPrice * 0.999) {
+                // Cluster por debajo → soporte
+                importantLows.push({
+                  price: cluster.price,
+                  source: 'VP_Cluster',
+                  type: 'CLUSTER',
+                  rangeId: indicator.rangeId,
+                  rangeLabel: rangeLabel,
+                  strength: cluster.strength,
+                  volume: cluster.volume,
+                  color: indicator.clusterColor || '#E65100'
+                });
+              } else {
+                // Cluster muy cerca del precio → pivot
+                pivots.push({
+                  price: cluster.price,
+                  source: 'VP_Cluster',
+                  type: 'CLUSTER',
+                  rangeId: indicator.rangeId,
+                  rangeLabel: rangeLabel,
+                  strength: cluster.strength,
+                  volume: cluster.volume,
+                  color: indicator.clusterColor || '#E65100'
+                });
+              }
+            } else {
+              // Sin precio actual, agregar como pivot
+              pivots.push({
+                price: cluster.price,
+                source: 'VP_Cluster',
+                type: 'CLUSTER',
+                rangeId: indicator.rangeId,
+                rangeLabel: rangeLabel,
+                strength: cluster.strength,
+                volume: cluster.volume,
+                color: indicator.clusterColor || '#E65100'
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // 3. RANGE DETECTION (Boundaries)
+    if (sources.rangeDetection) {
+      const rangeDetector = this.indicators.find(ind => ind.name === "Range Detection");
+      if (rangeDetector && rangeDetector.enabled && rangeDetector.consolidationRanges) {
+        rangeDetector.consolidationRanges.forEach(range => {
+          // Range high es resistencia
+          if (range.high) {
+            importantHighs.push({
+              price: range.high,
+              source: 'Range_Detection',
+              type: 'RANGE_HIGH',
+              rangeLabel: range.label,
+              strength: 8,
+              color: '#9C27B0'
+            });
+          }
+
+          // Range low es soporte
+          if (range.low) {
+            importantLows.push({
+              price: range.low,
+              source: 'Range_Detection',
+              type: 'RANGE_LOW',
+              rangeLabel: range.label,
+              strength: 8,
+              color: '#9C27B0'
+            });
+          }
+        });
+      }
+    }
+
+    // 4. SUPPORT & RESISTANCE (Solo lectura, sin modificar)
+    if (sources.supportResistance) {
+      const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
+      if (srIndicator && srIndicator.enabled) {
+        // Resistances
+        if (srIndicator.resistances && Array.isArray(srIndicator.resistances)) {
+          srIndicator.resistances.forEach(resistance => {
+            importantHighs.push({
+              price: resistance.price,
+              source: 'S&R',
+              type: 'RESISTANCE',
+              strength: resistance.strength || 5,
+              touches: resistance.touches,
+              color: '#F44336'
+            });
+          });
+        }
+
+        // Supports
+        if (srIndicator.supports && Array.isArray(srIndicator.supports)) {
+          srIndicator.supports.forEach(support => {
+            importantLows.push({
+              price: support.price,
+              source: 'S&R',
+              type: 'SUPPORT',
+              strength: support.strength || 5,
+              touches: support.touches,
+              color: '#4CAF50'
+            });
+          });
+        }
+      }
+    }
+
+    // 5. MANUAL LEVELS (Horizontal lines from drawings)
+    if (sources.manualLevels && manualLevels && manualLevels.length > 0) {
+      manualLevels.forEach(drawing => {
+        if (drawing.type === 'horizontal' && drawing.price) {
+          // Clasificar según posición relativa al precio actual
+          if (currentPrice) {
+            if (drawing.price > currentPrice * 1.001) {
+              importantHighs.push({
+                price: drawing.price,
+                source: 'Manual',
+                type: 'HORIZONTAL_LINE',
+                drawingId: drawing.id,
+                strength: 7,
+                color: drawing.style?.color || '#8B5CF6'
+              });
+            } else if (drawing.price < currentPrice * 0.999) {
+              importantLows.push({
+                price: drawing.price,
+                source: 'Manual',
+                type: 'HORIZONTAL_LINE',
+                drawingId: drawing.id,
+                strength: 7,
+                color: drawing.style?.color || '#8B5CF6'
+              });
+            } else {
+              pivots.push({
+                price: drawing.price,
+                source: 'Manual',
+                type: 'HORIZONTAL_LINE',
+                drawingId: drawing.id,
+                strength: 7,
+                color: drawing.style?.color || '#8B5CF6'
+              });
+            }
+          } else {
+            // Sin precio actual, agregar como pivot
+            pivots.push({
+              price: drawing.price,
+              source: 'Manual',
+              type: 'HORIZONTAL_LINE',
+              drawingId: drawing.id,
+              strength: 7,
+              color: drawing.style?.color || '#8B5CF6'
+            });
+          }
+        }
+      });
+    }
+
+    // Ordenar por precio (descendente para highs, ascendente para lows)
+    importantHighs.sort((a, b) => b.price - a.price);
+    importantLows.sort((a, b) => a.price - b.price);
+    pivots.sort((a, b) => a.price - b.price);
+
+    return {
+      importantHighs,
+      importantLows,
+      pivots,
+      totalLevels: importantHighs.length + importantLows.length + pivots.length
     };
   }
 }

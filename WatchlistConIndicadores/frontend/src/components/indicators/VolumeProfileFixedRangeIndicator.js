@@ -474,6 +474,9 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   }
 
   toJSON() {
+    // Exportar clusters si están disponibles
+    const clusters = this.getClusters();
+
     return {
       rangeId: this.rangeId,
       startTimestamp: this.startTimestamp,
@@ -491,8 +494,32 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       clusterThreshold: this.clusterThreshold,
       clusterColor: this.clusterColor,
       enabled: this.enabled,
-      rangeLabel: this.rangeLabel  // 🎯 AGREGAR rangeLabel
+      rangeLabel: this.rangeLabel,  // 🎯 AGREGAR rangeLabel
+      clusters: clusters  // 🎯 NUEVO: Exportar clusters calculados
     };
+  }
+
+  /**
+   * Obtiene los clusters de volumen detectados
+   * @returns {Array} Array de clusters con {price, volume, strength, levelLow, levelHigh}
+   */
+  getClusters() {
+    if (!this.profile || !this.profile.levels || !this.enableClusterDetection) {
+      return [];
+    }
+
+    const maxVolume = this.profile.maxVolume || 1;
+
+    return this.profile.levels
+      .filter(level => level.isCluster)
+      .map(level => ({
+        price: level.price,
+        volume: level.volume,
+        strength: maxVolume > 0 ? (level.volume / maxVolume * 10) : 0,  // Strength 0-10
+        levelLow: level.levelLow,
+        levelHigh: level.levelHigh,
+        volumeFraction: maxVolume > 0 ? (level.volume / maxVolume) : 0  // 0-1 fraction
+      }));
   }
 
   fromJSON(data) {

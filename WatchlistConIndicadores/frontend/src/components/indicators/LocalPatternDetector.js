@@ -44,13 +44,26 @@ class LocalPatternDetector {
       minZScore: 1.0
     };
 
+    // Configuración de swing detection
+    const swingConfig = config.swingDetection || {
+      enabled: false,
+      leftBars: 5,
+      rightBars: 5,
+      required: false  // Si true, rechaza patrones que no estén en swing points
+    };
+
     // Pre-calcular Z-scores de volumen si está habilitado
     const volumeZScores = volumeConfig.enabled ? this.calculateVolumeZScores(candles, volumeConfig.lookbackPeriod) : null;
 
-    // Detectar patrones para cada vela (excepto la primera)
-    for (let i = 1; i < candles.length; i++) {
+    // Determinar rango de iteración
+    // Si swing detection está habilitado y es required, necesitamos leftBars y rightBars
+    const startIndex = swingConfig.enabled && swingConfig.required ? swingConfig.leftBars : 1;
+    const endIndex = swingConfig.enabled && swingConfig.required ? candles.length - swingConfig.rightBars : candles.length;
+
+    // Detectar patrones para cada vela
+    for (let i = startIndex; i < endIndex; i++) {
       const current = candles[i];
-      const previous = candles[i - 1];
+      const previous = i > 0 ? candles[i - 1] : null;
 
       // Skip invalid candles
       if (!this.isValidCandle(current)) continue;
@@ -63,59 +76,101 @@ class LocalPatternDetector {
         }
       }
 
-      // Hammer
-      if (enabledPatterns.hammer?.enabled && this.isHammer(current, enabledPatterns.hammer.minWickRatio)) {
-        patterns.push({
-          type: 'HAMMER',
-          timestamp: current.timestamp,
-          price: current.close,
-          candle: current,
-          quality: this.calculateHammerQuality(current)
-        });
+      // Pre-calcular swing points si está habilitado
+      let isAtSwingLow = false;
+      let isAtSwingHigh = false;
+      if (swingConfig.enabled) {
+        isAtSwingLow = this.isSwingLow(candles, i, swingConfig.leftBars, swingConfig.rightBars);
+        isAtSwingHigh = this.isSwingHigh(candles, i, swingConfig.leftBars, swingConfig.rightBars);
       }
 
-      // Shooting Star
-      if (enabledPatterns.shootingStar?.enabled && this.isShootingStar(current, enabledPatterns.shootingStar.minWickRatio)) {
-        patterns.push({
-          type: 'SHOOTING_STAR',
-          timestamp: current.timestamp,
-          price: current.close,
-          candle: current,
-          quality: this.calculateShootingStarQuality(current)
-        });
+      // Hammer - patrón bullish, debe estar en swing low
+      if (enabledPatterns.hammer?.enabled && this.isHammer(current, enabledPatterns.hammer)) {
+        // Si swing detection está habilitado y es required, validar swing low
+        if (!swingConfig.enabled || !swingConfig.required || isAtSwingLow) {
+          patterns.push({
+            type: 'HAMMER',
+            timestamp: current.timestamp,
+            price: current.low,  // Usar low para patrones bullish
+            candle: current,
+            quality: this.calculateHammerQuality(current),
+            atSwingPoint: swingConfig.enabled ? isAtSwingLow : undefined,
+            swingType: 'low',
+            candleIndex: i,
+            volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+          });
+        }
+      }
+
+      // Shooting Star - patrón bearish, debe estar en swing high
+      if (enabledPatterns.shootingStar?.enabled && this.isShootingStar(current, enabledPatterns.shootingStar)) {
+        // Si swing detection está habilitado y es required, validar swing high
+        if (!swingConfig.enabled || !swingConfig.required || isAtSwingHigh) {
+          patterns.push({
+            type: 'SHOOTING_STAR',
+            timestamp: current.timestamp,
+            price: current.high,  // Usar high para patrones bearish
+            candle: current,
+            quality: this.calculateShootingStarQuality(current),
+            atSwingPoint: swingConfig.enabled ? isAtSwingHigh : undefined,
+            swingType: 'high',
+            candleIndex: i,
+            volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+          });
+        }
       }
 
       // Engulfing patterns (necesita vela anterior)
       if (enabledPatterns.engulfing?.enabled && previous) {
         const engulfingType = this.isEngulfing(previous, current);
         if (engulfingType) {
-          patterns.push({
-            type: engulfingType,
-            timestamp: current.timestamp,
-            price: current.close,
-            candle: current,
-            previousCandle: previous,
-            quality: this.calculateEngulfingQuality(previous, current)
-          });
+          const isBullish = engulfingType === 'ENGULFING_BULLISH';
+          const isAtCorrectSwing = isBullish ? isAtSwingLow : isAtSwingHigh;
+
+          // Validar swing point si está habilitado
+          if (!swingConfig.enabled || !swingConfig.required || isAtCorrectSwing) {
+            patterns.push({
+              type: engulfingType,
+              timestamp: current.timestamp,
+              price: isBullish ? current.low : current.high,  // Usar low/high según tipo
+              candle: current,
+              previousCandle: previous,
+              quality: this.calculateEngulfingQuality(previous, current),
+              atSwingPoint: swingConfig.enabled ? isAtCorrectSwing : undefined,
+              swingType: isBullish ? 'low' : 'high',
+              candleIndex: i,
+              volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+            });
+          }
         }
       }
 
       // Doji patterns
       if (enabledPatterns.doji?.enabled) {
-        const dojiType = this.isDoji(current);
+        const dojiType = this.isDoji(current, enabledPatterns.doji);
         if (dojiType) {
-          patterns.push({
-            type: dojiType,
-            timestamp: current.timestamp,
-            price: current.close,
-            candle: current,
-            quality: this.calculateDojiQuality(current)
-          });
+          const isDragonfly = dojiType === 'DOJI_DRAGONFLY';
+          const isAtCorrectSwing = isDragonfly ? isAtSwingLow : isAtSwingHigh;
+
+          // Validar swing point si está habilitado
+          if (!swingConfig.enabled || !swingConfig.required || isAtCorrectSwing) {
+            patterns.push({
+              type: dojiType,
+              timestamp: current.timestamp,
+              price: isDragonfly ? current.low : current.high,  // Usar low/high según tipo
+              candle: current,
+              quality: this.calculateDojiQuality(current),
+              atSwingPoint: swingConfig.enabled ? isAtCorrectSwing : undefined,
+              swingType: isDragonfly ? 'low' : 'high',
+              candleIndex: i,
+              volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+            });
+          }
         }
       }
     }
 
-    // console.log(`[LocalPatternDetector] Detected ${patterns.length} patterns in ${candles.length} candles`);
+    // console.log(`[LocalPatternDetector] Detected ${patterns.length} patterns in ${candles.length} candles (swing detection: ${swingConfig.enabled})`);
     return patterns;
   }
 
@@ -134,32 +189,104 @@ class LocalPatternDetector {
   }
 
   /**
+   * Detecta swing low (mínimo local)
+   * Verifica que el low de la vela actual sea el mínimo en la ventana leftBars + rightBars
+   *
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela actual
+   * @param {number} leftBars - Número de velas a la izquierda para comparar
+   * @param {number} rightBars - Número de velas a la derecha para comparar
+   * @returns {boolean} True si es un swing low
+   */
+  isSwingLow(candles, index, leftBars = 5, rightBars = 5) {
+    // Verificar que hay suficientes velas a ambos lados
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentLow = candles[index].low;
+
+    // Verificar que el low actual es el mínimo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].low <= currentLow) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Detecta swing high (máximo local)
+   * Verifica que el high de la vela actual sea el máximo en la ventana leftBars + rightBars
+   *
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela actual
+   * @param {number} leftBars - Número de velas a la izquierda para comparar
+   * @param {number} rightBars - Número de velas a la derecha para comparar
+   * @returns {boolean} True si es un swing high
+   */
+  isSwingHigh(candles, index, leftBars = 5, rightBars = 5) {
+    // Verificar que hay suficientes velas a ambos lados
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentHigh = candles[index].high;
+
+    // Verificar que el high actual es el máximo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].high >= currentHigh) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Detecta patrón Hammer
    * - Cuerpo pequeño en la parte superior
    * - Mecha inferior larga (al menos 2x el cuerpo)
    * - Poca o ninguna mecha superior
    */
-  isHammer(candle, minWickRatio = 2.0) {
+  isHammer(candle, params = {}) {
+    const {
+      minWickRatio = 2.0,
+      maxUpperWickRatio = 0.2,
+      minBodyPosition = 0.6,
+      debug = false
+    } = params;
+
     const body = Math.abs(candle.close - candle.open);
     const lowerWick = Math.min(candle.open, candle.close) - candle.low;
     const upperWick = candle.high - Math.max(candle.open, candle.close);
     const range = candle.high - candle.low;
 
     // Evitar división por cero
-    if (body === 0 || range === 0) return false;
+    if (body === 0 || range === 0) {
+      if (debug) console.log(`[HAMMER REJECTED] body=0 or range=0`, candle);
+      return false;
+    }
 
     // Mecha inferior debe ser al menos minWickRatio veces el cuerpo
     const wickToBodyRatio = lowerWick / body;
 
-    // Mecha superior debe ser pequeña (máximo 20% del cuerpo)
+    // Mecha superior debe ser pequeña
     const upperWickRatio = upperWick / body;
 
-    // Cuerpo debe estar en el tercio superior
+    // Cuerpo debe estar en la posición superior
     const bodyPosition = (Math.min(candle.open, candle.close) - candle.low) / range;
 
-    return wickToBodyRatio >= minWickRatio &&
-           upperWickRatio <= 0.2 &&
-           bodyPosition >= 0.6;
+    const passes = wickToBodyRatio >= minWickRatio &&
+                   upperWickRatio <= maxUpperWickRatio &&
+                   bodyPosition >= minBodyPosition;
+
+    if (debug && !passes) {
+      console.log(`[HAMMER REJECTED] time=${candle.timestamp}, wickRatio=${wickToBodyRatio.toFixed(2)} (need >=${minWickRatio}), upperWickRatio=${upperWickRatio.toFixed(2)} (need <=${maxUpperWickRatio}), bodyPos=${bodyPosition.toFixed(2)} (need >=${minBodyPosition})`);
+    }
+
+    return passes;
   }
 
   /**
@@ -168,21 +295,37 @@ class LocalPatternDetector {
    * - Mecha superior larga (al menos 2x el cuerpo)
    * - Poca o ninguna mecha inferior
    */
-  isShootingStar(candle, minWickRatio = 2.0) {
+  isShootingStar(candle, params = {}) {
+    const {
+      minWickRatio = 2.0,
+      maxLowerWickRatio = 0.2,
+      minBodyPosition = 0.6,
+      debug = false
+    } = params;
+
     const body = Math.abs(candle.close - candle.open);
     const lowerWick = Math.min(candle.open, candle.close) - candle.low;
     const upperWick = candle.high - Math.max(candle.open, candle.close);
     const range = candle.high - candle.low;
 
-    if (body === 0 || range === 0) return false;
+    if (body === 0 || range === 0) {
+      if (debug) console.log(`[SHOOTING_STAR REJECTED] body=0 or range=0`, candle);
+      return false;
+    }
 
     const wickToBodyRatio = upperWick / body;
     const lowerWickRatio = lowerWick / body;
     const bodyPosition = (candle.high - Math.max(candle.open, candle.close)) / range;
 
-    return wickToBodyRatio >= minWickRatio &&
-           lowerWickRatio <= 0.2 &&
-           bodyPosition >= 0.6;
+    const passes = wickToBodyRatio >= minWickRatio &&
+                   lowerWickRatio <= maxLowerWickRatio &&
+                   bodyPosition >= minBodyPosition;
+
+    if (debug && !passes) {
+      console.log(`[SHOOTING_STAR REJECTED] time=${candle.timestamp}, wickRatio=${wickToBodyRatio.toFixed(2)} (need >=${minWickRatio}), lowerWickRatio=${lowerWickRatio.toFixed(2)} (need <=${maxLowerWickRatio}), bodyPos=${bodyPosition.toFixed(2)} (need >=${minBodyPosition})`);
+    }
+
+    return passes;
   }
 
   /**
@@ -220,27 +363,46 @@ class LocalPatternDetector {
    * - Dragonfly: mecha inferior larga
    * - Gravestone: mecha superior larga
    */
-  isDoji(candle) {
+  isDoji(candle, params = {}) {
+    const {
+      maxBodyRatio = 0.05,
+      minLongWick = 0.6,
+      maxShortWick = 0.1,
+      debug = false
+    } = params;
+
     const body = Math.abs(candle.close - candle.open);
     const range = candle.high - candle.low;
 
-    if (range === 0) return null;
+    if (range === 0) {
+      if (debug) console.log(`[DOJI REJECTED] range=0`, candle);
+      return null;
+    }
 
-    // Cuerpo debe ser menos del 5% del rango total
+    // Cuerpo debe ser menor a maxBodyRatio del rango total
     const bodyRatio = body / range;
-    if (bodyRatio > 0.05) return null;
+    if (bodyRatio > maxBodyRatio) {
+      if (debug) console.log(`[DOJI REJECTED] time=${candle.timestamp}, bodyRatio=${bodyRatio.toFixed(3)} (need <=${maxBodyRatio})`);
+      return null;
+    }
 
     const lowerWick = Math.min(candle.open, candle.close) - candle.low;
     const upperWick = candle.high - Math.max(candle.open, candle.close);
 
     // Dragonfly Doji: mecha inferior larga, superior corta
-    if (lowerWick > range * 0.6 && upperWick < range * 0.1) {
+    if (lowerWick > range * minLongWick && upperWick < range * maxShortWick) {
       return 'DOJI_DRAGONFLY';
     }
 
     // Gravestone Doji: mecha superior larga, inferior corta
-    if (upperWick > range * 0.6 && lowerWick < range * 0.1) {
+    if (upperWick > range * minLongWick && lowerWick < range * maxShortWick) {
       return 'DOJI_GRAVESTONE';
+    }
+
+    if (debug) {
+      const lowerWickRatio = lowerWick / range;
+      const upperWickRatio = upperWick / range;
+      console.log(`[DOJI REJECTED] time=${candle.timestamp}, lowerWickRatio=${lowerWickRatio.toFixed(2)} (need >${minLongWick} for dragonfly), upperWickRatio=${upperWickRatio.toFixed(2)} (need >${minLongWick} for gravestone)`);
     }
 
     return null;
