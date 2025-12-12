@@ -137,11 +137,18 @@ class PatternDetectorExtended:
 
         reversal_params = pattern_params.get('reversal', {})
         continuation_params = pattern_params.get('continuation', {})
+        trendStart_params = pattern_params.get('trendStart', {})
         momentum_params = pattern_params.get('momentum', {})
 
         # Log if proximity logic is inverted (for debugging)
         if reversal_params.get('invertProximity', False):
             print(f"[PATTERN DETECTION] Reversal proximity logic INVERTED: far from levels = high confidence")
+        if continuation_params.get('invertProximity', False):
+            print(f"[PATTERN DETECTION] Continuation proximity logic INVERTED: far from levels = high confidence")
+        if trendStart_params.get('invertProximity', False):
+            print(f"[PATTERN DETECTION] Trend Start proximity logic INVERTED: far from levels = high confidence")
+        if momentum_params.get('invertProximity', False):
+            print(f"[PATTERN DETECTION] Momentum proximity logic INVERTED: far from levels = high confidence")
 
         # Calculate volume average for comparison
         avg_volume = self._calculate_average_volume(candles)
@@ -159,21 +166,21 @@ class PatternDetectorExtended:
 
             # Detect continuation patterns (flags, pennants)
             continuation_pattern = self._detect_continuation_pattern(
-                candles, i, trend_analysis, avg_volume, all_levels
+                candles, i, trend_analysis, avg_volume, all_levels, continuation_params
             )
             if continuation_pattern:
                 patterns.append(continuation_pattern)
 
             # Detect trend start patterns (breakouts)
             breakout_pattern = self._detect_breakout_pattern(
-                candles, i, trend_analysis, avg_volume, all_levels
+                candles, i, trend_analysis, avg_volume, all_levels, trendStart_params
             )
             if breakout_pattern:
                 patterns.append(breakout_pattern)
 
             # Detect momentum patterns (soldiers, crows, marubozu)
             momentum_pattern = self._detect_momentum_pattern(
-                candles, i, trend_analysis, avg_volume, all_levels
+                candles, i, trend_analysis, avg_volume, all_levels, momentum_params
             )
             if momentum_pattern:
                 patterns.append(momentum_pattern)
@@ -196,13 +203,16 @@ class PatternDetectorExtended:
         index: int,
         trend_analysis: Optional[Dict],
         avg_volume: float,
-        levels: List[Dict]
+        levels: List[Dict],
+        continuation_params: Optional[Dict] = None
     ) -> Optional[DetectedPattern]:
         """
         Detect continuation patterns (flags, pennants)
 
         These appear in the middle of a trend and signal continuation
         """
+        if continuation_params is None:
+            continuation_params = {}
         # Need to be in a strong trend for continuation pattern
         if not trend_analysis or trend_analysis.get('strength', 0) < self.strong_trend_threshold:
             return None
@@ -284,6 +294,12 @@ class PatternDetectorExtended:
         )
         level_proximity = self._calculate_level_proximity_score(level_dist)
 
+        # INVERT PROXIMITY LOGIC if requested for continuation patterns
+        # Normally: close to level = high score
+        # Inverted: far from level = high score
+        if continuation_params.get('invertProximity', False):
+            level_proximity = 100 - level_proximity
+
         # Calculate confidence
         confidence = (pattern_quality * 0.4) + (volume_score * 0.3) + (level_proximity * 0.3)
 
@@ -318,13 +334,16 @@ class PatternDetectorExtended:
         index: int,
         trend_analysis: Optional[Dict],
         avg_volume: float,
-        levels: List[Dict]
+        levels: List[Dict],
+        trendStart_params: Optional[Dict] = None
     ) -> Optional[DetectedPattern]:
         """
         Detect trend start patterns (breakouts from ranges)
 
         These appear when price breaks out of consolidation/range
         """
+        if trendStart_params is None:
+            trendStart_params = {}
         # Should NOT be in a strong trend (breaking out of range/sideways)
         if trend_analysis and trend_analysis.get('strength', 0) > self.strong_trend_threshold:
             return None
@@ -377,6 +396,12 @@ class PatternDetectorExtended:
         )
         level_proximity = self._calculate_level_proximity_score(level_dist)
 
+        # INVERT PROXIMITY LOGIC if requested for trend start patterns
+        # Normally: close to level = high score
+        # Inverted: far from level = high score
+        if trendStart_params.get('invertProximity', False):
+            level_proximity = 100 - level_proximity
+
         # Calculate confidence
         confidence = (pattern_quality * 0.5) + (volume_score * 0.4) + (level_proximity * 0.1)
 
@@ -411,24 +436,28 @@ class PatternDetectorExtended:
         index: int,
         trend_analysis: Optional[Dict],
         avg_volume: float,
-        levels: List[Dict]
+        levels: List[Dict],
+        momentum_params: Optional[Dict] = None
     ) -> Optional[DetectedPattern]:
         """
         Detect momentum patterns (three white soldiers, three black crows, marubozu)
 
         These show strong consecutive candles indicating force/momentum
         """
+        if momentum_params is None:
+            momentum_params = {}
+
         # Three white soldiers / three black crows
         if index >= 2:
             soldiers_pattern = self._detect_three_soldiers_crows(
-                candles, index, trend_analysis, avg_volume, levels
+                candles, index, trend_analysis, avg_volume, levels, momentum_params
             )
             if soldiers_pattern:
                 return soldiers_pattern
 
         # Marubozu (strong single candle)
         marubozu_pattern = self._detect_marubozu(
-            candles, index, trend_analysis, avg_volume, levels
+            candles, index, trend_analysis, avg_volume, levels, momentum_params
         )
         if marubozu_pattern:
             return marubozu_pattern
@@ -442,7 +471,8 @@ class PatternDetectorExtended:
         index: int,
         trend_analysis: Optional[Dict],
         avg_volume: float,
-        levels: List[Dict]
+        levels: List[Dict],
+        momentum_params: Optional[Dict] = None
     ) -> Optional[DetectedPattern]:
         """
         Detect three white soldiers (bullish) or three black crows (bearish)
@@ -514,6 +544,12 @@ class PatternDetectorExtended:
         )
         level_proximity = self._calculate_level_proximity_score(level_dist)
 
+        # INVERT PROXIMITY LOGIC if requested for momentum patterns
+        # Normally: close to level = high score
+        # Inverted: far from level = high score
+        if momentum_params and momentum_params.get('invertProximity', False):
+            level_proximity = 100 - level_proximity
+
         # Momentum patterns are less dependent on levels
         confidence = (pattern_quality * 0.6) + (volume_score * 0.3) + (level_proximity * 0.1)
 
@@ -555,7 +591,8 @@ class PatternDetectorExtended:
         index: int,
         trend_analysis: Optional[Dict],
         avg_volume: float,
-        levels: List[Dict]
+        levels: List[Dict],
+        momentum_params: Optional[Dict] = None
     ) -> Optional[DetectedPattern]:
         """
         Detect marubozu: very strong candle with almost no wicks
@@ -602,6 +639,12 @@ class PatternDetectorExtended:
             current['close'], levels
         )
         level_proximity = self._calculate_level_proximity_score(level_dist)
+
+        # INVERT PROXIMITY LOGIC if requested for momentum patterns
+        # Normally: close to level = high score
+        # Inverted: far from level = high score
+        if momentum_params and momentum_params.get('invertProximity', False):
+            level_proximity = 100 - level_proximity
 
         confidence = (pattern_quality * 0.5) + (volume_score * 0.3) + (level_proximity * 0.2)
 

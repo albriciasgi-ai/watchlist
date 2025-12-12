@@ -10,11 +10,35 @@ class ContinuationPatternIndicator extends IndicatorBase {
     this.name = "Continuation Patterns";
     this.height = 0; // Draws over main chart
 
-    // Pattern type filters
+    // Pattern type filters (by category)
     this.showContinuation = config.showContinuation !== undefined ? config.showContinuation : true;
     this.showTrendStart = config.showTrendStart !== undefined ? config.showTrendStart : true;
     this.showMomentum = config.showMomentum !== undefined ? config.showMomentum : true;
     this.showReversal = config.showReversal !== undefined ? config.showReversal : false;
+
+    // Individual pattern enables (fine-grained control)
+    this.patternEnables = config.patternEnables || {
+      // Reversal
+      hammer: true,
+      shooting_star: true,
+      bull_engulfing: true,
+      bear_engulfing: true,
+      dragonfly_doji: true,
+      gravestone_doji: true,
+      // Continuation
+      bull_flag: true,
+      bear_flag: true,
+      bull_pennant: true,
+      bear_pennant: true,
+      // Trend Start
+      bull_breakout: true,
+      bear_breakout: true,
+      // Momentum
+      three_white_soldiers: true,
+      three_black_crows: true,
+      bull_marubozu: true,
+      bear_marubozu: true
+    };
 
     // Confidence filtering
     this.minConfidence = config.minConfidence || 60;
@@ -51,12 +75,20 @@ class ContinuationPatternIndicator extends IndicatorBase {
       // Continuation pattern parameters
       continuation: {
         maxConsolidationRange: 0.03,  // Max consolidation range (3%)
-        minBreakoutSize: 0.01         // Min breakout size (1%)
+        minBreakoutSize: 0.01,        // Min breakout size (1%)
+        minTrendStrength: 60,         // Min trend strength to detect continuation (0-100)
+        invertProximity: false        // Invert proximity logic
+      },
+      // Trend start pattern parameters
+      trendStart: {
+        minBreakoutSize: 0.02,    // Min breakout size from range
+        invertProximity: false    // Invert proximity logic
       },
       // Momentum pattern parameters
       momentum: {
         minBodyPercent: 0.3,      // Min body as % of range
-        minConsecutive: 3         // Min consecutive candles
+        minConsecutive: 3,        // Min consecutive candles
+        invertProximity: false    // Invert proximity logic
       }
     };
 
@@ -281,6 +313,9 @@ class ContinuationPatternIndicator extends IndicatorBase {
       if (pattern.pattern_type === 'trend_start' && !this.showTrendStart) return false;
       if (pattern.pattern_type === 'momentum' && !this.showMomentum) return false;
       if (pattern.pattern_type === 'reversal' && !this.showReversal) return false;
+
+      // Individual pattern enable filter
+      if (this.patternEnables && this.patternEnables[pattern.pattern_name] === false) return false;
 
       return true;
     });
