@@ -7,6 +7,8 @@ import time
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from typing import Optional
+from dataclasses import asdict
 
 app = FastAPI(
     title="Crypto Watchlist Backend",
@@ -157,7 +159,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
         
-        print(f"[{symbol}] 📊 HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+        print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
         interval_minutes = get_interval_minutes(interval_final)
         minutes_in_period = days_to_fetch * 24 * 60
@@ -251,7 +253,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
 
         now_colombia = datetime.now(COLOMBIA_TZ)
         
-        print(f"[{symbol}] Historical: ✅ Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
+        print(f"[{symbol}] Historical: [OK] Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
         
         return {
             "symbol": symbol,
@@ -298,7 +300,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
         
-        print(f"[{symbol}] 📈 VOLUME DELTA: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+        print(f"[{symbol}] [UP] VOLUME DELTA: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
         
         # CRÍTICO: Calcular cuántas velas necesitamos para days_to_fetch
         interval_minutes = get_interval_minutes(interval_final)
@@ -328,7 +330,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
                             "volume": candle["volume"]
                         })
                     
-                    print(f"[CACHE HIT] ✅ {symbol} {interval_final} devolviendo {len(processed_data)} velas desde cache")
+                    print(f"[CACHE HIT] [OK] {symbol} {interval_final} devolviendo {len(processed_data)} velas desde cache")
                     
                     return {
                         "symbol": symbol,
@@ -344,7 +346,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
                         "max_days_allowed": max_days_allowed
                     }
                 else:
-                    print(f"[CACHE MISS] ❌ {symbol} {interval_final} - Cache insuficiente, recalculando...")
+                    print(f"[CACHE MISS] [ERROR] {symbol} {interval_final} - Cache insuficiente, recalculando...")
         
         # Recalcular - USAR days_to_fetch (limitado)
         print(f"[CALCULATING] {symbol} {interval_final} Volume Delta con {days_to_fetch} días")
@@ -514,7 +516,7 @@ async def detect_rejection_patterns(request: Request):
         # Serialize patterns
         serialized_patterns = [serialize_pattern(p) for p in patterns]
 
-        print(f"[REJECTION PATTERNS] ✅ Detected {len(patterns)} patterns for {symbol}")
+        print(f"[REJECTION PATTERNS] [OK] Detected {len(patterns)} patterns for {symbol}")
 
         # Send alerts for high-confidence patterns
         if config.get('alertsEnabled', False):
@@ -618,7 +620,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
 
         if is_pivot_high:
             pivots.append({
-                'type': 'pivot_high',  # ✅ FIX: Marcarlo como pivot_high, no como resistance aún
+                'type': 'pivot_high',  # [OK] FIX: Marcarlo como pivot_high, no como resistance aún
                 'price': high,
                 'timestamp': candle['timestamp'],
                 'volume': volume,
@@ -641,7 +643,7 @@ def detect_pivots(candles: list, left_bars: int = 15, right_bars: int = 15,
 
         if is_pivot_low:
             pivots.append({
-                'type': 'pivot_low',  # ✅ FIX: Marcarlo como pivot_low, no como support aún
+                'type': 'pivot_low',  # [OK] FIX: Marcarlo como pivot_low, no como support aún
                 'price': low,
                 'timestamp': candle['timestamp'],
                 'volume': volume,
@@ -666,7 +668,7 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
     if not pivots:
         return []
 
-    # ✅ FIX: Separar pivot highs y pivot lows
+    # [OK] FIX: Separar pivot highs y pivot lows
     pivot_lows = [p for p in pivots if p['type'] == 'pivot_low']
     pivot_highs = [p for p in pivots if p['type'] == 'pivot_high']
 
@@ -712,7 +714,7 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
         avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
 
         levels.append({
-            'type': 'pivot_low',  # ✅ FIX: Mantener como pivot_low por ahora
+            'type': 'pivot_low',  # [OK] FIX: Mantener como pivot_low por ahora
             'price': avg_price,
             'touches': len(cluster),
             'touch_timestamps': [p['timestamp'] for p in cluster],
@@ -729,7 +731,7 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
         avg_z_score = sum(p['z_score'] for p in cluster) / len(cluster)
 
         levels.append({
-            'type': 'pivot_high',  # ✅ FIX: Mantener como pivot_high por ahora
+            'type': 'pivot_high',  # [OK] FIX: Mantener como pivot_high por ahora
             'price': avg_price,
             'touches': len(cluster),
             'touch_timestamps': [p['timestamp'] for p in cluster],
@@ -745,7 +747,7 @@ def cluster_levels(pivots: list, distance_pct: float = 0.5):
 
 def reclassify_levels_by_price(levels: list, current_price: float):
     """
-    ✅ FIX: Reclasifica los niveles como soporte o resistencia basándose en el precio actual
+    [OK] FIX: Reclasifica los niveles como soporte o resistencia basándose en el precio actual
 
     Lógica:
     - pivot_high (máximo local):
@@ -976,16 +978,16 @@ async def get_support_resistance(
 
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
 
-        print(f"[{symbol}] 📊 SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
+        print(f"[{symbol}] [DATA] SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
 
         # Intentar cargar del cache
-        # ✅ FIX: Incluir 'days' en la cache key para evitar colisiones entre diferentes períodos
+        # [OK] FIX: Incluir 'days' en la cache key para evitar colisiones entre diferentes períodos
         cache_key = f"sr_{days}_{volume_method}_{z_score_threshold}_{z_score_period}_{left_bars}_{right_bars}_{min_touches}_{cluster_distance}"
         cached_data = load_cache(symbol, interval_final, cache_key)
 
         if cached_data and cached_data.get("symbol") == symbol:
             cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] ✅ {symbol} {interval_final} S/R desde cache (age: {cache_age:.0f}s)")
+            print(f"[CACHE HIT] [OK] {symbol} {interval_final} S/R desde cache (age: {cache_age:.0f}s)")
 
             return {
                 "symbol": symbol,
@@ -1034,13 +1036,13 @@ async def get_support_resistance(
         levels = [l for l in levels if l['touches'] >= min_touches]
         print(f"[{symbol}] Niveles después de filtrar por min_touches: {len(levels)}")
 
-        # ✅ FIX: Obtener precio actual ANTES de reclasificar
+        # [OK] FIX: Obtener precio actual ANTES de reclasificar
         current_time_ms = int(time.time() * 1000)
         current_price = candles[-1]['close']
 
-        # ✅ FIX: Reclasificar niveles basándose en precio actual
+        # [OK] FIX: Reclasificar niveles basándose en precio actual
         levels = reclassify_levels_by_price(levels, current_price)
-        print(f"[{symbol}] ✅ Niveles reclasificados basándose en precio actual: ${current_price:.2f}")
+        print(f"[{symbol}] [OK] Niveles reclasificados basándose en precio actual: ${current_price:.2f}")
 
         # Calcular strength para cada nivel
 
@@ -1514,14 +1516,14 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
 
-        print(f"[{symbol}] 📊 OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+        print(f"[{symbol}] [DATA] OPEN INTEREST: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
         # Intentar cargar del cache
         cached_data = load_cache(symbol, interval_final, "openinterest")
 
         if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
             cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+            print(f"[CACHE HIT] [OK] {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
 
             return {
                 "symbol": symbol,
@@ -1782,7 +1784,7 @@ async def send_test_alert():
         )
 
         if success:
-            print(f"[TEST ALERT] ✅ Test alert queued successfully")
+            print(f"[TEST ALERT] [OK] Test alert queued successfully")
             print(f"[TEST ALERT] 💡 Check the alert_sender logs above for delivery status")
             print("="*80 + "\n")
 
@@ -1799,7 +1801,7 @@ async def send_test_alert():
                 "note": "Check server logs for delivery confirmation"
             }
         else:
-            print(f"[TEST ALERT] ❌ Failed to queue test alert")
+            print(f"[TEST ALERT] [ERROR] Failed to queue test alert")
             print("="*80 + "\n")
 
             return {
@@ -1809,7 +1811,7 @@ async def send_test_alert():
             }
 
     except Exception as e:
-        print(f"[TEST ALERT] ❌ ERROR: {str(e)}")
+        print(f"[TEST ALERT] [ERROR] ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         print("="*80 + "\n")
@@ -1891,9 +1893,9 @@ async def send_test_alert_batch():
 
                 if not success:
                     errors.append(f"{alert_data['symbol']}: Failed to send")
-                    print(f"[BATCH TEST] ⚠️ Failed to send alert for {alert_data['symbol']}")
+                    print(f"[BATCH TEST] [WARNING] Failed to send alert for {alert_data['symbol']}")
                 else:
-                    print(f"[BATCH TEST] ✅ Alert sent for {alert_data['symbol']}")
+                    print(f"[BATCH TEST] [OK] Alert sent for {alert_data['symbol']}")
 
                 # Longer delay between alerts to give bot time to process (2s instead of 0.5s)
                 await asyncio.sleep(2.0)
@@ -1907,7 +1909,7 @@ async def send_test_alert_batch():
                     "success": False,
                     "error": str(e)
                 })
-                print(f"[BATCH TEST] ❌ Exception for {alert_data['symbol']}: {str(e)}")
+                print(f"[BATCH TEST] [ERROR] Exception for {alert_data['symbol']}: {str(e)}")
 
         successful = sum(1 for r in results if r.get("success", False))
         total = len(results)
@@ -1957,6 +1959,577 @@ async def shutdown_event():
     print("[SHUTDOWN] Backend shutdown complete")
 
 
+# ==================== VWAP ENDPOINTS ====================
+
+from vwap_calculator import vwap_calculator
+
+
+@app.get("/api/vwap/{symbol}")
+async def get_vwap(
+    symbol: str,
+    interval: str = "60",
+    days: int = 7,
+    vwap_type: str = "session",
+    reset_hour: int = 0,
+    anchor_timestamp: Optional[int] = None,
+    rolling_period: int = 20,
+    band_multipliers: str = "1.0,2.0,3.0",
+    apply_crypto_adjustment: bool = True
+):
+    """
+    Calculate VWAP with standard deviation bands
+
+    Args:
+        symbol: Trading pair (e.g., BTCUSDT)
+        interval: Candle interval (15, 60, 240, D)
+        days: Historical data period
+        vwap_type: Type of VWAP - 'session', 'anchored', or 'rolling'
+        reset_hour: Hour (UTC) for session reset (default: 0 = midnight)
+        anchor_timestamp: Timestamp (ms) for anchored VWAP (required if type='anchored')
+        rolling_period: Period for rolling VWAP (default: 20)
+        band_multipliers: Comma-separated multipliers (default: "1.0,2.0,3.0")
+        apply_crypto_adjustment: Apply +15% volatility adjustment (default: True)
+
+    Returns:
+        VWAP data with bands for each candle
+    """
+    try:
+        # Clean interval
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "60")
+
+        # Apply max days limit
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] [DATA] VWAP: type={vwap_type}, interval={interval_final}, days={days_to_fetch}")
+
+        # Check cache
+        cache_key = f"vwap_{vwap_type}_{days_to_fetch}_{reset_hour}_{anchor_timestamp}_{rolling_period}_{band_multipliers}"
+        cached_data = load_cache(symbol, interval_final, cache_key)
+
+        if cached_data and cached_data.get("symbol") == symbol:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] [OK] {symbol} {interval_final} VWAP desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "vwap",
+                "vwap_type": vwap_type,
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age)
+            }
+
+        # Get historical data
+        historical = await get_historical(symbol, interval_final, days_to_fetch)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "vwap",
+                "data": [],
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] Calculating VWAP for {len(candles)} candles")
+
+        # Parse band multipliers
+        try:
+            multipliers = [float(x.strip()) for x in band_multipliers.split(',')]
+        except:
+            multipliers = [1.0, 2.0, 3.0]
+
+        # Build config
+        config = {
+            'reset_hour': reset_hour,
+            'anchor_timestamp': anchor_timestamp,
+            'rolling_period': rolling_period,
+            'band_multipliers': multipliers,
+            'apply_crypto_adjustment': apply_crypto_adjustment
+        }
+
+        # Calculate VWAP
+        vwap_data = vwap_calculator.calculate_vwap_with_bands(
+            candles,
+            vwap_type,
+            config
+        )
+
+        # Format response
+        processed_data = []
+        for point in vwap_data:
+            processed_point = {
+                'timestamp': point['timestamp'],
+                'vwap': point['vwap'],
+                'typical_price': point.get('typical_price'),
+                'bands': point.get('bands', {})
+            }
+
+            # Add type-specific metadata
+            if 'session_start' in point:
+                processed_point['session_start'] = point['session_start']
+            elif 'anchor_timestamp' in point:
+                processed_point['anchor_timestamp'] = point['anchor_timestamp']
+            elif 'window_size' in point:
+                processed_point['window_size'] = point['window_size']
+
+            processed_data.append(processed_point)
+
+        # Save to cache
+        cache_data = {
+            "symbol": symbol,
+            "interval": interval_final,
+            "vwap_type": vwap_type,
+            "data": processed_data
+        }
+        save_cache(symbol, interval_final, cache_key, cache_data)
+        print(f"[CACHE SAVED] {symbol} {interval_final} VWAP guardado ({len(processed_data)} puntos)")
+
+        print(f"[SUCCESS] {symbol} {interval_final} VWAP: {len(processed_data)} puntos")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "vwap",
+            "vwap_type": vwap_type,
+            "data": processed_data,
+            "config": {
+                "reset_hour": reset_hour,
+                "anchor_timestamp": anchor_timestamp,
+                "rolling_period": rolling_period,
+                "band_multipliers": multipliers,
+                "crypto_adjustment": apply_crypto_adjustment
+            },
+            "success": True,
+            "from_cache": False,
+            "total_points": len(processed_data)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] VWAP {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "vwap",
+            "data": [],
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ==================== FIBONACCI ENDPOINTS ====================
+
+from fibonacci_calculator import fibonacci_calculator
+
+
+@app.post("/api/fibonacci/calculate")
+async def calculate_fibonacci(request: Request):
+    """
+    Calculate Fibonacci retracement and extension levels
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "60",
+      "days": 30,
+      "swing_high": null,  // Optional: manual swing high
+      "swing_low": null,   // Optional: manual swing low
+      "auto_detect": true,
+      "lookback": 50,
+      "include_extensions": false
+    }
+
+    Returns:
+        Fibonacci levels with swing information
+    """
+    try:
+        body = await request.json()
+
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 30)
+        swing_high = body.get('swing_high')
+        swing_low = body.get('swing_low')
+        auto_detect = body.get('auto_detect', True)
+        lookback = body.get('lookback', 50)
+        include_extensions = body.get('include_extensions', False)
+
+        if not symbol:
+            return {
+                "success": False,
+                "error": "symbol is required"
+            }
+
+        # Clean interval
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "60")
+
+        # Apply max days limit
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] [DATA] FIBONACCI: interval={interval_final}, days={days_to_fetch}, auto_detect={auto_detect}")
+
+        # Check cache (only if auto-detect, manual swings shouldn't be cached)
+        if auto_detect and swing_high is None and swing_low is None:
+            cache_key = f"fibonacci_{days_to_fetch}_{lookback}_{include_extensions}"
+            cached_data = load_cache(symbol, interval_final, cache_key)
+
+            if cached_data and cached_data.get("symbol") == symbol:
+                cache_age = time.time() - cached_data.get('timestamp', 0)
+                print(f"[CACHE HIT] [OK] {symbol} {interval_final} Fibonacci desde cache (age: {cache_age:.0f}s)")
+
+                return {
+                    "symbol": symbol,
+                    "interval": interval_final,
+                    "indicator": "fibonacci",
+                    "data": cached_data.get("data", {}),
+                    "success": True,
+                    "from_cache": True,
+                    "cache_age_seconds": int(cache_age)
+                }
+
+        # Get historical data
+        historical = await get_historical(symbol, interval_final, days_to_fetch)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "fibonacci",
+                "data": {},
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] Calculating Fibonacci for {len(candles)} candles")
+
+        # Calculate Fibonacci levels
+        fib_data = fibonacci_calculator.calculate_all_levels(
+            candles,
+            swing_high=swing_high,
+            swing_low=swing_low,
+            auto_detect=auto_detect,
+            lookback=lookback,
+            include_extensions=include_extensions
+        )
+
+        # Save to cache (only if auto-detected)
+        if auto_detect and swing_high is None and swing_low is None:
+            cache_key = f"fibonacci_{days_to_fetch}_{lookback}_{include_extensions}"
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "fibonacci",
+                "data": fib_data
+            }
+            save_cache(symbol, interval_final, cache_key, cache_data)
+            print(f"[CACHE SAVED] {symbol} {interval_final} Fibonacci guardado")
+
+        print(f"[SUCCESS] {symbol} {interval_final} Fibonacci: {len(fib_data.get('retracements', []))} retracements")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "fibonacci",
+            "data": fib_data,
+            "success": True,
+            "from_cache": False,
+            "config": {
+                "lookback": lookback,
+                "auto_detect": auto_detect,
+                "include_extensions": include_extensions
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Fibonacci {symbol if 'symbol' in locals() else 'unknown'}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol if 'symbol' in locals() else 'unknown',
+            "interval": interval_final if 'interval_final' in locals() else 'unknown',
+            "indicator": "fibonacci",
+            "data": {},
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ==================== PATTERN ANALYSIS ENDPOINTS ====================
+
+
+@app.post("/api/patterns/analyze")
+async def analyze_patterns(request: Request):
+    """
+    Analyze patterns with trend context and level sources
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "60",
+      "days": 30,
+      "include_vwap": true,
+      "include_fibonacci": false,
+      "vwap_config": {...},
+      "fibonacci_config": {...}
+    }
+
+    Returns:
+        Complete pattern analysis with trend context
+    """
+    try:
+        # Import pattern detection modules
+        from trend_analyzer import trend_analyzer
+        from pattern_detector_extended import pattern_detector_extended
+
+        body = await request.json()
+
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 30)
+        include_vwap = body.get('include_vwap', True)
+        include_fibonacci = body.get('include_fibonacci', False)
+        vwap_config = body.get('vwap_config', {})
+        fibonacci_config = body.get('fibonacci_config', {})
+
+        if not symbol:
+            return {
+                "success": False,
+                "error": "symbol is required"
+            }
+
+        # Clean interval
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "60")
+
+        # Apply max days limit
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] [SEARCH] PATTERN ANALYSIS: interval={interval_final}, days={days_to_fetch}")
+
+        # Get historical data
+        historical = await get_historical(symbol, interval_final, days_to_fetch)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "data": {},
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] Analyzing {len(candles)} candles for patterns")
+
+        # Step 1: Analyze trend
+        print(f"[{symbol}] Step 1: Analyzing trend...")
+        trend_analysis = trend_analyzer.analyze_trend(candles, lookback=100)
+        trend_summary = trend_analyzer.get_trend_summary(trend_analysis)
+
+        print(f"[{symbol}] Trend: {trend_summary['direction']} (strength: {trend_summary['strength']})")
+
+        # Step 2: Collect level sources
+        vwap_levels = None
+        fibonacci_levels = None
+
+        if include_vwap:
+            print(f"[{symbol}] Step 2a: Fetching VWAP levels...")
+            # Import vwap_calculator at function level (already imported globally)
+            from vwap_calculator import vwap_calculator
+
+            vwap_type = vwap_config.get('vwap_type', 'session')
+            vwap_result = vwap_calculator.calculate_vwap_with_bands(
+                candles,
+                vwap_type=vwap_type,
+                config=vwap_config
+            )
+
+            # Convert VWAP data to levels format
+            if vwap_result and len(vwap_result) > 0:
+                last_vwap = vwap_result[-1]
+                vwap_levels = [
+                    {'price': last_vwap['vwap'], 'type': 'vwap', 'strength': 90}
+                ]
+
+                # Add band levels
+                if last_vwap.get('bands'):
+                    for band_key, band_price in last_vwap['bands'].items():
+                        strength = 70 if '1' in band_key else 85 if '2' in band_key else 95
+                        vwap_levels.append({
+                            'price': band_price,
+                            'type': f'vwap_{band_key}',
+                            'strength': strength
+                        })
+
+                print(f"[{symbol}] VWAP levels: {len(vwap_levels)}")
+
+        if include_fibonacci:
+            print(f"[{symbol}] Step 2b: Fetching Fibonacci levels...")
+            from fibonacci_calculator import fibonacci_calculator
+
+            auto_detect = fibonacci_config.get('auto_detect', True)
+            lookback = fibonacci_config.get('lookback', 50)
+            include_extensions = fibonacci_config.get('include_extensions', False)
+
+            fib_result = fibonacci_calculator.calculate_all_levels(
+                candles,
+                swing_high=fibonacci_config.get('swing_high'),
+                swing_low=fibonacci_config.get('swing_low'),
+                auto_detect=auto_detect,
+                lookback=lookback,
+                include_extensions=include_extensions
+            )
+
+            # Convert Fibonacci data to levels format
+            fibonacci_levels = []
+            for level in fib_result.get('retracements', []):
+                strength = 90 if level['level'] in [0.382, 0.5, 0.618] else 70
+                fibonacci_levels.append({
+                    'price': level['price'],
+                    'type': 'fibonacci_retracement',
+                    'level': level['level'],
+                    'strength': strength
+                })
+
+            if include_extensions and 'extensions' in fib_result:
+                for level in fib_result['extensions']:
+                    fibonacci_levels.append({
+                        'price': level['price'],
+                        'type': 'fibonacci_extension',
+                        'level': level['level'],
+                        'strength': 70
+                    })
+
+            print(f"[{symbol}] Fibonacci levels: {len(fibonacci_levels)}")
+
+        # Step 3: Detect patterns with context
+        print(f"[{symbol}] Step 3: Detecting patterns...")
+        patterns = pattern_detector_extended.detect_patterns(
+            candles,
+            trend_analysis=trend_summary,
+            vwap_levels=vwap_levels,
+            fibonacci_levels=fibonacci_levels,
+            volume_profile_levels=None  # Can be added later
+        )
+
+        # Convert patterns to dict format (dataclass to dict)
+        patterns_dict = [asdict(p) for p in patterns]
+
+        # Convert numpy types to native Python types for JSON serialization
+        import numpy as np
+        def convert_numpy_types(obj):
+            """Recursively convert numpy types to native Python types"""
+            if isinstance(obj, dict):
+                return {k: convert_numpy_types(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_numpy_types(item) for item in obj]
+            elif isinstance(obj, (np.integer, np.int64, np.int32)):
+                return int(obj)
+            elif isinstance(obj, (np.floating, np.float64, np.float32)):
+                return float(obj)
+            elif isinstance(obj, (np.bool_, np.bool)):
+                return bool(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return obj
+
+        patterns_dict = convert_numpy_types(patterns_dict)
+
+        # Also convert trend_summary
+        trend_summary = convert_numpy_types(trend_summary)
+
+        print(f"[{symbol}] [OK] Pattern Analysis Complete: {len(patterns_dict)} patterns detected")
+
+        # Organize patterns by type
+        patterns_by_type = {
+            'continuation': [],
+            'trend_start': [],
+            'momentum': [],
+            'reversal': []
+        }
+
+        for pattern in patterns_dict:
+            pattern_type = pattern['pattern_type']
+            if pattern_type in patterns_by_type:
+                patterns_by_type[pattern_type].append(pattern)
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "success": True,
+            "data": {
+                "trend": trend_summary,
+                "patterns": patterns_dict,
+                "patterns_by_type": patterns_by_type,
+                "level_sources": {
+                    "vwap_enabled": include_vwap,
+                    "fibonacci_enabled": include_fibonacci,
+                    "vwap_levels": len(vwap_levels) if vwap_levels else 0,
+                    "fibonacci_levels": len(fibonacci_levels) if fibonacci_levels else 0
+                },
+                "summary": {
+                    "total_patterns": len(patterns_dict),
+                    "continuation": len(patterns_by_type['continuation']),
+                    "trend_start": len(patterns_by_type['trend_start']),
+                    "momentum": len(patterns_by_type['momentum']),
+                    "reversal": len(patterns_by_type['reversal'])
+                }
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Pattern Analysis {symbol if 'symbol' in locals() else 'unknown'}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol if 'symbol' in locals() else 'unknown',
+            "interval": interval_final if 'interval_final' in locals() else 'unknown',
+            "data": {},
+            "success": False,
+            "error": str(e)
+        }
+
+
 # ==================== DRAWING TOOLS ENDPOINTS ====================
 
 DRAWINGS_DIR = Path("drawings")
@@ -1975,7 +2548,7 @@ async def get_drawings(symbol: str):
         if drawings_file.exists():
             with open(drawings_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol}")
+                print(f"[DRAWINGS] [OK] Loaded {len(data.get('shapes', []))} shapes for {symbol}")
                 return data
         else:
             print(f"[DRAWINGS] No drawings found for {symbol}")
@@ -2022,7 +2595,7 @@ async def save_drawings(symbol: str, request: Request):
         with open(drawings_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol}")
+        print(f"[DRAWINGS] [OK] Saved {len(shapes)} shapes for {symbol}")
 
         return {
             "success": True,
@@ -2049,7 +2622,7 @@ async def delete_drawings(symbol: str):
 
         if drawings_file.exists():
             drawings_file.unlink()
-            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol}")
+            print(f"[DRAWINGS] [OK] Deleted all drawings for {symbol}")
             return {
                 "success": True,
                 "message": f"Drawings deleted for {symbol}"

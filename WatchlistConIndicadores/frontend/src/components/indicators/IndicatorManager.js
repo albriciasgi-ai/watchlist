@@ -12,6 +12,10 @@ import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
 import SupportResistanceIndicator from "./SupportResistanceIndicator";
 import OpenInterestIndicator from "./OpenInterestIndicator";
+import VWAPIndicator from "./VWAPIndicator";
+import FibonacciLevelCalculator from "./FibonacciLevelCalculator";
+import LevelSourceManager from "./LevelSourceManager";
+import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -33,6 +37,9 @@ class IndicatorManager {
     // 📊 NUEVO: Open Interest Indicator
     this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
 
+    // 🎯 NUEVO: Level Source Manager (for continuation patterns)
+    this.levelSourceManager = null; // Gestión centralizada de niveles de múltiples fuentes
+
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -49,8 +56,15 @@ class IndicatorManager {
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
-      this.supportResistanceIndicator
+      this.supportResistanceIndicator,
+      new VWAPIndicator(this.symbol, this.interval, this.days),
+      new FibonacciLevelCalculator(this.symbol, this.interval, this.days),
+      new ContinuationPatternIndicator(this.symbol, this.interval, this.days)
     ];
+
+    // 🎯 NUEVO: Inicializar Level Source Manager
+    this.levelSourceManager = new LevelSourceManager(this);
+    console.log(`[${this.symbol}] 🎯 LevelSourceManager inicializado`);
 
     // Habilitar el indicador de patrones por defecto
     const patternIndicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
@@ -136,6 +150,31 @@ class IndicatorManager {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator) {
       indicator.setEnabled(enabled);
+
+      // 🎯 NUEVO: Cargar datos automáticamente cuando se habilita un indicador que los requiere
+      if (enabled && indicator.fetchData) {
+        const needsFetch = [
+          "VWAP",
+          "Fibonacci",
+          "Continuation Patterns",
+          "Volume Profile",
+          "Open Interest",
+          "Support & Resistance"
+        ];
+
+        if (needsFetch.includes(name)) {
+          console.log(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+          indicator.fetchData().then(() => {
+            console.log(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+            // Forzar redibujado si está disponible
+            if (this.requestRedraw) {
+              this.requestRedraw();
+            }
+          }).catch(err => {
+            console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+          });
+        }
+      }
     }
   }
 
@@ -907,6 +946,51 @@ class IndicatorManager {
       startTimestamp: profile.startTimestamp,
       endTimestamp: profile.endTimestamp
     };
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el indicador VWAP
+   */
+  getVWAPIndicator() {
+    return this.indicators.find(ind => ind.name === "VWAP");
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el indicador de Fibonacci
+   */
+  getFibonacciIndicator() {
+    return this.indicators.find(ind => ind.name === "Fibonacci");
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el indicador de Continuation Patterns
+   */
+  getContinuationPatternIndicator() {
+    return this.indicators.find(ind => ind.name === "Continuation Patterns");
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el Level Source Manager
+   */
+  getLevelSourceManager() {
+    return this.levelSourceManager;
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene un indicador por nombre
+   */
+  getIndicator(name) {
+    return this.indicators.find(ind => ind.name === name);
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene múltiples indicadores por tipo (para fixed ranges)
+   */
+  getIndicatorsByType(type) {
+    if (type === 'VolumeProfileFixedRange') {
+      return this.fixedRangeIndicators;
+    }
+    return this.indicators.filter(ind => ind.constructor.name === type);
   }
 
   /**

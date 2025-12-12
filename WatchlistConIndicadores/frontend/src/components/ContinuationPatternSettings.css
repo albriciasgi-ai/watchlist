@@ -1,0 +1,160 @@
+/* ContinuationPatternSettings.css */
+.continuation-pattern-settings {
+  background: #ffffff;
+  color: #333333;
+  padding: 15px;
+  border-radius: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  min-width: 350px;
+}
+
+.continuation-pattern-settings .settings-section h4 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4CAF50;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.continuation-pattern-settings .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.continuation-pattern-settings .setting-row label {
+  font-size: 12px;
+  color: #555555;
+  flex: 1;
+}
+
+.continuation-pattern-settings .setting-row input[type="number"],
+.continuation-pattern-settings .setting-row input[type="text"],
+.continuation-pattern-settings .setting-row select {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 120px;
+}
+
+.continuation-pattern-settings .setting-row input[type="number"]:focus,
+.continuation-pattern-settings .setting-row input[type="text"]:focus,
+.continuation-pattern-settings .setting-row select:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.continuation-pattern-settings .setting-row input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.continuation-pattern-settings .pattern-types {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.continuation-pattern-settings .pattern-types h5,
+.continuation-pattern-settings .visual-settings h5 {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4CAF50;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.continuation-pattern-settings .visual-settings {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.continuation-pattern-settings .toggle-advanced-btn {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.continuation-pattern-settings .toggle-advanced-btn:hover {
+  background: #e8e8e8;
+}
+
+.continuation-pattern-settings .advanced-settings {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.continuation-pattern-settings .advanced-settings h5 {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4CAF50;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.continuation-pattern-settings .source-group {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.continuation-pattern-settings .sub-settings {
+  margin-left: 20px;
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 2px solid #cccccc;
+}
+
+.continuation-pattern-settings .settings-hint {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4CAF50;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Scrollbar styling */
+.continuation-pattern-settings::-webkit-scrollbar {
+  width: 6px;
+}
+
+.continuation-pattern-settings::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.continuation-pattern-settings::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 3px;
+}
+
+.continuation-pattern-settings::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}

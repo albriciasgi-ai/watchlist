@@ -128,7 +128,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -1557,6 +1557,66 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               ⚡
             </button>
           )}
+          {indicatorStates && indicatorStates["VWAP"] && (
+            <button
+              className="vwap-settings-btn"
+              onClick={() => onOpenVWAPSettings(indicatorManagerRef.current)}
+              title="Configurar VWAP"
+              style={{
+                background: '#FF9800',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              VW
+            </button>
+          )}
+          {indicatorStates && indicatorStates["Fibonacci"] && (
+            <button
+              className="fibonacci-settings-btn"
+              onClick={() => onOpenFibonacciSettings(indicatorManagerRef.current)}
+              title="Configurar Fibonacci"
+              style={{
+                background: '#2196F3',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              FIB
+            </button>
+          )}
+          {indicatorStates && indicatorStates["Continuation Patterns"] && (
+            <button
+              className="cp-settings-btn"
+              onClick={() => onOpenContinuationPatternSettings(indicatorManagerRef.current)}
+              title="Configurar Continuation Patterns"
+              style={{
+                background: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              CP
+            </button>
+          )}
           <button
             className="fixed-range-manager-btn"
             onClick={() => setShowFixedRangeManager(!showFixedRangeManager)}
@@ -1680,6 +1740,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
               onOpenSupportResistanceSettings={onOpenSupportResistanceSettings}
+              onOpenVWAPSettings={onOpenVWAPSettings}
+              onOpenFibonacciSettings={onOpenFibonacciSettings}
+              onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
               rejectionPatternConfig={rejectionPatternConfig}
             />
           </div>

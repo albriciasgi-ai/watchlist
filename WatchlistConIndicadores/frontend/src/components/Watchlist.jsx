@@ -5,6 +5,9 @@ import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
+import VWAPSettings from "./VWAPSettings";
+import FibonacciSettings from "./FibonacciSettings";
+import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
 import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
 
@@ -46,7 +49,10 @@ const Watchlist = () => {
     "Volume Delta": true,
     "CVD": true,
     "Volume Profile": false,
-    "Open Interest": false
+    "Open Interest": false,
+    "VWAP": false,
+    "Fibonacci": false,
+    "Continuation Patterns": false
   });
   
   const [vpConfig, setVpConfig] = useState({
@@ -90,6 +96,14 @@ const Watchlist = () => {
   // 📊 NUEVO: Estado para Support & Resistance Settings
   const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
   const [selectedSymbolForSR, setSelectedSymbolForSR] = useState(null);
+
+  // 📈 NUEVO: Estados para VWAP, Fibonacci y Continuation Pattern Settings
+  const [showVWAPSettings, setShowVWAPSettings] = useState(false);
+  const [selectedSymbolForVWAP, setSelectedSymbolForVWAP] = useState(null);
+  const [showFibonacciSettings, setShowFibonacciSettings] = useState(false);
+  const [selectedSymbolForFib, setSelectedSymbolForFib] = useState(null);
+  const [showContinuationPatternSettings, setShowContinuationPatternSettings] = useState(false);
+  const [selectedSymbolForCP, setSelectedSymbolForCP] = useState(null);
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -176,6 +190,74 @@ const Watchlist = () => {
     }
 
     setShowSupportResistanceSettings(true);
+  };
+
+  // 📈 NUEVO: Handlers para VWAP, Fibonacci y Continuation Pattern Settings
+  const handleOpenVWAPSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForVWAP(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowVWAPSettings(true);
+  };
+
+  const handleOpenFibonacciSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForFib(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowFibonacciSettings(true);
+  };
+
+  const handleOpenContinuationPatternSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForCP(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowContinuationPatternSettings(true);
+  };
+
+  // 📈 NUEVO: Handlers para cambio de config
+  const handleVWAPConfigChange = (config) => {
+    const manager = indicatorManagers[selectedSymbolForVWAP]?.manager;
+    if (manager) {
+      const vwapIndicator = manager.getVWAPIndicator();
+      if (vwapIndicator) {
+        vwapIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated VWAP config for ${selectedSymbolForVWAP}`);
+      }
+    }
+  };
+
+  const handleFibonacciConfigChange = (config) => {
+    const manager = indicatorManagers[selectedSymbolForFib]?.manager;
+    if (manager) {
+      const fibIndicator = manager.getFibonacciIndicator();
+      if (fibIndicator) {
+        fibIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
+      }
+    }
+  };
+
+  const handleContinuationPatternConfigChange = (config) => {
+    const manager = indicatorManagers[selectedSymbolForCP]?.manager;
+    if (manager) {
+      const cpIndicator = manager.getContinuationPatternIndicator();
+      if (cpIndicator) {
+        cpIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated Continuation Pattern config for ${selectedSymbolForCP}`);
+      }
+    }
   };
 
   // 🔔 NUEVO: Handler para cambio de config de patrones
@@ -424,6 +506,33 @@ const Watchlist = () => {
               Open Interest
             </label>
 
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["VWAP"]}
+                onChange={() => toggleIndicator("VWAP")}
+              />
+              VWAP
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Fibonacci"]}
+                onChange={() => toggleIndicator("Fibonacci")}
+              />
+              Fibonacci
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Continuation Patterns"]}
+                onChange={() => toggleIndicator("Continuation Patterns")}
+              />
+              Continuation Patterns
+            </label>
+
             {/* 🧪 Test Alert Buttons */}
             <button
               onClick={handleTestAlert}
@@ -489,6 +598,9 @@ const Watchlist = () => {
             onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
             onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
             onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
+            onOpenVWAPSettings={(indicatorManagerRef) => handleOpenVWAPSettings(sym, indicatorManagerRef)}
+            onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
+            onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
           />
         ))}
@@ -561,6 +673,160 @@ const Watchlist = () => {
             setSelectedSymbolForSR(null);
           }}
         />
+      )}
+
+      {/* 📈 NUEVO: Modal de VWAP Settings */}
+      {showVWAPSettings && selectedSymbolForVWAP && (
+        <div className="modal-overlay" onClick={() => setShowVWAPSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Configuración VWAP</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowVWAPSettings(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <VWAPSettings
+                config={(() => {
+                  const manager = indicatorManagers[selectedSymbolForVWAP]?.manager;
+                  const vwapIndicator = manager?.getVWAPIndicator();
+                  return vwapIndicator ? {
+                    vwapType: vwapIndicator.vwapType,
+                    resetHour: vwapIndicator.resetHour,
+                    rollingPeriod: vwapIndicator.rollingPeriod,
+                    showBands: vwapIndicator.showBands,
+                    applyCryptoAdjustment: vwapIndicator.applyCryptoAdjustment,
+                    bandMultipliers: vwapIndicator.bandMultipliers,
+                    vwapColor: vwapIndicator.vwapColor
+                  } : {
+                    vwapType: 'session',
+                    resetHour: 0,
+                    rollingPeriod: 20,
+                    showBands: true,
+                    applyCryptoAdjustment: true,
+                    bandMultipliers: [1.0, 2.0, 3.0],
+                    vwapColor: '#FF9800'
+                  };
+                })()}
+                onConfigChange={handleVWAPConfigChange}
+                currentSymbol={selectedSymbolForVWAP}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📈 NUEVO: Modal de Fibonacci Settings */}
+      {showFibonacciSettings && selectedSymbolForFib && (
+        <div className="modal-overlay" onClick={() => setShowFibonacciSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Configuración Fibonacci</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowFibonacciSettings(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <FibonacciSettings
+                config={(() => {
+                  const manager = indicatorManagers[selectedSymbolForFib]?.manager;
+                  const fibIndicator = manager?.getFibonacciIndicator();
+                  return fibIndicator ? {
+                    autoDetect: fibIndicator.autoDetect,
+                    lookback: fibIndicator.lookback,
+                    showRetracements: fibIndicator.showRetracements,
+                    showExtensions: fibIndicator.showExtensions,
+                    levels: fibIndicator.levels,
+                    extensionLevels: fibIndicator.extensionLevels,
+                    color: fibIndicator.color,
+                    labelPosition: fibIndicator.labelPosition,
+                    lineWidth: fibIndicator.lineWidth
+                  } : {
+                    autoDetect: true,
+                    lookback: 50,
+                    showRetracements: true,
+                    showExtensions: false,
+                    levels: [0.236, 0.382, 0.5, 0.618, 0.786],
+                    extensionLevels: [1.272, 1.414, 1.618, 2.0, 2.618],
+                    color: 'rgba(33, 150, 243, 0.6)',
+                    labelPosition: 'right',
+                    lineWidth: 1
+                  };
+                })()}
+                onConfigChange={handleFibonacciConfigChange}
+                currentSymbol={selectedSymbolForFib}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📈 NUEVO: Modal de Continuation Pattern Settings */}
+      {showContinuationPatternSettings && selectedSymbolForCP && (
+        <div className="modal-overlay" onClick={() => setShowContinuationPatternSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Configuración Continuation Patterns</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowContinuationPatternSettings(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <ContinuationPatternSettings
+                config={(() => {
+                  const manager = indicatorManagers[selectedSymbolForCP]?.manager;
+                  const cpIndicator = manager?.getContinuationPatternIndicator();
+                  return cpIndicator ? {
+                    showContinuation: cpIndicator.showContinuation,
+                    showTrendStart: cpIndicator.showTrendStart,
+                    showMomentum: cpIndicator.showMomentum,
+                    showReversal: cpIndicator.showReversal,
+                    minConfidence: cpIndicator.minConfidence,
+                    includeVWAP: cpIndicator.includeVWAP,
+                    includeFibonacci: cpIndicator.includeFibonacci,
+                    vwapConfig: cpIndicator.vwapConfig,
+                    fibonacciConfig: cpIndicator.fibonacciConfig,
+                    showLabels: cpIndicator.showLabels,
+                    showConfidence: cpIndicator.showConfidence,
+                    iconSize: cpIndicator.iconSize
+                  } : {
+                    showContinuation: true,
+                    showTrendStart: true,
+                    showMomentum: true,
+                    showReversal: false,
+                    minConfidence: 60,
+                    includeVWAP: true,
+                    includeFibonacci: false,
+                    vwapConfig: {
+                      vwap_type: 'session',
+                      reset_hour: 0,
+                      apply_crypto_adjustment: true
+                    },
+                    fibonacciConfig: {
+                      auto_detect: true,
+                      lookback: 50,
+                      include_extensions: false
+                    },
+                    showLabels: true,
+                    showConfidence: true,
+                    iconSize: 16
+                  };
+                })()}
+                onConfigChange={handleContinuationPatternConfigChange}
+                currentSymbol={selectedSymbolForCP}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
