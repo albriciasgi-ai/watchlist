@@ -141,6 +141,15 @@
   line-height: 1.4;
 }
 
+.continuation-pattern-settings .param-hint {
+  display: block;
+  font-size: 10px;
+  color: #888888;
+  font-weight: normal;
+  font-style: italic;
+  margin-top: 2px;
+}
+
 /* Scrollbar styling */
 .continuation-pattern-settings::-webkit-scrollbar {
   width: 6px;

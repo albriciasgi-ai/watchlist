@@ -20,7 +20,21 @@
       "Bash(.venv/Scripts/pip.exe:*)",
       "Bash(findstr:*)",
       "Bash(.venvScriptspip.exe install -r requirements.txt)",
-      "Bash(\".venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8000)"
+      "Bash(\".venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8000)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "WebSearch",
+      "Bash(.venvScriptspip.exe install numpy)",
+      "Bash(.venv/Scripts/python.exe -m uvicorn main:app --reload --port 8000)",
+      "Bash(curl:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(powershell -Command \"Get-Content Watchlist.jsx | Select-Object -Last 100\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Measure-Object -Line\")",
+      "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Select-Object -Last 30\")",
+      "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Select-Object -Skip 520 -First 50\")",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []

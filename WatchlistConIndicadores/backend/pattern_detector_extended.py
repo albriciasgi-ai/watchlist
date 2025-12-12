@@ -110,7 +110,8 @@ class PatternDetectorExtended:
         trend_analysis: Optional[Dict] = None,
         vwap_levels: Optional[List[Dict]] = None,
         fibonacci_levels: Optional[List[Dict]] = None,
-        volume_profile_levels: Optional[List[Dict]] = None
+        volume_profile_levels: Optional[List[Dict]] = None,
+        pattern_params: Optional[Dict] = None
     ) -> List[DetectedPattern]:
         """
         Detect all pattern types in the candles
@@ -129,6 +130,18 @@ class PatternDetectorExtended:
             return []
 
         patterns = []
+
+        # Extract pattern-specific parameters (or use defaults)
+        if pattern_params is None:
+            pattern_params = {}
+
+        reversal_params = pattern_params.get('reversal', {})
+        continuation_params = pattern_params.get('continuation', {})
+        momentum_params = pattern_params.get('momentum', {})
+
+        # Log if proximity logic is inverted (for debugging)
+        if reversal_params.get('invertProximity', False):
+            print(f"[PATTERN DETECTION] Reversal proximity logic INVERTED: far from levels = high confidence")
 
         # Calculate volume average for comparison
         avg_volume = self._calculate_average_volume(candles)
@@ -164,6 +177,13 @@ class PatternDetectorExtended:
             )
             if momentum_pattern:
                 patterns.append(momentum_pattern)
+
+            # Detect reversal patterns (hammer, shooting star, engulfing, doji)
+            reversal_pattern = self._detect_reversal_pattern(
+                candles, i, trend_analysis, avg_volume, all_levels, reversal_params
+            )
+            if reversal_pattern:
+                patterns.append(reversal_pattern)
 
         return patterns
 
@@ -614,6 +634,228 @@ class PatternDetectorExtended:
             level_proximity=level_proximity,
             candle_index=index,
             price=current['close']
+        )
+
+
+    # ==================== REVERSAL PATTERNS ====================
+
+    def _detect_reversal_pattern(
+        self,
+        candles: List[Dict],
+        index: int,
+        trend_analysis: Optional[Dict],
+        avg_volume: float,
+        levels: List[Dict],
+        params: Dict
+    ) -> Optional[DetectedPattern]:
+        """
+        Detect reversal patterns (hammer, shooting star, engulfing, doji)
+
+        These patterns typically appear at trend extremes and signal potential reversals
+        """
+        current = candles[index]
+
+        # Extract parameters with defaults
+        min_wick_ratio = params.get('minWickRatio', 1.5)
+        max_opposite_wick = params.get('maxOppositeWick', 0.25)
+        min_body_position = params.get('minBodyPosition', 0.5)
+        engulfing_tolerance = params.get('engulfingTolerance', 0.02)  # 2% tolerance (stricter)
+        invert_proximity = params.get('invertProximity', False)  # Invert proximity logic
+
+        # Check for hammer (bullish pin bar at bottom)
+        hammer = self._is_hammer(current, min_wick_ratio, max_opposite_wick, min_body_position)
+        if hammer:
+            return self._create_reversal_pattern(
+                current, index, PatternName.HAMMER.value, 'bullish',
+                trend_analysis, avg_volume, levels, candles, invert_proximity
+            )
+
+        # Check for shooting star (bearish pin bar at top)
+        shooting_star = self._is_shooting_star(current, min_wick_ratio, max_opposite_wick, min_body_position)
+        if shooting_star:
+            return self._create_reversal_pattern(
+                current, index, PatternName.SHOOTING_STAR.value, 'bearish',
+                trend_analysis, avg_volume, levels, candles, invert_proximity
+            )
+
+        # Check for engulfing (need previous candle)
+        if index > 0:
+            prev_candle = candles[index - 1]
+            engulfing = self._is_engulfing(prev_candle, current, engulfing_tolerance)
+            if engulfing:
+                direction = 'bullish' if engulfing == PatternName.ENGULFING_BULL.value else 'bearish'
+                return self._create_reversal_pattern(
+                    current, index, engulfing, direction,
+                    trend_analysis, avg_volume, levels, candles, invert_proximity
+                )
+
+        # Check for doji
+        doji = self._is_doji(current)
+        if doji:
+            direction = 'bullish' if doji == PatternName.DOJI_DRAGONFLY.value else 'bearish'
+            return self._create_reversal_pattern(
+                current, index, doji, direction,
+                trend_analysis, avg_volume, levels, candles, invert_proximity
+            )
+
+        return None
+
+    def _is_hammer(self, candle: Dict, min_wick_ratio: float = 1.5, max_opposite_wick: float = 0.25, min_body_position: float = 0.5) -> bool:
+        """Detect hammer: long lower shadow, small upper shadow"""
+        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
+        body = abs(c - o)
+        lower_shadow = min(o, c) - l
+        upper_shadow = h - max(o, c)
+        total_range = h - l
+
+        if total_range == 0 or body == 0:
+            return False
+
+        return (
+            lower_shadow >= min_wick_ratio * body and
+            upper_shadow <= max_opposite_wick * body and
+            (c - l) / total_range >= min_body_position
+        )
+
+    def _is_shooting_star(self, candle: Dict, min_wick_ratio: float = 1.5, max_opposite_wick: float = 0.25, min_body_position: float = 0.5) -> bool:
+        """Detect shooting star: long upper shadow, small lower shadow"""
+        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
+        body = abs(c - o)
+        lower_shadow = min(o, c) - l
+        upper_shadow = h - max(o, c)
+        total_range = h - l
+
+        if total_range == 0 or body == 0:
+            return False
+
+        return (
+            upper_shadow >= min_wick_ratio * body and
+            lower_shadow <= max_opposite_wick * body and
+            (h - c) / total_range >= min_body_position
+        )
+
+    def _is_engulfing(self, prev_candle: Dict, curr_candle: Dict, tolerance: float = 0.02) -> Optional[str]:
+        """
+        Detect engulfing pattern with tolerance
+
+        tolerance: Allow pattern if engulfs X% of previous candle (default 2% = 98% engulfing, stricter than 5%)
+        """
+        prev_body_top = max(prev_candle['open'], prev_candle['close'])
+        prev_body_bottom = min(prev_candle['open'], prev_candle['close'])
+        curr_body_top = max(curr_candle['open'], curr_candle['close'])
+        curr_body_bottom = min(curr_candle['open'], curr_candle['close'])
+
+        prev_body_size = prev_body_top - prev_body_bottom
+        tolerance_amount = prev_body_size * tolerance
+
+        # Bullish engulfing (current green candle engulfs previous red)
+        if (prev_candle['close'] < prev_candle['open'] and
+            curr_candle['close'] > curr_candle['open'] and
+            curr_body_bottom <= (prev_body_bottom + tolerance_amount) and
+            curr_body_top >= (prev_body_top - tolerance_amount)):
+            return PatternName.ENGULFING_BULL.value
+
+        # Bearish engulfing (current red candle engulfs previous green)
+        if (prev_candle['close'] > prev_candle['open'] and
+            curr_candle['close'] < curr_candle['open'] and
+            curr_body_top >= (prev_body_top - tolerance_amount) and
+            curr_body_bottom <= (prev_body_bottom + tolerance_amount)):
+            return PatternName.ENGULFING_BEAR.value
+
+        return None
+
+    def _is_doji(self, candle: Dict) -> Optional[str]:
+        """Detect doji patterns"""
+        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
+        body = abs(c - o)
+        lower_shadow = min(o, c) - l
+        upper_shadow = h - max(o, c)
+        total_range = h - l
+
+        if total_range == 0:
+            return None
+
+        # Doji = very small body (< 5% of range)
+        if body / total_range > 0.05:
+            return None
+
+        # Dragonfly Doji
+        if lower_shadow > total_range * 0.6 and upper_shadow < total_range * 0.1:
+            return PatternName.DOJI_DRAGONFLY.value
+
+        # Gravestone Doji
+        if upper_shadow > total_range * 0.6 and lower_shadow < total_range * 0.1:
+            return PatternName.DOJI_GRAVESTONE.value
+
+        return None
+
+    def _create_reversal_pattern(
+        self,
+        candle: Dict,
+        index: int,
+        pattern_name: str,
+        direction: str,
+        trend_analysis: Optional[Dict],
+        avg_volume: float,
+        levels: List[Dict],
+        all_candles: List[Dict],
+        invert_proximity: bool = False
+    ) -> DetectedPattern:
+        """Helper to create a reversal pattern DetectedPattern object"""
+        # Calculate metrics
+        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
+        body_size = abs(c - o) / c
+        total_range = h - l
+        wick_size = (total_range - abs(c - o)) / c if c > 0 else 0
+        volume_ratio = candle['volume'] / avg_volume if avg_volume > 0 else 1.0
+
+        # Quality: reversal patterns should have good wick ratio and volume
+        pattern_quality = min(100, (wick_size * 150) + (volume_ratio * 20))
+        volume_score = min(100, volume_ratio * 50)
+
+        # Check proximity to levels
+        near_level, level_dist, level_type = self._check_level_proximity(c, levels)
+        level_proximity = self._calculate_level_proximity_score(level_dist)
+
+        # INVERT PROXIMITY LOGIC if requested
+        # Normally: close to level = high score
+        # Inverted: far from level = high score (useful for divergences)
+        if invert_proximity:
+            level_proximity = 100 - level_proximity
+
+        # Reversal patterns confidence formula
+        # If inverted: patterns AWAY from levels get more confidence
+        confidence = (pattern_quality * 0.3) + (volume_score * 0.2) + (level_proximity * 0.5)
+
+        # Get trend context
+        in_trend = False
+        trend_dir = 'sideways'
+        trend_strength = 0.0
+        if trend_analysis:
+            trend_strength = trend_analysis.get('strength', 0)
+            trend_dir = trend_analysis.get('direction', 'sideways')
+            in_trend = trend_strength >= self.strong_trend_threshold
+
+        return DetectedPattern(
+            timestamp=candle['timestamp'],
+            pattern_type=PatternType.REVERSAL.value,
+            pattern_name=pattern_name,
+            direction=direction,
+            confidence=confidence,
+            body_size=body_size,
+            wick_size=wick_size,
+            volume_ratio=volume_ratio,
+            in_trend=in_trend,
+            trend_direction=trend_dir,
+            trend_strength=trend_strength,
+            near_level=near_level,
+            level_distance=level_dist,
+            level_type=level_type,
+            pattern_quality=pattern_quality,
+            volume_score=volume_score,
+            level_proximity=level_proximity,
+            candle_index=index,
+            price=c
         )
 
 

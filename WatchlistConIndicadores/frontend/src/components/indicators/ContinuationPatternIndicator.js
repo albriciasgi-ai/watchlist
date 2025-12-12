@@ -28,7 +28,7 @@ class ContinuationPatternIndicator extends IndicatorBase {
       apply_crypto_adjustment: true
     };
     this.fibonacciConfig = config.fibonacciConfig || {
-      auto_detect: true,
+      auto_detect: true,  // MUST be true by default to avoid backend error
       lookback: 50,
       include_extensions: false
     };
@@ -36,7 +36,29 @@ class ContinuationPatternIndicator extends IndicatorBase {
     // Visual settings
     this.showLabels = config.showLabels !== undefined ? config.showLabels : true;
     this.showConfidence = config.showConfidence !== undefined ? config.showConfidence : true;
-    this.iconSize = config.iconSize || 16;
+    this.iconSize = config.iconSize || 9;  // Changed from 16 to 9px
+
+    // Pattern-specific parameters (for backend detection)
+    this.patternParams = config.patternParams || {
+      // Reversal pattern parameters
+      reversal: {
+        minWickRatio: 1.5,        // Min wick/body ratio (1.5 = wick 1.5x body)
+        maxOppositeWick: 0.25,    // Max opposite wick (0.25 = 25% of body)
+        minBodyPosition: 0.5,     // Min body position in range (0.5 = 50%)
+        engulfingTolerance: 0.02, // Engulfing tolerance (0.02 = 2% margin, more strict)
+        invertProximity: false    // Invert proximity logic (false = near levels = high confidence)
+      },
+      // Continuation pattern parameters
+      continuation: {
+        maxConsolidationRange: 0.03,  // Max consolidation range (3%)
+        minBreakoutSize: 0.01         // Min breakout size (1%)
+      },
+      // Momentum pattern parameters
+      momentum: {
+        minBodyPercent: 0.3,      // Min body as % of range
+        minConsecutive: 3         // Min consecutive candles
+      }
+    };
 
     // Data
     this.patterns = [];
@@ -107,7 +129,8 @@ class ContinuationPatternIndicator extends IndicatorBase {
         include_vwap: this.includeVWAP,
         include_fibonacci: this.includeFibonacci,
         vwap_config: this.vwapConfig,
-        fibonacci_config: this.fibonacciConfig
+        fibonacci_config: this.fibonacciConfig,
+        pattern_params: this.patternParams  // Send pattern-specific parameters
       };
 
       const url = `${API_BASE_URL}/api/patterns/analyze`;
@@ -132,6 +155,38 @@ class ContinuationPatternIndicator extends IndicatorBase {
         this.trendAnalysis = json.data.trend || null;
 
         console.log(`[${this.symbol}] ✅ Patterns loaded:`, json.data.summary);
+
+        // DEBUG: Log reversal pattern analysis (only once after fetch)
+        const reversalPatterns = this.patterns.filter(p => p.pattern_type === 'reversal');
+        if (reversalPatterns.length > 0) {
+          const countByName = {};
+          const belowThreshold = [];
+          const aboveThreshold = [];
+
+          reversalPatterns.forEach(p => {
+            countByName[p.pattern_name] = (countByName[p.pattern_name] || 0) + 1;
+            if (p.confidence < this.minConfidence) {
+              belowThreshold.push(p);
+            } else {
+              aboveThreshold.push(p);
+            }
+          });
+
+          console.log(`[${this.symbol}] 📊 Reversal Patterns by type:`, countByName);
+          console.log(`[${this.symbol}] 🎯 Min confidence threshold: ${this.minConfidence}%`);
+          console.log(`[${this.symbol}] ✅ Above threshold: ${aboveThreshold.length}/${reversalPatterns.length}`);
+          console.log(`[${this.symbol}] ❌ Below threshold: ${belowThreshold.length}/${reversalPatterns.length}`);
+
+          if (belowThreshold.length > 0) {
+            const avgConfidence = (belowThreshold.reduce((sum, p) => sum + p.confidence, 0) / belowThreshold.length).toFixed(1);
+            console.log(`[${this.symbol}] 📉 Avg confidence of rejected: ${avgConfidence}%`);
+          }
+          if (aboveThreshold.length > 0) {
+            const avgConfidence = (aboveThreshold.reduce((sum, p) => sum + p.confidence, 0) / aboveThreshold.length).toFixed(1);
+            console.log(`[${this.symbol}] 📈 Avg confidence of accepted: ${avgConfidence}%`);
+          }
+        }
+
         return true;
       } else {
         console.error(`[${this.symbol}] ❌ Pattern error:`, json.error);
@@ -197,6 +252,12 @@ class ContinuationPatternIndicator extends IndicatorBase {
     }
     if (config.iconSize !== undefined) {
       this.iconSize = config.iconSize;
+    }
+
+    // Pattern parameters (require refresh)
+    if (config.patternParams) {
+      this.patternParams = { ...this.patternParams, ...config.patternParams };
+      needsRefresh = true;
     }
 
     if (needsRefresh) {

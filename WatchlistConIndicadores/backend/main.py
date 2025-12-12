@@ -2443,12 +2443,17 @@ async def analyze_patterns(request: Request):
 
         # Step 3: Detect patterns with context
         print(f"[{symbol}] Step 3: Detecting patterns...")
+
+        # Extract pattern parameters from request
+        pattern_params = body.get('pattern_params', {})
+
         patterns = pattern_detector_extended.detect_patterns(
             candles,
             trend_analysis=trend_summary,
             vwap_levels=vwap_levels,
             fibonacci_levels=fibonacci_levels,
-            volume_profile_levels=None  # Can be added later
+            volume_profile_levels=None,  # Can be added later
+            pattern_params=pattern_params  # Pass custom pattern parameters
         )
 
         # Convert patterns to dict format (dataclass to dict)

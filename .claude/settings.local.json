@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(python -c:*)",
+      "Bash(start_backend.bat)",
+      "Bash(python -m uvicorn:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node test_pattern_detection.js)",
+      "Bash(npx eslint:*)",
+      "Bash(node test_ui_parameters.js:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(git restore:*)",
+      "Bash(del UI_CONFIGURATION_GUIDE.md UI_UPDATE_TESTING_REPORT.md frontendtest_ui_parameters.js)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(node:*)",
+      "Bash(del:*)",
+      "Bash(dir:*)",
+      "Bash(pip install:*)",
+      "Bash(python extract_pdf_info.py:*)",
+      "Bash(iconv:*)",
+      "Bash(python extract_continuation_patterns.py:*)",
+      "Bash(python:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

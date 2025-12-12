@@ -6,9 +6,12 @@ import './RejectionPatternSettings.css';
  *
  * Allows users to configure:
  * - Which patterns to detect (Hammer, Shooting Star, Engulfing, etc.)
+ * - Pattern-specific parameters (wick ratios, body position, debug mode)
+ * - Swing detection settings
  * - Reference contexts to validate patterns (Volume Profiles, Range Detector)
  * - Filters (confidence, volume, proximity)
  * - Alert settings
+ * - Quick presets by timeframe
  */
 const RejectionPatternSettings = ({
   symbol,
@@ -20,7 +23,8 @@ const RejectionPatternSettings = ({
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [availableContexts, setAvailableContexts] = useState([]);
   const [showContextModal, setShowContextModal] = useState(false);
-  const [showMode, setShowMode] = useState('validated'); // ✅ FIX: Default a 'validated' (consistente con indicador)
+  const [showMode, setShowMode] = useState('validated');
+  const [activePreset, setActivePreset] = useState('custom');
 
   // ✅ NUEVO: Leer el modo actual del indicador al montar
   useEffect(() => {
@@ -39,7 +43,9 @@ const RejectionPatternSettings = ({
     if (savedConfig) {
       try {
         const parsed = JSON.parse(savedConfig);
-        setConfig(parsed);
+        // Migrate old configs to include new fields
+        const migratedConfig = migrateConfig(parsed);
+        setConfig(migratedConfig);
       } catch (e) {
         console.error('Failed to load config:', e);
       }
@@ -145,6 +151,24 @@ const RejectionPatternSettings = ({
     return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
   };
 
+  // Migrar configs antiguas para incluir nuevos campos
+  const migrateConfig = (oldConfig) => {
+    const defaultConfig = getDefaultConfig();
+
+    return {
+      ...defaultConfig,
+      ...oldConfig,
+      patterns: {
+        hammer: { ...defaultConfig.patterns.hammer, ...oldConfig.patterns?.hammer },
+        shootingStar: { ...defaultConfig.patterns.shootingStar, ...oldConfig.patterns?.shootingStar },
+        engulfing: { ...defaultConfig.patterns.engulfing, ...oldConfig.patterns?.engulfing },
+        doji: { ...defaultConfig.patterns.doji, ...oldConfig.patterns?.doji }
+      },
+      swingDetection: { ...defaultConfig.swingDetection, ...oldConfig.swingDetection },
+      debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode
+    };
+  };
+
   useEffect(() => {
     // Notify parent of config changes
     if (onConfigChange) {
@@ -166,6 +190,7 @@ const RejectionPatternSettings = ({
         }
       }
     }));
+    setActivePreset('custom');
   };
 
   const updatePatternConfig = (patternKey, field, value) => {
@@ -179,6 +204,18 @@ const RejectionPatternSettings = ({
         }
       }
     }));
+    setActivePreset('custom');
+  };
+
+  const updateSwingDetection = (field, value) => {
+    setConfig(prev => ({
+      ...prev,
+      swingDetection: {
+        ...prev.swingDetection,
+        [field]: value
+      }
+    }));
+    setActivePreset('custom');
   };
 
   const toggleContext = (contextId) => {
@@ -229,6 +266,7 @@ const RejectionPatternSettings = ({
         [filterKey]: value
       }
     }));
+    setActivePreset('custom');
   };
 
   const addContext = (context) => {
@@ -283,6 +321,93 @@ const RejectionPatternSettings = ({
     }
   };
 
+  // 🎯 NUEVO: Quick Presets
+  const applyPreset = (presetKey) => {
+    const presets = getPresets();
+    const preset = presets[presetKey];
+
+    if (!preset) return;
+
+    setConfig(prev => ({
+      ...prev,
+      patterns: preset.patterns,
+      swingDetection: preset.swingDetection,
+      filters: { ...prev.filters, minConfidence: preset.minConfidence }
+    }));
+
+    setActivePreset(presetKey);
+  };
+
+  // 🔧 NUEVO: Utilities
+  const copyConfig = async () => {
+    try {
+      const configJson = JSON.stringify(config, null, 2);
+      await navigator.clipboard.writeText(configJson);
+      alert('✅ Configuration copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy config:', err);
+      alert('❌ Failed to copy configuration');
+    }
+  };
+
+  const pasteConfig = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const parsed = JSON.parse(text);
+      const migratedConfig = migrateConfig(parsed);
+      setConfig(migratedConfig);
+      setActivePreset('custom');
+      alert('✅ Configuration pasted successfully!');
+    } catch (err) {
+      console.error('Failed to paste config:', err);
+      alert('❌ Failed to paste configuration (invalid JSON)');
+    }
+  };
+
+  const resetToDefaults = () => {
+    if (window.confirm('Reset all settings to default values?')) {
+      setConfig(getDefaultConfig());
+      setActivePreset('custom');
+    }
+  };
+
+  const exportConfig = () => {
+    const configJson = JSON.stringify(config, null, 2);
+    const blob = new Blob([configJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rejection-pattern-config-${symbol}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importConfig = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          const migratedConfig = migrateConfig(parsed);
+          setConfig(migratedConfig);
+          setActivePreset('custom');
+          alert('✅ Configuration imported successfully!');
+        } catch (err) {
+          console.error('Failed to import config:', err);
+          alert('❌ Failed to import configuration (invalid JSON)');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   return (
     <div className="rejection-pattern-settings">
       <div className="settings-header">
@@ -290,8 +415,27 @@ const RejectionPatternSettings = ({
         <button className="close-button" onClick={onClose}>✕</button>
       </div>
 
+      {/* ⚡ NUEVO: Utilities Bar */}
+      <div className="utilities-bar">
+        <button className="utility-button" onClick={copyConfig} title="Copy config to clipboard">
+          📋 Copy
+        </button>
+        <button className="utility-button" onClick={pasteConfig} title="Paste config from clipboard">
+          📝 Paste
+        </button>
+        <button className="utility-button" onClick={resetToDefaults} title="Reset to defaults">
+          🔄 Reset
+        </button>
+        <button className="utility-button" onClick={exportConfig} title="Export config as JSON">
+          💾 Export
+        </button>
+        <button className="utility-button" onClick={importConfig} title="Import config from JSON">
+          📂 Import
+        </button>
+      </div>
+
       <div className="settings-content">
-        {/* NEW: Show Mode Toggle */}
+        {/* Visualization Mode Toggle */}
         <section className="settings-section" style={{ background: '#1a1a1a', padding: '15px', borderRadius: '4px', marginBottom: '15px' }}>
           <h4 style={{ marginBottom: '10px' }}>👁️ Visualization Mode</h4>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -337,6 +481,74 @@ const RejectionPatternSettings = ({
           </p>
         </section>
 
+        {/* ⚡ NUEVO: Quick Presets */}
+        <section className="settings-section">
+          <h4>⚡ Quick Presets</h4>
+          <p className="help-text">
+            Apply pre-configured settings optimized for different timeframes and trading styles.
+          </p>
+          <div className="presets-section">
+            <button
+              className={`preset-button ${activePreset === 'scalping_1m' ? 'active' : ''}`}
+              onClick={() => applyPreset('scalping_1m')}
+            >
+              ⚡ 1m Scalping
+            </button>
+            <button
+              className={`preset-button ${activePreset === 'swing_15m' ? 'active' : ''}`}
+              onClick={() => applyPreset('swing_15m')}
+            >
+              📈 15m Swing
+            </button>
+            <button
+              className={`preset-button ${activePreset === 'position_4h' ? 'active' : ''}`}
+              onClick={() => applyPreset('position_4h')}
+            >
+              📊 4h Position
+            </button>
+            <button
+              className={`preset-button ${activePreset === 'custom' ? 'active' : ''}`}
+              style={{ marginLeft: 'auto' }}
+            >
+              🎨 Custom
+            </button>
+          </div>
+        </section>
+
+        {/* 🐛 NUEVO: Debug & Diagnostics */}
+        <section className="settings-section">
+          <h4>🐛 Debug & Diagnostics</h4>
+          <p className="help-text">
+            Enable debug mode to see why patterns are rejected in the browser console (F12 → Console).
+          </p>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.debugMode || false}
+                onChange={(e) => {
+                  setConfig(prev => ({ ...prev, debugMode: e.target.checked }));
+                  setActivePreset('custom');
+                }}
+              />
+              <span>🔧 Enable global debug mode (all patterns)</span>
+            </label>
+            <span className="filter-hint">
+              Shows detailed rejection reasons in browser console
+            </span>
+          </div>
+
+          {config.debugMode && (
+            <div className="debug-info-box">
+              <p>💡 Debug mode is active. Open browser console (F12 → Console) to see pattern rejection details.</p>
+              <p style={{ fontSize: '11px', marginTop: '8px', color: '#888' }}>
+                You'll see messages like: <code>[HAMMER REJECTED] wickRatio=1.2 (need ≥1.5)</code>
+              </p>
+            </div>
+          )}
+        </section>
+
         {/* Section 1: Patterns to Detect */}
         <section className="settings-section">
           <h4>📊 Patterns to Detect</h4>
@@ -348,6 +560,7 @@ const RejectionPatternSettings = ({
               onToggle={() => togglePattern('hammer')}
               config={config.patterns.hammer}
               onConfigChange={(field, value) => updatePatternConfig('hammer', field, value)}
+              patternType="hammer"
             />
 
             <PatternToggle
@@ -357,6 +570,7 @@ const RejectionPatternSettings = ({
               onToggle={() => togglePattern('shootingStar')}
               config={config.patterns.shootingStar}
               onConfigChange={(field, value) => updatePatternConfig('shootingStar', field, value)}
+              patternType="shootingStar"
             />
 
             <PatternToggle
@@ -366,6 +580,7 @@ const RejectionPatternSettings = ({
               onToggle={() => togglePattern('engulfing')}
               config={config.patterns.engulfing}
               onConfigChange={(field, value) => updatePatternConfig('engulfing', field, value)}
+              patternType="engulfing"
             />
 
             <PatternToggle
@@ -375,8 +590,94 @@ const RejectionPatternSettings = ({
               onToggle={() => togglePattern('doji')}
               config={config.patterns.doji}
               onConfigChange={(field, value) => updatePatternConfig('doji', field, value)}
+              patternType="doji"
             />
           </div>
+        </section>
+
+        {/* 🎯 NUEVO: Swing Detection Settings */}
+        <section className="settings-section">
+          <h4>🎯 Swing Detection Settings</h4>
+          <p className="help-text">
+            Configure swing point detection to identify local highs and lows.
+            Patterns at swing points are typically more reliable.
+          </p>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.swingDetection?.enabled || false}
+                onChange={(e) => updateSwingDetection('enabled', e.target.checked)}
+              />
+              <span>Enable swing point detection</span>
+            </label>
+            <span className="filter-hint">
+              Identifies local highs and lows in the price action
+            </span>
+          </div>
+
+          {config.swingDetection?.enabled && (
+            <>
+              <div className="swing-visual-explanation">
+                <pre style={{ fontSize: '10px', color: '#888', margin: '12px 0' }}>
+{`  ${config.swingDetection.leftBars} bars ← [Pattern] → ${config.swingDetection.rightBars} bars
+              ↓
+      Must be local high/low`}
+                </pre>
+              </div>
+
+              <div className="filter-item">
+                <label>
+                  Left Bars: {config.swingDetection?.leftBars || 5}
+                  <input
+                    type="range"
+                    min="3"
+                    max="20"
+                    step="1"
+                    value={config.swingDetection?.leftBars || 5}
+                    onChange={(e) => updateSwingDetection('leftBars', parseInt(e.target.value))}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  Number of candles to the left to compare
+                </span>
+              </div>
+
+              <div className="filter-item">
+                <label>
+                  Right Bars: {config.swingDetection?.rightBars || 5}
+                  <input
+                    type="range"
+                    min="3"
+                    max="20"
+                    step="1"
+                    value={config.swingDetection?.rightBars || 5}
+                    onChange={(e) => updateSwingDetection('rightBars', parseInt(e.target.value))}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  Number of candles to the right to compare
+                </span>
+              </div>
+
+              <div className="filter-item">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={config.swingDetection?.required || false}
+                    onChange={(e) => updateSwingDetection('required', e.target.checked)}
+                  />
+                  <span>Only show patterns at swing points (more restrictive)</span>
+                </label>
+                <span className="filter-hint">
+                  If enabled, patterns NOT at swing points will be hidden
+                </span>
+              </div>
+            </>
+          )}
         </section>
 
         {/* Section 2: Reference Contexts */}
@@ -593,6 +894,14 @@ const RejectionPatternSettings = ({
           <div className="config-summary">
             <p>✅ {getEnabledPatternsCount()} pattern types active</p>
             <p>✅ {getEnabledContextsCount()} reference contexts active</p>
+            {config.swingDetection?.enabled && (
+              <p>✅ Swing detection: {config.swingDetection.leftBars}L / {config.swingDetection.rightBars}R {config.swingDetection.required ? '(required)' : ''}</p>
+            )}
+            {config.debugMode && (
+              <p className="info">
+                🐛 Debug mode active - check console
+              </p>
+            )}
             {getEnabledContextsCount() === 0 && (
               <p className="warning">
                 ⚠️ No contexts active - may generate false positives!
@@ -620,9 +929,249 @@ const RejectionPatternSettings = ({
   );
 };
 
-// Sub-component: PatternToggle
-const PatternToggle = ({ label, description, enabled, onToggle, config, onConfigChange }) => {
+// ========================================
+// Sub-component: ParameterSlider
+// ========================================
+const ParameterSlider = ({ label, value, min, max, step, unit, onChange, defaultValue, tooltip }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  // Determine warning level based on how far from default
+  const getWarningLevel = () => {
+    if (!defaultValue) return null;
+    const range = max - min;
+    const deviation = Math.abs(value - defaultValue) / range;
+
+    if (deviation < 0.2) return null; // Close to default
+    if (deviation < 0.4) return 'permissive';
+    return 'restrictive';
+  };
+
+  const warningLevel = getWarningLevel();
+  const warningMessages = {
+    permissive: '⚠️ More permissive - may detect more patterns',
+    restrictive: '⚠️ More restrictive - may miss some patterns'
+  };
+
+  return (
+    <div className="parameter-slider">
+      <div className="parameter-label">
+        <span>
+          {label}
+          {tooltip && (
+            <span
+              className="tooltip-icon"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              ℹ️
+            </span>
+          )}
+        </span>
+        <span className="parameter-value">
+          {value}{unit}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="parameter-range"
+      />
+      {warningLevel && (
+        <div className={`parameter-warning ${warningLevel}`}>
+          {warningMessages[warningLevel]}
+        </div>
+      )}
+      {showTooltip && tooltip && (
+        <div className="parameter-tooltip">
+          {tooltip}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ========================================
+// Sub-component: PatternParameterGroup
+// ========================================
+const PatternParameterGroup = ({ title, children }) => {
+  return (
+    <div className="parameter-group">
+      <div className="parameter-group-title">{title}</div>
+      {children}
+    </div>
+  );
+};
+
+// ========================================
+// Sub-component: PatternToggle (MEJORADO)
+// ========================================
+const PatternToggle = ({ label, description, enabled, onToggle, config, onConfigChange, patternType }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const renderHammerParams = () => (
+    <>
+      <PatternParameterGroup title="📏 Wick Requirements">
+        <ParameterSlider
+          label="Min Wick Ratio"
+          value={config.minWickRatio || 1.5}
+          min={1.0}
+          max={5.0}
+          step={0.1}
+          unit="x"
+          onChange={(v) => onConfigChange('minWickRatio', v)}
+          defaultValue={1.5}
+          tooltip="Lower wick must be X times longer than body"
+        />
+        <ParameterSlider
+          label="Max Upper Wick"
+          value={config.maxUpperWickRatio || 0.3}
+          min={0.0}
+          max={1.0}
+          step={0.05}
+          unit="x"
+          onChange={(v) => onConfigChange('maxUpperWickRatio', v)}
+          defaultValue={0.3}
+          tooltip="Upper wick should be small (max X times body)"
+        />
+      </PatternParameterGroup>
+
+      <PatternParameterGroup title="📍 Body Position">
+        <ParameterSlider
+          label="Min Body Position"
+          value={config.minBodyPosition || 0.5}
+          min={0.0}
+          max={1.0}
+          step={0.05}
+          unit=""
+          onChange={(v) => onConfigChange('minBodyPosition', v)}
+          defaultValue={0.5}
+          tooltip="Body must be in upper X% of candle range (0=bottom, 1=top)"
+        />
+      </PatternParameterGroup>
+
+      <div className="debug-checkbox">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={config.debug || false}
+            onChange={(e) => onConfigChange('debug', e.target.checked)}
+          />
+          <span>🐛 Debug this pattern</span>
+        </label>
+      </div>
+    </>
+  );
+
+  const renderShootingStarParams = () => (
+    <>
+      <PatternParameterGroup title="📏 Wick Requirements">
+        <ParameterSlider
+          label="Min Wick Ratio"
+          value={config.minWickRatio || 1.5}
+          min={1.0}
+          max={5.0}
+          step={0.1}
+          unit="x"
+          onChange={(v) => onConfigChange('minWickRatio', v)}
+          defaultValue={1.5}
+          tooltip="Upper wick must be X times longer than body"
+        />
+        <ParameterSlider
+          label="Max Lower Wick"
+          value={config.maxLowerWickRatio || 0.3}
+          min={0.0}
+          max={1.0}
+          step={0.05}
+          unit="x"
+          onChange={(v) => onConfigChange('maxLowerWickRatio', v)}
+          defaultValue={0.3}
+          tooltip="Lower wick should be small (max X times body)"
+        />
+      </PatternParameterGroup>
+
+      <PatternParameterGroup title="📍 Body Position">
+        <ParameterSlider
+          label="Min Body Position"
+          value={config.minBodyPosition || 0.5}
+          min={0.0}
+          max={1.0}
+          step={0.05}
+          unit=""
+          onChange={(v) => onConfigChange('minBodyPosition', v)}
+          defaultValue={0.5}
+          tooltip="Body must be in lower X% of candle range (from top)"
+        />
+      </PatternParameterGroup>
+
+      <div className="debug-checkbox">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={config.debug || false}
+            onChange={(e) => onConfigChange('debug', e.target.checked)}
+          />
+          <span>🐛 Debug this pattern</span>
+        </label>
+      </div>
+    </>
+  );
+
+  const renderDojiParams = () => (
+    <>
+      <PatternParameterGroup title="📏 Body & Wick Requirements">
+        <ParameterSlider
+          label="Max Body Ratio"
+          value={config.maxBodyRatio || 0.08}
+          min={0.01}
+          max={0.20}
+          step={0.01}
+          unit=""
+          onChange={(v) => onConfigChange('maxBodyRatio', v)}
+          defaultValue={0.08}
+          tooltip="Body must be smaller than X% of total candle range"
+        />
+        <ParameterSlider
+          label="Min Long Wick"
+          value={config.minLongWick || 0.5}
+          min={0.3}
+          max={0.8}
+          step={0.05}
+          unit=""
+          onChange={(v) => onConfigChange('minLongWick', v)}
+          defaultValue={0.5}
+          tooltip="Long wick must be at least X% of total range"
+        />
+        <ParameterSlider
+          label="Max Short Wick"
+          value={config.maxShortWick || 0.15}
+          min={0.0}
+          max={0.30}
+          step={0.05}
+          unit=""
+          onChange={(v) => onConfigChange('maxShortWick', v)}
+          defaultValue={0.15}
+          tooltip="Short wick must be less than X% of total range"
+        />
+      </PatternParameterGroup>
+
+      <div className="debug-checkbox">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={config.debug || false}
+            onChange={(e) => onConfigChange('debug', e.target.checked)}
+          />
+          <span>🐛 Debug this pattern</span>
+        </label>
+      </div>
+    </>
+  );
+
+  const hasParams = patternType === 'hammer' || patternType === 'shootingStar' || patternType === 'doji';
 
   return (
     <div className={`pattern-item ${enabled ? 'enabled' : 'disabled'}`}>
@@ -631,7 +1180,7 @@ const PatternToggle = ({ label, description, enabled, onToggle, config, onConfig
           <input type="checkbox" checked={enabled} onChange={onToggle} />
           <span className="pattern-name">{label}</span>
         </label>
-        {enabled && (
+        {enabled && hasParams && (
           <button
             className="advanced-toggle"
             onClick={() => setShowAdvanced(!showAdvanced)}
@@ -642,19 +1191,11 @@ const PatternToggle = ({ label, description, enabled, onToggle, config, onConfig
       </div>
       <p className="pattern-description">{description}</p>
 
-      {enabled && showAdvanced && config.minWickRatio !== undefined && (
+      {enabled && showAdvanced && (
         <div className="pattern-advanced">
-          <label>
-            Min Wick Ratio: {config.minWickRatio}x
-            <input
-              type="range"
-              min="1.5"
-              max="4"
-              step="0.1"
-              value={config.minWickRatio}
-              onChange={(e) => onConfigChange('minWickRatio', parseFloat(e.target.value))}
-            />
-          </label>
+          {patternType === 'hammer' && renderHammerParams()}
+          {patternType === 'shootingStar' && renderShootingStarParams()}
+          {patternType === 'doji' && renderDojiParams()}
         </div>
       )}
     </div>
@@ -828,6 +1369,119 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
   );
 };
 
+// ========================================
+// Presets Configuration
+// ========================================
+function getPresets() {
+  return {
+    scalping_1m: {
+      patterns: {
+        hammer: {
+          enabled: true,
+          minWickRatio: 1.2,
+          maxUpperWickRatio: 0.4,
+          minBodyPosition: 0.4,
+          debug: false
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 1.2,
+          maxLowerWickRatio: 0.4,
+          minBodyPosition: 0.4,
+          debug: false
+        },
+        engulfing: {
+          enabled: true
+        },
+        doji: {
+          enabled: false,
+          maxBodyRatio: 0.08,
+          minLongWick: 0.5,
+          maxShortWick: 0.15,
+          debug: false
+        }
+      },
+      swingDetection: {
+        enabled: true,
+        leftBars: 3,
+        rightBars: 3,
+        required: false
+      },
+      minConfidence: 40
+    },
+    swing_15m: {
+      patterns: {
+        hammer: {
+          enabled: true,
+          minWickRatio: 1.5,
+          maxUpperWickRatio: 0.3,
+          minBodyPosition: 0.5,
+          debug: false
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 1.5,
+          maxLowerWickRatio: 0.3,
+          minBodyPosition: 0.5,
+          debug: false
+        },
+        engulfing: {
+          enabled: true
+        },
+        doji: {
+          enabled: false,
+          maxBodyRatio: 0.08,
+          minLongWick: 0.5,
+          maxShortWick: 0.15,
+          debug: false
+        }
+      },
+      swingDetection: {
+        enabled: true,
+        leftBars: 7,
+        rightBars: 7,
+        required: true
+      },
+      minConfidence: 60
+    },
+    position_4h: {
+      patterns: {
+        hammer: {
+          enabled: true,
+          minWickRatio: 2.0,
+          maxUpperWickRatio: 0.2,
+          minBodyPosition: 0.6,
+          debug: false
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 2.0,
+          maxLowerWickRatio: 0.2,
+          minBodyPosition: 0.6,
+          debug: false
+        },
+        engulfing: {
+          enabled: true
+        },
+        doji: {
+          enabled: false,
+          maxBodyRatio: 0.05,
+          minLongWick: 0.6,
+          maxShortWick: 0.1,
+          debug: false
+        }
+      },
+      swingDetection: {
+        enabled: true,
+        leftBars: 12,
+        rightBars: 12,
+        required: true
+      },
+      minConfidence: 70
+    }
+  };
+}
+
 // Default configuration
 function getDefaultConfig() {
   return {
@@ -835,32 +1489,49 @@ function getDefaultConfig() {
     patterns: {
       hammer: {
         enabled: true,
-        minWickRatio: 2.0
+        minWickRatio: 1.5,
+        maxUpperWickRatio: 0.3,
+        minBodyPosition: 0.5,
+        debug: false
       },
       shootingStar: {
         enabled: true,
-        minWickRatio: 2.0
+        minWickRatio: 1.5,
+        maxLowerWickRatio: 0.3,
+        minBodyPosition: 0.5,
+        debug: false
       },
       engulfing: {
         enabled: true
       },
       doji: {
-        enabled: false
+        enabled: false,
+        maxBodyRatio: 0.08,
+        minLongWick: 0.5,
+        maxShortWick: 0.15,
+        debug: false
       }
+    },
+    swingDetection: {
+      enabled: true,
+      leftBars: 5,
+      rightBars: 5,
+      required: false
     },
     referenceContexts: [],
     filters: {
-      minConfidence: 60,
-      requireNearLevel: true,
+      minConfidence: 50,
+      requireNearLevel: false,
       proximityPercent: 1.0,
-      requireVolumeSpike: true
+      requireVolumeSpike: false
     },
     volumeZScore: {
       enabled: false,
       lookbackPeriod: 20,
       minZScore: 1.0
     },
-    alertsEnabled: false
+    alertsEnabled: false,
+    debugMode: false
   };
 }
 

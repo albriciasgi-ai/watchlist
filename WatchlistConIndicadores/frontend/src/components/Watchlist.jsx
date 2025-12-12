@@ -797,7 +797,8 @@ const Watchlist = () => {
                     fibonacciConfig: cpIndicator.fibonacciConfig,
                     showLabels: cpIndicator.showLabels,
                     showConfidence: cpIndicator.showConfidence,
-                    iconSize: cpIndicator.iconSize
+                    iconSize: cpIndicator.iconSize,
+                    patternParams: cpIndicator.patternParams
                   } : {
                     showContinuation: true,
                     showTrendStart: true,
@@ -818,7 +819,24 @@ const Watchlist = () => {
                     },
                     showLabels: true,
                     showConfidence: true,
-                    iconSize: 16
+                    iconSize: 9,  // Changed from 16 to 9px
+                    patternParams: {
+                      reversal: {
+                        minWickRatio: 1.5,
+                        maxOppositeWick: 0.25,
+                        minBodyPosition: 0.5,
+                        engulfingTolerance: 0.02,
+                        invertProximity: false
+                      },
+                      continuation: {
+                        maxConsolidationRange: 0.03,
+                        minBreakoutSize: 0.01
+                      },
+                      momentum: {
+                        minBodyPercent: 0.3,
+                        minConsecutive: 3
+                      }
+                    }
                   };
                 })()}
                 onConfigChange={handleContinuationPatternConfigChange}

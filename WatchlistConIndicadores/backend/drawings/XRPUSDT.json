@@ -1,56 +1,6 @@
 {
   "symbol": "XRPUSDT",
-  "shapes": [
-    {
-      "type": "tpsl-short",
-      "id": "tpsl_short_1764214045984_0.9393056177932405",
-      "entryPrice": 2.2189638018038127,
-      "tpPrice": 1.963807157970814,
-      "slPrice": 2.2918657000418126,
-      "time": 1764183600000,
-      "widthTime": 39600000
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1764214140294_0.6140272771925441",
-      "price1": 2.592309265175719,
-      "time1": 1763766000000,
-      "price2": 2.450244089456869,
-      "time2": 1763928000000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "trendline",
-      "id": "trendline_1764214142735_0.06877163839917866",
-      "price1": 2.953929712460064,
-      "time1": 1764050400000,
-      "price2": 2.928099680511182,
-      "time2": 1764057600000,
-      "style": {
-        "color": "#3B82F6",
-        "lineWidth": 2,
-        "dash": []
-      }
-    },
-    {
-      "type": "horizontal",
-      "id": "horizontal_1764214174850_0.9610357484994285",
-      "price": 1.688258146964856,
-      "time": 1761112800000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    }
-  ],
-  "updated_at": "2025-11-27T03:29:46.213396+00:00",
-  "total_shapes": 4
+  "shapes": [],
+  "updated_at": "2025-12-03T04:14:57.408370+00:00",
+  "total_shapes": 0
 }

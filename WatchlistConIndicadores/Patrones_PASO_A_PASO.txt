@@ -1,0 +1,118 @@
+Te explico con más claridad cómo modificar los parámetros de los patrones. Hay 2 formas de hacerlo:
+
+  ---
+  📝 FORMA 1: Cambio Temporal (Solo para probar)
+
+  Esta forma es útil cuando quieres experimentar con valores sin tocar el código.
+
+  Pasos:
+
+  1. Abre tu aplicación en el navegador (http://localhost:5173)
+  2. Abre la consola del navegador:
+    - Presiona F12
+    - O clic derecho → "Inspeccionar" → pestaña "Console"
+  3. Copia y pega este código en la consola (ejemplo para BTCUSDT):
+
+  // 1. Obtener la configuración actual
+  const symbol = 'BTCUSDT';
+  const config = JSON.parse(localStorage.getItem(`rejection_pattern_config_${symbol}`));
+
+  // 2. Modificar los valores que quieras cambiar
+  config.patterns.hammer.minWickRatio = 1.2;           // Antes era 1.5
+  config.patterns.hammer.maxUpperWickRatio = 0.4;      // Antes era 0.3
+  config.patterns.hammer.minBodyPosition = 0.4;        // Antes era 0.5
+
+  // 3. Habilitar debug para ver qué pasa
+  config.debugMode = true;
+
+  // 4. Guardar los cambios
+  localStorage.setItem(`rejection_pattern_config_${symbol}`, JSON.stringify(config));
+
+  // 5. Recargar la página
+  location.reload();
+
+  4. Presiona Enter - La página se recargará con los nuevos valores
+  5. Revisa la consola para ver mensajes de debug que te dirán por qué detecta o rechaza patrones
+
+  ⚠️ Importante:
+
+  - Estos cambios son solo para ese símbolo (BTCUSDT en el ejemplo)
+  - Si borras el localStorage o cambias de navegador, se pierden
+  - Para otros símbolos, cambia 'BTCUSDT' por 'ETHUSDT', etc.
+
+  ---
+  🔧 FORMA 2: Cambio Permanente (En el código)
+
+  Esta forma modifica los valores por defecto que usa la aplicación para TODOS los símbolos.
+
+  Pasos:
+
+  1. Abre el archivo RejectionPatternIndicator.js:
+    - Ruta: frontend/src/components/indicators/RejectionPatternIndicator.js
+  2. Busca la función getDefaultConfig() (debería estar alrededor de la línea 50-150)
+  3. Modifica los valores que quieras cambiar:
+
+  getDefaultConfig() {
+    return {
+      patterns: {
+        hammer: {
+          enabled: true,
+          minWickRatio: 1.2,           // ← CAMBIA ESTE VALOR (era 1.5)
+          maxUpperWickRatio: 0.4,      // ← CAMBIA ESTE VALOR (era 0.3)
+          minBodyPosition: 0.4,        // ← CAMBIA ESTE VALOR (era 0.5)
+          debug: false
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 1.2,           // ← CAMBIA AQUÍ TAMBIÉN
+          maxLowerWickRatio: 0.4,
+          minBodyPosition: 0.4,
+          debug: false
+        },
+        // ... resto del código
+      },
+      debugMode: true,  // ← CAMBIA A true PARA VER DEBUG
+      // ... resto de la configuración
+    };
+  }
+
+  4. Guarda el archivo
+  5. El frontend se recargará automáticamente (si tienes npm run dev corriendo)
+  6. Abre la consola (F12) para ver los mensajes de debug
+
+  ---
+  🎯 ¿Cuál método usar?
+
+  | Situación                             | Método Recomendado     |
+  |---------------------------------------|------------------------|
+  | Quiero probar valores rápidamente     | FORMA 1 (localStorage) |
+  | Quiero diferentes valores por símbolo | FORMA 1 (localStorage) |
+  | Quiero cambios permanentes para todos | FORMA 2 (código)       |
+  | Quiero commitear los cambios a git    | FORMA 2 (código)       |
+
+  ---
+  📊 Ejemplo Práctico
+
+  Imagina que quieres ver MÁS hammers porque el indicador detecta muy pocos:
+
+  Usando FORMA 1 (localStorage):
+
+  const symbol = 'BTCUSDT';
+  const config = JSON.parse(localStorage.getItem(`rejection_pattern_config_${symbol}`));
+
+  // Hacer los valores MÁS PERMISIVOS
+  config.patterns.hammer.minWickRatio = 1.2;        // Mecha más corta OK
+  config.patterns.hammer.maxUpperWickRatio = 0.4;   // Mecha superior más larga OK
+  config.patterns.hammer.minBodyPosition = 0.4;     // Cuerpo más bajo OK
+  config.filters.minConfidence = 40;                // Confianza mínima reducida
+  config.debugMode = true;                          // Ver qué detecta
+
+  localStorage.setItem(`rejection_pattern_config_${symbol}`, JSON.stringify(config));
+  location.reload();
+
+  Después de recargar, revisa la consola y verás mensajes como:
+
+  ✅ [HAMMER DETECTED] time=1764568800000, wickRatio=1.25, confidence=65
+  ❌ [HAMMER REJECTED] time=1764572400000, wickRatio=1.10 (need >=1.2)
+
+  Esto te dice exactamente por qué detecta o rechaza cada patrón.
