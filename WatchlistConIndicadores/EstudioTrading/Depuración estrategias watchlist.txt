@@ -1,0 +1,75 @@
+Por mejorar del indicador de continuation:
+
+(FALTA REFINAR EL INDICADOR DE REJECTION PATTERNS)
+1. en los minicharts cargar todos los indicadores en un caché para que la carga sea rápida. Se demora mucho al pasar a full screen.
+2. Que tenga en cuenta cuando se acerca a una resistencia y rebota en ella, a un % de distancia de ella tome en cuenta para emitir señales cuando se forma un patrón de rebote.
+3. No está identificando ningún patrón de continuación (flag o penant)
+
+
+breakouts (lógica normal - sin mirar rangos):
+profit 3 (alejándose del vwap, no cruzándola)    25%
+loss 9 (señales tardías)
+mix 7
+cuando hay varias seguidas, del mismo tipo, la últimas son señales fallidas
+
+
+Breakouts - Mirando los rangos:
+profit  5 (rompiendo rango)   62%
+loss  3 (fuera de rango y se devuelve)
+mix 3
+
+revisar si al hacer un breakout y mandar señal pero luego se devuelve a retestar el vwap, comprar en un hammer que ocurra al rebote.
+Nos da una mejor entrada con mayor r/r, menos stoploss y nos protege de un fakeout
+// YA LA REVISÉ Y FUNCIONA MEJOR COMPRÁNDOLA DE UNA.
+
+
+
+LA POSICIÓN DE LAS SEÑALES NO TIENE EN CUENTA EL LUGAR DONDE SE DAN.
+Para los black crows + white soldiers:
+profit  11(lógica al revés) 42%
+loss  15  (
+mix 3
+
+Para los Marubozu (no importa donde se dan las señales):
+profit  4 (lógica normal)  36%
+loss  7 (
+mix  2
+
+Para los Marubozu (no importa donde se dan las señales):
+profit  7 (lógica al revés)  41%
+loss 10  (
+mix  1
+
+
+*REVISAR SI LAS MARUBOZU PUEDEN FUNCIONAR MEJOR CON LA VWAP O LA EMA EN LA DIRECCIÓN DE LA MARUBOZÚ (ACORDE CON LA TENDENCIA)
+
+
+Patrones de reversal en el mismo indicador
+profit  1 (lógica normal)    -- bull engulfing   -- con la lógica normal sólo sale 1 señal en los 15 días. Haciendo otra corrida salieron otros extra pero nada prometedor
+loss   (
+mix  
+
+profit  1 (lógica invertida)    
+loss    1 (
+mix  
+
+* CUADRAR PARA QUE LOS PATRONES DE REVERSAL SEAN EN LOS FRACTALES
+* EL BULL/BEAR ENGULFING PUEDEN SER ÚTILES EN EL MOMENTO DE ROMPER LOS RANGOS-
+* EL BULL/BEAR ENGULFING PUEDEN SER UTILES EN LA PARTE DE ABAJO/ARRIBA DEL RANGO, 
+  NO ES PARA ROMPER EL RANGO SINO DESDE LA PARTE OPUESTA, PARA INICIAR EL MOVIMIENTO.
+* MIRAR CÓMO PONERLE LA LÓGICA DE LOS DOUBLE TOPS/BOTTOMS. PUEDE SER TAN SÓLO INCLUIR LAS RESISTENCIAS/SOPORTES
+* OJO___IMPORTANTE: EL INDICADOR DE REJECTION PATTERNS ESTÁ MANDANDO UNAS SEÑALES MUY BUENAS CUANDO HAY UNA HAMMER O DOJI BULL (EN CASO DE CAÍDA)
+  Y PERMITE ABRIR POSICIÓN PARA LONG MUY ABAJO. 
+  
+  *EN EL REJECTION PATTERNS AL INCLUIR EL CONTEXTO, LAS RESISTENCIAS DEBEN SER DE FECHAS ANTERIORES AL PATRÓN
+   NO DE DESPUES PORQUE ARROJA PATRONES VALIDADOS EN EL PASADO PERO EN ESE MOMENTO NO HABÍA ESOS NIVELES
+  
+  * EN EL REJECTION PATTERNS HACE FALTA PONER QUE DEPENDIENDO DE LA SEÑAL (BULL/BEAR) Y SI ESTÁ EN UN 
+    NIVEL DE UN LOW, SÓLO TOME SEÑALES LONG. ASÍ PODEMOS FILTRAR SEÑALES ERRADAS. 
+	** ESTO PUEDE TOMARSE TAMBIÉN DEPENDIENDO DEL TIPO DE PATRON. SI ESTÁ ABAJO DE UN RANGO Y MANDA UN BREAKOUT, TOMAR ESA SEÑAL SHORT
+	   PERO SI MANDA UNA SEÑAL LONG CON ESE MISMO PATRON (WHITE SOLDIERS), DESCARTARLA.
+  
+  * LOS INDICADORES NO ESTÁN TENIENDO PERSISTENCIA ENTRE EL MINICHART Y EL FULL SCREEN. TENER SESIONES?
+  
+  
+****COMO INCLUIR EL PODER SENTIR EL MERCADO EN LOS INDICADORES DE PATRONES?

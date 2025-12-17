@@ -1,16 +1,6 @@
 {
   "symbol": "BTCUSDT",
-  "shapes": [
-    {
-      "type": "tpsl",
-      "id": "tpsl_1765398870913_0.9182442645723622",
-      "entryPrice": 92042.61065897746,
-      "tpPrice": 94458.31540340855,
-      "slPrice": 91063.72716811443,
-      "time": 1765260000000,
-      "widthTime": 14400000
-    }
-  ],
-  "updated_at": "2025-12-12T03:10:03.099377+00:00",
-  "total_shapes": 1
+  "shapes": [],
+  "updated_at": "2025-12-16T19:31:59.474527+00:00",
+  "total_shapes": 0
 }
