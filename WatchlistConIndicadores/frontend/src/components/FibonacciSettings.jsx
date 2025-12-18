@@ -1,5 +1,6 @@
 // src/components/FibonacciSettings.jsx
 import React, { useState } from "react";
+import PresetManager from "../utils/PresetManager";
 import "./FibonacciSettings.css";
 
 const FibonacciSettings = ({
@@ -8,27 +9,119 @@ const FibonacciSettings = ({
   currentSymbol
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [applyGlobally, setApplyGlobally] = useState(false);
+
+  const hasOverride = currentSymbol && PresetManager.hasOverride(currentSymbol, "Fibonacci");
 
   const handleConfigChange = (key, value) => {
-    onConfigChange({ ...config, [key]: value });
+    const newConfig = { ...config, [key]: value };
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Fibonacci", newConfig);
+      console.log(`[FibonacciSettings] 🌐 Preset global actualizado`);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleLevelChange = (index, value) => {
     const newLevels = [...config.levels];
     newLevels[index] = parseFloat(value);
-    handleConfigChange('levels', newLevels);
+    const newConfig = { ...config, levels: newLevels };
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Fibonacci", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleExtensionLevelChange = (index, value) => {
     const newLevels = [...config.extensionLevels];
     newLevels[index] = parseFloat(value);
-    handleConfigChange('extensionLevels', newLevels);
+    const newConfig = { ...config, extensionLevels: newLevels };
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Fibonacci", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
+  };
+
+  const handleResetToGlobal = () => {
+    if (currentSymbol && hasOverride) {
+      PresetManager.clearSymbolOverride(currentSymbol, "Fibonacci");
+      const globalConfig = PresetManager.getGlobalPreset("Fibonacci");
+      onConfigChange(globalConfig, false);
+      console.log(`[FibonacciSettings] 🔄 ${currentSymbol} reseteado a preset global`);
+    }
   };
 
   return (
     <div className="fibonacci-settings">
       <div className="settings-section">
-        <h4>Configuración Fibonacci - {currentSymbol}</h4>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h4 style={{ margin: 0 }}>
+            Configuración Fibonacci - {currentSymbol}
+            {hasOverride && (
+              <span style={{
+                marginLeft: '8px',
+                padding: '2px 8px',
+                background: '#FF9800',
+                color: 'white',
+                fontSize: '10px',
+                borderRadius: '4px',
+                fontWeight: 'bold'
+              }}>
+                OVERRIDE
+              </span>
+            )}
+          </h4>
+          {hasOverride && (
+            <button onClick={handleResetToGlobal} style={{
+              padding: '4px 12px',
+              background: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}>
+              🔄 Reset to Global
+            </button>
+          )}
+        </div>
+
+        <div className="setting-row" style={{
+          background: applyGlobally ? '#fff3e0' : '#e3f2fd',
+          padding: '12px',
+          borderRadius: '8px',
+          border: `2px solid ${applyGlobally ? '#FF9800' : '#2196F3'}`,
+          marginBottom: '16px'
+        }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: 'bold' }}>
+            <input
+              type="checkbox"
+              checked={applyGlobally}
+              onChange={(e) => setApplyGlobally(e.target.checked)}
+              style={{ marginRight: '8px', cursor: 'pointer' }}
+            />
+            {applyGlobally ? (
+              <span style={{ color: '#FF9800' }}>🌐 Modificando preset GLOBAL (todas las monedas)</span>
+            ) : (
+              <span style={{ color: '#2196F3' }}>✏️ Modificando solo {currentSymbol}</span>
+            )}
+          </label>
+          <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', marginLeft: '24px' }}>
+            {applyGlobally
+              ? "Los cambios se aplicarán a todas las monedas que no tengan overrides"
+              : "Los cambios solo afectarán a " + currentSymbol
+            }
+          </div>
+        </div>
 
         {/* Auto Detect */}
         <div className="setting-row">

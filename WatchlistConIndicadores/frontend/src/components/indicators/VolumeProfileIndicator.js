@@ -74,6 +74,16 @@ class VolumeProfileIndicator extends IndicatorBase {
     return true;
   }
 
+  /**
+   * Carga datos desde precarga (Volume Profile calcula desde candles, no necesita datos externos)
+   */
+  setPreloadedData(data) {
+    console.log(`[${this.symbol}] 💾 VolumeProfile: Usando datos precargados (${data ? data.length : 0} candles)`);
+    // Volume Profile no necesita datos precargados, calcula directamente desde las candles visibles
+    // Este método existe solo para compatibilidad con el sistema de precarga
+    return true;
+  }
+
   setMode(mode) {
     this.mode = mode;
     if (mode === "fixed" && this.profile) {

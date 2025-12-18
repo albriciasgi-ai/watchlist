@@ -67,6 +67,32 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
+   * Carga datos desde precarga (sin fetchear del backend)
+   */
+  setPreloadedData(data) {
+    console.log(`[${this.symbol}] 💾 OpenInterest: Usando datos precargados (${data ? data.length : 0} puntos)`);
+
+    if (data && data.length > 0) {
+      // Crear map de timestamp -> openInterest para búsqueda rápida (mismo proceso que fetchData)
+      this.dataMap = new Map();
+      data.forEach(item => {
+        this.dataMap.set(item.timestamp, item.openInterest);
+      });
+
+      this.data = data;
+      this.lastFetch = Date.now();
+
+      console.log(`[${this.symbol}] ✅ Open Interest cargado desde precarga: ${this.data.length} points`);
+      return true;
+    } else {
+      console.warn(`[${this.symbol}] ⚠️ No hay datos precargados de Open Interest`);
+      this.dataMap = null;
+      this.data = [];
+      return false;
+    }
+  }
+
+  /**
    * Calcula EMA (Exponential Moving Average)
    */
   calculateEMA(values, period) {

@@ -16,6 +16,7 @@ import VWAPIndicator from "./VWAPIndicator";
 import FibonacciLevelCalculator from "./FibonacciLevelCalculator";
 import LevelSourceManager from "./LevelSourceManager";
 import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
+import IndicatorPreloader from "../../utils/IndicatorPreloader";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -73,22 +74,46 @@ class IndicatorManager {
       patternIndicator.setShowMode('validated'); // Mostrar solo patrones validados por defecto
     }
 
-    // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile y Open Interest si es necesario
-    await Promise.all(
-      this.indicators.map(ind => {
-        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
-          return ind.fetchData();
-        }
-        return Promise.resolve();
-      })
-    );
+    // ✅ NO cargar datos aquí - se cargarán de forma lazy cuando se activen los indicadores
+    // Esto permite que la precarga corra en background sin bloquear
 
     this.loadFixedRangeProfilesFromStorage();
     this.syncFixedRangeIndicators(); // ✅ Sincronizar instancias
 
     // 🎯 NUEVO: Cargar configuración de Range Detection
     this.loadRangeDetectionConfig();
+  }
+
+  // ✅ NUEVO: Método para cargar datos precargados
+  loadPreloadedData() {
+    console.log(`[${this.symbol}] 📂 Cargando datos precargados...`);
+
+    this.indicators.forEach(indicator => {
+      const preloadableIndicators = [
+        'Volume Profile',
+        'Open Interest',
+        'Support & Resistance'
+      ];
+
+      if (preloadableIndicators.includes(indicator.name)) {
+        const data = IndicatorPreloader.getData(
+          this.symbol,
+          indicator.name,
+          this.interval,
+          this.days
+        );
+
+        if (data) {
+          // Usar método setPreloadedData() del indicador (lo implementaremos)
+          if (indicator.setPreloadedData) {
+            indicator.setPreloadedData(data);
+            console.log(`[${this.symbol}] ✅ ${indicator.name} cargado desde precarga`);
+          }
+        } else {
+          console.warn(`[${this.symbol}] ⚠️ ${indicator.name} no tiene datos precargados`);
+        }
+      }
+    });
   }
 
   // ✅ NUEVO: Sincroniza instancias de fixed range indicators con los datos
@@ -151,28 +176,62 @@ class IndicatorManager {
     if (indicator) {
       indicator.setEnabled(enabled);
 
-      // 🎯 NUEVO: Cargar datos automáticamente cuando se habilita un indicador que los requiere
-      if (enabled && indicator.fetchData) {
-        const needsFetch = [
-          "VWAP",
-          "Fibonacci",
-          "Continuation Patterns",
-          "Volume Profile",
-          "Open Interest",
-          "Support & Resistance"
+      // ✅ NUEVO: Verificar si necesita cargar datos
+      if (enabled) {
+        const preloadableIndicators = [
+          'Volume Profile',
+          'Open Interest',
+          'Support & Resistance'
         ];
 
-        if (needsFetch.includes(name)) {
-          console.log(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
-          indicator.fetchData().then(() => {
-            console.log(`[${this.symbol}] ✅ Datos de ${name} cargados`);
-            // Forzar redibujado si está disponible
+        // Si está precargado, intentar obtener datos
+        if (preloadableIndicators.includes(name)) {
+          // Intentar obtener datos precargados
+          const data = IndicatorPreloader.getData(
+            this.symbol,
+            name,
+            this.interval,
+            this.days
+          );
+
+          if (data && indicator.setPreloadedData) {
+            // Tenemos datos precargados, usarlos
+            console.log(`[${this.symbol}] ⚡ ${name} activado (datos precargados)`);
+            indicator.setPreloadedData(data);
+
+            // Forzar redibujado
             if (this.requestRedraw) {
               this.requestRedraw();
             }
-          }).catch(err => {
-            console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
-          });
+          } else {
+            // No hay datos precargados, hacer fetch (fallback)
+            console.log(`[${this.symbol}] 📥 ${name}: No hay precarga, cargando desde backend...`);
+            if (indicator.fetchData) {
+              indicator.fetchData().then(() => {
+                console.log(`[${this.symbol}] ✅ Datos de ${name} cargados desde backend`);
+                if (this.requestRedraw) {
+                  this.requestRedraw();
+                }
+              }).catch(err => {
+                console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+              });
+            }
+          }
+        } else {
+          // Indicadores no precargables (VWAP, Fibonacci, etc.)
+          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns"];
+
+          if (needsFetch.includes(name) && indicator.fetchData) {
+            console.log(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+            indicator.fetchData().then(() => {
+              console.log(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+              if (this.requestRedraw) {
+                this.requestRedraw();
+              }
+            }).catch(err => {
+              console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+            });
+          }
         }
       }
     }

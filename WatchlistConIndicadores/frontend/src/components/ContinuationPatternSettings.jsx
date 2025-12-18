@@ -1,5 +1,6 @@
 // src/components/ContinuationPatternSettings.jsx
 import React, { useState, useEffect } from "react";
+import PresetManager from "../utils/PresetManager";
 import "./ContinuationPatternSettings.css";
 import { getPresetNames, getPresetConfig } from "./presets/ContinuationPatternPresets";
 import {
@@ -17,6 +18,8 @@ const ContinuationPatternSettings = ({
   currentSymbol
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [applyGlobally, setApplyGlobally] = useState(false);
+  const hasOverride = currentSymbol && PresetManager.hasOverride(currentSymbol, "Continuation Patterns");
   const [showReversalParams, setShowReversalParams] = useState(false);
   const [showContinuationParams, setShowContinuationParams] = useState(false);
   const [showTrendStartParams, setShowTrendStartParams] = useState(false);
@@ -46,7 +49,24 @@ const ContinuationPatternSettings = ({
   const handleConfigChange = (key, value) => {
     const newConfig = { ...localConfig, [key]: value };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      console.log(`[ContinuationPatternSettings] 🌐 Preset global actualizado`);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
+  };
+
+  const handleResetToGlobal = () => {
+    if (currentSymbol && hasOverride) {
+      PresetManager.clearSymbolOverride(currentSymbol, "Continuation Patterns");
+      const globalConfig = PresetManager.getGlobalPreset("Continuation Patterns");
+      setLocalConfig(globalConfig);
+      onConfigChange(globalConfig, false);
+      console.log(`[ContinuationPatternSettings] 🔄 ${currentSymbol} reseteado a preset global`);
+    }
   };
 
   const handleVWAPConfigChange = (key, value) => {
@@ -217,7 +237,66 @@ const ContinuationPatternSettings = ({
   return (
     <div className="continuation-pattern-settings">
       <div className="settings-section">
-        <h4>Configuración Continuation Patterns - {currentSymbol}</h4>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h4 style={{ margin: 0 }}>
+            Configuración Continuation Patterns - {currentSymbol}
+            {hasOverride && (
+              <span style={{
+                marginLeft: '8px',
+                padding: '2px 8px',
+                background: '#FF9800',
+                color: 'white',
+                fontSize: '10px',
+                borderRadius: '4px',
+                fontWeight: 'bold'
+              }}>
+                OVERRIDE
+              </span>
+            )}
+          </h4>
+          {hasOverride && (
+            <button onClick={handleResetToGlobal} style={{
+              padding: '4px 12px',
+              background: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}>
+              🔄 Reset to Global
+            </button>
+          )}
+        </div>
+
+        {/* Global/Symbol Selector */}
+        <div className="setting-row" style={{
+          background: applyGlobally ? '#fff3e0' : '#e3f2fd',
+          padding: '12px',
+          borderRadius: '8px',
+          border: `2px solid ${applyGlobally ? '#FF9800' : '#2196F3'}`,
+          marginBottom: '16px'
+        }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: 'bold' }}>
+            <input
+              type="checkbox"
+              checked={applyGlobally}
+              onChange={(e) => setApplyGlobally(e.target.checked)}
+              style={{ marginRight: '8px', cursor: 'pointer' }}
+            />
+            {applyGlobally ? (
+              <span style={{ color: '#FF9800' }}>🌐 Modificando preset GLOBAL (todas las monedas)</span>
+            ) : (
+              <span style={{ color: '#2196F3' }}>✏️ Modificando solo {currentSymbol}</span>
+            )}
+          </label>
+          <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', marginLeft: '24px' }}>
+            {applyGlobally
+              ? "Los cambios se aplicarán a todas las monedas que no tengan overrides"
+              : "Los cambios solo afectarán a " + currentSymbol
+            }
+          </div>
+        </div>
 
         {/* Preset Management System */}
         <div className="preset-selector" style={{

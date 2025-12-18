@@ -898,3 +898,9 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
 }
+
+/* Animación del spinner de precarga */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

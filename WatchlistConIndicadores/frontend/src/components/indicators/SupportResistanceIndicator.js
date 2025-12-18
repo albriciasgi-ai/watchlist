@@ -85,6 +85,19 @@ class SupportResistanceIndicator extends IndicatorBase {
     }
   }
 
+  /**
+   * Carga datos desde precarga (S&R requiere cálculo en backend, solo guardamos candles)
+   */
+  setPreloadedData(data) {
+    console.log(`[${this.symbol}] 💾 S&R: Datos precargados recibidos (${data ? data.length : 0} candles)`);
+    // S&R requiere cálculo en backend, los datos precargados son solo candles históricas
+    // No podemos calcular niveles localmente sin replicar la lógica del backend
+    // Los niveles se calcularán cuando se active el indicador con fetchData()
+    this.candles = data;
+    this.lastFetch = Date.now();
+    return true;
+  }
+
   clearData() {
     this.resistances = [];
     this.supports = [];

@@ -5,6 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "../config";
 import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
+import PresetManager from "../utils/PresetManager";
+import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
 import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
 import ChartModal from "./drawing/ChartModal";
@@ -128,7 +130,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -1236,6 +1238,32 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     log.candle(symbol, '🚀 Componente montado, iniciando...');
     
     const initIndicators = async () => {
+      // ✅ Si hay manager externo (fullscreen), usarlo directamente
+      if (externalIndicatorManager) {
+        console.log(`[${symbol}] 🔗 Usando IndicatorManager externo (fullscreen)`);
+        indicatorManagerRef.current = externalIndicatorManager;
+
+        // Sincronizar estados de indicadores visuales
+        const profiles = externalIndicatorManager.getFixedRangeProfiles();
+        setFixedRangeProfiles(profiles);
+
+        // Agregar requestRedraw si no existe
+        if (!externalIndicatorManager.requestRedraw) {
+          externalIndicatorManager.requestRedraw = () => {
+            if (candlesRef.current && candlesRef.current.length > 0) {
+              console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+            }
+          };
+        }
+
+        log.indicator(symbol, '✅ IndicatorManager externo conectado');
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        return; // NO crear nuevo manager
+      }
+
+      // ✅ Si no hay externo, crear nuevo (comportamiento normal)
+      console.log(`[${symbol}] 🔧 Creando nuevo IndicatorManager`);
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       await indicatorManagerRef.current.initialize();
 
@@ -1246,6 +1274,29 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         }
       };
+
+      // 📋 Registrar en el registro global
+      IndicatorManagerRegistry.register(symbol, indicatorManagerRef.current);
+
+      // 🎛️ Aplicar presets globales con overrides por símbolo
+      console.log(`[${symbol}] 🎛️ Aplicando presets efectivos (global + overrides)`);
+      const indicatorsWithPresets = [
+        "Rejection Patterns",
+        "Support & Resistance",
+        "VWAP",
+        "Fibonacci",
+        "Continuation Patterns",
+        "Volume Profile",
+        "Range Detection",
+        "Open Interest"
+      ];
+
+      indicatorsWithPresets.forEach(indicatorName => {
+        const effectiveConfig = PresetManager.getEffectiveConfig(indicatorName, symbol);
+        if (effectiveConfig && Object.keys(effectiveConfig).length > 0) {
+          indicatorManagerRef.current.applyConfig(indicatorName, effectiveConfig);
+        }
+      });
 
       if (indicatorStates) {
         Object.entries(indicatorStates).forEach(([name, enabled]) => {
@@ -1345,41 +1396,49 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
 
     return () => {
-      log.candle(symbol, '🛑 Componente desmontado, limpiando...');
-      
-      mountedRef.current = false;
-      wsManager.unsubscribe(symbol, handleWebSocketMessage);
-      
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      
-      clearInterval(reloadInterval);
+      // ✅ Solo limpiar si NO es manager externo
+      if (!externalIndicatorManager) {
+        log.candle(symbol, '🛑 Componente desmontado, limpiando...');
 
-      // ✅ NUEVO: Limpiar intervalos de gap check
-      if (gapCheckIntervalRef.current) {
-        clearInterval(gapCheckIntervalRef.current);
-      }
+        // 📋 Desregistrar del registro global
+        IndicatorManagerRegistry.unregister(symbol);
 
-      // 🎯 NUEVO: Limpiar intervalo de detección de patrones
-      if (patternDetectionInterval) {
-        clearInterval(patternDetectionInterval);
-      }
-      
-      // ✅ NUEVO: Destruir IndicatorManager correctamente
-      if (indicatorManagerRef.current) {
-        indicatorManagerRef.current.destroy();
-      }
-      
-      candlesRef.current = [];
-      inProgressCandleRef.current = null;
+        mountedRef.current = false;
+        wsManager.unsubscribe(symbol, handleWebSocketMessage);
 
-      if (canvas) {
-        canvas.removeEventListener('wheel', preventScroll);
-        canvas.removeEventListener('dblclick', handleDoubleClick);
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+
+        clearInterval(reloadInterval);
+
+        // ✅ NUEVO: Limpiar intervalos de gap check
+        if (gapCheckIntervalRef.current) {
+          clearInterval(gapCheckIntervalRef.current);
+        }
+
+        // 🎯 NUEVO: Limpiar intervalo de detección de patrones
+        if (patternDetectionInterval) {
+          clearInterval(patternDetectionInterval);
+        }
+
+        // ✅ NUEVO: Destruir IndicatorManager correctamente (solo si no es externo)
+        if (indicatorManagerRef.current) {
+          indicatorManagerRef.current.destroy();
+        }
+
+        candlesRef.current = [];
+        inProgressCandleRef.current = null;
+
+        if (canvas) {
+          canvas.removeEventListener('wheel', preventScroll);
+          canvas.removeEventListener('dblclick', handleDoubleClick);
+        }
+      } else {
+        console.log(`[${symbol}] ⏭️ Skipping cleanup (external manager)`);
       }
     };
-  }, [symbol, interval, days, indicatorStates]);
+  }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
 
   // ✅ NUEVO: Escuchar evento global para aplicar rangos a todas las monedas
   useEffect(() => {
@@ -1736,6 +1795,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               vpConfig={vpConfig}
               vpFixedRange={vpFixedRange}
               oiMode={fullscreenOiMode}
+              externalIndicatorManager={indicatorManagerRef.current}
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}

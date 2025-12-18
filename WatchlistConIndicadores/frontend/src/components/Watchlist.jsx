@@ -10,6 +10,9 @@ import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
 import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
+import IndicatorPreloader from "../utils/IndicatorPreloader";
+import PresetManager from "../utils/PresetManager";
+import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 
 const symbols = [
   "BTCUSDT", "ETHUSDT", "TRXUSDT", "XRPUSDT", "SOLUSDT", "AAVEUSDT",
@@ -54,7 +57,11 @@ const Watchlist = () => {
     "Fibonacci": false,
     "Continuation Patterns": false
   });
-  
+
+  // 🚀 Estados para precarga de indicadores
+  const [isPreloading, setIsPreloading] = useState(true);
+  const [preloadProgress, setPreloadProgress] = useState({ current: 0, total: 0 });
+
   const [vpConfig, setVpConfig] = useState({
     mode: "dynamic",
     rows: 100,
@@ -121,6 +128,47 @@ const Watchlist = () => {
   useEffect(() => {
     wsManager.changeInterval(interval);
   }, [interval]);
+
+  // 🚀 Precarga de indicadores al montar (NO BLOQUEANTE)
+  useEffect(() => {
+    // Precarga en background, NO bloquea renderizado de charts
+    setIsPreloading(true);
+
+    const preload = async () => {
+      console.log('🚀 Iniciando precarga de indicadores en background...');
+      const startTime = Date.now();
+
+      // Limpiar cache expirado primero
+      IndicatorPreloader.clearExpiredCache();
+
+      // NO usar await aquí - dejar que corra en background
+      IndicatorPreloader.preloadAllIndicators(
+        symbols,
+        interval,
+        days,
+        (current, total) => {
+          setPreloadProgress({ current, total });
+
+          // Ocultar banner cuando llegue al 100%
+          if (current === total) {
+            const duration = (Date.now() - startTime) / 1000;
+            console.log(`✅ Precarga completada en ${duration}s`);
+            setTimeout(() => setIsPreloading(false), 500); // Pequeño delay para mostrar 100%
+          }
+        }
+      );
+
+      // Ocultar banner después de 500ms para no bloquear UI
+      // Los datos seguirán cargando en background
+      setTimeout(() => {
+        if (preloadProgress.current === 0) {
+          setIsPreloading(false);
+        }
+      }, 500);
+    };
+
+    preload();
+  }, [interval, days]); // Re-precargar si cambian timeframe o días
 
   const toggleIndicator = (indicatorName) => {
     setIndicatorStates(prev => ({
@@ -227,41 +275,82 @@ const Watchlist = () => {
   };
 
   // 📈 NUEVO: Handlers para cambio de config
-  const handleVWAPConfigChange = (config) => {
-    const manager = indicatorManagers[selectedSymbolForVWAP]?.manager;
-    if (manager) {
-      const vwapIndicator = manager.getVWAPIndicator();
-      if (vwapIndicator) {
-        vwapIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated VWAP config for ${selectedSymbolForVWAP}`);
+  const handleVWAPConfigChange = (config, saveAsOverride = true) => {
+    if (saveAsOverride) {
+      // Modo símbolo: solo actualizar el símbolo actual
+      const manager = indicatorManagers[selectedSymbolForVWAP]?.manager;
+      if (manager) {
+        const vwapIndicator = manager.getVWAPIndicator();
+        if (vwapIndicator) {
+          vwapIndicator.updateConfig(config);
+          console.log(`[Watchlist] Updated VWAP config for ${selectedSymbolForVWAP}`);
+          PresetManager.updateSymbolOverride(selectedSymbolForVWAP, "VWAP", config);
+          console.log(`[Watchlist] 🔧 VWAP override guardado para ${selectedSymbolForVWAP}`);
+        }
       }
+    } else {
+      // Modo global: actualizar TODOS los símbolos que NO tengan override
+      console.log(`[Watchlist] 🌐 Aplicando preset global de VWAP a todos los símbolos sin override`);
+
+      const registeredSymbols = IndicatorManagerRegistry.getAllSymbols();
+      console.log(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`);
+
+      symbols.forEach(symbol => {
+        const hasOverride = PresetManager.hasOverride(symbol, "VWAP");
+        if (!hasOverride) {
+          const manager = IndicatorManagerRegistry.get(symbol);
+          if (manager) {
+            const vwapIndicator = manager.getVWAPIndicator();
+            if (vwapIndicator) {
+              vwapIndicator.updateConfig(config);
+              console.log(`[Watchlist] ✅ ${symbol}: VWAP actualizado con preset global`);
+            }
+          } else {
+            console.log(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en registro`);
+          }
+        } else {
+          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+        }
+      });
     }
   };
 
-  const handleFibonacciConfigChange = (config) => {
+  const handleFibonacciConfigChange = (config, saveAsOverride = true) => {
     const manager = indicatorManagers[selectedSymbolForFib]?.manager;
     if (manager) {
       const fibIndicator = manager.getFibonacciIndicator();
       if (fibIndicator) {
         fibIndicator.updateConfig(config);
         console.log(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
+
+        // ✅ Guardar como override del símbolo
+        if (saveAsOverride) {
+          PresetManager.updateSymbolOverride(selectedSymbolForFib, "Fibonacci", config);
+          console.log(`[Watchlist] 🔧 Fibonacci override guardado para ${selectedSymbolForFib}`);
+        }
       }
     }
   };
 
-  const handleContinuationPatternConfigChange = (config) => {
+  const handleContinuationPatternConfigChange = (config, saveAsOverride = true) => {
     const manager = indicatorManagers[selectedSymbolForCP]?.manager;
     if (manager) {
       const cpIndicator = manager.getContinuationPatternIndicator();
       if (cpIndicator) {
         cpIndicator.updateConfig(config);
         console.log(`[Watchlist] Updated Continuation Pattern config for ${selectedSymbolForCP}`);
+
+        // ✅ Guardar como override del símbolo
+        if (saveAsOverride) {
+          PresetManager.updateSymbolOverride(selectedSymbolForCP, "Continuation Patterns", config);
+          console.log(`[Watchlist] 🔧 Continuation Patterns override guardado para ${selectedSymbolForCP}`);
+        }
       }
     }
   };
 
   // 🔔 NUEVO: Handler para cambio de config de patrones
-  const handleRejectionPatternConfigChange = (config) => {
+  const handleRejectionPatternConfigChange = (config, saveAsOverride = true) => {
     setRejectionPatternConfigs(prev => ({
       ...prev,
       [selectedSymbolForRP]: config
@@ -272,6 +361,48 @@ const Watchlist = () => {
     if (manager) {
       manager.updateRejectionPatternConfig(config);
       console.log(`[Watchlist] Updated rejection pattern config for ${selectedSymbolForRP}`);
+
+      // ✅ Guardar como override del símbolo
+      if (saveAsOverride) {
+        PresetManager.updateSymbolOverride(selectedSymbolForRP, "Rejection Patterns", config);
+        console.log(`[Watchlist] 🔧 Rejection Patterns override guardado para ${selectedSymbolForRP}`);
+      }
+    }
+  };
+
+  // 📊 NUEVO: Handler para cambio de config de Support & Resistance
+  const handleSupportResistanceConfigChange = (config, saveAsOverride = true) => {
+    const manager = indicatorManagers[selectedSymbolForSR]?.manager;
+    if (manager) {
+      const srIndicator = manager.getSupportResistanceIndicator();
+      if (srIndicator) {
+        srIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated Support & Resistance config for ${selectedSymbolForSR}`);
+
+        // ✅ Guardar como override del símbolo
+        if (saveAsOverride) {
+          PresetManager.updateSymbolOverride(selectedSymbolForSR, "Support & Resistance", config);
+          console.log(`[Watchlist] 🔧 Support & Resistance override guardado para ${selectedSymbolForSR}`);
+        }
+      }
+    }
+  };
+
+  // 🎯 NUEVO: Handler para cambio de config de Range Detection
+  const handleRangeDetectionConfigChange = (config, saveAsOverride = true) => {
+    const manager = indicatorManagers[selectedSymbolForRD]?.manager;
+    if (manager) {
+      const rdIndicator = manager.getRangeDetector();
+      if (rdIndicator) {
+        rdIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated Range Detection config for ${selectedSymbolForRD}`);
+
+        // ✅ Guardar como override del símbolo
+        if (saveAsOverride) {
+          PresetManager.updateSymbolOverride(selectedSymbolForRD, "Range Detection", config);
+          console.log(`[Watchlist] 🔧 Range Detection override guardado para ${selectedSymbolForRD}`);
+        }
+      }
     }
   };
 
@@ -433,6 +564,37 @@ const Watchlist = () => {
 
   return (
     <div className="watchlist-container">
+      {/* Banner de precarga */}
+      {isPreloading && (
+        <div style={{
+          position: 'fixed',
+          top: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 10000,
+          fontSize: '14px',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{
+            width: '16px',
+            height: '16px',
+            border: '2px solid rgba(255,255,255,0.3)',
+            borderTop: '2px solid white',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite'
+          }}></div>
+          ⏳ Precargando indicadores... {preloadProgress.current}/{preloadProgress.total} ({preloadProgress.total > 0 ? Math.round(preloadProgress.current / preloadProgress.total * 100) : 0}%)
+        </div>
+      )}
+
       <div className="watchlist-header">
         <h2>Watchlist PoC - Phase 3: Volume Profile + UI Controls</h2>
 
@@ -640,6 +802,7 @@ const Watchlist = () => {
               symbol={selectedSymbolForRD}
               indicatorManager={indicatorManagers[selectedSymbolForRD]?.manager}
               candles={indicatorManagers[selectedSymbolForRD]?.candles}
+              onConfigChange={handleRangeDetectionConfigChange}
               onClose={() => {
                 setShowRangeDetectionSettings(false);
                 setSelectedSymbolForRD(null);
@@ -668,6 +831,7 @@ const Watchlist = () => {
         <SupportResistanceSettings
           symbol={selectedSymbolForSR}
           indicatorManager={indicatorManagers[selectedSymbolForSR]?.manager}
+          onConfigChange={handleSupportResistanceConfigChange}
           onClose={() => {
             setShowSupportResistanceSettings(false);
             setSelectedSymbolForSR(null);

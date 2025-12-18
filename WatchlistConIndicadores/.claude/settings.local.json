@@ -34,7 +34,9 @@
       "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Measure-Object -Line\")",
       "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Select-Object -Last 30\")",
       "Bash(powershell -Command \"Get-Content ''C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\backend\\pattern_detector_extended.py'' | Select-Object -Skip 520 -First 50\")",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\frontend\\src\\styles.css\")",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
