@@ -316,36 +316,78 @@ const Watchlist = () => {
   };
 
   const handleFibonacciConfigChange = (config, saveAsOverride = true) => {
-    const manager = indicatorManagers[selectedSymbolForFib]?.manager;
-    if (manager) {
-      const fibIndicator = manager.getFibonacciIndicator();
-      if (fibIndicator) {
-        fibIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
-
-        // ✅ Guardar como override del símbolo
-        if (saveAsOverride) {
+    if (saveAsOverride) {
+      // Modo símbolo: solo actualizar el símbolo actual
+      const manager = indicatorManagers[selectedSymbolForFib]?.manager;
+      if (manager) {
+        const fibIndicator = manager.getFibonacciIndicator();
+        if (fibIndicator) {
+          fibIndicator.updateConfig(config);
+          console.log(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
           PresetManager.updateSymbolOverride(selectedSymbolForFib, "Fibonacci", config);
           console.log(`[Watchlist] 🔧 Fibonacci override guardado para ${selectedSymbolForFib}`);
         }
       }
+    } else {
+      // Modo global: actualizar TODOS los símbolos que NO tengan override
+      console.log(`[Watchlist] 🌐 Aplicando preset global de Fibonacci a todos los símbolos sin override`);
+
+      symbols.forEach(symbol => {
+        const hasOverride = PresetManager.hasOverride(symbol, "Fibonacci");
+        if (!hasOverride) {
+          const manager = IndicatorManagerRegistry.get(symbol);
+          if (manager) {
+            const fibIndicator = manager.getFibonacciIndicator();
+            if (fibIndicator) {
+              fibIndicator.updateConfig(config);
+              console.log(`[Watchlist] ✅ ${symbol}: Fibonacci actualizado con preset global`);
+            }
+          }
+        } else {
+          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+        }
+      });
     }
   };
 
   const handleContinuationPatternConfigChange = (config, saveAsOverride = true) => {
-    const manager = indicatorManagers[selectedSymbolForCP]?.manager;
-    if (manager) {
-      const cpIndicator = manager.getContinuationPatternIndicator();
-      if (cpIndicator) {
-        cpIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated Continuation Pattern config for ${selectedSymbolForCP}`);
-
-        // ✅ Guardar como override del símbolo
-        if (saveAsOverride) {
+    if (saveAsOverride) {
+      // Modo símbolo: solo actualizar el símbolo actual
+      const manager = indicatorManagers[selectedSymbolForCP]?.manager;
+      if (manager) {
+        const cpIndicator = manager.getContinuationPatternIndicator();
+        if (cpIndicator) {
+          cpIndicator.updateConfig(config);
           PresetManager.updateSymbolOverride(selectedSymbolForCP, "Continuation Patterns", config);
           console.log(`[Watchlist] 🔧 Continuation Patterns override guardado para ${selectedSymbolForCP}`);
         }
       }
+    } else {
+      // Modo global: actualizar TODOS los símbolos que NO tengan override
+      console.log(`[Watchlist] 🌐 Aplicando preset global de Continuation Patterns a todos los símbolos sin override`);
+
+      const registeredSymbols = IndicatorManagerRegistry.getAllSymbols();
+      console.log(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`, registeredSymbols);
+
+      symbols.forEach(symbol => {
+        const hasOverride = PresetManager.hasOverride(symbol, "Continuation Patterns");
+        if (!hasOverride) {
+          const manager = IndicatorManagerRegistry.get(symbol);
+          if (manager) {
+            const cpIndicator = manager.getContinuationPatternIndicator();
+            if (cpIndicator) {
+              cpIndicator.updateConfig(config);
+              console.log(`[Watchlist] ✅ ${symbol}: Continuation Patterns actualizado con preset global`);
+            } else {
+              console.log(`[Watchlist] ⚠️ ${symbol}: getContinuationPatternIndicator() devolvió null`);
+            }
+          } else {
+            console.log(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en Registry`);
+          }
+        } else {
+          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+        }
+      });
     }
   };
 

@@ -1,5 +1,5 @@
 // src/components/ContinuationPatternSettings.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PresetManager from "../utils/PresetManager";
 import "./ContinuationPatternSettings.css";
 import { getPresetNames, getPresetConfig } from "./presets/ContinuationPatternPresets";
@@ -11,6 +11,8 @@ import {
   getUserPresetNames,
   isUserPreset
 } from "./presets/UserPresetManager";
+
+const DEBUG = false;
 
 const ContinuationPatternSettings = ({
   config,
@@ -28,6 +30,16 @@ const ContinuationPatternSettings = ({
 
   // Local state for immediate UI updates
   const [localConfig, setLocalConfig] = useState(config);
+  const renderCount = useRef(0);
+
+  renderCount.current++;
+
+  if (DEBUG) {
+    console.log(`[ContinuationPatternSettings] Render #${renderCount.current}`, {
+      currentSymbol,
+      applyGlobally
+    });
+  }
 
   // Preset management state
   const [currentPresetKey, setCurrentPresetKey] = useState('custom');
@@ -35,10 +47,24 @@ const ContinuationPatternSettings = ({
   const [userPresets, setUserPresets] = useState({});
   const [saveMessage, setSaveMessage] = useState('');
 
-  // Sync local state when prop changes
+  // Inicializar config local solo al montar o cuando cambia el símbolo
   useEffect(() => {
+    if (DEBUG) console.log('[ContinuationPatternSettings] useEffect: Inicializando config local');
     setLocalConfig(config);
-  }, [config]);
+    setApplyGlobally(false);
+  }, [currentSymbol]);
+
+  // Cuando cambia applyGlobally, cargar la config correspondiente
+  useEffect(() => {
+    if (applyGlobally) {
+      const globalPreset = PresetManager.getGlobalPreset("Continuation Patterns");
+      if (DEBUG) console.log('[ContinuationPatternSettings] Cargando preset global:', globalPreset);
+      setLocalConfig(globalPreset);
+    } else {
+      if (DEBUG) console.log('[ContinuationPatternSettings] Cargando config del símbolo:', config);
+      setLocalConfig(config);
+    }
+  }, [applyGlobally]);
 
   // Load user presets on mount
   useEffect(() => {
@@ -73,14 +99,26 @@ const ContinuationPatternSettings = ({
     const newVwapConfig = { ...localConfig.vwapConfig, [key]: value };
     const newConfig = { ...localConfig, vwapConfig: newVwapConfig };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleFibonacciConfigChange = (key, value) => {
     const newFibConfig = { ...localConfig.fibonacciConfig, [key]: value };
     const newConfig = { ...localConfig, fibonacciConfig: newFibConfig };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleReversalParamChange = (key, value) => {
@@ -94,7 +132,13 @@ const ContinuationPatternSettings = ({
     const newPatternParams = { ...currentPatternParams, reversal: newReversalParams };
     const newConfig = { ...localConfig, patternParams: newPatternParams };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleContinuationParamChange = (key, value) => {
@@ -108,7 +152,13 @@ const ContinuationPatternSettings = ({
     const newPatternParams = { ...currentPatternParams, continuation: newContinuationParams };
     const newConfig = { ...localConfig, patternParams: newPatternParams };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleTrendStartParamChange = (key, value) => {
@@ -122,7 +172,13 @@ const ContinuationPatternSettings = ({
     const newPatternParams = { ...currentPatternParams, trendStart: newTrendStartParams };
     const newConfig = { ...localConfig, patternParams: newPatternParams };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handleMomentumParamChange = (key, value) => {
@@ -136,7 +192,13 @@ const ContinuationPatternSettings = ({
     const newPatternParams = { ...currentPatternParams, momentum: newMomentumParams };
     const newConfig = { ...localConfig, patternParams: newPatternParams };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   const handlePatternEnableChange = (patternName, enabled) => {
@@ -144,7 +206,13 @@ const ContinuationPatternSettings = ({
     const newPatternEnables = { ...currentPatternEnables, [patternName]: enabled };
     const newConfig = { ...localConfig, patternEnables: newPatternEnables };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("Continuation Patterns", newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      onConfigChange(newConfig, true);
+    }
   };
 
   // Get all presets (predefined + user)

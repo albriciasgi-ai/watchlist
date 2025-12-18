@@ -232,6 +232,11 @@ class ContinuationPatternIndicator extends IndicatorBase {
     }
   }
 
+  // Alias para compatibilidad con IndicatorManager
+  applyConfig(config) {
+    this.updateConfig(config);
+  }
+
   updateConfig(config) {
     let needsRefresh = false;
 
@@ -292,8 +297,18 @@ class ContinuationPatternIndicator extends IndicatorBase {
       needsRefresh = true;
     }
 
+    // Pattern enables
+    if (config.patternEnables) {
+      this.patternEnables = { ...this.patternEnables, ...config.patternEnables };
+    }
+
     if (needsRefresh) {
       this.fetchData();
+    }
+
+    // Request redraw through manager if available
+    if (this.indicatorManager && this.indicatorManager.requestRedraw) {
+      this.indicatorManager.requestRedraw();
     }
   }
 

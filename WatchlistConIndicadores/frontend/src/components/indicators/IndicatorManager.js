@@ -63,6 +63,11 @@ class IndicatorManager {
       new ContinuationPatternIndicator(this.symbol, this.interval, this.days)
     ];
 
+    // Asignar referencia al manager a todos los indicadores
+    this.indicators.forEach(indicator => {
+      indicator.indicatorManager = this;
+    });
+
     // 🎯 NUEVO: Inicializar Level Source Manager
     this.levelSourceManager = new LevelSourceManager(this);
     console.log(`[${this.symbol}] 🎯 LevelSourceManager inicializado`);

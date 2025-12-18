@@ -1,7 +1,9 @@
 // src/components/FibonacciSettings.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PresetManager from "../utils/PresetManager";
 import "./FibonacciSettings.css";
+
+const DEBUG = false;
 
 const FibonacciSettings = ({
   config,
@@ -10,25 +12,62 @@ const FibonacciSettings = ({
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [applyGlobally, setApplyGlobally] = useState(false);
+  const [localConfig, setLocalConfig] = useState(config);
+  const renderCount = useRef(0);
+
+  renderCount.current++;
+
+  if (DEBUG) {
+    console.log(`[FibonacciSettings] Render #${renderCount.current}`, {
+      currentSymbol,
+      applyGlobally
+    });
+  }
 
   const hasOverride = currentSymbol && PresetManager.hasOverride(currentSymbol, "Fibonacci");
 
+  // Inicializar config local solo al montar o cuando cambia el símbolo
+  useEffect(() => {
+    if (DEBUG) console.log('[FibonacciSettings] useEffect: Inicializando config local');
+    setLocalConfig(config);
+    setApplyGlobally(false);
+  }, [currentSymbol]);
+
+  // Cuando cambia applyGlobally, cargar la config correspondiente
+  useEffect(() => {
+    if (applyGlobally) {
+      const globalPreset = PresetManager.getGlobalPreset("Fibonacci");
+      if (DEBUG) console.log('[FibonacciSettings] Cargando preset global:', globalPreset);
+      setLocalConfig(globalPreset);
+    } else {
+      if (DEBUG) console.log('[FibonacciSettings] Cargando config del símbolo:', config);
+      setLocalConfig(config);
+    }
+  }, [applyGlobally]);
+
   const handleConfigChange = (key, value) => {
-    const newConfig = { ...config, [key]: value };
+    if (DEBUG) console.log(`[FibonacciSettings] handleConfigChange:`, { key, value, applyGlobally });
+
+    const newConfig = { ...localConfig, [key]: value };
+    setLocalConfig(newConfig);
 
     if (applyGlobally) {
       PresetManager.updateGlobalPreset("Fibonacci", newConfig);
-      console.log(`[FibonacciSettings] 🌐 Preset global actualizado`);
+      if (DEBUG) console.log(`[FibonacciSettings] ✅ Preset global actualizado:`, newConfig);
       onConfigChange(newConfig, false);
     } else {
+      if (DEBUG) console.log(`[FibonacciSettings] ✅ Override guardado para ${currentSymbol}:`, newConfig);
       onConfigChange(newConfig, true);
     }
   };
 
   const handleLevelChange = (index, value) => {
-    const newLevels = [...config.levels];
+    if (!localConfig.levels) return;
+
+    const newLevels = [...localConfig.levels];
     newLevels[index] = parseFloat(value);
-    const newConfig = { ...config, levels: newLevels };
+    const newConfig = { ...localConfig, levels: newLevels };
+    setLocalConfig(newConfig);
 
     if (applyGlobally) {
       PresetManager.updateGlobalPreset("Fibonacci", newConfig);
@@ -39,9 +78,12 @@ const FibonacciSettings = ({
   };
 
   const handleExtensionLevelChange = (index, value) => {
-    const newLevels = [...config.extensionLevels];
+    if (!localConfig.extensionLevels) return;
+
+    const newLevels = [...localConfig.extensionLevels];
     newLevels[index] = parseFloat(value);
-    const newConfig = { ...config, extensionLevels: newLevels };
+    const newConfig = { ...localConfig, extensionLevels: newLevels };
+    setLocalConfig(newConfig);
 
     if (applyGlobally) {
       PresetManager.updateGlobalPreset("Fibonacci", newConfig);
@@ -55,6 +97,7 @@ const FibonacciSettings = ({
     if (currentSymbol && hasOverride) {
       PresetManager.clearSymbolOverride(currentSymbol, "Fibonacci");
       const globalConfig = PresetManager.getGlobalPreset("Fibonacci");
+      setLocalConfig(globalConfig);
       onConfigChange(globalConfig, false);
       console.log(`[FibonacciSettings] 🔄 ${currentSymbol} reseteado a preset global`);
     }
@@ -128,7 +171,7 @@ const FibonacciSettings = ({
           <label>
             <input
               type="checkbox"
-              checked={config.autoDetect}
+              checked={localConfig.autoDetect}
               onChange={(e) => handleConfigChange('autoDetect', e.target.checked)}
             />
             Detectar swing points automáticamente
@@ -136,14 +179,14 @@ const FibonacciSettings = ({
         </div>
 
         {/* Lookback (solo si autoDetect está activo) */}
-        {config.autoDetect && (
+        {localConfig.autoDetect && (
           <div className="setting-row">
             <label>Lookback (períodos):</label>
             <input
               type="number"
               min="20"
               max="200"
-              value={config.lookback}
+              value={localConfig.lookback}
               onChange={(e) => handleConfigChange('lookback', parseInt(e.target.value))}
             />
           </div>
@@ -154,7 +197,7 @@ const FibonacciSettings = ({
           <label>
             <input
               type="checkbox"
-              checked={config.showRetracements}
+              checked={localConfig.showRetracements}
               onChange={(e) => handleConfigChange('showRetracements', e.target.checked)}
             />
             Mostrar niveles de retroceso
@@ -166,7 +209,7 @@ const FibonacciSettings = ({
           <label>
             <input
               type="checkbox"
-              checked={config.showExtensions}
+              checked={localConfig.showExtensions}
               onChange={(e) => handleConfigChange('showExtensions', e.target.checked)}
             />
             Mostrar niveles de extensión
@@ -177,7 +220,7 @@ const FibonacciSettings = ({
         <div className="setting-row">
           <label>Posición de etiquetas:</label>
           <select
-            value={config.labelPosition}
+            value={localConfig.labelPosition}
             onChange={(e) => handleConfigChange('labelPosition', e.target.value)}
           >
             <option value="right">Derecha</option>
@@ -191,7 +234,7 @@ const FibonacciSettings = ({
           <label>Color de niveles:</label>
           <input
             type="color"
-            value={config.color || 'rgba(33, 150, 243, 0.6)'}
+            value={localConfig.color || 'rgba(33, 150, 243, 0.6)'}
             onChange={(e) => handleConfigChange('color', e.target.value)}
           />
         </div>
@@ -208,10 +251,10 @@ const FibonacciSettings = ({
 
         {showAdvanced && (
           <div className="advanced-settings">
-            {config.showRetracements && (
+            {localConfig.showRetracements && (
               <div className="level-group">
                 <h5>Niveles de Retroceso</h5>
-                {config.levels.map((level, index) => (
+                {localConfig.levels.map((level, index) => (
                   <div key={index} className="setting-row">
                     <label>Nivel {index + 1}:</label>
                     <input
@@ -228,10 +271,10 @@ const FibonacciSettings = ({
               </div>
             )}
 
-            {config.showExtensions && (
+            {localConfig.showExtensions && (
               <div className="level-group">
                 <h5>Niveles de Extensión</h5>
-                {config.extensionLevels.map((level, index) => (
+                {localConfig.extensionLevels.map((level, index) => (
                   <div key={index} className="setting-row">
                     <label>Extensión {index + 1}:</label>
                     <input
@@ -254,7 +297,7 @@ const FibonacciSettings = ({
                 type="number"
                 min="1"
                 max="5"
-                value={config.lineWidth || 1}
+                value={localConfig.lineWidth || 1}
                 onChange={(e) => handleConfigChange('lineWidth', parseInt(e.target.value))}
               />
             </div>
