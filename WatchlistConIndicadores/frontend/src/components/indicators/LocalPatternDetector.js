@@ -19,22 +19,35 @@ class LocalPatternDetector {
   }
 
   /**
-   * ✅ NUEVO: Valida si un patrón cumple con los filtros de zonas manuales
+   * ✅ ACTUALIZADO: Valida si un patrón cumple con los filtros de zonas manuales
    * @param {number} price - Precio del patrón (close)
    * @param {string} patternDirection - 'LONG' o 'SHORT'
    * @param {Array} manualZones - Array de zonas manuales configuradas
    * @param {string} globalDirection - Dirección global ('LONG'|'SHORT'|'BOTH')
+   * @param {string} validationMode - 'all' o 'validated' - Modo de validación
+   * @param {boolean} debug - Si true, imprime logs de debugging
    * @returns {boolean} true si el patrón pasa los filtros
    */
-  passesZoneFilters(price, patternDirection, manualZones, globalDirection, debug = false) {
-    // Si no hay zonas activas, solo aplicar filtro global
-    const activeZones = manualZones.filter(z => z.enabled);
-    if (activeZones.length === 0) {
-      // Sin zonas: aplicar solo filtro global
+  passesZoneFilters(price, patternDirection, manualZones, globalDirection, validationMode = 'all', debug = false) {
+    // ✅ FIX: En modo 'all' (Show All), SIEMPRE ignorar zonas y solo aplicar filtro de dirección global
+    if (validationMode === 'all') {
       if (globalDirection === 'BOTH') return true;
       const passes = patternDirection === globalDirection;
       if (debug && !passes) {
-        console.log(`    ❌ Pattern ${patternDirection} rejected by global filter (requires ${globalDirection})`);
+        console.log(`    ❌ [ALL MODE] Pattern ${patternDirection} rejected by global filter (requires ${globalDirection})`);
+      }
+      return passes;
+    }
+
+    // ✅ Modo 'validated' (Validated Only): Aplicar lógica de zonas
+    const activeZones = manualZones.filter(z => z.enabled);
+
+    // Si no hay zonas activas en modo validated, solo aplicar filtro global
+    if (activeZones.length === 0) {
+      if (globalDirection === 'BOTH') return true;
+      const passes = patternDirection === globalDirection;
+      if (debug && !passes) {
+        console.log(`    ❌ [VALIDATED MODE - NO ZONES] Pattern ${patternDirection} rejected by global filter (requires ${globalDirection})`);
       }
       return passes;
     }
@@ -84,9 +97,10 @@ class LocalPatternDetector {
    * Detecta todos los patrones en un array de velas
    * @param {Array} candles - Array de velas OHLC
    * @param {Object} config - Configuración de detección
+   * @param {string} validationMode - 'all' o 'validated' - Controla si se validan contra zonas
    * @returns {Array} Array de patrones detectados
    */
-  detectPatterns(candles, config = {}) {
+  detectPatterns(candles, config = {}, validationMode = 'all') {
     if (!candles || candles.length < 2) {
       return [];
     }
@@ -122,6 +136,7 @@ class LocalPatternDetector {
     const hasActiveZones = manualZones.some(z => z.enabled);
 
     console.log(`[LocalPatternDetector] 🎯 Filtro config:`, {
+      validationMode: validationMode,
       globalDirection: globalSignalDirection,
       manualZones: manualZones.length,
       activeZones: manualZones.filter(z => z.enabled).map(z => ({
@@ -165,8 +180,8 @@ class LocalPatternDetector {
 
       // Hammer - patrón bullish, debe estar en swing low
       if (enabledPatterns.hammer?.enabled && this.isHammer(current, enabledPatterns.hammer)) {
-        // ✅ NUEVO: Validar con zonas manuales
-        if (!this.passesZoneFilters(current.close, 'LONG', manualZones, globalSignalDirection, true)) {
+        // ✅ ACTUALIZADO: Validar con zonas manuales según modo de validación
+        if (!this.passesZoneFilters(current.close, 'LONG', manualZones, globalSignalDirection, validationMode, true)) {
           continue; // No pasa filtros de zona/dirección
         }
 
@@ -189,8 +204,8 @@ class LocalPatternDetector {
 
       // Shooting Star - patrón bearish, debe estar en swing high
       if (enabledPatterns.shootingStar?.enabled && this.isShootingStar(current, enabledPatterns.shootingStar)) {
-        // ✅ NUEVO: Validar con zonas manuales
-        if (!this.passesZoneFilters(current.close, 'SHORT', manualZones, globalSignalDirection)) {
+        // ✅ ACTUALIZADO: Validar con zonas manuales según modo de validación
+        if (!this.passesZoneFilters(current.close, 'SHORT', manualZones, globalSignalDirection, validationMode)) {
           continue; // No pasa filtros de zona/dirección
         }
 
@@ -218,8 +233,8 @@ class LocalPatternDetector {
           const isBullish = engulfingType === 'ENGULFING_BULLISH';
           const patternDirection = isBullish ? 'LONG' : 'SHORT';
 
-          // ✅ NUEVO: Validar con zonas manuales
-          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection)) {
+          // ✅ ACTUALIZADO: Validar con zonas manuales según modo de validación
+          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection, validationMode)) {
             continue; // No pasa filtros de zona/dirección
           }
 
@@ -251,8 +266,8 @@ class LocalPatternDetector {
           const isDragonfly = dojiType === 'DOJI_DRAGONFLY';
           const patternDirection = isDragonfly ? 'LONG' : 'SHORT';
 
-          // ✅ NUEVO: Validar con zonas manuales
-          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection)) {
+          // ✅ ACTUALIZADO: Validar con zonas manuales según modo de validación
+          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection, validationMode)) {
             continue; // No pasa filtros de zona/dirección
           }
 

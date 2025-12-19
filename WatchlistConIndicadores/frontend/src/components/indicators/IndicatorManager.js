@@ -989,6 +989,13 @@ class IndicatorManager {
   }
 
   /**
+   * ✅ NUEVO: Obtiene el indicador de Support & Resistance
+   */
+  getSupportResistanceIndicator() {
+    return this.supportResistanceIndicator;
+  }
+
+  /**
    * Verifica si el Volume Profile dinámico está activo y tiene datos calculados
    */
   hasDynamicVolumeProfile() {

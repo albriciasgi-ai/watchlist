@@ -127,8 +127,10 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.config = config;
     localStorage.setItem(`rejection_pattern_config_${this.symbol}`, JSON.stringify(config));
 
-    // Refetch patterns with new config
-    this.fetchData();
+    // ✅ FIX BUG 1: Limpiar patrones para forzar re-detección en el próximo render
+    // Esto asegura que al borrar zonas o cambiar configuración, los patrones se actualicen
+    this.localPatterns = [];
+    console.log(`[${this.symbol}] 🔄 Config updated - patterns will be re-detected on next render`);
   }
 
   /**
@@ -140,11 +142,8 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.showMode = mode;
     console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
 
-    // Si cambiamos a modo 'validated', necesitamos cargar los patrones validados del backend
-    if (mode === 'validated' && previousMode !== 'validated') {
-      console.log(`[${this.symbol}] 🔄 Switching to validated mode - fetching patterns from backend...`);
-      this.fetchData();
-    }
+    // ✅ FIX: Ya no necesitamos fetch al backend - la detección local maneja ambos modos
+    // Los patrones se re-detectan automáticamente en el siguiente renderOverlay()
   }
 
   /**
@@ -199,7 +198,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       swingPoint: 0,
       proximity: 0,
       volume: 0,
-      levelStrength: 0
+      levelStrength: 0,
+      srLevel: 0  // ✅ NUEVO: Boost por nivel de S/R
     };
 
     // BOOST 1: Está en swing point (+20)
@@ -241,6 +241,18 @@ class RejectionPatternIndicator extends IndicatorBase {
       confidence += volumeBonus;
     }
 
+    // ✅ BOOST 4: Cerca de nivel de Support & Resistance (+20 + strength bonus)
+    if (pattern.nearSRLevel) {
+      const srBonus = 20; // Base bonus por estar cerca de S/R
+      boosts.srLevel = srBonus;
+      confidence += srBonus;
+
+      // Bonus adicional por strength del nivel S/R (0-15 puntos)
+      const srStrengthBonus = (pattern.nearSRLevel.strength / 10) * 15;
+      boosts.srLevel += srStrengthBonus;
+      confidence += srStrengthBonus;
+    }
+
     // Normalizar a 0-100
     confidence = Math.min(100, Math.max(0, confidence));
 
@@ -250,6 +262,70 @@ class RejectionPatternIndicator extends IndicatorBase {
       nearLevel: nearestLevel || null,
       boosts: boosts
     };
+  }
+
+  /**
+   * ✅ NUEVO: Valida patrones contra niveles de Support & Resistance
+   * Agrega información de S/R a los patrones que estén cerca de niveles activos
+   * @param {Array} patterns - Array de patrones detectados (se modifica in-place)
+   * @param {Object} indicatorManager - Referencia al IndicatorManager
+   */
+  validatePatternsAgainstSR(patterns, indicatorManager) {
+    const srIndicator = indicatorManager.getSupportResistanceIndicator();
+
+    if (!srIndicator || !srIndicator.enabled) {
+      console.log(`[${this.symbol}] 📊 S/R validation skipped: indicator not enabled`);
+      return;
+    }
+
+    // Obtener niveles S/R activos
+    const activeLevels = [
+      ...(srIndicator.supports || []).filter(l => l.status === 'active'),
+      ...(srIndicator.resistances || []).filter(l => l.status === 'active')
+    ];
+
+    if (activeLevels.length === 0) {
+      console.log(`[${this.symbol}] 📊 S/R validation skipped: no active levels`);
+      return;
+    }
+
+    const proximityPct = (this.config.filters?.proximityPercent || 1.0) / 100;
+
+    // Para cada patrón, buscar niveles S/R cercanos
+    let patternsValidated = 0;
+    patterns.forEach(pattern => {
+      // Determinar qué tipo de nivel buscar (support para LONG, resistance para SHORT)
+      const relevantLevels = pattern.direction === 'LONG'
+        ? srIndicator.supports.filter(l => l.status === 'active')
+        : srIndicator.resistances.filter(l => l.status === 'active');
+
+      // Buscar nivel más cercano
+      let nearestSRLevel = null;
+      let minDistance = Infinity;
+
+      for (const level of relevantLevels) {
+        const distance = Math.abs(pattern.price - level.price) / pattern.price;
+        if (distance <= proximityPct && distance < minDistance) {
+          nearestSRLevel = level;
+          minDistance = distance;
+        }
+      }
+
+      // Si encontramos un nivel cercano, agregarlo al patrón
+      if (nearestSRLevel) {
+        pattern.nearSRLevel = {
+          price: nearestSRLevel.price,
+          strength: nearestSRLevel.strength,
+          touches: nearestSRLevel.touches,
+          type: pattern.direction === 'LONG' ? 'support' : 'resistance',
+          distance: minDistance,
+          distancePercent: (minDistance * 100).toFixed(2)
+        };
+        patternsValidated++;
+      }
+    });
+
+    console.log(`[${this.symbol}] 📊 S/R validation: ${patternsValidated}/${patterns.length} patterns near S/R levels`);
   }
 
   /**
@@ -295,14 +371,90 @@ class RejectionPatternIndicator extends IndicatorBase {
     // NUEVO: Obtener filtro de dirección global
     const globalDirection = this.config.signalDirection?.global || 'BOTH';
 
-    // Detectar patrones con swing detection y filtro de dirección
+    // ✅ FIX BUG 2: Solo pasar zonas manuales si la fuente está habilitada
+    const manualZonesToUse = (this.config.levelSources?.manualPriceZones !== false)
+      ? (this.config.manualPriceZones || [])
+      : [];
+
+    // ✅ FIX BUG 3: Determinar modo de detección basado en si S/R está habilitado
+    const srEnabled = this.config.levelSources?.supportResistance !== false;
+    const hasManualZones = manualZonesToUse.length > 0;
+
+    // Si S/R está habilitado, detectar en modo 'all' para no pre-filtrar por zonas
+    // Filtraremos después combinando zonas + S/R con lógica OR
+    let detectionMode = this.showMode;
+    if (this.showMode === 'validated' && srEnabled && hasManualZones) {
+      // Caso especial: ambas fuentes activas, no filtrar por zonas aún
+      detectionMode = 'all';
+    }
+
+    console.log(`[${this.symbol}] 🎯 Detection config:`, {
+      showMode: this.showMode,
+      detectionMode: detectionMode,
+      manualZonesEnabled: this.config.levelSources?.manualPriceZones !== false,
+      manualZonesCount: manualZonesToUse.length,
+      srEnabled: srEnabled
+    });
+
+    // ✅ ACTUALIZADO: Detectar patrones con swing detection, filtro de dirección y modo de validación
     const detectedPatterns = this.localDetector.detectPatterns(candles, {
       patterns: patternsConfig,
       swingDetection: swingConfig,
       volumeZScore: volumeConfig,
       signalDirection: this.config.signalDirection,  // ✅ Pasar objeto completo
-      manualPriceZones: this.config.manualPriceZones  // ✅ NUEVO: Pasar zonas manuales
-    });
+      manualPriceZones: manualZonesToUse  // ✅ FIX: Solo si la fuente está habilitada
+    }, detectionMode);  // ✅ FIX: Usar detectionMode calculado
+
+    // ✅ FIX BUG 3: Validar patrones contra S/R y aplicar filtro combinado
+    const srValidationActive = this.showMode === 'validated' && srEnabled && indicatorManager;
+
+    if (srValidationActive) {
+      this.validatePatternsAgainstSR(detectedPatterns, indicatorManager);
+    }
+
+    // ✅ FIX BUG 3: Filtrar patrones según fuentes activas en modo 'validated'
+    if (this.showMode === 'validated') {
+      if (hasManualZones && srEnabled) {
+        // CASO 1: Ambas fuentes activas (zonas + S/R) - Lógica OR
+        // Patrón pasa si está en zona O cerca de S/R
+        const beforeFilter = detectedPatterns.length;
+        const filtered = detectedPatterns.filter(pattern => {
+          // Verificar si está en alguna zona
+          const inZone = manualZonesToUse.some(zone => {
+            if (!zone.enabled) return false;
+            const inRange = pattern.price >= zone.minPrice && pattern.price <= zone.maxPrice;
+            if (!inRange) return false;
+
+            // Verificar dirección de la zona
+            const zoneDirection = zone.signalDirection || 'BOTH';
+            if (zoneDirection === 'BOTH') return true;
+            return pattern.direction === zoneDirection;
+          });
+
+          // Verificar si está cerca de S/R
+          const nearSR = !!pattern.nearSRLevel;
+
+          return inZone || nearSR;
+        });
+
+        console.log(`[${this.symbol}] 📊 Zones+S/R validation: ${filtered.length}/${beforeFilter} patterns (${filtered.filter(p => p.nearSRLevel).length} near S/R, ${filtered.filter(p => !p.nearSRLevel).length} in zones only)`);
+
+        detectedPatterns.length = 0;
+        detectedPatterns.push(...filtered);
+
+      } else if (srEnabled && !hasManualZones) {
+        // CASO 2: Solo S/R activo (sin zonas)
+        const beforeFilter = detectedPatterns.length;
+        const filtered = detectedPatterns.filter(p => p.nearSRLevel);
+
+        console.log(`[${this.symbol}] 📊 S/R-only validation: ${filtered.length}/${beforeFilter} patterns near S/R levels`);
+
+        detectedPatterns.length = 0;
+        detectedPatterns.push(...filtered);
+      }
+      // CASO 3: Solo zonas (sin S/R) - Ya filtrado por LocalPatternDetector
+      // No hacer nada adicional
+    }
 
     // Si no hay IndicatorManager, solo retornar los patrones básicos
     if (!indicatorManager) {
@@ -467,13 +619,14 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.renderManualPriceZones(ctx, bounds, priceContext);
     }
 
-    // Detectar patrones localmente si está en modo "all"
-    if (this.showMode === 'all' && allCandles && allCandles.length > 0) {
+    // ✅ FIX: Detectar patrones localmente en AMBOS modos (all y validated)
+    // El modo se pasa a detectLocalPatterns que internamente lo pasa a LocalPatternDetector
+    if (allCandles && allCandles.length > 0) {
       this.detectLocalPatterns(allCandles, indicatorManager, manualLevels);
     }
 
-    // Elegir qué patrones mostrar según el modo
-    const patternsToShow = this.showMode === 'all' ? this.localPatterns : this.patterns;
+    // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
+    const patternsToShow = this.localPatterns;
 
     if (patternsToShow.length === 0) {
       return;
@@ -656,14 +809,14 @@ class RejectionPatternIndicator extends IndicatorBase {
 
   // Handle mouse hover to show pattern details
   getTooltipInfo(x, y, bounds, candles, priceToY) {
-    if (!this.enabled || !this.config.enabled || this.patterns.length === 0) {
+    if (!this.enabled || !this.config.enabled || this.localPatterns.length === 0) {
       return null;
     }
 
     const candleWidth = bounds.width / candles.length;
     const patternMap = new Map();
 
-    for (const pattern of this.patterns) {
+    for (const pattern of this.localPatterns) {
       patternMap.set(pattern.timestamp, pattern);
     }
 
@@ -728,14 +881,14 @@ class RejectionPatternIndicator extends IndicatorBase {
 
   // Get count of patterns for UI display
   getPatternCount() {
-    return this.patterns.length;
+    return this.localPatterns.length;
   }
 
   // Get patterns by type
   getPatternsByType() {
     const byType = {};
-    for (const pattern of this.patterns) {
-      const type = pattern.patternType;
+    for (const pattern of this.localPatterns) {
+      const type = pattern.patternType || pattern.type;
       if (!byType[type]) {
         byType[type] = 0;
       }

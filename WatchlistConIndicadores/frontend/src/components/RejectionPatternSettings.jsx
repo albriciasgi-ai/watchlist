@@ -325,6 +325,20 @@ const RejectionPatternSettings = ({
     return context ? Math.round(context.weight * 100) : 50;
   };
 
+  // ✅ NUEVO: Obtiene el número de niveles S/R activos
+  const getSRLevelCount = () => {
+    if (!indicatorManager) return 0;
+    const srIndicator = indicatorManager.getSupportResistanceIndicator();
+    if (!srIndicator || !srIndicator.enabled) return 0;
+
+    const activeLevels = [
+      ...(srIndicator.supports || []).filter(l => l.status === 'active'),
+      ...(srIndicator.resistances || []).filter(l => l.status === 'active')
+    ];
+
+    return activeLevels.length;
+  };
+
   const handleShowModeChange = (mode) => {
     setShowMode(mode);
     // Actualizar el indicador con el nuevo modo
@@ -671,6 +685,11 @@ const RejectionPatternSettings = ({
                 onChange={(e) => updateLevelSource('supportResistance', e.target.checked)}
               />
               <span>📏 Support & Resistance</span>
+              {config.levelSources?.supportResistance !== false && indicatorManager && getSRLevelCount() > 0 && (
+                <span className="level-count-badge" title={`${getSRLevelCount()} active S/R levels available`}>
+                  {getSRLevelCount()} levels
+                </span>
+              )}
             </label>
 
             <label className="checkbox-label">
@@ -744,6 +763,12 @@ const RejectionPatternSettings = ({
           <h4>🎨 Manual Price Zones</h4>
           <p className="help-text">
             Define custom price zones where you want to detect patterns. Each zone can override the global signal direction.
+            {showMode === 'validated' && (
+              <strong> 💡 Zones are used in "Validated Only" mode to filter patterns.</strong>
+            )}
+            {showMode === 'all' && (
+              <span style={{ color: '#ff9800' }}> ⚠️ Zones are IGNORED in "Show All" mode.</span>
+            )}
           </p>
 
           {(!config.manualPriceZones || config.manualPriceZones.length === 0) ? (
