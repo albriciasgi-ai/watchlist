@@ -90,12 +90,13 @@ class RejectionPatternIndicator extends IndicatorBase {
       },
       // Nueva configuración de fuentes de niveles
       levelSources: {
-        volumeProfile: true,
-        fixedRanges: true,
-        clusters: true,
-        manualLevels: true,
-        supportResistance: true,
-        rangeDetection: true
+        volumeProfile: false,        // VP dinámico (VolumeProfileIndicator.js) - no usado
+        fixedRanges: true,          // Fixed Ranges (VolumeProfileFixedRangeIndicator.js) ✅
+        clusters: true,             // Clusters de Fixed Ranges ✅
+        manualLevels: true,         // Líneas horizontales dibujadas
+        supportResistance: true,    // Support & Resistance Indicator
+        rangeDetection: true,       // Range Detector boundaries
+        manualPriceZones: true      // Zonas manuales de precio (NUEVO)
       },
       // Configuración de volume Z-score
       volumeZScore: {
@@ -111,7 +112,14 @@ class RejectionPatternIndicator extends IndicatorBase {
       },
       alertsEnabled: false,
       // Nuevo: Modo debug global
-      debugMode: false                  // Si true, muestra console.log de todos los patrones rechazados
+      debugMode: false,                  // Si true, muestra console.log de todos los patrones rechazados
+      // NUEVO: Filtro de dirección de señales
+      signalDirection: {
+        global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'
+        // Los overrides por nivel se guardan en cada zona (zone.signalDirection)
+      },
+      // NUEVO: Zonas manuales de precio
+      manualPriceZones: []
     };
   }
 
@@ -277,11 +285,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       });
     }
 
-    // Detectar patrones con swing detection
+    // NUEVO: Obtener filtro de dirección global
+    const globalDirection = this.config.signalDirection?.global || 'BOTH';
+
+    // Detectar patrones con swing detection y filtro de dirección
     const detectedPatterns = this.localDetector.detectPatterns(candles, {
       patterns: patternsConfig,
       swingDetection: swingConfig,
-      volumeZScore: volumeConfig
+      volumeZScore: volumeConfig,
+      signalDirection: this.config.signalDirection,  // ✅ Pasar objeto completo
+      manualPriceZones: this.config.manualPriceZones  // ✅ NUEVO: Pasar zonas manuales
     });
 
     // Si no hay IndicatorManager, solo retornar los patrones básicos
@@ -321,13 +334,27 @@ class RejectionPatternIndicator extends IndicatorBase {
       )
     );
 
-    // Filtrar por minConfidence si está configurado
+    // Filtrar por minConfidence y dirección del nivel
     const minConfidence = this.config.filters?.minConfidence || 0;
-    if (minConfidence > 0) {
-      this.localPatterns = this.localPatterns.filter(p => p.confidence >= minConfidence);
-    }
+    this.localPatterns = this.localPatterns.filter(pattern => {
+      // Filtro 1: Confidence mínimo
+      if (pattern.confidence < minConfidence) return false;
 
-    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before confidence filter)`);
+      // NUEVO: Filtro 2: Dirección del nivel (override)
+      if (pattern.nearLevel?.signalDirection) {
+        const levelDirection = pattern.nearLevel.signalDirection;
+        const patternDirection = pattern.direction; // Ya viene del LocalPatternDetector
+
+        // Si el nivel tiene un override de dirección, debe coincidir
+        if (levelDirection === 'LONG' && patternDirection !== 'LONG') return false;
+        if (levelDirection === 'SHORT' && patternDirection !== 'SHORT') return false;
+        // Si levelDirection === 'BOTH', pasar todos los patrones
+      }
+
+      return true;
+    });
+
+    // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before filters)`);
   }
 
   async fetchData() {
@@ -336,12 +363,18 @@ class RejectionPatternIndicator extends IndicatorBase {
       return;
     }
 
+    // ✅ NUEVO: Construir contextos de referencia incluyendo zonas manuales
+    const allReferenceContexts = this.buildAllReferenceContexts();
+
     // Check if we have reference contexts
-    if (this.config.referenceContexts.length === 0) {
-      console.warn(`[${this.symbol}] No reference contexts configured. Patterns disabled.`);
+    if (allReferenceContexts.length === 0) {
+      console.warn(`[${this.symbol}] ⚠️ No reference contexts configured. Patterns disabled in 'validated' mode.`);
+      console.warn(`[${this.symbol}] 💡 TIP: Either add Reference Contexts OR switch to 'Show All' mode to see locally detected patterns.`);
       this.patterns = [];
       return;
     }
+
+    console.log(`[${this.symbol}] 📊 Fetching patterns with ${allReferenceContexts.length} reference contexts:`, allReferenceContexts.map(c => c.type));
 
     this.loading = true;
 
@@ -356,7 +389,7 @@ class RejectionPatternIndicator extends IndicatorBase {
           interval: this.interval,
           days: this.days,
           config: this.config,
-          referenceContexts: this.config.referenceContexts
+          referenceContexts: allReferenceContexts
         })
       });
 
@@ -364,23 +397,67 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (data.success) {
         this.patterns = data.patterns || [];
-        console.log(`[${this.symbol}] Loaded ${this.patterns.length} rejection patterns`);
+        console.log(`[${this.symbol}] ✅ Loaded ${this.patterns.length} validated rejection patterns`);
       } else {
-        console.error(`[${this.symbol}] Failed to fetch patterns:`, data.error);
+        console.error(`[${this.symbol}] ❌ Failed to fetch patterns:`, data.error);
         this.patterns = [];
       }
     } catch (error) {
-      console.error(`[${this.symbol}] Error fetching rejection patterns:`, error);
+      console.error(`[${this.symbol}] ❌ Error fetching rejection patterns:`, error);
       this.patterns = [];
     } finally {
       this.loading = false;
     }
   }
 
+  /**
+   * ✅ NUEVO: Construye todos los contextos de referencia incluyendo zonas manuales
+   * Convierte las zonas manuales en contextos de tipo "manual_zone" para el backend
+   */
+  buildAllReferenceContexts() {
+    const contexts = [...(this.config.referenceContexts || [])];
+
+    // Agregar zonas manuales como contextos si están habilitadas
+    if (this.config.levelSources?.manualPriceZones && this.config.manualPriceZones) {
+      this.config.manualPriceZones.forEach(zone => {
+        if (zone.enabled) {
+          const zoneContext = {
+            id: zone.id,
+            type: 'manual_zone',
+            name: zone.name,
+            minPrice: zone.minPrice,
+            maxPrice: zone.maxPrice,
+            signalDirection: zone.signalDirection,
+            color: zone.color,
+            enabled: true,
+            weight: 0.8  // Peso alto para zonas manuales
+          };
+          console.log(`[${this.symbol}] 🎯 Adding manual zone context:`, {
+            name: zone.name,
+            range: `${zone.minPrice}-${zone.maxPrice}`,
+            signalDirection: zone.signalDirection
+          });
+          contexts.push(zoneContext);
+        }
+      });
+    }
+
+    console.log(`[${this.symbol}] 🔧 Built ${contexts.length} total contexts (${this.config.referenceContexts?.length || 0} regular + ${contexts.length - (this.config.referenceContexts?.length || 0)} manual zones)`);
+
+    return contexts;
+  }
+
   // Método para overlay (llamado por IndicatorManager)
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext, indicatorManager = null, manualLevels = []) {
     if (!this.enabled || !this.config.enabled) {
       return;
+    }
+
+    // NUEVO: Renderizar zonas manuales PRIMERO (fondo)
+    if (this.config.manualPriceZones &&
+        this.config.manualPriceZones.length > 0 &&
+        priceContext?.priceToY) {
+      this.renderManualPriceZones(ctx, bounds, priceContext);
     }
 
     // Detectar patrones localmente si está en modo "all"
@@ -500,6 +577,74 @@ class RejectionPatternIndicator extends IndicatorBase {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /**
+   * NUEVO: Renderiza zonas manuales de precio en el gráfico
+   */
+  renderManualPriceZones(ctx, bounds, priceContext) {
+    const { priceToY } = priceContext;
+
+    this.config.manualPriceZones.forEach(zone => {
+      if (!zone.enabled) return;
+
+      const minY = priceToY(zone.minPrice);
+      const maxY = priceToY(zone.maxPrice);
+      const height = Math.abs(minY - maxY);
+
+      // Rectángulo sombreado (fondo de la zona)
+      ctx.save();
+      ctx.fillStyle = this.hexToRgba(zone.color, 0.08);
+      ctx.fillRect(bounds.x, maxY, bounds.width, height);
+
+      // Bordes superior e inferior (punteados)
+      ctx.strokeStyle = zone.color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 3]);
+
+      // Borde superior
+      ctx.beginPath();
+      ctx.moveTo(bounds.x, maxY);
+      ctx.lineTo(bounds.x + bounds.width, maxY);
+      ctx.stroke();
+
+      // Borde inferior
+      ctx.beginPath();
+      ctx.moveTo(bounds.x, minY);
+      ctx.lineTo(bounds.x + bounds.width, minY);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      // Label con nombre y dirección
+      const labelY = (minY + maxY) / 2;
+      const directionIcon = zone.signalDirection === 'LONG' ? '📈' :
+                            zone.signalDirection === 'SHORT' ? '📉' :
+                            zone.signalDirection === 'BOTH' ? '↕️' : '';
+
+      ctx.fillStyle = zone.color;
+      ctx.font = 'bold 11px Arial';
+      const labelText = `${zone.name} ${directionIcon}`;
+
+      // Fondo semi-transparente para el texto
+      const textMetrics = ctx.measureText(labelText);
+      const textWidth = textMetrics.width;
+      const padding = 6;
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(
+        bounds.x + 5,
+        labelY - 8,
+        textWidth + padding * 2,
+        16
+      );
+
+      // Texto
+      ctx.fillStyle = zone.color;
+      ctx.fillText(labelText, bounds.x + 5 + padding, labelY + 4);
+
+      ctx.restore();
+    });
   }
 
   // Handle mouse hover to show pattern details

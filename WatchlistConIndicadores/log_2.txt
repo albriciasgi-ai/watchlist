@@ -1,0 +1,1063 @@
+FibonacciLevelCalculator.js:60 [UNIUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ARBUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [DOTUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [AVAXUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [BNBUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [PEOPLEUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [HBARUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ASTRUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [MASKUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [TRBUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [INJUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ATOMUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [GRTUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ALGOUSDT] ✅ Fibonacci loaded: downtrend
+ContinuationPatternIndicator.js:189 [BTCUSDT] ✅ Patterns loaded: Object
+ContinuationPatternIndicator.js:207 [BTCUSDT] 📊 Reversal Patterns by type: Object
+ContinuationPatternIndicator.js:208 [BTCUSDT] 🎯 Min confidence threshold: 60%
+ContinuationPatternIndicator.js:209 [BTCUSDT] ✅ Above threshold: 3/630
+ContinuationPatternIndicator.js:210 [BTCUSDT] ❌ Below threshold: 627/630
+ContinuationPatternIndicator.js:214 [BTCUSDT] 📉 Avg confidence of rejected: 12.1%
+ContinuationPatternIndicator.js:218 [BTCUSDT] 📈 Avg confidence of accepted: 71.3%
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 13 validated rejection patterns
+ContinuationPatternIndicator.js:189 [ETHUSDT] ✅ Patterns loaded: Object
+ContinuationPatternIndicator.js:207 [ETHUSDT] 📊 Reversal Patterns by type: Object
+ContinuationPatternIndicator.js:208 [ETHUSDT] 🎯 Min confidence threshold: 60%
+ContinuationPatternIndicator.js:209 [ETHUSDT] ✅ Above threshold: 4/613
+ContinuationPatternIndicator.js:210 [ETHUSDT] ❌ Below threshold: 609/613
+ContinuationPatternIndicator.js:214 [ETHUSDT] 📉 Avg confidence of rejected: 11.9%
+ContinuationPatternIndicator.js:218 [ETHUSDT] 📈 Avg confidence of accepted: 66.6%
+ContinuationPatternIndicator.js:189 [XRPUSDT] ✅ Patterns loaded: Object
+ContinuationPatternIndicator.js:207 [XRPUSDT] 📊 Reversal Patterns by type: Object
+ContinuationPatternIndicator.js:208 [XRPUSDT] 🎯 Min confidence threshold: 60%
+ContinuationPatternIndicator.js:209 [XRPUSDT] ✅ Above threshold: 0/627
+ContinuationPatternIndicator.js:210 [XRPUSDT] ❌ Below threshold: 627/627
+ContinuationPatternIndicator.js:214 [XRPUSDT] 📉 Avg confidence of rejected: 12.1%
+ContinuationPatternIndicator.js:189 [TRXUSDT] ✅ Patterns loaded: Object
+ContinuationPatternIndicator.js:207 [TRXUSDT] 📊 Reversal Patterns by type: Object
+ContinuationPatternIndicator.js:208 [TRXUSDT] 🎯 Min confidence threshold: 60%
+ContinuationPatternIndicator.js:209 [TRXUSDT] ✅ Above threshold: 19/652
+ContinuationPatternIndicator.js:210 [TRXUSDT] ❌ Below threshold: 633/652
+ContinuationPatternIndicator.js:214 [TRXUSDT] 📉 Avg confidence of rejected: 17.4%
+ContinuationPatternIndicator.js:218 [TRXUSDT] 📈 Avg confidence of accepted: 70.0%
+MiniChart.jsx:35 [131] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [131] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [131] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [131] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.45
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.64
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.48
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [319] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [320] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [320] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [320] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.45
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.64
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.48
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.45
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.64
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.48
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.47
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.61
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.37
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [195] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [196] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [196] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [196] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [357] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [358] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [358] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [359] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [619] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:35 [619] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:1243 [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+MiniChart.jsx:47 [620] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+MiniChart.jsx:41 [620] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+MiniChart.jsx:1438 [ETHUSDT] ⏭️ Skipping cleanup (external manager)
+MiniChart.jsx:35 [621] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:35 [622] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:1243 [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+MiniChart.jsx:47 [622] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+MiniChart.jsx:41 [623] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+MiniChart.jsx:35 [835] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+MiniChart.jsx:35 [229] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [229] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [230] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [230] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [846] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [847] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [847] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [848] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [951] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [951] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [951] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [952] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [023] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [024] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [024] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [024] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [759] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [760] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [760] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [761] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [627] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [627] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [627] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [628] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [504] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [505] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [505] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [505] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [614] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [614] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [615] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [615] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [721] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [721] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [722] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [722] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [823] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [823] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [823] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [824] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [441] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [442] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [443] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [443] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [360] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [360] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [361] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [361] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [467] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [468] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [468] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [468] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [576] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [576] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [577] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [577] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [056] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [056] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [057] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [057] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [904] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [905] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [905] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [905] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [071] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [072] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [072] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [073] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [181] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [181] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [181] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [182] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [287] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [288] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [288] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [288] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [907] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [908] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [908] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [908] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [541] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [541] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [541] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [542] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [675] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [676] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [676] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [676] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+MiniChart.jsx:35 [757] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [757] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [757] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [758] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [188] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [189] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [189] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [189] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [379] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [379] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [380] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [380] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [489] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [490] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [490] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [490] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [608] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [609] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [609] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [609] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.39
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.77
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.36
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+MiniChart.jsx:35 [497] 🕯️  SOLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [498] 🕯️  SOLUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [498] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [498] 🕯️  DOTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [499] 🕯️  DOTUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [499] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [499] 🕯️  XRPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [500] 🕯️  XRPUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [500] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [532] 🕯️  MASKUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [533] 🕯️  MASKUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [533] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [602] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [603] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [603] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [619] 🕯️  POLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [620] 🕯️  POLUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [620] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [803] 🕯️  ARBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [803] 🕯️  ARBUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [803] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [807] 🕯️  SUIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [807] 🕯️  SUIUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [808] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [809] 🕯️  GALAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [809] 🕯️  GALAUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [810] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [906] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [907] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [907] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [907] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [907] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [908] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [908] 🕯️  BNBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [908] 🕯️  BNBUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [908] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [909] 🕯️  AAVEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [909] 🕯️  AAVEUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [909] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [017] 🕯️  ATOMUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [017] 🕯️  ATOMUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [018] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [052] 🕯️  UNIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [053] 🕯️  UNIUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [053] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [214] 🕯️  INJUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [215] 🕯️  INJUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [215] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [217] 🕯️  ADAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [218] 🕯️  ADAUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [218] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [285] 🕯️  OPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [286] 🕯️  OPUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [286] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [300] 🕯️  HBARUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [300] 🕯️  HBARUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [300] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [385] 🕯️  TRXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [386] 🕯️  TRXUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [386] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [626] 🕯️  PEOPLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [627] 🕯️  PEOPLEUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [627] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [931] 🕯️  AVAXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [932] 🕯️  AVAXUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [932] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [137] 🕯️  TRBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [137] 🕯️  TRBUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [138] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [994] 🕯️  TONUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [995] 🕯️  TONUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [995] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [725] 🕯️  CAKEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [726] 🕯️  CAKEUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [726] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [540] 🕯️  PENDLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [541] 🕯️  PENDLEUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [542] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+MiniChart.jsx:35 [569] 🕯️  ASTRUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [569] 🕯️  ASTRUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [570] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [429] 🕯️  ALGOUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [430] 🕯️  ALGOUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [430] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [473] 🕯️  POLYXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [473] 🕯️  POLYXUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [474] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+MiniChart.jsx:35 [496] 🕯️  GRTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+MiniChart.jsx:35 [496] 🕯️  GRTUSDT | ✅ Vela confirmada y agregada Object
+MiniChart.jsx:58 [497] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.46
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.66
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.31
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.21
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.92
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.59
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [647] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [648] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [649] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [650] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [651] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [653] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [654] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [654] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [656] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [657] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [659] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [660] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [662] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [663] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [664] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [665] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [666] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [667] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [674] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [675] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [676] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [676] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [678] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [679] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [680] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [680] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [681] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [681] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [682] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [682] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [683] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [684] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [684] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [685] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [686] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [687] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [688] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [689] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [690] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [691] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [697] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [697] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [698] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [699] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [700] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [701] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [702] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [703] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [704] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [705] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [706] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [706] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [708] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [708] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [709] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [710] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [711] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [711] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [719] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [719] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [720] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [720] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [136] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [137] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [137] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [137] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [253] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [253] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [254] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [254] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [365] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [365] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [366] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [366] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [660] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [661] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [661] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [662] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [775] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [776] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [776] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [776] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [922] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [923] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [924] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [925] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [221] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [222] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [222] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [222] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [336] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [337] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [337] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [337] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [172] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [172] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [173] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [173] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [246] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [247] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [247] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [248] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [580] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [581] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [581] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [581] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [705] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [706] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [706] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [707] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [931] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [931] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [932] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [932] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [070] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [071] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [071] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [071] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [686] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [687] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [687] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [687] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [527] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [527] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [527] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [528] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [002] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [002] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [003] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [003] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [103] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [103] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [104] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [104] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [754] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [755] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [755] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [756] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [876] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [876] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [877] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [877] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [981] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [982] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [982] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [982] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+MiniChart.jsx:35 [284] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [284] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [284] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [285] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [734] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [735] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [736] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [737] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [059] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [060] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [060] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [061] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [204] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [205] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [206] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [206] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [319] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [319] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [319] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [320] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [425] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [425] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [425] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [426] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [536] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [537] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [537] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [537] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [621] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [622] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [623] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [624] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.32
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.78
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.82
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [621] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [622] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [622] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [623] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [382] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [382] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [383] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [383] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.25
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.81
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.71
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.45
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.53
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 19.05
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [764] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [766] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [767] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [770] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [772] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [773] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [775] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [776] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [777] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [777] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [778] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [778] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [779] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [779] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [781] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [782] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [782] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [783] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [786] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [786] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [787] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [788] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [789] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [790] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [791] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [791] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [792] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [792] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [793] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [794] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [794] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [795] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [796] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [796] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [797] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [797] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [798] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [798] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [799] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [800] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [800] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [801] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [802] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [803] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [804] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [805] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [806] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [806] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [807] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [808] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [808] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [809] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [809] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [810] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [811] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [811] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [812] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [812] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 4 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+MiniChart.jsx:35 [795] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [796] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [796] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [797] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [630] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [631] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [631] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [631] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [721] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [722] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [722] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [722] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternSettings.jsx:36 [ETHUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:74 [ETHUSDT] Profiles from IndicatorManager: 0 Array(0)
+RejectionPatternSettings.jsx:78 [ETHUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:142 [ETHUSDT] Found 0 available contexts: Array(0)
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+RejectionPatternIndicator.js:439 [ETHUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+RejectionPatternIndicator.js:377 [ETHUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+IndicatorManager.js:960 [ETHUSDT] 🎯 Rejection Pattern config updated
+Watchlist.jsx:405 [Watchlist] Updated rejection pattern config for ETHUSDT
+PresetManager.js:146 [PresetManager] 💾 Guardando presets migrados...
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:174 [PresetManager] Presets guardados exitosamente
+PresetManager.js:227 [PresetManager] ✅ Override guardado: ETHUSDT - Rejection Patterns
+Watchlist.jsx:410 [Watchlist] 🔧 Rejection Patterns override guardado para ETHUSDT
+MiniChart.jsx:35 [598] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [598] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [598] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [599] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [712] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [712] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [712] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [713] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 4 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504826451-odjphu6in score: 17.3
+useProximityAlerts.js:171 [useProximityAlerts] Result 1: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504840313-wit4hsr0h score: 24.61
+useProximityAlerts.js:171 [useProximityAlerts] Result 2: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763504868427-p2qfcgdkb score: 0
+useProximityAlerts.js:171 [useProximityAlerts] Result 3: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1763851378775-jwhvz2cle score: 18.81
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:35 [330] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [330] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [331] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [331] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [446] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [447] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [447] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [447] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [551] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [551] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [552] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [552] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [540] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [541] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [541] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [541] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [450] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [451] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [451] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [451] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [882] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [882] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [883] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [883] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [170] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [171] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [171] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [171] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [289] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [289] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [290] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [290] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [979] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [980] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [980] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [980] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [905] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [906] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [907] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [907] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [831] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [832] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [832] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [832] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [128] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [129] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [129] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [130] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [070] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [071] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [071] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [072] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [192] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [193] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [193] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [193] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [874] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [875] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [875] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [876] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [981] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [982] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [983] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [983] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [611] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [612] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [613] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [613] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [733] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [733] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [734] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [734] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [621] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [622] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [624] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [624] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [014] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [015] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [016] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [018] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [195] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [196] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [196] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [197] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [312] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [313] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [314] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [315] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [453] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [454] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [454] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [455] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [839] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [839] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [840] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [841] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [451] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [452] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [452] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [453] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+MiniChart.jsx:35 [839] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [840] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [840] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [841] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+RejectionPatternIndicator.js:400 [ETHUSDT] ✅ Loaded 11 validated rejection patterns
+MiniChart.jsx:35 [047] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766124000000, datetime: '2025-12-19 01:00:00'}
+MiniChart.jsx:35 [048] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [048] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [048] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 

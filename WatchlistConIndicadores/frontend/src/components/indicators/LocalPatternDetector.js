@@ -19,6 +19,68 @@ class LocalPatternDetector {
   }
 
   /**
+   * ✅ NUEVO: Valida si un patrón cumple con los filtros de zonas manuales
+   * @param {number} price - Precio del patrón (close)
+   * @param {string} patternDirection - 'LONG' o 'SHORT'
+   * @param {Array} manualZones - Array de zonas manuales configuradas
+   * @param {string} globalDirection - Dirección global ('LONG'|'SHORT'|'BOTH')
+   * @returns {boolean} true si el patrón pasa los filtros
+   */
+  passesZoneFilters(price, patternDirection, manualZones, globalDirection, debug = false) {
+    // Si no hay zonas activas, solo aplicar filtro global
+    const activeZones = manualZones.filter(z => z.enabled);
+    if (activeZones.length === 0) {
+      // Sin zonas: aplicar solo filtro global
+      if (globalDirection === 'BOTH') return true;
+      const passes = patternDirection === globalDirection;
+      if (debug && !passes) {
+        console.log(`    ❌ Pattern ${patternDirection} rejected by global filter (requires ${globalDirection})`);
+      }
+      return passes;
+    }
+
+    // Con zonas activas: el patrón DEBE estar dentro de al menos una zona
+    for (const zone of activeZones) {
+      const { minPrice, maxPrice, signalDirection } = zone;
+
+      // 1. Validar que el precio esté DENTRO del rango de la zona
+      if (price < minPrice || price > maxPrice) {
+        if (debug) {
+          console.log(`    ⏭️ Price ${price} outside zone '${zone.name}' (${minPrice}-${maxPrice})`);
+        }
+        continue; // Fuera de esta zona, probar siguiente
+      }
+
+      // 2. El precio está dentro de esta zona, ahora validar dirección
+      const zoneDirection = signalDirection || globalDirection; // Zone override o global
+
+      if (zoneDirection === 'BOTH') {
+        if (debug) {
+          console.log(`    ✅ Pattern accepted in zone '${zone.name}' (accepts BOTH)`);
+        }
+        return true; // Zona acepta ambas direcciones
+      }
+
+      if (patternDirection === zoneDirection) {
+        if (debug) {
+          console.log(`    ✅ Pattern ${patternDirection} accepted in zone '${zone.name}' (matches ${zoneDirection})`);
+        }
+        return true; // Dirección coincide
+      }
+
+      if (debug) {
+        console.log(`    ❌ Pattern ${patternDirection} rejected in zone '${zone.name}' (zone requires ${zoneDirection})`);
+      }
+
+      // Si llega aquí, está en la zona pero dirección no coincide
+      // Continuar buscando otra zona que acepte esta dirección
+    }
+
+    // Si salió del loop, el patrón no pasó ninguna zona
+    return false;
+  }
+
+  /**
    * Detecta todos los patrones en un array de velas
    * @param {Array} candles - Array de velas OHLC
    * @param {Object} config - Configuración de detección
@@ -51,6 +113,23 @@ class LocalPatternDetector {
       rightBars: 5,
       required: false  // Si true, rechaza patrones que no estén en swing points
     };
+
+    // NUEVO: Configuración de filtro de dirección
+    const globalSignalDirection = config.signalDirection?.global || 'BOTH'; // 'LONG' | 'SHORT' | 'BOTH'
+
+    // ✅ NUEVO: Zonas manuales (si existen)
+    const manualZones = config.manualPriceZones || [];
+    const hasActiveZones = manualZones.some(z => z.enabled);
+
+    console.log(`[LocalPatternDetector] 🎯 Filtro config:`, {
+      globalDirection: globalSignalDirection,
+      manualZones: manualZones.length,
+      activeZones: manualZones.filter(z => z.enabled).map(z => ({
+        name: z.name,
+        range: `${z.minPrice}-${z.maxPrice}`,
+        signalDirection: z.signalDirection
+      }))
+    });
 
     // Pre-calcular Z-scores de volumen si está habilitado
     const volumeZScores = volumeConfig.enabled ? this.calculateVolumeZScores(candles, volumeConfig.lookbackPeriod) : null;
@@ -86,6 +165,11 @@ class LocalPatternDetector {
 
       // Hammer - patrón bullish, debe estar en swing low
       if (enabledPatterns.hammer?.enabled && this.isHammer(current, enabledPatterns.hammer)) {
+        // ✅ NUEVO: Validar con zonas manuales
+        if (!this.passesZoneFilters(current.close, 'LONG', manualZones, globalSignalDirection, true)) {
+          continue; // No pasa filtros de zona/dirección
+        }
+
         // Si swing detection está habilitado y es required, validar swing low
         if (!swingConfig.enabled || !swingConfig.required || isAtSwingLow) {
           patterns.push({
@@ -97,13 +181,19 @@ class LocalPatternDetector {
             atSwingPoint: swingConfig.enabled ? isAtSwingLow : undefined,
             swingType: 'low',
             candleIndex: i,
-            volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+            volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+            direction: 'LONG'  // NUEVO: Marcar dirección
           });
         }
       }
 
       // Shooting Star - patrón bearish, debe estar en swing high
       if (enabledPatterns.shootingStar?.enabled && this.isShootingStar(current, enabledPatterns.shootingStar)) {
+        // ✅ NUEVO: Validar con zonas manuales
+        if (!this.passesZoneFilters(current.close, 'SHORT', manualZones, globalSignalDirection)) {
+          continue; // No pasa filtros de zona/dirección
+        }
+
         // Si swing detection está habilitado y es required, validar swing high
         if (!swingConfig.enabled || !swingConfig.required || isAtSwingHigh) {
           patterns.push({
@@ -115,7 +205,8 @@ class LocalPatternDetector {
             atSwingPoint: swingConfig.enabled ? isAtSwingHigh : undefined,
             swingType: 'high',
             candleIndex: i,
-            volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+            volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+            direction: 'SHORT'  // NUEVO: Marcar dirección
           });
         }
       }
@@ -125,6 +216,13 @@ class LocalPatternDetector {
         const engulfingType = this.isEngulfing(previous, current);
         if (engulfingType) {
           const isBullish = engulfingType === 'ENGULFING_BULLISH';
+          const patternDirection = isBullish ? 'LONG' : 'SHORT';
+
+          // ✅ NUEVO: Validar con zonas manuales
+          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection)) {
+            continue; // No pasa filtros de zona/dirección
+          }
+
           const isAtCorrectSwing = isBullish ? isAtSwingLow : isAtSwingHigh;
 
           // Validar swing point si está habilitado
@@ -139,7 +237,8 @@ class LocalPatternDetector {
               atSwingPoint: swingConfig.enabled ? isAtCorrectSwing : undefined,
               swingType: isBullish ? 'low' : 'high',
               candleIndex: i,
-              volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+              volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+              direction: isBullish ? 'LONG' : 'SHORT'  // NUEVO: Marcar dirección
             });
           }
         }
@@ -150,6 +249,13 @@ class LocalPatternDetector {
         const dojiType = this.isDoji(current, enabledPatterns.doji);
         if (dojiType) {
           const isDragonfly = dojiType === 'DOJI_DRAGONFLY';
+          const patternDirection = isDragonfly ? 'LONG' : 'SHORT';
+
+          // ✅ NUEVO: Validar con zonas manuales
+          if (!this.passesZoneFilters(current.close, patternDirection, manualZones, globalSignalDirection)) {
+            continue; // No pasa filtros de zona/dirección
+          }
+
           const isAtCorrectSwing = isDragonfly ? isAtSwingLow : isAtSwingHigh;
 
           // Validar swing point si está habilitado
@@ -163,7 +269,8 @@ class LocalPatternDetector {
               atSwingPoint: swingConfig.enabled ? isAtCorrectSwing : undefined,
               swingType: isDragonfly ? 'low' : 'high',
               candleIndex: i,
-              volumeZScore: volumeZScores ? volumeZScores[i] : undefined
+              volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+              direction: isDragonfly ? 'LONG' : 'SHORT'  // NUEVO: Marcar dirección
             });
           }
         }

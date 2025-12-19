@@ -27,7 +27,8 @@
       "Bash(python extract_pdf_info.py:*)",
       "Bash(iconv:*)",
       "Bash(python extract_continuation_patterns.py:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

@@ -35,6 +35,11 @@ class IndicatorManager {
     // 📊 NUEVO: Support & Resistance Indicator
     this.supportResistanceIndicator = null; // Indicador de S/R (solo si está habilitado)
 
+    // ✅ NUEVO: Cache para optimizar getAllReferenceLevels()
+    this._referenceLevelsCache = null;
+    this._referenceLevelsCacheKey = null;
+    this._lastCacheTime = 0;
+
     // 📊 NUEVO: Open Interest Indicator
     this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
 
@@ -1072,14 +1077,42 @@ class IndicatorManager {
       manualLevels = [],
       currentPrice = null,
       sources = {
-        volumeProfile: true,
+        volumeProfile: false,         // VP dinámico - no usado
         fixedRanges: true,
         clusters: true,
         manualLevels: true,
         supportResistance: true,
-        rangeDetection: true
+        rangeDetection: true,
+        manualPriceZones: true        // Zonas manuales (NUEVO)
       }
     } = options;
+
+    // ✅ NUEVO: Generar cache key
+    const rejectionPatternIndicator = this.getRejectionPatternIndicator();
+    const activeManualZonesCount = rejectionPatternIndicator?.config?.manualPriceZones?.filter(z => z.enabled).length || 0;
+
+    const cacheKey = JSON.stringify({
+      sources,
+      manualLevelsCount: manualLevels.length,
+      currentPrice: currentPrice ? Math.round(currentPrice) : null,
+      fixedRangesCount: this.fixedRangeIndicators.length,
+      activeManualZonesCount: activeManualZonesCount
+    });
+
+    // ✅ NUEVO: Usar cache si está disponible (válido por 1 segundo)
+    const now = Date.now();
+    if (this._referenceLevelsCacheKey === cacheKey &&
+        this._referenceLevelsCache &&
+        (now - this._lastCacheTime) < 1000) {
+      return this._referenceLevelsCache;
+    }
+
+    // ✅ Solo loggear cuando hay cambio de cache (no en cada llamada)
+    const isNewCalculation = this._referenceLevelsCacheKey !== cacheKey;
+    if (isNewCalculation) {
+      console.log(`[${this.symbol}] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)`);
+      console.log(`[${this.symbol}] 📍 Current price:`, currentPrice);
+    }
 
     const importantHighs = [];
     const importantLows = [];
@@ -1298,30 +1331,48 @@ class IndicatorManager {
     }
 
     // 5. MANUAL LEVELS (Horizontal lines from drawings)
+    // ⚠️ IMPORTANTE: Si hay zonas manuales activas, NO incluir líneas horizontales
+    // para evitar mezclar referencias de diferentes fuentes
+    const hasActiveManualZones = activeManualZonesCount > 0;
+
     if (sources.manualLevels && manualLevels && manualLevels.length > 0) {
-      manualLevels.forEach(drawing => {
-        if (drawing.type === 'horizontal' && drawing.price) {
-          // Clasificar según posición relativa al precio actual
-          if (currentPrice) {
-            if (drawing.price > currentPrice * 1.001) {
-              importantHighs.push({
-                price: drawing.price,
-                source: 'Manual',
-                type: 'HORIZONTAL_LINE',
-                drawingId: drawing.id,
-                strength: 7,
-                color: drawing.style?.color || '#8B5CF6'
-              });
-            } else if (drawing.price < currentPrice * 0.999) {
-              importantLows.push({
-                price: drawing.price,
-                source: 'Manual',
-                type: 'HORIZONTAL_LINE',
-                drawingId: drawing.id,
-                strength: 7,
-                color: drawing.style?.color || '#8B5CF6'
-              });
+      if (hasActiveManualZones && isNewCalculation) {
+        console.log(`[${this.symbol}]   ⏭️ Skipping ${manualLevels.length} manual horizontal lines (${activeManualZonesCount} manual zones active)`);
+      } else if (!hasActiveManualZones) {
+        manualLevels.forEach(drawing => {
+          if (drawing.type === 'horizontal' && drawing.price) {
+            // Clasificar según posición relativa al precio actual
+            if (currentPrice) {
+              if (drawing.price > currentPrice * 1.001) {
+                importantHighs.push({
+                  price: drawing.price,
+                  source: 'Manual',
+                  type: 'HORIZONTAL_LINE',
+                  drawingId: drawing.id,
+                  strength: 7,
+                  color: drawing.style?.color || '#8B5CF6'
+                });
+              } else if (drawing.price < currentPrice * 0.999) {
+                importantLows.push({
+                  price: drawing.price,
+                  source: 'Manual',
+                  type: 'HORIZONTAL_LINE',
+                  drawingId: drawing.id,
+                  strength: 7,
+                  color: drawing.style?.color || '#8B5CF6'
+                });
+              } else {
+                pivots.push({
+                  price: drawing.price,
+                  source: 'Manual',
+                  type: 'HORIZONTAL_LINE',
+                  drawingId: drawing.id,
+                  strength: 7,
+                  color: drawing.style?.color || '#8B5CF6'
+                });
+              }
             } else {
+              // Sin precio actual, agregar como pivot
               pivots.push({
                 price: drawing.price,
                 source: 'Manual',
@@ -1331,19 +1382,48 @@ class IndicatorManager {
                 color: drawing.style?.color || '#8B5CF6'
               });
             }
+          }
+        });
+      }
+    }
+
+    // 6. MANUAL PRICE ZONES (NUEVO)
+    if (sources.manualPriceZones) {
+      if (rejectionPatternIndicator?.config?.manualPriceZones) {
+        rejectionPatternIndicator.config.manualPriceZones.forEach(zone => {
+          if (!zone.enabled) return;
+
+          // Usar el punto medio de la zona como precio de referencia
+          const zoneMidPrice = (zone.minPrice + zone.maxPrice) / 2;
+
+          const levelData = {
+            price: zoneMidPrice,
+            source: 'Manual_Zone',
+            type: 'PRICE_ZONE',
+            zoneId: zone.id,
+            zoneName: zone.name,
+            minPrice: zone.minPrice,
+            maxPrice: zone.maxPrice,
+            strength: zone.strength || 8,
+            signalDirection: zone.signalDirection || null,
+            color: zone.color || '#FF5722'
+          };
+
+          // Clasificar según posición relativa al precio actual
+          if (currentPrice) {
+            if (zoneMidPrice > currentPrice * 1.001) {
+              importantHighs.push(levelData);
+            } else if (zoneMidPrice < currentPrice * 0.999) {
+              importantLows.push(levelData);
+            } else {
+              pivots.push(levelData);
+            }
           } else {
             // Sin precio actual, agregar como pivot
-            pivots.push({
-              price: drawing.price,
-              source: 'Manual',
-              type: 'HORIZONTAL_LINE',
-              drawingId: drawing.id,
-              strength: 7,
-              color: drawing.style?.color || '#8B5CF6'
-            });
+            pivots.push(levelData);
           }
-        }
-      });
+        });
+      }
     }
 
     // Ordenar por precio (descendente para highs, ascendente para lows)
@@ -1351,12 +1431,26 @@ class IndicatorManager {
     importantLows.sort((a, b) => a.price - b.price);
     pivots.sort((a, b) => a.price - b.price);
 
-    return {
+    const totalLevels = importantHighs.length + importantLows.length + pivots.length;
+
+    const result = {
       importantHighs,
       importantLows,
       pivots,
-      totalLevels: importantHighs.length + importantLows.length + pivots.length
+      totalLevels
     };
+
+    // ✅ NUEVO: Guardar resultado en cache
+    this._referenceLevelsCache = result;
+    this._referenceLevelsCacheKey = cacheKey;
+    this._lastCacheTime = now;
+
+    // Solo loggear cuando recalculamos (no en cache hits)
+    if (isNewCalculation) {
+      console.log(`[${this.symbol}] 📊 getAllReferenceLevels() COMPLETE - Total levels: ${totalLevels} (${importantHighs.length} highs, ${importantLows.length} lows, ${pivots.length} pivots)`);
+    }
+
+    return result;
   }
 }
 

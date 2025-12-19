@@ -17,10 +17,13 @@ import math
 class ReferenceLevel:
     """Represents a key level from a reference context"""
     price: float
-    type: str  # "POC", "VAH", "VAL", "TOP", "BOTTOM", "MIDDLE"
+    type: str  # "POC", "VAH", "VAL", "TOP", "BOTTOM", "MIDDLE", "ZONE_TOP", "ZONE_BOTTOM", "ZONE_MIDDLE"
     source_id: str  # ID of the source context
-    source_type: str  # "VOLUME_PROFILE_DYNAMIC", "VOLUME_PROFILE_FIXED", "RANGE_DETECTOR"
+    source_type: str  # "VOLUME_PROFILE_DYNAMIC", "VOLUME_PROFILE_FIXED", "RANGE_DETECTOR", "MANUAL_ZONE"
     weight: float  # Weight in confidence calculation (0.0 - 1.0)
+    signal_direction: Optional[str] = None  # "LONG", "SHORT", "BOTH" or None (for zones only)
+    min_price: Optional[float] = None  # For zones: minimum price of the zone
+    max_price: Optional[float] = None  # For zones: maximum price of the zone
 
 
 @dataclass
@@ -197,6 +200,51 @@ class RejectionDetector:
                         weight=weight * 0.7  # Lower weight for middle level
                     ))
 
+            elif context_type == "manual_zone":
+                # ✅ NUEVO: Extract levels from manual price zones
+                min_price = context.get('minPrice')
+                max_price = context.get('maxPrice')
+                signal_direction = context.get('signalDirection', 'BOTH')  # Get signal direction from context
+
+                if min_price is not None and max_price is not None:
+                    # Agregar 3 niveles: min, max, mid
+                    # IMPORTANTE: Todos los niveles comparten el signalDirection y el rango completo
+                    levels.append(ReferenceLevel(
+                        price=float(max_price),
+                        type='ZONE_TOP',
+                        source_id=context_id,
+                        source_type='MANUAL_ZONE',
+                        weight=weight,
+                        signal_direction=signal_direction,
+                        min_price=float(min_price),
+                        max_price=float(max_price)
+                    ))
+                    levels.append(ReferenceLevel(
+                        price=float(min_price),
+                        type='ZONE_BOTTOM',
+                        source_id=context_id,
+                        source_type='MANUAL_ZONE',
+                        weight=weight,
+                        signal_direction=signal_direction,
+                        min_price=float(min_price),
+                        max_price=float(max_price)
+                    ))
+                    levels.append(ReferenceLevel(
+                        price=(float(min_price) + float(max_price)) / 2,
+                        type='ZONE_MIDDLE',
+                        source_id=context_id,
+                        source_type='MANUAL_ZONE',
+                        weight=weight * 0.9,  # High weight for middle level
+                        signal_direction=signal_direction,
+                        min_price=float(min_price),
+                        max_price=float(max_price)
+                    ))
+
+                    print(f"  ✅ Manual Zone '{context.get('name', context_id)}': {min_price:.2f} - {max_price:.2f} (signalDirection={signal_direction})")
+                    print(f"      🎯 Zone will filter patterns to: {signal_direction}")
+
+        print(f"📊 [{symbol}] Extracted {len(levels)} reference levels from {len([c for c in reference_contexts if c.get('enabled', False)])} active contexts")
+
         return levels
 
     def _create_pattern(
@@ -213,12 +261,43 @@ class RejectionDetector:
         close_price = candle['close']
         proximity_pct = config.get('filters', {}).get('proximityPercent', 1.0) / 100
 
-        # Find nearby levels
+        # ✅ NUEVO: Determinar dirección del patrón
+        bullish_patterns = ["HAMMER", "ENGULFING_BULLISH", "DOJI_DRAGONFLY"]
+        bearish_patterns = ["SHOOTING_STAR", "ENGULFING_BEARISH", "DOJI_GRAVESTONE"]
+
+        pattern_direction = None
+        if pattern_type in bullish_patterns:
+            pattern_direction = "LONG"
+        elif pattern_type in bearish_patterns:
+            pattern_direction = "SHORT"
+
+        # Find nearby levels and validate zone constraints
         near_levels = []
         for level in reference_levels:
-            distance_pct = abs(close_price - level.price) / close_price
-            if distance_pct <= proximity_pct:
+            # ✅ NUEVO: Para zonas manuales, validar que el precio esté DENTRO del rango
+            if level.source_type == 'MANUAL_ZONE':
+                # Verificar que el precio esté dentro del rango de la zona
+                if level.min_price is not None and level.max_price is not None:
+                    if close_price < level.min_price or close_price > level.max_price:
+                        # Patrón fuera de la zona, rechazar
+                        continue
+
+                # ✅ NUEVO: Verificar signal_direction de la zona
+                if level.signal_direction and level.signal_direction != 'BOTH':
+                    if pattern_direction and pattern_direction != level.signal_direction:
+                        # Dirección del patrón no coincide con la zona, rechazar
+                        print(f"    ❌ Pattern {pattern_type} ({pattern_direction}) rejected - zone requires {level.signal_direction}")
+                        continue
+                    else:
+                        print(f"    ✅ Pattern {pattern_type} ({pattern_direction}) accepted - matches zone {level.signal_direction}")
+
+                # Si pasó ambas validaciones, agregar el nivel
                 near_levels.append(level)
+            else:
+                # Para otros tipos de niveles (VP, S&R), usar proximidad normal
+                distance_pct = abs(close_price - level.price) / close_price
+                if distance_pct <= proximity_pct:
+                    near_levels.append(level)
 
         # If near level is required and there are none, reject
         if config.get('filters', {}).get('requireNearLevel', True) and not near_levels:

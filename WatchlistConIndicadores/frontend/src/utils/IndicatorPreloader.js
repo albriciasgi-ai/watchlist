@@ -1,4 +1,13 @@
 // Sistema de precarga inteligente para indicadores
+import localforage from 'localforage';
+
+// ✅ Configurar localforage para usar IndexedDB
+localforage.config({
+  name: 'WatchlistIndicators',
+  storeName: 'indicator_cache',
+  description: 'Cached indicator data (Volume Profile, Open Interest, S&R)'
+});
+
 class IndicatorPreloader {
   static preloadedData = new Map(); // symbol_indicator_interval_days → data
   static loadingPromises = new Map(); // Evitar requests duplicados
@@ -75,17 +84,17 @@ class IndicatorPreloader {
       return cached.data;
     }
 
-    // Verificar cache en localStorage
-    const localCached = this.getFromLocalStorage(cacheKey);
+    // Verificar cache en IndexedDB
+    const localCached = await this.getFromLocalStorage(cacheKey);  // ✅ await
     if (localCached && this.isCacheValid(localCached)) {
-      console.log(`[Preloader] 💾 ${symbol} ${indicatorName} - desde localStorage`);
+      console.log(`[Preloader] 💾 ${symbol} ${indicatorName} - desde IndexedDB`);
       this.preloadedData.set(cacheKey, localCached);
       return localCached.data;
     }
 
     // Crear promesa de carga
     const loadPromise = this.fetchIndicatorData(symbol, indicatorName, interval, days)
-      .then(data => {
+      .then(async (data) => {  // ✅ async
         const cacheEntry = {
           data,
           timestamp: Date.now(),
@@ -95,8 +104,10 @@ class IndicatorPreloader {
         // Guardar en memoria
         this.preloadedData.set(cacheKey, cacheEntry);
 
-        // Guardar en localStorage
-        this.saveToLocalStorage(cacheKey, cacheEntry);
+        // Guardar en IndexedDB (no blocking - fire and forget)
+        this.saveToLocalStorage(cacheKey, cacheEntry).catch(err =>
+          console.warn(`[Preloader] Error guardando en IndexedDB:`, err)
+        );
 
         console.log(`[Preloader] ✅ ${symbol} ${indicatorName} - cargado y cacheado`);
 
@@ -115,9 +126,9 @@ class IndicatorPreloader {
   }
 
   /**
-   * Obtiene datos precargados (desde memoria o localStorage)
+   * Obtiene datos precargados (desde memoria o IndexedDB)
    */
-  static getData(symbol, indicatorName, interval, days) {
+  static async getData(symbol, indicatorName, interval, days) {
     const cacheKey = this.getCacheKey(symbol, indicatorName, interval, days);
 
     // Prioridad 1: Memoria
@@ -126,8 +137,8 @@ class IndicatorPreloader {
       return memCached.data;
     }
 
-    // Prioridad 2: localStorage
-    const localCached = this.getFromLocalStorage(cacheKey);
+    // Prioridad 2: IndexedDB
+    const localCached = await this.getFromLocalStorage(cacheKey);  // ✅ await
     if (localCached && this.isCacheValid(localCached)) {
       // Restaurar a memoria
       this.preloadedData.set(cacheKey, localCached);
@@ -188,29 +199,27 @@ class IndicatorPreloader {
   }
 
   /**
-   * Guarda en localStorage
+   * Guarda en IndexedDB (via localforage)
    */
-  static saveToLocalStorage(cacheKey, cacheEntry) {
+  static async saveToLocalStorage(cacheKey, cacheEntry) {
     try {
       const storageKey = `indicator_preload_${cacheKey}`;
-      localStorage.setItem(storageKey, JSON.stringify(cacheEntry));
+      await localforage.setItem(storageKey, cacheEntry);  // ✅ No need to JSON.stringify!
     } catch (error) {
-      console.warn(`[Preloader] No se pudo guardar en localStorage:`, error);
+      console.warn(`[Preloader] No se pudo guardar en IndexedDB:`, error);
     }
   }
 
   /**
-   * Lee desde localStorage
+   * Lee desde IndexedDB (via localforage)
    */
-  static getFromLocalStorage(cacheKey) {
+  static async getFromLocalStorage(cacheKey) {
     try {
       const storageKey = `indicator_preload_${cacheKey}`;
-      const stored = localStorage.getItem(storageKey);
-      if (stored) {
-        return JSON.parse(stored);
-      }
+      const stored = await localforage.getItem(storageKey);  // ✅ Returns object directly!
+      return stored;
     } catch (error) {
-      console.warn(`[Preloader] Error leyendo localStorage:`, error);
+      console.warn(`[Preloader] Error leyendo IndexedDB:`, error);
     }
     return null;
   }
@@ -218,7 +227,7 @@ class IndicatorPreloader {
   /**
    * Limpia cache expirado
    */
-  static clearExpiredCache() {
+  static async clearExpiredCache() {
     let cleared = 0;
 
     // Limpiar memoria
@@ -229,20 +238,24 @@ class IndicatorPreloader {
       }
     }
 
-    // Limpiar localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('indicator_preload_')) {
-        try {
-          const entry = JSON.parse(localStorage.getItem(key));
-          if (!this.isCacheValid(entry)) {
-            localStorage.removeItem(key);
-            cleared++;
+    // Limpiar IndexedDB (via localforage)
+    try {
+      const keys = await localforage.keys();
+      for (const key of keys) {
+        if (key.startsWith('indicator_preload_')) {
+          try {
+            const entry = await localforage.getItem(key);
+            if (!this.isCacheValid(entry)) {
+              await localforage.removeItem(key);
+              cleared++;
+            }
+          } catch (e) {
+            // Ignorar errores de parsing
           }
-        } catch (e) {
-          // Ignorar errores de parsing
         }
       }
+    } catch (error) {
+      console.warn(`[Preloader] Error obteniendo claves:`, error);
     }
 
     console.log(`[Preloader] 🧹 Limpiados ${cleared} caches expirados`);
@@ -251,21 +264,20 @@ class IndicatorPreloader {
   /**
    * Limpia todo el cache
    */
-  static clearAllCache() {
+  static async clearAllCache() {
     this.preloadedData.clear();
 
-    // Limpiar localStorage
-    const keysToRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('indicator_preload_')) {
-        keysToRemove.push(key);
-      }
+    // Limpiar IndexedDB (via localforage)
+    try {
+      const keys = await localforage.keys();
+      const keysToRemove = keys.filter(key => key.startsWith('indicator_preload_'));
+
+      await Promise.all(keysToRemove.map(key => localforage.removeItem(key)));
+
+      console.log(`[Preloader] 🗑️ Cache completamente limpiado (${keysToRemove.length} items)`);
+    } catch (error) {
+      console.warn(`[Preloader] Error limpiando cache:`, error);
     }
-
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-
-    console.log(`[Preloader] 🗑️ Cache completamente limpiado`);
   }
 }
 

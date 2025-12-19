@@ -920,3 +920,389 @@
 .modal-body::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* ===================================== */
+/* ✅ NUEVO: Level Sources Section */
+/* ===================================== */
+.level-sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.level-sources-list .checkbox-label {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 4px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.level-sources-list .checkbox-label:hover {
+  border-color: #4a9eff;
+  background: #252525;
+}
+
+/* ===================================== */
+/* ✅ NUEVO: Signal Direction Selector */
+/* ===================================== */
+.direction-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.direction-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  background: #1e1e1e;
+  border: 2px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #ccc;
+}
+
+.direction-btn:hover {
+  border-color: #555;
+  background: #252525;
+}
+
+.direction-btn.active {
+  border-color: currentColor;
+  background: rgba(74, 158, 255, 0.1);
+}
+
+.direction-btn.long.active {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.direction-btn.short.active {
+  border-color: #F44336;
+  color: #F44336;
+}
+
+.direction-btn.both.active {
+  border-color: #2196F3;
+  color: #2196F3;
+}
+
+.direction-btn .icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.direction-btn .label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.direction-btn small {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ===================================== */
+/* ✅ NUEVO: Manual Price Zones */
+/* ===================================== */
+.no-zones-message {
+  text-align: center;
+  padding: 30px;
+  background: #1a1a1a;
+  border-radius: 6px;
+  color: #888;
+}
+
+.manual-zones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.zone-item {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  transition: all 0.2s;
+}
+
+.zone-item.disabled {
+  opacity: 0.5;
+}
+
+.zone-item:hover {
+  border-color: #4a9eff;
+}
+
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zone-header label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  cursor: pointer;
+}
+
+.zone-color-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin: 0 8px;
+  flex-shrink: 0;
+}
+
+.zone-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-name {
+  font-weight: 500;
+  color: #fff;
+}
+
+.zone-range {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.zone-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.expand-btn,
+.delete-btn {
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.expand-btn:hover {
+  background: #2a2a2a;
+  border-color: #4a9eff;
+}
+
+.delete-btn:hover {
+  background: #2a2a2a;
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.zone-details {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #333;
+}
+
+.zone-direction {
+  margin-bottom: 12px;
+}
+
+.zone-direction label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.zone-direction select {
+  width: 100%;
+  padding: 8px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.zone-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.price-input label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #888;
+}
+
+.price-input input {
+  width: 100%;
+  padding: 6px 8px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.zone-color {
+  margin-bottom: 12px;
+}
+
+.zone-color label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.zone-color input[type="color"] {
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+  cursor: pointer;
+}
+
+.add-zone-button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-zone-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ===================================== */
+/* ✅ NUEVO: Add Price Zone Modal */
+/* ===================================== */
+.zone-modal {
+  max-width: 600px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.form-group input.error {
+  border-color: #f44336;
+}
+
+.error-message {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #f44336;
+}
+
+.error-message-block {
+  padding: 10px;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  color: #f44336;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.zone-preview {
+  margin: 16px 0;
+  padding: 12px;
+  background: #1a1a1a;
+  border-radius: 6px;
+}
+
+.preview-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.color-hex-input {
+  width: 100px !important;
+}
+
+.color-presets {
+  display: flex;
+  gap: 6px;
+}
+
+.color-preset {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.color-preset:hover {
+  border-color: #fff;
+  transform: scale(1.1);
+}

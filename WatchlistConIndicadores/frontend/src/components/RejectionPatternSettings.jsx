@@ -25,6 +25,7 @@ const RejectionPatternSettings = ({
   const [showContextModal, setShowContextModal] = useState(false);
   const [showMode, setShowMode] = useState('validated');
   const [activePreset, setActivePreset] = useState('custom');
+  const [showAddZoneModal, setShowAddZoneModal] = useState(false);
 
   // ✅ NUEVO: Leer el modo actual del indicador al montar
   useEffect(() => {
@@ -164,7 +165,22 @@ const RejectionPatternSettings = ({
         engulfing: { ...defaultConfig.patterns.engulfing, ...oldConfig.patterns?.engulfing },
         doji: { ...defaultConfig.patterns.doji, ...oldConfig.patterns?.doji }
       },
-      swingDetection: { ...defaultConfig.swingDetection, ...oldConfig.swingDetection },
+      swingDetection: {
+        ...defaultConfig.swingDetection,
+        ...oldConfig.swingDetection
+      },
+      levelSources: {
+        ...defaultConfig.levelSources,
+        ...oldConfig.levelSources
+      },
+      signalDirection: {
+        ...defaultConfig.signalDirection,
+        ...oldConfig.signalDirection
+      },
+      manualPriceZones: (oldConfig.manualPriceZones || defaultConfig.manualPriceZones).map(zone => ({
+        ...zone,
+        signalDirection: zone.signalDirection || 'BOTH'  // ✅ FIX: Migrate null to 'BOTH'
+      })),
       debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode
     };
   };
@@ -177,7 +193,7 @@ const RejectionPatternSettings = ({
 
     // Save to localStorage
     localStorage.setItem(`rejection_pattern_config_${symbol}`, JSON.stringify(config));
-  }, [config, symbol, onConfigChange]);
+  }, [config, symbol]);  // ✅ FIX: Removed onConfigChange from deps to prevent infinite loop
 
   const togglePattern = (patternKey) => {
     setConfig(prev => ({
@@ -319,6 +335,79 @@ const RejectionPatternSettings = ({
         console.log(`[${symbol}] Show mode changed to: ${mode}`);
       }
     }
+  };
+
+  // ✅ NUEVO: Handlers para Level Sources
+  const updateLevelSource = (source, enabled) => {
+    setConfig(prev => ({
+      ...prev,
+      levelSources: {
+        ...prev.levelSources,
+        [source]: enabled
+      }
+    }));
+    setActivePreset('custom');
+  };
+
+  // ✅ NUEVO: Handlers para Signal Direction
+  const updateSignalDirection = (scope, direction) => {
+    setConfig(prev => ({
+      ...prev,
+      signalDirection: {
+        ...prev.signalDirection,
+        [scope]: direction
+      }
+    }));
+    setActivePreset('custom');
+  };
+
+  // ✅ NUEVO: Handlers para Manual Price Zones
+  const addZone = (zone) => {
+    setConfig(prev => ({
+      ...prev,
+      manualPriceZones: [...(prev.manualPriceZones || []), zone]
+    }));
+    setShowAddZoneModal(false);
+  };
+
+  const updateZone = (zoneId, updates) => {
+    setConfig(prev => ({
+      ...prev,
+      manualPriceZones: prev.manualPriceZones.map(z =>
+        z.id === zoneId ? { ...z, ...updates } : z
+      )
+    }));
+  };
+
+  const toggleZone = (zoneId, enabled) => {
+    setConfig(prev => ({
+      ...prev,
+      manualPriceZones: prev.manualPriceZones.map(z =>
+        z.id === zoneId ? { ...z, enabled } : z
+      )
+    }));
+  };
+
+  const deleteZone = (zoneId) => {
+    if (window.confirm('Delete this price zone?')) {
+      setConfig(prev => ({
+        ...prev,
+        manualPriceZones: prev.manualPriceZones.filter(z => z.id !== zoneId)
+      }));
+    }
+  };
+
+  const getCurrentPrice = () => {
+    // Obtener precio actual del indicatorManager si está disponible
+    if (indicatorManager) {
+      const indicator = indicatorManager.getRejectionPatternIndicator();
+      if (indicator && indicator.localPatterns && indicator.localPatterns.length > 0) {
+        // Obtener el precio de la última vela
+        const lastPattern = indicator.localPatterns[indicator.localPatterns.length - 1];
+        return lastPattern.price || 50000;
+      }
+    }
+    return 50000; // Fallback default
   };
 
   // 🎯 NUEVO: Quick Presets
@@ -547,6 +636,145 @@ const RejectionPatternSettings = ({
               </p>
             </div>
           )}
+        </section>
+
+        {/* ✅ NUEVO: Level Sources */}
+        <section className="settings-section">
+          <h4>📍 Level Sources</h4>
+          <p className="help-text">
+            Configure which sources provide important price levels for pattern detection.
+          </p>
+
+          <div className="level-sources-list">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.fixedRanges !== false}
+                onChange={(e) => updateLevelSource('fixedRanges', e.target.checked)}
+              />
+              <span>📌 Fixed Range Profiles (POC/VAH/VAL)</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.clusters !== false}
+                onChange={(e) => updateLevelSource('clusters', e.target.checked)}
+              />
+              <span>🎯 Volume Clusters</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.supportResistance !== false}
+                onChange={(e) => updateLevelSource('supportResistance', e.target.checked)}
+              />
+              <span>📏 Support & Resistance</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.rangeDetection !== false}
+                onChange={(e) => updateLevelSource('rangeDetection', e.target.checked)}
+              />
+              <span>🔲 Range Detection</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.manualLevels !== false}
+                onChange={(e) => updateLevelSource('manualLevels', e.target.checked)}
+              />
+              <span>✏️ Manual Horizontal Lines</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.levelSources?.manualPriceZones !== false}
+                onChange={(e) => updateLevelSource('manualPriceZones', e.target.checked)}
+              />
+              <span>🎨 Manual Price Zones</span>
+            </label>
+          </div>
+        </section>
+
+        {/* ✅ NUEVO: Signal Direction Filter */}
+        <section className="settings-section">
+          <h4>📍 Signal Direction Filter (Global)</h4>
+          <p className="help-text">
+            Choose which direction of signals to show. This applies to all price levels unless overridden by individual zones.
+          </p>
+
+          <div className="direction-selector">
+            <button
+              className={`direction-btn long ${config.signalDirection?.global === 'LONG' ? 'active' : ''}`}
+              onClick={() => updateSignalDirection('global', 'LONG')}
+            >
+              <span className="icon">📈</span>
+              <span className="label">LONG Only</span>
+              <small>Bullish patterns only</small>
+            </button>
+
+            <button
+              className={`direction-btn both ${(!config.signalDirection?.global || config.signalDirection?.global === 'BOTH') ? 'active' : ''}`}
+              onClick={() => updateSignalDirection('global', 'BOTH')}
+            >
+              <span className="icon">↕️</span>
+              <span className="label">BOTH</span>
+              <small>All patterns</small>
+            </button>
+
+            <button
+              className={`direction-btn short ${config.signalDirection?.global === 'SHORT' ? 'active' : ''}`}
+              onClick={() => updateSignalDirection('global', 'SHORT')}
+            >
+              <span className="icon">📉</span>
+              <span className="label">SHORT Only</span>
+              <small>Bearish patterns only</small>
+            </button>
+          </div>
+        </section>
+
+        {/* ✅ NUEVO: Manual Price Zones */}
+        <section className="settings-section">
+          <h4>🎨 Manual Price Zones</h4>
+          <p className="help-text">
+            Define custom price zones where you want to detect patterns. Each zone can override the global signal direction.
+          </p>
+
+          {(!config.manualPriceZones || config.manualPriceZones.length === 0) ? (
+            <div className="no-zones-message">
+              <p>📍 No manual price zones defined yet.</p>
+              <p style={{ fontSize: '13px', color: '#888' }}>
+                Create zones to mark important price areas for pattern detection.
+              </p>
+            </div>
+          ) : (
+            <div className="manual-zones-list">
+              {config.manualPriceZones.map(zone => (
+                <ManualZoneItem
+                  key={zone.id}
+                  zone={zone}
+                  currentPrice={getCurrentPrice()}
+                  globalDirection={config.signalDirection?.global || 'BOTH'}
+                  onUpdate={(zoneId, updates) => updateZone(zoneId, updates)}
+                  onDelete={(zoneId) => deleteZone(zoneId)}
+                  onToggle={(zoneId, enabled) => toggleZone(zoneId, enabled)}
+                />
+              ))}
+            </div>
+          )}
+
+          <button
+            className="add-zone-button"
+            onClick={() => setShowAddZoneModal(true)}
+          >
+            ➕ Add Price Zone
+          </button>
         </section>
 
         {/* Section 1: Patterns to Detect */}
@@ -923,6 +1151,16 @@ const RejectionPatternSettings = ({
           availableContexts={availableContexts}
           onAdd={addContext}
           onClose={() => setShowContextModal(false)}
+        />
+      )}
+
+      {/* ✅ NUEVO: Add Price Zone Modal */}
+      {showAddZoneModal && (
+        <AddPriceZoneModal
+          symbol={symbol}
+          currentPrice={getCurrentPrice()}
+          onAdd={addZone}
+          onClose={() => setShowAddZoneModal(false)}
         />
       )}
     </div>
@@ -1369,6 +1607,299 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
   );
 };
 
+// ✅ NUEVO: ManualZoneItem Component
+const ManualZoneItem = ({ zone, currentPrice, globalDirection, onUpdate, onDelete, onToggle }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const zoneRange = zone.maxPrice - zone.minPrice;
+  const zoneWidth = ((zoneRange / currentPrice) * 100).toFixed(2);
+
+  return (
+    <div className={`zone-item ${zone.enabled ? 'enabled' : 'disabled'}`}>
+      <div className="zone-header">
+        <label>
+          <input
+            type="checkbox"
+            checked={zone.enabled}
+            onChange={(e) => onToggle(zone.id, e.target.checked)}
+          />
+          <div
+            className="zone-color-indicator"
+            style={{ backgroundColor: zone.color }}
+          />
+          <div className="zone-info">
+            <span className="zone-name">{zone.name}</span>
+            <small className="zone-range">
+              ${zone.minPrice.toFixed(2)} - ${zone.maxPrice.toFixed(2)} ({zoneWidth}% range)
+            </small>
+          </div>
+        </label>
+
+        <div className="zone-actions">
+          <button
+            className="expand-btn"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? '▼' : '▶'}
+          </button>
+          <button
+            className="delete-btn"
+            onClick={() => onDelete(zone.id)}
+            title="Delete zone"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="zone-details">
+          {/* Direction override */}
+          <div className="zone-direction">
+            <label>Signal Direction Override:</label>
+            <select
+              value={zone.signalDirection || ''}
+              onChange={(e) => onUpdate(zone.id, {
+                signalDirection: e.target.value || null
+              })}
+            >
+              <option value="">Use Global ({globalDirection})</option>
+              <option value="LONG">📈 LONG Only</option>
+              <option value="SHORT">📉 SHORT Only</option>
+              <option value="BOTH">↕️ BOTH</option>
+            </select>
+          </div>
+
+          {/* Edit prices */}
+          <div className="zone-prices">
+            <div className="price-input">
+              <label>Min Price:</label>
+              <input
+                type="number"
+                value={zone.minPrice}
+                onChange={(e) => onUpdate(zone.id, {
+                  minPrice: parseFloat(e.target.value)
+                })}
+                step="0.01"
+              />
+            </div>
+            <div className="price-input">
+              <label>Max Price:</label>
+              <input
+                type="number"
+                value={zone.maxPrice}
+                onChange={(e) => onUpdate(zone.id, {
+                  maxPrice: parseFloat(e.target.value)
+                })}
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          {/* Edit color */}
+          <div className="zone-color">
+            <label>Zone Color:</label>
+            <input
+              type="color"
+              value={zone.color}
+              onChange={(e) => onUpdate(zone.id, { color: e.target.value })}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ✅ NUEVO: AddPriceZoneModal Component
+const AddPriceZoneModal = ({ symbol, currentPrice, onAdd, onClose }) => {
+  const [zoneName, setZoneName] = useState('');
+  const [minPrice, setMinPrice] = useState((currentPrice * 0.98).toFixed(2));
+  const [maxPrice, setMaxPrice] = useState((currentPrice * 1.02).toFixed(2));
+  const [signalDirection, setSignalDirection] = useState('BOTH');  // ✅ FIX: Default to 'BOTH' instead of null
+  const [color, setColor] = useState('#FF5722');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!zoneName.trim()) {
+      newErrors.name = 'Zone name is required';
+    }
+
+    const min = parseFloat(minPrice);
+    const max = parseFloat(maxPrice);
+
+    if (isNaN(min) || min <= 0) {
+      newErrors.minPrice = 'Invalid min price';
+    }
+
+    if (isNaN(max) || max <= 0) {
+      newErrors.maxPrice = 'Invalid max price';
+    }
+
+    if (min >= max) {
+      newErrors.range = 'Min price must be less than max price';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAdd = () => {
+    if (!validate()) return;
+
+    onAdd({
+      id: `zone_${Date.now()}`,
+      name: zoneName.trim(),
+      minPrice: parseFloat(minPrice),
+      maxPrice: parseFloat(maxPrice),
+      enabled: true,
+      signalDirection: signalDirection,
+      color: color,
+      strength: 8
+    });
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content zone-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>🎨 Add Manual Price Zone - {symbol}</h3>
+          <button onClick={onClose}>✕</button>
+        </div>
+
+        <div className="modal-body">
+          <p className="help-text">
+            Define a custom price zone for pattern detection. Current price: <strong>${currentPrice.toFixed(2)}</strong>
+          </p>
+
+          <div className="form-group">
+            <label>Zone Name *</label>
+            <input
+              type="text"
+              value={zoneName}
+              onChange={(e) => setZoneName(e.target.value)}
+              placeholder="e.g., Strong Resistance Zone"
+              className={errors.name ? 'error' : ''}
+            />
+            {errors.name && <span className="error-message">{errors.name}</span>}
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Min Price ($) *</label>
+              <input
+                type="number"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                step="0.01"
+                className={errors.minPrice ? 'error' : ''}
+              />
+              {errors.minPrice && <span className="error-message">{errors.minPrice}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Max Price ($) *</label>
+              <input
+                type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                step="0.01"
+                className={errors.maxPrice ? 'error' : ''}
+              />
+              {errors.maxPrice && <span className="error-message">{errors.maxPrice}</span>}
+            </div>
+          </div>
+
+          {errors.range && (
+            <div className="error-message-block">{errors.range}</div>
+          )}
+
+          <div className="zone-preview">
+            <div className="preview-label">Zone Preview:</div>
+            <div className="preview-bar">
+              <div
+                className="preview-zone"
+                style={{
+                  backgroundColor: color,
+                  opacity: 0.3,
+                  height: '40px',
+                  borderRadius: '4px',
+                  border: `2px solid ${color}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontWeight: 'bold'
+                }}
+              >
+                ${minPrice} - ${maxPrice}
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Signal Direction (Optional)</label>
+            <select
+              value={signalDirection || ''}
+              onChange={(e) => setSignalDirection(e.target.value || null)}
+            >
+              <option value="">Use Global Setting</option>
+              <option value="LONG">📈 LONG Only (Bullish patterns)</option>
+              <option value="SHORT">📉 SHORT Only (Bearish patterns)</option>
+              <option value="BOTH">↕️ BOTH (All patterns)</option>
+            </select>
+            <small className="help-text">
+              If not set, the global signal direction filter will apply to this zone.
+            </small>
+          </div>
+
+          <div className="form-group">
+            <label>Zone Color</label>
+            <div className="color-picker-row">
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+              />
+              <input
+                type="text"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                placeholder="#FF5722"
+                maxLength="7"
+                className="color-hex-input"
+              />
+              <div className="color-presets">
+                {['#FF5722', '#F44336', '#E91E63', '#9C27B0', '#3F51B5', '#2196F3'].map(c => (
+                  <button
+                    key={c}
+                    className="color-preset"
+                    style={{ backgroundColor: c }}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-footer">
+          <button onClick={onClose} className="cancel-button">
+            Cancel
+          </button>
+          <button
+            onClick={handleAdd}
+            className="add-button"
+          >
+            ✅ Add Zone
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ========================================
 // Presets Configuration
 // ========================================
@@ -1519,6 +2050,15 @@ function getDefaultConfig() {
       required: false
     },
     referenceContexts: [],
+    levelSources: {
+      volumeProfile: false,        // VP dinámico (VolumeProfileIndicator.js) - no usado
+      fixedRanges: true,          // Fixed Ranges (VolumeProfileFixedRangeIndicator.js) ✅
+      clusters: true,             // Clusters de Fixed Ranges ✅
+      manualLevels: true,         // Líneas horizontales dibujadas
+      supportResistance: true,    // Support & Resistance Indicator
+      rangeDetection: true,       // Range Detector boundaries
+      manualPriceZones: true      // Zonas manuales de precio
+    },
     filters: {
       minConfidence: 50,
       requireNearLevel: false,
@@ -1531,7 +2071,11 @@ function getDefaultConfig() {
       minZScore: 1.0
     },
     alertsEnabled: false,
-    debugMode: false
+    debugMode: false,
+    signalDirection: {
+      global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'
+    },
+    manualPriceZones: []
   };
 }
 
