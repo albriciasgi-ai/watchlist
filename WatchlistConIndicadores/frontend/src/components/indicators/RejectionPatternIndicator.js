@@ -136,8 +136,15 @@ class RejectionPatternIndicator extends IndicatorBase {
    * @param {string} mode - 'all' o 'validated'
    */
   setShowMode(mode) {
+    const previousMode = this.showMode;
     this.showMode = mode;
     console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
+
+    // Si cambiamos a modo 'validated', necesitamos cargar los patrones validados del backend
+    if (mode === 'validated' && previousMode !== 'validated') {
+      console.log(`[${this.symbol}] 🔄 Switching to validated mode - fetching patterns from backend...`);
+      this.fetchData();
+    }
   }
 
   /**

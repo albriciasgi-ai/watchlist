@@ -273,26 +273,31 @@ class RejectionDetector:
 
         # Find nearby levels and validate zone constraints
         near_levels = []
+
         for level in reference_levels:
-            # ✅ NUEVO: Para zonas manuales, validar que el precio esté DENTRO del rango
+            # ✅ Para zonas manuales, validar que el precio esté DENTRO del rango
             if level.source_type == 'MANUAL_ZONE':
-                # Verificar que el precio esté dentro del rango de la zona
+                # 1. Verificar que el precio esté dentro del rango de la zona
                 if level.min_price is not None and level.max_price is not None:
                     if close_price < level.min_price or close_price > level.max_price:
-                        # Patrón fuera de la zona, rechazar
+                        # Fuera de esta zona, probar la siguiente
+                        print(f"    ⏭️ Pattern at {close_price:.2f} outside zone range {level.min_price:.2f}-{level.max_price:.2f}")
                         continue
 
-                # ✅ NUEVO: Verificar signal_direction de la zona
-                if level.signal_direction and level.signal_direction != 'BOTH':
-                    if pattern_direction and pattern_direction != level.signal_direction:
-                        # Dirección del patrón no coincide con la zona, rechazar
-                        print(f"    ❌ Pattern {pattern_type} ({pattern_direction}) rejected - zone requires {level.signal_direction}")
-                        continue
-                    else:
-                        print(f"    ✅ Pattern {pattern_type} ({pattern_direction}) accepted - matches zone {level.signal_direction}")
+                    # 2. Precio DENTRO de la zona, verificar dirección
+                    print(f"    ✅ Pattern at {close_price:.2f} IS INSIDE zone range {level.min_price:.2f}-{level.max_price:.2f}")
 
-                # Si pasó ambas validaciones, agregar el nivel
-                near_levels.append(level)
+                    # 3. Verificar signal_direction de la zona
+                    if level.signal_direction and level.signal_direction != 'BOTH':
+                        if pattern_direction and pattern_direction != level.signal_direction:
+                            # Dirección no coincide con ESTA zona, probar la siguiente
+                            print(f"    ❌ Pattern {pattern_type} ({pattern_direction}) rejected by zone '{level.context_id}' (requires {level.signal_direction})")
+                            continue
+
+                    # 4. Pasó ambas validaciones (rango + dirección), agregar nivel
+                    print(f"    ✅ Pattern {pattern_type} ({pattern_direction}) accepted by zone '{level.context_id}' (allows {level.signal_direction or 'BOTH'})")
+                    near_levels.append(level)
+                    print(f"    ✅ Added manual zone level to near_levels (no proximity check needed)")
             else:
                 # Para otros tipos de niveles (VP, S&R), usar proximidad normal
                 distance_pct = abs(close_price - level.price) / close_price

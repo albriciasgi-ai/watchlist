@@ -28,7 +28,8 @@
       "Bash(iconv:*)",
       "Bash(python extract_continuation_patterns.py:*)",
       "Bash(python:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []
