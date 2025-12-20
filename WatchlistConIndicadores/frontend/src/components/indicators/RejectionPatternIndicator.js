@@ -3,6 +3,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import LocalPatternDetector from './LocalPatternDetector.js';
+import { createLogger } from '../../utils/logger.js';
 
 /**
  * Rejection Pattern Indicator
@@ -37,6 +38,15 @@ class RejectionPatternIndicator extends IndicatorBase {
       DOJI_DRAGONFLY: '🐉',
       DOJI_GRAVESTONE: '🪦'
     };
+
+    // ✅ NUEVO: Sistema de alertas automáticas
+    this.alertedPatterns = new Map(); // patternId → timestamp del envío
+    this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
+    this.lastPatternCount = 0; // Para detectar patrones nuevos
+    this.notificationPermissionRequested = false; // Flag para pedir permiso una sola vez
+    this.logger = createLogger(this.symbol); // Logger con contexto del símbolo
+
+    this.logger.alert(`🔔 Alert system initialized (cooldown: ${this.alertCooldownMs/60000} min)`);
   }
 
   loadConfig() {
@@ -329,6 +339,203 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Formatea nombre del patrón según formato de alertas existente
+   * Mantiene compatibilidad EXACTA con sistema actual
+   */
+  formatPatternName(patternType) {
+    const names = {
+      'HAMMER': 'Hammer (ABRIR LONG)',
+      'SHOOTING_STAR': 'Shooting Star (ABRIR SHORT)',
+      'ENGULFING_BULLISH': 'Bullish Engulfing (ABRIR LONG)',
+      'ENGULFING_BEARISH': 'Bearish Engulfing (ABRIR SHORT)',
+      'DOJI_DRAGONFLY': 'Dragonfly Doji (ABRIR LONG)',
+      'DOJI_GRAVESTONE': 'Gravestone Doji (ABRIR SHORT)'
+    };
+    return names[patternType] || patternType;
+  }
+
+  /**
+   * ✅ NUEVO: Detecta si hay patrones nuevos comparando con detección anterior
+   * Retorna solo los patrones que aparecieron en esta iteración
+   */
+  getNewPatterns() {
+    if (this.localPatterns.length === 0) return [];
+
+    // Si es la primera vez, todos son "nuevos" pero no los alertamos (son históricos)
+    if (this.lastPatternCount === 0) {
+      this.lastPatternCount = this.localPatterns.length;
+      console.log(`[${this.symbol}] 📊 Initial pattern count: ${this.lastPatternCount} (not alerting historical patterns)`);
+      return [];
+    }
+
+    // Si hay más patrones que antes, son nuevos
+    if (this.localPatterns.length > this.lastPatternCount) {
+      const newPatterns = this.localPatterns.slice(this.lastPatternCount);
+      this.lastPatternCount = this.localPatterns.length;
+
+      console.log(`[${this.symbol}] 🆕 Detected ${newPatterns.length} NEW patterns`);
+      return newPatterns;
+    }
+
+    // Si hay menos o igual, no hay nuevos
+    return [];
+  }
+
+  /**
+   * ✅ NUEVO: Verifica patrones nuevos y envía alertas si aplica
+   * Solo procesa patrones que NO han sido alertados previamente
+   */
+  async checkAndSendAlerts() {
+    if (!this.config.alertsEnabled) return;
+    if (this.showMode !== 'validated') return; // Solo en modo validated
+
+    const newPatterns = this.getNewPatterns();
+    if (newPatterns.length === 0) return;
+
+    const minConfidence = this.config.filters?.minConfidence || 60;
+    const now = Date.now();
+
+    for (const pattern of newPatterns) {
+      // Filtro 1: Confidence mínimo
+      if (pattern.confidence < minConfidence) {
+        console.log(`[${this.symbol}] ⏭️ Pattern skipped: confidence ${pattern.confidence.toFixed(1)} < ${minConfidence}`);
+        continue;
+      }
+
+      // Filtro 2: Crear ID único para el patrón
+      const patternId = `${pattern.type}_${pattern.timestamp}_${Math.round(pattern.price * 100)}`;
+
+      // Filtro 3: Cooldown - no enviar mismo patrón muy seguido
+      const lastAlert = this.alertedPatterns.get(patternId);
+      if (lastAlert && (now - lastAlert) < this.alertCooldownMs) {
+        const remaining = Math.round((this.alertCooldownMs - (now - lastAlert)) / 60000);
+        this.logger.debug(`⏱️ Pattern in cooldown: ${remaining} min remaining`);
+        continue;
+      }
+
+      // Enviar alerta
+      const success = await this.sendPatternAlert(pattern);
+
+      if (success) {
+        // Marcar como alertado
+        this.alertedPatterns.set(patternId, now);
+
+        // Marcar visualmente
+        pattern._alertSent = true;
+        pattern._alertTimestamp = now;
+
+        this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
+      }
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Envía patrón al backend usando formato EXACTO de alertas existentes
+   */
+  async sendPatternAlert(pattern) {
+    try {
+      const payload = {
+        symbol: this.symbol,
+        interval: this.interval,
+        pattern: {
+          patternType: pattern.type,
+          price: pattern.price,
+          confidence: Math.round(pattern.confidence * 10) / 10, // 1 decimal
+          timestamp: pattern.timestamp,
+          direction: pattern.direction,
+          nearSRLevel: pattern.nearSRLevel,
+          nearLevel: pattern.nearLevel
+        },
+        config: {
+          filters: this.config.filters,
+          alertsEnabled: this.config.alertsEnabled
+        }
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // ✅ Mostrar popup en navegador
+        this.showAlertPopup(pattern);
+        return true;
+      } else {
+        this.logger.error(`❌ Alert rejected: ${result.reason || result.error}`);
+        return false;
+      }
+
+    } catch (error) {
+      this.logger.error(`❌ Error sending alert: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Muestra popup en navegador cuando se envía una alerta
+   * Usa Notification API si está disponible, sino alert nativo
+   */
+  showAlertPopup(pattern) {
+    const patternName = this.formatPatternName(pattern.type);
+    const priceFormatted = pattern.price.toFixed(2);
+    const confidenceFormatted = Math.round(pattern.confidence);
+
+    // Preparar mensaje
+    const title = `🚨 Alert Sent: ${this.symbol}`;
+    const body = `${patternName}\nPrice: $${priceFormatted}\nConfidence: ${confidenceFormatted}%`;
+
+    // Intentar usar Notification API (más elegante)
+    if ("Notification" in window && Notification.permission === "granted") {
+      const notification = new Notification(title, {
+        body: body,
+        icon: pattern.direction === 'LONG' ? '📈' : '📉',
+        badge: '🔔',
+        requireInteraction: false,
+        tag: `pattern-alert-${this.symbol}` // Agrupa notificaciones del mismo símbolo
+      });
+
+      // Auto-cerrar después de 5 segundos
+      setTimeout(() => notification.close(), 5000);
+
+    } else {
+      // Fallback: alert nativo del navegador
+      alert(`${title}\n\n${body}\n\nAlert sent to port 5000 ✅`);
+    }
+
+    // Log detallado en consola
+    console.log(`%c[${this.symbol}] 🚨 ALERT SENT`, 'background: #ff4444; color: white; font-weight: bold; padding: 4px;');
+    console.log(`Pattern: ${patternName}`);
+    console.log(`Price: $${priceFormatted}`);
+    console.log(`Confidence: ${confidenceFormatted}%`);
+    console.log(`Endpoint: http://localhost:5000/api/watchlist-alert`);
+  }
+
+  /**
+   * ✅ NUEVO: Pide permisos de notificación del navegador
+   * Se llama una sola vez cuando se habilitan las alertas
+   */
+  requestNotificationPermission() {
+    if (this.notificationPermissionRequested) return;
+    if (!("Notification" in window)) {
+      console.log(`[${this.symbol}] ⚠️ Browser doesn't support notifications`);
+      return;
+    }
+
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        console.log(`[${this.symbol}] 🔔 Notification permission:`, permission);
+        this.notificationPermissionRequested = true;
+      });
+    } else {
+      this.notificationPermissionRequested = true;
+    }
+  }
+
+  /**
    * Detecta patrones localmente en las velas dadas
    * @param {Array} candles - Array de velas OHLC
    * @param {Object} indicatorManager - Referencia al IndicatorManager para obtener niveles
@@ -514,6 +721,18 @@ class RejectionPatternIndicator extends IndicatorBase {
     });
 
     // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before filters)`);
+
+    // ✅ NUEVO: Verificar y enviar alertas automáticas (solo en modo validated)
+    if (this.showMode === 'validated' && this.config.alertsEnabled) {
+      this.checkAndSendAlerts().catch(err => {
+        this.logger.error(`Error checking alerts: ${err.message}`);
+      });
+    }
+
+    // ✅ NUEVO: Pedir permisos de notificación si alertas están habilitadas
+    if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
+      this.requestNotificationPermission();
+    }
   }
 
   async fetchData() {

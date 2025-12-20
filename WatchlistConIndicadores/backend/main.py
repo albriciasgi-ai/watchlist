@@ -574,6 +574,74 @@ async def get_available_contexts(symbol: str, interval: str = "4h"):
     }
 
 
+@app.post("/api/pattern-alert")
+async def send_pattern_alert_endpoint(request: Request):
+    """
+    Receives a validated pattern from frontend and sends alert to port 5000
+    Maintains EXACT format of existing test alerts
+
+    Expected payload:
+    {
+        "symbol": "BTCUSDT",
+        "interval": "4h",
+        "pattern": {
+            "patternType": "HAMMER",
+            "price": 45000.50,
+            "confidence": 85.5,
+            "timestamp": 1234567890,
+            "direction": "LONG"
+        },
+        "config": {
+            "filters": {"minConfidence": 60},
+            "alertsEnabled": true
+        }
+    }
+    """
+    try:
+        data = await request.json()
+        symbol = data.get('symbol')
+        interval = data.get('interval')
+        pattern = data.get('pattern')
+        config = data.get('config', {})
+
+        if not symbol or not pattern:
+            return {
+                "success": False,
+                "error": "Missing required fields: symbol, pattern"
+            }
+
+        # Validate minimum confidence
+        min_confidence = config.get('filters', {}).get('minConfidence', 60)
+        pattern_confidence = pattern.get('confidence', 0)
+
+        if pattern_confidence < min_confidence:
+            print(f"[{symbol}] ⚠️ Pattern alert rejected: confidence {pattern_confidence} < {min_confidence}")
+            return {
+                "success": False,
+                "reason": "confidence_too_low",
+                "confidence": pattern_confidence,
+                "required": min_confidence
+            }
+
+        # Send alert using existing system
+        print(f"[{symbol}] 🚨 Sending pattern alert: {pattern.get('patternType')} at ${pattern.get('price')}")
+        await send_pattern_alert(symbol, interval, pattern, config)
+
+        return {
+            "success": True,
+            "pattern": pattern.get('patternType'),
+            "symbol": symbol,
+            "price": pattern.get('price'),
+            "confidence": pattern_confidence
+        }
+
+    except Exception as e:
+        print(f"❌ Error sending pattern alert: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 
 # ==================== SUPPORT & RESISTANCE ENDPOINTS ====================
 

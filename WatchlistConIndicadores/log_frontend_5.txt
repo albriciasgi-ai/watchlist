@@ -1,0 +1,1261 @@
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [ALGOUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ALGOUSDT] 📊 S/R validation skipped: no active levels
+ [ALGOUSDT] 📊 Zones+S/R validation: 233/699 patterns (0 near S/R, 233 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2974.73
+ [ETHUSDT]   ⏭️ Skipping 2 manual horizontal lines (1 manual zones active)
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 1 (1 highs, 0 lows, 0 pivots)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [626] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [626] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [626] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [626] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [296] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [297] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [297] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [297] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [ETHUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [ETHUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+RejectionPatternIndicator.js:645 [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+RejectionPatternIndicator.js:596 [SUIUSDT] 🎯 Detection config: Object
+LocalPatternDetector.js:138 [LocalPatternDetector] 🎯 Filtro config: Object
+RejectionPatternIndicator.js:296 [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [SUIUSDT] ⏭️ Skipping cleanup (external manager)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ 
+================================================================================
+ [BATCH TEST] 🚀 Starting batch test (10 alerts)...
+ ================================================================================
+ [BATCH TEST] Target: http://localhost:8000/api/test-alert-batch
+ [BATCH TEST] Expected duration: ~20 seconds
+ [BATCH TEST] Sending POST request...
+ ================================================================================
+
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2976.25
+ [ETHUSDT]   ⏭️ Skipping 2 manual horizontal lines (1 manual zones active)
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 1 (1 highs, 0 lows, 0 pivots)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2975.4
+ [ETHUSDT]   ⏭️ Skipping 2 manual horizontal lines (1 manual zones active)
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 1 (1 highs, 0 lows, 0 pivots)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ALGOUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ALGOUSDT] 📊 S/R validation skipped: no active levels
+ [ALGOUSDT] 📊 Zones+S/R validation: 233/699 patterns (0 near S/R, 233 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ALGOUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ALGOUSDT] 📊 S/R validation skipped: no active levels
+ [ALGOUSDT] 📊 Zones+S/R validation: 233/699 patterns (0 near S/R, 233 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ 
+================================================================================
+ [BATCH TEST] 🚀 Starting batch test (10 alerts)...
+ ================================================================================
+ [BATCH TEST] Target: http://localhost:8000/api/test-alert-batch
+ [BATCH TEST] Expected duration: ~20 seconds
+ [BATCH TEST] Sending POST request...
+ ================================================================================
+
+ [287] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [288] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [288] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [289] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [289] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [289] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+ [290] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [290] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+ [290] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [290] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+ [291] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [291] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+ [291] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [291] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+ [292] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [292] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+ [292] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [292] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+ [293] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [293] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ [293] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [294] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+ [294] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [294] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+ [294] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [295] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+ [295] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [295] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+ [295] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [295] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+ [296] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [296] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+ [297] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [297] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+ [297] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [297] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+ [298] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [298] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+ [299] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [299] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+ [299] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [299] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+ [300] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [300] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+ [301] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [301] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+ [301] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [301] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+ [302] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [302] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+ [303] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [303] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+ [303] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [303] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+ [304] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [304] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+ [304] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [304] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+ [305] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [305] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ [305] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [305] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ WebSocket Manager cerrado
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [GRTUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [GRTUSDT] 📊 S/R validation skipped: no active levels
+ [GRTUSDT] 📊 Zones+S/R validation: 14/37 patterns (0 near S/R, 14 in zones only)
+ [ATOMUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [SUIUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [ALGOUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ALGOUSDT] 📊 S/R validation skipped: no active levels
+ [ALGOUSDT] 📊 Zones+S/R validation: 233/699 patterns (0 near S/R, 233 in zones only)
+ [492] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [493] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [493] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [493] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [539] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [540] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [540] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [540] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [682] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [683] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [683] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [683] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [605] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [605] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [606] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [606] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🎯 Detection config: Object
+ [LocalPatternDetector] 🎯 Filtro config: Object
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [656] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [656] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [656] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [656] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [715] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [715] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [715] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [715] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [164] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [164] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [164] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [164] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [579] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [580] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [580] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [580] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [647] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [648] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [648] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [649] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [362] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [363] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [363] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [363] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [732] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [733] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [733] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [733] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [113] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [113] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [114] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [114] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [SUIUSDT] 🎯 Detection config: {showMode: 'validated', detectionMode: 'all', manualZonesEnabled: true, manualZonesCount: 1, srEnabled: true}
+ [LocalPatternDetector] 🎯 Filtro config: {validationMode: 'all', globalDirection: 'BOTH', manualZones: 1, activeZones: Array(1)}
+ [SUIUSDT] 📊 S/R validation skipped: no active levels
+ [SUIUSDT] 📊 Zones+S/R validation: 49/75 patterns (0 near S/R, 49 in zones only)
+ [766] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [767] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [767] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [767] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [182] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [183] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [183] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [183] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [576] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [577] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [577] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [577] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [079] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [079] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [079] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [079] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [444] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [444] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [445] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [445] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [203] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [204] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [204] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [204] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [225] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [225] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [225] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [225] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [739] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [740] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [740] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [740] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [641] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [642] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [642] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [642] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [695] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [695] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [695] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [695] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [959] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [959] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [959] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [959] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [009] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [009] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [009] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [010] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [372] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [373] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [373] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [373] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [619] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [620] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [620] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [620] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [123] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [124] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [124] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [124] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ATOMUSDT] 🎯 Detection config: {showMode: 'validated', detectionMode: 'validated', manualZonesEnabled: true, manualZonesCount: 1, srEnabled: false}
+ [LocalPatternDetector] 🎯 Filtro config: {validationMode: 'validated', globalDirection: 'SHORT', manualZones: 1, activeZones: Array(1)}
+     ⏭️ Price 4.462 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.438 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.43 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.182 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.116 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.072 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.068 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.065 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.041 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.127 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.09 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.01 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.099 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.1 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.239 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.244 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.196 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.225 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.04 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 4.126 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.93 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.855 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.512 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.474 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.344 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.204 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.252 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.212 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.29 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.259 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.198 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.179 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.16 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.168 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.171 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.237 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.224 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 3.111 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.982 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.589 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.657 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.706 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.813 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.888 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.845 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.705 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.774 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.749 outside zone 'adsfs' (1.6-2.5)
+     ⏭️ Price 2.539 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.522 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ⏭️ Price 2.516 outside zone 'adsfs' (1.6-2.5)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+     ✅ Pattern accepted in zone 'adsfs' (accepts BOTH)
+ [172] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [173] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [173] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [173] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [GRTUSDT] 🎯 Detection config: {showMode: 'validated', detectionMode: 'all', manualZonesEnabled: true, manualZonesCount: 1, srEnabled: true}
+ [LocalPatternDetector] 🎯 Filtro config: {validationMode: 'all', globalDirection: 'LONG', manualZones: 1, activeZones: Array(1)}
+ [GRTUSDT] 📊 S/R validation skipped: no active levels
+ [GRTUSDT] 📊 Zones+S/R validation: 14/37 patterns (0 near S/R, 14 in zones only)
+ [853] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [853] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [853] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [853] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ALGOUSDT] 🎯 Detection config: {showMode: 'validated', detectionMode: 'all', manualZonesEnabled: true, manualZonesCount: 1, srEnabled: true}
+ [LocalPatternDetector] 🎯 Filtro config: {validationMode: 'all', globalDirection: 'BOTH', manualZones: 1, activeZones: Array(1)}
+ [ALGOUSDT] 📊 S/R validation skipped: no active levels
+ [ALGOUSDT] 📊 Zones+S/R validation: 233/699 patterns (0 near S/R, 233 in zones only)
+ [901] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [902] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [902] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [902] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [496] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [497] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [497] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [497] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [767] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [768] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [769] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [770] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [770] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [770] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+ [771] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [771] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+ [772] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [772] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+ [772] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [773] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+ [773] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [774] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+ [774] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [774] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+ [775] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [775] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+ [776] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [776] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ [777] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [778] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+ [778] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [779] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+ [779] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [780] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+ [780] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [781] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+ [781] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [782] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+ [782] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [783] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+ [783] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [783] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+ [784] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [784] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+ [785] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [785] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+ [786] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [786] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+ [787] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [787] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+ [787] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [788] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+ [788] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [789] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+ [789] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [789] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+ [790] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [790] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+ [791] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [791] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+ [791] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [792] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+ [792] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [793] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+ [793] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [793] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+ [176] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [176] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [176] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [176] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [534] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [535] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [535] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [535] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [904] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [905] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [905] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [906] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [400] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [400] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [400] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [401] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [472] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [472] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [472] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [472] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🎯 Detection config: {showMode: 'validated', detectionMode: 'all', manualZonesEnabled: true, manualZonesCount: 1, srEnabled: true}
+ [LocalPatternDetector] 🎯 Filtro config: {validationMode: 'all', globalDirection: 'BOTH', manualZones: 1, activeZones: Array(1)}
+ [ETHUSDT] 📊 S/R validation skipped: no active levels
+ [ETHUSDT] 📊 Zones+S/R validation: 176/621 patterns (0 near S/R, 176 in zones only)
+ [142] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766188800000, datetime: '2025-12-19 19:00:00'}
+ [143] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [143] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [143] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 

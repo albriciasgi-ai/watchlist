@@ -441,6 +441,56 @@ const RejectionPatternSettings = ({
     setActivePreset(presetKey);
   };
 
+  // ✅ NUEVO: Simulación de patrones para testing
+  const simulatePattern = async (patternType) => {
+    if (!indicatorManager) {
+      alert('❌ IndicatorManager not available');
+      return;
+    }
+
+    const indicator = indicatorManager.getRejectionPatternIndicator();
+    if (!indicator) {
+      alert('❌ Rejection Pattern Indicator not found');
+      return;
+    }
+
+    // Obtener precio actual
+    const currentPrice = getCurrentPrice();
+
+    // Crear un patrón simulado
+    const simulatedPattern = {
+      type: patternType,  // ✅ FIX: Usar 'type' en lugar de 'patternType'
+      direction: patternType === 'HAMMER' || patternType === 'ENGULFING_BULLISH' ? 'LONG' : 'SHORT',  // ✅ FIX: Usar ENGULFING_BULLISH
+      price: currentPrice,
+      timestamp: Date.now(),
+      confidence: 85.5,
+      isSwingPoint: true,
+      candle: {
+        open: currentPrice,
+        close: currentPrice,
+        high: currentPrice * 1.01,
+        low: currentPrice * 0.99,
+        volume: 1000000,
+        timestamp: Date.now()
+      }
+    };
+
+    console.log(`[${symbol}] Simulating pattern:`, simulatedPattern);
+
+    try {
+      // Enviar alerta directamente
+      await indicator.sendPatternAlert(simulatedPattern);
+
+      // Mostrar popup
+      indicator.showAlertPopup(simulatedPattern);
+
+      alert(`✅ Simulated ${patternType} pattern alert sent!\nPrice: $${currentPrice.toFixed(2)}\nConfidence: 85.5%`);
+    } catch (err) {
+      console.error('Failed to simulate pattern:', err);
+      alert(`❌ Failed to simulate pattern: ${err.message}`);
+    }
+  };
+
   // 🔧 NUEVO: Utilities
   const copyConfig = async () => {
     try {
@@ -608,6 +658,13 @@ const RejectionPatternSettings = ({
               onClick={() => applyPreset('position_4h')}
             >
               📊 4h Position
+            </button>
+            <button
+              className={`preset-button ${activePreset === 'test_mode' ? 'active' : ''}`}
+              onClick={() => applyPreset('test_mode')}
+              title="Relaxed parameters for testing - detects more patterns"
+            >
+              🧪 Test Mode
             </button>
             <button
               className={`preset-button ${activePreset === 'custom' ? 'active' : ''}`}
@@ -1139,6 +1196,48 @@ const RejectionPatternSettings = ({
               Sends notifications to external alert listener service
             </span>
           </div>
+
+          {/* ✅ NUEVO: Simulación de Patrones */}
+          {config.alertsEnabled && (
+            <div className="alert-test-section">
+              <h5 style={{ marginTop: '15px', marginBottom: '10px', fontSize: '14px', color: '#888' }}>
+                🧪 Pattern Simulation (Testing)
+              </h5>
+              <p className="help-text" style={{ marginBottom: '10px', fontSize: '12px' }}>
+                Test the alert system without waiting for real market patterns. Simulates pattern detection and sends alerts.
+              </p>
+              <div className="simulation-buttons">
+                <button
+                  className="test-pattern-button test-hammer"
+                  onClick={() => simulatePattern('HAMMER')}
+                  title="Simulate Hammer pattern detection"
+                >
+                  🔨 Test Hammer (LONG)
+                </button>
+                <button
+                  className="test-pattern-button test-shooting-star"
+                  onClick={() => simulatePattern('SHOOTING_STAR')}
+                  title="Simulate Shooting Star pattern detection"
+                >
+                  ⭐ Test Shooting Star (SHORT)
+                </button>
+                <button
+                  className="test-pattern-button test-engulfing-bullish"
+                  onClick={() => simulatePattern('ENGULFING_BULLISH')}
+                  title="Simulate Bullish Engulfing pattern"
+                >
+                  📈 Test Bullish Engulfing
+                </button>
+                <button
+                  className="test-pattern-button test-engulfing-bearish"
+                  onClick={() => simulatePattern('ENGULFING_BEARISH')}
+                  title="Simulate Bearish Engulfing pattern"
+                >
+                  📉 Test Bearish Engulfing
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Summary */}
@@ -1930,6 +2029,41 @@ const AddPriceZoneModal = ({ symbol, currentPrice, onAdd, onClose }) => {
 // ========================================
 function getPresets() {
   return {
+    test_mode: {
+      patterns: {
+        hammer: {
+          enabled: true,
+          minWickRatio: 1.0,        // ✅ Muy relajado para testing
+          maxUpperWickRatio: 0.5,   // ✅ Permite upper wick más grande
+          minBodyPosition: 0.3,     // ✅ Body puede estar más abajo
+          debug: false
+        },
+        shootingStar: {
+          enabled: true,
+          minWickRatio: 1.0,        // ✅ Muy relajado
+          maxLowerWickRatio: 0.5,   // ✅ Permite lower wick más grande
+          minBodyPosition: 0.3,     // ✅ Body puede estar más abajo
+          debug: false
+        },
+        engulfing: {
+          enabled: true
+        },
+        doji: {
+          enabled: true,
+          maxBodyRatio: 0.12,       // ✅ Permite body más grande
+          minLongWick: 0.4,         // ✅ Wick largo menos estricto
+          maxShortWick: 0.20,       // ✅ Permite wick corto más grande
+          debug: false
+        }
+      },
+      swingDetection: {
+        enabled: false,             // ✅ Deshabilitado para detectar más patrones
+        leftBars: 3,
+        rightBars: 3,
+        required: false
+      },
+      minConfidence: 20             // ✅ Muy bajo para testing
+    },
     scalping_1m: {
       patterns: {
         hammer: {

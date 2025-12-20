@@ -29,7 +29,11 @@
       "Bash(python extract_continuation_patterns.py:*)",
       "Bash(python:*)",
       "Bash(npm install:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(cmd //c \"taskkill /PID 20204 /F /T 2>&1\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File ../find_port_process.ps1)",
+      "Bash(wmic process where \"name=''python.exe''\" get ProcessId,CommandLine,ExecutablePath)"
     ],
     "deny": [],
     "ask": []
