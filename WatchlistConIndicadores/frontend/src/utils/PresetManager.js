@@ -143,7 +143,7 @@ class PresetManager {
 
         // Si hubo migración, guardar automáticamente
         if (migrated || (globalPresets.VWAP && globalPresets.VWAP.bandMultipliers)) {
-          console.log('[PresetManager] 💾 Guardando presets migrados...');
+          // console.log('[PresetManager] 💾 Guardando presets migrados...');
           this.saveAll(globalPresets, symbolOverrides);
         }
 
@@ -171,7 +171,7 @@ class PresetManager {
         lastUpdate: Date.now()
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-      console.log('[PresetManager] Presets guardados exitosamente');
+      // console.log('[PresetManager] Presets guardados exitosamente');
       return true;
     } catch (error) {
       console.error('[PresetManager] Error saving presets:', error);
@@ -194,11 +194,11 @@ class PresetManager {
 
     // Merge: override tiene prioridad
     if (symbolOverride) {
-      console.log(`[PresetManager] 🔧 ${symbol} ${indicatorName}: Usando override local`);
+      // console.log(`[PresetManager] 🔧 ${symbol} ${indicatorName}: Usando override local`);
       return { ...globalConfig, ...symbolOverride };
     }
 
-    console.log(`[PresetManager] 🌐 ${symbol} ${indicatorName}: Usando preset global`);
+    // console.log(`[PresetManager] 🌐 ${symbol} ${indicatorName}: Usando preset global`);
     return globalConfig;
   }
 

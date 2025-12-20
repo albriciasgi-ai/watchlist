@@ -33,7 +33,14 @@
       "Bash(powershell -Command:*)",
       "Bash(cmd //c \"taskkill /PID 20204 /F /T 2>&1\")",
       "Bash(powershell -ExecutionPolicy Bypass -File ../find_port_process.ps1)",
-      "Bash(wmic process where \"name=''python.exe''\" get ProcessId,CommandLine,ExecutablePath)"
+      "Bash(wmic process where \"name=''python.exe''\" get ProcessId,CommandLine,ExecutablePath)",
+      "Bash(wmic process where \"name=''''python.exe''''\" get ProcessId,CommandLine)",
+      "Bash(cmd //c \"taskkill /PID 27628 /F /T 2>&1\")",
+      "Bash(wmic process where \"ProcessId=7760\" get ProcessId,CommandLine,ExecutablePath)",
+      "Bash(wmic process where \"ProcessId=9824\" get ProcessId,CommandLine,ExecutablePath)",
+      "Bash(wmic process where \"ProcessId=28452\" get ProcessId,CommandLine,ExecutablePath)",
+      "Bash(cmd //c \"tasklist /FI \"\"IMAGENAME eq python.exe\"\" /FO LIST\")",
+      "Bash(wmic process where \"name=''node.exe''\" get ProcessId,CommandLine)"
     ],
     "deny": [],
     "ask": []

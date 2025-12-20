@@ -40,13 +40,13 @@ class RejectionPatternIndicator extends IndicatorBase {
     };
 
     // ✅ NUEVO: Sistema de alertas automáticas
-    this.alertedPatterns = new Map(); // patternId → timestamp del envío
+    this.alertedPatterns = new Set(); // Set de IDs de patrones ya alertados
     this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
-    this.lastPatternCount = 0; // Para detectar patrones nuevos
     this.notificationPermissionRequested = false; // Flag para pedir permiso una sola vez
+    this.alertSystemStartTime = null; // Timestamp cuando se inician las alertas
     this.logger = createLogger(this.symbol); // Logger con contexto del símbolo
 
-    this.logger.alert(`🔔 Alert system initialized (cooldown: ${this.alertCooldownMs/60000} min)`);
+    this.logger.debug(`🔔 Alert system initialized (cooldown: ${this.alertCooldownMs/60000} min)`);
   }
 
   loadConfig() {
@@ -284,7 +284,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     const srIndicator = indicatorManager.getSupportResistanceIndicator();
 
     if (!srIndicator || !srIndicator.enabled) {
-      console.log(`[${this.symbol}] 📊 S/R validation skipped: indicator not enabled`);
+      // console.log(`[${this.symbol}] 📊 S/R validation skipped: indicator not enabled`);
       return;
     }
 
@@ -295,7 +295,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     ];
 
     if (activeLevels.length === 0) {
-      console.log(`[${this.symbol}] 📊 S/R validation skipped: no active levels`);
+      // console.log(`[${this.symbol}] 📊 S/R validation skipped: no active levels`);
       return;
     }
 
@@ -335,7 +335,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       }
     });
 
-    console.log(`[${this.symbol}] 📊 S/R validation: ${patternsValidated}/${patterns.length} patterns near S/R levels`);
+    // console.log(`[${this.symbol}] 📊 S/R validation: ${patternsValidated}/${patterns.length} patterns near S/R levels`);
   }
 
   /**
@@ -355,76 +355,202 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
-   * ✅ NUEVO: Detecta si hay patrones nuevos comparando con detección anterior
-   * Retorna solo los patrones que aparecieron en esta iteración
+   * ✅ NUEVO: Genera ID único para un patrón
+   * Formato: tipo_timestamp_precio_indice
    */
-  getNewPatterns() {
-    if (this.localPatterns.length === 0) return [];
-
-    // Si es la primera vez, todos son "nuevos" pero no los alertamos (son históricos)
-    if (this.lastPatternCount === 0) {
-      this.lastPatternCount = this.localPatterns.length;
-      console.log(`[${this.symbol}] 📊 Initial pattern count: ${this.lastPatternCount} (not alerting historical patterns)`);
-      return [];
-    }
-
-    // Si hay más patrones que antes, son nuevos
-    if (this.localPatterns.length > this.lastPatternCount) {
-      const newPatterns = this.localPatterns.slice(this.lastPatternCount);
-      this.lastPatternCount = this.localPatterns.length;
-
-      console.log(`[${this.symbol}] 🆕 Detected ${newPatterns.length} NEW patterns`);
-      return newPatterns;
-    }
-
-    // Si hay menos o igual, no hay nuevos
-    return [];
+  getPatternId(pattern) {
+    return `${pattern.type}_${pattern.timestamp}_${Math.round(pattern.price * 100)}`;
   }
 
   /**
-   * ✅ NUEVO: Verifica patrones nuevos y envía alertas si aplica
-   * Solo procesa patrones que NO han sido alertados previamente
+   * ✅ NUEVO: Verifica si un patrón está confirmado y listo para alertar
+   *
+   * Confirmación depende de:
+   * 1. Vela CERRADA (no in_progress)
+   * 2. Si swingDetection.required = true: swing debe estar CONFIRMADO (rightBars velas después)
+   * 3. Si swingDetection.required = false: solo requiere vela cerrada
    */
-  async checkAndSendAlerts() {
+  isPatternConfirmed(pattern, candles) {
+    if (!pattern || !candles || candles.length === 0) return false;
+
+    // Verificar que el patrón tiene timestamp
+    if (!pattern.timestamp) return false;
+
+    // Encontrar índice de la vela del patrón en el array
+    const patternIndex = candles.findIndex(c => c.timestamp === pattern.timestamp);
+    if (patternIndex === -1) {
+      this.logger.debug(`Pattern not found in candles array`);
+      return false;
+    }
+
+    const patternCandle = candles[patternIndex];
+
+    // 1. La vela del patrón debe estar CERRADA (no in_progress)
+    if (patternCandle.in_progress) {
+      this.logger.debug(`Pattern candle still in progress`);
+      return false;
+    }
+
+    // 2. Si swing detection está requerido, verificar confirmación de swing
+    if (this.config.swingDetection?.required) {
+      const rightBars = this.config.swingDetection.rightBars || 5;
+
+      // Necesitamos rightBars velas CERRADAS después del patrón para confirmar el swing
+      const requiredIndex = patternIndex + rightBars;
+
+      // Verificar que existan suficientes velas después
+      if (requiredIndex >= candles.length) {
+        this.logger.debug(`Swing not confirmed yet: need ${rightBars} bars after pattern (current: ${candles.length - patternIndex - 1})`);
+        return false;
+      }
+
+      // Verificar que todas las velas de confirmación estén cerradas
+      for (let i = patternIndex + 1; i <= requiredIndex; i++) {
+        if (candles[i]?.in_progress) {
+          this.logger.debug(`Swing confirmation bar ${i - patternIndex} still in progress`);
+          return false;
+        }
+      }
+
+      this.logger.debug(`✅ Swing confirmed with ${rightBars} bars`);
+    }
+
+    return true;
+  }
+
+  /**
+   * ✅ NUEVO: Obtiene patrones confirmados que no han sido alertados
+   * Solo retorna patrones listos para alertar en TIEMPO REAL
+   */
+  getNewConfirmedPatterns(candles) {
+    if (!this.localPatterns || this.localPatterns.length === 0) {
+      this.logger.debug(`getNewConfirmedPatterns: No local patterns`);
+      return [];
+    }
+    if (!candles || candles.length === 0) {
+      this.logger.debug(`getNewConfirmedPatterns: No candles`);
+      return [];
+    }
+
+    const newConfirmed = [];
+
+    // ✅ Iterar sin logging (el logging se hace cuando se ENVÍA la alerta, no aquí)
+    for (let i = 0; i < this.localPatterns.length; i++) {
+      const pattern = this.localPatterns[i];
+      const patternId = this.getPatternId(pattern);
+
+      // Si ya fue alertado, skip
+      if (this.alertedPatterns.has(patternId)) {
+        continue;
+      }
+
+      // Verificar si está confirmado
+      const isConfirmed = this.isPatternConfirmed(pattern, candles);
+
+      if (!isConfirmed) {
+        continue;
+      }
+
+      // Agregar a la lista sin logging (se loggea cuando se envía)
+      newConfirmed.push(pattern);
+    }
+
+    return newConfirmed;
+  }
+
+  /**
+   * ✅ NUEVO: Verifica patrones confirmados y envía alertas
+   * Solo procesa patrones que NO han sido alertados previamente y están CONFIRMADOS
+   *
+   * @param {Array} candles - Array de velas para verificar confirmación
+   */
+  async checkAndSendAlerts(candles) {
     if (!this.config.alertsEnabled) return;
     if (this.showMode !== 'validated') return; // Solo en modo validated
+    if (!candles || candles.length === 0) return;
 
-    const newPatterns = this.getNewPatterns();
-    if (newPatterns.length === 0) return;
+    // ✅ PRIMERA VEZ: Guardar timestamp de inicio del sistema de alertas
+    if (this.alertSystemStartTime === null) {
+      this.alertSystemStartTime = Date.now();
 
-    const minConfidence = this.config.filters?.minConfidence || 60;
-    const now = Date.now();
+      console.log(`\n${'='.repeat(80)}`);
+      console.log(`📊 [${this.symbol}] ALERT SYSTEM ACTIVATED`);
+      console.log(`${'='.repeat(80)}`);
+      console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+      console.log(`All patterns before this time will be suppressed`);
+      console.log(`Only NEW patterns detected AFTER this time will trigger alerts`);
+      console.log(`${'='.repeat(80)}\n`);
 
-    for (const pattern of newPatterns) {
-      // Filtro 1: Confidence mínimo
+      this.logger.alert(`✅ Alert system activated - suppressing all historical patterns`);
+      return; // Salir en la primera ejecución para dar tiempo a la detección
+    }
+
+    // Obtener solo patrones confirmados que no han sido alertados
+    const newConfirmedPatterns = this.getNewConfirmedPatterns(candles);
+    if (newConfirmedPatterns.length === 0) return;
+
+    // ✅ Filtrar solo patrones NUEVOS (timestamp >= alertSystemStartTime)
+    const minConfidence = this.config.filters?.minConfidence || 50;
+
+    const recentPatterns = newConfirmedPatterns.filter(p => p.timestamp >= this.alertSystemStartTime);
+
+    // Solo mostrar logging detallado si hay patrones que PASAN el filtro
+    if (recentPatterns.length > 0) {
+      console.log(`\n[${this.symbol}] 🔍 NEW PATTERNS DETECTED:`);
+      console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+      console.log(`  Total confirmed patterns: ${newConfirmedPatterns.length}`);
+      console.log(`  Historical (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
+      console.log(`  ✅ NEW patterns to alert: ${recentPatterns.length}`);
+
+      // Detalles de patrones nuevos
+      recentPatterns.forEach((p, i) => {
+        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - ${new Date(p.timestamp).toLocaleString()}`);
+      });
+      console.log('');
+    }
+
+    if (recentPatterns.length === 0) {
+      // Solo log en debug (silencioso)
+      return;
+    }
+
+    // ✅ PROTECCIÓN ANTI-SPAM: Máximo 5 alertas por ejecución
+    const MAX_ALERTS_PER_RUN = 5;
+    if (recentPatterns.length > MAX_ALERTS_PER_RUN) {
+      this.logger.warn(`⚠️ Too many patterns to alert (${recentPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN} to prevent spam.`);
+    }
+
+    // Procesar solo patrones NUEVOS (después del start time)
+    let alertCount = 0;
+    for (const pattern of recentPatterns) {
+      // Límite de alertas por ejecución
+      if (alertCount >= MAX_ALERTS_PER_RUN) {
+        this.logger.warn(`⚠️ Alert limit reached (${MAX_ALERTS_PER_RUN}). Remaining ${recentPatterns.length - alertCount} patterns will be processed next time.`);
+        break;
+      }
+
+      // Filtro de confidence
       if (pattern.confidence < minConfidence) {
-        console.log(`[${this.symbol}] ⏭️ Pattern skipped: confidence ${pattern.confidence.toFixed(1)} < ${minConfidence}`);
+        this.logger.debug(`⏭️ Pattern skipped: confidence ${pattern.confidence.toFixed(1)} < ${minConfidence}`);
         continue;
       }
 
-      // Filtro 2: Crear ID único para el patrón
-      const patternId = `${pattern.type}_${pattern.timestamp}_${Math.round(pattern.price * 100)}`;
-
-      // Filtro 3: Cooldown - no enviar mismo patrón muy seguido
-      const lastAlert = this.alertedPatterns.get(patternId);
-      if (lastAlert && (now - lastAlert) < this.alertCooldownMs) {
-        const remaining = Math.round((this.alertCooldownMs - (now - lastAlert)) / 60000);
-        this.logger.debug(`⏱️ Pattern in cooldown: ${remaining} min remaining`);
-        continue;
-      }
+      // Generar ID del patrón
+      const patternId = this.getPatternId(pattern);
 
       // Enviar alerta
       const success = await this.sendPatternAlert(pattern);
 
       if (success) {
-        // Marcar como alertado
-        this.alertedPatterns.set(patternId, now);
+        // Marcar como alertado (agregar a Set)
+        this.alertedPatterns.add(patternId);
 
         // Marcar visualmente
         pattern._alertSent = true;
-        pattern._alertTimestamp = now;
+        pattern._alertTimestamp = Date.now();
 
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
+        alertCount++;
       }
     }
   }
@@ -462,7 +588,8 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (result.success) {
         // ✅ Mostrar popup en navegador
-        this.showAlertPopup(pattern);
+        // DISABLED: Causing browser to freeze with too many popups
+        // this.showAlertPopup(pattern);
         return true;
       } else {
         this.logger.error(`❌ Alert rejected: ${result.reason || result.error}`);
@@ -595,13 +722,13 @@ class RejectionPatternIndicator extends IndicatorBase {
       detectionMode = 'all';
     }
 
-    console.log(`[${this.symbol}] 🎯 Detection config:`, {
-      showMode: this.showMode,
-      detectionMode: detectionMode,
-      manualZonesEnabled: this.config.levelSources?.manualPriceZones !== false,
-      manualZonesCount: manualZonesToUse.length,
-      srEnabled: srEnabled
-    });
+    // console.log(`[${this.symbol}] 🎯 Detection config:`, {
+    //   showMode: this.showMode,
+    //   detectionMode: detectionMode,
+    //   manualZonesEnabled: this.config.levelSources?.manualPriceZones !== false,
+    //   manualZonesCount: manualZonesToUse.length,
+    //   srEnabled: srEnabled
+    // });
 
     // ✅ ACTUALIZADO: Detectar patrones con swing detection, filtro de dirección y modo de validación
     const detectedPatterns = this.localDetector.detectPatterns(candles, {
@@ -644,7 +771,7 @@ class RejectionPatternIndicator extends IndicatorBase {
           return inZone || nearSR;
         });
 
-        console.log(`[${this.symbol}] 📊 Zones+S/R validation: ${filtered.length}/${beforeFilter} patterns (${filtered.filter(p => p.nearSRLevel).length} near S/R, ${filtered.filter(p => !p.nearSRLevel).length} in zones only)`);
+        // console.log(`[${this.symbol}] 📊 Zones+S/R validation: ${filtered.length}/${beforeFilter} patterns (${filtered.filter(p => p.nearSRLevel).length} near S/R, ${filtered.filter(p => !p.nearSRLevel).length} in zones only)`);
 
         detectedPatterns.length = 0;
         detectedPatterns.push(...filtered);
@@ -654,7 +781,7 @@ class RejectionPatternIndicator extends IndicatorBase {
         const beforeFilter = detectedPatterns.length;
         const filtered = detectedPatterns.filter(p => p.nearSRLevel);
 
-        console.log(`[${this.symbol}] 📊 S/R-only validation: ${filtered.length}/${beforeFilter} patterns near S/R levels`);
+        // console.log(`[${this.symbol}] 📊 S/R-only validation: ${filtered.length}/${beforeFilter} patterns near S/R levels`);
 
         detectedPatterns.length = 0;
         detectedPatterns.push(...filtered);
@@ -724,7 +851,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // ✅ NUEVO: Verificar y enviar alertas automáticas (solo en modo validated)
     if (this.showMode === 'validated' && this.config.alertsEnabled) {
-      this.checkAndSendAlerts().catch(err => {
+      this.checkAndSendAlerts(candles).catch(err => {
         this.logger.error(`Error checking alerts: ${err.message}`);
       });
     }

@@ -135,16 +135,16 @@ class LocalPatternDetector {
     const manualZones = config.manualPriceZones || [];
     const hasActiveZones = manualZones.some(z => z.enabled);
 
-    console.log(`[LocalPatternDetector] 🎯 Filtro config:`, {
-      validationMode: validationMode,
-      globalDirection: globalSignalDirection,
-      manualZones: manualZones.length,
-      activeZones: manualZones.filter(z => z.enabled).map(z => ({
-        name: z.name,
-        range: `${z.minPrice}-${z.maxPrice}`,
-        signalDirection: z.signalDirection
-      }))
-    });
+    // console.log(`[LocalPatternDetector] 🎯 Filtro config:`, {
+    //   validationMode: validationMode,
+    //   globalDirection: globalSignalDirection,
+    //   manualZones: manualZones.length,
+    //   activeZones: manualZones.filter(z => z.enabled).map(z => ({
+    //     name: z.name,
+    //     range: `${z.minPrice}-${z.maxPrice}`,
+    //     signalDirection: z.signalDirection
+    //   }))
+    // });
 
     // Pre-calcular Z-scores de volumen si está habilitado
     const volumeZScores = volumeConfig.enabled ? this.calculateVolumeZScores(candles, volumeConfig.lookbackPeriod) : null;

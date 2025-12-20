@@ -186,38 +186,38 @@ class ContinuationPatternIndicator extends IndicatorBase {
         };
         this.trendAnalysis = json.data.trend || null;
 
-        console.log(`[${this.symbol}] ✅ Patterns loaded:`, json.data.summary);
+        // console.log(`[${this.symbol}] ✅ Patterns loaded:`, json.data.summary);
 
         // DEBUG: Log reversal pattern analysis (only once after fetch)
-        const reversalPatterns = this.patterns.filter(p => p.pattern_type === 'reversal');
-        if (reversalPatterns.length > 0) {
-          const countByName = {};
-          const belowThreshold = [];
-          const aboveThreshold = [];
+        // const reversalPatterns = this.patterns.filter(p => p.pattern_type === 'reversal');
+        // if (reversalPatterns.length > 0) {
+        //   const countByName = {};
+        //   const belowThreshold = [];
+        //   const aboveThreshold = [];
 
-          reversalPatterns.forEach(p => {
-            countByName[p.pattern_name] = (countByName[p.pattern_name] || 0) + 1;
-            if (p.confidence < this.minConfidence) {
-              belowThreshold.push(p);
-            } else {
-              aboveThreshold.push(p);
-            }
-          });
+        //   reversalPatterns.forEach(p => {
+        //     countByName[p.pattern_name] = (countByName[p.pattern_name] || 0) + 1;
+        //     if (p.confidence < this.minConfidence) {
+        //       belowThreshold.push(p);
+        //     } else {
+        //       aboveThreshold.push(p);
+        //     }
+        //   });
 
-          console.log(`[${this.symbol}] 📊 Reversal Patterns by type:`, countByName);
-          console.log(`[${this.symbol}] 🎯 Min confidence threshold: ${this.minConfidence}%`);
-          console.log(`[${this.symbol}] ✅ Above threshold: ${aboveThreshold.length}/${reversalPatterns.length}`);
-          console.log(`[${this.symbol}] ❌ Below threshold: ${belowThreshold.length}/${reversalPatterns.length}`);
+        //   console.log(`[${this.symbol}] 📊 Reversal Patterns by type:`, countByName);
+        //   console.log(`[${this.symbol}] 🎯 Min confidence threshold: ${this.minConfidence}%`);
+        //   console.log(`[${this.symbol}] ✅ Above threshold: ${aboveThreshold.length}/${reversalPatterns.length}`);
+        //   console.log(`[${this.symbol}] ❌ Below threshold: ${belowThreshold.length}/${reversalPatterns.length}`);
 
-          if (belowThreshold.length > 0) {
-            const avgConfidence = (belowThreshold.reduce((sum, p) => sum + p.confidence, 0) / belowThreshold.length).toFixed(1);
-            console.log(`[${this.symbol}] 📉 Avg confidence of rejected: ${avgConfidence}%`);
-          }
-          if (aboveThreshold.length > 0) {
-            const avgConfidence = (aboveThreshold.reduce((sum, p) => sum + p.confidence, 0) / aboveThreshold.length).toFixed(1);
-            console.log(`[${this.symbol}] 📈 Avg confidence of accepted: ${avgConfidence}%`);
-          }
-        }
+        //   if (belowThreshold.length > 0) {
+        //     const avgConfidence = (belowThreshold.reduce((sum, p) => sum + p.confidence, 0) / belowThreshold.length).toFixed(1);
+        //     console.log(`[${this.symbol}] 📉 Avg confidence of rejected: ${avgConfidence}%`);
+        //   }
+        //   if (aboveThreshold.length > 0) {
+        //     const avgConfidence = (aboveThreshold.reduce((sum, p) => sum + p.confidence, 0) / aboveThreshold.length).toFixed(1);
+        //     console.log(`[${this.symbol}] 📈 Avg confidence of accepted: ${avgConfidence}%`);
+        //   }
+        // }
 
         return true;
       } else {
