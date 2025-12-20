@@ -13,6 +13,10 @@ import { createLogger } from '../../utils/logger.js';
  * - Mode "Validated Only": Shows only patterns validated against reference contexts (backend)
  */
 class RejectionPatternIndicator extends IndicatorBase {
+  // ✅ Variables estáticas para limitar popups globalmente (compartidas entre todos los símbolos)
+  static activePopups = 0;
+  static MAX_SIMULTANEOUS_POPUPS = 3;
+
   constructor(symbol, interval, days = 30) {
     super(symbol, interval, days);
     this.name = "Rejection Patterns";
@@ -587,9 +591,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       const result = await response.json();
 
       if (result.success) {
-        // ✅ Mostrar popup en navegador
-        // DISABLED: Causing browser to freeze with too many popups
-        // this.showAlertPopup(pattern);
+        // ✅ Mostrar popup en navegador (con límite de 3 simultáneos)
+        this.showAlertPopup(pattern);
         return true;
       } else {
         this.logger.error(`❌ Alert rejected: ${result.reason || result.error}`);
@@ -607,30 +610,48 @@ class RejectionPatternIndicator extends IndicatorBase {
    * Usa Notification API si está disponible, sino alert nativo
    */
   showAlertPopup(pattern) {
+    // ✅ PROTECCIÓN: Limitar popups simultáneos para evitar bloqueo del navegador
+    if (RejectionPatternIndicator.activePopups >= RejectionPatternIndicator.MAX_SIMULTANEOUS_POPUPS) {
+      this.logger.debug(`⏭️ Popup skipped: ${RejectionPatternIndicator.activePopups} popups already active (max: ${RejectionPatternIndicator.MAX_SIMULTANEOUS_POPUPS})`);
+      return;
+    }
+
     const patternName = this.formatPatternName(pattern.type);
     const priceFormatted = pattern.price.toFixed(2);
     const confidenceFormatted = Math.round(pattern.confidence);
 
     // Preparar mensaje
-    const title = `🚨 Alert Sent: ${this.symbol}`;
+    const title = `🚨 Alert: ${this.symbol}`;
     const body = `${patternName}\nPrice: $${priceFormatted}\nConfidence: ${confidenceFormatted}%`;
 
     // Intentar usar Notification API (más elegante)
     if ("Notification" in window && Notification.permission === "granted") {
+      RejectionPatternIndicator.activePopups++;
+
       const notification = new Notification(title, {
         body: body,
         icon: pattern.direction === 'LONG' ? '📈' : '📉',
         badge: '🔔',
         requireInteraction: false,
-        tag: `pattern-alert-${this.symbol}` // Agrupa notificaciones del mismo símbolo
+        tag: `pattern-alert-${this.symbol}-${Date.now()}` // Tag único por notificación
       });
 
-      // Auto-cerrar después de 5 segundos
-      setTimeout(() => notification.close(), 5000);
+      // Auto-cerrar después de 5 segundos y decrementar contador
+      setTimeout(() => {
+        notification.close();
+        RejectionPatternIndicator.activePopups = Math.max(0, RejectionPatternIndicator.activePopups - 1);
+      }, 5000);
+
+      // Decrementar también cuando el usuario cierra manualmente
+      notification.onclose = () => {
+        RejectionPatternIndicator.activePopups = Math.max(0, RejectionPatternIndicator.activePopups - 1);
+      };
 
     } else {
-      // Fallback: alert nativo del navegador
+      // Fallback: alert nativo del navegador (limitado también)
+      RejectionPatternIndicator.activePopups++;
       alert(`${title}\n\n${body}\n\nAlert sent to port 5000 ✅`);
+      RejectionPatternIndicator.activePopups = Math.max(0, RejectionPatternIndicator.activePopups - 1);
     }
 
     // Log detallado en consola
