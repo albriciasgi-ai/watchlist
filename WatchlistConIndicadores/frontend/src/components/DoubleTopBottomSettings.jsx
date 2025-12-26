@@ -33,7 +33,9 @@ function getDefaultConfig() {
         zScoreThresholdFirst: 1.5,   // First extreme usually has higher volume (strong initial move)
         zScoreThresholdSecond: 0.5,  // Second extreme usually has lower volume (weakness/divergence)
         zScorePeriod: 20             // Period for z-score calculation
-      }
+      },
+
+      maxBreakoutPercent: 2.0  // Maximum % price can exceed first extreme between peaks (breakout rejection)
     },
 
     momentumConfirmation: {
@@ -53,6 +55,12 @@ function getDefaultConfig() {
           minBodyRatio: 0.7,
           allowBigWick: true
         }
+      },
+
+      volumeFilter: {
+        enabled: false,
+        zScoreThreshold: 1.0,
+        zScorePeriod: 20
       },
 
       lookbackAfterPattern: 10,
@@ -119,6 +127,8 @@ const DoubleTopBottomSettings = ({
 }) => {
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [activeTab, setActiveTab] = useState('pattern');
+  const logTimerRef = React.useRef(null);
+  const saveLogTimerRef = React.useRef(null);
 
   // Estilos reutilizables
   const styles = {
@@ -143,10 +153,29 @@ const DoubleTopBottomSettings = ({
         console.error('Failed to load double top/bottom config:', e);
       }
     }
+
+    // Cleanup: limpiar timers al desmontar
+    return () => {
+      if (logTimerRef.current) {
+        clearTimeout(logTimerRef.current);
+      }
+      if (saveLogTimerRef.current) {
+        clearTimeout(saveLogTimerRef.current);
+      }
+    };
   }, [symbol]);
 
   useEffect(() => {
     // Notify parent of config changes and save to localStorage
+    // Debounce este log también para evitar spam
+    if (saveLogTimerRef.current) {
+      clearTimeout(saveLogTimerRef.current);
+    }
+
+    saveLogTimerRef.current = setTimeout(() => {
+      console.log(`[PRUEBA_DBT] Saving config to localStorage for ${symbol}`);
+    }, 500);
+
     if (onConfigChange) {
       onConfigChange(config);
     }
@@ -154,18 +183,28 @@ const DoubleTopBottomSettings = ({
   }, [config, symbol]);
 
   const handleSave = () => {
-    console.log(`[${symbol}] Saving Double Top/Bottom configuration`, config);
+    console.log(`[PRUEBA_DBT] ${symbol} - Saving Double Top/Bottom configuration`, config);
     onClose();
   };
 
   const handleReset = () => {
+    console.log(`[PRUEBA_DBT] ${symbol} - Resetting to default configuration`);
     const defaultConfig = getDefaultConfig();
     setConfig(defaultConfig);
     localStorage.removeItem(`double_topbottom_config_${symbol}`);
-    console.log(`[${symbol}] Reset Double Top/Bottom to default configuration`);
+    console.log(`[PRUEBA_DBT] ${symbol} - Reset complete`, defaultConfig);
   };
 
   const updateConfig = (path, value) => {
+    // Debounce logging: solo registra después de 500ms sin cambios
+    if (logTimerRef.current) {
+      clearTimeout(logTimerRef.current);
+    }
+
+    logTimerRef.current = setTimeout(() => {
+      console.log(`[PRUEBA_DBT] Config change: ${path} = ${JSON.stringify(value)}`);
+    }, 500);
+
     setConfig(prev => {
       const newConfig = { ...prev };
       const parts = path.split('.');
@@ -275,6 +314,26 @@ const DoubleTopBottomSettings = ({
         />
         <p style={styles.description}>
           Maximum candles between extremes (10-150)
+        </p>
+      </div>
+
+      <div style={styles.settingGroup}>
+        <label style={styles.label}>
+          <span>Max Breakout % 🚫</span>
+          <span style={styles.settingValue}>{(config.doubleTopBottom.maxBreakoutPercent || 2.0).toFixed(1)}%</span>
+        </label>
+        <input
+          type="range"
+          min="0.5"
+          max="10.0"
+          step="0.5"
+          value={config.doubleTopBottom.maxBreakoutPercent || 2.0}
+          onChange={(e) => updateConfig('doubleTopBottom.maxBreakoutPercent', parseFloat(e.target.value))}
+          style={styles.rangeInput}
+        />
+        <p style={styles.description}>
+          Maximum % price can break through first extreme between peaks (0.5-10.0%).
+          Patterns with breakouts exceeding this are rejected as they indicate breakout continuation, not reversal.
         </p>
       </div>
 
@@ -581,6 +640,61 @@ const DoubleTopBottomSettings = ({
               </>
             )}
           </div>
+
+          <h4 style={{marginTop: '30px'}}>Volume Filter 📊</h4>
+          <p style={{fontSize: '12px', color: '#888', marginBottom: '15px'}}>
+            Validates that momentum patterns have institutional backing (high volume).
+          </p>
+
+          <div className="checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={config.momentumConfirmation.volumeFilter?.enabled || false}
+                onChange={(e) => updateConfig('momentumConfirmation.volumeFilter.enabled', e.target.checked)}
+              />
+              <span>Require High Volume in Momentum</span>
+            </label>
+          </div>
+
+          {config.momentumConfirmation.volumeFilter?.enabled && (
+            <>
+              <div className="setting-group">
+                <label>
+                  <span>Z-Score Threshold</span>
+                  <span className="setting-value">{(config.momentumConfirmation.volumeFilter?.zScoreThreshold || 1.0).toFixed(1)}</span>
+                </label>
+                <input
+                  type="range"
+                  min="0.5"
+                  max="3.0"
+                  step="0.1"
+                  value={config.momentumConfirmation.volumeFilter?.zScoreThreshold || 1.0}
+                  onChange={(e) => updateConfig('momentumConfirmation.volumeFilter.zScoreThreshold', parseFloat(e.target.value))}
+                />
+                <p className="setting-description">
+                  Minimum z-score for volume in momentum candles (0.5-3.0). For multi-candle patterns (Soldiers/Crows), average z-score is used.
+                </p>
+              </div>
+
+              <div className="setting-group">
+                <label>
+                  <span>Z-Score Period</span>
+                  <span className="setting-value">{config.momentumConfirmation.volumeFilter?.zScorePeriod || 20}</span>
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  value={config.momentumConfirmation.volumeFilter?.zScorePeriod || 20}
+                  onChange={(e) => updateConfig('momentumConfirmation.volumeFilter.zScorePeriod', parseInt(e.target.value))}
+                />
+                <p className="setting-description">
+                  Period for z-score calculation (10-100 candles)
+                </p>
+              </div>
+            </>
+          )}
 
           <div className="checkbox-group">
             <label>

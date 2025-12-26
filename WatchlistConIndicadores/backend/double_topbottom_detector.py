@@ -93,11 +93,27 @@ class DoubleTopBottomDetector:
         search_start = 0
         search_candles = candles
 
-        print(f"[{symbol}] Double Top/Bottom Detection:")
-        print(f"  - Searching ALL {len(search_candles)} candles (no lookback limit)")
-        print(f"  - Extremes window: {candles_per_extreme} candles")
-        print(f"  - Price margin: {price_margin_pct * 100:.1f}%")
-        print(f"  - Volume filter: {'enabled' if volume_filter_enabled else 'disabled'}")
+        print(f"[PRUEBA_DBT] {symbol} - Double Top/Bottom Detection Started")
+        print(f"  [PRUEBA_DBT] Config Parameters:")
+        print(f"    - Lookback candles: {lookback_candles}")
+        print(f"    - Searching ALL {len(search_candles)} candles (no lookback limit)")
+        print(f"    - Extremes window: {candles_per_extreme} candles")
+        print(f"    - Price margin: {price_margin_pct * 100:.1f}%")
+        print(f"    - Min candles between: {min_candles_between}")
+        print(f"    - Max candles between: {max_candles_between}")
+        print(f"    - Volume filter: {'enabled' if volume_filter_enabled else 'disabled'}")
+        if volume_filter_enabled:
+            print(f"      • Z-Score threshold: {z_score_threshold}")
+            print(f"      • Z-Score period: {z_score_period}")
+        print(f"    - High volume at extremes: {'enabled' if require_high_volume_enabled else 'disabled'}")
+        if require_high_volume_enabled:
+            z_threshold_first = require_high_volume_config.get('zScoreThresholdFirst', 1.5)
+            z_threshold_second = require_high_volume_config.get('zScoreThresholdSecond', 0.5)
+            print(f"      • First extreme z-score: {z_threshold_first}")
+            print(f"      • Second extreme z-score: {z_threshold_second}")
+            print(f"      • Z-Score period: {require_high_volume_period}")
+        breakout_tolerance = config.get('doubleTopBottom', {}).get('maxBreakoutPercent', 2.0)
+        print(f"    - Max breakout %: {breakout_tolerance}%")
 
         # Step 1: Find local extremes (highs and lows)
         local_highs = self._find_local_extremes(
@@ -114,8 +130,8 @@ class DoubleTopBottomDetector:
             search_start
         )
 
-        print(f"  - Found {len(local_highs)} local highs")
-        print(f"  - Found {len(local_lows)} local lows")
+        print(f"  [PRUEBA_DBT] Found {len(local_highs)} local highs")
+        print(f"  [PRUEBA_DBT] Found {len(local_lows)} local lows")
 
         # Filter extremes by volume if required
         require_high_volume = config.get('doubleTopBottom', {}).get('requireHighVolumeAtExtremes', {})
@@ -132,7 +148,7 @@ class DoubleTopBottomDetector:
                 require_high_volume,
                 z_scores
             )
-            print(f"  - After volume filter: {len(local_highs)} highs, {len(local_lows)} lows")
+            print(f"  [PRUEBA_DBT] After volume filter: {len(local_highs)} highs, {len(local_lows)} lows")
 
         # Step 2: Find double tops
         double_tops = self._find_double_tops(
@@ -164,6 +180,8 @@ class DoubleTopBottomDetector:
 
         detected_patterns.extend(double_bottoms)
 
+        print(f"  [PRUEBA_DBT] Before post-validation: {len(detected_patterns)} patterns")
+
         # Step 4: Post-pattern validation (confirm directional movement)
         detected_patterns = self._validate_post_pattern_movement(
             detected_patterns,
@@ -171,11 +189,15 @@ class DoubleTopBottomDetector:
             config
         )
 
+        print(f"  [PRUEBA_DBT] After post-validation: {len(detected_patterns)} patterns")
+
         # Step 5: Remove duplicate patterns in same zone
         detected_patterns = self._filter_duplicate_patterns(
             detected_patterns,
             config
         )
+
+        print(f"  [PRUEBA_DBT] After deduplication: {len(detected_patterns)} patterns")
 
         # Step 6: Apply momentum confirmation if enabled (Phase 2)
         if config.get('momentumConfirmation', {}).get('enabled', False):
@@ -184,11 +206,15 @@ class DoubleTopBottomDetector:
                 candles,
                 config
             )
+            print(f"  [PRUEBA_DBT] After momentum: {len(detected_patterns)} patterns")
 
         # Step 7: Filter by minimum confidence
         min_confidence = config.get('filters', {}).get('minConfidence', 60)
+        patterns_before_conf_filter = len(detected_patterns)
         detected_patterns = [p for p in detected_patterns if p.confidence >= min_confidence]
 
+        print(f"  [PRUEBA_DBT] After min_confidence filter ({min_confidence}): {len(detected_patterns)} patterns (filtered {patterns_before_conf_filter - len(detected_patterns)})")
+        print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
         print(f"  ✅ Detected {len(detected_patterns)} patterns (after filtering)")
 
         return detected_patterns
@@ -386,6 +412,21 @@ class DoubleTopBottomDetector:
                 if variance_pct > price_margin:
                     continue  # Prices too different
 
+                # NUEVO: Validar que el precio ENTRE los extremos no sobrepase el primer extremo
+                # Para double top: el precio entre h1 y h2 no debe superar h1 significativamente
+                # Si lo hace, indica un breakout y el patrón se invalida
+                breakout_tolerance_pct = config.get('doubleTopBottom', {}).get('maxBreakoutPercent', 2.0) / 100.0
+                candles_between = all_candles[h1['candle_index']:h2['candle_index'] + 1]
+
+                if candles_between:
+                    highest_high_between = max(c.get('high', 0) for c in candles_between)
+                    breakout_amount = (highest_high_between - h1_price) / h1_price
+
+                    if breakout_amount > breakout_tolerance_pct:
+                        # El precio sobrepasó el primer extremo - patrón invalidado
+                        print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        continue
+
                 # Validate rejection patterns at both extremes
                 rejection_h1 = self._validate_rejection_pattern(
                     h1['candle'],
@@ -485,6 +526,17 @@ class DoubleTopBottomDetector:
 
                 patterns.append(pattern)
 
+                # Detailed logging for detected pattern
+                print(f"    [PRUEBA_DBT] ✅ DOUBLE TOP detected:")
+                print(f"      Level Price: ${level_price:.2f}")
+                print(f"      First extreme:  ${h1['price']:.2f} @ {h1['timestamp']} (candle {h1['candle_index']}) | Rejection: {rejection_h1['pattern_type']} (quality: {rejection_h1['quality']:.2f}) | Vol Z-Score: {zscore_h1:.2f}")
+                print(f"      Second extreme: ${h2['price']:.2f} @ {h2['timestamp']} (candle {h2['candle_index']}) | Rejection: {rejection_h2['pattern_type']} (quality: {rejection_h2['quality']:.2f}) | Vol Z-Score: {zscore_h2:.2f}")
+                print(f"      Price variance: {variance_pct * 100:.2f}%")
+                print(f"      Candles between: {candles_distance}")
+                print(f"      Duration: {duration_hours:.2f} hours")
+                print(f"      Avg volume: {volume_avg:.2f}")
+                print(f"      Confidence: {confidence:.1f}/100")
+
         return patterns
 
     def _find_double_bottoms(
@@ -540,6 +592,21 @@ class DoubleTopBottomDetector:
 
                 if variance_pct > price_margin:
                     continue
+
+                # NUEVO: Validar que el precio ENTRE los extremos no caiga por debajo del primer extremo
+                # Para double bottom: el precio entre l1 y l2 no debe caer por debajo de l1 significativamente
+                # Si lo hace, indica un breakdown y el patrón se invalida
+                breakout_tolerance_pct = config.get('doubleTopBottom', {}).get('maxBreakoutPercent', 2.0) / 100.0
+                candles_between = all_candles[l1['candle_index']:l2['candle_index'] + 1]
+
+                if candles_between:
+                    lowest_low_between = min(c.get('low', float('inf')) for c in candles_between)
+                    breakdown_amount = (l1_price - lowest_low_between) / l1_price
+
+                    if breakdown_amount > breakout_tolerance_pct:
+                        # El precio cayó por debajo del primer extremo - patrón invalidado
+                        print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        continue
 
                 # Validate rejection patterns
                 rejection_l1 = self._validate_rejection_pattern(
@@ -635,6 +702,17 @@ class DoubleTopBottomDetector:
                 )
 
                 patterns.append(pattern)
+
+                # Detailed logging for detected pattern
+                print(f"    [PRUEBA_DBT] ✅ DOUBLE BOTTOM detected:")
+                print(f"      Level Price: ${level_price:.2f}")
+                print(f"      First extreme:  ${l1['price']:.2f} @ {l1['timestamp']} (candle {l1['candle_index']}) | Rejection: {rejection_l1['pattern_type']} (quality: {rejection_l1['quality']:.2f}) | Vol Z-Score: {zscore_l1:.2f}")
+                print(f"      Second extreme: ${l2['price']:.2f} @ {l2['timestamp']} (candle {l2['candle_index']}) | Rejection: {rejection_l2['pattern_type']} (quality: {rejection_l2['quality']:.2f}) | Vol Z-Score: {zscore_l2:.2f}")
+                print(f"      Price variance: {variance_pct * 100:.2f}%")
+                print(f"      Candles between: {candles_distance}")
+                print(f"      Duration: {duration_hours:.2f} hours")
+                print(f"      Avg volume: {volume_avg:.2f}")
+                print(f"      Confidence: {confidence:.1f}/100")
 
         return patterns
 
@@ -777,9 +855,20 @@ class DoubleTopBottomDetector:
         - Marubozu (body >= 80% of range)
         - White Soldiers / Black Crows (3+ consecutive candles)
         - Big Body (body >= 70% with optional big wick)
+
+        Now includes volume validation to ensure institutional backing.
         """
         lookback_after = config.get('momentumConfirmation', {}).get('lookbackAfterPattern', 10)
         require_momentum = config.get('momentumConfirmation', {}).get('requireMomentum', False)
+
+        # Calculate z-scores for volume validation
+        volume_config = config.get('momentumConfirmation', {}).get('volumeFilter', {})
+        volume_enabled = volume_config.get('enabled', False)
+        z_scores = []
+
+        if volume_enabled:
+            z_period = volume_config.get('zScorePeriod', 20)
+            z_scores = self._calculate_z_scores(all_candles, z_period)
 
         updated_patterns = []
 
@@ -790,11 +879,20 @@ class DoubleTopBottomDetector:
             search_end = min(second_extreme_index + lookback_after, len(all_candles))
             search_range = all_candles[second_extreme_index:search_end]
 
+            # Get z-scores for the search range
+            z_scores_range = z_scores[second_extreme_index:search_end] if z_scores else []
+
             # Determine expected momentum direction
             expected_direction = 'bearish' if pattern.type == 'DOUBLE_TOP' else 'bullish'
 
-            # Search for momentum patterns
-            momentum = self._detect_momentum(search_range, config, expected_direction)
+            # Search for momentum patterns with volume validation
+            momentum = self._detect_momentum(
+                search_range,
+                config,
+                expected_direction,
+                z_scores_range,
+                second_extreme_index
+            )
 
             if momentum['has_momentum']:
                 pattern.entry_signal = momentum
@@ -840,6 +938,8 @@ class DoubleTopBottomDetector:
             most_recent_timestamp = max(p.second_extreme['timestamp'] for p in patterns)
 
         validated_patterns = []
+        patterns_with_bonus = 0
+        patterns_skipped_realtime = 0
 
         for pattern in patterns:
             second_idx = pattern.second_extreme['candle_index']
@@ -849,6 +949,7 @@ class DoubleTopBottomDetector:
             # Skip validation for most recent pattern if apply_to_realtime is False
             # This allows immediate real-time signals without waiting for confirmation
             if not apply_to_realtime and is_most_recent:
+                patterns_skipped_realtime += 1
                 validated_patterns.append(pattern)
                 continue
 
@@ -876,6 +977,7 @@ class DoubleTopBottomDetector:
                     # Strong bearish movement confirmed
                     pattern.confidence += confidence_bonus
                     pattern.confidence = min(100.0, pattern.confidence)  # Cap at 100
+                    patterns_with_bonus += 1
 
             else:  # DOUBLE_BOTTOM
                 # For double bottom, we want price to go UP
@@ -887,8 +989,11 @@ class DoubleTopBottomDetector:
                     # Strong bullish movement confirmed
                     pattern.confidence += confidence_bonus
                     pattern.confidence = min(100.0, pattern.confidence)  # Cap at 100
+                    patterns_with_bonus += 1
 
             validated_patterns.append(pattern)
+
+        print(f"    Post-validation: {len(validated_patterns)} patterns kept, {patterns_with_bonus} got bonus, {patterns_skipped_realtime} skipped (real-time mode)")
 
         return validated_patterns
 
@@ -981,10 +1086,19 @@ class DoubleTopBottomDetector:
         self,
         candles: List[Dict],
         config: Dict,
-        expected_direction: str
+        expected_direction: str,
+        z_scores: List[float] = None,
+        base_index: int = 0
     ) -> Dict:
         """
-        Detect momentum patterns in the given candles
+        Detect momentum patterns in the given candles with volume validation
+
+        Args:
+            candles: List of candles to search
+            config: Configuration dict
+            expected_direction: 'bullish' or 'bearish'
+            z_scores: Optional z-scores for volume validation
+            base_index: Base index offset for z-score lookup
 
         Returns:
             {
@@ -993,10 +1107,14 @@ class DoubleTopBottomDetector:
                 'entry_candle_timestamp': int,
                 'entry_price': float,
                 'direction': str,  # 'LONG' or 'SHORT'
-                'momentum_quality': float
+                'momentum_quality': float,
+                'volume_zscore': float  # Average z-score of momentum candles
             }
         """
         patterns_config = config.get('momentumConfirmation', {}).get('patterns', {})
+        volume_config = config.get('momentumConfirmation', {}).get('volumeFilter', {})
+        volume_enabled = volume_config.get('enabled', False)
+        min_zscore = volume_config.get('zScoreThreshold', 1.0)
 
         for i, candle in enumerate(candles):
             o = candle.get('open', 0)
@@ -1027,13 +1145,22 @@ class DoubleTopBottomDetector:
 
                     if (expected_direction == 'bullish' and is_bullish) or \
                        (expected_direction == 'bearish' and is_bearish):
+
+                        # Volume validation
+                        avg_zscore = 0.0
+                        if volume_enabled and z_scores and i < len(z_scores):
+                            avg_zscore = z_scores[i]
+                            if avg_zscore < min_zscore:
+                                continue  # Skip pattern with insufficient volume
+
                         return {
                             'has_momentum': True,
                             'momentum_pattern': 'BULLISH_MARUBOZU' if is_bullish else 'BEARISH_MARUBOZU',
                             'entry_candle_timestamp': candle['timestamp'],
                             'entry_price': c,
                             'direction': 'LONG' if is_bullish else 'SHORT',
-                            'momentum_quality': body_ratio
+                            'momentum_quality': body_ratio,
+                            'volume_zscore': avg_zscore
                         }
 
             # Check Big Body
@@ -1049,13 +1176,22 @@ class DoubleTopBottomDetector:
 
                     if wicks_ok and ((expected_direction == 'bullish' and is_bullish) or \
                                      (expected_direction == 'bearish' and is_bearish)):
+
+                        # Volume validation
+                        avg_zscore = 0.0
+                        if volume_enabled and z_scores and i < len(z_scores):
+                            avg_zscore = z_scores[i]
+                            if avg_zscore < min_zscore:
+                                continue  # Skip pattern with insufficient volume
+
                         return {
                             'has_momentum': True,
                             'momentum_pattern': 'BIG_BODY_BULLISH' if is_bullish else 'BIG_BODY_BEARISH',
                             'entry_candle_timestamp': candle['timestamp'],
                             'entry_price': c,
                             'direction': 'LONG' if is_bullish else 'SHORT',
-                            'momentum_quality': body_ratio
+                            'momentum_quality': body_ratio,
+                            'volume_zscore': avg_zscore
                         }
 
             # Check Soldiers/Crows (need at least 3 candles)
@@ -1066,13 +1202,23 @@ class DoubleTopBottomDetector:
                 soldiers_crows = self._is_soldiers_or_crows(three_candles, min_body_ratio, expected_direction)
 
                 if soldiers_crows:
+                    # Volume validation (average z-score of the 3 candles)
+                    avg_zscore = 0.0
+                    if volume_enabled and z_scores and i < len(z_scores):
+                        # Average z-score of the 3 candles
+                        z_score_sum = sum(z_scores[j] for j in range(i-2, i+1) if j < len(z_scores))
+                        avg_zscore = z_score_sum / 3
+                        if avg_zscore < min_zscore:
+                            continue  # Skip pattern with insufficient volume
+
                     return {
                         'has_momentum': True,
                         'momentum_pattern': 'WHITE_SOLDIERS' if expected_direction == 'bullish' else 'BLACK_CROWS',
                         'entry_candle_timestamp': candle['timestamp'],
                         'entry_price': c,
                         'direction': 'LONG' if expected_direction == 'bullish' else 'SHORT',
-                        'momentum_quality': 0.9  # High quality for 3-candle patterns
+                        'momentum_quality': 0.9,  # High quality for 3-candle patterns
+                        'volume_zscore': avg_zscore
                     }
 
         return {'has_momentum': False}

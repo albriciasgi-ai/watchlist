@@ -62,7 +62,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           zScoreThresholdFirst: 1.5,   // First extreme usually has higher volume (strong initial move)
           zScoreThresholdSecond: 0.5,  // Second extreme usually has lower volume (weakness/divergence)
           zScorePeriod: 20             // Period for z-score calculation
-        }
+        },
+
+        maxBreakoutPercent: 2.0  // Maximum % price can exceed first extreme between peaks (breakout rejection)
       },
 
       // Phase 2: Momentum Confirmation
@@ -83,6 +85,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
             minBodyRatio: 0.7,
             allowBigWick: true
           }
+        },
+
+        volumeFilter: {
+          enabled: false,
+          zScoreThreshold: 1.0,
+          zScorePeriod: 20
         },
 
         lookbackAfterPattern: 10,
