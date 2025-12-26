@@ -154,9 +154,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.loading = true;
+    const startTime = Date.now();
 
     try {
       console.log(`[${this.symbol}] 🔍 Fetching Double Top/Bottom patterns...`);
+
+      // Timeout de 30 segundos para evitar bloqueos
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
         method: 'POST',
@@ -168,14 +173,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           interval: this.interval,
           days: this.days,
           config: this.config
-        })
+        }),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+
       const result = await response.json();
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
       if (result.success && result.patterns) {
         this.patterns = result.patterns;
-        console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns detected`);
+        console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns detected in ${duration}s`);
 
         if (this.config.debugMode) {
           console.log(`[${this.symbol}] Patterns:`, this.patterns);
@@ -186,7 +195,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       }
 
     } catch (error) {
-      console.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom patterns:`, error);
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      if (error.name === 'AbortError') {
+        console.error(`[${this.symbol}] ⏱️ Double Top/Bottom detection timeout after ${duration}s`);
+      } else {
+        console.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom patterns after ${duration}s:`, error);
+      }
       this.patterns = [];
     } finally {
       this.loading = false;

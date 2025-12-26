@@ -166,24 +166,41 @@ const DoubleTopBottomSettings = ({
   }, [symbol]);
 
   useEffect(() => {
-    // Notify parent of config changes and save to localStorage
-    // Debounce este log también para evitar spam
+    // Solo guardar en localStorage, NO notificar al parent
+    // El parent solo se notificará cuando el usuario presione "Save & Close"
+    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
+
+    // Debounce del log (solo para logging)
     if (saveLogTimerRef.current) {
       clearTimeout(saveLogTimerRef.current);
     }
 
     saveLogTimerRef.current = setTimeout(() => {
-      console.log(`[PRUEBA_DBT] Saving config to localStorage for ${symbol}`);
+      console.log(`[PRUEBA_DBT] Config saved to localStorage for ${symbol}`);
     }, 500);
 
-    if (onConfigChange) {
-      onConfigChange(config);
-    }
-    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
+    // Cleanup
+    return () => {
+      if (saveLogTimerRef.current) {
+        clearTimeout(saveLogTimerRef.current);
+      }
+    };
   }, [config, symbol]);
 
   const handleSave = () => {
-    console.log(`[PRUEBA_DBT] ${symbol} - Saving Double Top/Bottom configuration`, config);
+    console.log(`[PRUEBA_DBT] ${symbol} - User clicked Save & Close - will reload patterns`);
+
+    // Cancelar timer pendiente
+    if (saveLogTimerRef.current) {
+      clearTimeout(saveLogTimerRef.current);
+    }
+
+    // Notificar al parent con la configuración final
+    // Esto disparará la recarga de patrones desde el backend
+    if (onConfigChange) {
+      onConfigChange(config);
+    }
+
     onClose();
   };
 

@@ -112,6 +112,7 @@ const Watchlist = () => {
   // 🎯 NUEVO: Estado para Double Top/Bottom Settings
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
+  const [isDTBReloading, setIsDTBReloading] = useState(false); // Estado de carga
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -287,6 +288,12 @@ const Watchlist = () => {
     setShowDoubleTopBottomSettings(true);
   };
 
+  // 🎯 Handler para cerrar Double Top/Bottom Settings
+  const handleCloseDoubleTopBottomSettings = () => {
+    setShowDoubleTopBottomSettings(false);
+    setSelectedSymbolForDTB(null);
+  };
+
   // 📈 NUEVO: Handlers para cambio de config
   const handleVWAPConfigChange = (config, saveAsOverride = true) => {
     if (saveAsOverride) {
@@ -405,22 +412,35 @@ const Watchlist = () => {
   };
 
   // 🎯 NUEVO: Handler para cambio de config de Double Top/Bottom
+  // Se llama SOLO cuando el usuario presiona "Save & Close"
   const handleDoubleTopBottomConfigChange = async (config) => {
     const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
     if (manager) {
       const dtbIndicator = manager.indicators.find(ind => ind.name === "Double Top/Bottom");
       if (dtbIndicator) {
+        // Actualizar config inmediatamente (localStorage)
         dtbIndicator.updateConfig(config);
         console.log(`[Watchlist] Updated Double Top/Bottom config for ${selectedSymbolForDTB}`);
 
-        // Recargar patrones con la nueva configuración
+        // Recargar patrones con la nueva configuración INMEDIATAMENTE (solo una vez)
         if (dtbIndicator.enabled) {
-          console.log(`[Watchlist] Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
-          await dtbIndicator.fetchData();
+          setIsDTBReloading(true); // Mostrar indicador de carga
+          const startTime = Date.now();
+          console.log(`[Watchlist] 🔄 Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
 
-          // Forzar redibujado del chart
-          if (manager.requestRedraw) {
-            manager.requestRedraw();
+          try {
+            await dtbIndicator.fetchData();
+            const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+            console.log(`[Watchlist] ✅ Patterns reloaded for ${selectedSymbolForDTB} in ${duration}s`);
+
+            // Forzar redibujado del chart
+            if (manager.requestRedraw) {
+              manager.requestRedraw();
+            }
+          } catch (error) {
+            console.error(`[Watchlist] ❌ Error reloading patterns:`, error);
+          } finally {
+            setIsDTBReloading(false); // Ocultar indicador de carga
           }
         }
       }
@@ -670,6 +690,37 @@ const Watchlist = () => {
             animation: 'spin 0.8s linear infinite'
           }}></div>
           ⏳ Precargando indicadores... {preloadProgress.current}/{preloadProgress.total} ({preloadProgress.total > 0 ? Math.round(preloadProgress.current / preloadProgress.total * 100) : 0}%)
+        </div>
+      )}
+
+      {/* Banner de recarga de Double Top/Bottom */}
+      {isDTBReloading && (
+        <div style={{
+          position: 'fixed',
+          top: '60px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 10000,
+          fontSize: '14px',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{
+            width: '16px',
+            height: '16px',
+            border: '2px solid rgba(255,255,255,0.3)',
+            borderTop: '2px solid white',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite'
+          }}></div>
+          🔄 Recargando patrones Double Top/Bottom para {selectedSymbolForDTB}...
         </div>
       )}
 
@@ -1101,19 +1152,13 @@ const Watchlist = () => {
 
       {/* 🎯 NUEVO: Modal de Double Top/Bottom Settings */}
       {showDoubleTopBottomSettings && selectedSymbolForDTB && (
-        <div className="modal-overlay" onClick={() => {
-          setShowDoubleTopBottomSettings(false);
-          setSelectedSymbolForDTB(null);
-        }}>
+        <div className="modal-overlay" onClick={handleCloseDoubleTopBottomSettings}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Double Top/Bottom Settings - {selectedSymbolForDTB}</h3>
               <button
                 className="modal-close-btn"
-                onClick={() => {
-                  setShowDoubleTopBottomSettings(false);
-                  setSelectedSymbolForDTB(null);
-                }}
+                onClick={handleCloseDoubleTopBottomSettings}
               >
                 ✕
               </button>
@@ -1122,10 +1167,7 @@ const Watchlist = () => {
               <DoubleTopBottomSettings
                 symbol={selectedSymbolForDTB}
                 onConfigChange={handleDoubleTopBottomConfigChange}
-                onClose={() => {
-                  setShowDoubleTopBottomSettings(false);
-                  setSelectedSymbolForDTB(null);
-                }}
+                onClose={handleCloseDoubleTopBottomSettings}
                 initialConfig={(() => {
                   const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
                   const dtbIndicator = manager?.indicators.find(ind => ind.name === "Double Top/Bottom");
