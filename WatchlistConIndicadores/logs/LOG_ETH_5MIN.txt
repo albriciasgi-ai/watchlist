@@ -1,0 +1,180 @@
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87024.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2899.36
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87003.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87022.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87023.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87025.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87012.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2898.3
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87016.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87021.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87012
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87019.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87039.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2899.03
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87044.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87039.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomSettings.jsx:138 [ETHUSDT] Saving Double Top/Bottom configuration {enabled: true, doubleTopBottom: {…}, momentumConfirmation: {…}, filters: {…}, visualization: {…}, …}
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87027.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2898.18
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87018.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87013
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87019.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87025.8
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87030.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87032.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2898.66
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87038.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2898.18
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87025.8
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomSettings.jsx:138 [ETHUSDT] Saving Double Top/Bottom configuration {enabled: true, doubleTopBottom: {…}, momentumConfirmation: {…}, filters: {…}, visualization: {…}, …}
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87015
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2897.18
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87001.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 86993
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2895.87
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87011.8
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+MiniChart.jsx:35 [331] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [332] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [333] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [334] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 86997.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2896.5
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 86989.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+MiniChart.jsx:35 [429] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766707200000, datetime: '2025-12-25 19:00:00'}
+MiniChart.jsx:35 [429] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [430] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [431] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [475] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [476] 🕯️  ETHUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:35 [488] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [489] 🕯️  ETHUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:35 [569] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766707200000, datetime: '2025-12-25 19:00:00'}
+MiniChart.jsx:35 [570] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [571] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [572] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2895.64
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)

@@ -1,0 +1,31 @@
+{
+  "symbol": "BTCUSDT",
+  "interval": "1h",
+  "days": 7,
+  "config": {
+    "doubleTopBottom": {
+      "lookbackCandles": 100,
+      "candlesPerExtreme": 3,
+      "priceMarginPercent": 5.0,
+      "minCandlesBetween": 3,
+      "maxCandlesBetween": 80,
+      "rejectionPatterns": {
+        "hammer": true,
+        "shootingStar": true,
+        "bullishEngulfing": true,
+        "bearishEngulfing": true
+      },
+      "volumeFilter": {
+        "enabled": false,
+        "zScoreThreshold": 1.5,
+        "zScorePeriod": 20
+      }
+    },
+    "filters": {
+      "minConfidence": 20,
+      "requireBothRejections": false,
+      "minPatternDuration": 1,
+      "maxPatternDuration": 168
+    }
+  }
+}

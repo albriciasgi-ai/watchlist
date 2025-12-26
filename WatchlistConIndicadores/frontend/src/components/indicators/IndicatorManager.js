@@ -16,6 +16,7 @@ import VWAPIndicator from "./VWAPIndicator";
 import FibonacciLevelCalculator from "./FibonacciLevelCalculator";
 import LevelSourceManager from "./LevelSourceManager";
 import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
+import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 
 class IndicatorManager {
@@ -62,6 +63,7 @@ class IndicatorManager {
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
+      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days),
       this.supportResistanceIndicator,
       new VWAPIndicator(this.symbol, this.interval, this.days),
       new FibonacciLevelCalculator(this.symbol, this.interval, this.days),
@@ -229,7 +231,7 @@ class IndicatorManager {
           }
         } else {
           // Indicadores no precargables (VWAP, Fibonacci, etc.)
-          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns"];
+          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns", "Double Top/Bottom"];
 
           if (needsFetch.includes(name) && indicator.fetchData) {
             console.log(`[${this.symbol}] 📥 Cargando datos para ${name}...`);

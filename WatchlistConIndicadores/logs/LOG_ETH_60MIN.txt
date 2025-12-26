@@ -1,0 +1,1423 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+ [useProximityAlerts] Enabled alerts: 0
+ [useProximityAlerts] No enabled alerts, stopping polling
+ [340] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [340] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔧 Creando nuevo IndicatorManager
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🎯 LevelSourceManager inicializado
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ⚪ Range Detection deshabilitado por default
+ [342] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
+ [343] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [343] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [ETHUSDT] 🔧 Creando nuevo IndicatorManager
+ [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] 🎯 LevelSourceManager inicializado
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ETHUSDT] ⚪ Range Detection deshabilitado por default
+ [344] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+ 🚀 Iniciando precarga de indicadores en background...
+ [Preloader] 🚀 Iniciando precarga para 2 símbolos
+ [345] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [345] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [ETHUSDT] 🧹 IndicatorManager destruido
+ [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+ [useProximityAlerts] Enabled alerts: 0
+ [useProximityAlerts] No enabled alerts, stopping polling
+ [345] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [346] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔧 Creando nuevo IndicatorManager
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🎯 LevelSourceManager inicializado
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ⚪ Range Detection deshabilitado por default
+ [347] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
+ [347] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [347] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [ETHUSDT] 🔧 Creando nuevo IndicatorManager
+ [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] 🎯 LevelSourceManager inicializado
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ETHUSDT] ⚪ Range Detection deshabilitado por default
+ [349] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+ 🚀 Iniciando precarga de indicadores en background...
+ [Preloader] 🚀 Iniciando precarga para 2 símbolos
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+ [BTCUSDT] Fetching Fibonacci levels...
+ [BTCUSDT] Fetching continuation patterns...
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [354] 📊 BTCUSDT | ✅ Indicadores inicializados 
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+ [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+ [ETHUSDT] Fetching Fibonacci levels...
+ [ETHUSDT] Fetching continuation patterns...
+ [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [359] 📊 ETHUSDT | ✅ Indicadores inicializados 
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+ [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+ [BTCUSDT] Fetching Fibonacci levels...
+ [BTCUSDT] Fetching continuation patterns...
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [364] 📊 BTCUSDT | ✅ Indicadores inicializados 
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+ [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+ [ETHUSDT] Fetching Fibonacci levels...
+ [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [368] 📊 ETHUSDT | ✅ Indicadores inicializados 
+ [Preloader] 💾 BTCUSDT Open Interest - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Open Interest - desde IndexedDB
+ [Preloader] 💾 BTCUSDT Open Interest - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Open Interest - desde IndexedDB
+ [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
+ [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
+ ✅ Precarga completada en 0.064s
+ [Preloader] ✅ Precarga completada en 0.063s (6 exitosos, 0 fallidos)
+ [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
+ [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
+ [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
+ ✅ Precarga completada en 0.068s
+ [Preloader] ✅ Precarga completada en 0.068s (6 exitosos, 0 fallidos)
+ [Preloader] 🧹 Limpiados 0 caches expirados
+ [Preloader] 🧹 Limpiados 0 caches expirados
+ [BTCUSDT] ✅ VWAP loaded: 2160 points
+ [BTCUSDT] ✅ Fibonacci loaded: downtrend
+ [BTCUSDT] ✅ Fibonacci loaded: downtrend
+ [ETHUSDT] ✅ Fibonacci loaded: downtrend
+ [ETHUSDT] ✅ VWAP loaded: 2160 points
+ WebSocket Manager conectado [60]
+ [ETHUSDT] ✅ Fibonacci loaded: downtrend
+ [285] 🕯️  BTCUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [286] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [073] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [074] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [074] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [074] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.62
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [120] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [121] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [121] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [121] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87894.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] ✅ VWAP loaded: 2160 points
+ [ETHUSDT] ✅ VWAP loaded: 2160 points
+ [457] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [458] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [458] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [458] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [637] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [637] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [637] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [637] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.32
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.5
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87897.4
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87900.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.12
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87897.9
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87891.2
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87886.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87885
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87878.2
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87883.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87890.4
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87892.8
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87897.9
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87900
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87902.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87907.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.61
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87914.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87914.5
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87907.6
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87900
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87891.5
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2946.32
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87889
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87882.1
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87880.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2945.37
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2945.53
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87878
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87866
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2945.42
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87871.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87878
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87871.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87865.2
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [348] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [349] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [349] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [349] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87859.3
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [564] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [565] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [565] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [565] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [622] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [622] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [622] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [623] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87846.3
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [045] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [047] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [048] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [048] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [618] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [619] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [619] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [619] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2945.9
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [668] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [669] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [669] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [669] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87863.9
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [093] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [094] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada Object
+ [094] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [319] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [319] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+ [319] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [049] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [050] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [051] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [051] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [786] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [786] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [786] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [786] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [988] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [988] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [989] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [989] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87878.8
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [050] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [051] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [052] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [052] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [967] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [967] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [967] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [967] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2942.65
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [764] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [764] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [764] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [764] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87789.3
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [049] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [051] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [052] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [052] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [689] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [689] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [689] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [689] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2941.27
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [953] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [953] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [953] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [954] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87832.7
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [047] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [048] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [049] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [050] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [652] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [652] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [652] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [652] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [721] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [721] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [722] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [722] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87824.2
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87796.3
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [983] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [984] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+ [985] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+ [986] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+ [ETHUSDT] ⏭️ Skipping cleanup (external manager)
+ [987] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [988] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+ [988] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+ [989] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 87790
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+ [355] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+ [939] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [939] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [939] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [939] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [253] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [253] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [254] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [254] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2939.93
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2939.49
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [ETHUSDT] ⏭️ Skipping cleanup (external manager)
+ [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [ETHUSDT] 📍 Current price: 2939.5
+ [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+ [581] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [582] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [ETHUSDT] 🧹 IndicatorManager destruido
+ [582] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [582] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔧 Creando nuevo IndicatorManager
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🎯 LevelSourceManager inicializado
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ⚪ Range Detection deshabilitado por default
+ [588] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
+ [589] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [589] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [ETHUSDT] 🔧 Creando nuevo IndicatorManager
+ [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] 🎯 LevelSourceManager inicializado
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ETHUSDT] ⚪ Range Detection deshabilitado por default
+ [589] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+ [BTCUSDT] Fetching Fibonacci levels...
+ [BTCUSDT] Fetching continuation patterns...
+ [BTCUSDT] 📥 Cargando datos para Double Top/Bottom...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:47 [594] 📊 BTCUSDT | ✅ Indicadores inicializados 
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+MiniChart.jsx:1282 [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
+RejectionPatternIndicator.js:147 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+VWAPIndicator.js:54 [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
+FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
+IndicatorManager.js:237 [ETHUSDT] 📥 Cargando datos para Double Top/Bottom...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+MiniChart.jsx:1320 [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:47 [598] 📊 ETHUSDT | ✅ Indicadores inicializados 
+MiniChart.jsx:35 [905] 🕯️  BTCUSDT | 🆕 Primera vela en progreso Object
+WebSocketManager.js:40 âœ“ Suscrito: 
+FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
+VWAPIndicator.js:68 [BTCUSDT] ✅ VWAP loaded: 2160 points
+VWAPIndicator.js:68 [ETHUSDT] ✅ VWAP loaded: 2160 points
+MiniChart.jsx:35 [794] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:35 [795] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:1243 [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+MiniChart.jsx:47 [795] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+MiniChart.jsx:41 [796] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+MiniChart.jsx:1438 [ETHUSDT] ⏭️ Skipping cleanup (external manager)
+MiniChart.jsx:35 [796] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+MiniChart.jsx:35 [796] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:1243 [ETHUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+MiniChart.jsx:47 [797] 📊 ETHUSDT | ✅ IndicatorManager externo conectado 
+MiniChart.jsx:41 [797] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
+MiniChart.jsx:35 [682] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [683] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [683] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: NO
+MiniChart.jsx:35 [683] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2945.45
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+MiniChart.jsx:35 [440] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [441] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [441] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [441] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87789.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+MiniChart.jsx:35 [358] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+MiniChart.jsx:35 [359] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2939.83
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+MiniChart.jsx:35 [876] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [876] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [877] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [877] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+IndicatorManager.js:239 [BTCUSDT] ✅ Datos de Double Top/Bottom cargados
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+MiniChart.jsx:35 [195] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [195] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [196] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [196] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+IndicatorManager.js:239 [ETHUSDT] ✅ Datos de Double Top/Bottom cargados
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2939.49
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.8
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87791.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87792.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2939.61
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [ETHUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for ETHUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for ETHUSDT...
+DoubleTopBottomIndicator.js:133 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87799.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87801.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomSettings.jsx:138 [ETHUSDT] Saving Double Top/Bottom configuration {enabled: true, doubleTopBottom: {…}, momentumConfirmation: {…}, filters: {…}, visualization: {…}, …}
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87801.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87801.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87801.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87798.5
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87798.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87793.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87790.8
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [ETHUSDT] ✅ Double Top/Bottom: 0 patterns detected
+MiniChart.jsx:1273 [ETHUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87784.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)

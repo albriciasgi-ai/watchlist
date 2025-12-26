@@ -33,16 +33,16 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
-    "1": 5,      # 5 min -> máx 5 días
-    "3": 10,     # 3 min -> máx 10 días
-    "5": 5,      # 5 min -> máx 5 días
-    "15": 15,    # 15 min -> máx 15 días
-    "30": 30,    # 30 min -> máx 30 días
-    "60": 120,   # 1 hora -> máx 120 días
-    "120": 180,  # 2 horas -> máx 180 días
-    "240": 300,  # 4 horas -> máx 300 días
-    "D": 730,    # 1 día -> máx 730 días
-    "W": 730,    # 1 semana -> máx 730 días
+    "1": 5,       # 1 min -> máx 5 días
+    "3": 10,      # 3 min -> máx 10 días
+    "5": 30,      # 5 min -> máx 30 días
+    "15": 90,     # 15 min -> máx 90 días
+    "30": 150,    # 30 min -> máx 150 días
+    "60": 360,    # 1 hora -> máx 360 días
+    "120": 180,   # 2 horas -> máx 180 días
+    "240": 720,   # 4 horas -> máx 720 días
+    "D": 1440,    # 1 día -> máx 1440 días (4 años)
+    "W": 730,     # 1 semana -> máx 730 días
 }
 
 def load_cache(symbol: str, interval: str, indicator: str):
@@ -641,6 +641,117 @@ async def send_pattern_alert_endpoint(request: Request):
         traceback.print_exc()
         return {"success": False, "error": str(e)}
 
+
+
+# ==================== DOUBLE TOP/BOTTOM ENDPOINTS ====================
+
+from double_topbottom_detector import DoubleTopBottomDetector, serialize_pattern as serialize_double_pattern
+
+double_detector = DoubleTopBottomDetector()
+
+
+@app.post("/api/double-topbottom/detect")
+async def detect_double_topbottom(request: Request):
+    """
+    Detects double top/bottom patterns
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "60",
+      "days": 90,
+      "config": {
+        "doubleTopBottom": {
+          "lookbackCandles": 50,
+          "candlesPerExtreme": 5,
+          "priceMarginPercent": 2.0,
+          "minCandlesBetween": 5,
+          "maxCandlesBetween": 50,
+          "rejectionPatterns": {
+            "hammer": true,
+            "shootingStar": true,
+            "bullishEngulfing": true,
+            "bearishEngulfing": true
+          },
+          "volumeFilter": {
+            "enabled": false,
+            "zScoreThreshold": 1.5,
+            "zScorePeriod": 20
+          }
+        },
+        "momentumConfirmation": {
+          "enabled": false,
+          "patterns": {
+            "marubozu": {"enabled": true, "minBodyRatio": 0.8},
+            "soldiers_crows": {"enabled": true, "minBodyRatio": 0.6},
+            "bigBody": {"enabled": true, "minBodyRatio": 0.7, "allowBigWick": true}
+          },
+          "lookbackAfterPattern": 10,
+          "requireMomentum": false
+        },
+        "filters": {
+          "minConfidence": 60,
+          "requireBothRejections": true,
+          "minPatternDuration": 3,
+          "maxPatternDuration": 72
+        }
+      }
+    }
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 90)
+        config = body.get('config', {})
+
+        if not symbol:
+            return {
+                "success": False,
+                "error": "Symbol is required"
+            }
+
+        print(f"[DOUBLE TOP/BOTTOM] Detecting patterns for {symbol} {interval}")
+
+        # Get historical candles
+        historical = await get_historical(symbol, interval, days)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+
+        # Detect patterns
+        patterns = double_detector.detect_patterns(
+            symbol,
+            candles,
+            config
+        )
+
+        # Serialize patterns
+        serialized_patterns = [serialize_double_pattern(p) for p in patterns]
+
+        print(f"[DOUBLE TOP/BOTTOM] [OK] Detected {len(patterns)} patterns for {symbol}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "patterns": serialized_patterns,
+            "totalPatterns": len(patterns)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Double top/bottom detection: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 
 # ==================== SUPPORT & RESISTANCE ENDPOINTS ====================

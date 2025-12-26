@@ -40,8 +40,77 @@ profit  7 (lógica al revés)  41%
 loss 10  (
 mix  1
 
+CONTINUATION PATTERNS:
+1.1. White soldiers/blackcrows (sin importar donde van los patrones)
+profit  6  ---- 40%
+loss  9 
+mix  
 
+1.2. Marubozu / engulfing   (sin importar donde van los patrones)
+profit  4 ----- 36%
+loss  7 
+mix  
+
+2.1. White soldiers/blackcrows (rompiendo rangos)
+profit  0  ---- 0 %
+loss   1
+mix  1
+
+2.2. Marubozu / engulfing(rompiendo rangos)
+profit  2 -----50%
+loss   2
+mix  1
+
+3.1. Marubozu / engulfing (breakouts - sin mirar el volumen // evaluar otra opción igual pero con el vol.respuesta)
+profit 29  ----- 60%
+loss   19
+EVALUADO EN 90 DÍAS!!!!
+
+3.1. Marubozu / engulfing (analizando liquidez)
+profit   ----- %
+loss   
+mix  
+
+
+INDICADOR REJECTION PATTERNS, sólo teniendo en cuenta los swing highs/lows: 41%
+take profit 16
+stop loss 21
+
+Teniendo en cuenta el z-score de volumen (en 1zscore y 20 periodos --- timeframe 15 minutos): 54%
+take profit 5 (r/r 2:1)
+stop loss 6
+mix 1
+Teniendo en cuenta el z-score de volumen (en 2zscorey 50 periodos): 12.5%
+take profit 1 (r/r 4:1)
+stop loss 7
+mix 1
+Teniendo en cuenta el z-score de volumen (en 1zscore y 50 periodos -- timeframe 15 minutos): 62.5%
+take profit 5 (r/r 2:1)
+stop loss 3
+mix 2
+Teniendo en cuenta el z-score de volumen (en 1zscore y 50 periodos // 1 hora): 33%
+take profit 2 (r/r 2:1)
+stop loss 4
+mix 
+Teniendo en cuenta el z-score de volumen --42 %-- (en 1zscore y 50 periodos // 5 minutos - por los días de la aplicación sólo son 5 días)
+take profit 3(r/r 2:1)
+stop loss 4
+mix 2 (hacen r/r 1:1 y luego se devuelve)
+
+Teniendo en cuenta el z-score de volumen --50 %-- (en 2zscore y 50 periodos // 5 minutos - por los días de la aplicación sólo son 5 días)
+take profit 3(r/r 2:1)
+stop loss 4
+mix 2 (hacen r/r 1:1 y luego se devuelve)
 *REVISAR SI LAS MARUBOZU PUEDEN FUNCIONAR MEJOR CON LA VWAP O LA EMA EN LA DIRECCIÓN DE LA MARUBOZÚ (ACORDE CON LA TENDENCIA)
+
+==========
+==========
+
+en 90 días:
+Teniendo en cuenta el z-score de volumen (en 1zscore y 50 periodos -- timeframe 15 minutos): 37 %
+take profit 26 (r/r 2:1)
+stop loss 44
+mix 
 
 
 Patrones de reversal en el mismo indicador
@@ -53,6 +122,16 @@ profit  1 (lógica invertida)
 loss    1 (
 mix  
 
+
+
+
+APRENDIZAJES DE LAS DIVERSAS ESTRATEGIAS EN 90 DÍAS:
+1. Hasta ahora la mejor es la de breakouts de rangos // Es muy útil cuando se tiene tendencia
+2. Necesitamos en el rejection patterns escoger cuándo tener en cuenta las señales long y las short para mejorar
+	la efectividad del indicador
+3. Falta probar la estrategia de liquidez: puede ser cuando barre un low/high y luego trata de hacer un nuevo low/high
+		pero no lo logra y hace un rejection pattern. Sería como un failure?
+	
 * CUADRAR PARA QUE LOS PATRONES DE REVERSAL SEAN EN LOS FRACTALES
 * EL BULL/BEAR ENGULFING PUEDEN SER ÚTILES EN EL MOMENTO DE ROMPER LOS RANGOS-
 * EL BULL/BEAR ENGULFING PUEDEN SER UTILES EN LA PARTE DE ABAJO/ARRIBA DEL RANGO, 

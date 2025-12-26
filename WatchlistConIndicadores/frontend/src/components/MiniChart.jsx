@@ -130,7 +130,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -1676,6 +1676,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               CP
             </button>
           )}
+          {indicatorStates && indicatorStates["Double Top/Bottom"] && (
+            <button
+              className="dtb-settings-btn"
+              onClick={() => onOpenDoubleTopBottomSettings(indicatorManagerRef.current)}
+              title="Configurar Double Top/Bottom"
+              style={{
+                background: '#FF5722',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              DTB
+            </button>
+          )}
           <button
             className="fixed-range-manager-btn"
             onClick={() => setShowFixedRangeManager(!showFixedRangeManager)}
@@ -1803,6 +1823,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenVWAPSettings={onOpenVWAPSettings}
               onOpenFibonacciSettings={onOpenFibonacciSettings}
               onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
+              onOpenDoubleTopBottomSettings={onOpenDoubleTopBottomSettings}
               rejectionPatternConfig={rejectionPatternConfig}
             />
           </div>

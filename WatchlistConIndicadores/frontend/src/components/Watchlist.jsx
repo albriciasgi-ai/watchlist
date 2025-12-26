@@ -4,6 +4,7 @@ import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
+import DoubleTopBottomSettings from "./DoubleTopBottomSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
 import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
@@ -15,33 +16,28 @@ import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 
 const symbols = [
-  "BTCUSDT", "ETHUSDT", "TRXUSDT", "XRPUSDT", "SOLUSDT", "AAVEUSDT",
-  "GALAUSDT", "OPUSDT", "ADAUSDT", "SUIUSDT", "POLUSDT", "POLYXUSDT",
-  "CAKEUSDT", "PENDLEUSDT", "TONUSDT", "UNIUSDT", "ARBUSDT", "DOTUSDT",
-  "AVAXUSDT", "BNBUSDT", "PEOPLEUSDT", "HBARUSDT", "ASTRUSDT", "MASKUSDT",
-  "TRBUSDT", "INJUSDT", "ATOMUSDT", "GRTUSDT",
-  "ALGOUSDT"
+  "BTCUSDT", "ETHUSDT"
 ];
 
 // CORREGIDO: Límites máximos de días por timeframe (deben coincidir con el backend)
 const MAX_DAYS_BY_INTERVAL = {
-  "5": 5,
-  "15": 15,
-  "30": 30,
-  "60": 120,
-  "240": 300,
-  "D": 730,
+  "5": 30,
+  "15": 90,
+  "30": 150,
+  "60": 360,
+  "240": 720,
+  "D": 1440,
   "W": 730
 };
 
 // CORREGIDO: Opciones de días permitidas por timeframe
 const DAYS_OPTIONS_BY_INTERVAL = {
-  "5": [1, 2, 5],
-  "15": [1, 2, 5, 10, 15],
-  "30": [1, 2, 5, 10, 30],
-  "60": [1, 2, 5, 10, 30, 60, 90, 120],
-  "240": [1, 2, 5, 10, 30, 60, 90, 180, 300],
-  "D": [30, 60, 90, 180, 365, 730],
+  "5": [1, 2, 5, 7, 10, 15, 20, 30],
+  "15": [1, 2, 5, 7, 10, 15, 30, 60, 90],
+  "30": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 150],
+  "60": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 180, 270, 360],
+  "240": [1, 2, 5, 7, 10, 15, 30, 60, 90, 180, 270, 360, 540, 720],
+  "D": [30, 60, 90, 180, 270, 365, 540, 720, 1080, 1440],
   "W": [90, 180, 365, 730]
 };
 
@@ -55,7 +51,8 @@ const Watchlist = () => {
     "Open Interest": false,
     "VWAP": false,
     "Fibonacci": false,
-    "Continuation Patterns": false
+    "Continuation Patterns": false,
+    "Double Top/Bottom": false
   });
 
   // 🚀 Estados para precarga de indicadores
@@ -111,6 +108,10 @@ const Watchlist = () => {
   const [selectedSymbolForFib, setSelectedSymbolForFib] = useState(null);
   const [showContinuationPatternSettings, setShowContinuationPatternSettings] = useState(false);
   const [selectedSymbolForCP, setSelectedSymbolForCP] = useState(null);
+
+  // 🎯 NUEVO: Estado para Double Top/Bottom Settings
+  const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
+  const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
 
   // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
   useEffect(() => {
@@ -274,6 +275,18 @@ const Watchlist = () => {
     setShowContinuationPatternSettings(true);
   };
 
+  // 🎯 NUEVO: Handler para abrir Double Top/Bottom Settings
+  const handleOpenDoubleTopBottomSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForDTB(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowDoubleTopBottomSettings(true);
+  };
+
   // 📈 NUEVO: Handlers para cambio de config
   const handleVWAPConfigChange = (config, saveAsOverride = true) => {
     if (saveAsOverride) {
@@ -388,6 +401,29 @@ const Watchlist = () => {
           console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
         }
       });
+    }
+  };
+
+  // 🎯 NUEVO: Handler para cambio de config de Double Top/Bottom
+  const handleDoubleTopBottomConfigChange = async (config) => {
+    const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
+    if (manager) {
+      const dtbIndicator = manager.indicators.find(ind => ind.name === "Double Top/Bottom");
+      if (dtbIndicator) {
+        dtbIndicator.updateConfig(config);
+        console.log(`[Watchlist] Updated Double Top/Bottom config for ${selectedSymbolForDTB}`);
+
+        // Recargar patrones con la nueva configuración
+        if (dtbIndicator.enabled) {
+          console.log(`[Watchlist] Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
+          await dtbIndicator.fetchData();
+
+          // Forzar redibujado del chart
+          if (manager.requestRedraw) {
+            manager.requestRedraw();
+          }
+        }
+      }
     }
   };
 
@@ -737,6 +773,15 @@ const Watchlist = () => {
               Continuation Patterns
             </label>
 
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Double Top/Bottom"]}
+                onChange={() => toggleIndicator("Double Top/Bottom")}
+              />
+              Double Top/Bottom
+            </label>
+
             {/* 🧪 Test Alert Buttons */}
             <button
               onClick={handleTestAlert}
@@ -805,6 +850,7 @@ const Watchlist = () => {
             onOpenVWAPSettings={(indicatorManagerRef) => handleOpenVWAPSettings(sym, indicatorManagerRef)}
             onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
             onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
+            onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
           />
         ))}
@@ -1047,6 +1093,44 @@ const Watchlist = () => {
                 })()}
                 onConfigChange={handleContinuationPatternConfigChange}
                 currentSymbol={selectedSymbolForCP}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🎯 NUEVO: Modal de Double Top/Bottom Settings */}
+      {showDoubleTopBottomSettings && selectedSymbolForDTB && (
+        <div className="modal-overlay" onClick={() => {
+          setShowDoubleTopBottomSettings(false);
+          setSelectedSymbolForDTB(null);
+        }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Double Top/Bottom Settings - {selectedSymbolForDTB}</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => {
+                  setShowDoubleTopBottomSettings(false);
+                  setSelectedSymbolForDTB(null);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <DoubleTopBottomSettings
+                symbol={selectedSymbolForDTB}
+                onConfigChange={handleDoubleTopBottomConfigChange}
+                onClose={() => {
+                  setShowDoubleTopBottomSettings(false);
+                  setSelectedSymbolForDTB(null);
+                }}
+                initialConfig={(() => {
+                  const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
+                  const dtbIndicator = manager?.indicators.find(ind => ind.name === "Double Top/Bottom");
+                  return dtbIndicator?.config;
+                })()}
               />
             </div>
           </div>
