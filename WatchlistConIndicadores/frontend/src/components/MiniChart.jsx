@@ -156,6 +156,29 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       setFullscreenOiMode(oiMode);
     }
   }, [oiMode]);
+
+  // 🎯 Ajustar zoom al abrir fullscreen
+  useEffect(() => {
+    if (isFullscreen && canvasRef.current && candlesRef.current.length > 0) {
+      // Resetear escala de precios para recalcular en fullscreen
+      priceScaleRef.current.minPrice = null;
+      priceScaleRef.current.maxPrice = null;
+
+      // Ajustar zoom para mostrar ~1222 velas en fullscreen
+      const rect = canvasRef.current.getBoundingClientRect();
+      const chartWidth = rect.width - 75;
+      const targetCandles = 1222;
+      const calculatedZoom = chartWidth / (targetCandles * 8);
+      viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
+
+      log.candle(symbol, `🎯 Fullscreen: zoom ajustado a ${viewStateRef.current.zoom.toFixed(2)} para ~${targetCandles} velas`);
+
+      // Forzar redibujado
+      setTimeout(() => {
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      }, 100);
+    }
+  }, [isFullscreen]);
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
@@ -163,6 +186,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [drawingsVersion, setDrawingsVersion] = useState(0); // ✅ FIX: Estado para forzar re-render al cargar drawings
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
+  const priceScaleRef = useRef({ minPrice: null, maxPrice: null, lastZoom: 1 }); // Guardar escala de precios
 
   const getBybitInterval = (interval) => {
     const map = {
@@ -324,10 +348,29 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     if (visibleCandles.length === 0) return;
 
-    // 🎯 CAMBIO: Usar TODAS las velas del período para el rango de precios (no solo las visibles)
-    // Esto evita el auto-zoom vertical durante el paneo y mantiene el contexto
-    const minPrice = Math.min(...displayCandles.map(d => d.low));
-    const maxPrice = Math.max(...displayCandles.map(d => d.high));
+    // 🎯 Escala de precios inteligente:
+    // - Recalcular SOLO cuando cambia el zoom (zoom in/out)
+    // - Mantener la misma escala durante paneo horizontal
+    let minPrice, maxPrice;
+
+    const currentZoom = viewStateRef.current.zoom;
+    const zoomChanged = Math.abs(currentZoom - priceScaleRef.current.lastZoom) > 0.001;
+
+    if (zoomChanged || priceScaleRef.current.minPrice === null) {
+      // Zoom cambió o primera carga: recalcular escala basándose en velas visibles
+      minPrice = Math.min(...visibleCandles.map(d => d.low));
+      maxPrice = Math.max(...visibleCandles.map(d => d.high));
+
+      // Guardar para mantener durante paneo
+      priceScaleRef.current.minPrice = minPrice;
+      priceScaleRef.current.maxPrice = maxPrice;
+      priceScaleRef.current.lastZoom = currentZoom;
+    } else {
+      // Zoom no cambió (solo paneo): usar escala guardada
+      minPrice = priceScaleRef.current.minPrice;
+      maxPrice = priceScaleRef.current.maxPrice;
+    }
+
     const priceRange = maxPrice - minPrice;
 
     // 🎯 NUEVO: Aplicar zoom vertical (Ctrl + rueda del mouse) y offset vertical (paneo)
@@ -717,7 +760,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         candlesRef.current = historicalCandles;
         log.candle(symbol, `✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
         log.state(symbol, candlesRef.current.length, inProgressCandleRef.current !== null);
-        
+
+        // 🎯 Resetear escala de precios para recalcular con nuevos datos
+        priceScaleRef.current.minPrice = null;
+        priceScaleRef.current.maxPrice = null;
+
+        // 🎯 Ajustar zoom inicial para mostrar el número deseado de velas
+        // Minichart: ~573 velas, Fullscreen: ~1222 velas
+        if (canvasRef.current) {
+          const rect = canvasRef.current.getBoundingClientRect();
+          const chartWidth = rect.width - 75; // Restar márgenes
+
+          // Determinar número de velas deseado según tamaño del canvas
+          // Si width > 1000px, es fullscreen, de lo contrario es minichart
+          const targetCandles = chartWidth > 1000 ? 1222 : 573;
+
+          // Calcular zoom necesario para mostrar ese número de velas
+          // barWidth = 8 * zoom, candlesPerScreen = chartWidth / barWidth
+          // targetCandles = chartWidth / (8 * zoom)
+          // zoom = chartWidth / (targetCandles * 8)
+          const calculatedZoom = chartWidth / (targetCandles * 8);
+          viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
+
+          log.candle(symbol, `🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas`);
+        }
+
         // ✅ NUEVO: Verificar si hay gap después de cargar
         if (indicatorManagerRef.current) {
           setTimeout(() => {
