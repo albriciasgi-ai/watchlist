@@ -19,8 +19,10 @@ class VWAPIndicator extends IndicatorBase {
     this.bandMultipliers = config.bandMultipliers || [1.0, 2.0, 3.0];
     this.applyCryptoAdjustment = config.applyCryptoAdjustment !== undefined ? config.applyCryptoAdjustment : true;
 
-    // Colors
+    // Colors and Line Styles
     this.vwapColor = config.vwapColor || 'rgba(255, 152, 0, 0.8)';
+    this.vwapLineWidth = config.vwapLineWidth || 2;
+    this.bandLineWidth = config.bandLineWidth || 1;
     this.bandColors = config.bandColors || {
       band1: 'rgba(255, 152, 0, 0.3)',
       band2: 'rgba(255, 152, 0, 0.2)',
@@ -117,6 +119,8 @@ class VWAPIndicator extends IndicatorBase {
     }
 
     if (config.vwapColor) this.vwapColor = config.vwapColor;
+    if (config.vwapLineWidth !== undefined) this.vwapLineWidth = config.vwapLineWidth;
+    if (config.bandLineWidth !== undefined) this.bandLineWidth = config.bandLineWidth;
     if (config.bandColors) this.bandColors = config.bandColors;
 
     // Refresh data if configuration that affects calculation changed
@@ -143,7 +147,7 @@ class VWAPIndicator extends IndicatorBase {
 
   _drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height) {
     ctx.strokeStyle = this.vwapColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = this.vwapLineWidth;
     ctx.beginPath();
 
     let firstPoint = true;
@@ -188,7 +192,7 @@ class VWAPIndicator extends IndicatorBase {
 
       // Draw upper band
       ctx.strokeStyle = bandColor;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = this.bandLineWidth;
       ctx.setLineDash([3, 3]);
       ctx.beginPath();
 

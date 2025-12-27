@@ -32,7 +32,8 @@ function getDefaultConfig() {
         enabled: false,
         zScoreThresholdFirst: 1.5,   // First extreme usually has higher volume (strong initial move)
         zScoreThresholdSecond: 0.5,  // Second extreme usually has lower volume (weakness/divergence)
-        zScorePeriod: 20             // Period for z-score calculation
+        zScorePeriod: 20,            // Period for z-score calculation
+        volumeWindowCandles: 3       // ⭐ NUEVO: Buscar volumen alto en ±N velas alrededor del extremo
       },
 
       maxBreakoutPercent: 2.0  // Maximum % price can exceed first extreme between peaks (breakout rejection)
@@ -518,6 +519,25 @@ const DoubleTopBottomSettings = ({
             />
             <p className="setting-description">
               Period for z-score calculation (10-100 candles)
+            </p>
+          </div>
+
+          <div className="setting-group">
+            <label>
+              <span>Volume Window (candles) 🔍</span>
+              <span className="setting-value">±{config.doubleTopBottom.requireHighVolumeAtExtremes?.volumeWindowCandles || 3}</span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              value={config.doubleTopBottom.requireHighVolumeAtExtremes?.volumeWindowCandles || 3}
+              onChange={(e) => updateConfig('doubleTopBottom.requireHighVolumeAtExtremes.volumeWindowCandles', parseInt(e.target.value))}
+            />
+            <p className="setting-description">
+              Buscar volumen alto en ±N velas alrededor del extremo (0-10).
+              0 = solo vela del extremo (estricto), 3 = ±3 velas (recomendado), 5+ = permisivo.
+              Permite capturar volumen en velas adyacentes (acumulación/confirmación).
             </p>
           </div>
         </>

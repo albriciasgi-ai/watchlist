@@ -61,7 +61,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           enabled: false,
           zScoreThresholdFirst: 1.5,   // First extreme usually has higher volume (strong initial move)
           zScoreThresholdSecond: 0.5,  // Second extreme usually has lower volume (weakness/divergence)
-          zScorePeriod: 20             // Period for z-score calculation
+          zScorePeriod: 20,            // Period for z-score calculation
+          volumeWindowCandles: 3       // ⭐ NUEVO: Buscar volumen alto en ±N velas alrededor del extremo
         },
 
         maxBreakoutPercent: 2.0  // Maximum % price can exceed first extreme between peaks (breakout rejection)

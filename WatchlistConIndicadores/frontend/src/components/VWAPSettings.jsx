@@ -5,6 +5,38 @@ import "./VWAPSettings.css";
 
 const DEBUG = true;
 
+// Helper functions for color conversion
+const rgbaToHex = (rgba) => {
+  if (!rgba || typeof rgba !== 'string') return '#FF9800';
+
+  // If already hex, return as is
+  if (rgba.startsWith('#')) return rgba;
+
+  // Parse rgba string
+  const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!match) return '#FF9800';
+
+  const r = parseInt(match[1]);
+  const g = parseInt(match[2]);
+  const b = parseInt(match[3]);
+
+  return '#' + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  }).join('');
+};
+
+const hexToRgba = (hex, alpha = 0.3) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return `rgba(255, 152, 0, ${alpha})`;
+
+  const r = parseInt(result[1], 16);
+  const g = parseInt(result[2], 16);
+  const b = parseInt(result[3], 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 const VWAPSettings = ({
   config,
   onConfigChange,
@@ -14,6 +46,7 @@ const VWAPSettings = ({
   const [applyGlobally, setApplyGlobally] = useState(false);
   const [localConfig, setLocalConfig] = useState(config);
   const renderCount = useRef(0);
+  const isUpdatingRef = useRef(false); // Evita loops en useEffect
 
   renderCount.current++;
 
@@ -31,25 +64,64 @@ const VWAPSettings = ({
 
   // Inicializar config local solo al montar o cuando cambia el símbolo
   useEffect(() => {
-    if (DEBUG) console.log('[VWAPSettings] useEffect: Inicializando config local', { currentSymbol });
-    setLocalConfig(config);
+    if (DEBUG) console.log('[VWAPSettings] useEffect: Inicializando config local', { currentSymbol, config });
+
+    // Asegurar que rollingPeriod tenga un valor por defecto
+    const configWithDefaults = {
+      ...config,
+      rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 20
+    };
+
+    if (DEBUG) console.log('[VWAPSettings] Config with defaults:', configWithDefaults);
+    setLocalConfig(configWithDefaults);
     setApplyGlobally(false);
   }, [currentSymbol]);
 
   // Cuando cambia applyGlobally, cargar la config correspondiente
   useEffect(() => {
+    // Solo ejecutar cuando applyGlobally cambia, NO cuando config cambia
+    // (config puede cambiar debido a nuestras propias actualizaciones)
+    if (DEBUG) console.log('[VWAPSettings] useEffect applyGlobally triggered:', { applyGlobally, isUpdating: isUpdatingRef.current });
+
+    // No sobrescribir si estamos en medio de una actualización del usuario
+    if (isUpdatingRef.current) {
+      if (DEBUG) console.log('[VWAPSettings] Skipping useEffect - user is updating');
+      return;
+    }
+
     if (applyGlobally) {
       const globalPreset = PresetManager.getGlobalPreset("VWAP");
-      if (DEBUG) console.log('[VWAPSettings] Cargando preset global:', globalPreset);
-      setLocalConfig(globalPreset);
+      const presetWithDefaults = {
+        ...globalPreset,
+        rollingPeriod: globalPreset.rollingPeriod !== undefined ? globalPreset.rollingPeriod : 20
+      };
+      if (DEBUG) console.log('[VWAPSettings] Cargando preset global:', presetWithDefaults);
+      setLocalConfig(presetWithDefaults);
     } else {
-      if (DEBUG) console.log('[VWAPSettings] Cargando config del símbolo:', config);
-      setLocalConfig(config);
+      const configWithDefaults = {
+        ...config,
+        rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 20
+      };
+      if (DEBUG) console.log('[VWAPSettings] Cargando config del símbolo:', configWithDefaults);
+      setLocalConfig(configWithDefaults);
     }
-  }, [applyGlobally]);
+  }, [applyGlobally]); // Removí 'config' de las dependencias para evitar loops
+
+  // Helper para obtener el valor del rolling period con fallback
+  const getRollingPeriodValue = () => {
+    const value = localConfig.rollingPeriod;
+    if (value !== undefined && value !== null && !isNaN(value)) {
+      return Number(value);
+    }
+    if (DEBUG) console.log('[VWAPSettings] ⚠️ rollingPeriod inválido, usando default 20:', value);
+    return 20;
+  };
 
   const handleConfigChange = (key, value) => {
-    if (DEBUG) console.log(`[VWAPSettings] handleConfigChange:`, { key, value, applyGlobally });
+    if (DEBUG) console.log(`[VWAPSettings] handleConfigChange:`, { key, value, applyGlobally, currentLocalConfig: localConfig });
+
+    // Marcar que estamos actualizando para evitar que useEffect sobrescriba
+    isUpdatingRef.current = true;
 
     const newConfig = { ...localConfig, [key]: value };
     setLocalConfig(newConfig);
@@ -62,6 +134,12 @@ const VWAPSettings = ({
       if (DEBUG) console.log(`[VWAPSettings] ✅ Override guardado para ${currentSymbol}:`, newConfig);
       onConfigChange(newConfig, true);
     }
+
+    // Resetear después de un breve delay para permitir que se complete la actualización
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+      if (DEBUG) console.log('[VWAPSettings] Actualización completa, isUpdatingRef reset');
+    }, 100);
   };
 
   const handleResetToGlobal = () => {
@@ -84,6 +162,8 @@ const VWAPSettings = ({
       return;
     }
 
+    isUpdatingRef.current = true;
+
     const newMultipliers = [...localConfig.bandMultipliers];
     newMultipliers[index] = parseFloat(value);
     const newConfig = { ...localConfig, bandMultipliers: newMultipliers };
@@ -97,6 +177,52 @@ const VWAPSettings = ({
       if (DEBUG) console.log(`[VWAPSettings] ✅ Override guardado (bands) para ${currentSymbol}:`, newConfig);
       onConfigChange(newConfig, true);
     }
+
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 100);
+  };
+
+  const handleBandColorChange = (bandKey, hexColor) => {
+    if (DEBUG) console.log(`[VWAPSettings] handleBandColorChange:`, { bandKey, hexColor });
+
+    isUpdatingRef.current = true;
+
+    // Extract current alpha value from existing color (if any)
+    const currentColor = localConfig.bandColors?.[bandKey];
+    let alpha = 0.3; // default
+
+    if (currentColor && typeof currentColor === 'string') {
+      const alphaMatch = currentColor.match(/rgba?\([^,]+,[^,]+,[^,]+,?\s*([\d.]+)?\)/);
+      if (alphaMatch && alphaMatch[1]) {
+        alpha = parseFloat(alphaMatch[1]);
+      }
+    }
+
+    // Set default alpha based on band (closer bands = more opaque)
+    if (bandKey === 'band1') alpha = alpha || 0.4;
+    if (bandKey === 'band2') alpha = alpha || 0.25;
+    if (bandKey === 'band3') alpha = alpha || 0.15;
+
+    // Convert hex to rgba preserving alpha
+    const rgbaColor = hexToRgba(hexColor, alpha);
+
+    const newBandColors = { ...(localConfig.bandColors || {}), [bandKey]: rgbaColor };
+    const newConfig = { ...localConfig, bandColors: newBandColors };
+    setLocalConfig(newConfig);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("VWAP", newConfig);
+      if (DEBUG) console.log(`[VWAPSettings] ✅ Preset global actualizado (band colors):`, newConfig);
+      onConfigChange(newConfig, false);
+    } else {
+      if (DEBUG) console.log(`[VWAPSettings] ✅ Override guardado (band colors) para ${currentSymbol}:`, newConfig);
+      onConfigChange(newConfig, true);
+    }
+
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 100);
   };
 
   return (
@@ -167,16 +293,42 @@ const VWAPSettings = ({
         </div>
 
         {/* VWAP Type */}
-        <div className="setting-row">
-          <label>Tipo de VWAP:</label>
-          <select
-            value={localConfig.vwapType}
-            onChange={(e) => handleConfigChange('vwapType', e.target.value)}
-          >
-            <option value="session">Session (reinicia diario)</option>
-            <option value="rolling">Rolling (período móvil)</option>
-            <option value="anchored">Anchored (desde fecha fija)</option>
-          </select>
+        <div className="setting-row" style={{ background: '#e8f5e9', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '2px solid #4CAF50' }}>
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ fontWeight: 'bold', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+              🎯 Tipo de VWAP:
+            </label>
+            <select
+              value={localConfig.vwapType}
+              onChange={(e) => handleConfigChange('vwapType', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px',
+                fontSize: '14px',
+                borderRadius: '4px',
+                border: '2px solid #4CAF50',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              <option value="session">📅 Session - Reinicia diariamente</option>
+              <option value="rolling">🔄 Rolling - Ventana móvil (CONFIGURABLE)</option>
+              <option value="anchored">📍 Anchored - Desde fecha fija</option>
+            </select>
+          </div>
+
+          {/* Descripción del tipo seleccionado */}
+          <div style={{ fontSize: '12px', color: '#555', background: 'white', padding: '8px', borderRadius: '4px', marginTop: '8px' }}>
+            {localConfig.vwapType === 'session' && (
+              <span>✅ <b>Session VWAP:</b> Se reinicia cada día a las {localConfig.resetHour}:00 UTC. Ideal para day trading.</span>
+            )}
+            {localConfig.vwapType === 'rolling' && (
+              <span>✅ <b>Rolling VWAP:</b> Ventana móvil de {localConfig.rollingPeriod} períodos. Puedes configurar el tamaño abajo. Ideal para swing trading.</span>
+            )}
+            {localConfig.vwapType === 'anchored' && (
+              <span>✅ <b>Anchored VWAP:</b> Inicia desde una fecha/evento específico y no se resetea. Útil para analizar desde eventos importantes.</span>
+            )}
+          </div>
         </div>
 
         {/* Reset Hour (solo para session) */}
@@ -195,15 +347,47 @@ const VWAPSettings = ({
 
         {/* Rolling Period (solo para rolling) */}
         {localConfig.vwapType === 'rolling' && (
-          <div className="setting-row">
-            <label>Período (períodos):</label>
-            <input
-              type="number"
-              min="5"
-              max="500"
-              value={localConfig.rollingPeriod}
-              onChange={(e) => handleConfigChange('rollingPeriod', parseInt(e.target.value))}
-            />
+          <div className="setting-row" style={{ background: '#f5f5f5', padding: '12px', borderRadius: '8px', marginBottom: '8px' }}>
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ fontWeight: 'bold', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                📊 Período Rolling VWAP (número de velas):
+              </label>
+              <input
+                type="number"
+                min="5"
+                max="200"
+                step="5"
+                value={getRollingPeriodValue()}
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value);
+                  if (newValue >= 5 && newValue <= 200) {
+                    console.log('[VWAPSettings] ✏️ Rolling period manual input:', newValue);
+                    handleConfigChange('rollingPeriod', newValue);
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  border: '2px solid #2196F3',
+                  borderRadius: '6px',
+                  textAlign: 'center',
+                  color: '#2196F3'
+                }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#666', marginTop: '8px', padding: '8px', background: 'white', borderRadius: '4px' }}>
+              <span>📉 5 (muy corto)</span>
+              <span>📊 50 (medio)</span>
+              <span>📈 200 (largo)</span>
+            </div>
+            <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', marginBottom: '0' }}>
+              💡 <strong>Número de velas en la ventana móvil.</strong><br/>
+              • Valores bajos (5-20): más sensible a cambios recientes, más reactivo<br/>
+              • Valores medios (40-80): balance entre sensibilidad y estabilidad<br/>
+              • Valores altos (100-200): más suavizado, menos ruido
+            </p>
           </div>
         )}
 
@@ -281,13 +465,152 @@ const VWAPSettings = ({
               />
             </div>
 
-            <div className="setting-row">
-              <label>Color VWAP:</label>
-              <input
-                type="color"
-                value={localConfig.vwapColor || '#FF9800'}
-                onChange={(e) => handleConfigChange('vwapColor', e.target.value)}
-              />
+            {/* Sección de Estilo de Líneas */}
+            <div style={{ marginTop: '20px', padding: '12px', background: '#fff3e0', borderRadius: '8px', border: '2px solid #FF9800' }}>
+              <h5 style={{ marginTop: 0, marginBottom: '12px', color: '#F57C00' }}>🎨 Estilo de Líneas</h5>
+
+              {/* Color VWAP */}
+              <div className="setting-row" style={{ marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label style={{ fontWeight: 'bold' }}>Color VWAP:</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      type="color"
+                      value={localConfig.vwapColor || '#FF9800'}
+                      onChange={(e) => handleConfigChange('vwapColor', e.target.value)}
+                      style={{ width: '50px', height: '30px', cursor: 'pointer', border: '2px solid #ccc', borderRadius: '4px' }}
+                    />
+                    <span style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace' }}>
+                      {localConfig.vwapColor || '#FF9800'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Grosor línea VWAP */}
+              <div className="setting-row" style={{ marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <label style={{ fontWeight: 'bold' }}>Grosor línea VWAP:</label>
+                  <span style={{
+                    background: '#FF9800',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    {localConfig.vwapLineWidth || 2}px
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="0.5"
+                  value={localConfig.vwapLineWidth || 2}
+                  onChange={(e) => handleConfigChange('vwapLineWidth', parseFloat(e.target.value))}
+                  style={{ width: '100%', cursor: 'pointer' }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666', marginTop: '2px' }}>
+                  <span>1px (fino)</span>
+                  <span>3px</span>
+                  <span>5px (grueso)</span>
+                </div>
+              </div>
+
+              {/* Grosor líneas bandas */}
+              {localConfig.showBands && (
+                <div className="setting-row" style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Grosor líneas bandas:</label>
+                    <span style={{
+                      background: '#2196F3',
+                      color: 'white',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      {localConfig.bandLineWidth || 1}px
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="3"
+                    step="0.5"
+                    value={localConfig.bandLineWidth || 1}
+                    onChange={(e) => handleConfigChange('bandLineWidth', parseFloat(e.target.value))}
+                    style={{ width: '100%', cursor: 'pointer' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666', marginTop: '2px' }}>
+                    <span>0.5px (muy fino)</span>
+                    <span>1.5px</span>
+                    <span>3px (grueso)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Colores de bandas individuales */}
+              {localConfig.showBands && (
+                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ddd' }}>
+                  <h6 style={{ margin: '0 0 12px 0', color: '#F57C00' }}>🌈 Colores de Bandas de Desviación</h6>
+
+                  {/* Banda 1 */}
+                  <div className="setting-row" style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label style={{ fontWeight: '500' }}>Banda 1 (±{localConfig.bandMultipliers?.[0] || 1.0}σ):</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                          type="color"
+                          value={rgbaToHex((localConfig.bandColors && localConfig.bandColors.band1) || 'rgba(255, 152, 0, 0.3)')}
+                          onChange={(e) => handleBandColorChange('band1', e.target.value)}
+                          style={{ width: '50px', height: '30px', cursor: 'pointer', border: '2px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <span style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace', minWidth: '120px' }}>
+                          {(localConfig.bandColors && localConfig.bandColors.band1) || 'rgba(255, 152, 0, 0.3)'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Banda 2 */}
+                  <div className="setting-row" style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label style={{ fontWeight: '500' }}>Banda 2 (±{localConfig.bandMultipliers?.[1] || 2.0}σ):</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                          type="color"
+                          value={rgbaToHex((localConfig.bandColors && localConfig.bandColors.band2) || 'rgba(255, 152, 0, 0.2)')}
+                          onChange={(e) => handleBandColorChange('band2', e.target.value)}
+                          style={{ width: '50px', height: '30px', cursor: 'pointer', border: '2px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <span style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace', minWidth: '120px' }}>
+                          {(localConfig.bandColors && localConfig.bandColors.band2) || 'rgba(255, 152, 0, 0.2)'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Banda 3 */}
+                  <div className="setting-row" style={{ marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label style={{ fontWeight: '500' }}>Banda 3 (±{localConfig.bandMultipliers?.[2] || 3.0}σ):</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                          type="color"
+                          value={rgbaToHex((localConfig.bandColors && localConfig.bandColors.band3) || 'rgba(255, 152, 0, 0.1)')}
+                          onChange={(e) => handleBandColorChange('band3', e.target.value)}
+                          style={{ width: '50px', height: '30px', cursor: 'pointer', border: '2px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <span style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace', minWidth: '120px' }}>
+                          {(localConfig.bandColors && localConfig.bandColors.band3) || 'rgba(255, 152, 0, 0.1)'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

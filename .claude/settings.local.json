@@ -41,7 +41,11 @@
       "Bash(wmic process where \"ProcessId=28452\" get ProcessId,CommandLine,ExecutablePath)",
       "Bash(cmd //c \"tasklist /FI \"\"IMAGENAME eq python.exe\"\" /FO LIST\")",
       "Bash(wmic process where \"name=''node.exe''\" get ProcessId,CommandLine)",
-      "Bash(cmd //c \"taskkill /PID 13588 /F /T 2>&1\")"
+      "Bash(cmd //c \"taskkill /PID 13588 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 19584 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 29820 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 3092 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 34888 /F /T 2>&1\")"
     ],
     "deny": [],
     "ask": []

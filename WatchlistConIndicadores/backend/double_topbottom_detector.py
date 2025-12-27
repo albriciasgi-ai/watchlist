@@ -322,9 +322,10 @@ class DoubleTopBottomDetector:
     ) -> List[Dict]:
         """
         Filter extremes by volume requirement.
-        Only keep extremes where the volume at that candle is significantly high.
+        Searches for high volume in a window of candles around the extreme.
 
-        This ensures that highs/lows are formed with big player involvement.
+        This ensures that highs/lows are formed with big player involvement,
+        allowing for volume to appear in adjacent candles (not just the exact extreme).
 
         Args:
             extremes: List of extreme points to filter
@@ -333,29 +334,52 @@ class DoubleTopBottomDetector:
             z_scores: Pre-calculated z-scores for all candles
 
         Returns:
-            Filtered list of extremes with high volume
+            Filtered list of extremes with high volume in window
         """
         if not z_scores:
             print(f"  - WARNING: Volume filter enabled but z-scores not available")
             return extremes
 
         z_threshold = config.get('zScoreThreshold', 1.0)
+        window_size = config.get('volumeWindowCandles', 3)  # ⭐ NUEVO: ventana de búsqueda
         filtered_extremes = []
+
+        print(f"  [PRUEBA_DBT] Filtering {len(extremes)} extremes by volume (z-threshold={z_threshold:.1f}, window=±{window_size})")
 
         for extreme in extremes:
             candle_idx = extreme['candle_index']
 
-            # Get z-score for this candle's volume
-            if candle_idx < len(z_scores):
-                volume_zscore = z_scores[candle_idx]
+            # ⭐ MEJORADO: Buscar volumen alto en ventana de velas alrededor del extremo
+            start_idx = max(0, candle_idx - window_size)
+            end_idx = min(len(z_scores), candle_idx + window_size + 1)
 
-                # Keep extreme if volume is above threshold
-                if volume_zscore >= z_threshold:
+            # Obtener z-scores en la ventana
+            window_zscores = z_scores[start_idx:end_idx]
+
+            if window_zscores:
+                # Usar el MÁXIMO z-score de la ventana
+                max_zscore = max(window_zscores)
+                max_zscore_idx = start_idx + window_zscores.index(max_zscore)
+                offset = max_zscore_idx - candle_idx
+
+                # Debug detallado
+                extreme_price = extreme['price']
+                extreme_ts = extreme['candle'].get('timestamp', 'N/A')
+
+                if max_zscore >= z_threshold:
+                    # Volumen alto encontrado en ventana
                     filtered_extremes.append(extreme)
+                    print(f"    ✅ ACCEPTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                          f"Max z-score={max_zscore:.2f} at offset={offset:+d} (threshold={z_threshold:.1f})")
+                else:
+                    # Volumen bajo en toda la ventana
+                    print(f"    ❌ REJECTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                          f"Max z-score={max_zscore:.2f} < threshold={z_threshold:.1f}")
             else:
-                # If no z-score available, keep it (edge case)
+                # Edge case: sin z-scores disponibles, mantener
                 filtered_extremes.append(extreme)
 
+        print(f"  [PRUEBA_DBT] Volume filter result: {len(extremes)} → {len(filtered_extremes)} extremes")
         return filtered_extremes
 
     def _find_double_tops(
