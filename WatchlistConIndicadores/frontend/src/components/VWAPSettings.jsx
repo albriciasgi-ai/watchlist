@@ -45,6 +45,9 @@ const VWAPSettings = ({
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [applyGlobally, setApplyGlobally] = useState(false);
   const [localConfig, setLocalConfig] = useState(config);
+  const [showPresets, setShowPresets] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [savedPresets, setSavedPresets] = useState([]);
   const renderCount = useRef(0);
   const isUpdatingRef = useRef(false); // Evita loops en useEffect
 
@@ -61,6 +64,72 @@ const VWAPSettings = ({
 
   // Verificar si este símbolo tiene un override activo
   const hasOverride = currentSymbol && PresetManager.hasOverride(currentSymbol, "VWAP");
+
+  // Cargar presets guardados
+  useEffect(() => {
+    const loadPresets = () => {
+      try {
+        const saved = localStorage.getItem('vwap_custom_presets');
+        if (saved) {
+          const presets = JSON.parse(saved);
+          setSavedPresets(presets);
+          if (DEBUG) console.log('[VWAPSettings] Presets cargados:', presets);
+        }
+      } catch (e) {
+        console.error('[VWAPSettings] Error cargando presets:', e);
+      }
+    };
+    loadPresets();
+  }, []);
+
+  // Guardar preset actual
+  const handleSavePreset = () => {
+    if (!presetName.trim()) {
+      alert('Por favor ingresa un nombre para el preset');
+      return;
+    }
+
+    const newPreset = {
+      name: presetName.trim(),
+      config: { ...localConfig },
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedPresets = [...savedPresets.filter(p => p.name !== presetName.trim()), newPreset];
+    setSavedPresets(updatedPresets);
+    localStorage.setItem('vwap_custom_presets', JSON.stringify(updatedPresets));
+
+    setPresetName('');
+    alert(`✅ Preset "${newPreset.name}" guardado correctamente`);
+    if (DEBUG) console.log('[VWAPSettings] Preset guardado:', newPreset);
+  };
+
+  // Cargar preset
+  const handleLoadPreset = (preset) => {
+    if (DEBUG) console.log('[VWAPSettings] Cargando preset:', preset);
+
+    setLocalConfig(preset.config);
+
+    if (applyGlobally) {
+      PresetManager.updateGlobalPreset("VWAP", preset.config);
+      onConfigChange(preset.config, false);
+    } else {
+      onConfigChange(preset.config, true);
+    }
+
+    alert(`✅ Preset "${preset.name}" cargado`);
+  };
+
+  // Eliminar preset
+  const handleDeletePreset = (presetToDelete) => {
+    if (confirm(`¿Eliminar el preset "${presetToDelete.name}"?`)) {
+      const updatedPresets = savedPresets.filter(p => p.name !== presetToDelete.name);
+      setSavedPresets(updatedPresets);
+      localStorage.setItem('vwap_custom_presets', JSON.stringify(updatedPresets));
+      alert(`🗑️ Preset "${presetToDelete.name}" eliminado`);
+      if (DEBUG) console.log('[VWAPSettings] Preset eliminado:', presetToDelete);
+    }
+  };
 
   // Inicializar config local solo al montar o cuando cambia el símbolo
   useEffect(() => {
@@ -291,6 +360,152 @@ const VWAPSettings = ({
             }
           </div>
         </div>
+
+        {/* Presets Personalizados */}
+        <div className="setting-row" style={{ marginBottom: '16px' }}>
+          <button
+            className="toggle-advanced-btn"
+            onClick={() => setShowPresets(!showPresets)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: showPresets ? '#4CAF50' : '#2196F3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '14px'
+            }}
+          >
+            {showPresets ? '▼' : '▶'} 💾 Presets Personalizados ({savedPresets.length})
+          </button>
+        </div>
+
+        {showPresets && (
+          <div style={{
+            background: '#f5f5f5',
+            padding: '16px',
+            borderRadius: '8px',
+            marginBottom: '16px',
+            border: '2px solid #4CAF50'
+          }}>
+            {/* Guardar nuevo preset */}
+            <div style={{ marginBottom: '16px' }}>
+              <h5 style={{ margin: '0 0 12px 0', color: '#4CAF50' }}>💾 Guardar Configuración Actual</h5>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  value={presetName}
+                  onChange={(e) => setPresetName(e.target.value)}
+                  placeholder="Nombre del preset (ej: VWAP Agresivo)"
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    fontSize: '14px',
+                    border: '2px solid #4CAF50',
+                    borderRadius: '6px'
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') handleSavePreset();
+                  }}
+                />
+                <button
+                  onClick={handleSavePreset}
+                  style={{
+                    padding: '10px 20px',
+                    background: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
+                  💾 Guardar
+                </button>
+              </div>
+            </div>
+
+            {/* Lista de presets guardados */}
+            {savedPresets.length > 0 && (
+              <div>
+                <h5 style={{ margin: '0 0 12px 0', color: '#4CAF50' }}>📂 Presets Guardados</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {savedPresets.map((preset, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        background: 'white',
+                        padding: '12px',
+                        borderRadius: '6px',
+                        border: '1px solid #ddd',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>
+                          {preset.name}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#666' }}>
+                          Creado: {new Date(preset.createdAt).toLocaleDateString()} {new Date(preset.createdAt).toLocaleTimeString()}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => handleLoadPreset(preset)}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#2196F3',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          📥 Cargar
+                        </button>
+                        <button
+                          onClick={() => handleDeletePreset(preset)}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#f44336',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {savedPresets.length === 0 && (
+              <div style={{
+                padding: '20px',
+                textAlign: 'center',
+                color: '#666',
+                fontSize: '14px',
+                background: 'white',
+                borderRadius: '6px'
+              }}>
+                No hay presets guardados. Configura el VWAP como desees y guarda tu primera configuración.
+              </div>
+            )}
+          </div>
+        )}
 
         {/* VWAP Type */}
         <div className="setting-row" style={{ background: '#e8f5e9', padding: '12px', borderRadius: '8px', marginBottom: '16px', border: '2px solid #4CAF50' }}>
