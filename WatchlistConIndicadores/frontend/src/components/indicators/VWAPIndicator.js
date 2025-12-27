@@ -32,6 +32,10 @@ class VWAPIndicator extends IndicatorBase {
     // Data
     this.vwapData = [];
     this.dataMap = new Map();
+
+    // Auto-refresh timer para actualizar VWAP periódicamente
+    this.refreshInterval = null;
+    this.refreshIntervalMs = 30000; // 30 segundos
   }
 
   async fetchData() {
@@ -68,6 +72,10 @@ class VWAPIndicator extends IndicatorBase {
         });
 
         console.log(`[${this.symbol}] ✅ VWAP loaded: ${this.vwapData.length} points`);
+
+        // Iniciar auto-refresh si no está activo
+        this.startAutoRefresh();
+
         return true;
       } else {
         console.error(`[${this.symbol}] ❌ VWAP error:`, json.error);
@@ -78,6 +86,41 @@ class VWAPIndicator extends IndicatorBase {
       return false;
     } finally {
       this.loading = false;
+    }
+  }
+
+  startAutoRefresh() {
+    // Detener timer anterior si existe
+    this.stopAutoRefresh();
+
+    // Iniciar nuevo timer
+    this.refreshInterval = setInterval(() => {
+      if (this.enabled && !this.loading) {
+        console.log(`[${this.symbol}] 🔄 Auto-refreshing VWAP...`);
+        this.fetchData();
+      }
+    }, this.refreshIntervalMs);
+
+    console.log(`[${this.symbol}] ⏰ VWAP auto-refresh started (every ${this.refreshIntervalMs/1000}s)`);
+  }
+
+  stopAutoRefresh() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+      this.refreshInterval = null;
+      console.log(`[${this.symbol}] ⏹️ VWAP auto-refresh stopped`);
+    }
+  }
+
+  setEnabled(enabled) {
+    this.enabled = enabled;
+
+    if (!enabled) {
+      // Detener auto-refresh cuando se deshabilita
+      this.stopAutoRefresh();
+    } else {
+      // Recargar y reiniciar auto-refresh cuando se habilita
+      this.fetchData();
     }
   }
 
