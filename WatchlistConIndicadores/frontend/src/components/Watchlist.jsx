@@ -1171,6 +1171,10 @@ const Watchlist = () => {
                 symbol={selectedSymbolForDTB}
                 onConfigChange={handleDoubleTopBottomConfigChange}
                 onClose={handleCloseDoubleTopBottomSettings}
+                indicator={(() => {
+                  const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
+                  return manager?.indicators.find(ind => ind.name === "Double Top/Bottom");
+                })()}
                 initialConfig={(() => {
                   const manager = indicatorManagers[selectedSymbolForDTB]?.manager;
                   const dtbIndicator = manager?.indicators.find(ind => ind.name === "Double Top/Bottom");

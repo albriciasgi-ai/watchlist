@@ -124,12 +124,14 @@ const DoubleTopBottomSettings = ({
   symbol,
   onConfigChange,
   onClose,
-  initialConfig
+  initialConfig,
+  indicator
 }) => {
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [activeTab, setActiveTab] = useState('pattern');
   const logTimerRef = React.useRef(null);
   const saveLogTimerRef = React.useRef(null);
+  const [testAlertStatus, setTestAlertStatus] = useState(null); // null | 'testing' | 'success' | 'error'
 
   // Estilos reutilizables
   const styles = {
@@ -211,6 +213,30 @@ const DoubleTopBottomSettings = ({
     setConfig(defaultConfig);
     localStorage.removeItem(`double_topbottom_config_${symbol}`);
     console.log(`[PRUEBA_DBT] ${symbol} - Reset complete`, defaultConfig);
+  };
+
+  const handleTestAlert = async () => {
+    if (!indicator) {
+      console.error('No indicator reference available');
+      setTestAlertStatus('error');
+      setTimeout(() => setTestAlertStatus(null), 3000);
+      return;
+    }
+
+    setTestAlertStatus('testing');
+    console.log(`\n🧪 [${symbol}] User clicked Test Alert button`);
+
+    try {
+      const success = await indicator.sendTestAlert();
+      setTestAlertStatus(success ? 'success' : 'error');
+
+      // Reset status after 5 seconds
+      setTimeout(() => setTestAlertStatus(null), 5000);
+    } catch (error) {
+      console.error('Test alert failed:', error);
+      setTestAlertStatus('error');
+      setTimeout(() => setTestAlertStatus(null), 3000);
+    }
   };
 
   // Presets optimizados por timeframe
@@ -1338,6 +1364,54 @@ const DoubleTopBottomSettings = ({
               </span>
             )}
           </div>
+
+          {/* Botón de prueba de alertas */}
+          <button
+            onClick={handleTestAlert}
+            disabled={testAlertStatus === 'testing'}
+            style={{
+              marginTop: '12px',
+              marginLeft: '26px',
+              padding: '8px 16px',
+              background: testAlertStatus === 'testing' ? '#9E9E9E' :
+                         testAlertStatus === 'success' ? '#4CAF50' :
+                         testAlertStatus === 'error' ? '#F44336' : '#2196F3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: testAlertStatus === 'testing' ? 'not-allowed' : 'pointer',
+              fontSize: '13px',
+              fontWeight: '500',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            {testAlertStatus === 'testing' ? '⏳ Enviando...' :
+             testAlertStatus === 'success' ? '✅ Alerta enviada correctamente!' :
+             testAlertStatus === 'error' ? '❌ Error al enviar alerta' :
+             '🧪 Test Alert'}
+          </button>
+
+          {testAlertStatus === 'success' && (
+            <div style={{
+              marginTop: '8px',
+              marginLeft: '26px',
+              fontSize: '11px',
+              color: '#4CAF50'
+            }}>
+              ✓ Revisa la consola del navegador y el servicio de alertas (puerto 5000)
+            </div>
+          )}
+
+          {testAlertStatus === 'error' && (
+            <div style={{
+              marginTop: '8px',
+              marginLeft: '26px',
+              fontSize: '11px',
+              color: '#F44336'
+            }}>
+              ✗ Verifica que el backend esté corriendo (puerto 8000) y revisa la consola
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>

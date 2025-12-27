@@ -597,14 +597,18 @@ async def send_pattern_alert_endpoint(request: Request):
         }
     }
     """
+    print("[ALERT_ENDPOINT] Received pattern alert request")
     try:
         data = await request.json()
+        print(f"[ALERT_ENDPOINT] Payload: {data}")
+
         symbol = data.get('symbol')
         interval = data.get('interval')
         pattern = data.get('pattern')
         config = data.get('config', {})
 
         if not symbol or not pattern:
+            print("[ALERT_ENDPOINT] Missing required fields")
             return {
                 "success": False,
                 "error": "Missing required fields: symbol, pattern"
@@ -615,7 +619,7 @@ async def send_pattern_alert_endpoint(request: Request):
         pattern_confidence = pattern.get('confidence', 0)
 
         if pattern_confidence < min_confidence:
-            print(f"[{symbol}] ⚠️ Pattern alert rejected: confidence {pattern_confidence} < {min_confidence}")
+            print(f"[{symbol}] [ALERT] Pattern alert rejected: confidence {pattern_confidence} < {min_confidence}")
             return {
                 "success": False,
                 "reason": "confidence_too_low",
@@ -624,8 +628,9 @@ async def send_pattern_alert_endpoint(request: Request):
             }
 
         # Send alert using existing system
-        print(f"[{symbol}] 🚨 Sending pattern alert: {pattern.get('patternType')} at ${pattern.get('price')}")
+        print(f"[{symbol}] [ALERT] Sending pattern alert: {pattern.get('patternType')} at ${pattern.get('price')}")
         await send_pattern_alert(symbol, interval, pattern, config)
+        print(f"[{symbol}] [ALERT] Alert sent successfully")
 
         return {
             "success": True,
@@ -636,7 +641,7 @@ async def send_pattern_alert_endpoint(request: Request):
         }
 
     except Exception as e:
-        print(f"❌ Error sending pattern alert: {e}")
+        print(f"[ALERT_ENDPOINT] ERROR: {e}")
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e)}

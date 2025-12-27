@@ -263,8 +263,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    * Verifica patrones confirmados y envía alertas
    */
   async checkAndSendAlerts() {
-    if (!this.config.alertsEnabled) return;
-    if (!this.patterns || this.patterns.length === 0) return;
+    if (!this.config.alertsEnabled) {
+      console.log(`[${this.symbol}] DBT Alerts: DISABLED`);
+      return;
+    }
+
+    if (!this.patterns || this.patterns.length === 0) {
+      console.log(`[${this.symbol}] DBT Alerts: No patterns detected`);
+      return;
+    }
 
     // Primera vez: guardar timestamp de inicio del sistema de alertas
     if (this.alertSystemStartTime === null) {
@@ -276,62 +283,95 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
       console.log(`All patterns before this time will be suppressed`);
       console.log(`Only NEW patterns detected AFTER this time will trigger alerts`);
+      console.log(`Total patterns in historical data: ${this.patterns.length}`);
       console.log(`${'='.repeat(80)}\n`);
 
       return; // Salir en la primera ejecución
     }
 
+    console.log(`\n${'='.repeat(80)}`);
+    console.log(`🔔 [${this.symbol}] DBT ALERT CHECK - ${new Date().toLocaleString()}`);
+    console.log(`${'='.repeat(80)}`);
+    console.log(`Total patterns: ${this.patterns.length}`);
+    console.log(`Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+    console.log(`Already alerted: ${this.alertedPatterns.size}`);
+
     // Obtener solo patrones nuevos que no han sido alertados
     const newPatterns = [];
+    const skipReasons = {
+      alreadyAlerted: 0,
+      noMomentum: 0,
+      historical: 0
+    };
 
     for (const pattern of this.patterns) {
       const patternId = this.getPatternId(pattern);
+      const patternTime = pattern.secondExtreme.timestamp;
+      const patternDate = new Date(patternTime).toLocaleString();
 
       // Si ya fue alertado, skip
       if (this.alertedPatterns.has(patternId)) {
+        skipReasons.alreadyAlerted++;
+        console.log(`  ⏭️  SKIP: Already alerted - ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate})`);
         continue;
       }
 
       // Solo patrones con señal de entrada (momentum confirmado)
       if (!pattern.entrySignal || !pattern.entrySignal.has_momentum) {
+        skipReasons.noMomentum++;
+        console.log(`  ⏭️  SKIP: No momentum - ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate})`);
         continue;
       }
 
       // Solo patrones detectados después del start time
-      const patternTime = pattern.secondExtreme.timestamp; // Usar segundo extremo como tiempo del patrón
       if (patternTime < this.alertSystemStartTime) {
+        skipReasons.historical++;
+        console.log(`  ⏭️  SKIP: Historical - ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate})`);
         continue;
       }
 
+      console.log(`  ✅ NEW: ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate}) - Direction: ${pattern.entrySignal.direction}`);
       newPatterns.push(pattern);
     }
 
-    if (newPatterns.length === 0) return;
+    console.log(`\nSummary:`);
+    console.log(`  📊 Total patterns: ${this.patterns.length}`);
+    console.log(`  ✅ NEW to alert: ${newPatterns.length}`);
+    console.log(`  ⏭️  Already alerted: ${skipReasons.alreadyAlerted}`);
+    console.log(`  ⏭️  No momentum: ${skipReasons.noMomentum}`);
+    console.log(`  ⏭️  Historical: ${skipReasons.historical}`);
 
-    console.log(`\n[${this.symbol}] 🔍 NEW DBT PATTERNS DETECTED:`);
-    console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-    console.log(`  ✅ NEW patterns to alert: ${newPatterns.length}`);
-
-    newPatterns.forEach((p, i) => {
-      console.log(`    ${i + 1}. ${p.type} at $${p.levelPrice.toFixed(2)} - Direction: ${p.entrySignal.direction}`);
-    });
-    console.log('');
+    if (newPatterns.length === 0) {
+      console.log(`\n❌ No new patterns to alert`);
+      console.log(`${'='.repeat(80)}\n`);
+      return;
+    }
 
     // Protección anti-spam: Máximo 5 alertas por ejecución
     const MAX_ALERTS_PER_RUN = 5;
     if (newPatterns.length > MAX_ALERTS_PER_RUN) {
-      console.log(`⚠️ Too many patterns to alert (${newPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN}.`);
+      console.log(`\n⚠️  Too many patterns (${newPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN} alerts.`);
     }
 
     // Enviar alertas
+    console.log(`\n🚨 Sending alerts...`);
     let alertCount = 0;
+    let alertsFailed = 0;
+
     for (const pattern of newPatterns) {
       if (alertCount >= MAX_ALERTS_PER_RUN) {
-        console.log(`⚠️ Alert limit reached (${MAX_ALERTS_PER_RUN}). Remaining ${newPatterns.length - alertCount} patterns will be processed next time.`);
+        console.log(`\n⚠️  Alert limit reached (${MAX_ALERTS_PER_RUN}). Remaining ${newPatterns.length - alertCount} will be processed next time.`);
         break;
       }
 
       const patternId = this.getPatternId(pattern);
+      const patternDate = new Date(pattern.secondExtreme.timestamp).toLocaleString();
+
+      console.log(`\n  📤 Sending alert ${alertCount + 1}/${Math.min(newPatterns.length, MAX_ALERTS_PER_RUN)}:`);
+      console.log(`     Pattern: ${this.formatPatternName(pattern)}`);
+      console.log(`     Price: $${pattern.levelPrice.toFixed(2)}`);
+      console.log(`     Time: ${patternDate}`);
+      console.log(`     Direction: ${pattern.entrySignal.direction}`);
 
       // Enviar alerta
       const success = await this.sendPatternAlert(pattern);
@@ -342,10 +382,19 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         pattern._alertSent = true;
         pattern._alertTimestamp = Date.now();
 
-        console.log(`🚨 ALERT SENT: ${this.formatPatternName(pattern)} at $${pattern.levelPrice.toFixed(2)}`);
+        console.log(`     ✅ ALERT SENT SUCCESSFULLY`);
         alertCount++;
+      } else {
+        console.log(`     ❌ ALERT FAILED TO SEND`);
+        alertsFailed++;
       }
     }
+
+    console.log(`\n📊 Alert Results:`);
+    console.log(`  ✅ Sent: ${alertCount}`);
+    console.log(`  ❌ Failed: ${alertsFailed}`);
+    console.log(`  📝 Total alerted (session): ${this.alertedPatterns.size}`);
+    console.log(`${'='.repeat(80)}\n`);
   }
 
   /**
@@ -375,13 +424,19 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         }
       };
 
+      console.log(`📤 Sending POST to ${API_BASE_URL}/api/pattern-alert`);
+      console.log(`Payload:`, payload);
+
       const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
+      console.log(`📥 Response status: ${response.status} ${response.statusText}`);
+
       const result = await response.json();
+      console.log(`📥 Response body:`, result);
 
       if (result.success) {
         // Mostrar popup en navegador
@@ -393,7 +448,70 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       }
 
     } catch (error) {
-      console.error(`❌ Error sending alert: ${error.message}`);
+      console.error(`❌ Error sending alert:`, error);
+      console.error(`Error stack:`, error.stack);
+      return false;
+    }
+  }
+
+  /**
+   * Envía una alerta de prueba para debugging
+   */
+  async sendTestAlert() {
+    console.log(`\n${'='.repeat(80)}`);
+    console.log(`🧪 [${this.symbol}] SENDING TEST ALERT`);
+    console.log(`${'='.repeat(80)}`);
+
+    // Crear un patrón de prueba
+    const testPattern = {
+      type: 'DOUBLE_BOTTOM',
+      levelPrice: 50000.00,
+      confidence: 85.5,
+      firstExtreme: {
+        timestamp: Date.now() - 3600000, // 1 hora atrás
+        price: 49980.00,
+        index: 100
+      },
+      secondExtreme: {
+        timestamp: Date.now(),
+        price: 50020.00,
+        index: 150
+      },
+      entrySignal: {
+        has_momentum: true,
+        direction: 'LONG',
+        timestamp: Date.now(),
+        price: 50100.00,
+        pattern_type: 'MARUBOZU',
+        quality: 0.95
+      },
+      priceTolerance: 20.00
+    };
+
+    console.log(`Test Pattern:`, testPattern);
+    console.log(`\nSending to backend...`);
+
+    try {
+      const success = await this.sendPatternAlert(testPattern);
+
+      console.log(`\n📊 Test Alert Result:`);
+      if (success) {
+        console.log(`  ✅ Test alert sent successfully!`);
+        console.log(`  - Backend accepted the alert`);
+        console.log(`  - Should appear in alert listener (port 5000) if running`);
+        console.log(`  - Check browser notifications`);
+      } else {
+        console.log(`  ❌ Test alert failed to send`);
+        console.log(`  - Check console for error details`);
+        console.log(`  - Verify backend is running on port 8000`);
+        console.log(`  - Check if alert service is running on port 5000`);
+      }
+      console.log(`${'='.repeat(80)}\n`);
+
+      return success;
+    } catch (error) {
+      console.error(`  ❌ Test alert error:`, error);
+      console.log(`${'='.repeat(80)}\n`);
       return false;
     }
   }

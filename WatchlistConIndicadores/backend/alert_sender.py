@@ -122,13 +122,15 @@ class AlertSender:
         bullish_patterns = {
             "HAMMER",              # Bullish pin bar reversal
             "ENGULFING_BULLISH",   # Bullish engulfing
-            "DOJI_DRAGONFLY"       # Bullish doji
+            "DOJI_DRAGONFLY",      # Bullish doji
+            "DOUBLE_BOTTOM"        # Double bottom reversal
         }
 
         bearish_patterns = {
             "SHOOTING_STAR",       # Bearish pin bar reversal
             "ENGULFING_BEARISH",   # Bearish engulfing
-            "DOJI_GRAVESTONE"      # Bearish doji
+            "DOJI_GRAVESTONE",     # Bearish doji
+            "DOUBLE_TOP"           # Double top reversal
         }
 
         if pattern_type in bullish_patterns:
@@ -147,7 +149,9 @@ class AlertSender:
             "ENGULFING_BULLISH": "📈",
             "ENGULFING_BEARISH": "📉",
             "DOJI_DRAGONFLY": "🐉",
-            "DOJI_GRAVESTONE": "🪦"
+            "DOJI_GRAVESTONE": "🪦",
+            "DOUBLE_BOTTOM": "⏫",
+            "DOUBLE_TOP": "⏬"
         }
         return emoji_map.get(pattern_type, "🔔")
 
@@ -159,7 +163,9 @@ class AlertSender:
             "ENGULFING_BULLISH": "Bullish Engulfing",
             "ENGULFING_BEARISH": "Bearish Engulfing",
             "DOJI_DRAGONFLY": "Dragonfly Doji",
-            "DOJI_GRAVESTONE": "Gravestone Doji"
+            "DOJI_GRAVESTONE": "Gravestone Doji",
+            "DOUBLE_BOTTOM": "Double Bottom",
+            "DOUBLE_TOP": "Double Top"
         }
         return name_map.get(pattern_type, pattern_type)
 
