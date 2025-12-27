@@ -21,6 +21,7 @@ const symbols = [
 
 // CORREGIDO: Límites máximos de días por timeframe (deben coincidir con el backend)
 const MAX_DAYS_BY_INTERVAL = {
+  "1": 1,
   "5": 30,
   "15": 90,
   "30": 150,
@@ -32,6 +33,7 @@ const MAX_DAYS_BY_INTERVAL = {
 
 // CORREGIDO: Opciones de días permitidas por timeframe
 const DAYS_OPTIONS_BY_INTERVAL = {
+  "1": [1],
   "5": [1, 2, 5, 7, 10, 15, 20, 30],
   "15": [1, 2, 5, 7, 10, 15, 30, 60, 90],
   "30": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 150],
@@ -731,6 +733,7 @@ const Watchlist = () => {
           <label>
             Timeframe:
             <select value={interval} onChange={(e) => setInterval(e.target.value)}>
+              <option value="1">1m</option>
               <option value="5">5m</option>
               <option value="15">15m</option>
               <option value="30">30m</option>

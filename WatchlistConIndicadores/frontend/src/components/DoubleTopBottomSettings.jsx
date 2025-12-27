@@ -213,6 +213,79 @@ const DoubleTopBottomSettings = ({
     console.log(`[PRUEBA_DBT] ${symbol} - Reset complete`, defaultConfig);
   };
 
+  // Presets optimizados por timeframe
+  const applyTimeframePreset = (timeframe) => {
+    const presets = {
+      '1m': {
+        lookbackCandles: 200,
+        candlesPerExtreme: 2,
+        priceMarginPercent: 0.3,
+        minCandlesBetween: 5,
+        maxCandlesBetween: 60,
+        maxBreakoutPercent: 0.5,
+        filters: {
+          ...config.filters,
+          minConfidence: 10,
+          minPatternDuration: 0.1,    // 6 minutos
+          maxPatternDuration: 4,       // 4 horas = 240 minutos
+          duplicatePriceTolerancePercent: 0.5,
+          duplicateTimeToleranceHours: 2
+        }
+      },
+      '5m': {
+        lookbackCandles: 150,
+        candlesPerExtreme: 2,
+        priceMarginPercent: 0.5,
+        minCandlesBetween: 3,
+        maxCandlesBetween: 50,
+        maxBreakoutPercent: 1.0,
+        filters: {
+          ...config.filters,
+          minConfidence: 15,
+          minPatternDuration: 0.5,    // 30 minutos
+          maxPatternDuration: 12,     // 12 horas
+          duplicatePriceTolerancePercent: 1.0,
+          duplicateTimeToleranceHours: 6
+        }
+      },
+      '60m': {
+        lookbackCandles: 100,
+        candlesPerExtreme: 3,
+        priceMarginPercent: 2.0,
+        minCandlesBetween: 3,
+        maxCandlesBetween: 80,
+        maxBreakoutPercent: 2.0,
+        filters: {
+          ...config.filters,
+          minConfidence: 20,
+          minPatternDuration: 4,      // 4 horas
+          maxPatternDuration: 168,    // 7 días
+          duplicatePriceTolerancePercent: 2.0,
+          duplicateTimeToleranceHours: 24
+        }
+      }
+    };
+
+    const preset = presets[timeframe];
+    if (!preset) return;
+
+    setConfig(prev => ({
+      ...prev,
+      doubleTopBottom: {
+        ...prev.doubleTopBottom,
+        lookbackCandles: preset.lookbackCandles,
+        candlesPerExtreme: preset.candlesPerExtreme,
+        priceMarginPercent: preset.priceMarginPercent,
+        minCandlesBetween: preset.minCandlesBetween,
+        maxCandlesBetween: preset.maxCandlesBetween,
+        maxBreakoutPercent: preset.maxBreakoutPercent
+      },
+      filters: preset.filters
+    }));
+
+    console.log(`[PRUEBA_DBT] ${symbol} - Applied ${timeframe} preset`);
+  };
+
   const updateConfig = (path, value) => {
     // Debounce logging: solo registra después de 500ms sin cambios
     if (logTimerRef.current) {
@@ -1031,6 +1104,72 @@ const DoubleTopBottomSettings = ({
 
   return (
     <div style={{ padding: '0' }}>
+      {/* Quick Presets Section */}
+      <div style={{
+        background: '#f8f9fa',
+        padding: '12px',
+        borderRadius: '6px',
+        marginBottom: '16px',
+        border: '1px solid #dee2e6'
+      }}>
+        <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
+          ⚡ Quick Presets (Timeframe Optimized)
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => applyTimeframePreset('1m')}
+            style={{
+              padding: '8px 16px',
+              background: '#FF6B6B',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            1 Minute
+          </button>
+          <button
+            onClick={() => applyTimeframePreset('5m')}
+            style={{
+              padding: '8px 16px',
+              background: '#4ECDC4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            5 Minutes
+          </button>
+          <button
+            onClick={() => applyTimeframePreset('60m')}
+            style={{
+              padding: '8px 16px',
+              background: '#95E1D3',
+              color: '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            1 Hour
+          </button>
+        </div>
+        <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '8px' }}>
+          Click a preset to automatically adjust all parameters for optimal detection in that timeframe
+        </div>
+      </div>
+
       <div style={{
         borderBottom: '1px solid #ddd',
         marginBottom: '16px',
@@ -1155,6 +1294,52 @@ const DoubleTopBottomSettings = ({
         >
           Reset to Defaults
         </button>
+
+        {/* Sistema de Alertas */}
+        <div style={{
+          marginTop: '16px',
+          padding: '16px',
+          background: config.alertsEnabled ? '#e8f5e9' : '#fff3e0',
+          border: `2px solid ${config.alertsEnabled ? '#4CAF50' : '#FF9800'}`,
+          borderRadius: '8px'
+        }}>
+          <label style={{
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: config.alertsEnabled ? '#2E7D32' : '#F57C00'
+          }}>
+            <input
+              type="checkbox"
+              checked={config.alertsEnabled || false}
+              onChange={(e) => updateConfig('alertsEnabled', e.target.checked)}
+              style={{ marginRight: '8px', cursor: 'pointer', width: '18px', height: '18px' }}
+            />
+            🔔 Habilitar Alertas Automáticas
+          </label>
+          <div style={{ fontSize: '12px', color: '#666', marginTop: '8px', marginLeft: '26px' }}>
+            {config.alertsEnabled ? (
+              <span>
+                ✅ <strong>Alertas ACTIVAS:</strong> Recibirás notificaciones cuando se detecten nuevos patrones Double Top/Bottom con señal de entrada confirmada.
+                <br />
+                • Double Bottom → Señal LONG 📈
+                <br />
+                • Double Top → Señal SHORT 📉
+                <br />
+                <em style={{ fontSize: '11px', color: '#999' }}>
+                  Las alertas se envían a http://localhost:5000/api/watchlist-alert
+                </em>
+              </span>
+            ) : (
+              <span>
+                ⚠️ <strong>Alertas DESACTIVADAS:</strong> No recibirás notificaciones. Habilita este checkbox para activar el sistema de alertas automáticas.
+              </span>
+            )}
+          </div>
+        </div>
+
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             style={{

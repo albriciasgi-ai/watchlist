@@ -45,7 +45,9 @@
       "Bash(cmd //c \"taskkill /PID 19584 /F /T 2>&1\")",
       "Bash(cmd //c \"taskkill /PID 29820 /F /T 2>&1\")",
       "Bash(cmd //c \"taskkill /PID 3092 /F /T 2>&1\")",
-      "Bash(cmd //c \"taskkill /PID 34888 /F /T 2>&1\")"
+      "Bash(cmd //c \"taskkill /PID 34888 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 4060 /F /T 2>&1\")",
+      "Bash(cmd //c \"taskkill /PID 20868 /F /T 2>&1\")"
     ],
     "deny": [],
     "ask": []

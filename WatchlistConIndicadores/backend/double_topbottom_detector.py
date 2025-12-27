@@ -215,7 +215,7 @@ class DoubleTopBottomDetector:
 
         print(f"  [PRUEBA_DBT] After min_confidence filter ({min_confidence}): {len(detected_patterns)} patterns (filtered {patterns_before_conf_filter - len(detected_patterns)})")
         print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
-        print(f"  ✅ Detected {len(detected_patterns)} patterns (after filtering)")
+        print(f"  [OK] Detected {len(detected_patterns)} patterns (after filtering)")
 
         return detected_patterns
 
@@ -369,7 +369,7 @@ class DoubleTopBottomDetector:
                 if max_zscore >= z_threshold:
                     # Volumen alto encontrado en ventana
                     filtered_extremes.append(extreme)
-                    print(f"    ✅ ACCEPTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                    print(f"    [OK] ACCEPTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
                           f"Max z-score={max_zscore:.2f} at offset={offset:+d} (threshold={z_threshold:.1f})")
                 else:
                     # Volumen bajo en toda la ventana
@@ -551,7 +551,7 @@ class DoubleTopBottomDetector:
                 patterns.append(pattern)
 
                 # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] ✅ DOUBLE TOP detected:")
+                print(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
                 print(f"      Level Price: ${level_price:.2f}")
                 print(f"      First extreme:  ${h1['price']:.2f} @ {h1['timestamp']} (candle {h1['candle_index']}) | Rejection: {rejection_h1['pattern_type']} (quality: {rejection_h1['quality']:.2f}) | Vol Z-Score: {zscore_h1:.2f}")
                 print(f"      Second extreme: ${h2['price']:.2f} @ {h2['timestamp']} (candle {h2['candle_index']}) | Rejection: {rejection_h2['pattern_type']} (quality: {rejection_h2['quality']:.2f}) | Vol Z-Score: {zscore_h2:.2f}")
@@ -728,7 +728,7 @@ class DoubleTopBottomDetector:
                 patterns.append(pattern)
 
                 # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] ✅ DOUBLE BOTTOM detected:")
+                print(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
                 print(f"      Level Price: ${level_price:.2f}")
                 print(f"      First extreme:  ${l1['price']:.2f} @ {l1['timestamp']} (candle {l1['candle_index']}) | Rejection: {rejection_l1['pattern_type']} (quality: {rejection_l1['quality']:.2f}) | Vol Z-Score: {zscore_l1:.2f}")
                 print(f"      Second extreme: ${l2['price']:.2f} @ {l2['timestamp']} (candle {l2['candle_index']}) | Rejection: {rejection_l2['pattern_type']} (quality: {rejection_l2['quality']:.2f}) | Vol Z-Score: {zscore_l2:.2f}")
@@ -775,13 +775,15 @@ class DoubleTopBottomDetector:
         # Check for Hammer (bullish)
         if expected_direction == 'bullish' and rejection_patterns.get('hammer', True):
             if lower_shadow >= 1.5 * body and upper_shadow <= 0.3 * body and (c - l) / total_range >= 0.5:
-                quality = min(1.0, (lower_shadow / body) / 3.0)
+                # Protección contra división por cero
+                quality = min(1.0, (lower_shadow / body) / 3.0) if body > 0 else 0.8
                 return {'has_pattern': True, 'pattern_type': 'HAMMER', 'quality': quality}
 
         # Check for Shooting Star (bearish)
         if expected_direction == 'bearish' and rejection_patterns.get('shootingStar', True):
             if upper_shadow >= 1.5 * body and lower_shadow <= 0.3 * body and (h - c) / total_range >= 0.5:
-                quality = min(1.0, (upper_shadow / body) / 3.0)
+                # Protección contra división por cero
+                quality = min(1.0, (upper_shadow / body) / 3.0) if body > 0 else 0.8
                 return {'has_pattern': True, 'pattern_type': 'SHOOTING_STAR', 'quality': quality}
 
         # Check for Engulfing patterns

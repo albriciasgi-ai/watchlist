@@ -33,7 +33,7 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
-    "1": 5,       # 1 min -> máx 5 días
+    "1": 1,       # 1 min -> máx 1 día
     "3": 10,      # 3 min -> máx 10 días
     "5": 30,      # 5 min -> máx 30 días
     "15": 90,     # 15 min -> máx 90 días

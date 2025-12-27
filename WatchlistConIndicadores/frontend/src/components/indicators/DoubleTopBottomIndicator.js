@@ -15,8 +15,22 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.name = "Double Top/Bottom";
     this.patterns = [];
     this.config = this.loadConfig();
+
+    // ✅ Sincronizar this.enabled con config.enabled al inicializar
+    if (this.config.enabled !== undefined) {
+      this.enabled = this.config.enabled;
+    }
+
     this.height = 0; // Overlay on main chart
     this.loading = false;
+
+    // Sistema de alertas (mismo formato que RejectionPatternIndicator)
+    this.alertedPatterns = new Set(); // Set de IDs de patrones ya alertados
+    this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
+    this.notificationPermissionRequested = false;
+    this.alertSystemStartTime = null; // Solo alertar patrones detectados después de este timestamp
+
+    console.log(`[${this.symbol}] 🔔 Double Top/Bottom alert system initialized (cooldown: ${this.alertCooldownMs/60000} min)`);
   }
 
   loadConfig() {
@@ -137,12 +151,19 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         }
       },
 
-      debugMode: false
+      debugMode: false,
+      alertsEnabled: false  // Sistema de alertas automáticas
     };
   }
 
   updateConfig(config) {
     this.config = config;
+
+    // ✅ Sincronizar this.enabled con config.enabled
+    if (config.enabled !== undefined) {
+      this.enabled = config.enabled;
+    }
+
     localStorage.setItem(`double_topbottom_config_${this.symbol}`, JSON.stringify(config));
     // Don't clear patterns immediately - let fetchData() replace them naturally
     console.log(`[${this.symbol}] 🔄 Double Top/Bottom config updated, patterns will refresh`);
@@ -205,7 +226,236 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       this.patterns = [];
     } finally {
       this.loading = false;
+
+      // Verificar y enviar alertas si están habilitadas
+      if (this.config.alertsEnabled && this.patterns.length > 0) {
+        this.checkAndSendAlerts().catch(err => {
+          console.error(`[${this.symbol}] Error checking alerts:`, err);
+        });
+      }
+
+      // Pedir permisos de notificación si alertas están habilitadas
+      if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
+        this.requestNotificationPermission();
+      }
     }
+  }
+
+  /**
+   * Genera ID único para un patrón
+   */
+  getPatternId(pattern) {
+    return `${pattern.type}_${pattern.levelPrice}_${pattern.firstExtreme.timestamp}_${pattern.secondExtreme.timestamp}`;
+  }
+
+  /**
+   * Formatea nombre del patrón para alertas
+   */
+  formatPatternName(pattern) {
+    if (pattern.type === 'DOUBLE_TOP') {
+      return 'Double Top (ABRIR SHORT)';
+    } else {
+      return 'Double Bottom (ABRIR LONG)';
+    }
+  }
+
+  /**
+   * Verifica patrones confirmados y envía alertas
+   */
+  async checkAndSendAlerts() {
+    if (!this.config.alertsEnabled) return;
+    if (!this.patterns || this.patterns.length === 0) return;
+
+    // Primera vez: guardar timestamp de inicio del sistema de alertas
+    if (this.alertSystemStartTime === null) {
+      this.alertSystemStartTime = Date.now();
+
+      console.log(`\n${'='.repeat(80)}`);
+      console.log(`📊 [${this.symbol}] DBT ALERT SYSTEM ACTIVATED`);
+      console.log(`${'='.repeat(80)}`);
+      console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+      console.log(`All patterns before this time will be suppressed`);
+      console.log(`Only NEW patterns detected AFTER this time will trigger alerts`);
+      console.log(`${'='.repeat(80)}\n`);
+
+      return; // Salir en la primera ejecución
+    }
+
+    // Obtener solo patrones nuevos que no han sido alertados
+    const newPatterns = [];
+
+    for (const pattern of this.patterns) {
+      const patternId = this.getPatternId(pattern);
+
+      // Si ya fue alertado, skip
+      if (this.alertedPatterns.has(patternId)) {
+        continue;
+      }
+
+      // Solo patrones con señal de entrada (momentum confirmado)
+      if (!pattern.entrySignal || !pattern.entrySignal.has_momentum) {
+        continue;
+      }
+
+      // Solo patrones detectados después del start time
+      const patternTime = pattern.secondExtreme.timestamp; // Usar segundo extremo como tiempo del patrón
+      if (patternTime < this.alertSystemStartTime) {
+        continue;
+      }
+
+      newPatterns.push(pattern);
+    }
+
+    if (newPatterns.length === 0) return;
+
+    console.log(`\n[${this.symbol}] 🔍 NEW DBT PATTERNS DETECTED:`);
+    console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+    console.log(`  ✅ NEW patterns to alert: ${newPatterns.length}`);
+
+    newPatterns.forEach((p, i) => {
+      console.log(`    ${i + 1}. ${p.type} at $${p.levelPrice.toFixed(2)} - Direction: ${p.entrySignal.direction}`);
+    });
+    console.log('');
+
+    // Protección anti-spam: Máximo 5 alertas por ejecución
+    const MAX_ALERTS_PER_RUN = 5;
+    if (newPatterns.length > MAX_ALERTS_PER_RUN) {
+      console.log(`⚠️ Too many patterns to alert (${newPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN}.`);
+    }
+
+    // Enviar alertas
+    let alertCount = 0;
+    for (const pattern of newPatterns) {
+      if (alertCount >= MAX_ALERTS_PER_RUN) {
+        console.log(`⚠️ Alert limit reached (${MAX_ALERTS_PER_RUN}). Remaining ${newPatterns.length - alertCount} patterns will be processed next time.`);
+        break;
+      }
+
+      const patternId = this.getPatternId(pattern);
+
+      // Enviar alerta
+      const success = await this.sendPatternAlert(pattern);
+
+      if (success) {
+        // Marcar como alertado
+        this.alertedPatterns.add(patternId);
+        pattern._alertSent = true;
+        pattern._alertTimestamp = Date.now();
+
+        console.log(`🚨 ALERT SENT: ${this.formatPatternName(pattern)} at $${pattern.levelPrice.toFixed(2)}`);
+        alertCount++;
+      }
+    }
+  }
+
+  /**
+   * Envía patrón al backend usando formato de alertas
+   */
+  async sendPatternAlert(pattern) {
+    try {
+      const payload = {
+        symbol: this.symbol,
+        interval: this.interval,
+        pattern: {
+          patternType: pattern.type,
+          price: pattern.levelPrice,
+          confidence: Math.round(pattern.confidence * 10) / 10,
+          timestamp: pattern.secondExtreme.timestamp,
+          direction: pattern.entrySignal.direction,
+          metadata: {
+            firstExtreme: pattern.firstExtreme,
+            secondExtreme: pattern.secondExtreme,
+            entrySignal: pattern.entrySignal,
+            priceTolerance: pattern.priceTolerance
+          }
+        },
+        config: {
+          filters: this.config.filters,
+          alertsEnabled: this.config.alertsEnabled
+        }
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Mostrar popup en navegador
+        this.showAlertPopup(pattern);
+        return true;
+      } else {
+        console.error(`❌ Alert rejected: ${result.reason || result.error}`);
+        return false;
+      }
+
+    } catch (error) {
+      console.error(`❌ Error sending alert: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Muestra popup en navegador cuando se envía una alerta
+   */
+  showAlertPopup(pattern) {
+    const patternName = this.formatPatternName(pattern);
+    const priceFormatted = pattern.levelPrice.toFixed(2);
+    const confidenceFormatted = Math.round(pattern.confidence);
+    const direction = pattern.entrySignal.direction;
+
+    const title = `🚨 Alert: ${this.symbol}`;
+    const body = `${patternName}\nPrice: $${priceFormatted}\nConfidence: ${confidenceFormatted}%\nDirection: ${direction}`;
+
+    // Intentar usar Notification API
+    if ("Notification" in window && Notification.permission === "granted") {
+      const notification = new Notification(title, {
+        body: body,
+        icon: direction === 'LONG' ? '📈' : '📉',
+        badge: '🔔',
+        requireInteraction: false,
+        tag: `dbt-alert-${this.symbol}-${Date.now()}`
+      });
+
+      // Auto-cerrar después de 5 segundos
+      setTimeout(() => {
+        notification.close();
+      }, 5000);
+
+    } else {
+      // Fallback: alert nativo
+      alert(`${title}\n\n${body}\n\nAlert sent to port 5000 ✅`);
+    }
+
+    // Log detallado en consola
+    console.log(`%c[${this.symbol}] 🚨 DBT ALERT SENT`, 'background: #ff4444; color: white; font-weight: bold; padding: 4px;');
+    console.log(`Pattern: ${patternName}`);
+    console.log(`Price: $${priceFormatted}`);
+    console.log(`Confidence: ${confidenceFormatted}%`);
+    console.log(`Direction: ${direction}`);
+    console.log(`Endpoint: http://localhost:5000/api/watchlist-alert`);
+  }
+
+  /**
+   * Pide permisos de notificación del navegador
+   */
+  requestNotificationPermission() {
+    if (this.notificationPermissionRequested) return;
+    if (!("Notification" in window)) {
+      console.log(`[${this.symbol}] ⚠️ Browser doesn't support notifications`);
+      return;
+    }
+
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        console.log(`[${this.symbol}] Notification permission: ${permission}`);
+      });
+    }
+
+    this.notificationPermissionRequested = true;
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
