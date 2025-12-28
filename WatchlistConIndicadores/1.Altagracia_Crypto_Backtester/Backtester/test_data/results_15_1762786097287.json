@@ -1,0 +1,27 @@
+{
+  "testFile": "BTCUSDT_sample.json",
+  "interval": "15",
+  "config": {
+    "windowSize": 30,
+    "atrPeriod": 14,
+    "atrThreshold": 0.6,
+    "priceRangeThreshold": 0.04,
+    "candleBalanceMin": 0.4,
+    "candleBalanceMax": 0.6,
+    "pocCentralRangeMin": 0.35,
+    "pocCentralRangeMax": 0.65,
+    "valueAreaMaxSize": 0.6,
+    "minConsolidationBars": 15,
+    "maxActiveRanges": 10,
+    "autoCreateFixedRange": true,
+    "enableDateFilter": false,
+    "startDate": null,
+    "endDate": null
+  },
+  "totalCandles": 192000,
+  "rangesDetected": 0,
+  "confirmed": 0,
+  "monitoring": 0,
+  "broken": 0,
+  "ranges": []
+}

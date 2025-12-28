@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if pgrep -f \"uvicorn main:app\")",
+      "Bash(then echo \"Backend already running\")",
+      "Bash(else echo \"Backend not running\")",
+      "Bash(fi)",
+      "Bash(if lsof -i:5173)",
+      "Bash(/dev/null)",
+      "Bash(then echo \"Frontend already running on port 5173\")",
+      "Bash(else echo \"Frontend not running\")",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(xcopy:*)",
+      "Bash(echo:*)",
+      "Bash(npm run dev:*)",
+      "Bash(if not exist .venv python -m venv .venv)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(pip install:*)",
+      "Bash(uvicorn:*)",
+      "Bash(start_backend.bat)",
+      "Bash(taskkill /F /IM node.exe 2)",
+      "Bash(nul)",
+      "Bash(exit 0)",
+      "Bash(tasklist:*)",
+      "Bash(.venv/Scripts/activate)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(taskkill /F /PID 13052)",
+      "Bash(taskkill /F /PID 7708)",
+      "Bash(python -c \"import os; os.system(''taskkill /F /IM python.exe'')\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

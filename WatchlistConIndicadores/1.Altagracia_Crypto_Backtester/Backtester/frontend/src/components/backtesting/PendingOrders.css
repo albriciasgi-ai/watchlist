@@ -1,0 +1,197 @@
+/* PendingOrders.css */
+/* Estilos para lista de órdenes pendientes */
+
+.pending-orders {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pending-orders h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-count {
+  background: #FF9800;
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.pending-empty {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pending-item {
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.2s;
+}
+
+.pending-item:hover {
+  border-color: #2196F3;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+.pending-long {
+  border-left: 4px solid #4CAF50;
+}
+
+.pending-short {
+  border-left: 4px solid #F44336;
+}
+
+.pending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pending-side {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.pending-side-long {
+  background: #4CAF50;
+  color: white;
+}
+
+.pending-side-short {
+  background: #F44336;
+  color: white;
+}
+
+.pending-type {
+  background: #FF9800;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.pending-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.pending-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.pending-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.pending-value {
+  color: #333;
+  font-weight: 600;
+}
+
+.pending-price {
+  font-size: 14px;
+  color: #2196F3;
+  font-weight: 700;
+}
+
+.pending-sl {
+  color: #F44336;
+}
+
+.pending-tp {
+  color: #4CAF50;
+}
+
+.pending-notes {
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin-top: 4px;
+  border-left: 3px solid #2196F3;
+}
+
+.pending-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-cancel-order {
+  flex: 1;
+  background: #F44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-order:hover {
+  background: #D32F2F;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-cancel-order:active {
+  transform: translateY(0);
+}
+
+/* Scrollbar personalizado */
+.pending-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pending-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.pending-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.pending-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

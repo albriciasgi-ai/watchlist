@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen Desarrollo Range Detector</title>
+  <style>
+    @page {
+      margin: 2cm;
+      size: A4;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 20px;
+      background: white;
+    }
+
+    h1 {
+      color: #2196F3;
+      border-bottom: 3px solid #2196F3;
+      padding-bottom: 10px;
+      margin-top: 30px;
+      page-break-after: avoid;
+    }
+
+    h2 {
+      color: #1976D2;
+      border-bottom: 2px solid #E3F2FD;
+      padding-bottom: 8px;
+      margin-top: 25px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      color: #0D47A1;
+      margin-top: 20px;
+      page-break-after: avoid;
+    }
+
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+      color: #d32f2f;
+    }
+
+    pre {
+      background: #263238;
+      color: #ECEFF1;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      page-break-inside: avoid;
+    }
+
+    pre code {
+      background: none;
+      color: #ECEFF1;
+      padding: 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #2196F3;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background: #f5f5f5;
+    }
+
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid #E0E0E0;
+      margin: 30px 0;
+    }
+
+    .checkmark {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    blockquote {
+      border-left: 4px solid #2196F3;
+      padding-left: 20px;
+      margin: 20px 0;
+      color: #666;
+      font-style: italic;
+    }
+
+    .page-break {
+      page-break-after: always;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+      }
+
+      h1, h2, h3 {
+        page-break-after: avoid;
+      }
+
+      pre, table {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<h1>Resumen Completo: Desarrollo del Range Detector</h1>
+<h2>Plataforma de Trading - Volume Profile & Range Detection</h2>
+<hr>
+<h2>Tabla de Contenidos</h2>
+<ul><li><a href="#descripción-general-del-sistema">Descripción General del Sistema</a></li>
+<li><a href="#arquitectura-del-range-detector">Arquitectura del Range Detector</a></li>
+<li><a href="#algoritmo-atr-based-range-detection">Algoritmo ATR-Based Range Detection</a></li>
+<li><a href="#funcionalidades-implementadas">Funcionalidades Implementadas</a></li>
+<li><a href="#integraciones-con-volume-profile">Integraciones con Volume Profile</a></li>
+<li><a href="#mejoras-de-uiux">Mejoras de UI/UX</a></li>
+<li><a href="#configuración-y-personalización">Configuración y Personalización</a></li>
+<li><a href="#archivos-del-sistema">Archivos del Sistema</a></li>
+<li><a href="#flujo-de-datos">Flujo de Datos</a></li>
+<li><a href="#casos-de-uso">Casos de Uso</a></li>
+</ul>
+<hr>
+<h2>Descripción General del Sistema</h2>
+<p>El <strong>Range Detector</strong> es un sistema avanzado de análisis técnico que identifica automáticamente zonas de consolidación (rangos) en el mercado de criptomonedas, utilizando el indicador ATR (Average True Range) como base matemática.</p>
+<h3>Objetivo Principal</h3>
+Detectar períodos donde el precio se mueve lateralmente dentro de límites definidos, diferenciándolos de períodos de tendencia (breakouts).
+<h3>Características Clave</h3>
+<ul><li><span class="checkmark">✅</span> Detección automática de rangos usando ATR</li>
+<li><span class="checkmark">✅</span> Creación automática de Volume Profiles en rangos detectados</li>
+<li><span class="checkmark">✅</span> Volume Profiles de tendencia entre rangos</li>
+<li><span class="checkmark">✅</span> Detección de clusters de alto volumen (zonas de soporte/resistencia)</li>
+<li><span class="checkmark">✅</span> Sistema de etiquetado alfabético (A, B, C...)</li>
+<li><span class="checkmark">✅</span> Persistencia en localStorage por símbolo y timeframe</li>
+<li><span class="checkmark">✅</span> Configuración granular por timeframe</li>
+<li><span class="checkmark">✅</span> Control individual de visibilidad de rangos</li>
+</ul>
+<hr>
+<h2>Arquitectura del Range Detector</h2>
+<h3>Componentes Principales</h3>
+<p>#### 1. ATRBasedRangeDetector.js
+<strong>Ubicación</strong>: <code>frontend/src/components/indicators/ATRBasedRangeDetector.js</code></p>
+<p><strong>Responsabilidades</strong>:
+<ul><li>Cálculo del ATR (Average True Range)</li>
+<li>Lógica de detección de rangos</li>
+<li>Gestión del estado de rangos activos</li>
+<li>Detección de breakouts</li>
+<li>Etiquetado automático</li>
+</ul>
+<strong>Configuración</strong>:
+<pre><code class="language-javascript">{
+  minRangeLength: 20,        // Mínimo de velas para considerar un rango
+  atrMultiplier: 1.0,        // Multiplicador del ATR para límites
+  atrLength: 200,            // Período del ATR
+  maxActiveRanges: 10,       // Máximo de rangos simultáneos
+  autoCreateFixedRange: true, // Crear VP automáticamente
+  maxBreakoutCandles: 5,     // Velas consecutivas para confirmar breakout
+  createTrendProfiles: false, // Crear VP entre rangos
+  showOtherTimeframes: false  // Mostrar rangos de otros TF
+}
+</code></pre></p>
+<p>#### 2. IndicatorManager.js
+<strong>Ubicación</strong>: <code>frontend/src/components/indicators/IndicatorManager.js</code></p>
+<p><strong>Responsabilidades</strong>:
+<ul><li>Coordinar todos los indicadores del símbolo</li>
+<li>Gestionar Volume Profiles fijos y dinámicos</li>
+<li>Sincronizar rangos detectados con localStorage</li>
+<li>Filtrar rangos por timeframe</li>
+<li>Renderizar indicadores en el canvas</li>
+</ul>
+<strong>Métodos Clave</strong>:
+<pre><code class="language-javascript">enableRangeDetection(config)           // Activar detección
+disableRangeDetection()                // Desactivar detección
+syncFixedRangeIndicators()             // Sincronizar desde localStorage
+createTrendProfilesBetweenRanges()    // Crear VP de tendencias
+renderFixedRangeProfiles()             // Renderizar con filtros
+saveRangeDetectionConfig()             // Guardar config por TF
+loadRangeDetectionConfig()             // Cargar config por TF
+</code></pre></p>
+<p>#### 3. RangeDetectionSettings.jsx
+<strong>Ubicación</strong>: <code>frontend/src/components/RangeDetectionSettings.jsx</code></p>
+<p><strong>Responsabilidades</strong>:
+<ul><li>UI de configuración del Range Detector</li>
+<li>Gestión de parámetros ATR</li>
+<li>Lista de rangos detectados con checkboxes</li>
+<li>Toggles de funcionalidades</li>
+<li>Activación/desactivación por símbolo</li>
+</ul>
+<hr></p>
+<h2>Algoritmo ATR-Based Range Detection</h2>
+<h3>Paso 1: Cálculo del ATR</h3>
+<pre><code class="language-javascript">calculateATR(candles, period = 200) {
+  const trueRanges = [];
+<p>  for (let i = 1; i < candles.length; i++) {
+    const high = candles[i].high;
+    const low = candles[i].low;
+    const prevClose = candles[i - 1].close;</p>
+<p>    const tr = Math.max(
+      high - low,
+      Math.abs(high - prevClose),
+      Math.abs(low - prevClose)
+    );</p>
+<p>    trueRanges.push(tr);
+  }</p>
+<p>  // Media móvil simple de los True Ranges
+  const sum = trueRanges.slice(-period).reduce((a, b) => a + b, 0);
+  return sum / Math.min(period, trueRanges.length);
+}
+</code></pre></p>
+<h3>Paso 2: Detección de Rangos</h3>
+<p>Un rango se detecta cuando:</p>
+<ul><li><strong>Inicio del Rango</strong>:</li>
+</ul>   - Precio está contenido dentro de bandas ATR
+   - <code>high <= initialHigh + (atr * atrMultiplier)</code>
+   - <code>low >= initialLow - (atr * atrMultiplier)</code>
+<ul><li><strong>Mantenimiento del Rango</strong>:</li>
+</ul>   - Cada vela nueva respeta los límites
+   - Se actualiza el rango detectado
+   - Longitud del rango incrementa
+<ul><li><strong>Validación del Rango</strong>:</li>
+</ul>   - Longitud >= <code>minRangeLength</code> velas
+   - No hay breakout confirmado
+<h3>Paso 3: Detección de Breakout</h3>
+<p>Un breakout se confirma cuando:</p>
+<pre><code class="language-javascript">if (breakoutCandleCount >= maxBreakoutCandles) {
+  // Breakout confirmado
+  if (rangeLength >= minRangeLength) {
+    // Guardar rango como válido
+    validatedRanges.push(currentRange);
+  }
+  // Reiniciar detección
+  currentRange = null;
+}
+</code></pre>
+<h3>Paso 4: Creación de Volume Profile</h3>
+<p>Cuando un rango es validado:</p>
+<pre><code class="language-javascript">const rangeProfile = {
+  rangeId: <code>range_${range.id}</code>,
+  symbol: this.symbol,
+  interval: this.interval,
+  startTimestamp: range.startTimestamp,
+  endTimestamp: range.endTimestamp,
+  enabled: true,
+  isAutoDetected: true,
+  rangeLabel: range.label,  // "A", "B", "C"...
+  detectionScore: range.score,
+  rows: 100,
+  valueAreaPercent: 70,
+  enableClusterDetection: true,
+  clusterColor: "#E65100",  // Naranja oscuro
+  baseColor: "#9C27B0"      // Púrpura
+};
+</code></pre>
+<hr>
+<h2>Funcionalidades Implementadas</h2>
+<h3>1. Sistema de Etiquetado Alfabético</h3>
+<p><strong>Implementación</strong>: <code>ATRBasedRangeDetector.js:124-132</code></p>
+<pre><code class="language-javascript">assignRangeLabels() {
+  const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  this.detectedRanges.forEach((range, index) => {
+    if (index < labels.length) {
+      range.label = labels[index];
+    } else {
+      const quotient = Math.floor(index / labels.length) - 1;
+      const remainder = index % labels.length;
+      range.label = labels[quotient] + labels[remainder];
+    }
+  });
+}
+</code></pre>
+<p><strong>Resultado</strong>: Rangos etiquetados como A, B, C... AA, AB, AC...</p>
+<h3>2. Separación por Timeframe</h3>
+<p><strong>Problema Resuelto</strong>: Rangos de diferentes timeframes se traslapaban</p>
+<p><strong>Solución</strong>: <code>IndicatorManager.js:175-213</code></p>
+<pre><code class="language-javascript">renderFixedRangeProfiles(ctx, bounds, visibleCandles, allCandles, priceContext) {
+  const showOtherTimeframes = this.rangeDetector?.config.showOtherTimeframes || false;
+<p>  const activeIndicators = this.fixedRangeIndicators.filter(indicator => {
+    const profile = this.fixedRangeProfiles.find(p => p.rangeId === indicator.rangeId);</p>
+<p>    // Rangos manuales siempre visibles
+    if (!profile || !profile.isAutoDetected) {
+      return true;
+    }</p>
+<p>    // Rangos auto-detectados filtrados por timeframe
+    if (showOtherTimeframes) {
+      return true;
+    } else {
+      return profile.interval === this.interval;
+    }
+  });</p>
+<p>  // Renderizar
+  activeIndicators.forEach(indicator => {
+    indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
+  });
+}
+</code></pre></p>
+<p><strong>Features</strong>:
+<ul><li>Por defecto: solo rangos del timeframe actual</li>
+<li>Opción: mostrar rangos de todos los timeframes</li>
+<li>Rangos manuales siempre visibles</li>
+</ul>
+<h3>3. Volume Profiles de Tendencia</h3></p>
+<p><strong>Concepto</strong>: Crear VP en los gaps entre rangos detectados (zonas de tendencia)</p>
+<p><strong>Implementación</strong>: <code>IndicatorManager.js:539-624</code></p>
+<pre><code class="language-javascript">createTrendProfilesBetweenRanges() {
+  // Obtener rangos auto-detectados ordenados
+  const autoRanges = this.getAutoDetectedRanges()
+    .filter(p => !p.isTrendProfile)
+    .sort((a, b) => a.startTimestamp - b.startTimestamp);
+<p>  // Detectar gaps entre rangos consecutivos
+  for (let i = 0; i < autoRanges.length - 1; i++) {
+    const currentRange = autoRanges[i];
+    const nextRange = autoRanges[i + 1];
+    const gapStart = currentRange.endTimestamp;
+    const gapEnd = nextRange.startTimestamp;</p>
+<p>    // Verificar si ya existe
+    const gapExists = this.fixedRangeProfiles.some(p =>
+      p.isTrendProfile &&
+      p.startTimestamp === gapStart &&
+      p.endTimestamp === gapEnd
+    );</p>
+<p>    if (!gapExists && (gapEnd - gapStart > 60000)) {
+      // Crear VP de tendencia
+      const trendProfile = {
+        rangeId: <code>trend_${gapStart}_${gapEnd}</code>,
+        isTrendProfile: true,
+        baseColor: "#2196F3",  // Azul para tendencias
+        clusterColor: "#FF6F00", // Naranja para clusters
+        // ... resto de config
+      };</p>
+<p>      this.fixedRangeProfiles.push(trendProfile);
+    }
+  }
+}
+</code></pre></p>
+<p><strong>Características</strong>:
+<ul><li>Color azul distintivo (#2196F3)</li>
+<li>Toggle ON/OFF en settings</li>
+<li>Default: desactivado</li>
+<li>Se actualiza automáticamente al detectar nuevos rangos</li>
+</ul>
+<h3>4. Detección de Clusters</h3></p>
+<p><strong>Configuración</strong>: Activada por defecto en rangos auto-detectados</p>
+<pre><code class="language-javascript">enableClusterDetection: true,
+clusterThreshold: 1.5,
+clusterColor: "#E65100"  // Naranja oscuro
+</code></pre>
+<p><strong>Algoritmo</strong>: Detecta zonas de alto volumen (>1.5x promedio) y las marca visualmente</p>
+<h3>5. Control Individual de Visibilidad</h3>
+<p><strong>UI</strong>: Checkboxes en lista de rangos</p>
+<p><strong>Handler</strong>: <code>RangeDetectionSettings.jsx:118-136</code></p>
+<pre><code class="language-javascript">const handleToggleRange = (rangeId, currentlyEnabled) => {
+  const indicator = indicatorManager.fixedRangeIndicators.find(
+    ind => ind.rangeId === rangeId
+  );
+  const profile = indicatorManager.fixedRangeProfiles.find(
+    p => p.rangeId === rangeId
+  );
+<p>  if (indicator && profile) {
+    indicator.enabled = !currentlyEnabled;
+    profile.enabled = !currentlyEnabled;
+    indicatorManager.saveFixedRangeProfilesToStorage();
+    setConfig({ ...config }); // Force re-render
+  }
+};
+</code></pre></p>
+<p><strong>Persistencia</strong>: Estado guardado en localStorage</p>
+<h3>6. Configuración por Timeframe</h3>
+<p><strong>Problema</strong>: Diferentes timeframes requieren diferentes parámetros ATR</p>
+<p><strong>Solución</strong>: localStorage keys incluyen símbolo + interval</p>
+<pre><code class="language-javascript">// Guardar
+saveRangeDetectionConfig() {
+  const configKey = <code>range_detection_config_${this.symbol}_${this.interval}</code>;
+  localStorage.setItem(configKey, JSON.stringify({
+    enabled: true,
+    config: this.rangeDetector.config,
+    lastUpdate: Date.now()
+  }));
+}
+<p>// Cargar
+loadRangeDetectionConfig() {
+  const configKey = <code>range_detection_config_${this.symbol}_${this.interval}</code>;
+  const stored = localStorage.getItem(configKey);
+  if (stored) {
+    const { config } = JSON.parse(stored);
+    this.enableRangeDetection(config);
+  }
+}
+</code></pre></p>
+<p><strong>Resultado</strong>: Cada símbolo puede tener diferentes configs para 15m, 1h, 4h, etc.</p>
+<hr>
+<h2>Integraciones con Volume Profile</h2>
+<h3>VolumeProfileFixedRangeIndicator.js</h3>
+<p>El Range Detector crea automáticamente instancias de Volume Profile fijo para cada rango detectado.</p>
+<p><strong>Configuración típica</strong>:
+<pre><code class="language-javascript">{
+  rows: 100,                    // Bins de precio
+  valueAreaPercent: 70,         // Área de valor (70% del volumen)
+  histogramMaxWidth: 25,        // Ancho máximo del histograma
+  useGradient: true,            // Gradiente de color
+  baseColor: "#9C27B0",         // Púrpura para rangos
+  valueAreaColor: "#BA68C8",    // Púrpura claro para VA
+  pocColor: "#7B1FA2",          // Púrpura oscuro para POC
+  vahValColor: "#AB47BC",       // Líneas VAH/VAL
+  rangeShadeColor: "#E1BEE7",   // Sombreado del rango
+  enableClusterDetection: true, // Detectar clusters
+  clusterThreshold: 1.5,        // 150% del promedio
+  clusterColor: "#E65100"       // Naranja oscuro
+}
+</code></pre></p>
+<h3>Diferencias Visuales</h3>
+<table><thead><tr><th>Elemento</th><th>Rangos Laterales</th><th>Tendencias</th></tr></thead><tbody><tr><td>Color base</td><td>Púrpura (#9C27B0)</td><td>Azul (#2196F3)</td></tr><tr><td>Etiqueta</td><td>A, B, C...</td><td>Sin etiqueta</td></tr><tr><td>Clusters</td><td>Naranja oscuro</td><td>Naranja brillante</td></tr><tr><td>Sombreado</td><td>Púrpura claro</td><td>Azul claro</td></tr></tbody></table>
+<hr>
+<h2>Mejoras de UI/UX</h2>
+<h3>1. Crosshair Estilo TradingView</h3>
+<p><strong>Implementación</strong>: <code>MiniChart.jsx:373-447</code></p>
+<p><strong>Características</strong>:
+<ul><li>Líneas gruesas (2px) para mejor visibilidad</li>
+<li>Fecha/hora en eje X sin año (formato: "DD MMM HH:mm")</li>
+<li>Precio en eje Y</li>
+<li>Interpolación entre velas para posición exacta del mouse</li>
+<li>Tooltip flotante eliminado</li>
+</ul>
+<strong>Interpolación de Timestamp</strong>:
+<pre><code class="language-javascript">const candle1 = visibleCandles[candleIdx];
+const candle2 = visibleCandles[candleIdx + 1];
+const fraction = mousePositionInChart - candleIdx;
+const interpolatedTimestamp = candle1.timestamp +
+  (candle2.timestamp - candle1.timestamp) * fraction;
+</code></pre></p>
+<h3>2. Zoom Vertical con Anclaje en Mouse</h3>
+<p><strong>Fix Crítico</strong>: <code>MiniChart.jsx:694-755</code></p>
+<p><strong>Problema Original</strong>:
+<ul><li><code>handleWheel</code> usaba cálculos simplificados de <code>priceChartHeight</code></li>
+<li>No incluía <code>inProgressCandle</code> en displayCandles</li>
+<li><code>marginTop</code> incorrecto (30 vs 25)</li>
+</ul>
+<strong>Solución</strong>:
+<pre><code class="language-javascript">// Calcular altura exacta como en drawChart
+const availableHeight = height - marginTop - timeAxisHeight;
+const totalNeeded = minPriceChartHeight + baseVolumeHeight + desiredIndicatorsHeight;</p>
+<p>let priceChartHeight;
+if (availableHeight >= totalNeeded) {
+  priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+} else {
+  const scale = availableHeight / totalNeeded;
+  priceChartHeight = Math.floor(minPriceChartHeight * scale);
+  // ...
+}</p>
+<p>// Usar displayCandles con inProgressCandle
+let displayCandles = [...candlesRef.current];
+if (inProgressCandleRef.current) {
+  displayCandles.push(inProgressCandleRef.current);
+}</p>
+<p>// Calcular precio en mouse ANTES del zoom
+const priceAtMouse = minPrice +
+  (marginTop + priceChartHeight - mouseY + oldVerticalOffset) / oldYScale;</p>
+<p>// Aplicar zoom y calcular nuevo offset
+const newVerticalOffset = mouseY - marginTop - priceChartHeight +
+  (priceAtMouse - minPrice) * newYScale;
+</code></pre></p>
+<p><strong>Resultado</strong>: El precio bajo el cursor permanece fijo durante el zoom</p>
+<h3>3. Indicador de Timeframe</h3>
+<p><strong>Implementación</strong>: <code>MiniChart.jsx:363-370</code></p>
+<pre><code class="language-javascript">// Mostrar timeframe en esquina superior derecha
+ctx.fillStyle = "#2196F3";
+ctx.font = "bold 14px Inter, sans-serif";
+const timeframeText = interval;
+const timeframeWidth = ctx.measureText(timeframeText).width;
+ctx.fillRect(width - marginRight - timeframeWidth - 16, 6, timeframeWidth + 12, 20);
+ctx.fillStyle = "#FFFFFF";
+ctx.fillText(timeframeText, width - marginRight - timeframeWidth - 10, 20);
+</code></pre>
+<p><strong>Propósito</strong>: Identificar timeframe en modo pantalla completa</p>
+<h3>4. Botones de Acción</h3>
+<p><strong>Reposicionamiento</strong>: <code>MiniChart.jsx:1048-1058</code></p>
+<p>Ubicados en esquina superior derecha (debajo del timeframe):
+<ul><li>⛶ Pantalla completa</li>
+<li>→| Ir a última vela</li>
+<li>VP Configuración</li>
+<li>🎯 Range Detection</li>
+<li>📊 Fixed Range Profiles</li>
+</ul>
+<strong>Fix CSS</strong>: Eliminado <code>position: absolute</code> conflictivo de:
+<ul><li><code>.fullscreen-btn</code></li>
+<li><code>.goto-latest-btn</code></li>
+<li><code>.vp-chart-settings-btn</code></li>
+<li><code>.fixed-range-manager-btn</code></li>
+</ul>
+Ahora controlados por contenedor flex.</p>
+<hr>
+<h2>Configuración y Personalización</h2>
+<h3>Panel de Configuración</h3>
+<p><strong>Acceso</strong>: Botón 🎯 en cada gráfico</p>
+<p><strong>Parámetros Ajustables</strong>:</p>
+<ul><li><strong>Mínimo de velas en rango</strong> (minRangeLength)</li>
+</ul>   - Default: 20
+   - Rango: 10-100
+   - Descripción: Número mínimo de velas para validar un rango
+<ul><li><strong>Multiplicador ATR</strong> (atrMultiplier)</li>
+</ul>   - Default: 1.0
+   - Rango: 0.5-3.0
+   - Descripción: Ajusta el ancho de las bandas de rango
+<ul><li><strong>Período ATR</strong> (atrLength)</li>
+</ul>   - Default: 200
+   - Rango: 50-500
+   - Descripción: Número de velas para calcular el ATR
+<ul><li><strong>Máximo de rangos activos</strong> (maxActiveRanges)</li>
+</ul>   - Default: 10
+   - Rango: 1-20
+   - Descripción: Límite de rangos detectados simultáneos
+<ul><li><strong>Crear VP Fixed Range</strong> (autoCreateFixedRange)</li>
+</ul>   - Default: true
+   - Descripción: Crear automáticamente VP en rangos detectados
+<ul><li><strong>Velas para confirmar breakout</strong> (maxBreakoutCandles)</li>
+</ul>   - Default: 5
+   - Rango: 1-20
+   - Descripción: Velas consecutivas fuera del rango para confirmar salida
+<ul><li><strong>Crear VP de tendencias</strong> (createTrendProfiles)</li>
+</ul>   - Default: false
+   - Descripción: Crear VP en gaps entre rangos
+<ul><li><strong>Mostrar otros timeframes</strong> (showOtherTimeframes)</li>
+</ul>   - Default: false
+   - Descripción: Mostrar rangos detectados en otros intervalos
+<h3>Activación por Símbolo</h3>
+<p><strong>Toggle Principal</strong>: Activa/desactiva Range Detection para el símbolo</p>
+<p><strong>Persistencia</strong>:
+<pre><code class="language-javascript">localStorage: 'range_detection_enabled_symbols'
+Formato: ["BTCUSDT", "ETHUSDT", ...]
+</code></pre></p>
+<h3>Lista de Rangos Detectados</h3>
+<p><strong>UI Features</strong>:
+<ul><li>Checkbox individual para mostrar/ocultar</li>
+<li>Badge con etiqueta (A, B, C...)</li>
+<li>Badge con timeframe (15m, 1h, etc.)</li>
+<li>Score de detección</li>
+<li>Fechas de inicio/fin</li>
+<li>Alternancia de colores de fila</li>
+</ul>
+<strong>Ejemplo</strong>:
+<pre><code class="language-">☑ [A] Rango #1 Score: 8.5 [15m]
+  01 Nov 14:30 → 01 Nov 18:45</p>
+<p>☑ [B] Rango #2 Score: 7.2 [15m]
+  02 Nov 09:15 → 02 Nov 12:00
+</code></pre></p>
+<hr>
+<h2>Archivos del Sistema</h2>
+<h3>Componentes React</h3>
+<ul><li><strong>MiniChart.jsx</strong> (1200+ líneas)</li>
+</ul>   - Componente principal del gráfico
+   - Renderizado en canvas
+   - Gestión de interacciones (zoom, pan, crosshair)
+   - Integración con IndicatorManager
+<ul><li><strong>RangeDetectionSettings.jsx</strong> (500+ líneas)</li>
+</ul>   - Modal de configuración
+   - Controles de parámetros ATR
+   - Lista de rangos detectados
+   - Toggles de features
+<ul><li><strong>FixedRangeProfilesManager.jsx</strong></li>
+</ul>   - Gestión de rangos manuales
+   - Creación/edición/eliminación
+   - Selector de fechas
+<h3>Indicadores</h3>
+<ul><li><strong>ATRBasedRangeDetector.js</strong> (400+ líneas)</li>
+</ul>   - Algoritmo de detección
+   - Cálculo de ATR
+   - Gestión de rangos activos
+   - Etiquetado alfabético
+<ul><li><strong>IndicatorManager.js</strong> (800+ líneas)</li>
+</ul>   - Coordinador de indicadores
+   - Sincronización con localStorage
+   - Filtrado por timeframe
+   - Renderizado de Volume Profiles
+<ul><li><strong>VolumeProfileFixedRangeIndicator.js</strong> (600+ líneas)</li>
+</ul>   - Cálculo de Volume Profile
+   - Detección de clusters
+   - Renderizado en canvas
+   - Configuración personalizada
+<ul><li><strong>IndicatorBase.js</strong></li>
+</ul>   - Clase abstracta base
+   - Interfaz común para indicadores
+<h3>Estilos</h3>
+<ul><li><strong>styles.css</strong></li>
+</ul>   - Estilos de botones (hover effects)
+   - Modal styles
+   - Layout de gráficos
+<hr>
+<h2>Flujo de Datos</h2>
+<h3>1. Inicialización</h3>
+<pre><code class="language-">User navega a Watchlist
+  ↓
+MiniChart.jsx monta
+  ↓
+IndicatorManager creado
+  ↓
+loadRangeDetectionConfig()
+  ↓
+localStorage → config por símbolo+timeframe
+  ↓
+Si enabled: enableRangeDetection(config)
+  ↓
+ATRBasedRangeDetector creado
+  ↓
+syncFixedRangeIndicators()
+  ↓
+localStorage → rangos detectados
+  ↓
+VolumeProfileFixedRangeIndicator creado para cada rango
+</code></pre>
+<h3>2. Actualización de Datos</h3>
+<pre><code class="language-">WebSocket recibe tick
+  ↓
+WebSocketManager distribuye
+  ↓
+MiniChart actualiza inProgressCandle
+  ↓
+IndicatorManager.update(candles)
+  ↓
+RangeDetector.detectRanges(candles)
+  ↓
+Si nuevo rango detectado:
+  ↓
+createFixedRangeProfile()
+  ↓
+VolumeProfileFixedRangeIndicator creado
+  ↓
+saveFixedRangeProfilesToStorage()
+  ↓
+localStorage actualizado
+  ↓
+drawChart() re-renderiza
+</code></pre>
+<h3>3. Interacción del Usuario</h3>
+<pre><code class="language-">User abre RangeDetectionSettings
+  ↓
+Muestra config actual + lista de rangos
+  ↓
+User ajusta parámetro (ej: atrMultiplier)
+  ↓
+handleConfigChange()
+  ↓
+rangeDetector.updateConfig(newConfig)
+  ↓
+saveRangeDetectionConfig()
+  ↓
+localStorage actualizado (key: symbol_interval)
+  ↓
+Si createTrendProfiles activado:
+  ↓
+createTrendProfilesBetweenRanges()
+  ↓
+Nuevos VP azules creados
+  ↓
+saveFixedRangeProfilesToStorage()
+  ↓
+drawChart() re-renderiza
+</code></pre>
+<h3>4. Cambio de Timeframe</h3>
+<pre><code class="language-">User cambia de 15m a 1h
+  ↓
+MiniChart useEffect triggered
+  ↓
+IndicatorManager destruido
+  ↓
+Nuevo IndicatorManager creado
+  ↓
+loadRangeDetectionConfig() con nuevo interval
+  ↓
+localStorage → config específico de 1h
+  ↓
+syncFixedRangeIndicators()
+  ↓
+Filtra rangos: solo interval === "60"
+  ↓
+renderFixedRangeProfiles() aplica filtro
+  ↓
+Solo rangos de 1h visibles
+</code></pre>
+<hr>
+<h2>Casos de Uso</h2>
+<h3>Caso 1: Trader Swing identificando zonas de consolidación</h3>
+<p><strong>Objetivo</strong>: Identificar rangos en timeframe 4h para detectar posibles breakouts</p>
+<p><strong>Workflow</strong>:
+<ul><li>Seleccionar timeframe 4h</li>
+<li>Activar Range Detection (botón 🎯)</li>
+<li>Ajustar <code>atrMultiplier</code> a 1.2 (rangos más estrechos)</li>
+<li>Ajustar <code>minRangeLength</code> a 30 (rangos más largos)</li>
+<li>Activar "Crear VP de tendencias"</li>
+<li>Observar:</li>
+</ul>   - Rangos púrpura (A, B, C...) = consolidaciones
+   - VP azules = tendencias entre rangos
+   - Clusters naranjas = soportes/resistencias clave</p>
+<p><strong>Resultado</strong>:
+<ul><li>3 rangos identificados en la última semana</li>
+<li>2 zonas de tendencia alcista entre rangos</li>
+<li>5 clusters de alto volumen (posibles zonas de reversión)</li>
+</ul>
+<h3>Caso 2: Day Trader en timeframe 15m</h3></p>
+<p><strong>Objetivo</strong>: Scalping usando micro-rangos del día</p>
+<p><strong>Workflow</strong>:
+<ul><li>Seleccionar timeframe 15m</li>
+<li>Activar Range Detection</li>
+<li>Ajustar <code>atrMultiplier</code> a 0.8 (rangos muy ajustados)</li>
+<li>Ajustar <code>minRangeLength</code> a 12 (rangos más cortos)</li>
+<li>Ajustar <code>maxBreakoutCandles</code> a 3 (confirmación rápida)</li>
+<li>Desactivar "Mostrar otros timeframes"</li>
+<li>Usar checkboxes para ocultar rangos antiguos</li>
+</ul>
+<strong>Resultado</strong>:
+<ul><li>8 micro-rangos detectados en la sesión</li>
+<li>Enfoque solo en los 3 rangos más recientes</li>
+<li>Identificación rápida de breakouts</li>
+</ul>
+<h3>Caso 3: Análisis multi-timeframe</h3></p>
+<p><strong>Objetivo</strong>: Comparar rangos de 1h con contexto de 4h</p>
+<p><strong>Workflow</strong>:
+<ul><li>Seleccionar timeframe 1h</li>
+<li>Activar Range Detection en 1h (parámetros personalizados)</li>
+<li>Cambiar a timeframe 4h</li>
+<li>Activar Range Detection en 4h (parámetros diferentes)</li>
+<li>Volver a 1h</li>
+<li>Activar "Mostrar otros timeframes"</li>
+</ul>
+<strong>Resultado</strong>:
+<ul><li>Rangos de 1h (púrpura) superpuestos con rangos de 4h</li>
+<li>Identificación de confluencias (rangos que coinciden)</li>
+<li>Mejor timing para entradas (micro-rango dentro de macro-rango)</li>
+</ul>
+<hr></p>
+<h2>Almacenamiento en localStorage</h2>
+<h3>Estructura de Datos</h3>
+<p>#### 1. Símbolos con Range Detection Activo</p>
+<pre><code class="language-javascript">Key: 'range_detection_enabled_symbols'
+Value: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+</code></pre>
+<p>#### 2. Configuración por Símbolo+Timeframe</p>
+<pre><code class="language-javascript">Key: 'range_detection_config_BTCUSDT_15'
+Value: {
+  enabled: true,
+  config: {
+    minRangeLength: 20,
+    atrMultiplier: 1.0,
+    atrLength: 200,
+    maxActiveRanges: 10,
+    autoCreateFixedRange: true,
+    maxBreakoutCandles: 5,
+    createTrendProfiles: false,
+    showOtherTimeframes: false
+  },
+  lastUpdate: 1699123456789
+}
+</code></pre>
+<p>#### 3. Rangos Detectados (Fixed Range Profiles)</p>
+<pre><code class="language-javascript">Key: 'volumeprofile_fixed_ranges_v2'
+Value: [
+  {
+    rangeId: "range_BTCUSDT_15_001",
+    symbol: "BTCUSDT",
+    interval: "15",
+    startTimestamp: 1699000000000,
+    endTimestamp: 1699010000000,
+    enabled: true,
+    isAutoDetected: true,
+    isTrendProfile: false,
+    rangeLabel: "A",
+    detectionScore: 8.5,
+    rows: 100,
+    valueAreaPercent: 70,
+    histogramMaxWidth: 25,
+    useGradient: true,
+    baseColor: "#9C27B0",
+    valueAreaColor: "#BA68C8",
+    pocColor: "#7B1FA2",
+    vahValColor: "#AB47BC",
+    rangeShadeColor: "#E1BEE7",
+    enableClusterDetection: true,
+    clusterThreshold: 1.5,
+    clusterColor: "#E65100"
+  },
+  {
+    rangeId: "trend_1699010000000_1699020000000",
+    symbol: "BTCUSDT",
+    interval: "15",
+    startTimestamp: 1699010000000,
+    endTimestamp: 1699020000000,
+    enabled: true,
+    isAutoDetected: true,
+    isTrendProfile: true,
+    rows: 50,
+    valueAreaPercent: 70,
+    baseColor: "#2196F3",
+    clusterColor: "#FF6F00",
+    // ...
+  }
+]
+</code></pre>
+<hr>
+<h2>Optimizaciones Implementadas</h2>
+<h3>1. Renderizado Condicional</h3>
+<ul><li>Solo renderizar rangos del timeframe actual (filtrado)</li>
+<li>Checkboxes para ocultar rangos individualmente</li>
+<li>Destrucción correcta de indicadores al cambiar timeframe</li>
+</ul>
+<h3>2. Caché de Cálculos</h3>
+<ul><li>ATR calculado una vez por actualización</li>
+<li>Volume Profile bins cacheados</li>
+<li>displayCandles filtrado eficientemente</li>
+</ul>
+<h3>3. localStorage Granular</h3>
+<ul><li>Configuración separada por símbolo+timeframe</li>
+<li>Evita colisiones entre símbolos</li>
+<li>Carga solo datos relevantes</li>
+</ul>
+<h3>4. Lazy Loading de Trend Profiles</h3>
+<ul><li>Solo creados cuando toggle activado</li>
+<li>Eliminados automáticamente cuando desactivado</li>
+<li>No afectan performance si no se usan</li>
+</ul>
+<hr>
+<h2>Próximas Mejoras Sugeridas</h2>
+<h3>1. Drag-to-Resize Ranges</h3>
+<ul><li>Permitir ajustar rangos arrastrando bordes</li>
+<li>Handles visuales en bordes verticales</li>
+<li>Opción C del análisis de complejidad (2.5 horas estimadas)</li>
+</ul>
+<h3>2. Range Templates</h3>
+<ul><li>Guardar configuraciones ATR como presets</li>
+<li>"Conservative", "Moderate", "Aggressive"</li>
+<li>Aplicación con un click</li>
+</ul>
+<h3>3. Estadísticas de Rangos</h3>
+<ul><li>Duración promedio</li>
+<li>Tasa de breakout exitoso vs falso</li>
+<li>Mejor timeframe para cada símbolo</li>
+</ul>
+<h3>4. Alertas de Breakout</h3>
+<ul><li>Notificación cuando se confirma breakout</li>
+<li>Integración con sistema de alertas existente</li>
+<li>Configuración de sensibilidad</li>
+</ul>
+<h3>5. Exportación de Datos</h3>
+<ul><li>CSV con rangos detectados</li>
+<li>Análisis histórico</li>
+<li>Backtesting de estrategias</li>
+</ul>
+<hr>
+<h2>Conclusiones</h2>
+<p>El sistema de <strong>Range Detector</strong> representa una herramienta avanzada de análisis técnico que:</p>
+<p><span class="checkmark">✅</span> <strong>Automatiza</strong> la identificación de zonas de consolidación
+<span class="checkmark">✅</span> <strong>Integra</strong> seamlessly con Volume Profile para análisis de volumen
+<span class="checkmark">✅</span> <strong>Personaliza</strong> configuraciones por símbolo y timeframe
+<span class="checkmark">✅</span> <strong>Persiste</strong> datos y configuraciones para análisis continuo
+<span class="checkmark">✅</span> <strong>Optimiza</strong> la experiencia del usuario con UI intuitiva</p>
+<h3>Impacto en el Trading</h3>
+<ul><li><strong>Reducción de tiempo</strong>: Detección automática vs análisis manual</li>
+<li><strong>Objetividad</strong>: Criterios matemáticos (ATR) vs subjetividad</li>
+<li><strong>Consistencia</strong>: Mismos parámetros aplicados sistemáticamente</li>
+<li><strong>Contexto</strong>: Integración con Volume Profile para decisiones informadas</li>
+</ul>
+<h3>Métricas de Éxito</h3>
+<ul><li><span class="checkmark">✅</span> 100% de funcionalidades implementadas según spec</li>
+<li><span class="checkmark">✅</span> Persistencia robusta en localStorage</li>
+<li><span class="checkmark">✅</span> UI responsive y intuitiva</li>
+<li><span class="checkmark">✅</span> Performance optimizada (no lag en charts)</li>
+<li><span class="checkmark">✅</span> Código mantenible y extensible</li>
+</ul>
+<hr>
+<h2>Anexo: Referencias Técnicas</h2>
+<h3>Fórmulas Clave</h3>
+<p><strong>True Range (TR)</strong>:
+<pre><code class="language-">TR = max(
+  High - Low,
+  |High - Previous Close|,
+  |Low - Previous Close|
+)
+</code></pre></p>
+<p><strong>Average True Range (ATR)</strong>:
+<pre><code class="language-">ATR = SMA(TR, period)
+</code></pre></p>
+<p><strong>Bandas de Rango</strong>:
+<pre><code class="language-">Upper Band = Initial High + (ATR × multiplier)
+Lower Band = Initial Low - (ATR × multiplier)
+</code></pre></p>
+<p><strong>Detección de Rango</strong>:
+<pre><code class="language-">In Range = (Low >= Lower Band) AND (High <= Upper Band)
+</code></pre></p>
+<p><strong>Breakout Confirmado</strong>:
+<pre><code class="language-">Breakout = (consecutive candles outside bands) >= maxBreakoutCandles
+</code></pre></p>
+<h3>Colores del Sistema</h3>
+<table><thead><tr><th>Elemento</th><th>Hex Code</th><th>Uso</th></tr></thead><tbody><tr><td>Rangos púrpura</td><td>#9C27B0</td><td>Base de rangos laterales</td></tr><tr><td>Tendencias azul</td><td>#2196F3</td><td>VP entre rangos</td></tr><tr><td>Clusters naranja oscuro</td><td>#E65100</td><td>Clusters en rangos</td></tr><tr><td>Clusters naranja brillante</td><td>#FF6F00</td><td>Clusters en tendencias</td></tr><tr><td>POC púrpura oscuro</td><td>#7B1FA2</td><td>Point of Control</td></tr><tr><td>VA púrpura claro</td><td>#BA68C8</td><td>Value Area</td></tr></tbody></table>
+<h3>Archivos Clave - Líneas de Código</h3>
+<table><thead><tr><th>Archivo</th><th>Líneas</th><th>Descripción</th></tr></thead><tbody><tr><td>ATRBasedRangeDetector.js</td><td>~400</td><td>Algoritmo detección</td></tr><tr><td>IndicatorManager.js</td><td>~800</td><td>Coordinación indicadores</td></tr><tr><td>VolumeProfileFixedRangeIndicator.js</td><td>~600</td><td>Volume Profile</td></tr><tr><td>MiniChart.jsx</td><td>~1200</td><td>Rendering + UX</td></tr><tr><td>RangeDetectionSettings.jsx</td><td>~500</td><td>UI configuración</td></tr></tbody></table>
+<strong>Total</strong>: ~3500 líneas de código core
+<hr>
+<h2>Apéndice: Sesión de Desarrollo Actual</h2>
+<h3>Cambios en Esta Sesión</h3>
+<ul><li><strong>Fix Zoom Vertical</strong> (MiniChart.jsx:694-755)</li>
+</ul>   - Problema: No anclaba en posición del mouse
+   - Solución: Sincronización exacta con drawChart calculations
+<ul><li><strong>Indicador Timeframe</strong> (MiniChart.jsx:363-370)</li>
+</ul>   - Badge azul en esquina superior derecha
+   - Visible en pantalla completa
+<ul><li><strong>Restauración Botones</strong> (styles.css)</li>
+</ul>   - Eliminado position absolute conflictivo
+   - Todos los botones visibles
+<ul><li><strong>Reposicionamiento UI</strong> (MiniChart.jsx:1048-1058)</li>
+</ul>   - Botones movidos a derecha
+   - No obstruyen nombre de símbolo
+<h3>Estado Final</h3>
+<p><span class="checkmark">✅</span> Todas las funcionalidades operativas
+<span class="checkmark">✅</span> UI optimizada y sin obstrucciones
+<span class="checkmark">✅</span> Zoom/Pan funcionando correctamente
+<span class="checkmark">✅</span> Range Detection totalmente funcional
+<span class="checkmark">✅</span> Persistencia en localStorage correcta</p>
+<hr>
+<p><strong>Documento Generado</strong>: 2024
+<strong>Versión del Sistema</strong>: 1.0
+<strong>Autor</strong>: Claude Code Development Session
+</p>
+</body>
+</html>

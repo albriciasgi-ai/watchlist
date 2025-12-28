@@ -1,0 +1,1102 @@
+:5173/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+The specified value "NaN" cannot be parsed, or is out of range.
+ [AVAXUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [PEOPLEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [BNBUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [BTCUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [BTCUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [HBARUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [POLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [PEOPLEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [INJUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ETHUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [ETHUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [AAVEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GALAUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ETHUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [ETHUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [BTCUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [BTCUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [SUIUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [BNBUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [TONUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [TRBUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GALAUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [HBARUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [AAVEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [TRXUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [TONUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ETHUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [ETHUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [HBARUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ETHUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [ETHUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [TRBUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [POLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [BTCUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=true
+ [BTCUSDT] 👁️ Volume Profile OCULTO (hay 1 Fixed Ranges activos)
+ [SUIUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [DOTUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ADAUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [BNBUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GALAUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [INJUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GRTUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [AVAXUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SUIUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [OPUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [AAVEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [HBARUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [UNIUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [DOTUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GALAUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SOLUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [PENDLEUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [INJUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [ALGOUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [GRTUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [SUIUSDT] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=false
+ [075] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [075] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+ [ETHUSDT] 🧹 IndicatorManager destruido
+ [076] 🕯️  TRXUSDT | 🛑 Componente desmontado, limpiando... 
+ [TRXUSDT] 🧹 IndicatorManager destruido
+ [076] 🕯️  XRPUSDT | 🛑 Componente desmontado, limpiando... 
+ [XRPUSDT] 🧹 IndicatorManager destruido
+ [076] 🕯️  SOLUSDT | 🛑 Componente desmontado, limpiando... 
+ [SOLUSDT] 🧹 IndicatorManager destruido
+ [076] 🕯️  AAVEUSDT | 🛑 Componente desmontado, limpiando... 
+ [AAVEUSDT] 🧹 IndicatorManager destruido
+ [077] 🕯️  GALAUSDT | 🛑 Componente desmontado, limpiando... 
+ [GALAUSDT] 🧹 IndicatorManager destruido
+ [077] 🕯️  OPUSDT | 🛑 Componente desmontado, limpiando... 
+ [OPUSDT] 🧹 IndicatorManager destruido
+ [077] 🕯️  ADAUSDT | 🛑 Componente desmontado, limpiando... 
+ [ADAUSDT] 🧹 IndicatorManager destruido
+ [077] 🕯️  SUIUSDT | 🛑 Componente desmontado, limpiando... 
+ [SUIUSDT] 🧹 IndicatorManager destruido
+ [078] 🕯️  POLUSDT | 🛑 Componente desmontado, limpiando... 
+ [POLUSDT] 🧹 IndicatorManager destruido
+ [078] 🕯️  POLYXUSDT | 🛑 Componente desmontado, limpiando... 
+ [POLYXUSDT] 🧹 IndicatorManager destruido
+ [078] 🕯️  CAKEUSDT | 🛑 Componente desmontado, limpiando... 
+ [CAKEUSDT] 🧹 IndicatorManager destruido
+ [078] 🕯️  PENDLEUSDT | 🛑 Componente desmontado, limpiando... 
+ [PENDLEUSDT] 🧹 IndicatorManager destruido
+ [079] 🕯️  TONUSDT | 🛑 Componente desmontado, limpiando... 
+ [TONUSDT] 🧹 IndicatorManager destruido
+ [079] 🕯️  UNIUSDT | 🛑 Componente desmontado, limpiando... 
+ [UNIUSDT] 🧹 IndicatorManager destruido
+ [079] 🕯️  ARBUSDT | 🛑 Componente desmontado, limpiando... 
+ [ARBUSDT] 🧹 IndicatorManager destruido
+ [079] 🕯️  DOTUSDT | 🛑 Componente desmontado, limpiando... 
+ [DOTUSDT] 🧹 IndicatorManager destruido
+ [079] 🕯️  AVAXUSDT | 🛑 Componente desmontado, limpiando... 
+ [AVAXUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  BNBUSDT | 🛑 Componente desmontado, limpiando... 
+ [BNBUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  PEOPLEUSDT | 🛑 Componente desmontado, limpiando... 
+ [PEOPLEUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  HBARUSDT | 🛑 Componente desmontado, limpiando... 
+ [HBARUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  ASTRUSDT | 🛑 Componente desmontado, limpiando... 
+ [ASTRUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  MASKUSDT | 🛑 Componente desmontado, limpiando... 
+ [MASKUSDT] 🧹 IndicatorManager destruido
+ [080] 🕯️  TRBUSDT | 🛑 Componente desmontado, limpiando... 
+ [TRBUSDT] 🧹 IndicatorManager destruido
+ [081] 🕯️  HIFIUSDT | 🛑 Componente desmontado, limpiando... 
+ [HIFIUSDT] 🧹 IndicatorManager destruido
+ [081] 🕯️  INJUSDT | 🛑 Componente desmontado, limpiando... 
+ [INJUSDT] 🧹 IndicatorManager destruido
+ [081] 🕯️  ATOMUSDT | 🛑 Componente desmontado, limpiando... 
+ [ATOMUSDT] 🧹 IndicatorManager destruido
+ [081] 🕯️  GRTUSDT | 🛑 Componente desmontado, limpiando... 
+ [GRTUSDT] 🧹 IndicatorManager destruido
+ [081] 🕯️  ALGOUSDT | 🛑 Componente desmontado, limpiando... 
+ [ALGOUSDT] 🧹 IndicatorManager destruido
+ [082] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [082] 🕯️  BTCUSDT | Solicitando histórico: 5 días @ 5 
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [082] 📡 BTCUSDT | Suscrito a WebSocket @ 5 
+ [083] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
+ [083] 🕯️  ETHUSDT | Solicitando histórico: 5 días @ 5 
+ [ETHUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [083] 📡 ETHUSDT | Suscrito a WebSocket @ 5 
+ [084] 🕯️  TRXUSDT | 🚀 Componente montado, iniciando... 
+ [084] 🕯️  TRXUSDT | Solicitando histórico: 5 días @ 5 
+ [TRXUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [085] 📡 TRXUSDT | Suscrito a WebSocket @ 5 
+ [085] 🕯️  XRPUSDT | 🚀 Componente montado, iniciando... 
+ [085] 🕯️  XRPUSDT | Solicitando histórico: 5 días @ 5 
+ [XRPUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [086] 📡 XRPUSDT | Suscrito a WebSocket @ 5 
+ [086] 🕯️  SOLUSDT | 🚀 Componente montado, iniciando... 
+ [087] 🕯️  SOLUSDT | Solicitando histórico: 5 días @ 5 
+ [SOLUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [087] 📡 SOLUSDT | Suscrito a WebSocket @ 5 
+ [088] 🕯️  AAVEUSDT | 🚀 Componente montado, iniciando... 
+ [088] 🕯️  AAVEUSDT | Solicitando histórico: 5 días @ 5 
+ [AAVEUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [089] 📡 AAVEUSDT | Suscrito a WebSocket @ 5 
+ [089] 🕯️  GALAUSDT | 🚀 Componente montado, iniciando... 
+ [089] 🕯️  GALAUSDT | Solicitando histórico: 5 días @ 5 
+ [GALAUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [090] 📡 GALAUSDT | Suscrito a WebSocket @ 5 
+ [091] 🕯️  OPUSDT | 🚀 Componente montado, iniciando... 
+ [091] 🕯️  OPUSDT | Solicitando histórico: 5 días @ 5 
+ [OPUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [092] 📡 OPUSDT | Suscrito a WebSocket @ 5 
+ [092] 🕯️  ADAUSDT | 🚀 Componente montado, iniciando... 
+ [092] 🕯️  ADAUSDT | Solicitando histórico: 5 días @ 5 
+ [ADAUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [093] 📡 ADAUSDT | Suscrito a WebSocket @ 5 
+ [093] 🕯️  SUIUSDT | 🚀 Componente montado, iniciando... 
+ [093] 🕯️  SUIUSDT | Solicitando histórico: 5 días @ 5 
+ [SUIUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [094] 📡 SUIUSDT | Suscrito a WebSocket @ 5 
+ [094] 🕯️  POLUSDT | 🚀 Componente montado, iniciando... 
+ [094] 🕯️  POLUSDT | Solicitando histórico: 5 días @ 5 
+ [POLUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [095] 📡 POLUSDT | Suscrito a WebSocket @ 5 
+ [095] 🕯️  POLYXUSDT | 🚀 Componente montado, iniciando... 
+ [095] 🕯️  POLYXUSDT | Solicitando histórico: 5 días @ 5 
+ [POLYXUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [096] 📡 POLYXUSDT | Suscrito a WebSocket @ 5 
+ [096] 🕯️  CAKEUSDT | 🚀 Componente montado, iniciando... 
+ [096] 🕯️  CAKEUSDT | Solicitando histórico: 5 días @ 5 
+ [CAKEUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [096] 📡 CAKEUSDT | Suscrito a WebSocket @ 5 
+ [097] 🕯️  PENDLEUSDT | 🚀 Componente montado, iniciando... 
+ [097] 🕯️  PENDLEUSDT | Solicitando histórico: 5 días @ 5 
+ [PENDLEUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [097] 📡 PENDLEUSDT | Suscrito a WebSocket @ 5 
+ [098] 🕯️  TONUSDT | 🚀 Componente montado, iniciando... 
+ [098] 🕯️  TONUSDT | Solicitando histórico: 5 días @ 5 
+ [TONUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [098] 📡 TONUSDT | Suscrito a WebSocket @ 5 
+ [098] 🕯️  UNIUSDT | 🚀 Componente montado, iniciando... 
+ [098] 🕯️  UNIUSDT | Solicitando histórico: 5 días @ 5 
+ [UNIUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [099] 📡 UNIUSDT | Suscrito a WebSocket @ 5 
+ [099] 🕯️  ARBUSDT | 🚀 Componente montado, iniciando... 
+ [099] 🕯️  ARBUSDT | Solicitando histórico: 5 días @ 5 
+ [ARBUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [100] 📡 ARBUSDT | Suscrito a WebSocket @ 5 
+ [101] 🕯️  DOTUSDT | 🚀 Componente montado, iniciando... 
+ [101] 🕯️  DOTUSDT | Solicitando histórico: 5 días @ 5 
+ [DOTUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [102] 📡 DOTUSDT | Suscrito a WebSocket @ 5 
+ [102] 🕯️  AVAXUSDT | 🚀 Componente montado, iniciando... 
+ [102] 🕯️  AVAXUSDT | Solicitando histórico: 5 días @ 5 
+ [AVAXUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [103] 📡 AVAXUSDT | Suscrito a WebSocket @ 5 
+ [103] 🕯️  BNBUSDT | 🚀 Componente montado, iniciando... 
+ [103] 🕯️  BNBUSDT | Solicitando histórico: 5 días @ 5 
+ [BNBUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [104] 📡 BNBUSDT | Suscrito a WebSocket @ 5 
+ [104] 🕯️  PEOPLEUSDT | 🚀 Componente montado, iniciando... 
+ [105] 🕯️  PEOPLEUSDT | Solicitando histórico: 5 días @ 5 
+ [PEOPLEUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [105] 📡 PEOPLEUSDT | Suscrito a WebSocket @ 5 
+ [105] 🕯️  HBARUSDT | 🚀 Componente montado, iniciando... 
+ [106] 🕯️  HBARUSDT | Solicitando histórico: 5 días @ 5 
+ [HBARUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [106] 📡 HBARUSDT | Suscrito a WebSocket @ 5 
+ [107] 🕯️  ASTRUSDT | 🚀 Componente montado, iniciando... 
+ [107] 🕯️  ASTRUSDT | Solicitando histórico: 5 días @ 5 
+ [ASTRUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [108] 📡 ASTRUSDT | Suscrito a WebSocket @ 5 
+ [108] 🕯️  MASKUSDT | 🚀 Componente montado, iniciando... 
+ [108] 🕯️  MASKUSDT | Solicitando histórico: 5 días @ 5 
+ [MASKUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [109] 📡 MASKUSDT | Suscrito a WebSocket @ 5 
+ [109] 🕯️  TRBUSDT | 🚀 Componente montado, iniciando... 
+ [109] 🕯️  TRBUSDT | Solicitando histórico: 5 días @ 5 
+ [TRBUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [110] 📡 TRBUSDT | Suscrito a WebSocket @ 5 
+ [110] 🕯️  HIFIUSDT | 🚀 Componente montado, iniciando... 
+ [110] 🕯️  HIFIUSDT | Solicitando histórico: 5 días @ 5 
+ [HIFIUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [110] 📡 HIFIUSDT | Suscrito a WebSocket @ 5 
+ [111] 🕯️  INJUSDT | 🚀 Componente montado, iniciando... 
+ [111] 🕯️  INJUSDT | Solicitando histórico: 5 días @ 5 
+ [INJUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [111] 📡 INJUSDT | Suscrito a WebSocket @ 5 
+ [111] 🕯️  ATOMUSDT | 🚀 Componente montado, iniciando... 
+ [112] 🕯️  ATOMUSDT | Solicitando histórico: 5 días @ 5 
+ [ATOMUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [112] 📡 ATOMUSDT | Suscrito a WebSocket @ 5 
+ [112] 🕯️  GRTUSDT | 🚀 Componente montado, iniciando... 
+ [112] 🕯️  GRTUSDT | Solicitando histórico: 5 días @ 5 
+ [GRTUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [113] 📡 GRTUSDT | Suscrito a WebSocket @ 5 
+ [113] 🕯️  ALGOUSDT | 🚀 Componente montado, iniciando... 
+ [113] 🕯️  ALGOUSDT | Solicitando histórico: 5 días @ 5 
+ [ALGOUSDT] 🔧 IndicatorManager: Inicializando con 5 días @ 5
+ [114] 📡 ALGOUSDT | Suscrito a WebSocket @ 5 
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🎯 RangeDetectionIndicator: Inicializado con window=60
+ [BTCUSDT] 🎯 Range Detection HABILITADO
+ [BTCUSDT] 🎯 Config actualizada: Object
+ [BTCUSDT] 💾 Config de Range Detection guardada
+ [BTCUSDT] 📂 Config de Range Detection cargada
+ [ETHUSDT] 📂 1 Fixed Ranges cargados desde localStorage
+ [ETHUSDT] ✅ Fixed Range range_1762700700000 cargado Object
+ [ETHUSDT] 🔄 Sincronizadas 1 instancias de Fixed Ranges
+ [ETHUSDT] 🎯 RangeDetectionIndicator: Inicializado con window=60
+ [ETHUSDT] 🎯 Range Detection HABILITADO
+ [ETHUSDT] 🎯 Config actualizada: Object
+ [ETHUSDT] 💾 Config de Range Detection guardada
+ [ETHUSDT] 📂 Config de Range Detection cargada
+ [TRXUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [TRXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [XRPUSDT] 📂 1 Fixed Ranges cargados desde localStorage
+ [XRPUSDT] ✅ Fixed Range range_1762781563338 cargado Object
+ [XRPUSDT] 🔄 Sincronizadas 1 instancias de Fixed Ranges
+ [SOLUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [SOLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AAVEUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [AAVEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GALAUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [GALAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [OPUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [OPUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ADAUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ADAUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [SUIUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [SUIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [POLUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [POLYXUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [POLYXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [CAKEUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [CAKEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PENDLEUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [PENDLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TONUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [TONUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [UNIUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [UNIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ARBUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ARBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [DOTUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [DOTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [AVAXUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [AVAXUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BNBUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BNBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [PEOPLEUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [PEOPLEUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [HBARUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [HBARUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ASTRUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ASTRUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MASKUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [MASKUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [TRBUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [TRBUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [HIFIUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [HIFIUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [INJUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [INJUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ATOMUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ATOMUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [GRTUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [GRTUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [ALGOUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [ALGOUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [116] 📊 BTCUSDT | ✅ Indicadores inicializados 
+ [ETHUSDT] ✅ Sincronizados 1 Fixed Range Profiles
+ [116] 📊 ETHUSDT | ✅ Indicadores inicializados 
+ [TRXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [116] 📊 TRXUSDT | ✅ Indicadores inicializados 
+ [XRPUSDT] ✅ Sincronizados 1 Fixed Range Profiles
+ [117] 📊 XRPUSDT | ✅ Indicadores inicializados 
+ [SOLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [117] 📊 SOLUSDT | ✅ Indicadores inicializados 
+ [AAVEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [117] 📊 AAVEUSDT | ✅ Indicadores inicializados 
+ [GALAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [117] 📊 GALAUSDT | ✅ Indicadores inicializados 
+ [OPUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [117] 📊 OPUSDT | ✅ Indicadores inicializados 
+ [ADAUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [118] 📊 ADAUSDT | ✅ Indicadores inicializados 
+ [SUIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 SUIUSDT | ✅ Indicadores inicializados 
+ [POLUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 POLUSDT | ✅ Indicadores inicializados 
+ [POLYXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 POLYXUSDT | ✅ Indicadores inicializados 
+ [CAKEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 CAKEUSDT | ✅ Indicadores inicializados 
+ [PENDLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 PENDLEUSDT | ✅ Indicadores inicializados 
+ [TONUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [119] 📊 TONUSDT | ✅ Indicadores inicializados 
+ [UNIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 UNIUSDT | ✅ Indicadores inicializados 
+ [ARBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 ARBUSDT | ✅ Indicadores inicializados 
+ [DOTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 DOTUSDT | ✅ Indicadores inicializados 
+ [AVAXUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 AVAXUSDT | ✅ Indicadores inicializados 
+ [BNBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 BNBUSDT | ✅ Indicadores inicializados 
+ [PEOPLEUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 PEOPLEUSDT | ✅ Indicadores inicializados 
+ [HBARUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 HBARUSDT | ✅ Indicadores inicializados 
+ [ASTRUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [120] 📊 ASTRUSDT | ✅ Indicadores inicializados 
+ [MASKUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 MASKUSDT | ✅ Indicadores inicializados 
+ [TRBUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 TRBUSDT | ✅ Indicadores inicializados 
+ [HIFIUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 HIFIUSDT | ✅ Indicadores inicializados 
+ [INJUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 INJUSDT | ✅ Indicadores inicializados 
+ [ATOMUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 ATOMUSDT | ✅ Indicadores inicializados 
+ [GRTUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [121] 📊 GRTUSDT | ✅ Indicadores inicializados 
+ [ALGOUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [122] 📊 ALGOUSDT | ✅ Indicadores inicializados 
+ [131] 🕯️  PENDLEUSDT | 🆕 Primera vela en progreso Object
+ [178] 🕯️  GRTUSDT | 🆕 Primera vela en progreso Object
+ [225] 🕯️  SOLUSDT | 🆕 Primera vela en progreso Object
+ [242] 🕯️  PEOPLEUSDT | 🆕 Primera vela en progreso Object
+ [279] 🕯️  INJUSDT | 🆕 Primera vela en progreso Object
+ [337] 🕯️  ALGOUSDT | 🆕 Primera vela en progreso Object
+ [386] 🕯️  BTCUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [387] 🕯️  ETHUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [388] 🕯️  TRXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [388] 🕯️  XRPUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ [401] 🕯️  AAVEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [402] 🕯️  GALAUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [408] 🕯️  OPUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [412] 🕯️  ADAUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [417] 🕯️  SUIUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [421] 🕯️  POLUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [421] 🕯️  POLYXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [422] 🕯️  CAKEUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ [424] 🕯️  TONUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [425] 🕯️  UNIUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [425] 🕯️  ARBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [425] 🕯️  DOTUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [426] 🕯️  AVAXUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [426] 🕯️  BNBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ [427] 🕯️  HBARUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [427] 🕯️  ASTRUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [427] 🕯️  MASKUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [427] 🕯️  TRBUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ [428] 🕯️  HIFIUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ [428] 🕯️  ATOMUSDT | 🆕 Primera vela en progreso Object
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ âœ“ Suscrito: 
+ [041] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [041] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [041] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [075] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [076] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [076] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [775] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [776] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [776] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [820] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [821] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [821] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [856] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [856] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [857] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [952] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [952] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [952] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [ETHUSDT] 🆕 Nuevo rango detectado (monitoring): Object
+ [099] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [100] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [100] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [485] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [485] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [486] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [519] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [520] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [520] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [191] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [192] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [192] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [232] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [232] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [232] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [267] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [267] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [267] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [784] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [785] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [785] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [828] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [828] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [829] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [867] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [867] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [867] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [784] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [784] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [784] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [823] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [824] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [824] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [206] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [206] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [206] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [306] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [307] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [307] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [751] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [751] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [751] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [789] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [789] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [790] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [052] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [052] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [052] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [128] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [128] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [129] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [903] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [903] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [903] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [905] ❌ HIFIUSDT | Error en respuesta histórica Object
+error @ MiniChart.jsx:43
+ [319] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [319] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [320] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [618] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [618] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [618] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [106] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [107] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [107] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [141] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [141] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [141] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [175] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [176] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [176] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [920] 🕯️  BNBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [920] 🕯️  BNBUSDT | ✅ Vela confirmada y agregada Object
+ [920] 🔍 BNBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [920] 🕯️  AVAXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [920] 🕯️  AVAXUSDT | ✅ Vela confirmada y agregada Object
+ [921] 🔍 AVAXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [975] 🕯️  HBARUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [976] 🕯️  HBARUSDT | ✅ Vela confirmada y agregada Object
+ [976] 🔍 HBARUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [100] 🕯️  PENDLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [100] 🕯️  PENDLEUSDT | ✅ Vela confirmada y agregada Object
+ [100] 🔍 PENDLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [226] 🕯️  SOLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [227] 🕯️  SOLUSDT | ✅ Vela confirmada y agregada Object
+ [227] 🔍 SOLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [238] 🕯️  PEOPLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [238] 🕯️  PEOPLEUSDT | ✅ Vela confirmada y agregada Object
+ [238] 🔍 PEOPLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [455] 🕯️  ALGOUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [455] 🕯️  ALGOUSDT | ✅ Vela confirmada y agregada Object
+ [455] 🔍 ALGOUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [458] 🕯️  GALAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [459] 🕯️  GALAUSDT | ✅ Vela confirmada y agregada Object
+ [459] 🔍 GALAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [459] 🕯️  ADAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [459] 🕯️  ADAUSDT | ✅ Vela confirmada y agregada Object
+ [459] 🔍 ADAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [459] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [460] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada Object
+ [460] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [461] 🕯️  XRPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [461] 🕯️  XRPUSDT | ✅ Vela confirmada y agregada Object
+ [461] 🔍 XRPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [486] 🕯️  MASKUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [486] 🕯️  MASKUSDT | ✅ Vela confirmada y agregada Object
+ [486] 🔍 MASKUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [581] 🕯️  AAVEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [582] 🕯️  AAVEUSDT | ✅ Vela confirmada y agregada Object
+ [582] 🔍 AAVEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [600] 🕯️  TRXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [600] 🕯️  TRXUSDT | ✅ Vela confirmada y agregada Object
+ [601] 🔍 TRXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [771] 🕯️  TONUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [772] 🕯️  TONUSDT | ✅ Vela confirmada y agregada Object
+ [772] 🔍 TONUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [772] 🕯️  CAKEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [772] 🕯️  CAKEUSDT | ✅ Vela confirmada y agregada Object
+ [772] 🔍 CAKEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [773] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [773] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+ [773] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [ETHUSDT] ✅ Rango CONFIRMADO (21 barras): Object
+ [ETHUSDT] ✅ Fixed Range range_1762786800000 cargado Object
+ [ETHUSDT] ✓ Rango marcado como procesado: range_1762786800000
+ [ETHUSDT] 💾 Fixed Ranges guardados en localStorage
+ [ETHUSDT] ✨ AUTO Fixed Range creado: Object
+ [774] 🕯️  TRBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [774] 🕯️  TRBUSDT | ✅ Vela confirmada y agregada Object
+ [775] 🔍 TRBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [782] 🕯️  OPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [783] 🕯️  OPUSDT | ✅ Vela confirmada y agregada Object
+ [783] 🔍 OPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [783] 🕯️  ARBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [784] 🕯️  ARBUSDT | ✅ Vela confirmada y agregada Object
+ [784] 🔍 ARBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [784] 🕯️  POLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [784] 🕯️  POLUSDT | ✅ Vela confirmada y agregada Object
+ [784] 🔍 POLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [785] 🕯️  UNIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [785] 🕯️  UNIUSDT | ✅ Vela confirmada y agregada Object
+ [785] 🔍 UNIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [944] 🕯️  DOTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [945] 🕯️  DOTUSDT | ✅ Vela confirmada y agregada Object
+ [945] 🔍 DOTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [186] 🕯️  GRTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [186] 🕯️  GRTUSDT | ✅ Vela confirmada y agregada Object
+ [186] 🔍 GRTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [284] 🕯️  INJUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [285] 🕯️  INJUSDT | ✅ Vela confirmada y agregada Object
+ [285] 🔍 INJUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [429] 🕯️  SUIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [429] 🕯️  SUIUSDT | ✅ Vela confirmada y agregada Object
+ [430] 🔍 SUIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [691] 🕯️  ATOMUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [692] 🕯️  ATOMUSDT | ✅ Vela confirmada y agregada Object
+ [692] 🔍 ATOMUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [028] 🕯️  POLYXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [028] 🕯️  POLYXUSDT | ✅ Vela confirmada y agregada Object
+ [028] 🔍 POLYXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [888] 🕯️  ASTRUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [889] 🕯️  ASTRUSDT | ✅ Vela confirmada y agregada Object
+ [889] 🔍 ASTRUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [084] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [084] 🕯️  BTCUSDT | Solicitando histórico: 5 días @ 5 
+ [085] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [085] 🕯️  ETHUSDT | Solicitando histórico: 5 días @ 5 
+ [086] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [086] 🕯️  TRXUSDT | Solicitando histórico: 5 días @ 5 
+ [088] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [088] 🕯️  XRPUSDT | Solicitando histórico: 5 días @ 5 
+ [088] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [089] 🕯️  SOLUSDT | Solicitando histórico: 5 días @ 5 
+ [100] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [100] 🕯️  AAVEUSDT | Solicitando histórico: 5 días @ 5 
+ [101] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [101] 🕯️  GALAUSDT | Solicitando histórico: 5 días @ 5 
+ [101] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [101] 🕯️  OPUSDT | Solicitando histórico: 5 días @ 5 
+ [101] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [102] 🕯️  ADAUSDT | Solicitando histórico: 5 días @ 5 
+ [102] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [102] 🕯️  SUIUSDT | Solicitando histórico: 5 días @ 5 
+ [102] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [102] 🕯️  POLUSDT | Solicitando histórico: 5 días @ 5 
+ [103] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [103] 🕯️  POLYXUSDT | Solicitando histórico: 5 días @ 5 
+ [103] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [103] 🕯️  CAKEUSDT | Solicitando histórico: 5 días @ 5 
+ [103] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [104] 🕯️  PENDLEUSDT | Solicitando histórico: 5 días @ 5 
+ [104] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [104] 🕯️  TONUSDT | Solicitando histórico: 5 días @ 5 
+ [105] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [105] 🕯️  UNIUSDT | Solicitando histórico: 5 días @ 5 
+ [105] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [105] 🕯️  ARBUSDT | Solicitando histórico: 5 días @ 5 
+ [105] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [106] 🕯️  DOTUSDT | Solicitando histórico: 5 días @ 5 
+ [106] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [106] 🕯️  AVAXUSDT | Solicitando histórico: 5 días @ 5 
+ [106] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [107] 🕯️  BNBUSDT | Solicitando histórico: 5 días @ 5 
+ [107] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [107] 🕯️  PEOPLEUSDT | Solicitando histórico: 5 días @ 5 
+ [107] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [108] 🕯️  HBARUSDT | Solicitando histórico: 5 días @ 5 
+ [108] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [109] 🕯️  ASTRUSDT | Solicitando histórico: 5 días @ 5 
+ [110] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [110] 🕯️  MASKUSDT | Solicitando histórico: 5 días @ 5 
+ [111] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [111] 🕯️  TRBUSDT | Solicitando histórico: 5 días @ 5 
+ [112] 🕯️  HIFIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [112] 🕯️  HIFIUSDT | Solicitando histórico: 5 días @ 5 
+ [113] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [113] 🕯️  INJUSDT | Solicitando histórico: 5 días @ 5 
+ [114] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [114] 🕯️  ATOMUSDT | Solicitando histórico: 5 días @ 5 
+ [115] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [115] 🕯️  GRTUSDT | Solicitando histórico: 5 días @ 5 
+ [115] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [116] 🕯️  ALGOUSDT | Solicitando histórico: 5 días @ 5 
+ [224] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [224] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [224] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [259] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [259] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [259] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [946] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [947] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [947] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [983] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [983] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [983] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [672] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [673] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [673] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [704] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [705] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [705] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [ETHUSDT] 🆕 Nuevo rango detectado (monitoring): Object
+ [515] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [515] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [515] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [551] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [552] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [552] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [252] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [253] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [253] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [286] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [286] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [286] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [981] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [982] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [982] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [013] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [013] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [014] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [801] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [801] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [801] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [836] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [836] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [836] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [525] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [525] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [525] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [559] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [560] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [560] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [245] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [246] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [246] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [120] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [120] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [120] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [796] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [796] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [796] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [833] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [833] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [833] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [195] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [195] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [195] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [552] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [553] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [553] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [907] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [908] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [908] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [589] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [589] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [590] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [237] ❌ HIFIUSDT | Error en respuesta histórica Object
+error @ MiniChart.jsx:43
+ [763] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [763] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [764] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [799] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [800] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [800] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [831] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [832] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [832] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [990] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [990] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [990] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [023] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [023] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+ [024] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+ [917] 🕯️  BNBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [918] 🕯️  BNBUSDT | ✅ Vela confirmada y agregada Object
+ [918] 🔍 BNBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [063] 🕯️  AVAXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [064] 🕯️  AVAXUSDT | ✅ Vela confirmada y agregada Object
+ [064] 🔍 AVAXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [064] 🕯️  DOTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [064] 🕯️  DOTUSDT | ✅ Vela confirmada y agregada Object
+ [064] 🔍 DOTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [064] 🕯️  HBARUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [064] 🕯️  HBARUSDT | ✅ Vela confirmada y agregada Object
+ [065] 🔍 HBARUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [104] 🕯️  PENDLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [104] 🕯️  PENDLEUSDT | ✅ Vela confirmada y agregada Object
+ [104] 🔍 PENDLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [186] 🕯️  GRTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [187] 🕯️  GRTUSDT | ✅ Vela confirmada y agregada Object
+ [187] 🔍 GRTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [241] 🕯️  SOLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [241] 🕯️  SOLUSDT | ✅ Vela confirmada y agregada Object
+ [241] 🔍 SOLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [245] 🕯️  PEOPLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [245] 🕯️  PEOPLEUSDT | ✅ Vela confirmada y agregada Object
+ [246] 🔍 PEOPLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [293] 🕯️  INJUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [293] 🕯️  INJUSDT | ✅ Vela confirmada y agregada Object
+ [294] 🔍 INJUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [348] 🕯️  ALGOUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [348] 🕯️  ALGOUSDT | ✅ Vela confirmada y agregada Object
+ [348] 🔍 ALGOUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [411] 🕯️  GALAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [411] 🕯️  GALAUSDT | ✅ Vela confirmada y agregada Object
+ [411] 🔍 GALAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [413] 🕯️  ADAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [413] 🕯️  ADAUSDT | ✅ Vela confirmada y agregada Object
+ [413] 🔍 ADAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [431] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [431] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada Object
+ [431] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [435] 🕯️  SUIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [435] 🕯️  SUIUSDT | ✅ Vela confirmada y agregada Object
+ [435] 🔍 SUIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [445] 🕯️  XRPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [445] 🕯️  XRPUSDT | ✅ Vela confirmada y agregada Object
+ [446] 🔍 XRPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [584] 🕯️  AAVEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [584] 🕯️  AAVEUSDT | ✅ Vela confirmada y agregada Object
+ [584] 🔍 AAVEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [959] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [959] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+ [959] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [ETHUSDT] ✅ Rango CONFIRMADO (21 barras): Object
+ [960] 🕯️  ATOMUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [961] 🕯️  ATOMUSDT | ✅ Vela confirmada y agregada Object
+ [961] 🔍 ATOMUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [961] 🕯️  OPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [961] 🕯️  OPUSDT | ✅ Vela confirmada y agregada Object
+ [961] 🔍 OPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [961] 🕯️  ARBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [961] 🕯️  ARBUSDT | ✅ Vela confirmada y agregada Object
+ [962] 🔍 ARBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [962] 🕯️  POLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [962] 🕯️  POLUSDT | ✅ Vela confirmada y agregada Object
+ [962] 🔍 POLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [962] 🕯️  UNIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [962] 🕯️  UNIUSDT | ✅ Vela confirmada y agregada Object
+ [962] 🔍 UNIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [613] 🕯️  TONUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [613] 🕯️  TONUSDT | ✅ Vela confirmada y agregada Object
+ [613] 🔍 TONUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [652] 🕯️  CAKEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [652] 🕯️  CAKEUSDT | ✅ Vela confirmada y agregada Object
+ [653] 🔍 CAKEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [493] 🕯️  MASKUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [493] 🕯️  MASKUSDT | ✅ Vela confirmada y agregada Object
+ [493] 🔍 MASKUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [620] 🕯️  TRXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [621] 🕯️  TRXUSDT | ✅ Vela confirmada y agregada Object
+ [621] 🔍 TRXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [694] 🕯️  TRBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [694] 🕯️  TRBUSDT | ✅ Vela confirmada y agregada Object
+ [695] 🔍 TRBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [034] 🕯️  POLYXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [034] 🕯️  POLYXUSDT | ✅ Vela confirmada y agregada Object
+ [034] 🔍 POLYXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [898] 🕯️  ASTRUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [898] 🕯️  ASTRUSDT | ✅ Vela confirmada y agregada Object
+ [899] 🔍 ASTRUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+ [916] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [917] 🕯️  BTCUSDT | Solicitando histórico: 5 días @ 5 
+ [917] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [918] 🕯️  ETHUSDT | Solicitando histórico: 5 días @ 5 
+ [918] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [918] 🕯️  TRXUSDT | Solicitando histórico: 5 días @ 5 
+ [918] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [918] 🕯️  XRPUSDT | Solicitando histórico: 5 días @ 5 
+ [918] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [919] 🕯️  SOLUSDT | Solicitando histórico: 5 días @ 5 
+ [919] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [919] 🕯️  AAVEUSDT | Solicitando histórico: 5 días @ 5 
+ [919] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [919] 🕯️  GALAUSDT | Solicitando histórico: 5 días @ 5 
+ [920] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [920] 🕯️  OPUSDT | Solicitando histórico: 5 días @ 5 
+ [920] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [920] 🕯️  ADAUSDT | Solicitando histórico: 5 días @ 5 
+ [920] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [921] 🕯️  SUIUSDT | Solicitando histórico: 5 días @ 5 
+ [921] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [921] 🕯️  POLUSDT | Solicitando histórico: 5 días @ 5 
+ [921] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [922] 🕯️  POLYXUSDT | Solicitando histórico: 5 días @ 5 
+ [922] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [922] 🕯️  CAKEUSDT | Solicitando histórico: 5 días @ 5 
+ [922] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [922] 🕯️  PENDLEUSDT | Solicitando histórico: 5 días @ 5 
+ [923] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [923] 🕯️  TONUSDT | Solicitando histórico: 5 días @ 5 
+ [923] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [923] 🕯️  UNIUSDT | Solicitando histórico: 5 días @ 5 
+ [924] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [924] 🕯️  ARBUSDT | Solicitando histórico: 5 días @ 5 
+ [924] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [924] 🕯️  DOTUSDT | Solicitando histórico: 5 días @ 5 
+ [924] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [925] 🕯️  AVAXUSDT | Solicitando histórico: 5 días @ 5 
+ [925] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [925] 🕯️  BNBUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [925] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [926] 🕯️  PEOPLEUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [926] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [926] 🕯️  HBARUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [926] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [927] 🕯️  ASTRUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [927] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [927] 🕯️  MASKUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [927] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [928] 🕯️  TRBUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [928] 🕯️  HIFIUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [928] 🕯️  HIFIUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [928] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [929] 🕯️  INJUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [929] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [929] 🕯️  ATOMUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [929] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [930] 🕯️  GRTUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [930] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:18 [930] 🕯️  ALGOUSDT | Solicitando histórico: 5 días @ 5 
+MiniChart.jsx:18 [635] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [635] 🕯️  TRXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [635] 🔍 TRXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [668] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [668] 🕯️  XRPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [669] 🔍 XRPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [701] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [702] 🕯️  AAVEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [702] 🔍 AAVEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [716] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [717] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [717] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [748] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [748] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [748] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [780] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [781] 🕯️  SOLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [781] 🔍 SOLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [618] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [618] 🕯️  SUIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [618] 🔍 SUIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+RangeDetectionIndicator.js:427 [ETHUSDT] 🆕 Nuevo rango detectado (monitoring): Object
+MiniChart.jsx:18 [992] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [992] 🕯️  OPUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [993] 🔍 OPUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [026] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [026] 🕯️  ADAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [026] 🔍 ADAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [060] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [061] 🕯️  GALAUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [061] 🔍 GALAUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [092] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [092] 🕯️  POLYXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [092] 🔍 POLYXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [722] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [722] 🕯️  POLUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [722] 🔍 POLUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [509] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [510] 🕯️  TONUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [510] 🔍 TONUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [545] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [545] 🕯️  CAKEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [546] 🔍 CAKEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [230] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [231] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [231] 🔍 PENDLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [263] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [263] 🕯️  ARBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [263] 🔍 ARBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [296] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [296] 🕯️  UNIUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [296] 🔍 UNIUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [893] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [894] 🕯️  DOTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [894] 🔍 DOTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [257] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [257] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [257] 🔍 PEOPLEUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [621] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [622] 🕯️  ASTRUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [622] 🔍 ASTRUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [987] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [987] 🕯️  AVAXUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [987] 🔍 AVAXUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [019] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [019] 🕯️  HBARUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [019] 🔍 HBARUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [052] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [052] 🕯️  BNBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [053] 🔍 BNBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [367] ❌ HIFIUSDT | Error en respuesta histórica Object
+error @ MiniChart.jsx:35
+MiniChart.jsx:18 [736] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [736] 🕯️  MASKUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [736] 🔍 MASKUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [090] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [090] 🕯️  TRBUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [090] 🔍 TRBUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [156] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [157] 🕯️  INJUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [157] 🔍 INJUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [191] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [191] 🕯️  GRTUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [191] 🔍 GRTUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [461] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [462] 🕯️  ATOMUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [462] 🔍 ATOMUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [551] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:18 [551] 🕯️  ALGOUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
+MiniChart.jsx:41 [551] 🔍 ALGOUSDT | Estado: 1439 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [927] 🕯️  BNBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [928] 🕯️  BNBUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [928] 🔍 BNBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [934] 🕯️  AVAXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [934] 🕯️  AVAXUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [935] 🔍 AVAXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [953] 🕯️  DOTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [954] 🕯️  DOTUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [954] 🔍 DOTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [990] 🕯️  HBARUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [991] 🕯️  HBARUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [991] 🔍 HBARUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [241] 🕯️  SOLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [242] 🕯️  SOLUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [242] 🔍 SOLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [532] 🕯️  GALAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [533] 🕯️  GALAUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [534] 🔍 GALAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [535] 🕯️  ADAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [535] 🕯️  ADAUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [535] 🔍 ADAUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [536] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [536] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [536] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [537] 🕯️  SUIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [538] 🕯️  SUIUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [538] 🔍 SUIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [538] 🕯️  XRPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [538] 🕯️  XRPUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [539] 🔍 XRPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [540] 🕯️  MASKUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [540] 🕯️  MASKUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [541] 🔍 MASKUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [600] 🕯️  AAVEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [601] 🕯️  AAVEUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [601] 🔍 AAVEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [622] 🕯️  TONUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [623] 🕯️  TONUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [624] 🔍 TONUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [667] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [668] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [668] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+RangeDetectionIndicator.js:401 [ETHUSDT] ✅ Rango CONFIRMADO (21 barras): {start: '2025-11-10T15:00:00.000Z', end: '2025-11-10T16:35:00.000Z', score: '93.7', cv: '0.31%', priceRange: '1.51%'}
+MiniChart.jsx:18 [742] 🕯️  OPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [742] 🕯️  OPUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [742] 🔍 OPUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [744] 🕯️  ARBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [745] 🕯️  ARBUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [746] 🔍 ARBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [751] 🕯️  POLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [752] 🕯️  POLUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [752] 🔍 POLUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [765] 🕯️  UNIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [766] 🕯️  UNIUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [766] 🔍 UNIUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [130] 🕯️  PENDLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [130] 🕯️  PENDLEUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [131] 🔍 PENDLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [196] 🕯️  GRTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [196] 🕯️  GRTUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [196] 🔍 GRTUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [300] 🕯️  INJUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [301] 🕯️  INJUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [301] 🔍 INJUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [668] 🕯️  CAKEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [668] 🕯️  CAKEUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [669] 🔍 CAKEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [610] 🕯️  TRXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [611] 🕯️  TRXUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [611] 🔍 TRXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [252] 🕯️  PEOPLEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [252] 🕯️  PEOPLEUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [253] 🔍 PEOPLEUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [759] 🕯️  TRBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [759] 🕯️  TRBUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [760] 🔍 TRBUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [904] 🕯️  ASTRUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [905] 🕯️  ASTRUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [905] 🔍 ASTRUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [041] 🕯️  POLYXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [041] 🕯️  POLYXUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [041] 🔍 POLYXUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [703] 🕯️  ATOMUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [704] 🕯️  ATOMUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [704] 🔍 ATOMUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+MiniChart.jsx:18 [354] 🕯️  ALGOUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1762793700000, nuevo: 1762794000000}
+MiniChart.jsx:18 [355] 🕯️  ALGOUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
+MiniChart.jsx:41 [355] 🔍 ALGOUSDT | Estado: 1440 confirmadas, En progreso: SÍ
+RangeDetectionIndicator.js:75 [BTCUSDT] 📅 Date filter activado: {start: '2025-11-06T17:00:00.000Z', end: '2025-11-10T17:00:00.000Z'}
+IndicatorManager.js:382 [BTCUSDT] 📅 Filtro de fecha aplicado: 2025-11-06T17:00:00.000Z → 2025-11-10T17:00:00.000Z

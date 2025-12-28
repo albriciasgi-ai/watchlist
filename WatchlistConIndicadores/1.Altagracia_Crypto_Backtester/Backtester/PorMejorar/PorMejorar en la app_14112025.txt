@@ -1,0 +1,4 @@
+1. Que se puedan encoger las velas en su ancho para poder ver más velas al tiempo. Que se pueda llegar hasta el máximo de lo que permita el selector de días
+2. Que el zoom out tenga autoscale para que al aumentar el espectro pueda aprovechar la altura total de la ventana
+3. Hacer el prefetch de datos para que sea más rápida la carga.
+4.Cuando el usuario haga doble click en el eje vertical cuadre la escala pero sólo con los datos de las velas visibles, no de todo el rango.
