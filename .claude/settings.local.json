@@ -56,7 +56,10 @@
       "Bash(cmd //c \"dir /b WatchlistConIndicadores\\TradingBot_Python\\backend\\*.py\")",
       "Bash(timeout 3 bash:*)",
       "Bash(find:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(VWAPIndicator.js)",
+      "Bash(git checkout:*)",
+      "Bash(main.py)"
     ],
     "deny": [],
     "ask": []
