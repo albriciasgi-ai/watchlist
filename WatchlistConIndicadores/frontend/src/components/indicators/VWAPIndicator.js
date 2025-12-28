@@ -172,9 +172,232 @@ class VWAPIndicator extends IndicatorBase {
     }
   }
 
+  // ✅ NUEVO: Calcular VWAP en tiempo real desde las velas
+  calculateVWAP(candles) {
+    if (!candles || candles.length === 0) return [];
+
+    const vwapData = [];
+
+    if (this.vwapType === 'session') {
+      return this._calculateSessionVWAP(candles);
+    } else if (this.vwapType === 'rolling') {
+      return this._calculateRollingVWAP(candles);
+    } else if (this.vwapType === 'anchored') {
+      return this._calculateAnchoredVWAP(candles);
+    }
+
+    return vwapData;
+  }
+
+  _calculateSessionVWAP(candles) {
+    const vwapData = [];
+    let cumulativePV = 0;
+    let cumulativeVolume = 0;
+    let sessionStartTimestamp = null;
+
+    for (const candle of candles) {
+      const candleDate = new Date(candle.timestamp);
+      const hourUTC = candleDate.getUTCHours();
+
+      // Reset on new session
+      if (sessionStartTimestamp === null || hourUTC === this.resetHour) {
+        if (sessionStartTimestamp === null) {
+          cumulativePV = 0;
+          cumulativeVolume = 0;
+          sessionStartTimestamp = candle.timestamp;
+        } else {
+          const timeSinceSession = candle.timestamp - sessionStartTimestamp;
+          if (timeSinceSession >= (23 * 60 * 60 * 1000)) {
+            cumulativePV = 0;
+            cumulativeVolume = 0;
+            sessionStartTimestamp = candle.timestamp;
+          }
+        }
+      }
+
+      // Calculate typical price
+      const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+      const volume = candle.volume;
+
+      cumulativePV += typicalPrice * volume;
+      cumulativeVolume += volume;
+
+      const vwap = cumulativeVolume > 0 ? cumulativePV / cumulativeVolume : typicalPrice;
+
+      vwapData.push({
+        timestamp: candle.timestamp,
+        vwap: vwap,
+        typical_price: typicalPrice,
+        volume: volume
+      });
+    }
+
+    return vwapData;
+  }
+
+  _calculateRollingVWAP(candles) {
+    const vwapData = [];
+    const period = this.rollingPeriod;
+
+    for (let i = 0; i < candles.length; i++) {
+      const startIdx = Math.max(0, i - period + 1);
+      const window = candles.slice(startIdx, i + 1);
+
+      let cumulativePV = 0;
+      let cumulativeVolume = 0;
+
+      for (const candle of window) {
+        const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+        const volume = candle.volume;
+        cumulativePV += typicalPrice * volume;
+        cumulativeVolume += volume;
+      }
+
+      const currentCandle = candles[i];
+      const currentTypicalPrice = (currentCandle.high + currentCandle.low + currentCandle.close) / 3.0;
+      const vwap = cumulativeVolume > 0 ? cumulativePV / cumulativeVolume : currentTypicalPrice;
+
+      vwapData.push({
+        timestamp: currentCandle.timestamp,
+        vwap: vwap,
+        typical_price: currentTypicalPrice,
+        volume: currentCandle.volume
+      });
+    }
+
+    return vwapData;
+  }
+
+  _calculateAnchoredVWAP(candles) {
+    const vwapData = [];
+
+    // Find anchor index
+    let anchorIndex = 0;
+    if (this.anchorTimestamp) {
+      for (let i = 0; i < candles.length; i++) {
+        if (candles[i].timestamp >= this.anchorTimestamp) {
+          anchorIndex = i;
+          break;
+        }
+      }
+    }
+
+    let cumulativePV = 0;
+    let cumulativeVolume = 0;
+
+    for (let i = anchorIndex; i < candles.length; i++) {
+      const candle = candles[i];
+      const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+      const volume = candle.volume;
+
+      cumulativePV += typicalPrice * volume;
+      cumulativeVolume += volume;
+
+      const vwap = cumulativeVolume > 0 ? cumulativePV / cumulativeVolume : typicalPrice;
+
+      vwapData.push({
+        timestamp: candle.timestamp,
+        vwap: vwap,
+        typical_price: typicalPrice,
+        volume: volume
+      });
+    }
+
+    return vwapData;
+  }
+
+  // ✅ Calcular bandas de desviación estándar
+  _calculateStdBands(candles, vwapData) {
+    if (candles.length !== vwapData.length) return vwapData;
+
+    // Aplicar ajuste de crypto a los multiplicadores si está habilitado
+    const cryptoAdjustment = this.applyCryptoAdjustment ? 1.15 : 1.0;
+    const adjustedMultipliers = this.bandMultipliers.map(m => m * cryptoAdjustment);
+
+    for (let i = 0; i < vwapData.length; i++) {
+      const vwapPoint = vwapData[i];
+      const vwapValue = vwapPoint.vwap;
+
+      // Determinar ventana según tipo de VWAP
+      let windowCandles;
+      if (this.vwapType === 'rolling') {
+        const startIdx = Math.max(0, i - this.rollingPeriod + 1);
+        windowCandles = candles.slice(startIdx, i + 1);
+      } else if (this.vwapType === 'session') {
+        // Para session, buscar desde el inicio de la sesión
+        let sessionStartIdx = 0;
+        for (let j = i; j >= 0; j--) {
+          const candleDate = new Date(candles[j].timestamp);
+          const hourUTC = candleDate.getUTCHours();
+          if (hourUTC === this.resetHour && j < i) {
+            const timeDiff = candles[i].timestamp - candles[j].timestamp;
+            if (timeDiff >= (23 * 60 * 60 * 1000)) {
+              sessionStartIdx = j;
+              break;
+            }
+          }
+        }
+        windowCandles = candles.slice(sessionStartIdx, i + 1);
+      } else {
+        // Anchored: desde inicio hasta actual
+        windowCandles = candles.slice(0, i + 1);
+      }
+
+      if (windowCandles.length < 2) {
+        // No hay suficientes datos para calcular varianza
+        vwapPoint.bands = {};
+        adjustedMultipliers.forEach((_, idx) => {
+          vwapPoint.bands[`upper_${idx + 1}`] = vwapValue;
+          vwapPoint.bands[`lower_${idx + 1}`] = vwapValue;
+        });
+        continue;
+      }
+
+      // Calcular varianza ponderada
+      let totalWeightedSqDiff = 0;
+      let totalVolume = 0;
+
+      for (const candle of windowCandles) {
+        const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+        const volume = candle.volume;
+        const sqDiff = Math.pow(typicalPrice - vwapValue, 2);
+        totalWeightedSqDiff += sqDiff * volume;
+        totalVolume += volume;
+      }
+
+      // Desviación estándar
+      const variance = totalVolume > 0 ? totalWeightedSqDiff / totalVolume : 0;
+      const stdDev = Math.sqrt(variance);
+
+      // Crear bandas
+      vwapPoint.bands = {};
+      adjustedMultipliers.forEach((mult, idx) => {
+        vwapPoint.bands[`upper_${idx + 1}`] = vwapValue + (stdDev * mult);
+        vwapPoint.bands[`lower_${idx + 1}`] = vwapValue - (stdDev * mult);
+      });
+    }
+
+    return vwapData;
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
-    if (this.vwapData.length === 0) return;
+
+    // ✅ Calcular VWAP en tiempo real desde TODAS las velas
+    let calculatedVWAP = this.calculateVWAP(allCandles);
+
+    if (calculatedVWAP.length === 0) return;
+
+    // ✅ Calcular bandas de desviación estándar
+    if (this.showBands) {
+      calculatedVWAP = this._calculateStdBands(allCandles, calculatedVWAP);
+    }
+
+    // Actualizar dataMap con los datos calculados
+    this.dataMap.clear();
+    calculatedVWAP.forEach(point => {
+      this.dataMap.set(point.timestamp, point);
+    });
 
     const { x, y, width, height } = bounds;
     const viewport = priceContext || {};
