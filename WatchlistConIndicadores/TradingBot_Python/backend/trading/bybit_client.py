@@ -38,7 +38,7 @@ class BybitClient:
         self.last_sync = 0
         self.sync_interval = 300  # Sync every 5 minutes
 
-        print(f"🔧 BybitClient initialized: {self.base_url} (mode: {self.mode})")
+        print(f"[BYBIT] Client initialized: {self.base_url} (mode: {self.mode})")
 
     async def _get_server_time(self, client: httpx.AsyncClient) -> int:
         """Get server time from Bybit"""
@@ -48,7 +48,7 @@ class BybitClient:
             if data.get("retCode") == 0:
                 return int(data["result"]["timeNano"]) // 1000000  # Convert to ms
         except Exception as e:
-            print(f"❌ Error getting server time: {e}")
+            print(f"[ERROR] Error getting server time: {e}")
         return int(time.time() * 1000)
 
     async def _sync_time(self, client: httpx.AsyncClient):
@@ -59,7 +59,7 @@ class BybitClient:
             local_time = int(time.time() * 1000)
             self.time_offset = server_time - local_time
             self.last_sync = current_time
-            print(f"⏰ Time synced: offset = {self.time_offset}ms")
+            print(f"[SYNC] Time synced: offset = {self.time_offset}ms")
 
     def _get_timestamp(self) -> int:
         """Get current timestamp adjusted with offset"""
@@ -131,13 +131,13 @@ class BybitClient:
                     if data.get("retCode") != 0:
                         error_code = data.get("retCode")
                         error_msg = data.get("retMsg", "Unknown error")
-                        print(f"❌ Bybit API Error {error_code}: {error_msg}")
+                        print(f"[ERROR] Bybit API Error {error_code}: {error_msg}")
                         print(f"   Endpoint: {method} {endpoint}")
                         print(f"   Using: {self.base_url}")
 
                     # Check for timestamp errors and resync
                     if data.get("retCode") == 10002:  # Timestamp error
-                        print(f"⚠️ Timestamp error, resyncing... (attempt {attempt + 1})")
+                        print(f"[WARNING] Timestamp error, resyncing... (attempt {attempt + 1})")
                         self.last_sync = 0  # Force resync
                         await self._sync_time(client)
                         await asyncio.sleep(1)
@@ -146,7 +146,7 @@ class BybitClient:
                     return data
 
                 except Exception as e:
-                    print(f"❌ Request error (attempt {attempt + 1}/{max_retries}): {e}")
+                    print(f"[ERROR] Request error (attempt {attempt + 1}/{max_retries}): {e}")
                     if attempt < max_retries - 1:
                         await asyncio.sleep(2 ** attempt)  # Exponential backoff
                     else:
@@ -179,14 +179,14 @@ class BybitClient:
             "orderLinkId": f"mkt_{int(time.time() * 1000)}"
         }
 
-        print(f"📈 Placing Market Order: {side} {symbol} qty={qty}")
+        print(f"[ORDER] Placing Market Order: {side} {symbol} qty={qty}")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
-            print(f"✅ Market Order placed: {order_id}")
+            print(f"[OK] Market Order placed: {order_id}")
         else:
-            print(f"❌ Market Order failed: {result.get('retMsg')}")
+            print(f"[ERROR] Market Order failed: {result.get('retMsg')}")
 
         return result
 
@@ -209,8 +209,8 @@ class BybitClient:
             category: "linear" for USDT perpetual
         """
         # Determine trigger direction
-        # For closing LONG (side="Sell"): trigger when price falls → direction=2
-        # For closing SHORT (side="Buy"): trigger when price rises → direction=1
+        # For closing LONG (side="Sell"): trigger when price falls -> direction=2
+        # For closing SHORT (side="Buy"): trigger when price rises -> direction=1
         trigger_direction = 2 if side == "Sell" else 1
 
         params = {
@@ -228,14 +228,14 @@ class BybitClient:
             "positionIdx": 0
         }
 
-        print(f"🛡️ Placing Stop Loss: {side} {symbol} @ {trigger_price} (direction={trigger_direction})")
+        print(f"[SL] Placing Stop Loss: {side} {symbol} @ {trigger_price} (direction={trigger_direction})")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
-            print(f"✅ Stop Loss placed: {order_id}")
+            print(f"[OK] Stop Loss placed: {order_id}")
         else:
-            print(f"❌ Stop Loss failed: {result.get('retMsg')}")
+            print(f"[ERROR] Stop Loss failed: {result.get('retMsg')}")
 
         return result
 
@@ -270,14 +270,14 @@ class BybitClient:
             "positionIdx": 0
         }
 
-        print(f"💰 Placing Take Profit: {side} {symbol} @ {price}")
+        print(f"[TP] Placing Take Profit: {side} {symbol} @ {price}")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
-            print(f"✅ Take Profit placed: {order_id}")
+            print(f"[OK] Take Profit placed: {order_id}")
         else:
-            print(f"❌ Take Profit failed: {result.get('retMsg')}")
+            print(f"[ERROR] Take Profit failed: {result.get('retMsg')}")
 
         return result
 

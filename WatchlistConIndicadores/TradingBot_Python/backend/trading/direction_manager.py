@@ -30,12 +30,12 @@ class DirectionManager:
                 with open(self.config_file, 'r') as f:
                     data = json.load(f)
                     self.directions = data.get("directions", {})
-                    print(f"✅ Loaded trading directions: {len(self.directions)} symbols configured")
+                    print(f"[OK] Loaded trading directions: {len(self.directions)} symbols configured")
             except Exception as e:
-                print(f"⚠️ Error loading trading directions: {e}")
+                print(f"[WARNING] Error loading trading directions: {e}")
                 self.directions = {}
         else:
-            print(f"⚠️ No trading directions file found, all symbols disabled by default")
+            print(f"[WARNING] No trading directions file found, all symbols disabled by default")
             self.directions = {}
 
     def save(self):
@@ -51,16 +51,16 @@ class DirectionManager:
             with open(self.config_file, 'w') as f:
                 json.dump(data, f, indent=2)
 
-            print(f"✅ Trading directions saved")
+            print(f"[OK] Trading directions saved")
         except Exception as e:
-            print(f"❌ Error saving trading directions: {e}")
+            print(f"[ERROR] Error saving trading directions: {e}")
 
     def set_direction(self, symbol: str, direction: DirectionType):
         """Set trading direction for a symbol"""
         symbol = symbol.upper()
         self.directions[symbol] = direction
         self.save()
-        print(f"✅ {symbol}: Direction set to {direction}")
+        print(f"[OK] {symbol}: Direction set to {direction}")
 
     def get_direction(self, symbol: str) -> DirectionType:
         """Get trading direction for a symbol"""
@@ -83,21 +83,21 @@ class DirectionManager:
 
         # Symbol must be enabled
         if direction == "DISABLED":
-            print(f"🚫 Alert REJECTED: {symbol} is DISABLED")
+            print(f"[REJECTED] Alert REJECTED: {symbol} is DISABLED")
             return False
 
         # Check direction match
         if direction == "BOTH":
-            print(f"✅ Alert ALLOWED: {symbol} accepts {side} (direction=BOTH)")
+            print(f"[ALLOWED] Alert ALLOWED: {symbol} accepts {side} (direction=BOTH)")
             return True
         elif direction == "LONG" and side == "Buy":
-            print(f"✅ Alert ALLOWED: {symbol} accepts Buy (direction=LONG)")
+            print(f"[ALLOWED] Alert ALLOWED: {symbol} accepts Buy (direction=LONG)")
             return True
         elif direction == "SHORT" and side == "Sell":
-            print(f"✅ Alert ALLOWED: {symbol} accepts Sell (direction=SHORT)")
+            print(f"[ALLOWED] Alert ALLOWED: {symbol} accepts Sell (direction=SHORT)")
             return True
         else:
-            print(f"🚫 Alert REJECTED: {symbol} side={side} but direction={direction}")
+            print(f"[REJECTED] Alert REJECTED: {symbol} side={side} but direction={direction}")
             return False
 
     def enable_symbol(self, symbol: str, direction: DirectionType = "BOTH"):

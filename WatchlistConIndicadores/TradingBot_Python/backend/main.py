@@ -235,8 +235,8 @@ class AppState:
         asyncio.create_task(self.broadcast_log(log_entry))
 
         # Also print to console
-        emoji = {"info": "ℹ️", "success": "✅", "warning": "⚠️", "error": "❌"}.get(level, "📝")
-        print(f"{emoji} {message}")
+        prefix = {"info": "[INFO]", "success": "[OK]", "warning": "[WARNING]", "error": "[ERROR]"}.get(level, "[LOG]")
+        print(f"{prefix} {message}")
 
     async def broadcast_log(self, log_entry: Dict):
         """Broadcast log to all connected WebSocket clients"""
@@ -276,16 +276,16 @@ state = AppState()
 
 @app.on_event("startup")
 async def startup():
-    state.log("info", "🚀 Trading Bot Backend starting...")
+    state.log("info", "Trading Bot Backend starting...")
     state.load_config()
     state.load_credentials()
     state.load_order_history()
-    state.log("success", "✅ Backend ready")
+    state.log("success", "Backend ready")
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    state.log("info", "🛑 Trading Bot Backend shutting down...")
+    state.log("info", "Trading Bot Backend shutting down...")
 
 
 # ==========================
@@ -333,17 +333,17 @@ async def set_credentials(req: CredentialsRequest):
         state.save_credentials(req.api_key, req.api_secret, req.demo)
 
         mode_str = "Demo Trading (api-demo.bybit.com)" if req.demo else "Real Trading (api.bybit.com)"
-        state.log("success", f"✅ Credentials configured: {mode_str}")
+        state.log("success", f"[OK] Credentials configured: {mode_str}")
 
         # Test credentials with a simple API call
         try:
             test_result = await state.bybit_client._make_request("GET", "/v5/market/time")
             if test_result.get("retCode") == 0:
-                state.log("success", f"✅ Credentials validated successfully")
+                state.log("success", f"Credentials validated successfully")
             else:
-                state.log("warning", f"⚠️ Credentials saved but validation returned: {test_result.get('retMsg')}")
+                state.log("warning", f"Credentials saved but validation returned: {test_result.get('retMsg')}")
         except Exception as e:
-            state.log("warning", f"⚠️ Credentials saved but validation failed: {str(e)}")
+            state.log("warning", f"Credentials saved but validation failed: {str(e)}")
 
         return {
             "success": True,
@@ -521,7 +521,7 @@ async def process_alert(req: AlertRequest):
         if len(raw_alerts) == 0:
             raise HTTPException(status_code=400, detail="No alerts found")
 
-        state.log("info", f"📨 Received {len(raw_alerts)} alert(s) to process")
+        state.log("info", f"Received {len(raw_alerts)} alert(s) to process")
 
         # Process all alerts in parallel
         async def process_single_alert(raw_alert_text):
@@ -567,7 +567,7 @@ async def process_alert(req: AlertRequest):
                 # But different symbols can still process in parallel
                 lock = state.get_symbol_lock(symbol)
                 async with lock:
-                    state.log("info", f"🔒 Acquired lock for {symbol}, processing alert...")
+                    state.log("info", f"Acquired lock for {symbol}, processing alert...")
 
                     # Check for existing position (inside lock to prevent race condition)
                     position = await state.bybit_client.get_position(symbol)
@@ -645,7 +645,7 @@ async def process_alert(req: AlertRequest):
                         }
                         state.add_order_to_history(order_history_entry)
 
-                    state.log("info", f"🔓 Released lock for {symbol}")
+                    state.log("info", f"[LOCK] Released lock for {symbol}")
 
                     return {
                         "success": success_status,
@@ -694,7 +694,7 @@ async def process_alert(req: AlertRequest):
                 failed_details.append(f"{symbol}: {reason}")
 
         if failed_details:
-            ui_message += "\n\nFailed alerts:\n" + "\n".join(f"• {detail}" for detail in failed_details)
+            ui_message += "\n\nFailed alerts:\n" + "\n".join(f"- {detail}" for detail in failed_details)
 
         return {
             "success": len(successful) > 0,
@@ -742,7 +742,7 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
         symbol = req.symbol.upper()
         price = Decimal(str(req.price))
 
-        state.log("info", f"📨 Watchlist alert received: {symbol} {side} @ {price} | Pattern: {req.pattern} | Confidence: {req.confidence}%")
+        state.log("info", f"Watchlist alert received: {symbol} {side} @ {price} | Pattern: {req.pattern} | Confidence: {req.confidence}%")
 
         # Check direction filter
         if not state.direction_manager.is_alert_allowed(symbol, side):
@@ -763,7 +763,7 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
         # Acquire lock for this symbol
         lock = state.get_symbol_lock(symbol)
         async with lock:
-            state.log("info", f"🔒 Acquired lock for {symbol}, processing watchlist alert...")
+            state.log("info", f"Acquired lock for {symbol}, processing watchlist alert...")
 
             # Check for existing position
             position = await state.bybit_client.get_position(symbol)
@@ -800,7 +800,7 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
             config["current_price"] = float(price)
 
             # Execute order sequence
-            state.log("info", f"🚀 Executing trade: {side} {symbol} qty={quantity} @ {price}")
+            state.log("info", f"[TRADE] Executing trade: {side} {symbol} qty={quantity} @ {price}")
 
             result = await state.order_manager.execute_complete_sequence(
                 symbol=symbol,
@@ -817,11 +817,11 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
 
             # Enhanced logging
             if success_status and partial:
-                state.log("warning", f"✅ {symbol}: Market Order executed but SL/TP failed")
+                state.log("warning", f"[PARTIAL] {symbol}: Market Order executed but SL/TP failed")
             elif success_status:
-                state.log("success", f"✅ {symbol}: Trade completed successfully! Pattern: {req.pattern}")
+                state.log("success", f"[SUCCESS] {symbol}: Trade completed successfully! Pattern: {req.pattern}")
             else:
-                state.log("error", f"❌ {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
+                state.log("error", f"[FAILED] {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
 
             # Save to order history
             if success_status:
@@ -839,7 +839,7 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
                 }
                 state.add_order_to_history(order_history_entry)
 
-            state.log("info", f"🔓 Released lock for {symbol}")
+            state.log("info", f"[LOCK] Released lock for {symbol}")
 
             return {
                 "success": success_status,
@@ -963,7 +963,7 @@ async def clear_order_history():
         total_before = len(state.order_history)
         state.clear_order_history()
 
-        state.log("warning", f"🗑️ Order history cleared: {total_before} orders deleted")
+        state.log("warning", f"Order history cleared: {total_before} orders deleted")
 
         return {
             "success": True,

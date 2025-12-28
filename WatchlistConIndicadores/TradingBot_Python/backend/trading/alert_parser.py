@@ -33,7 +33,7 @@ class AlertParser:
             Dict with symbol, side, price or None if parsing fails
         """
         if not raw_alert or not raw_alert.strip():
-            print("⚠️ Empty alert received")
+            print("[WARNING] Empty alert received")
             return None
 
         original = raw_alert.strip()
@@ -113,18 +113,18 @@ class AlertParser:
 
             # Validate we got all required fields
             if not symbol:
-                print(f"⚠️ Could not extract symbol from alert: {original}")
+                print(f"[WARNING] Could not extract symbol from alert: {original}")
                 return None
 
             if not side:
-                print(f"⚠️ Could not detect side (Buy/Sell) in alert: {original}")
+                print(f"[WARNING] Could not detect side (Buy/Sell) in alert: {original}")
                 return None
 
             if not price or price <= 0:
-                print(f"⚠️ Could not extract valid price from alert: {original}")
+                print(f"[WARNING] Could not extract valid price from alert: {original}")
                 return None
 
-            print(f"✅ Alert parsed: {side} {symbol} @ ${price}")
+            print(f"[OK] Alert parsed: {side} {symbol} @ ${price}")
 
             return {
                 "raw": original,
@@ -134,7 +134,7 @@ class AlertParser:
             }
 
         except Exception as e:
-            print(f"❌ Error parsing alert: {e}")
+            print(f"[ERROR] Error parsing alert: {e}")
             print(f"   Alert: {original}")
             import traceback
             traceback.print_exc()
@@ -148,15 +148,15 @@ class AlertParser:
         required_fields = ["symbol", "side", "price"]
         for field in required_fields:
             if field not in alert:
-                print(f"⚠️ Missing required field: {field}")
+                print(f"[WARNING] Missing required field: {field}")
                 return False
 
         if alert["price"] <= 0:
-            print(f"⚠️ Invalid price: {alert['price']}")
+            print(f"[WARNING] Invalid price: {alert['price']}")
             return False
 
         if alert["side"] not in ["Buy", "Sell"]:
-            print(f"⚠️ Invalid side: {alert['side']}")
+            print(f"[WARNING] Invalid side: {alert['side']}")
             return False
 
         return True

@@ -154,7 +154,7 @@ class OrderManager:
         """
         async with self.execution_lock:
             print(f"\n{'='*60}")
-            print(f"🚀 Executing Complete Sequence: {side} {symbol}")
+            print(f"[EXECUTE] Executing Complete Sequence: {side} {symbol}")
             print(f"{'='*60}")
 
             result = {
@@ -172,7 +172,7 @@ class OrderManager:
                 adjusted_qty = self._adjust_to_step_size(quantity, step_size)
                 formatted_qty = self._format_quantity(adjusted_qty, step_size)
 
-                print(f"📏 Quantity: {quantity} → {adjusted_qty} → '{formatted_qty}' (step={step_size})")
+                print(f"[QTY] Quantity: {quantity} -> {adjusted_qty} -> '{formatted_qty}' (step={step_size})")
 
                 # Step 2: Execute Market Order
                 market_result = await self.client.place_market_order(
@@ -185,7 +185,7 @@ class OrderManager:
                 result["market_order"] = market_result
 
                 if market_result.get("retCode") != 0:
-                    print(f"❌ Market order failed, aborting sequence")
+                    print(f"[ERROR] Market order failed, aborting sequence")
                     return result
 
                 # Step 3: Wait for execution and get real price
@@ -194,13 +194,13 @@ class OrderManager:
                 position = await self.client.get_position(symbol)
                 if position.get("hasPosition"):
                     real_price = Decimal(position["entryPrice"])
-                    print(f"💰 Real execution price: ${real_price}")
+                    print(f"[PRICE] Real execution price: ${real_price}")
                 else:
-                    print(f"⚠️ Could not get real price, using config price")
+                    print(f"[WARNING] Could not get real price, using config price")
                     real_price = Decimal(str(config.get("current_price", 0)))
 
                 if real_price == 0:
-                    print(f"❌ Invalid real price, aborting SL/TP")
+                    print(f"[ERROR] Invalid real price, aborting SL/TP")
                     return result
 
                 # Step 4: Calculate SL and TP prices
@@ -217,8 +217,8 @@ class OrderManager:
                 formatted_sl = self._format_price(sl_price, tick_size)
                 formatted_tp = self._format_price(tp_price, tick_size)
 
-                print(f"🛡️ Stop Loss: ${formatted_sl} ({sl_percent*100:.1f}% from entry)")
-                print(f"💰 Take Profit: ${formatted_tp} ({tp_percent*100:.1f}% from entry)")
+                print(f"[SL] Stop Loss: ${formatted_sl} ({sl_percent*100:.1f}% from entry)")
+                print(f"[TP] Take Profit: ${formatted_tp} ({tp_percent*100:.1f}% from entry)")
 
                 # Step 5: Place Stop Loss
                 opposite_side = self._get_opposite_side(side)
@@ -236,7 +236,7 @@ class OrderManager:
                 result["stop_loss"] = sl_result
 
                 if sl_result.get("retCode") != 0:
-                    print(f"⚠️ Stop Loss placement failed")
+                    print(f"[WARNING] Stop Loss placement failed")
 
                 # Step 6: Place Take Profit
                 await asyncio.sleep(1)
@@ -252,22 +252,22 @@ class OrderManager:
                 result["take_profit"] = tp_result
 
                 if tp_result.get("retCode") != 0:
-                    print(f"⚠️ Take Profit placement failed")
+                    print(f"[WARNING] Take Profit placement failed")
 
                 # Determine overall success
                 result["success"] = market_result.get("retCode") == 0
 
                 print(f"\n{'='*60}")
                 if result["success"]:
-                    print(f"✅ Sequence completed successfully!")
+                    print(f"[SUCCESS] Sequence completed successfully!")
                 else:
-                    print(f"⚠️ Sequence completed with warnings")
+                    print(f"[WARNING] Sequence completed with warnings")
                 print(f"{'='*60}\n")
 
                 return result
 
             except Exception as e:
-                print(f"❌ Critical error in order sequence: {e}")
+                print(f"[ERROR] Critical error in order sequence: {e}")
                 import traceback
                 traceback.print_exc()
                 result["error"] = str(e)
@@ -275,7 +275,7 @@ class OrderManager:
                 if result.get("market_order", {}).get("retCode") == 0:
                     result["success"] = True
                     result["partial"] = True
-                    print(f"⚠️ Market Order succeeded, but SL/TP failed: {str(e)}")
+                    print(f"[WARNING] Market Order succeeded, but SL/TP failed: {str(e)}")
                 else:
                     result["success"] = False
                 return result

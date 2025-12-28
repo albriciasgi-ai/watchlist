@@ -59,11 +59,11 @@ class RiskCalculator:
             # Validate against min/max
             if adjusted_quantity < min_qty:
                 adjusted_quantity = self._adjust_to_step_size(min_qty, step_size)
-                print(f"📏 Quantity adjusted to minimum: {adjusted_quantity}")
+                print(f"[QTY] Quantity adjusted to minimum: {adjusted_quantity}")
 
             if adjusted_quantity > max_qty:
                 adjusted_quantity = self._adjust_to_step_size(max_qty, step_size)
-                print(f"📏 Quantity adjusted to maximum: {adjusted_quantity}")
+                print(f"[QTY] Quantity adjusted to maximum: {adjusted_quantity}")
 
             # Calculate total value
             total_value = adjusted_quantity * current_price
@@ -77,7 +77,7 @@ class RiskCalculator:
                     "total_value": total_value
                 }
 
-            print(f"🧮 Risk Calculation:")
+            print(f"[RISK] Risk Calculation:")
             print(f"   Risk Amount: ${risk_amount}")
             print(f"   Stop Loss %: {stop_loss_percent * 100:.2f}%")
             print(f"   Investment: ${investment:.2f}")
