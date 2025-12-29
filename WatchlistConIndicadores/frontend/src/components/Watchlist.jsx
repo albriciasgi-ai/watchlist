@@ -1019,6 +1019,7 @@ const Watchlist = () => {
                 })()}
                 onConfigChange={handleVWAPConfigChange}
                 currentSymbol={selectedSymbolForVWAP}
+                interval={interval}
               />
             </div>
           </div>

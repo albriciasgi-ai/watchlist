@@ -37,10 +37,35 @@ const hexToRgba = (hex, alpha = 0.3) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+// Get recommended BandWidth thresholds by timeframe (same logic as VWAPIndicator)
+const getRecommendedBandWidthThresholds = (interval) => {
+  const thresholdsByTimeframe = {
+    // Ultra-short (scalping): bandas muy amplias
+    '1': { squeeze: 8, consolidation: 12, normal: 18 },
+    '3': { squeeze: 6, consolidation: 10, normal: 15 },
+    '5': { squeeze: 5, consolidation: 8, normal: 12 },
+
+    // Short-term (intraday): bandas moderadas
+    '15': { squeeze: 3.5, consolidation: 6, normal: 10 },
+    '30': { squeeze: 3, consolidation: 5, normal: 8 },
+    '60': { squeeze: 2.5, consolidation: 4.5, normal: 7 },
+
+    // Medium-term (swing): bandas estándar
+    '240': { squeeze: 2, consolidation: 4, normal: 6 },
+    'D': { squeeze: 1.5, consolidation: 3, normal: 5 },
+
+    // Long-term (position): bandas estrechas
+    'W': { squeeze: 1, consolidation: 2, normal: 4 }
+  };
+
+  return thresholdsByTimeframe[interval] || { squeeze: 2, consolidation: 5, normal: 10 };
+};
+
 const VWAPSettings = ({
   config,
   onConfigChange,
-  currentSymbol
+  currentSymbol,
+  interval = '60' // Timeframe actual
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [applyGlobally, setApplyGlobally] = useState(false);
@@ -129,6 +154,29 @@ const VWAPSettings = ({
       alert(`🗑️ Preset "${presetToDelete.name}" eliminado`);
       if (DEBUG) console.log('[VWAPSettings] Preset eliminado:', presetToDelete);
     }
+  };
+
+  // Restaurar valores por defecto de volatilidad para el timeframe actual
+  const handleRestoreDefaults = () => {
+    const recommended = getRecommendedBandWidthThresholds(interval);
+
+    const defaultConfig = {
+      ...localConfig,
+      bandWidthThresholds: recommended,
+      bbwpLookback: 252,
+      bbwpThresholds: { squeeze: 20, normal: 80 },
+      ttmATRLength: 20,
+      ttmATRMultiplier: 1.5
+    };
+
+    setLocalConfig(defaultConfig);
+    handleConfigChange('bandWidthThresholds', recommended);
+    handleConfigChange('bbwpLookback', 252);
+    handleConfigChange('bbwpThresholds', { squeeze: 20, normal: 80 });
+    handleConfigChange('ttmATRLength', 20);
+    handleConfigChange('ttmATRMultiplier', 1.5);
+
+    alert(`✅ Valores restaurados a los recomendados para ${interval} min`);
   };
 
   // Inicializar config local solo al montar o cuando cambia el símbolo
@@ -630,6 +678,66 @@ const VWAPSettings = ({
           </label>
         </div>
 
+        {/* Volatility Indicators Section */}
+        {localConfig.showBands && (
+          <div style={{ background: '#e1f5fe', padding: '12px', borderRadius: '8px', marginTop: '16px', marginBottom: '16px', border: '2px solid #03A9F4' }}>
+            <h5 style={{ margin: '0 0 12px 0', color: '#0277BD', fontSize: '15px' }}>
+              📊 Indicadores de Volatilidad
+            </h5>
+            <div style={{ fontSize: '12px', color: '#555', marginBottom: '12px', background: 'white', padding: '8px', borderRadius: '4px' }}>
+              Mide la separación de las bandas VWAP para detectar consolidación, squeeze y tendencias fuertes.
+            </div>
+
+            {/* BandWidth */}
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={localConfig.showBandWidth || false}
+                  onChange={(e) => handleConfigChange('showBandWidth', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontWeight: '500' }}>📏 BandWidth</span>
+              </label>
+              <div style={{ fontSize: '11px', color: '#666', marginLeft: '24px', marginTop: '4px' }}>
+                Ancho de banda: (Superior - Inferior) / VWAP × 100
+              </div>
+            </div>
+
+            {/* BBWP */}
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={localConfig.showBBWP || false}
+                  onChange={(e) => handleConfigChange('showBBWP', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontWeight: '500' }}>📈 BBWP (BandWidth Percentile)</span>
+              </label>
+              <div style={{ fontSize: '11px', color: '#666', marginLeft: '24px', marginTop: '4px' }}>
+                Percentil normalizado del BandWidth histórico (0-100%)
+              </div>
+            </div>
+
+            {/* TTM Squeeze */}
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={localConfig.showTTMSqueeze || false}
+                  onChange={(e) => handleConfigChange('showTTMSqueeze', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontWeight: '500' }}>🔴 TTM Squeeze</span>
+              </label>
+              <div style={{ fontSize: '11px', color: '#666', marginLeft: '24px', marginTop: '4px' }}>
+                Detecta cuando Bollinger Bands están dentro de Keltner Channels
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Advanced Settings */}
         <div className="setting-row">
           <button
@@ -642,6 +750,241 @@ const VWAPSettings = ({
 
         {showAdvanced && localConfig.showBands && localConfig.bandMultipliers && (
           <div className="advanced-settings">
+            {/* Volatility Indicators Advanced Config */}
+            {(localConfig.showBandWidth || localConfig.showBBWP || localConfig.showTTMSqueeze) && (
+              <div style={{ marginBottom: '24px', padding: '16px', background: '#f0f4ff', borderRadius: '8px', border: '2px solid #03A9F4' }}>
+                <h5 style={{ margin: '0 0 16px 0', color: '#0277BD' }}>⚙️ Configuración de Indicadores de Volatilidad</h5>
+
+                {/* BandWidth Thresholds */}
+                {localConfig.showBandWidth && (
+                  <div style={{ marginBottom: '16px', padding: '12px', background: 'white', borderRadius: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <h6 style={{ margin: 0, color: '#0277BD' }}>📏 Umbrales de BandWidth (%)</h6>
+                      <button
+                        onClick={handleRestoreDefaults}
+                        style={{
+                          padding: '4px 10px',
+                          fontSize: '11px',
+                          background: '#0277BD',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        🔄 Restaurar por defecto
+                      </button>
+                    </div>
+
+                    {(() => {
+                      const recommended = getRecommendedBandWidthThresholds(interval);
+                      return (
+                        <>
+                          <div className="setting-row" style={{ marginBottom: '8px' }}>
+                            <label>Squeeze (Verde):</label>
+                            <input
+                              type="number"
+                              step="0.5"
+                              min="0.5"
+                              max="20"
+                              value={localConfig.bandWidthThresholds?.squeeze || 2}
+                              onChange={(e) => handleConfigChange('bandWidthThresholds', {
+                                ...localConfig.bandWidthThresholds,
+                                squeeze: parseFloat(e.target.value)
+                              })}
+                              style={{ width: '80px' }}
+                            />
+                            <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
+                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                              (Recomendado: {recommended.squeeze}%)
+                            </span>
+                          </div>
+
+                          <div className="setting-row" style={{ marginBottom: '8px' }}>
+                            <label>Consolidation (Amarillo):</label>
+                            <input
+                              type="number"
+                              step="0.5"
+                              min="0.5"
+                              max="20"
+                              value={localConfig.bandWidthThresholds?.consolidation || 5}
+                              onChange={(e) => handleConfigChange('bandWidthThresholds', {
+                                ...localConfig.bandWidthThresholds,
+                                consolidation: parseFloat(e.target.value)
+                              })}
+                              style={{ width: '80px' }}
+                            />
+                            <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
+                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                              (Recomendado: {recommended.consolidation}%)
+                            </span>
+                          </div>
+
+                          <div className="setting-row">
+                            <label>Normal (Naranja):</label>
+                            <input
+                              type="number"
+                              step="0.5"
+                              min="0.5"
+                              max="30"
+                              value={localConfig.bandWidthThresholds?.normal || 10}
+                              onChange={(e) => handleConfigChange('bandWidthThresholds', {
+                                ...localConfig.bandWidthThresholds,
+                                normal: parseFloat(e.target.value)
+                              })}
+                              style={{ width: '80px' }}
+                            />
+                            <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
+                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                              (Recomendado: {recommended.normal}%)
+                            </span>
+                          </div>
+
+                          <div style={{ fontSize: '10px', color: '#777', marginTop: '8px', background: '#f5f5f5', padding: '6px', borderRadius: '4px' }}>
+                            Valores >normal% = Trending (rojo). Timeframe actual: {interval} min
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* BBWP Config */}
+                {localConfig.showBBWP && (
+                  <div style={{ marginBottom: '16px', padding: '12px', background: 'white', borderRadius: '6px' }}>
+                    <h6 style={{ margin: '0 0 12px 0', color: '#0277BD' }}>📈 Configuración BBWP</h6>
+
+                    <div className="setting-row" style={{ marginBottom: '8px' }}>
+                      <label>Lookback (períodos):</label>
+                      <input
+                        type="number"
+                        step="10"
+                        min="50"
+                        max="500"
+                        value={localConfig.bbwpLookback || 252}
+                        onChange={(e) => handleConfigChange('bbwpLookback', parseInt(e.target.value))}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>(ej: 252 = 1 año)</span>
+                    </div>
+
+                    <div className="setting-row" style={{ marginBottom: '8px' }}>
+                      <label>Squeeze (Verde):</label>
+                      <input
+                        type="number"
+                        step="5"
+                        min="5"
+                        max="50"
+                        value={localConfig.bbwpThresholds?.squeeze || 20}
+                        onChange={(e) => handleConfigChange('bbwpThresholds', {
+                          ...localConfig.bbwpThresholds,
+                          squeeze: parseInt(e.target.value)
+                        })}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
+                    </div>
+
+                    <div className="setting-row">
+                      <label>Normal (Amarillo):</label>
+                      <input
+                        type="number"
+                        step="5"
+                        min="50"
+                        max="95"
+                        value={localConfig.bbwpThresholds?.normal || 80}
+                        onChange={(e) => handleConfigChange('bbwpThresholds', {
+                          ...localConfig.bbwpThresholds,
+                          normal: parseInt(e.target.value)
+                        })}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>% (>% = Trending rojo)</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* TTM Squeeze Config */}
+                {localConfig.showTTMSqueeze && (
+                  <div style={{ marginBottom: '16px', padding: '12px', background: 'white', borderRadius: '6px' }}>
+                    <h6 style={{ margin: '0 0 12px 0', color: '#0277BD' }}>🔴 Configuración TTM Squeeze</h6>
+
+                    <div className="setting-row" style={{ marginBottom: '8px' }}>
+                      <label>ATR Length:</label>
+                      <input
+                        type="number"
+                        step="1"
+                        min="5"
+                        max="50"
+                        value={localConfig.ttmATRLength || 20}
+                        onChange={(e) => handleConfigChange('ttmATRLength', parseInt(e.target.value))}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>períodos</span>
+                    </div>
+
+                    <div className="setting-row">
+                      <label>ATR Multiplier (Keltner):</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0.5"
+                        max="5"
+                        value={localConfig.ttmATRMultiplier || 1.5}
+                        onChange={(e) => handleConfigChange('ttmATRMultiplier', parseFloat(e.target.value))}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>x ATR</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Volatility Bar Height */}
+                <div style={{ padding: '12px', background: 'white', borderRadius: '6px' }}>
+                  <h6 style={{ margin: '0 0 12px 0', color: '#0277BD' }}>📊 Visualización de Barras de Volatilidad</h6>
+
+                  <div className="setting-row" style={{ marginBottom: '8px' }}>
+                    <label style={{ fontWeight: 'bold', marginBottom: '6px', display: 'block' }}>
+                      Alto de cada barra (px):
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <input
+                        type="number"
+                        min="4"
+                        max="40"
+                        step="2"
+                        value={localConfig.volatilityBarHeight || 8}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (!isNaN(value) && value >= 4 && value <= 40) {
+                            handleConfigChange('volatilityBarHeight', value);
+                          }
+                        }}
+                        style={{
+                          width: '80px',
+                          padding: '6px 10px',
+                          fontSize: '14px',
+                          border: '2px solid #03A9F4',
+                          borderRadius: '4px',
+                          fontWeight: 'bold',
+                          textAlign: 'center'
+                        }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666' }}>
+                        Rango: 4-40 px (3 barras apiladas)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ fontSize: '11px', color: '#666', background: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
+                    <strong>Nota:</strong> Cada indicador activo (BandWidth, BBWP, TTM) mostrará su propia barra horizontal
+                    debajo del gráfico con etiqueta a la izquierda.
+                  </div>
+                </div>
+              </div>
+            )}
+
             <h5>Multiplicadores de Bandas</h5>
 
             <div className="setting-row">

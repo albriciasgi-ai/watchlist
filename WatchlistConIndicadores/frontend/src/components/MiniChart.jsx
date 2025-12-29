@@ -585,7 +585,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const x = marginLeft + (i * barWidth);
       const volHeight = d.volume * volumeScale;
       const color = d.close >= d.open ? bullColor : bearColor;
-      
+
       ctx.fillStyle = color;
       ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeight - volHeight, barWidth * 0.8, volHeight);
     });
@@ -594,6 +594,20 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     ctx.fillStyle = textColor;
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
+
+    // ✅ Draw VWAP volatility bars below volume panel
+    const vwapIndicator = indicatorManagerRef.current?.getVWAPIndicator();
+    if (vwapIndicator && vwapIndicator.enabled) {
+      const volatilityBarsStartY = volumeStartY + volumeHeight + 5;
+      vwapIndicator.renderVolatilityBars(
+        ctx,
+        marginLeft,
+        volatilityBarsStartY,
+        width - marginLeft - marginRight,
+        barWidth,
+        visibleCandles
+      );
+    }
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
     const timeY = volumeStartY + volumeHeight + 15;

@@ -59,7 +59,8 @@
       "Bash(nul)",
       "Bash(VWAPIndicator.js)",
       "Bash(git checkout:*)",
-      "Bash(main.py)"
+      "Bash(main.py)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
