@@ -54,7 +54,7 @@ const Watchlist = () => {
     "VWAP": false,
     "Fibonacci": false,
     "Continuation Patterns": false,
-    "Double Top/Bottom": false
+    "Double Top/Bottom": true
   });
 
   // 🚀 Estados para precarga de indicadores

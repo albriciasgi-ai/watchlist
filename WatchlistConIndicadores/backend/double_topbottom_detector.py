@@ -64,7 +64,7 @@ class DoubleTopBottomDetector:
         detected_patterns = []
 
         if len(candles) < 10:
-            print(f"⚠️ Not enough candles for {symbol}. Need at least 10.")
+            print(f"WARNING: Not enough candles for {symbol}. Need at least 10.")
             return []
 
         # Extract configuration
@@ -103,15 +103,15 @@ class DoubleTopBottomDetector:
         print(f"    - Max candles between: {max_candles_between}")
         print(f"    - Volume filter: {'enabled' if volume_filter_enabled else 'disabled'}")
         if volume_filter_enabled:
-            print(f"      • Z-Score threshold: {z_score_threshold}")
-            print(f"      • Z-Score period: {z_score_period}")
+            print(f"      - Z-Score threshold: {z_score_threshold}")
+            print(f"      - Z-Score period: {z_score_period}")
         print(f"    - High volume at extremes: {'enabled' if require_high_volume_enabled else 'disabled'}")
         if require_high_volume_enabled:
             z_threshold_first = require_high_volume_config.get('zScoreThresholdFirst', 1.5)
             z_threshold_second = require_high_volume_config.get('zScoreThresholdSecond', 0.5)
-            print(f"      • First extreme z-score: {z_threshold_first}")
-            print(f"      • Second extreme z-score: {z_threshold_second}")
-            print(f"      • Z-Score period: {require_high_volume_period}")
+            print(f"      - First extreme z-score: {z_threshold_first}")
+            print(f"      - Second extreme z-score: {z_threshold_second}")
+            print(f"      - Z-Score period: {require_high_volume_period}")
         breakout_tolerance = config.get('doubleTopBottom', {}).get('maxBreakoutPercent', 2.0)
         print(f"    - Max breakout %: {breakout_tolerance}%")
 
@@ -341,7 +341,7 @@ class DoubleTopBottomDetector:
             return extremes
 
         z_threshold = config.get('zScoreThreshold', 1.0)
-        window_size = config.get('volumeWindowCandles', 3)  # ⭐ NUEVO: ventana de búsqueda
+        window_size = config.get('volumeWindowCandles', 3)  # NUEVO: ventana de busqueda
         filtered_extremes = []
 
         print(f"  [PRUEBA_DBT] Filtering {len(extremes)} extremes by volume (z-threshold={z_threshold:.1f}, window=±{window_size})")
@@ -349,7 +349,7 @@ class DoubleTopBottomDetector:
         for extreme in extremes:
             candle_idx = extreme['candle_index']
 
-            # ⭐ MEJORADO: Buscar volumen alto en ventana de velas alrededor del extremo
+            # MEJORADO: Buscar volumen alto en ventana de velas alrededor del extremo
             start_idx = max(0, candle_idx - window_size)
             end_idx = min(len(z_scores), candle_idx + window_size + 1)
 
@@ -373,13 +373,13 @@ class DoubleTopBottomDetector:
                           f"Max z-score={max_zscore:.2f} at offset={offset:+d} (threshold={z_threshold:.1f})")
                 else:
                     # Volumen bajo en toda la ventana
-                    print(f"    ❌ REJECTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                    print(f"    [REJECTED] Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
                           f"Max z-score={max_zscore:.2f} < threshold={z_threshold:.1f}")
             else:
                 # Edge case: sin z-scores disponibles, mantener
                 filtered_extremes.append(extreme)
 
-        print(f"  [PRUEBA_DBT] Volume filter result: {len(extremes)} → {len(filtered_extremes)} extremes")
+        print(f"  [PRUEBA_DBT] Volume filter result: {len(extremes)} -> {len(filtered_extremes)} extremes")
         return filtered_extremes
 
     def _find_double_tops(
