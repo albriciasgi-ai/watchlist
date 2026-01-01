@@ -12,6 +12,8 @@ import VolumeProfileSettings from '../VolumeProfileSettings';
 import RangeDetectionSettings from '../RangeDetectionSettings';
 import RejectionPatternSettings from '../RejectionPatternSettings';
 import SupportResistanceSettings from '../SupportResistanceSettings';
+import VWAPSettings from '../VWAPSettings';
+import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
@@ -37,8 +39,10 @@ const BacktestingApp = () => {
         "Volume Profile": true,
         "CVD": true,
         "Open Interest": true,
+        "VWAP": false,
         "Range Detection": true,
         "Rejection Patterns": false,
+        "Double Top/Bottom": false,
         "Support & Resistance": true
       },
       vpConfig: {
@@ -59,8 +63,10 @@ const BacktestingApp = () => {
         "Volume Profile": true,
         "CVD": true,
         "Open Interest": true,
+        "VWAP": false,
         "Range Detection": true,
         "Rejection Patterns": false,
+        "Double Top/Bottom": false,
         "Support & Resistance": true
       },
       vpConfig: {
@@ -81,8 +87,10 @@ const BacktestingApp = () => {
         "Volume Profile": true,
         "CVD": true,
         "Open Interest": true,
+        "VWAP": false,
         "Range Detection": true,
         "Rejection Patterns": false,
+        "Double Top/Bottom": false,
         "Support & Resistance": true
       },
       vpConfig: {
@@ -116,8 +124,10 @@ const BacktestingApp = () => {
     "Volume Profile": true,
     "CVD": true,
     "Open Interest": true,
+    "VWAP": false,  // Nuevo indicador
     "Range Detection": true,
     "Rejection Patterns": false,  // Opcional (requiere configuración)
+    "Double Top/Bottom": false,  // Nuevo indicador
     "Support & Resistance": true
   });
 
@@ -126,6 +136,8 @@ const BacktestingApp = () => {
   const [showRangeDetectionSettings, setShowRangeDetectionSettings] = useState(false);
   const [showRejectionPatternSettings, setShowRejectionPatternSettings] = useState(false);
   const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
+  const [showVWAPSettings, setShowVWAPSettings] = useState(false);
+  const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
 
   // 🎯 Configuraciones de indicadores
   const [vpConfig, setVpConfig] = useState({
@@ -170,6 +182,7 @@ const BacktestingApp = () => {
   const timeControllerRef = useRef(null);
   const orderManagerRef = useRef(null);
   const indicatorPanelRef = useRef(null);
+  const indicatorManagerRef = useRef(null); // Ref para IndicatorManager del tab activo
 
   // 🎯 NUEVO: Referencias múltiples para cada timeframe
   const indicatorManagerRefs = useRef({
@@ -877,6 +890,16 @@ const BacktestingApp = () => {
     setShowSupportResistanceSettings(true);
   };
 
+  const handleOpenVWAPSettings = (indicatorManager) => {
+    indicatorManagerRef.current = indicatorManager;
+    setShowVWAPSettings(true);
+  };
+
+  const handleOpenDoubleTopBottomSettings = (indicatorManager) => {
+    indicatorManagerRef.current = indicatorManager;
+    setShowDoubleTopBottomSettings(true);
+  };
+
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfig(config);
   };
@@ -937,6 +960,18 @@ const BacktestingApp = () => {
       }
     });
   };
+
+  /**
+   * 🎯 Cerrar todos los modales al cambiar de tab
+   */
+  useEffect(() => {
+    setShowVpSettings(false);
+    setShowRangeDetectionSettings(false);
+    setShowRejectionPatternSettings(false);
+    setShowSupportResistanceSettings(false);
+    setShowVWAPSettings(false);
+    setShowDoubleTopBottomSettings(false);
+  }, [activeTimeframe]);
 
   /**
    * 🎯 NUEVO: Obtener contador de órdenes por timeframe
@@ -1427,40 +1462,80 @@ const BacktestingApp = () => {
                 <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>
                   Indicadores ({activeTimeframe})
                 </h4>
-                {Object.entries(tabStates[activeTimeframe]?.indicatorStates || {}).map(([name, enabled]) => (
-                  <label
-                    key={name}
-                    style={{
-                      display: 'block',
-                      padding: '6px 0',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      color: '#333'
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={enabled}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        setTabStates(prev => ({
-                          ...prev,
-                          [activeTimeframe]: {
-                            ...prev[activeTimeframe],
-                            indicatorStates: {
-                              ...prev[activeTimeframe].indicatorStates,
-                              [name]: e.target.checked
-                            }
-                          }
-                        }));
+                {Object.entries(tabStates[activeTimeframe]?.indicatorStates || {}).map(([name, enabled]) => {
+                  const settingsMap = {
+                    'Volume Profile': () => setShowVpSettings(true),
+                    'Range Detection': () => setShowRangeDetectionSettings(true),
+                    'Rejection Patterns': () => setShowRejectionPatternSettings(true),
+                    'Support & Resistance': () => setShowSupportResistanceSettings(true),
+                    'VWAP': () => setShowVWAPSettings(true),
+                    'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true)
+                  };
+
+                  const hasSettings = name in settingsMap;
+
+                  return (
+                    <label
+                      key={name}
+                      style={{
+                        display: 'block',
+                        padding: '6px 0',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        color: '#333'
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      style={{ marginRight: '8px' }}
-                    />
-                    {name}
-                  </label>
-                ))}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={enabled}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          setTabStates(prev => ({
+                            ...prev,
+                            [activeTimeframe]: {
+                              ...prev[activeTimeframe],
+                              indicatorStates: {
+                                ...prev[activeTimeframe].indicatorStates,
+                                [name]: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ marginRight: '8px' }}
+                      />
+                      {name}
+
+                      {hasSettings && (
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            if (!indicatorManagerRef.current) {
+                              console.warn(`[Settings] IndicatorManager not ready for ${name}`);
+                              return;
+                            }
+                            settingsMap[name]();
+                          }}
+                          style={{
+                            marginLeft: '8px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            opacity: 0.7,
+                            transition: 'opacity 0.2s',
+                            display: 'inline'
+                          }}
+                          onMouseEnter={(e) => e.target.style.opacity = '1'}
+                          onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+                          title={`Configurar ${name}`}
+                        >
+                          ⚙️
+                        </span>
+                      )}
+                    </label>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -1627,6 +1702,8 @@ const BacktestingApp = () => {
                   onOpenRangeDetectionSettings={handleOpenRangeDetectionSettings}
                   onOpenRejectionPatternSettings={handleOpenRejectionPatternSettings}
                   onOpenSupportResistanceSettings={handleOpenSupportResistanceSettings}
+                  onOpenVWAPSettings={handleOpenVWAPSettings}
+                  onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
                   rejectionPatternConfig={tabStates[tf]?.rejectionPatternConfig}
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
@@ -1770,6 +1847,147 @@ const BacktestingApp = () => {
           indicatorManager={indicatorManagerRef.current}
           onClose={() => setShowSupportResistanceSettings(false)}
         />
+      )}
+
+      {showVWAPSettings && indicatorManagerRef.current && (
+        <div className="modal-overlay" onClick={() => setShowVWAPSettings(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            width: '90%',
+            overflow: 'auto',
+            position: 'relative',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <button
+              onClick={() => setShowVWAPSettings(false)}
+              style={{
+                position: 'sticky',
+                top: '8px',
+                right: '8px',
+                float: 'right',
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                fontSize: '20px',
+                cursor: 'pointer',
+                zIndex: 1001,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold'
+              }}
+              title="Cerrar"
+            >
+              ×
+            </button>
+            <div style={{ padding: '20px' }}>
+              <VWAPSettings
+                config={indicatorManagerRef.current.getIndicatorConfig('VWAP') || {}}
+                onConfigChange={(newConfig) => {
+                  // 🎯 CRÍTICO: Aplicar config y resetear caché de VWAP
+                  indicatorManagerRef.current.applyConfig('VWAP', newConfig);
+
+                  // 🎯 CRÍTICO: Resetear caché del VWAP para forzar recalculo
+                  const vwapIndicator = indicatorManagerRef.current.indicators.find(ind => ind.name === 'VWAP');
+                  if (vwapIndicator) {
+                    vwapIndicator._lastCalculatedLength = 0;
+                    vwapIndicator._calculationValid = false;
+                    console.log(`[BacktestingApp] 🔄 Caché del VWAP reseteado después de cambio de config`);
+                  }
+
+                  // 🎯 CRÍTICO: Forzar redibujado del chart para que se vean los cambios
+                  const miniChart = miniChartRefs.current[activeTimeframe];
+                  if (miniChart && miniChart.forceRedraw) {
+                    miniChart.forceRedraw();
+                    console.log(`[BacktestingApp] ✅ Chart redibujado después de cambio de config VWAP`);
+                  }
+                }}
+                currentSymbol={symbol}
+                interval={activeTimeframe}
+                onClose={() => setShowVWAPSettings(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDoubleTopBottomSettings && indicatorManagerRef.current && (
+        <div className="modal-overlay" onClick={() => setShowDoubleTopBottomSettings(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            maxWidth: '700px',
+            maxHeight: '85vh',
+            width: '90%',
+            overflow: 'auto',
+            position: 'relative',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <button
+              onClick={() => setShowDoubleTopBottomSettings(false)}
+              style={{
+                position: 'sticky',
+                top: '8px',
+                right: '8px',
+                float: 'right',
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                fontSize: '20px',
+                cursor: 'pointer',
+                zIndex: 1001,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold'
+              }}
+              title="Cerrar"
+            >
+              ×
+            </button>
+            <div style={{ padding: '20px' }}>
+              <DoubleTopBottomSettings
+                symbol={symbol}
+                initialConfig={indicatorManagerRef.current.getIndicatorConfig('Double Top/Bottom')}
+                onConfigChange={(newConfig) => {
+                  indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig);
+                }}
+                onClose={() => setShowDoubleTopBottomSettings(false)}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 🎯 NUEVO: Modales de sistema de sesiones */}

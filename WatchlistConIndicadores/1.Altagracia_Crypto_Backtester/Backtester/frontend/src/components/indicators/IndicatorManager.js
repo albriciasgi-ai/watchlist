@@ -12,6 +12,8 @@ import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
 import SupportResistanceIndicator from "./SupportResistanceIndicator";
 import OpenInterestIndicator from "./OpenInterestIndicator";
+import VWAPIndicator from "./VWAPIndicator";
+import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -36,7 +38,10 @@ class IndicatorManager {
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
-  async initialize() {
+  async initialize(backtestingMode = false) {
+    // 🎯 Guardar modo backtesting para usarlo en otros métodos
+    this.backtestingMode = backtestingMode;
+
     // Crear el indicador de S/R
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
 
@@ -49,7 +54,9 @@ class IndicatorManager {
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
-      this.supportResistanceIndicator
+      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days),
+      this.supportResistanceIndicator,
+      new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode })
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -60,10 +67,27 @@ class IndicatorManager {
     }
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar Volume Profile y Open Interest si es necesario
+    // Solo cargar indicadores que requieren backend API
+    // 🎯 IMPORTANTE: En modo backtesting, solo cargar Open Interest si tiene datos precargados
     await Promise.all(
       this.indicators.map(ind => {
-        if (ind.name === "Volume Profile" || ind.name === "Open Interest") {
+        // En modo backtesting: solo Volume Profile y Open Interest (si tiene datos precargados)
+        if (backtestingMode) {
+          if (ind.name === "Volume Profile" ||
+              (ind.name === "Open Interest" && ind._dataPreloaded)) {
+            console.log(`[${this.symbol}] Fetching data for ${ind.name} (backtesting mode)`);
+            return ind.fetchData();
+          }
+          console.log(`[${this.symbol}] Skipping fetchData for ${ind.name} (backtesting mode)`);
+          return Promise.resolve();
+        }
+
+        // En modo normal: cargar todos los indicadores que requieren backend
+        if (ind.name === "Volume Profile" ||
+            ind.name === "Open Interest" ||
+            ind.name === "Double Top/Bottom" ||
+            ind.name === "Support & Resistance" ||
+            ind.name === "Rejection Patterns") {
           return ind.fetchData();
         }
         return Promise.resolve();
@@ -134,11 +158,61 @@ class IndicatorManager {
     }
   }
 
+  /**
+   * 🎯 NUEVO: Actualiza estados de indicadores SIN recrear el IndicatorManager
+   * @param {Object} indicatorStates - Objeto con estados {indicatorName: true/false}
+   * @param {boolean} backtestingMode - Si está en modo backtesting
+   */
+  async updateIndicatorStates(indicatorStates, backtestingMode = false) {
+    console.log(`[${this.symbol}] 🔄 Actualizando estados de indicadores:`, indicatorStates);
+
+    const promises = [];
+
+    for (const indicator of this.indicators) {
+      const shouldBeEnabled = indicatorStates[indicator.name] || false;
+      const wasEnabled = indicator.enabled;
+
+      if (shouldBeEnabled && !wasEnabled) {
+        // 🎯 Indicador se está ACTIVANDO
+        console.log(`[${this.symbol}] ✅ Activando ${indicator.name}`);
+        indicator.setEnabled(true);
+
+        // 🎯 CRÍTICO: Si es VWAP u otro indicador que requiere datos del backend, llamar fetchData()
+        // SIEMPRE llamar fetchData() cuando se activa dinámicamente, incluso en backtesting
+        if (indicator.name === "VWAP" ||
+            indicator.name === "Open Interest" ||
+            indicator.name === "Double Top/Bottom" ||
+            indicator.name === "Support & Resistance" ||
+            indicator.name === "Rejection Patterns") {
+          console.log(`[${this.symbol}] 🌐 Cargando datos para ${indicator.name} (activación dinámica)`);
+          promises.push(indicator.fetchData());
+        }
+      } else if (!shouldBeEnabled && wasEnabled) {
+        // 🎯 Indicador se está DESACTIVANDO
+        console.log(`[${this.symbol}] ❌ Desactivando ${indicator.name}`);
+        indicator.setEnabled(false);
+      }
+      // Si shouldBeEnabled === wasEnabled, no hacer nada
+    }
+
+    // Esperar a que todos los fetchData() terminen
+    await Promise.all(promises);
+    console.log(`[${this.symbol}] ✅ Estados actualizados correctamente`);
+  }
+
   applyConfig(name, config) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.applyConfig) {
       indicator.applyConfig(config);
     }
+  }
+
+  getIndicatorConfig(name) {
+    const indicator = this.indicators.find(ind => ind.name === name);
+    if (indicator && indicator.getConfig) {
+      return indicator.getConfig();
+    }
+    return null;
   }
 
   setIndicatorMode(name, mode) {

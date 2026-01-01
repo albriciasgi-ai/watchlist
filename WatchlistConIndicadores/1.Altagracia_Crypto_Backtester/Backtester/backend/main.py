@@ -1339,10 +1339,14 @@ async def get_support_resistance(
 # ==================== REJECTION PATTERN ENDPOINTS ====================
 
 from fastapi import Request
+from typing import Optional
 from rejection_detector import RejectionDetector, serialize_pattern
 from alert_sender import send_pattern_alert
+from double_topbottom_detector import DoubleTopBottomDetector, serialize_pattern as serialize_double_pattern
+from vwap_calculator import vwap_calculator
 
 rejection_detector = RejectionDetector()
+double_detector = DoubleTopBottomDetector()
 
 
 @app.post("/api/rejection-patterns/detect")
@@ -2047,6 +2051,284 @@ async def delete_drawings(symbol: str):
     except Exception as e:
         print(f"[ERROR] Deleting drawings for {symbol}: {str(e)}")
         return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ==================== DOUBLE TOP/BOTTOM ENDPOINTS ====================
+
+@app.post("/api/double-topbottom/detect")
+async def detect_double_topbottom(request: Request):
+    """
+    Detects double top/bottom patterns
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "60",
+      "days": 90,
+      "config": {
+        "doubleTopBottom": {
+          "lookbackCandles": 50,
+          "candlesPerExtreme": 5,
+          "priceMarginPercent": 2.0,
+          "minCandlesBetween": 5,
+          "maxCandlesBetween": 50,
+          "rejectionPatterns": {
+            "hammer": true,
+            "shootingStar": true,
+            "bullishEngulfing": true,
+            "bearishEngulfing": true
+          },
+          "volumeFilter": {
+            "enabled": false,
+            "zScoreThreshold": 1.5,
+            "zScorePeriod": 20
+          }
+        },
+        "momentumConfirmation": {
+          "enabled": false,
+          "patterns": {
+            "marubozu": {"enabled": true, "minBodyRatio": 0.8},
+            "soldiers_crows": {"enabled": true, "minBodyRatio": 0.6},
+            "bigBody": {"enabled": true, "minBodyRatio": 0.7, "allowBigWick": true}
+          },
+          "lookbackAfterPattern": 10,
+          "requireMomentum": false
+        },
+        "filters": {
+          "minConfidence": 60,
+          "requireBothRejections": true,
+          "minPatternDuration": 3,
+          "maxPatternDuration": 72
+        }
+      }
+    }
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 90)
+        config = body.get('config', {})
+
+        if not symbol:
+            return {
+                "success": False,
+                "error": "Symbol is required"
+            }
+
+        print(f"[DOUBLE TOP/BOTTOM] Detecting patterns for {symbol} {interval}")
+
+        # Get historical candles
+        historical = await get_historical(symbol, interval, days)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+
+        # Detect patterns
+        patterns = double_detector.detect_patterns(
+            symbol,
+            candles,
+            config
+        )
+
+        # Serialize patterns
+        serialized_patterns = [serialize_double_pattern(p) for p in patterns]
+
+        print(f"[DOUBLE TOP/BOTTOM] [OK] Detected {len(patterns)} patterns for {symbol}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "patterns": serialized_patterns,
+            "totalPatterns": len(patterns)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Double top/bottom detection: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ==================== VWAP ENDPOINTS ====================
+
+@app.get("/api/vwap/{symbol}")
+async def get_vwap(
+    symbol: str,
+    interval: str = "60",
+    days: int = 7,
+    vwap_type: str = "session",
+    reset_hour: int = 0,
+    anchor_timestamp: Optional[int] = None,
+    rolling_period: int = 20,
+    band_multipliers: str = "1.0,2.0,3.0",
+    apply_crypto_adjustment: bool = True
+):
+    """
+    Calculate VWAP with standard deviation bands
+
+    Args:
+        symbol: Trading pair (e.g., BTCUSDT)
+        interval: Candle interval (15, 60, 240, D)
+        days: Historical data period
+        vwap_type: Type of VWAP - 'session', 'anchored', or 'rolling'
+        reset_hour: Hour (UTC) for session reset (default: 0 = midnight)
+        anchor_timestamp: Timestamp (ms) for anchored VWAP (required if type='anchored')
+        rolling_period: Period for rolling VWAP (default: 20)
+        band_multipliers: Comma-separated multipliers (default: "1.0,2.0,3.0")
+        apply_crypto_adjustment: Apply +15% volatility adjustment (default: True)
+
+    Returns:
+        VWAP data with bands for each candle
+    """
+    try:
+        # Clean interval
+        interval_clean = (
+            interval.replace("m", "")
+            .replace("h", "")
+            .replace("d", "D")
+            .replace("w", "W")
+        )
+
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+
+        interval_final = INTERVAL_MAP.get(interval_clean, "60")
+
+        # Apply max days limit
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+
+        print(f"[{symbol}] [DATA] VWAP: type={vwap_type}, interval={interval_final}, days={days_to_fetch}")
+
+        # Check cache
+        cache_key = f"vwap_{vwap_type}_{days_to_fetch}_{reset_hour}_{anchor_timestamp}_{rolling_period}_{band_multipliers}"
+        cached_data = load_cache(symbol, interval_final, cache_key)
+
+        if cached_data and cached_data.get("symbol") == symbol:
+            cache_age = time.time() - cached_data.get('timestamp', 0)
+            print(f"[CACHE HIT] [OK] {symbol} {interval_final} VWAP desde cache (age: {cache_age:.0f}s)")
+
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "vwap",
+                "vwap_type": vwap_type,
+                "data": cached_data.get("data", []),
+                "success": True,
+                "from_cache": True,
+                "cache_age_seconds": int(cache_age)
+            }
+
+        # Get historical data
+        historical = await get_historical(symbol, interval_final, days_to_fetch)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "vwap",
+                "data": [],
+                "success": False,
+                "error": "Could not fetch historical data"
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] Calculating VWAP for {len(candles)} candles")
+
+        # Parse band multipliers
+        try:
+            multipliers = [float(x.strip()) for x in band_multipliers.split(',')]
+        except:
+            multipliers = [1.0, 2.0, 3.0]
+
+        # Build config
+        config = {
+            'reset_hour': reset_hour,
+            'anchor_timestamp': anchor_timestamp,
+            'rolling_period': rolling_period,
+            'band_multipliers': multipliers,
+            'apply_crypto_adjustment': apply_crypto_adjustment
+        }
+
+        # Calculate VWAP
+        vwap_data = vwap_calculator.calculate_vwap_with_bands(
+            candles,
+            vwap_type,
+            config
+        )
+
+        # Format response
+        processed_data = []
+        for point in vwap_data:
+            processed_point = {
+                'timestamp': point['timestamp'],
+                'vwap': point['vwap'],
+                'typical_price': point.get('typical_price'),
+                'bands': point.get('bands', {})
+            }
+
+            # Add type-specific metadata
+            if 'session_start' in point:
+                processed_point['session_start'] = point['session_start']
+            elif 'anchor_timestamp' in point:
+                processed_point['anchor_timestamp'] = point['anchor_timestamp']
+            elif 'window_size' in point:
+                processed_point['window_size'] = point['window_size']
+
+            processed_data.append(processed_point)
+
+        # Save to cache
+        cache_data = {
+            "symbol": symbol,
+            "interval": interval_final,
+            "vwap_type": vwap_type,
+            "data": processed_data
+        }
+        save_cache(symbol, interval_final, cache_key, cache_data)
+        print(f"[CACHE SAVED] {symbol} {interval_final} VWAP guardado ({len(processed_data)} puntos)")
+
+        print(f"[SUCCESS] {symbol} {interval_final} VWAP: {len(processed_data)} puntos")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "vwap",
+            "vwap_type": vwap_type,
+            "data": processed_data,
+            "config": {
+                "reset_hour": reset_hour,
+                "anchor_timestamp": anchor_timestamp,
+                "rolling_period": rolling_period,
+                "band_multipliers": multipliers,
+                "crypto_adjustment": apply_crypto_adjustment
+            },
+            "success": True,
+            "from_cache": False,
+            "total_points": len(processed_data)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] VWAP {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "vwap",
+            "data": [],
             "success": False,
             "error": str(e)
         }

@@ -29,7 +29,13 @@
       "Bash(.venv/Scripts/python.exe:*)",
       "Bash(taskkill /F /PID 13052)",
       "Bash(taskkill /F /PID 7708)",
-      "Bash(python -c \"import os; os.system(''taskkill /F /IM python.exe'')\")"
+      "Bash(python -c \"import os; os.system(''taskkill /F /IM python.exe'')\")",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(del /f /s /q node_modules.vite 2)",
+      "Bash(if exist \"node_modules\\.vite\" rmdir /s /q \"node_modules\\.vite\")",
+      "Bash(taskkill:*)",
+      "Bash(IndicatorManager.js)"
     ],
     "deny": [],
     "ask": []

@@ -12,7 +12,7 @@ import DrawingToolManager from "./drawing/DrawingToolManager";
 import MeasurementTool from "./drawing/MeasurementTool";
 
 // ==================== LOGGING SYSTEM ====================
-const DEBUG_MODE = true;
+const DEBUG_MODE = false;
 
 const log = {
   candle: (symbol, message, data = null) => {
@@ -128,6 +128,8 @@ const MiniChart = forwardRef(({
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
   onOpenSupportResistanceSettings,
+  onOpenVWAPSettings,
+  onOpenDoubleTopBottomSettings,
   rejectionPatternConfig,
   // 🎯 NUEVO: Props para modo backtesting
   backtestingMode = false,
@@ -262,6 +264,11 @@ const MiniChart = forwardRef(({
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0, verticalZoom: 1 });
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
   const manualPanRef = useRef(false); // 🎯 NUEVO: Detectar si el usuario hizo paneo manual
+  const rafRef = useRef(null); // Para requestAnimationFrame
+  const allCandlesRef = useRef([]); // Almacena todas las velas para binary search
+  const lastIndexRef = useRef(-1); // Para detectar cambios reales de vela
+  const initialRenderDoneRef = useRef(false); // Para forzar primer render cuando se carga currentTime
+  const lastRenderTimeRef = useRef(0); // Para throttling agresivo
 
   // 🎯 NUEVO: Estados para sistema de presets de zoom
   const [showPresetsConfig, setShowPresetsConfig] = useState(false);
@@ -514,7 +521,26 @@ const MiniChart = forwardRef(({
         yScale,
         priceToY  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
       };
-      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
+
+      // 🎯 OPTIMIZACIÓN: En modo backtesting, pasar TODAS las velas para pre-cálculo
+      // Los indicadores usarán esto para calcular UNA VEZ, luego solo dibujarán visibleCandles
+      // IMPORTANTE: SIEMPRE usar allCandlesRef en backtesting, incluso cuando está pausado
+      const allCandlesForCalculation = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : displayCandles;
+
+      // Debug: Detectar si allCandlesForCalculation está vacío
+      if (!allCandlesForCalculation || allCandlesForCalculation.length === 0) {
+        console.error(`[MiniChart ${symbol} ${interval}] ⚠️ CRÍTICO: allCandlesForCalculation está vacío!`);
+        console.error(`  backtestingMode: ${backtestingMode}`);
+        console.error(`  allCandlesRef.current: ${allCandlesRef.current ? allCandlesRef.current.length : 'null/undefined'}`);
+        console.error(`  displayCandles: ${displayCandles.length}`);
+      }
+
+      // Renderizar overlays
+      if (allCandlesForCalculation && allCandlesForCalculation.length > 0) {
+        indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
+      }
     }
 
     ctx.lineWidth = 1;
@@ -1516,51 +1542,116 @@ const MiniChart = forwardRef(({
     // Redibujar el chart después de actualizar los indicadores
     // SOLO si hay velas para dibujar
     if (candlesRef.current && candlesRef.current.length > 0) {
-      console.log('[MiniChart] Redibujando con', candlesRef.current.length, 'velas');
+      console.log(`[MiniChart ${symbol} ${interval}] Redibujando por cambio en indicatorStates - ${candlesRef.current.length} velas`);
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     } else {
-      console.warn('[MiniChart] No se puede redibujar, no hay velas disponibles - esperando datos');
+      console.warn(`[MiniChart ${symbol} ${interval}] ⚠️ NO se puede redibujar por cambio en indicatorStates - candlesRef.current ${candlesRef.current ? 'tiene 0 velas' : 'es null/undefined'}`);
+      // NO llamar a drawChart si no hay velas - esto evitará que el gráfico desaparezca
     }
-  }, [indicatorStates]);
+  }, [indicatorStates, symbol, interval]);
 
-  // 🎯 NUEVO: Efecto para modo backtesting - filtrar velas por currentTime
+  // 🎯 Cargar todas las velas UNA VEZ al inicio (para binary search)
   useEffect(() => {
-    if (!backtestingMode || !backtestingData || !currentTime) return;
+    // Reset del flag cuando cambia el interval o backtestingData
+    initialRenderDoneRef.current = false;
+    lastIndexRef.current = -1; // 🎯 CRÍTICO: Reset para forzar re-render en próximo Binary Search
 
-    const timeframeData = backtestingData.timeframes[interval];
-    if (!timeframeData || !timeframeData.main) return;
+    if (!backtestingMode || !backtestingData) {
+      console.log(`[MiniChart ${symbol} ${interval}] No hay datos de backtesting aún`);
+      return;
+    }
+    const timeframeData = backtestingData.timeframes?.[interval];
 
-    // Filtrar velas hasta currentTime
-    const filteredCandles = timeframeData.main.filter(c => c.timestamp <= currentTime);
+    if (timeframeData?.main) {
+      console.log(`[MiniChart ${symbol} ${interval}] 📊 Cargando ${timeframeData.main.length} velas en allCandlesRef`);
+      allCandlesRef.current = timeframeData.main;
 
-    candlesRef.current = filteredCandles;
-    inProgressCandleRef.current = null; // En backtesting no hay vela en progreso
+      // 🎯 ELIMINADO: Ya NO reseteamos el caché del VWAP
+      // El VWAP detecta automáticamente cambios en allCandles.length y se recalcula si es necesario
+    } else {
+      console.warn(`[MiniChart ${symbol} ${interval}] ⚠️ No hay datos main en timeframe ${interval}`);
+    }
+  }, [backtestingMode, backtestingData, interval, symbol]);
+
+  // 🎯 ELIMINADO - Ya no es necesario, el Binary Search maneja todo desde el inicio
+
+  // 🎯 OPTIMIZADO: Efecto para modo backtesting - filtrar velas con Binary Search
+  useEffect(() => {
+    // IMPORTANTE: Solo ejecutar en modo backtesting con datos disponibles
+    if (!backtestingMode || !backtestingData || allCandlesRef.current.length === 0) return;
+    if (!currentTime) return;
+
+    // Binary search: encontrar último índice donde timestamp <= currentTime
+    let left = 0;
+    let right = allCandlesRef.current.length - 1;
+    let lastIndex = -1;
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (allCandlesRef.current[mid].timestamp <= currentTime) {
+        lastIndex = mid;
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    // Solo actualizar si el índice cambió (nueva vela)
+    if (lastIndex < 0 || lastIndex === lastIndexRef.current) return;
+
+    // Actualizar refs
+    lastIndexRef.current = lastIndex;
+
+    // Usar slice en lugar de filter
+    candlesRef.current = allCandlesRef.current.slice(0, lastIndex + 1);
+    inProgressCandleRef.current = null;
 
     // Actualizar precio actual
-    if (filteredCandles.length > 0) {
-      const lastCandle = filteredCandles[filteredCandles.length - 1];
+    const lastCandle = candlesRef.current[candlesRef.current.length - 1];
+    if (lastCandle) {
       lastPriceRef.current = lastCandle.close;
     }
 
-    // 🎯 CORREGIDO: Solo ajustar offset si el usuario NO ha hecho paneo manual
-    if (!manualPanRef.current && canvasRef.current && filteredCandles.length > 0) {
+    // Ajustar offset si no hay paneo manual
+    if (!manualPanRef.current && canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
       const chartWidth = rect.width - 75;
       const zoom = viewStateRef.current.zoom || 1;
       const candlesPerScreen = Math.floor(chartWidth / (8 * zoom));
-
-      // 🎯 MODIFICADO: Dejar 35% de espacio a la derecha para tener área de dibujo
       const marginRightPx = chartWidth * 0.35;
       const candlesInMargin = Math.ceil(marginRightPx / (8 * zoom));
 
-      if (filteredCandles.length > candlesPerScreen) {
-        viewStateRef.current.offset = Math.min(candlesInMargin, filteredCandles.length - candlesPerScreen);
+      if (candlesRef.current.length > candlesPerScreen) {
+        viewStateRef.current.offset = Math.min(candlesInMargin, candlesRef.current.length - candlesPerScreen);
       } else {
         viewStateRef.current.offset = 0;
       }
     }
 
-    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    // 🎯 CRITICAL: Throttle agresivo para alta velocidad
+    // Limitar renders a 10 FPS (100ms) para evitar saturar el navegador
+    const now = performance.now();
+    const timeSinceLastRender = now - lastRenderTimeRef.current;
+
+    // Si han pasado menos de 100ms, cancelar render anterior y programar nuevo
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    if (timeSinceLastRender < 100) {
+      // Throttle: esperar 100ms desde el último render
+      rafRef.current = requestAnimationFrame(() => {
+        const checkTime = performance.now();
+        if (checkTime - lastRenderTimeRef.current >= 100) {
+          lastRenderTimeRef.current = checkTime;
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      });
+    } else {
+      // Render inmediato si ya pasaron 100ms
+      lastRenderTimeRef.current = now;
+      rafRef.current = requestAnimationFrame(() => {
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      });
+    }
   }, [backtestingMode, backtestingData, currentTime, interval]);
 
   // ==================== MAIN EFFECT ====================
@@ -1589,7 +1680,7 @@ const MiniChart = forwardRef(({
         }
       }
 
-      await indicatorManagerRef.current.initialize();
+      await indicatorManagerRef.current.initialize(backtestingMode);
 
       // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
       indicatorManagerRef.current.requestRedraw = () => {
@@ -1737,6 +1828,28 @@ const MiniChart = forwardRef(({
       }
     };
   }, [symbol, interval, days, backtestingMode]); // 🎯 FIX: Removed indicatorStates to prevent remounting
+
+  // 🎯 NUEVO: Manejar cambios en indicatorStates SIN recrear el IndicatorManager
+  useEffect(() => {
+    if (!indicatorManagerRef.current) return;
+
+    console.log(`[MiniChart] Actualizando indicadores:`, indicatorStates);
+    console.log(`[MiniChart] Velas disponibles:`, candlesRef.current?.length || 0);
+    console.log(`[MiniChart] Modo backtesting:`, backtestingMode);
+
+    // 🎯 CRÍTICO: Llamar al nuevo método updateIndicatorStates() en lugar de recrear
+    indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode)
+      .then(() => {
+        // Redibujar después de actualizar
+        if (candlesRef.current && candlesRef.current.length > 0) {
+          console.log(`[MiniChart ${symbol} ${interval}] Redibujando por cambio en indicatorStates - ${candlesRef.current.length} velas`);
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      })
+      .catch(error => {
+        console.error(`[MiniChart ${symbol} ${interval}] Error actualizando indicadores:`, error);
+      });
+  }, [indicatorStates]); // Solo reaccionar a cambios en indicatorStates
 
   // 🎯 NUEVO: Handlers para divisor redimensionable
   const handleDividerMouseDown = (e) => {
@@ -1973,6 +2086,46 @@ const MiniChart = forwardRef(({
               }}
             >
               ⚡
+            </button>
+          )}
+          {onOpenVWAPSettings && (
+            <button
+              className="vwap-chart-settings-btn"
+              onClick={() => onOpenVWAPSettings(indicatorManagerRef.current)}
+              title="Configurar VWAP"
+              style={{
+                background: '#2196F3',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              VWAP
+            </button>
+          )}
+          {onOpenDoubleTopBottomSettings && (
+            <button
+              className="dtb-chart-settings-btn"
+              onClick={() => onOpenDoubleTopBottomSettings(indicatorManagerRef.current)}
+              title="Configurar Double Top/Bottom"
+              style={{
+                background: '#E91E63',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              DTB
             </button>
           )}
           <button
