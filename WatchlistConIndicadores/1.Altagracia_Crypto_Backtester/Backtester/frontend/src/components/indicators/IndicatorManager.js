@@ -54,7 +54,7 @@ class IndicatorManager {
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
-      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days),
+      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       this.supportResistanceIndicator,
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode })
     ];

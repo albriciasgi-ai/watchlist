@@ -10,10 +10,14 @@ import { API_BASE_URL } from '../../config.js';
  * and optional momentum confirmation for entry signals.
  */
 class DoubleTopBottomIndicator extends IndicatorBase {
-  constructor(symbol, interval, days = 90) {
+  constructor(symbol, interval, days = 90, config = {}) {
     super(symbol, interval, days);
     this.name = "Double Top/Bottom";
     this.patterns = [];
+
+    // 🎯 CRÍTICO: Modo backtesting - deshabilita fetch al backend
+    this.backtestingMode = config.backtestingMode || false;
+
     this.config = this.loadConfig();
 
     // ✅ Sincronizar this.enabled con config.enabled al inicializar
@@ -172,6 +176,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   async fetchData() {
     if (!this.config.enabled) {
       console.log(`[${this.symbol}] Double Top/Bottom indicator disabled`);
+      return;
+    }
+
+    // 🎯 CRÍTICO: En modo backtesting, NO hacer fetch al backend
+    // La detección de patrones DTB requiere el backend Python
+    if (this.backtestingMode) {
+      console.log(`[${this.symbol}] ⚠️ Double Top/Bottom NO DISPONIBLE en modo backtesting`);
+      console.log(`[${this.symbol}] ℹ️  DTB requiere análisis del backend - desactiva el indicador en backtesting`);
+      this.loading = false;
+      this.patterns = [];
       return;
     }
 
