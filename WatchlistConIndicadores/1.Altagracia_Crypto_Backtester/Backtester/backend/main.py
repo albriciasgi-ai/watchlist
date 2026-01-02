@@ -16,6 +16,9 @@ CACHE_DIR.mkdir(exist_ok=True)
 BACKTESTING_CACHE_DIR = Path("backtesting_cache")
 BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
 
+# 🎯 Caché en memoria para velas de DTB (evitar enviar 11MB cada vez)
+DTB_CANDLES_CACHE = {}
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -2120,17 +2123,35 @@ async def detect_double_topbottom(request: Request):
             }
 
         print(f"[DOUBLE TOP/BOTTOM] Detecting patterns for {symbol} {interval}")
+        print(f"[DOUBLE TOP/BOTTOM] RELOADED V2 - detecting with updated algorithm")
 
-        # Get historical candles
-        historical = await get_historical(symbol, interval, days)
+        # 🎯 Caché en memoria para velas (evitar enviar 11MB cada vez)
+        cache_key = f"{symbol}_{interval}"
+        candles = body.get('candles')
 
-        if not historical.get('success') or not historical.get('data'):
-            return {
-                "success": False,
-                "error": "Could not fetch historical data"
-            }
+        if candles:
+            # Guardar velas en caché
+            DTB_CANDLES_CACHE[cache_key] = candles
+            print(f"[DOUBLE TOP/BOTTOM] ✅ Guardadas {len(candles)} velas en caché para {cache_key}")
+            if len(candles) > 0:
+                print(f"[DOUBLE TOP/BOTTOM] Primera vela: timestamp={candles[0].get('timestamp')}")
+                print(f"[DOUBLE TOP/BOTTOM] Última vela: timestamp={candles[-1].get('timestamp')}")
+        elif cache_key in DTB_CANDLES_CACHE:
+            # Usar velas del caché
+            candles = DTB_CANDLES_CACHE[cache_key]
+            print(f"[DOUBLE TOP/BOTTOM] 📦 Usando {len(candles)} velas del caché para {cache_key}")
+        else:
+            # Fetch desde Bybit API (modo normal)
+            print(f"[DOUBLE TOP/BOTTOM] Fetching candles from Bybit API...")
+            historical = await get_historical(symbol, interval, days)
 
-        candles = historical['data']
+            if not historical.get('success') or not historical.get('data'):
+                return {
+                    "success": False,
+                    "error": "Could not fetch historical data"
+                }
+
+            candles = historical['data']
 
         # Detect patterns
         patterns = double_detector.detect_patterns(

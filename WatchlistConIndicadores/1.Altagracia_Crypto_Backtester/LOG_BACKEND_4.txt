@@ -1,0 +1,172 @@
+PS C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\WatchlistConIndicadores\1.Altagracia_Crypto_Backtester\Backtester\backend> python -m uvicorn main:app --port 9000
+INFO:     Started server process [11796]
+INFO:     Waiting for application startup.
+INFO:alert_sender:🚀 Alert sender started. Target: http://localhost:5000
+INFO:alert_sender:📬 Alert queue processor started
+WARNING:alert_sender:⚠️ Alert service not reachable at http://localhost:5000
+INFO:alert_sender:💡 Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Backtesting cache directory: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\WatchlistConIndicadores\1.Altagracia_Crypto_Backtester\Backtester\backend\backtesting_cache
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché - 94.82 MB
+
+[BACKTESTING UPDATE] 🔄 Actualizando datos para BTCUSDT...
+[BACKTESTING UPDATE] 15m: Última vela en caché: 2026-01-02 11:45:00
+[BACKTESTING UPDATE] 15m: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 15m - Necesitamos 96 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64978 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64103 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64978 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64103 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64978 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] ✅ Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:64103 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1767288433399&limit=96 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 15m - 96 velas descargadas
+[BACKTESTING UPDATE] 15m main: +2 velas nuevas
+[BACKTESTING] BTCUSDT @ 5m - Necesitamos 288 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=5&start=1767288434422&limit=288 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 5m - 288 velas descargadas
+[BACKTESTING UPDATE] 15m subdivisions: +6 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 15) @ 15
+[OI CALCULATION] interval_final=15 → oi_interval=15min (15 min)
+[OI CALCULATION] 1 días × 24h × 60min / 15 min = 96 puntos necesarios
+[OI BACKTESTING MODE] Usando rango específico: 1670715000000 - 1767374100000
+[OI BACKTESTING MODE] Rango: 2022-12-10 23:30 → 2026-01-02 17:15
+[BYBIT API] Request 1/10: endTime=1767374100000 (2026-01-02 17:15) | 0/96 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=15min&limit=200&endTime=1767374100000
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=15min&limit=200&endTime=1767374100000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2025-12-31 15:30 → 2026-01-02 17:15
+[INFO BTCUSDT] Tenemos suficientes puntos (200/96)
+[INFO BTCUSDT] Total obtenido: 200 puntos en 1 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1767195000000, último_ts=1767374100000, orden_correcto=True
+[BACKTESTING MODE] Saltando guardado de caché (datos se guardan en backtesting cache)
+[SUCCESS] BTCUSDT 15 Open Interest: 200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=15 oi_interval=15min
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1767195000000, 'openInterest': 52295.746, 'datetime_colombia': '2025-12-31 10:30:00'}, {'timestamp': 1767195900000, 'openInterest': 52134.857, 'datetime_colombia': '2025-12-31 10:45:00'}, {'timestamp': 1767196800000, 'openInterest': 52423.717, 'datetime_colombia': '2025-12-31 11:00:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1767372300000, 'openInterest': 52851.727, 'datetime_colombia': '2026-01-02 11:45:00'}, {'timestamp': 1767373200000, 'openInterest': 53574.765, 'datetime_colombia': '2026-01-02 12:00:00'}, {'timestamp': 1767374100000, 'openInterest': 52984.923, 'datetime_colombia': '2026-01-02 12:15:00'}]
+[BACKTESTING UPDATE] 15m OI: +2 puntos nuevos
+[BACKTESTING UPDATE] 1h: Última vela en caché: 2026-01-02 11:00:00
+[BACKTESTING UPDATE] 1h: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 60m - Necesitamos 24 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1767288436620&limit=24 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 60m - 24 velas descargadas
+[BACKTESTING UPDATE] 1h main: +1 velas nuevas
+[BACKTESTING] BTCUSDT @ 15m - Necesitamos 96 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1767288437719&limit=96 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 15m - 96 velas descargadas
+[BACKTESTING UPDATE] 1h subdivisions: +2 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 120) @ 60
+[OI CALCULATION] interval_final=60 → oi_interval=1h (60 min)
+[OI CALCULATION] 1 días × 24h × 60min / 60 min = 24 puntos necesarios
+[OI BACKTESTING MODE] Usando rango específico: 1670716800000 - 1767373200000
+[OI BACKTESTING MODE] Rango: 2022-12-11 00:00 → 2026-01-02 17:00
+[BYBIT API] Request 1/10: endTime=1767373200000 (2026-01-02 17:00) | 0/24 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1h&limit=200&endTime=1767373200000
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1h&limit=200&endTime=1767373200000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2025-12-25 10:00 → 2026-01-02 17:00
+[INFO BTCUSDT] Tenemos suficientes puntos (200/24)
+[INFO BTCUSDT] Total obtenido: 200 puntos en 1 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1766656800000, último_ts=1767373200000, orden_correcto=True
+[BACKTESTING MODE] Saltando guardado de caché (datos se guardan en backtesting cache)
+[SUCCESS] BTCUSDT 60 Open Interest: 200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=60 oi_interval=1h
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1766656800000, 'openInterest': 47964.507, 'datetime_colombia': '2025-12-25 05:00:00'}, {'timestamp': 1766660400000, 'openInterest': 47997.573, 'datetime_colombia': '2025-12-25 06:00:00'}, {'timestamp': 1766664000000, 'openInterest': 47950.88, 'datetime_colombia': '2025-12-25 07:00:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1767366000000, 'openInterest': 53280.7, 'datetime_colombia': '2026-01-02 10:00:00'}, {'timestamp': 1767369600000, 'openInterest': 53385.618, 'datetime_colombia': '2026-01-02 11:00:00'}, {'timestamp': 1767373200000, 'openInterest': 53574.765, 'datetime_colombia': '2026-01-02 12:00:00'}]
+[BACKTESTING UPDATE] 1h OI: +1 puntos nuevos
+[BACKTESTING UPDATE] 4h: Última vela en caché: 2026-01-02 11:00:00
+[BACKTESTING UPDATE] 4h: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 240m - Necesitamos 6 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=240&start=1767288439996&limit=6 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 240m - 6 velas descargadas
+[BACKTESTING UPDATE] 4h main: +0 velas nuevas
+[BACKTESTING] BTCUSDT @ 60m - Necesitamos 24 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1767288440803&limit=24 "HTTP/1.1 200 OK"
+[BACKTESTING] ✅ BTCUSDT @ 60m - 24 velas descargadas
+[BACKTESTING UPDATE] 4h subdivisions: +1 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 300) @ 240
+[OI CALCULATION] interval_final=240 → oi_interval=4h (240 min)
+[OI CALCULATION] 1 días × 24h × 60min / 240 min = 6 puntos necesarios
+[OI BACKTESTING MODE] Usando rango específico: 1670716800000 - 1767369600000
+[OI BACKTESTING MODE] Rango: 2022-12-11 00:00 → 2026-01-02 16:00
+[BYBIT API] Request 1/10: endTime=1767369600000 (2026-01-02 16:00) | 0/6 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=4h&limit=200&endTime=1767369600000
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=4h&limit=200&endTime=1767369600000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2025-11-30 12:00 → 2026-01-02 16:00
+[INFO BTCUSDT] Tenemos suficientes puntos (200/6)
+[INFO BTCUSDT] Total obtenido: 200 puntos en 1 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1764504000000, último_ts=1767369600000, orden_correcto=True
+[BACKTESTING MODE] Saltando guardado de caché (datos se guardan en backtesting cache)
+[SUCCESS] BTCUSDT 240 Open Interest: 200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=240 oi_interval=4h
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1764504000000, 'openInterest': 55583.075, 'datetime_colombia': '2025-11-30 07:00:00'}, {'timestamp': 1764518400000, 'openInterest': 55390.457, 'datetime_colombia': '2025-11-30 11:00:00'}, {'timestamp': 1764532800000, 'openInterest': 55233.832, 'datetime_colombia': '2025-11-30 15:00:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1767340800000, 'openInterest': 52309.968, 'datetime_colombia': '2026-01-02 03:00:00'}, {'timestamp': 1767355200000, 'openInterest': 53950.843, 'datetime_colombia': '2026-01-02 07:00:00'}, {'timestamp': 1767369600000, 'openInterest': 53385.618, 'datetime_colombia': '2026-01-02 11:00:00'}]
+[BACKTESTING UPDATE] 4h OI: +0 puntos nuevos
+[BACKTESTING CACHE] Guardado BTCUSDT - 94.83 MB
+
+[BACKTESTING UPDATE] ✅ Actualización completada en 17.8s
+[BACKTESTING UPDATE] Total de velas nuevas agregadas: 3
+INFO:     127.0.0.1:62134 - "POST /api/backtesting/update/BTCUSDT HTTP/1.1" 200 OK
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché - 94.83 MB
+[BACKTESTING CACHE] ✅ Usando caché existente (0.0 horas de antigüedad)
+INFO:     127.0.0.1:62134 - "GET /api/backtesting/bulk-data/BTCUSDT HTTP/1.1" 200 OK
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché - 94.83 MB
+[BACKTESTING CACHE] ✅ Usando caché existente (0.0 horas de antigüedad)
+INFO:     127.0.0.1:49405 - "GET /api/backtesting/bulk-data/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59431 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200 OK
+[DOUBLE TOP/BOTTOM] Detecting patterns for BTCUSDT 15m
+[DOUBLE TOP/BOTTOM] RELOADED V2 - detecting with updated algorithm
+[DOUBLE TOP/BOTTOM] Using 107400 pre-loaded candles from request
+[DOUBLE TOP/BOTTOM] Primera vela: timestamp=1670715000000
+[DOUBLE TOP/BOTTOM] Última vela: timestamp=1767374100000
+[PRUEBA_DBT] BTCUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] DEBUG Rango de velas recibidas:
+    - Primera vela (indice 0): 2022-12-10 18:30:00 (1670715000000)
+    - Ultima vela (indice 107399): 2026-01-02 12:15:00 (1767374100000)
+    - Orden: OK Cronologico (antiguas->recientes)
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 34
+    - Searching ALL 107400 candles (no lookback limit)
+    - Extremes window: 2 candles
+    - Price margin: 0.5%
+    - Min candles between: 15
+    - Max candles between: 150
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 1.5%
+  [PRUEBA_DBT] Found 15333 local highs
+  [PRUEBA_DBT] Found 15310 local lows
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 1.50%)
+	
+	
+	
+	///
+	Del final de los miles de mensajes que mandó:
+	
+	  [PRUEBA_DBT] Before post-validation: 203977 patterns
+  [PRUEBA_DBT] DEBUG Rango de fechas de patrones ANTES de filtros:
+    - Patron mas antiguo: 2022-12-11 01:00:00 (1670738400000) - candle index 6
+    - Patron mas reciente: 2026-01-02 11:30:00 (1767371400000) - candle index 107396
+    - Total candles in dataset: 107400
+    Post-validation: 203977 patterns kept, 77829 got bonus, 1 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 203977 patterns
+	

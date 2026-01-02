@@ -1,0 +1,41 @@
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:322 [PRUEBA_DBT] Config change: doubleTopBottom.maxBreakoutPercent = 1.5
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:194 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+BacktestingApp.jsx:2032 [BacktestingApp] 📊 Aplicando config DTB con 107398 velas...
+DoubleTopBottomIndicator.js:976 [BTCUSDT] DTB: Aplicando nueva configuración (velas recibidas: 107398)
+DoubleTopBottomIndicator.js:986 [BTCUSDT] DTB: Indicador HABILITADO
+DoubleTopBottomIndicator.js:993 [BTCUSDT] 🔍 DTB habilitado en backtesting - precalculando con 107398 velas...
+DoubleTopBottomIndicator.js:195 [BTCUSDT] 🔍 Precalculating Double Top/Bottom patterns with 107398 candles...
+DoubleTopBottomIndicator.js:203 [BTCUSDT] 🔍 Rango de velas enviadas al backend:
+DoubleTopBottomIndicator.js:204   - Primera vela (índice 0): 2022-12-10 23:30:00 (1670715000000)
+DoubleTopBottomIndicator.js:205   - Última vela (índice 107397): 2026-01-02 16:45:00 (1767372300000)
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1588, …}
+DoubleTopBottomIndicator.js:234 [BTCUSDT] ✅ Double Top/Bottom: 101 patterns precalculated in 5.64s

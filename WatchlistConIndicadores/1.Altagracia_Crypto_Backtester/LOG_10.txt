@@ -1,0 +1,550 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [IndexedDB] Datos encontrados para BTCUSDT
+ [BacktestingApp] Datos encontrados en IndexedDB, guardados hace 0.63 horas
+ [BacktestingApp] Última vela del caché: 2026-01-02T05:15:00.000Z
+ [BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)
+ [BacktestingApp] 🔄 Verificando actualizaciones para BTCUSDT...
+ [BacktestingApp] DEBUG - startDate: 2025-12-05
+ [BacktestingApp] DEBUG - firstCandle.timestamp: 1670715000000 2022-12-10T23:30:00.000Z
+ [BacktestingApp] DEBUG - lastCandle.timestamp: 1767330900000 2026-01-02T05:15:00.000Z
+ [BacktestingApp] DEBUG - startDate input: 2025-12-05
+ [BacktestingApp] DEBUG - startTimestamp calculado: 1764910800000 2025-12-05T05:00:00.000Z
+ [BacktestingApp] ✅ Usando fecha de inicio seleccionada:
+   - Fecha ingresada: 2025-12-05
+   - Timestamp: 1764910800000
+   - Fecha real: 2025-12-05T05:00:00.000Z
+   - Índice de vela: 104662 de 107352
+   - Velas disponibles para simular: 2690
+ [TimeController] Inicializado:
+   - Historial: 2022-12-10T23:30:00.000Z → 2026-01-02T05:15:00.000Z
+   - Simulación inicia: 2025-12-05T05:00:00.000Z
+   - CurrentTime: 2025-12-05T05:00:00.000Z
+ [OrderManager] Inicializado con balance: 10000
+ [BacktestingApp] OrderManager creado
+ [BacktestingApp] ✅ Precio inicial establecido:
+   - Precio: 91994.9
+   - Fecha de la vela: 2025-12-05T04:45:00.000Z
+   - SimulationStartTime: 2025-12-05T05:00:00.000Z
+   - Índice de vela: 104661 de 107352
+ [BacktestingApp] 🚀 Iniciando precálculo de indicadores para todos los timeframes...
+ [BacktestingApp] ✅ PRECÁLCULO GLOBAL COMPLETADO en 0.00s
+ [BacktestingApp] 🎬 Sistema listo para playback rápido
+ [BacktestingApp] ✅ Inicializado
+   - Mostrando historial desde: 2022-12-10T23:30:00.000Z
+   - Simulación inicia en: 2025-12-05T05:00:00.000Z
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107352 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26838 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 26166
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 6542
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [TradingControls] Precio actualizado automáticamente: 91994.90
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107352 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26838 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 26166
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: Object
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 6542
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [TradingControls] Precio actualizado automáticamente: 91994.90
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 26166 velas
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 6542 velas
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 26166 velas
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 6542 velas
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [TradingControls] Precio actualizado automáticamente: 92084.50
+ [OI RENDER] BTCUSDT Object
+ [TimeController] Rol de master reclamado
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [BacktestingApp] ✅ Actualización completada: Object
+ [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+ [BacktestingApp] Datos cargados: Object
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107355 velas en allCandlesRef
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26839 velas en allCandlesRef
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [OI RENDER] BTCUSDT Object
+ [IndexedDB] Datos guardados para BTCUSDT
+ [IndexedDB] Datos guardados para BTCUSDT
+ [BacktestingApp] 🔄 4 velas nuevas disponibles
+ [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 104663
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: Object
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 104663 velas
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [BacktestingApp] Datos cargados: Object
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107355 velas en allCandlesRef
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26839 velas en allCandlesRef
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [OI RENDER] BTCUSDT Object
+ [IndexedDB] Datos guardados para BTCUSDT
+ [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+ [PRUEBA_DBT] BTCUSDT - Applied 5m preset
+ [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+ [PRUEBA_DBT] Config change: doubleTopBottom.lookbackCandles = 200
+ [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+ [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+ [BacktestingApp] 🔍 Precalculando indicadores para DTB con 107355 velas...
+ [MiniChart BTCUSDT 15m] 🚀 Iniciando precálculo de indicadores con 107355 velas...
+ [BTCUSDT] 🚀 PRECALCULANDO todos los indicadores con 107355 velas...
+ [BTCUSDT] ⏭️  Saltando Volume Profile (deshabilitado)
+ [BTCUSDT] ⏭️  Saltando Volume Delta (deshabilitado)
+ [BTCUSDT] ⏭️  Saltando Rejection Patterns (deshabilitado)
+ [BTCUSDT] 🔍 Precalculando Double Top/Bottom...
+ [BTCUSDT] 🔍 Precalculating Double Top/Bottom patterns with 107355 candles...
+ [BTCUSDT] 🔍 Rango de velas enviadas al backend:
+   - Primera vela (índice 0): 2022-12-10 23:30:00 (1670715000000)
+   - Última vela (índice 107354): 2026-01-02 06:00:00 (1767333600000)
+ [BTCUSDT] ⏭️  Saltando VWAP (deshabilitado)
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+DoubleTopBottomIndicator.js:234 [BTCUSDT] ✅ Double Top/Bottom: 194 patterns precalculated in 3.55s
+IndicatorManager.js:174 [BTCUSDT] ✅ PRECÁLCULO COMPLETADO en 3.56s
+IndicatorManager.js:175 [BTCUSDT] 📊 Indicadores listos para playback
+MiniChart.jsx:265 [MiniChart BTCUSDT 15m] ✅ Precálculo completado
+DoubleTopBottomIndicator.js:976 [BTCUSDT] DTB: Aplicando nueva configuración (velas recibidas: 107355)
+DoubleTopBottomIndicator.js:986 [BTCUSDT] DTB: Indicador HABILITADO
+DoubleTopBottomIndicator.js:998 [BTCUSDT] DTB: Configuración aplicada (194 patrones cargados)
+DoubleTopBottomIndicator.js:777 [BTCUSDT] DTB: ⚠️ timeToX devolvió null - timestamp1=1766046600000, timestamp2=1766053800000
+DoubleTopBottomIndicator.js:735 [BTCUSDT] 📊 DTB INFO:
+DoubleTopBottomIndicator.js:736   - Total patrones: 194
+DoubleTopBottomIndicator.js:737   - Rango precios patrones: [85170.00 - 90510.45]
+DoubleTopBottomIndicator.js:738   - Rango precios visible: [83755.30 - 94189.40]
+DoubleTopBottomIndicator.js:739   - Patrones en rango: 194, fuera: 0
+DoubleTopBottomIndicator.js:740 
+  🔍 DIAGNÓSTICO DE TIMESTAMPS:
+DoubleTopBottomIndicator.js:741   - Rango timestamps PATRONES:
+DoubleTopBottomIndicator.js:742     Inicio: 2025-12-18 08:30:00 (1766046600000)
+DoubleTopBottomIndicator.js:743     Fin:    2026-01-02 03:30:00 (1767324600000)
+DoubleTopBottomIndicator.js:744   - Rango timestamps VELAS VISIBLES:
+DoubleTopBottomIndicator.js:745     Inicio: 2025-12-01 05:45:00 (1764567900000)
+DoubleTopBottomIndicator.js:746     Fin:    2025-12-04 04:00:00 (1764820800000)
+DoubleTopBottomIndicator.js:747   - Total velas visibles: 282
+DoubleTopBottomIndicator.js:750   - Sample primeros 3 patrones (timestamps):
+DoubleTopBottomIndicator.js:752     0: 2025-12-18 08:30:00 - 2025-12-18 10:30:00
+DoubleTopBottomIndicator.js:752     1: 2025-12-18 14:00:00 - 2025-12-18 15:30:00
+DoubleTopBottomIndicator.js:752     2: 2025-12-18 21:30:00 - 2025-12-19 00:45:00
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT Object

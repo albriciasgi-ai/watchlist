@@ -255,6 +255,21 @@ const MiniChart = forwardRef(({
         drawChart(candlesRef.current, lastPriceRef.current, null, null);
         console.log(`[MiniChart ${symbol} ${interval}] Canvas forzado a redibujar`);
       }
+    },
+    // 🎯 NUEVO: Precalcular todos los indicadores con velas completas
+    precalculateIndicators: async (candles) => {
+      if (indicatorManagerRef.current && candles && candles.length > 0) {
+        console.log(`[MiniChart ${symbol} ${interval}] 🚀 Iniciando precálculo de indicadores con ${candles.length} velas...`);
+        try {
+          await indicatorManagerRef.current.precalculateAllIndicators(candles);
+          console.log(`[MiniChart ${symbol} ${interval}] ✅ Precálculo completado`);
+          return true;
+        } catch (error) {
+          console.error(`[MiniChart ${symbol} ${interval}] ❌ Error en precálculo:`, error);
+          return false;
+        }
+      }
+      return false;
     }
   }), [symbol]);
 
@@ -512,6 +527,14 @@ const MiniChart = forwardRef(({
       };
 
       // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
+      // 🎯 Función para convertir timestamp a coordenada X
+      const timeToX = (timestamp) => {
+        // Buscar índice de la vela con este timestamp en visibleCandles
+        const index = visibleCandles.findIndex(c => c.timestamp === timestamp);
+        if (index === -1) return null; // Vela no visible
+        return marginLeft + (index * barWidth) + (barWidth / 2);
+      };
+
       const priceContext = {
         minPrice,
         maxPrice,
@@ -519,7 +542,8 @@ const MiniChart = forwardRef(({
         verticalZoom,
         verticalOffset,
         yScale,
-        priceToY  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
+        priceToY,  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
+        timeToX    // ✨ Función para convertir timestamp a coordenada X
       };
 
       // 🎯 OPTIMIZACIÓN: En modo backtesting, pasar TODAS las velas para pre-cálculo

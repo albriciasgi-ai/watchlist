@@ -1,0 +1,43 @@
+MiniChart.jsx:1548 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+MiniChart.jsx:1549 [MiniChart] Velas disponibles: 101435
+MiniChart.jsx:1550 [MiniChart] Modo backtesting: true
+VWAPIndicator.js:106 [BTCUSDT] ⏸️ Skipping fetchData for VWAP (backtesting mode)
+MiniChart.jsx:1560 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 101435 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+MiniChart.jsx:1851 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+MiniChart.jsx:1852 [MiniChart] Velas disponibles: 101435
+MiniChart.jsx:1853 [MiniChart] Modo backtesting: true
+IndicatorManager.js:218 [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:1860 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 101435 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1283, …}
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:312 [PRUEBA_DBT] BTCUSDT - Applied 60m preset
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:194 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+DoubleTopBottomIndicator.js:892 [BTCUSDT] DTB: Aplicando nueva configuración
+DoubleTopBottomIndicator.js:902 [BTCUSDT] DTB: Indicador HABILITADO

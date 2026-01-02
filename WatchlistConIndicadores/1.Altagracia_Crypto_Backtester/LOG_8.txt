@@ -1,0 +1,934 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [IndexedDB] Datos encontrados para BTCUSDT
+ [BacktestingApp] Datos encontrados en IndexedDB, guardados hace 0.53 horas
+ [BacktestingApp] Última vela del caché: 2026-01-02T04:00:00.000Z
+ [BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)
+ [BacktestingApp] 🔄 Verificando actualizaciones para BTCUSDT...
+ [BacktestingApp] DEBUG - startDate: 2025-09-06
+ [BacktestingApp] DEBUG - firstCandle.timestamp: 1670715000000 2022-12-10T23:30:00.000Z
+ [BacktestingApp] DEBUG - lastCandle.timestamp: 1767326400000 2026-01-02T04:00:00.000Z
+ [BacktestingApp] DEBUG - startDate input: 2025-09-06
+ [BacktestingApp] DEBUG - startTimestamp calculado: 1757134800000 2025-09-06T05:00:00.000Z
+ [BacktestingApp] ✅ Usando fecha de inicio seleccionada:
+   - Fecha ingresada: 2025-09-06
+   - Timestamp: 1757134800000
+   - Fecha real: 2025-09-06T05:00:00.000Z
+   - Índice de vela: 96022 de 107347
+   - Velas disponibles para simular: 11325
+ [TimeController] Inicializado:
+   - Historial: 2022-12-10T23:30:00.000Z → 2026-01-02T04:00:00.000Z
+   - Simulación inicia: 2025-09-06T05:00:00.000Z
+   - CurrentTime: 2025-09-06T05:00:00.000Z
+ [OrderManager] Inicializado con balance: 10000
+ [BacktestingApp] OrderManager creado
+ [BacktestingApp] ✅ Precio inicial establecido:
+   - Precio: 110829.2
+   - Fecha de la vela: 2025-09-06T04:45:00.000Z
+   - SimulationStartTime: 2025-09-06T05:00:00.000Z
+   - Índice de vela: 96021 de 107347
+ [BacktestingApp] 🚀 Iniciando precálculo de indicadores para todos los timeframes...
+ [BacktestingApp] ✅ PRECÁLCULO GLOBAL COMPLETADO en 0.00s
+ [BacktestingApp] 🎬 Sistema listo para playback rápido
+ [BacktestingApp] ✅ Inicializado
+   - Mostrando historial desde: 2022-12-10T23:30:00.000Z
+   - Simulación inicia en: 2025-09-06T05:00:00.000Z
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107347 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 96023
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26837 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 24006
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 6002
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [TradingControls] Precio actualizado automáticamente: 110829.20
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 15m] 📊 Cargando 107347 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 96023
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 1h] 📊 Cargando 26837 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 24006
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 0
+ [MiniChart] Modo backtesting: true
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: {squeeze: 2, consolidation: 5, normal: 10}
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Support & Resistance (backtesting mode)
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [MiniChart] Velas disponibles: 6002
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: true, CVD: true, Open Interest: true, VWAP: false, …}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+IndicatorManager.js:252 [BTCUSDT] ❌ Desactivando Rejection Patterns
+IndicatorManager.js:252 [BTCUSDT] ❌ Desactivando Double Top/Bottom
+IndicatorManager.js:252 [BTCUSDT] ❌ Desactivando VWAP
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110829.20
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 24006 velas
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 6002 velas
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 24006 velas
+IndicatorManager.js:130 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+MiniChart.jsx:1869 [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 6002 velas
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+MiniChart.jsx:1736 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110800.10
+TimeController.js:115 [TimeController] Rol de master reclamado
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1557 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+MiniChart.jsx:1558 [MiniChart] Velas disponibles: 96023
+MiniChart.jsx:1559 [MiniChart] Modo backtesting: true
+MiniChart.jsx:1569 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1860 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+MiniChart.jsx:1861 [MiniChart] Velas disponibles: 96023
+MiniChart.jsx:1862 [MiniChart] Modo backtesting: true
+IndicatorManager.js:218 [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:1869 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1557 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+MiniChart.jsx:1558 [MiniChart] Velas disponibles: 96023
+MiniChart.jsx:1559 [MiniChart] Modo backtesting: true
+MiniChart.jsx:1569 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+MiniChart.jsx:1860 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+MiniChart.jsx:1861 [MiniChart] Velas disponibles: 96023
+MiniChart.jsx:1862 [MiniChart] Modo backtesting: true
+IndicatorManager.js:218 [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: false, …}
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:1869 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96023 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+BacktestingApp.jsx:395 [BacktestingApp] ✅ Actualización completada: {success: true, new_candles_added: 2, update_duration_seconds: 30.07, updated_at: '2026-01-01 23:34:08'}
+BacktestingApp.jsx:356 [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:194 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+BacktestingApp.jsx:2033 [BacktestingApp] 🔍 Precalculando indicadores para DTB con 107347 velas...
+MiniChart.jsx:262 [MiniChart BTCUSDT 15m] 🚀 Iniciando precálculo de indicadores con 107347 velas...
+IndicatorManager.js:148 [BTCUSDT] 🚀 PRECALCULANDO todos los indicadores con 107347 velas...
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Volume Profile (deshabilitado)
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Volume Delta (deshabilitado)
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Rejection Patterns (deshabilitado)
+IndicatorManager.js:162 [BTCUSDT] 🔍 Precalculando Double Top/Bottom...
+DoubleTopBottomIndicator.js:195 [BTCUSDT] 🔍 Precalculating Double Top/Bottom patterns with 107347 candles...
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando VWAP (deshabilitado)
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+BacktestingApp.jsx:366 [BacktestingApp] Datos cargados: {success: true, from_cache: true, symbol: 'BTCUSDT', timeframes: {…}, metadata: {…}}
+MiniChart.jsx:1590 [MiniChart BTCUSDT 15m] 📊 Cargando 107349 velas en allCandlesRef
+MiniChart.jsx:1590 [MiniChart BTCUSDT 1h] 📊 Cargando 26837 velas en allCandlesRef
+MiniChart.jsx:1590 [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 93, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+MiniChart.jsx:1054 [BTCUSDT] 🎯 Preset aplicado: 3D {targetDays: 3, targetCandles: 288, totalCandles: 96023, newZoom: '0.324', candlesPerScreen: 288}
+BacktestingApp.jsx:435 [IndexedDB] Datos guardados para BTCUSDT
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+BacktestingApp.jsx:435 [IndexedDB] Datos guardados para BTCUSDT
+BacktestingApp.jsx:577 [BacktestingApp] 🔄 2 velas nuevas disponibles
+BacktestingApp.jsx:356 [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+DoubleTopBottomIndicator.js:223 [BTCUSDT] ✅ Double Top/Bottom: 30 patterns precalculated in 12.93s
+IndicatorManager.js:174 [BTCUSDT] ✅ PRECÁLCULO COMPLETADO en 12.93s
+IndicatorManager.js:175 [BTCUSDT] 📊 Indicadores listos para playback
+MiniChart.jsx:265 [MiniChart BTCUSDT 15m] ✅ Precálculo completado
+DoubleTopBottomIndicator.js:899 [BTCUSDT] DTB: Aplicando nueva configuración (velas recibidas: 107347)
+DoubleTopBottomIndicator.js:909 [BTCUSDT] DTB: Indicador HABILITADO
+DoubleTopBottomIndicator.js:921 [BTCUSDT] DTB: Configuración aplicada (30 patrones cargados)
+BacktestingApp.jsx:366 [BacktestingApp] Datos cargados: {success: true, from_cache: true, symbol: 'BTCUSDT', timeframes: {…}, metadata: {…}}
+MiniChart.jsx:1590 [MiniChart BTCUSDT 15m] 📊 Cargando 107349 velas en allCandlesRef
+MiniChart.jsx:1590 [MiniChart BTCUSDT 1h] 📊 Cargando 26837 velas en allCandlesRef
+MiniChart.jsx:1590 [MiniChart BTCUSDT 4h] 📊 Cargando 6710 velas en allCandlesRef
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+BacktestingApp.jsx:435 [IndexedDB] Datos guardados para BTCUSDT
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:294 [TimeController] ⚡ Speed: 10000x
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+BacktestingApp.jsx:813 [BacktestingApp] handlePlay clicked {hasController: true, currentTime: 1757134800000, isPlaying: false}
+TimeController.js:175 [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2025-09-06T05:00:00.000Z
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110706.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110712.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110674.80
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T05:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:00:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110672.40
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110736.90
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110710.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110697.20
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T06:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110740.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110756.70
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:30:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110763.50
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110771.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T07:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110749.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110720.40
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110838.70
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110883.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T08:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110658.80
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110653.10
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110758.70
+BacktestingApp.jsx:813 [BacktestingApp] handlePlay clicked {hasController: true, currentTime: 1757151000000, isPlaying: false}
+TimeController.js:175 [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2025-09-06T09:30:00.000Z
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110651.00
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T09:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110718.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110702.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110714.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110730.20
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T10:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110682.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110630.10
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110679.60
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+MiniChart.jsx:1054 [BTCUSDT] 🎯 Preset aplicado: 1W {targetDays: 7, targetCandles: 672, totalCandles: 96049, newZoom: '0.139', candlesPerScreen: 672}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+VWAPSettings.jsx:82 [VWAPSettings] Render #1 {currentSymbol: 'BTCUSDT', applyGlobally: false, configKeys: Array(20), localConfigKeys: Array(20)}
+VWAPSettings.jsx:82 [VWAPSettings] Render #1 {currentSymbol: 'BTCUSDT', applyGlobally: false, configKeys: Array(20), localConfigKeys: Array(20)}
+VWAPSettings.jsx:101 [VWAPSettings] Presets cargados: [{…}]
+VWAPSettings.jsx:184 [VWAPSettings] useEffect: Inicializando config local {currentSymbol: 'BTCUSDT', config: {…}}
+VWAPSettings.jsx:192 [VWAPSettings] Config with defaults: {vwapType: 'session', resetHour: 0, anchorTimestamp: null, rollingPeriod: 20, showBands: true, …}
+VWAPSettings.jsx:201 [VWAPSettings] useEffect applyGlobally triggered: {applyGlobally: false, isUpdating: false}
+VWAPSettings.jsx:222 [VWAPSettings] Cargando config del símbolo: {vwapType: 'session', resetHour: 0, anchorTimestamp: null, rollingPeriod: 20, showBands: true, …}
+VWAPSettings.jsx:101 [VWAPSettings] Presets cargados: [{…}]
+VWAPSettings.jsx:184 [VWAPSettings] useEffect: Inicializando config local {currentSymbol: 'BTCUSDT', config: {…}}
+VWAPSettings.jsx:192 [VWAPSettings] Config with defaults: {vwapType: 'session', resetHour: 0, anchorTimestamp: null, rollingPeriod: 20, showBands: true, …}
+VWAPSettings.jsx:201 [VWAPSettings] useEffect applyGlobally triggered: {applyGlobally: false, isUpdating: false}
+VWAPSettings.jsx:222 [VWAPSettings] Cargando config del símbolo: {vwapType: 'session', resetHour: 0, anchorTimestamp: null, rollingPeriod: 20, showBands: true, …}
+VWAPSettings.jsx:82 [VWAPSettings] Render #2 {currentSymbol: 'BTCUSDT', applyGlobally: false, configKeys: Array(20), localConfigKeys: Array(20)}
+VWAPSettings.jsx:82 [VWAPSettings] Render #3 {currentSymbol: 'BTCUSDT', applyGlobally: false, configKeys: Array(20), localConfigKeys: Array(20)}
+MiniChart.jsx:1557 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+MiniChart.jsx:1558 [MiniChart] Velas disponibles: 96049
+MiniChart.jsx:1559 [MiniChart] Modo backtesting: true
+VWAPIndicator.js:106 [BTCUSDT] ⏸️ Skipping fetchData for VWAP (backtesting mode)
+MiniChart.jsx:1569 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96049 velas
+VWAPIndicator.js:789 [BTCUSDT] VWAP: Recalculando con 107349 velas (valid=false, dataMap.size=0, lastLength=0)
+VWAPIndicator.js:700 [BTCUSDT] VWAP: Calculando con 107349 velas...
+VWAPIndicator.js:761 [BTCUSDT] VWAP: ✅ Cálculo completado - 107349 puntos en dataMap
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+MiniChart.jsx:1860 [MiniChart] Actualizando indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+MiniChart.jsx:1861 [MiniChart] Velas disponibles: 96049
+MiniChart.jsx:1862 [MiniChart] Modo backtesting: true
+IndicatorManager.js:218 [BTCUSDT] 🔄 Actualizando estados de indicadores: {Volume: true, Volume Profile: false, CVD: true, Open Interest: true, VWAP: true, …}
+IndicatorManager.js:260 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:1869 [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 96049 velas
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:813 [BacktestingApp] handlePlay clicked {hasController: true, currentTime: 1757158200000, isPlaying: false}
+TimeController.js:175 [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2025-09-06T11:30:00.000Z
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110725.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T11:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110813.60
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110742.60
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110781.30
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110775.20
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T12:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:00:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110824.60
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110825.80
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110834.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110880.20
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T13:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:00:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110845.80
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110836.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:30:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110816.30
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110749.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:50:00.000Z, increment: 300000ms, subdivision: 1/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T14:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110637.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110694.90
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110553.40
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110339.40
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T15:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110277.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:10:00.000Z, increment: 300000ms, subdivision: 2/3
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 671, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 746, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 829, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 829, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 921, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 837, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 761, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 692, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 769, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 854, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 949, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 949, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1055, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1055, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1172, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1172, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1172, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 1065, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 968, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 880, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:813 [BacktestingApp] handlePlay clicked {hasController: true, currentTime: 1757175000000, isPlaying: false}
+TimeController.js:175 [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2025-09-06T16:10:00.000Z
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110155.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110176.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110201.60
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T16:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:00:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110156.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:05:00.000Z, increment: 300000ms, subdivision: 1/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110086.30
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:30:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 109948.10
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110090.60
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T17:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110168.90
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110135.40
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:30:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110024.10
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110181.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T18:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110136.70
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110100.70
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110002.80
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110000.00
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T19:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110030.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110019.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110079.00
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+BacktestingApp.jsx:813 [BacktestingApp] handlePlay clicked {hasController: true, currentTime: 1757190600000, isPlaying: false}
+TimeController.js:175 [TimeController] ▶️ Play @ 10000x - interval: 30ms - subdivisiones: 3 - currentTime: 2025-09-06T20:30:00.000Z
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:45:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110130.00
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T20:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:00:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110171.50
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:15:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110114.70
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:30:00.000Z, increment: 300000ms, subdivision: 0/3
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 110114.10
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:187 [TimeController] Tick - currentTime: 2025-09-06T21:40:00.000Z, increment: 300000ms, subdivision: 2/3
+BacktestingApp.jsx:827 [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:322 [PRUEBA_DBT] Config change: doubleTopBottom.minCandlesBetween = 34
+DoubleTopBottomSettings.jsx:182 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:194 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+BacktestingApp.jsx:2033 [BacktestingApp] 🔍 Precalculando indicadores para DTB con 107349 velas...
+MiniChart.jsx:262 [MiniChart BTCUSDT 15m] 🚀 Iniciando precálculo de indicadores con 107349 velas...
+IndicatorManager.js:148 [BTCUSDT] 🚀 PRECALCULANDO todos los indicadores con 107349 velas...
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Volume Profile (deshabilitado)
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Volume Delta (deshabilitado)
+IndicatorManager.js:155 [BTCUSDT] ⏭️  Saltando Rejection Patterns (deshabilitado)
+IndicatorManager.js:162 [BTCUSDT] 🔍 Precalculando Double Top/Bottom...
+DoubleTopBottomIndicator.js:195 [BTCUSDT] 🔍 Precalculating Double Top/Bottom patterns with 107349 candles...
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+DoubleTopBottomIndicator.js:223 [BTCUSDT] ✅ Double Top/Bottom: 30 patterns precalculated in 6.48s
+IndicatorManager.js:174 [BTCUSDT] ✅ PRECÁLCULO COMPLETADO en 6.48s
+IndicatorManager.js:175 [BTCUSDT] 📊 Indicadores listos para playback
+MiniChart.jsx:265 [MiniChart BTCUSDT 15m] ✅ Precálculo completado
+DoubleTopBottomIndicator.js:899 [BTCUSDT] DTB: Aplicando nueva configuración (velas recibidas: 107349)
+DoubleTopBottomIndicator.js:909 [BTCUSDT] DTB: Indicador HABILITADO
+DoubleTopBottomIndicator.js:921 [BTCUSDT] DTB: Configuración aplicada (30 patrones cargados)
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 800, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 9325, …}
+MiniChart.jsx:1054 [BTCUSDT] 🎯 Preset aplicado: ALL {targetDays: null, targetCandles: 96089, totalCandles: 96089, newZoom: '0.010', candlesPerScreen: 9328}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 287, …}
+MiniChart.jsx:1054 [BTCUSDT] 🎯 Preset aplicado: 3D {targetDays: 3, targetCandles: 288, totalCandles: 96089, newZoom: '0.324', candlesPerScreen: 288}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 95, …}
+MiniChart.jsx:1054 [BTCUSDT] 🎯 Preset aplicado: 1D {targetDays: 1, targetCandles: 96, totalCandles: 96089, newZoom: '0.972', candlesPerScreen: 96}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 95, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 95, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 106, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 106, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 118, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 118, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 131, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 131, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 146, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 146, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 162, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 180, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 200, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 222, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 222, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 222, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 202, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 184, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 167, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 152, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 152, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 152, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 152, …}
+OpenInterestIndicator.js:444 [OI RENDER] BTCUSDT {enabled: true, hasDataMap: false, dataMapSize: 0, dataLength: 0, visibleCandlesCount: 152, …}

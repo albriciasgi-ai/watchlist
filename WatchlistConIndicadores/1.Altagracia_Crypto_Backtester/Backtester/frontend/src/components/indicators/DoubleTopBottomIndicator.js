@@ -18,6 +18,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // 🎯 CRÍTICO: Modo backtesting - deshabilita fetch al backend
     this.backtestingMode = config.backtestingMode || false;
 
+    // 🎯 Flag para rastrear si ya se enviaron velas al backend (optimización)
+    this.candlesSentToBackend = false;
+
     this.config = this.loadConfig();
 
     // ✅ Sincronizar this.enabled con config.enabled al inicializar
@@ -173,19 +176,120 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     console.log(`[${this.symbol}] 🔄 Double Top/Bottom config updated, patterns will refresh`);
   }
 
+  /**
+   * 🎯 NUEVO: Precalcular patrones con velas proporcionadas
+   * @param {Array} candles - Array de velas históricas completas
+   */
+  async precalculateWithCandles(candles) {
+    if (!this.config.enabled) {
+      console.log(`[${this.symbol}] Double Top/Bottom indicator disabled`);
+      return;
+    }
+
+    if (!candles || candles.length === 0) {
+      console.warn(`[${this.symbol}] No candles provided for DTB precalculation`);
+      return;
+    }
+
+    this.loading = true;
+    const startTime = Date.now();
+
+    try {
+      console.log(`[${this.symbol}] 🔍 Precalculating Double Top/Bottom patterns with ${candles.length} candles...`);
+
+      // 🔍 DEBUG: Verificar orden de las velas
+      if (candles.length > 0) {
+        const firstCandle = candles[0];
+        const lastCandle = candles[candles.length - 1];
+        const firstDate = new Date(firstCandle.timestamp).toISOString().replace('T', ' ').substring(0, 19);
+        const lastDate = new Date(lastCandle.timestamp).toISOString().replace('T', ' ').substring(0, 19);
+        console.log(`[${this.symbol}] 🔍 Rango de velas enviadas al backend:`);
+        console.log(`  - Primera vela (índice 0): ${firstDate} (${firstCandle.timestamp})`);
+        console.log(`  - Última vela (índice ${candles.length - 1}): ${lastDate} (${lastCandle.timestamp})`);
+      }
+
+      // 🎯 Timeout de 10 minutos para procesamiento de 3 años de datos (~5 min primera vez)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutos
+
+      // 🎯 OPTIMIZACIÓN: Solo enviar velas la primera vez, luego usar caché del backend
+      const payload = {
+        symbol: this.symbol,
+        interval: this.interval,
+        days: this.days,
+        config: this.config
+      };
+
+      if (!this.candlesSentToBackend) {
+        payload.candles = candles;  // Solo primera vez: enviar 11MB
+        console.log(`[${this.symbol}] 📤 Enviando ${candles.length} velas al backend (primera vez)`);
+      } else {
+        console.log(`[${this.symbol}] 📦 Backend usará caché (no enviar velas)`);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      const result = await response.json();
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+
+      console.log(`[${this.symbol}] 🔍 DEBUG: Respuesta del backend:`, {
+        success: result.success,
+        hasPatterns: !!result.patterns,
+        patternsCount: result.patterns?.length || 0,
+        error: result.error
+      });
+
+      if (result.success && result.patterns) {
+        this.patterns = result.patterns;
+        console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns precalculated in ${duration}s`);
+        console.log(`[${this.symbol}] 🎯 this.patterns ahora tiene ${this.patterns.length} patrones guardados`);
+
+        // 🎯 Marcar que las velas ya están en el caché del backend
+        if (!this.candlesSentToBackend) {
+          this.candlesSentToBackend = true;
+          console.log(`[${this.symbol}] ✅ Velas almacenadas en caché del backend`);
+        }
+
+        if (this.config.debugMode) {
+          console.log(`[${this.symbol}] Patterns:`, this.patterns);
+        }
+      } else {
+        console.error(`[${this.symbol}] ❌ Double Top/Bottom precalculation failed:`, result.error);
+        this.patterns = [];
+      }
+
+    } catch (error) {
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      if (error.name === 'AbortError') {
+        console.error(`[${this.symbol}] ⏱️ Double Top/Bottom precalculation timeout after ${duration}s`);
+      } else {
+        console.error(`[${this.symbol}] ❌ Error precalculating Double Top/Bottom patterns after ${duration}s:`, error);
+      }
+      this.patterns = [];
+    } finally {
+      this.loading = false;
+    }
+  }
+
   async fetchData() {
     if (!this.config.enabled) {
       console.log(`[${this.symbol}] Double Top/Bottom indicator disabled`);
       return;
     }
 
-    // 🎯 CRÍTICO: En modo backtesting, NO hacer fetch al backend
-    // La detección de patrones DTB requiere el backend Python
+    // 🎯 En modo backtesting, usar precalculateWithCandles() en su lugar
     if (this.backtestingMode) {
-      console.log(`[${this.symbol}] ⚠️ Double Top/Bottom NO DISPONIBLE en modo backtesting`);
-      console.log(`[${this.symbol}] ℹ️  DTB requiere análisis del backend - desactiva el indicador en backtesting`);
+      console.log(`[${this.symbol}] ℹ️  DTB en modo backtesting - use precalculateWithCandles() en su lugar`);
       this.loading = false;
-      this.patterns = [];
       return;
     }
 
@@ -591,14 +695,43 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    // 🎯 DEBUG: Log de entrada a renderOverlay
+    if (!this._renderLogOnce) {
+      console.log(`[${this.symbol}] 🎨 renderOverlay CALLED:`, {
+        enabled: this.config.enabled,
+        patternsLength: this.patterns.length,
+        hasPriceContext: !!priceContext,
+        visibleCandlesCount: visibleCandles?.length || 0
+      });
+      this._renderLogOnce = true;
+    }
+
     if (!this.config.enabled || !this.patterns.length || !priceContext) {
+      if (!this._earlyReturnLogged) {
+        console.log(`[${this.symbol}] ⚠️ DTB renderOverlay EARLY RETURN:`, {
+          enabled: this.config.enabled,
+          patternsLength: this.patterns.length,
+          hasPriceContext: !!priceContext
+        });
+        this._earlyReturnLogged = true;
+      }
       return;
     }
 
-    const { priceToY, timeToX } = priceContext;
+    const { priceToY, timeToX, minPrice, maxPrice } = priceContext;
+
+    // 🎯 DEBUG: Log del rango de precios visible y patrones
+    let patternsInRange = 0;
+    let patternsOutOfRange = 0;
 
     // Render each pattern
     this.patterns.forEach(pattern => {
+      // 🎯 FIX: Verificar si el patrón está en el rango de precios visible
+      if (pattern.levelPrice < minPrice || pattern.levelPrice > maxPrice) {
+        patternsOutOfRange++;
+        return; // Patrón fuera del rango visible
+      }
+      patternsInRange++;
       // Draw level line
       if (this.config.visualization.showLines) {
         this._drawLevelLine(ctx, pattern, bounds, priceToY, timeToX);
@@ -620,15 +753,61 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         }
       }
     });
+
+    // 🎯 DEBUG: Log de resultados
+    if (!this._loggedPatternInfo) {
+      // Obtener rango de precios de los patrones
+      const patternPrices = this.patterns.map(p => p.levelPrice);
+      const minPatternPrice = Math.min(...patternPrices);
+      const maxPatternPrice = Math.max(...patternPrices);
+
+      // 🔍 NUEVO: Obtener rango de timestamps de patrones
+      const patternTimestamps = this.patterns.flatMap(p => [
+        p.firstExtreme.timestamp,
+        p.secondExtreme.timestamp
+      ]);
+      const minPatternTimestamp = Math.min(...patternTimestamps);
+      const maxPatternTimestamp = Math.max(...patternTimestamps);
+
+      // 🔍 NUEVO: Obtener rango de timestamps de velas visibles
+      const visibleTimestamps = visibleCandles.map(c => c.timestamp);
+      const minVisibleTimestamp = Math.min(...visibleTimestamps);
+      const maxVisibleTimestamp = Math.max(...visibleTimestamps);
+
+      // Convertir timestamps a fechas legibles
+      const formatDate = (ts) => new Date(ts).toISOString().replace('T', ' ').substring(0, 19);
+
+      console.log(`[${this.symbol}] 📊 DTB INFO:`);
+      console.log(`  - Total patrones: ${this.patterns.length}`);
+      console.log(`  - Rango precios patrones: [${minPatternPrice.toFixed(2)} - ${maxPatternPrice.toFixed(2)}]`);
+      console.log(`  - Rango precios visible: [${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}]`);
+      console.log(`  - Patrones en rango: ${patternsInRange}, fuera: ${patternsOutOfRange}`);
+      console.log(`\n  🔍 DIAGNÓSTICO DE TIMESTAMPS:`);
+      console.log(`  - Rango timestamps PATRONES:`);
+      console.log(`    Inicio: ${formatDate(minPatternTimestamp)} (${minPatternTimestamp})`);
+      console.log(`    Fin:    ${formatDate(maxPatternTimestamp)} (${maxPatternTimestamp})`);
+      console.log(`  - Rango timestamps VELAS VISIBLES:`);
+      console.log(`    Inicio: ${formatDate(minVisibleTimestamp)} (${minVisibleTimestamp})`);
+      console.log(`    Fin:    ${formatDate(maxVisibleTimestamp)} (${maxVisibleTimestamp})`);
+      console.log(`  - Total velas visibles: ${visibleCandles.length}`);
+
+      // Muestra los primeros 3 timestamps de patrones
+      console.log(`  - Sample primeros 3 patrones (timestamps):`);
+      this.patterns.slice(0, 3).forEach((p, i) => {
+        console.log(`    ${i}: ${formatDate(p.firstExtreme.timestamp)} - ${formatDate(p.secondExtreme.timestamp)}`);
+      });
+
+      if (patternsOutOfRange > 0 && patternsInRange === 0) {
+        console.log(`  ⚠️ TODOS los patrones están fuera del rango visible`);
+        console.log(`  💡 Haz zoom out o navega al rango [${minPatternPrice.toFixed(2)} - ${maxPatternPrice.toFixed(2)}]`);
+      }
+
+      this._loggedPatternInfo = true;
+    }
   }
 
   _drawLevelLine(ctx, pattern, bounds, priceToY, timeToX) {
     const y = priceToY(pattern.levelPrice);
-
-    // Check if line is within visible bounds
-    if (y < bounds.y || y > bounds.y + bounds.height) {
-      return;
-    }
 
     const color = pattern.type === 'DOUBLE_TOP'
       ? this.config.visualization.colors.doubleTopLine
@@ -636,6 +815,21 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     const startX = timeToX(pattern.firstExtreme.timestamp);
     const endX = timeToX(pattern.secondExtreme.timestamp);
+
+    // 🎯 DEBUG: Verificar coordenadas
+    if (startX === null || endX === null) {
+      if (!this._loggedNullX) {
+        console.log(`[${this.symbol}] DTB: ⚠️ timeToX devolvió null - timestamp1=${pattern.firstExtreme.timestamp}, timestamp2=${pattern.secondExtreme.timestamp}`);
+        this._loggedNullX = true; // Solo logear una vez
+      }
+      return;
+    }
+
+    // 🎯 DEBUG: Logear que realmente está dibujando (solo primera vez)
+    if (!this._loggedDrawing) {
+      console.log(`[${this.symbol}] DTB: ✏️ Dibujando línea: (${startX}, ${y}) → (${endX}, ${y}), color=${color}, lineWidth=${this.config.visualization.lineWidth}`);
+      this._loggedDrawing = true;
+    }
 
     // Draw line ONLY BETWEEN the two extremes (no extension to the right)
     ctx.save();
@@ -671,28 +865,32 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const candle1 = this._findCandleByTimestamp(allCandles, pattern.firstExtreme.timestamp);
     if (candle1) {
       const x1 = timeToX(pattern.firstExtreme.timestamp);
-      const y1 = priceToY(pattern.firstExtreme.price);
-      this._drawIcon(
-        ctx,
-        x1,
-        y1,
-        pattern.firstExtreme.rejection_pattern,
-        pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
-      );
+      if (x1 !== null) {  // 🎯 FIX: Verificar si la vela está visible
+        const y1 = priceToY(pattern.firstExtreme.price);
+        this._drawIcon(
+          ctx,
+          x1,
+          y1,
+          pattern.firstExtreme.rejection_pattern,
+          pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
+        );
+      }
     }
 
     // Draw icon at second extreme
     const candle2 = this._findCandleByTimestamp(allCandles, pattern.secondExtreme.timestamp);
     if (candle2) {
       const x2 = timeToX(pattern.secondExtreme.timestamp);
-      const y2 = priceToY(pattern.secondExtreme.price);
-      this._drawIcon(
-        ctx,
-        x2,
-        y2,
-        pattern.secondExtreme.rejection_pattern,
-        pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
-      );
+      if (x2 !== null) {  // 🎯 FIX: Verificar si la vela está visible
+        const y2 = priceToY(pattern.secondExtreme.price);
+        this._drawIcon(
+          ctx,
+          x2,
+          y2,
+          pattern.secondExtreme.rejection_pattern,
+          pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
+        );
+      }
     }
   }
 
@@ -725,6 +923,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     if (!candle) return;
 
     const x = timeToX(pattern.entrySignal.entry_candle_timestamp);
+    if (x === null) return;  // 🎯 FIX: Verificar si la vela está visible
+
     const y = priceToY(candle.high);
 
     // Icon based on momentum pattern
@@ -751,6 +951,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     if (!candle) return;
 
     const x = timeToX(pattern.entrySignal.entry_candle_timestamp);
+    if (x === null) return;  // 🎯 FIX: Verificar si la vela está visible
+
     const direction = pattern.entrySignal.direction;
 
     // Position arrow below low for LONG, above high for SHORT
@@ -810,13 +1012,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     return this.config;
   }
 
-  applyConfig(newConfig) {
+  async applyConfig(newConfig, candles = null) {
     if (!newConfig) {
       console.warn(`[${this.symbol}] DTB applyConfig called with null config`);
       return;
     }
 
-    console.log(`[${this.symbol}] DTB: Aplicando nueva configuración`);
+    console.log(`[${this.symbol}] DTB: Aplicando nueva configuración (velas recibidas: ${candles?.length || 0})`);
+    const wasEnabled = this.enabled;
+    const hadPatterns = this.patterns.length > 0;
+
     this.config = { ...this.config, ...newConfig };
     localStorage.setItem(`double_topbottom_config_${this.symbol}`, JSON.stringify(this.config));
 
@@ -826,9 +1031,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       console.log(`[${this.symbol}] DTB: Indicador ${this.enabled ? 'HABILITADO' : 'DESHABILITADO'}`);
     }
 
-    // Nota: No recalculamos patrones aquí para evitar lentitud
-    // Los patrones se recalcularán en el próximo fetchData() o updateCandles()
-    console.log(`[${this.symbol}] DTB: Configuración aplicada exitosamente (${this.patterns.length} patrones cargados)`);
+    // 🎯 FIX: En modo backtesting, SIEMPRE precalcular cuando el indicador está habilitado
+    // Esto asegura que los cambios de configuración recalculen patrones con todo el histórico
+    if (this.backtestingMode && this.enabled) {
+      if (candles && candles.length > 0) {
+        console.log(`[${this.symbol}] 🔍 DTB habilitado en backtesting - precalculando con ${candles.length} velas...`);
+        await this.precalculateWithCandles(candles);
+      } else {
+        console.warn(`[${this.symbol}] ⚠️ DTB habilitado en backtesting pero no se recibieron velas desde IndicatorManager`);
+      }
+    } else {
+      console.log(`[${this.symbol}] DTB: Configuración aplicada (${this.patterns.length} patrones cargados)`);
+    }
   }
 }
 

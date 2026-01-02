@@ -111,7 +111,7 @@ const BacktestingApp = () => {
   const [currentTime, setCurrentTime] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [startDate, setStartDate] = useState('');
+  const [startDate, setStartDate] = useState('2023-01-01'); // 🎯 Fijar en enero 2023 para testing DTB
   const [currentPrice, setCurrentPrice] = useState(null);
 
   // Estado de UI
@@ -338,6 +338,12 @@ const BacktestingApp = () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  // 🎯 DESHABILITADO: Este useEffect causaba problemas al ejecutarse múltiples veces
+  // El precálculo ahora se hace SOLO en handleInitialize cuando el usuario inicia la simulación
+  // useEffect(() => {
+  //   ...
+  // }, [marketData]);
 
   /**
    * Carga datos de backtesting desde el backend
@@ -728,6 +734,44 @@ const BacktestingApp = () => {
       }
 
       handleTimeUpdate(controller.currentTime);
+
+      // 🎯 NUEVO: PRECALCULAR todos los indicadores para todos los timeframes
+      console.log('[BacktestingApp] 🚀 Iniciando precálculo de indicadores para todos los timeframes...');
+      const precalculateStartTime = Date.now();
+
+      try {
+        const precalculateTasks = [];
+
+        // Precalcular para cada timeframe
+        for (const tf of ['15m', '1h', '4h']) {
+          const miniChart = miniChartRefs.current[tf];
+          const tfData = data.timeframes[tf];
+
+          if (miniChart && miniChart.precalculateIndicators && tfData && tfData.main) {
+            console.log(`[BacktestingApp] 📊 Precalculando ${tf} con ${tfData.main.length} velas...`);
+            precalculateTasks.push(
+              miniChart.precalculateIndicators(tfData.main)
+                .then(() => {
+                  console.log(`[BacktestingApp] ✅ ${tf} precálculo completado`);
+                })
+                .catch(err => {
+                  console.error(`[BacktestingApp] ❌ Error precalculando ${tf}:`, err);
+                })
+            );
+          }
+        }
+
+        // Esperar a que todos terminen
+        await Promise.all(precalculateTasks);
+
+        const precalculateDuration = ((Date.now() - precalculateStartTime) / 1000).toFixed(2);
+        console.log(`[BacktestingApp] ✅ PRECÁLCULO GLOBAL COMPLETADO en ${precalculateDuration}s`);
+        console.log(`[BacktestingApp] 🎬 Sistema listo para playback rápido`);
+
+      } catch (error) {
+        console.error('[BacktestingApp] ❌ Error en precálculo global:', error);
+        // Continuar de todos modos - los indicadores se calcularán on-the-fly si falla
+      }
 
       setInitialized(true);
 
@@ -1900,9 +1944,9 @@ const BacktestingApp = () => {
             <div style={{ padding: '20px' }}>
               <VWAPSettings
                 config={indicatorManagerRef.current.getIndicatorConfig('VWAP') || {}}
-                onConfigChange={(newConfig) => {
+                onConfigChange={async (newConfig) => {
                   // 🎯 CRÍTICO: Aplicar config y resetear caché de VWAP
-                  indicatorManagerRef.current.applyConfig('VWAP', newConfig);
+                  await indicatorManagerRef.current.applyConfig('VWAP', newConfig);
 
                   // 🎯 CRÍTICO: Resetear caché del VWAP para forzar recalculo
                   const vwapIndicator = indicatorManagerRef.current.indicators.find(ind => ind.name === 'VWAP');
@@ -1980,8 +2024,17 @@ const BacktestingApp = () => {
               <DoubleTopBottomSettings
                 symbol={symbol}
                 initialConfig={indicatorManagerRef.current.getIndicatorConfig('Double Top/Bottom')}
-                onConfigChange={(newConfig) => {
-                  indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig);
+                onConfigChange={async (newConfig) => {
+                  // 🎯 Pasar velas directamente a applyConfig para precálculo con nueva configuración
+                  const candles = marketData?.timeframes?.[activeTimeframe]?.main;
+
+                  if (candles && candles.length > 0) {
+                    console.log(`[BacktestingApp] 📊 Aplicando config DTB con ${candles.length} velas...`);
+                    await indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig, candles);
+                  } else {
+                    // Fallback sin velas (modo normal, no backtesting)
+                    await indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig);
+                  }
                 }}
                 onClose={() => setShowDoubleTopBottomSettings(false)}
               />

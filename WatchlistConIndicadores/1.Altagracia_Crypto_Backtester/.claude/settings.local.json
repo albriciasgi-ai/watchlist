@@ -35,7 +35,16 @@
       "Bash(del /f /s /q node_modules.vite 2)",
       "Bash(if exist \"node_modules\\.vite\" rmdir /s /q \"node_modules\\.vite\")",
       "Bash(taskkill:*)",
-      "Bash(IndicatorManager.js)"
+      "Bash(IndicatorManager.js)",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(python:*)",
+      "Bash(timeout /t 3)",
+      "Bash(del /S /Q *.pyc 2)",
+      "Bash(del /S /Q __pycache__ 2)",
+      "Bash(if exist __pycache__ rmdir /S /Q __pycache__)",
+      "Bash(timeout:*)",
+      "Bash(.venvScriptspython.exe -m uvicorn main:app --reload --port 8000)",
+      "Bash(....LOG_BACKEND_3.txt)"
     ],
     "deny": [],
     "ask": []

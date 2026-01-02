@@ -1,0 +1,444 @@
+[BTCUSDT] 📊 HISTORICAL: Recibido days=1095, aplicando límite -> days_to_fetch=15 (máx: 15) @ 15
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1766071306479&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1766971800000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: ✅ Devolviendo 1440 velas (esperadas: 1440)
+[PRUEBA_DBT] BTCUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 100
+    - Searching ALL 1440 candles (no lookback limit)
+    - Extremes window: 3 candles
+    - Price margin: 2.0%
+    - Min candles between: 3
+    - Max candles between: 80
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2%
+  [PRUEBA_DBT] Found 149 local highs
+  [PRUEBA_DBT] Found 153 local lows
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.00% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.00% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.30% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.30% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.49% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.49% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.49% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.49% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $88722.85
+      First extreme:  $88399.40 @ 1766274300000 (candle 225) | Rejection: SHOOTING_STAR (quality: 0.70) | Vol Z-Score: 0.00
+      Second extreme: $89046.30 @ 1766310300000 (candle 265) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.73%
+      Candles between: 40
+      Duration: 10.00 hours
+      Avg volume: 255.94
+      Confidence: 65.8/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $89150.45
+      First extreme:  $89046.30 @ 1766310300000 (candle 265) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $89254.60 @ 1766367000000 (candle 328) | Rejection: SHOOTING_STAR (quality: 0.94) | Vol Z-Score: 0.00
+      Price variance: 0.23%
+      Candles between: 63
+      Duration: 15.75 hours
+      Avg volume: 543.10
+      Confidence: 80.3/100
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.41% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.25% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.25% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.54% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.54% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.54% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.03% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.03% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.03% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.03% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $87953.45
+      First extreme:  $87656.90 @ 1766475900000 (candle 449) | Rejection: SHOOTING_STAR (quality: 0.83) | Vol Z-Score: 0.00
+      Second extreme: $88250.00 @ 1766509200000 (candle 486) | Rejection: SHOOTING_STAR (quality: 0.76) | Vol Z-Score: 0.00
+      Price variance: 0.67%
+      Candles between: 37
+      Duration: 9.25 hours
+      Avg volume: 883.13
+      Confidence: 67.0/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $87789.40
+      First extreme:  $88250.00 @ 1766509200000 (candle 486) | Rejection: SHOOTING_STAR (quality: 0.76) | Vol Z-Score: 0.00
+      Second extreme: $87328.80 @ 1766574900000 (candle 559) | Rejection: SHOOTING_STAR (quality: 0.62) | Vol Z-Score: 0.00
+      Price variance: 1.05%
+      Candles between: 73
+      Duration: 18.25 hours
+      Avg volume: 533.44
+      Confidence: 56.9/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $87524.20
+      First extreme:  $87328.80 @ 1766574900000 (candle 559) | Rejection: SHOOTING_STAR (quality: 0.62) | Vol Z-Score: 0.00
+      Second extreme: $87719.60 @ 1766621700000 (candle 611) | Rejection: SHOOTING_STAR (quality: 0.92) | Vol Z-Score: 0.00
+      Price variance: 0.45%
+      Candles between: 52
+      Duration: 13.00 hours
+      Avg volume: 546.86
+      Confidence: 64.5/100
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.12% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.12% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $89007.40
+      First extreme:  $89124.80 @ 1766724300000 (candle 725) | Rejection: SHOOTING_STAR (quality: 0.74) | Vol Z-Score: 0.00
+      Second extreme: $88890.00 @ 1766742300000 (candle 745) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.26%
+      Candles between: 20
+      Duration: 5.00 hours
+      Avg volume: 570.94
+      Confidence: 72.1/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $87742.60
+      First extreme:  $87635.20 @ 1766823300000 (candle 835) | Rejection: SHOOTING_STAR (quality: 0.67) | Vol Z-Score: 0.00
+      Second extreme: $87850.00 @ 1766889000000 (candle 908) | Rejection: SHOOTING_STAR (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.24%
+      Candles between: 73
+      Duration: 18.25 hours
+      Avg volume: 146.65
+      Confidence: 66.7/100
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.68% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.87% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (3.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (3.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.70% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.70% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.70% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.70% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.06% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.34% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.35% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.20% > 2.00%)
+    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos (2.10% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $88780.40
+      First extreme:  $88499.00 @ 1767288600000 (candle 1352) | Rejection: SHOOTING_STAR (quality: 0.66) | Vol Z-Score: 0.00
+      Second extreme: $89061.80 @ 1767335400000 (candle 1404) | Rejection: SHOOTING_STAR (quality: 0.63) | Vol Z-Score: 0.00
+      Price variance: 0.63%
+      Candles between: 52
+      Duration: 13.00 hours
+      Avg volume: 392.89
+      Confidence: 60.4/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $89104.85
+      First extreme:  $88499.00 @ 1767288600000 (candle 1352) | Rejection: SHOOTING_STAR (quality: 0.66) | Vol Z-Score: 0.00
+      Second extreme: $89710.70 @ 1767359700000 (candle 1431) | Rejection: SHOOTING_STAR (quality: 0.66) | Vol Z-Score: 0.00
+      Price variance: 1.36%
+      Candles between: 79
+      Duration: 19.75 hours
+      Avg volume: 461.86
+      Confidence: 54.3/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $89386.25
+      First extreme:  $89061.80 @ 1767335400000 (candle 1404) | Rejection: SHOOTING_STAR (quality: 0.63) | Vol Z-Score: 0.00
+      Second extreme: $89710.70 @ 1767359700000 (candle 1431) | Rejection: SHOOTING_STAR (quality: 0.66) | Vol Z-Score: 0.00
+      Price variance: 0.73%
+      Candles between: 27
+      Duration: 6.75 hours
+      Avg volume: 614.16
+      Confidence: 59.5/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87836.60
+      First extreme:  $87933.30 @ 1766196000000 (candle 138) | Rejection: HAMMER (quality: 0.55) | Vol Z-Score: 0.00
+      Second extreme: $87739.90 @ 1766236500000 (candle 183) | Rejection: HAMMER (quality: 0.51) | Vol Z-Score: 0.00
+      Price variance: 0.22%
+      Candles between: 45
+      Duration: 11.25 hours
+      Avg volume: 189.36
+      Confidence: 58.7/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87776.30
+      First extreme:  $87739.90 @ 1766236500000 (candle 183) | Rejection: HAMMER (quality: 0.51) | Vol Z-Score: 0.00
+      Second extreme: $87812.70 @ 1766283300000 (candle 235) | Rejection: HAMMER (quality: 0.63) | Vol Z-Score: 0.00
+      Price variance: 0.08%
+      Candles between: 52
+      Duration: 13.00 hours
+      Avg volume: 196.89
+      Confidence: 60.9/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87869.40
+      First extreme:  $87739.90 @ 1766236500000 (candle 183) | Rejection: HAMMER (quality: 0.51) | Vol Z-Score: 0.00
+      Second extreme: $87998.90 @ 1766292300000 (candle 245) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.29%
+      Candles between: 62
+      Duration: 15.50 hours
+      Avg volume: 194.90
+      Confidence: 62.5/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87905.80
+      First extreme:  $87812.70 @ 1766283300000 (candle 235) | Rejection: HAMMER (quality: 0.63) | Vol Z-Score: 0.00
+      Second extreme: $87998.90 @ 1766292300000 (candle 245) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.21%
+      Candles between: 10
+      Duration: 2.50 hours
+      Avg volume: 226.88
+      Confidence: 68.2/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87980.20
+      First extreme:  $87812.70 @ 1766283300000 (candle 235) | Rejection: HAMMER (quality: 0.63) | Vol Z-Score: 0.00
+      Second extreme: $88147.70 @ 1766345400000 (candle 304) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.38%
+      Candles between: 69
+      Duration: 17.25 hours
+      Avg volume: 434.62
+      Confidence: 66.5/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $88073.30
+      First extreme:  $87998.90 @ 1766292300000 (candle 245) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $88147.70 @ 1766345400000 (candle 304) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.17%
+      Candles between: 59
+      Duration: 14.75 hours
+      Avg volume: 472.84
+      Confidence: 83.3/100
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.09% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.04% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.04% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.04% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.16% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.40% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.29% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.08% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.08% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87503.00
+      First extreme:  $87745.90 @ 1766458800000 (candle 430) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87260.10 @ 1766482200000 (candle 456) | Rejection: HAMMER (quality: 0.98) | Vol Z-Score: 0.00
+      Price variance: 0.56%
+      Candles between: 26
+      Duration: 6.50 hours
+      Avg volume: 632.01
+      Confidence: 78.6/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87186.95
+      First extreme:  $87260.10 @ 1766482200000 (candle 456) | Rejection: HAMMER (quality: 0.98) | Vol Z-Score: 0.00
+      Second extreme: $87113.80 @ 1766531700000 (candle 511) | Rejection: HAMMER (quality: 0.59) | Vol Z-Score: 0.00
+      Price variance: 0.17%
+      Candles between: 55
+      Duration: 13.75 hours
+      Avg volume: 910.97
+      Confidence: 66.7/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87030.10
+      First extreme:  $87260.10 @ 1766482200000 (candle 456) | Rejection: HAMMER (quality: 0.98) | Vol Z-Score: 0.00
+      Second extreme: $86800.10 @ 1766545200000 (candle 526) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.53%
+      Candles between: 70
+      Duration: 17.50 hours
+      Avg volume: 811.84
+      Confidence: 68.1/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $86956.95
+      First extreme:  $87113.80 @ 1766531700000 (candle 511) | Rejection: HAMMER (quality: 0.59) | Vol Z-Score: 0.00
+      Second extreme: $86800.10 @ 1766545200000 (candle 526) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.36%
+      Candles between: 15
+      Duration: 3.75 hours
+      Avg volume: 502.42
+      Confidence: 62.1/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $86738.55
+      First extreme:  $87113.80 @ 1766531700000 (candle 511) | Rejection: HAMMER (quality: 0.59) | Vol Z-Score: 0.00
+      Second extreme: $86363.30 @ 1766586600000 (candle 572) | Rejection: HAMMER (quality: 0.74) | Vol Z-Score: 0.00
+      Price variance: 0.87%
+      Candles between: 61
+      Duration: 15.25 hours
+      Avg volume: 456.94
+      Confidence: 57.3/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $86581.70
+      First extreme:  $86800.10 @ 1766545200000 (candle 526) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Second extreme: $86363.30 @ 1766586600000 (candle 572) | Rejection: HAMMER (quality: 0.74) | Vol Z-Score: 0.00
+      Price variance: 0.50%
+      Candles between: 46
+      Duration: 11.50 hours
+      Avg volume: 464.82
+      Confidence: 66.0/100
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.10% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.10% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.10% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.10% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.43% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.43% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.43% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.11% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.22% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87407.95
+      First extreme:  $87450.10 @ 1766945700000 (candle 971) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87365.80 @ 1766955600000 (candle 982) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.10%
+      Candles between: 11
+      Duration: 2.75 hours
+      Avg volume: 286.09
+      Confidence: 72.6/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87640.25
+      First extreme:  $87450.10 @ 1766945700000 (candle 971) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87830.40 @ 1766970900000 (candle 999) | Rejection: HAMMER (quality: 0.73) | Vol Z-Score: 0.00
+      Price variance: 0.43%
+      Candles between: 28
+      Duration: 7.00 hours
+      Avg volume: 342.41
+      Confidence: 69.8/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87582.75
+      First extreme:  $87450.10 @ 1766945700000 (candle 971) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87715.40 @ 1767001500000 (candle 1033) | Rejection: HAMMER (quality: 0.96) | Vol Z-Score: 0.00
+      Price variance: 0.30%
+      Candles between: 62
+      Duration: 15.50 hours
+      Avg volume: 745.54
+      Confidence: 80.4/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87482.60
+      First extreme:  $87450.10 @ 1766945700000 (candle 971) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87515.10 @ 1767006000000 (candle 1038) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.07%
+      Candles between: 67
+      Duration: 16.75 hours
+      Avg volume: 758.57
+      Confidence: 84.3/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87598.10
+      First extreme:  $87365.80 @ 1766955600000 (candle 982) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Second extreme: $87830.40 @ 1766970900000 (candle 999) | Rejection: HAMMER (quality: 0.73) | Vol Z-Score: 0.00
+      Price variance: 0.53%
+      Candles between: 17
+      Duration: 4.25 hours
+      Avg volume: 392.15
+      Confidence: 65.6/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87540.60
+      First extreme:  $87365.80 @ 1766955600000 (candle 982) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Second extreme: $87715.40 @ 1767001500000 (candle 1033) | Rejection: HAMMER (quality: 0.96) | Vol Z-Score: 0.00
+      Price variance: 0.40%
+      Candles between: 51
+      Duration: 12.75 hours
+      Avg volume: 849.07
+      Confidence: 69.2/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87440.45
+      First extreme:  $87365.80 @ 1766955600000 (candle 982) | Rejection: HAMMER (quality: 0.71) | Vol Z-Score: 0.00
+      Second extreme: $87515.10 @ 1767006000000 (candle 1038) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.17%
+      Candles between: 56
+      Duration: 14.00 hours
+      Avg volume: 855.42
+      Confidence: 71.9/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87772.90
+      First extreme:  $87830.40 @ 1766970900000 (candle 999) | Rejection: HAMMER (quality: 0.73) | Vol Z-Score: 0.00
+      Second extreme: $87715.40 @ 1767001500000 (candle 1033) | Rejection: HAMMER (quality: 0.96) | Vol Z-Score: 0.00
+      Price variance: 0.13%
+      Candles between: 34
+      Duration: 8.50 hours
+      Avg volume: 1089.92
+      Confidence: 72.5/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87672.75
+      First extreme:  $87830.40 @ 1766970900000 (candle 999) | Rejection: HAMMER (quality: 0.73) | Vol Z-Score: 0.00
+      Second extreme: $87515.10 @ 1767006000000 (candle 1038) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.36%
+      Candles between: 39
+      Duration: 9.75 hours
+      Avg volume: 1068.16
+      Confidence: 70.6/100
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (2.16% > 2.00%)
+    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos (3.01% > 2.00%)
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87615.25
+      First extreme:  $87715.40 @ 1767001500000 (candle 1033) | Rejection: HAMMER (quality: 0.96) | Vol Z-Score: 0.00
+      Second extreme: $87515.10 @ 1767006000000 (candle 1038) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.23%
+      Candles between: 5
+      Duration: 1.25 hours
+      Avg volume: 1616.03
+      Confidence: 81.1/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87403.15
+      First extreme:  $87715.40 @ 1767001500000 (candle 1033) | Rejection: HAMMER (quality: 0.96) | Vol Z-Score: 0.00
+      Second extreme: $87090.90 @ 1767072600000 (candle 1112) | Rejection: HAMMER (quality: 0.97) | Vol Z-Score: 0.00
+      Price variance: 0.71%
+      Candles between: 79
+      Duration: 19.75 hours
+      Avg volume: 651.21
+      Confidence: 76.0/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87303.00
+      First extreme:  $87515.10 @ 1767006000000 (candle 1038) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $87090.90 @ 1767072600000 (candle 1112) | Rejection: HAMMER (quality: 0.97) | Vol Z-Score: 0.00
+      Price variance: 0.49%
+      Candles between: 74
+      Duration: 18.50 hours
+      Avg volume: 598.54
+      Confidence: 79.0/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87437.10
+      First extreme:  $87090.90 @ 1767072600000 (candle 1112) | Rejection: HAMMER (quality: 0.97) | Vol Z-Score: 0.00
+      Second extreme: $87783.30 @ 1767103200000 (candle 1146) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.79%
+      Candles between: 34
+      Duration: 8.50 hours
+      Avg volume: 484.47
+      Confidence: 76.0/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87565.55
+      First extreme:  $87090.90 @ 1767072600000 (candle 1112) | Rejection: HAMMER (quality: 0.97) | Vol Z-Score: 0.00
+      Second extreme: $88040.20 @ 1767116700000 (candle 1161) | Rejection: HAMMER (quality: 0.64) | Vol Z-Score: 0.00
+      Price variance: 1.08%
+      Candles between: 49
+      Duration: 12.25 hours
+      Avg volume: 880.42
+      Confidence: 59.4/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87911.75
+      First extreme:  $87783.30 @ 1767103200000 (candle 1146) | Rejection: HAMMER (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $88040.20 @ 1767116700000 (candle 1161) | Rejection: HAMMER (quality: 0.64) | Vol Z-Score: 0.00
+      Price variance: 0.29%
+      Candles between: 15
+      Duration: 3.75 hours
+      Avg volume: 1820.33
+      Confidence: 67.6/100
+    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:
+      Level Price: $87747.50
+      First extreme:  $87740.70 @ 1767262500000 (candle 1323) | Rejection: HAMMER (quality: 0.98) | Vol Z-Score: 0.00
+      Second extreme: $87754.30 @ 1767277800000 (candle 1340) | Rejection: HAMMER (quality: 0.78) | Vol Z-Score: 0.00
+      Price variance: 0.02%
+      Candles between: 17
+      Duration: 4.25 hours
+      Avg volume: 206.58
+      Confidence: 75.7/100
+  [PRUEBA_DBT] Before post-validation: 38 patterns
+    Post-validation: 38 patterns kept, 17 got bonus, 2 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 38 patterns
+  [PRUEBA_DBT] After deduplication: 12 patterns
+  [PRUEBA_DBT] After min_confidence filter (20): 12 patterns (filtered 0)
+[PRUEBA_DBT] BTCUSDT - Detection Complete: 12 patterns returned
+  [OK] Detected 12 patterns (after filtering)
+[DOUBLE TOP/BOTTOM] [OK] Detected 12 patterns for BTCUSDT
+INFO:     127.0.0.1:51646 - "POST /api/double-topbottom/detect HTTP/1.1" 200 OK

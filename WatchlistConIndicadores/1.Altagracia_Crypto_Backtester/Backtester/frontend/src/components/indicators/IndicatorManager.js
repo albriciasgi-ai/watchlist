@@ -41,6 +41,7 @@ class IndicatorManager {
   async initialize(backtestingMode = false) {
     // 🎯 Guardar modo backtesting para usarlo en otros métodos
     this.backtestingMode = backtestingMode;
+    this.allCandles = null; // 🎯 NUEVO: Almacenar referencia a todas las velas para precálculo
 
     // Crear el indicador de S/R
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
@@ -130,6 +131,56 @@ class IndicatorManager {
   }
 
 
+  /**
+   * 🎯 NUEVO: Precalcular TODOS los indicadores con velas completas (modo backtesting)
+   * @param {Array} candles - Todas las velas históricas del timeframe
+   */
+  async precalculateAllIndicators(candles) {
+    if (!candles || candles.length === 0) {
+      console.warn(`[${this.symbol}] No candles provided for precalculation`);
+      return;
+    }
+
+    // 🎯 NUEVO: Guardar referencia a las velas para uso posterior (activación dinámica)
+    this.allCandles = candles;
+
+    const startTime = Date.now();
+    console.log(`[${this.symbol}] 🚀 PRECALCULANDO todos los indicadores con ${candles.length} velas...`);
+
+    try {
+      const tasks = [];
+
+      for (const indicator of this.indicators) {
+        if (!indicator.enabled) {
+          console.log(`[${this.symbol}] ⏭️  Saltando ${indicator.name} (deshabilitado)`);
+          continue;
+        }
+
+        // DTB: usa precalculateWithCandles
+        if (indicator.name === "Double Top/Bottom") {
+          if (indicator.precalculateWithCandles) {
+            console.log(`[${this.symbol}] 🔍 Precalculando ${indicator.name}...`);
+            tasks.push(indicator.precalculateWithCandles(candles));
+          }
+        }
+        // Otros indicadores que puedan necesitar precálculo en el futuro
+        // Se pueden agregar aquí
+      }
+
+      // Esperar a que todos los precálculos terminen
+      await Promise.all(tasks);
+
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`[${this.symbol}] ✅ PRECÁLCULO COMPLETADO en ${duration}s`);
+      console.log(`[${this.symbol}] 📊 Indicadores listos para playback`);
+
+    } catch (error) {
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.error(`[${this.symbol}] ❌ Error en precálculo después de ${duration}s:`, error);
+      throw error;
+    }
+  }
+
   // ✅ SIMPLIFICADO: refresh solo para Volume Profile y Open Interest
   async refresh() {
     const startTime = Date.now();
@@ -177,13 +228,22 @@ class IndicatorManager {
         console.log(`[${this.symbol}] ✅ Activando ${indicator.name}`);
         indicator.setEnabled(true);
 
-        // 🎯 CRÍTICO: Si es VWAP u otro indicador que requiere datos del backend, llamar fetchData()
-        // SIEMPRE llamar fetchData() cuando se activa dinámicamente, incluso en backtesting
-        if (indicator.name === "VWAP" ||
-            indicator.name === "Open Interest" ||
-            indicator.name === "Double Top/Bottom" ||
-            indicator.name === "Support & Resistance" ||
-            indicator.name === "Rejection Patterns") {
+        // 🎯 NUEVO: En modo backtesting, usar precalculateWithCandles para DTB
+        if (backtestingMode && indicator.name === "Double Top/Bottom") {
+          if (this.allCandles && this.allCandles.length > 0 && indicator.precalculateWithCandles) {
+            console.log(`[${this.symbol}] 🔍 Precalculando ${indicator.name} (activación dinámica en backtesting) con ${this.allCandles.length} velas`);
+            promises.push(indicator.precalculateWithCandles(this.allCandles));
+          } else {
+            console.warn(`[${this.symbol}] ⚠️ No hay velas disponibles para precalcular ${indicator.name}`);
+          }
+        }
+        // 🎯 CRÍTICO: Si es VWAP u otro indicador que requiere datos del backend
+        else if (indicator.name === "VWAP" ||
+                 indicator.name === "Open Interest" ||
+                 indicator.name === "Double Top/Bottom" ||
+                 indicator.name === "Support & Resistance" ||
+                 indicator.name === "Rejection Patterns") {
+          // En modo normal o para otros indicadores, llamar fetchData()
           console.log(`[${this.symbol}] 🌐 Cargando datos para ${indicator.name} (activación dinámica)`);
           promises.push(indicator.fetchData());
         }
@@ -195,15 +255,20 @@ class IndicatorManager {
       // Si shouldBeEnabled === wasEnabled, no hacer nada
     }
 
-    // Esperar a que todos los fetchData() terminen
+    // Esperar a que todos los fetchData() o precalculateWithCandles() terminen
     await Promise.all(promises);
     console.log(`[${this.symbol}] ✅ Estados actualizados correctamente`);
   }
 
-  applyConfig(name, config) {
+  async applyConfig(name, config, candles = null) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.applyConfig) {
-      indicator.applyConfig(config);
+      // 🎯 Si se proporcionan velas, usarlas y actualizarlas en allCandles
+      if (candles && candles.length > 0) {
+        this.allCandles = candles;
+      }
+      // 🎯 CRÍTICO: Pasar velas al indicador para permitir precálculo al habilitar
+      await indicator.applyConfig(config, candles || this.allCandles);
     }
   }
 

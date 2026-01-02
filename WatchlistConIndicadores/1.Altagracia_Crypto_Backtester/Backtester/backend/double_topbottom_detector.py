@@ -94,6 +94,19 @@ class DoubleTopBottomDetector:
         search_candles = candles
 
         print(f"[PRUEBA_DBT] {symbol} - Double Top/Bottom Detection Started")
+
+        # DEBUG: Verificar orden y rango de velas recibidas
+        if len(candles) > 0:
+            first_ts = candles[0].get('timestamp', 0)
+            last_ts = candles[-1].get('timestamp', 0)
+            from datetime import datetime
+            first_date = datetime.fromtimestamp(first_ts / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            last_date = datetime.fromtimestamp(last_ts / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            print(f"  [PRUEBA_DBT] DEBUG Rango de velas recibidas:")
+            print(f"    - Primera vela (indice 0): {first_date} ({first_ts})")
+            print(f"    - Ultima vela (indice {len(candles)-1}): {last_date} ({last_ts})")
+            print(f"    - Orden: {'OK Cronologico (antiguas->recientes)' if last_ts > first_ts else 'WARN INVERSO (recientes->antiguas)'}")
+
         print(f"  [PRUEBA_DBT] Config Parameters:")
         print(f"    - Lookback candles: {lookback_candles}")
         print(f"    - Searching ALL {len(search_candles)} candles (no lookback limit)")
@@ -182,6 +195,22 @@ class DoubleTopBottomDetector:
 
         print(f"  [PRUEBA_DBT] Before post-validation: {len(detected_patterns)} patterns")
 
+        # DEBUG: Mostrar rango de fechas de patrones detectados
+        if len(detected_patterns) > 0:
+            from datetime import datetime
+            pattern_timestamps = [p.timestamp for p in detected_patterns]
+            pattern_indices = [p.first_extreme['candle_index'] for p in detected_patterns] + [p.second_extreme['candle_index'] for p in detected_patterns]
+            min_ts = min(pattern_timestamps)
+            max_ts = max(pattern_timestamps)
+            min_idx = min(pattern_indices)
+            max_idx = max(pattern_indices)
+            min_date = datetime.fromtimestamp(min_ts / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            max_date = datetime.fromtimestamp(max_ts / 1000).strftime('%Y-%m-%d %H:%M:%S')
+            print(f"  [PRUEBA_DBT] DEBUG Rango de fechas de patrones ANTES de filtros:")
+            print(f"    - Patron mas antiguo: {min_date} ({min_ts}) - candle index {min_idx}")
+            print(f"    - Patron mas reciente: {max_date} ({max_ts}) - candle index {max_idx}")
+            print(f"    - Total candles in dataset: {len(candles)}")
+
         # Step 4: Post-pattern validation (confirm directional movement)
         detected_patterns = self._validate_post_pattern_movement(
             detected_patterns,
@@ -214,6 +243,16 @@ class DoubleTopBottomDetector:
         detected_patterns = [p for p in detected_patterns if p.confidence >= min_confidence]
 
         print(f"  [PRUEBA_DBT] After min_confidence filter ({min_confidence}): {len(detected_patterns)} patterns (filtered {patterns_before_conf_filter - len(detected_patterns)})")
+
+        # Step 8: Limitar a los mejores 1000 patrones para evitar bloqueo del navegador
+        MAX_PATTERNS = 1000
+        if len(detected_patterns) > MAX_PATTERNS:
+            # Ordenar por confidence descendente y tomar los mejores
+            detected_patterns.sort(key=lambda p: p.confidence, reverse=True)
+            patterns_before_limit = len(detected_patterns)
+            detected_patterns = detected_patterns[:MAX_PATTERNS]
+            print(f"  [PRUEBA_DBT] LIMITADO a {MAX_PATTERNS} mejores patrones (descartados {patterns_before_limit - MAX_PATTERNS} de menor confidence)")
+
         print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
         print(f"  [OK] Detected {len(detected_patterns)} patterns (after filtering)")
 
@@ -550,16 +589,16 @@ class DoubleTopBottomDetector:
 
                 patterns.append(pattern)
 
-                # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
-                print(f"      Level Price: ${level_price:.2f}")
-                print(f"      First extreme:  ${h1['price']:.2f} @ {h1['timestamp']} (candle {h1['candle_index']}) | Rejection: {rejection_h1['pattern_type']} (quality: {rejection_h1['quality']:.2f}) | Vol Z-Score: {zscore_h1:.2f}")
-                print(f"      Second extreme: ${h2['price']:.2f} @ {h2['timestamp']} (candle {h2['candle_index']}) | Rejection: {rejection_h2['pattern_type']} (quality: {rejection_h2['quality']:.2f}) | Vol Z-Score: {zscore_h2:.2f}")
-                print(f"      Price variance: {variance_pct * 100:.2f}%")
-                print(f"      Candles between: {candles_distance}")
-                print(f"      Duration: {duration_hours:.2f} hours")
-                print(f"      Avg volume: {volume_avg:.2f}")
-                print(f"      Confidence: {confidence:.1f}/100")
+                # Detailed logging DISABLED for cleaner output
+                # print(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
+                # print(f"      Level Price: ${level_price:.2f}")
+                # print(f"      First extreme:  ${h1['price']:.2f} @ {h1['timestamp']} (candle {h1['candle_index']}) | Rejection: {rejection_h1['pattern_type']} (quality: {rejection_h1['quality']:.2f}) | Vol Z-Score: {zscore_h1:.2f}")
+                # print(f"      Second extreme: ${h2['price']:.2f} @ {h2['timestamp']} (candle {h2['candle_index']}) | Rejection: {rejection_h2['pattern_type']} (quality: {rejection_h2['quality']:.2f}) | Vol Z-Score: {zscore_h2:.2f}")
+                # print(f"      Price variance: {variance_pct * 100:.2f}%")
+                # print(f"      Candles between: {candles_distance}")
+                # print(f"      Duration: {duration_hours:.2f} hours")
+                # print(f"      Avg volume: {volume_avg:.2f}")
+                # print(f"      Confidence: {confidence:.1f}/100")
 
         return patterns
 
@@ -727,16 +766,16 @@ class DoubleTopBottomDetector:
 
                 patterns.append(pattern)
 
-                # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
-                print(f"      Level Price: ${level_price:.2f}")
-                print(f"      First extreme:  ${l1['price']:.2f} @ {l1['timestamp']} (candle {l1['candle_index']}) | Rejection: {rejection_l1['pattern_type']} (quality: {rejection_l1['quality']:.2f}) | Vol Z-Score: {zscore_l1:.2f}")
-                print(f"      Second extreme: ${l2['price']:.2f} @ {l2['timestamp']} (candle {l2['candle_index']}) | Rejection: {rejection_l2['pattern_type']} (quality: {rejection_l2['quality']:.2f}) | Vol Z-Score: {zscore_l2:.2f}")
-                print(f"      Price variance: {variance_pct * 100:.2f}%")
-                print(f"      Candles between: {candles_distance}")
-                print(f"      Duration: {duration_hours:.2f} hours")
-                print(f"      Avg volume: {volume_avg:.2f}")
-                print(f"      Confidence: {confidence:.1f}/100")
+                # Detailed logging DISABLED for cleaner output
+                # print(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
+                # print(f"      Level Price: ${level_price:.2f}")
+                # print(f"      First extreme:  ${l1['price']:.2f} @ {l1['timestamp']} (candle {l1['candle_index']}) | Rejection: {rejection_l1['pattern_type']} (quality: {rejection_l1['quality']:.2f}) | Vol Z-Score: {zscore_l1:.2f}")
+                # print(f"      Second extreme: ${l2['price']:.2f} @ {l2['timestamp']} (candle {l2['candle_index']}) | Rejection: {rejection_l2['pattern_type']} (quality: {rejection_l2['quality']:.2f}) | Vol Z-Score: {zscore_l2:.2f}")
+                # print(f"      Price variance: {variance_pct * 100:.2f}%")
+                # print(f"      Candles between: {candles_distance}")
+                # print(f"      Duration: {duration_hours:.2f} hours")
+                # print(f"      Avg volume: {volume_avg:.2f}")
+                # print(f"      Confidence: {confidence:.1f}/100")
 
         return patterns
 
