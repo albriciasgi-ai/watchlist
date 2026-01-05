@@ -37,6 +37,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.notificationPermissionRequested = false;
     this.alertSystemStartTime = null; // Solo alertar patrones detectados después de este timestamp
 
+    // 🎯 FIX: Flag para evitar fetches concurrentes durante playback
+    this._isFetchingPatterns = false;
+
     console.log(`[${this.symbol}] 🔔 Double Top/Bottom alert system initialized (cooldown: ${this.alertCooldownMs/60000} min)`);
   }
 
@@ -179,8 +182,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   /**
    * 🎯 NUEVO: Precalcular patrones con velas proporcionadas
    * @param {Array} candles - Array de velas históricas completas
+   * @param {number} playbackStartTime - Timestamp de inicio del playback (opcional)
    */
-  async precalculateWithCandles(candles) {
+  async precalculateWithCandles(candles, playbackStartTime = null) {
     if (!this.config.enabled) {
       console.log(`[${this.symbol}] Double Top/Bottom indicator disabled`);
       return;
@@ -243,12 +247,56 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
       console.log(`[${this.symbol}] 🔍 DEBUG: Respuesta del backend:`, {
         success: result.success,
+        cached: result.cached,
         hasPatterns: !!result.patterns,
+        hasChunks: !!result.chunks,
         patternsCount: result.patterns?.length || 0,
+        chunksCount: result.chunks?.length || 0,
         error: result.error
       });
 
-      if (result.success && result.patterns) {
+      // 🎯 NUEVO: Sistema de chunks - solicitar TODOS los patrones
+      if (result.success && result.cached && result.chunks) {
+        console.log(`[${this.symbol}] 📦 Patrones en caché por chunks. Solicitando TODOS los patrones disponibles...`);
+
+        // Marcar que las velas están en caché
+        if (!this.candlesSentToBackend) {
+          this.candlesSentToBackend = true;
+        }
+
+        // 🎯 NUEVO: Solicitar TODOS los patrones (fecha muy futura)
+        // El filtrado por fecha se hace en renderOverlay según el playback avanza
+        const futureTimestamp = new Date(2030, 0, 1).getTime(); // Año 2030
+        console.log(`[${this.symbol}] 📦 Solicitando TODOS los patrones detectados en el histórico`);
+        const patternsResult = await this.fetchPatternsUpTo(futureTimestamp);
+
+        if (patternsResult.success) {
+          this.patterns = patternsResult.patterns;
+          console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns cargados (TODOS) en ${duration}s`);
+
+          // 🎯 CRÍTICO: Inicializar playback time con la fecha de inicio
+          // PERO: Si ya existe un playback time (recalculación durante playback), mantenerlo
+          const wasPlaybackActive = !!this._currentPlaybackTime;
+          const initialTimestamp = this._currentPlaybackTime || playbackStartTime || candles[0].timestamp;
+          this._currentPlaybackTime = initialTimestamp;
+          console.log(`[${this.symbol}] 📅 Playback time: ${new Date(initialTimestamp).toISOString()}${wasPlaybackActive ? ' (mantenido desde playback activo)' : ' (inicial)'}`);
+          console.log(`[${this.symbol}] 📅 Los patrones se mostrarán progresivamente según avanza el playback`);
+
+          // 🎯 CRÍTICO: Resetear flags de logging para forzar nuevos logs en renderOverlay
+          this._renderLogOnce = false;
+          this._earlyReturnLogged = false;
+          this._loggedPatternInfo = false;
+          this._loggedNullX = false;
+          this._loggedDrawing = false;
+
+          console.log(`[${this.symbol}] 🔄 Flags de renderOverlay reseteados - próximo render mostrará logs`);
+        } else {
+          console.error(`[${this.symbol}] ❌ Error cargando chunks:`, patternsResult.error);
+          this.patterns = [];
+        }
+      }
+      // Sistema antiguo (si no hay chunks)
+      else if (result.success && result.patterns) {
         this.patterns = result.patterns;
         console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns precalculated in ${duration}s`);
         console.log(`[${this.symbol}] 🎯 this.patterns ahora tiene ${this.patterns.length} patrones guardados`);
@@ -278,6 +326,66 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     } finally {
       this.loading = false;
     }
+  }
+
+  /**
+   * 🎯 NUEVO: Solicitar patrones hasta cierto timestamp (sistema de chunks)
+   * @param {number} timestamp - Timestamp hasta el cual obtener patrones (evita sesgo de supervivencia)
+   * @returns {Object} - { success: boolean, patterns: Array, totalPatterns: number }
+   */
+  async fetchPatternsUpTo(timestamp) {
+    try {
+      console.log(`[${this.symbol}] 📦 Solicitando patrones hasta ${new Date(timestamp).toISOString()}`);
+
+      const response = await fetch(`${API_BASE_URL}/api/double-topbottom/chunk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: this.interval,
+          upTo: timestamp
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log(`[${this.symbol}] ✅ Recibidos ${result.patterns.length} patrones desde chunks`);
+      }
+
+      return result;
+
+    } catch (error) {
+      console.error(`[${this.symbol}] ❌ Error fetching patterns chunk:`, error);
+      return { success: false, error: error.message, patterns: [] };
+    }
+  }
+
+  /**
+   * 🎯 NUEVO: Actualizar fecha de playback (solo guarda para filtrado en renderOverlay)
+   * @param {number} timestamp - Timestamp actual del playback
+   */
+  async updatePlaybackDate(timestamp) {
+    // Simplemente guardar el timestamp actual del playback
+    // El filtrado de patrones se hace en renderOverlay
+    this._currentPlaybackTime = timestamp;
+  }
+
+  /**
+   * 🎯 Helper: Obtener clave del mes para un timestamp
+   * @param {number} timestamp
+   * @returns {string} - Ejemplo: "2023-01" (año-mes)
+   */
+  _getQuarterKey(timestamp) {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // 1-12 (getMonth devuelve 0-11)
+    const monthStr = String(month).padStart(2, '0'); // Formato: "01", "02", etc.
+    return `${year}-${monthStr}`;
   }
 
   async fetchData() {
@@ -720,12 +828,23 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     const { priceToY, timeToX, minPrice, maxPrice } = priceContext;
 
+    // 🎯 NUEVO: Filtrar patrones según el tiempo actual del playback
+    // Solo mostrar patrones que ya se han "formado" (evita survivorship bias)
+    const currentTime = this._currentPlaybackTime || Date.now();
+    const visiblePatterns = this.patterns.filter(pattern =>
+      pattern.secondExtreme.timestamp <= currentTime
+    );
+
+    if (!this._loggedPatternInfo) {
+      console.log(`[${this.symbol}] 📊 Patrones visibles: ${visiblePatterns.length} de ${this.patterns.length} (tiempo: ${new Date(currentTime).toISOString()})`);
+    }
+
     // 🎯 DEBUG: Log del rango de precios visible y patrones
     let patternsInRange = 0;
     let patternsOutOfRange = 0;
 
-    // Render each pattern
-    this.patterns.forEach(pattern => {
+    // Render each visible pattern
+    visiblePatterns.forEach(pattern => {
       // 🎯 FIX: Verificar si el patrón está en el rango de precios visible
       if (pattern.levelPrice < minPrice || pattern.levelPrice > maxPrice) {
         patternsOutOfRange++;
@@ -756,18 +875,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     // 🎯 DEBUG: Log de resultados
     if (!this._loggedPatternInfo) {
-      // Obtener rango de precios de los patrones
-      const patternPrices = this.patterns.map(p => p.levelPrice);
-      const minPatternPrice = Math.min(...patternPrices);
-      const maxPatternPrice = Math.max(...patternPrices);
+      // Obtener rango de precios de los patrones VISIBLES (filtrados por tiempo)
+      const patternPrices = visiblePatterns.map(p => p.levelPrice);
+      const minPatternPrice = patternPrices.length > 0 ? Math.min(...patternPrices) : 0;
+      const maxPatternPrice = patternPrices.length > 0 ? Math.max(...patternPrices) : 0;
 
-      // 🔍 NUEVO: Obtener rango de timestamps de patrones
-      const patternTimestamps = this.patterns.flatMap(p => [
+      // 🔍 NUEVO: Obtener rango de timestamps de patrones VISIBLES
+      const patternTimestamps = visiblePatterns.flatMap(p => [
         p.firstExtreme.timestamp,
         p.secondExtreme.timestamp
       ]);
-      const minPatternTimestamp = Math.min(...patternTimestamps);
-      const maxPatternTimestamp = Math.max(...patternTimestamps);
+      const minPatternTimestamp = patternTimestamps.length > 0 ? Math.min(...patternTimestamps) : 0;
+      const maxPatternTimestamp = patternTimestamps.length > 0 ? Math.max(...patternTimestamps) : 0;
 
       // 🔍 NUEVO: Obtener rango de timestamps de velas visibles
       const visibleTimestamps = visibleCandles.map(c => c.timestamp);
@@ -778,24 +897,30 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const formatDate = (ts) => new Date(ts).toISOString().replace('T', ' ').substring(0, 19);
 
       console.log(`[${this.symbol}] 📊 DTB INFO:`);
-      console.log(`  - Total patrones: ${this.patterns.length}`);
-      console.log(`  - Rango precios patrones: [${minPatternPrice.toFixed(2)} - ${maxPatternPrice.toFixed(2)}]`);
-      console.log(`  - Rango precios visible: [${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}]`);
-      console.log(`  - Patrones en rango: ${patternsInRange}, fuera: ${patternsOutOfRange}`);
-      console.log(`\n  🔍 DIAGNÓSTICO DE TIMESTAMPS:`);
-      console.log(`  - Rango timestamps PATRONES:`);
-      console.log(`    Inicio: ${formatDate(minPatternTimestamp)} (${minPatternTimestamp})`);
-      console.log(`    Fin:    ${formatDate(maxPatternTimestamp)} (${maxPatternTimestamp})`);
+      console.log(`  - Total patrones en memoria: ${this.patterns.length}`);
+      console.log(`  - Patrones visibles (filtrados por tiempo): ${visiblePatterns.length}`);
+      console.log(`  - Tiempo actual playback: ${formatDate(currentTime)}`);
+      if (visiblePatterns.length > 0) {
+        console.log(`  - Rango precios patrones visibles: [${minPatternPrice.toFixed(2)} - ${maxPatternPrice.toFixed(2)}]`);
+        console.log(`  - Rango precios visible: [${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}]`);
+        console.log(`  - Patrones en rango precio: ${patternsInRange}, fuera: ${patternsOutOfRange}`);
+        console.log(`\n  🔍 DIAGNÓSTICO DE TIMESTAMPS:`);
+        console.log(`  - Rango timestamps PATRONES VISIBLES:`);
+        console.log(`    Inicio: ${formatDate(minPatternTimestamp)} (${minPatternTimestamp})`);
+        console.log(`    Fin:    ${formatDate(maxPatternTimestamp)} (${maxPatternTimestamp})`);
+      }
       console.log(`  - Rango timestamps VELAS VISIBLES:`);
       console.log(`    Inicio: ${formatDate(minVisibleTimestamp)} (${minVisibleTimestamp})`);
       console.log(`    Fin:    ${formatDate(maxVisibleTimestamp)} (${maxVisibleTimestamp})`);
       console.log(`  - Total velas visibles: ${visibleCandles.length}`);
 
-      // Muestra los primeros 3 timestamps de patrones
-      console.log(`  - Sample primeros 3 patrones (timestamps):`);
-      this.patterns.slice(0, 3).forEach((p, i) => {
-        console.log(`    ${i}: ${formatDate(p.firstExtreme.timestamp)} - ${formatDate(p.secondExtreme.timestamp)}`);
-      });
+      // Muestra los primeros 3 timestamps de patrones VISIBLES
+      if (visiblePatterns.length > 0) {
+        console.log(`  - Sample primeros 3 patrones visibles (timestamps):`);
+        visiblePatterns.slice(0, 3).forEach((p, i) => {
+          console.log(`    ${i}: ${formatDate(p.firstExtreme.timestamp)} - ${formatDate(p.secondExtreme.timestamp)}`);
+        });
+      }
 
       if (patternsOutOfRange > 0 && patternsInRange === 0) {
         console.log(`  ⚠️ TODOS los patrones están fuera del rango visible`);
@@ -1012,13 +1137,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     return this.config;
   }
 
-  async applyConfig(newConfig, candles = null) {
+  async applyConfig(newConfig, candles = null, playbackStartTime = null) {
     if (!newConfig) {
       console.warn(`[${this.symbol}] DTB applyConfig called with null config`);
       return;
     }
 
     console.log(`[${this.symbol}] DTB: Aplicando nueva configuración (velas recibidas: ${candles?.length || 0})`);
+    if (playbackStartTime) {
+      console.log(`[${this.symbol}] DTB: playbackStartTime: ${new Date(playbackStartTime).toISOString()}`);
+    }
     const wasEnabled = this.enabled;
     const hadPatterns = this.patterns.length > 0;
 
@@ -1036,7 +1164,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     if (this.backtestingMode && this.enabled) {
       if (candles && candles.length > 0) {
         console.log(`[${this.symbol}] 🔍 DTB habilitado en backtesting - precalculando con ${candles.length} velas...`);
-        await this.precalculateWithCandles(candles);
+        // 🎯 CRÍTICO: Pasar playbackStartTime para evitar sesgo de supervivencia
+        await this.precalculateWithCandles(candles, playbackStartTime);
       } else {
         console.warn(`[${this.symbol}] ⚠️ DTB habilitado en backtesting pero no se recibieron velas desde IndicatorManager`);
       }

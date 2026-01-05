@@ -1,0 +1,1000 @@
+ [TimeController] Tick - currentTime: 2023-01-16T02:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21118.50
+ [TimeController] Tick - currentTime: 2023-01-16T03:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21134.00
+ [TimeController] Tick - currentTime: 2023-01-16T03:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21053.00
+ [TimeController] Tick - currentTime: 2023-01-16T03:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21086.00
+ [TimeController] Tick - currentTime: 2023-01-16T03:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T03:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21117.50
+ [TimeController] Tick - currentTime: 2023-01-16T04:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21066.00
+ [TimeController] Tick - currentTime: 2023-01-16T04:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21129.50
+ [TimeController] Tick - currentTime: 2023-01-16T04:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21158.50
+ [TimeController] Tick - currentTime: 2023-01-16T04:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T04:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21179.50
+ [TimeController] Tick - currentTime: 2023-01-16T05:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21151.50
+ [TimeController] Tick - currentTime: 2023-01-16T05:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21202.00
+ [TimeController] Tick - currentTime: 2023-01-16T05:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21194.50
+ [TimeController] Tick - currentTime: 2023-01-16T05:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T05:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21192.00
+ [TimeController] Tick - currentTime: 2023-01-16T06:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21155.00
+ [TimeController] Tick - currentTime: 2023-01-16T06:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21186.00
+ [TimeController] Tick - currentTime: 2023-01-16T06:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21160.50
+ [TimeController] Tick - currentTime: 2023-01-16T06:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T06:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21098.00
+ [TimeController] Tick - currentTime: 2023-01-16T07:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21114.50
+ [TimeController] Tick - currentTime: 2023-01-16T07:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21080.00
+ [TimeController] Tick - currentTime: 2023-01-16T07:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21112.00
+ [TimeController] Tick - currentTime: 2023-01-16T07:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T07:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20795.00
+ [TimeController] Tick - currentTime: 2023-01-16T08:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20809.50
+ [TimeController] Tick - currentTime: 2023-01-16T08:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20772.50
+ [TimeController] Tick - currentTime: 2023-01-16T08:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20750.00
+ [TimeController] Tick - currentTime: 2023-01-16T08:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T08:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20808.50
+ [TimeController] Tick - currentTime: 2023-01-16T09:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20828.00
+ [TimeController] Tick - currentTime: 2023-01-16T09:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20804.50
+ [TimeController] Tick - currentTime: 2023-01-16T09:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20833.00
+ [TimeController] Tick - currentTime: 2023-01-16T09:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T09:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20887.50
+ [TimeController] Tick - currentTime: 2023-01-16T10:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20847.00
+ [TimeController] Tick - currentTime: 2023-01-16T10:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20844.50
+ [TimeController] Tick - currentTime: 2023-01-16T10:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20847.00
+ [TimeController] Tick - currentTime: 2023-01-16T10:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T10:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20837.50
+ [TimeController] Tick - currentTime: 2023-01-16T11:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20801.00
+ [TimeController] Tick - currentTime: 2023-01-16T11:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20836.00
+ [TimeController] Tick - currentTime: 2023-01-16T11:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20814.00
+ [TimeController] Tick - currentTime: 2023-01-16T11:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T11:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20853.00
+ [TimeController] Tick - currentTime: 2023-01-16T12:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20833.50
+ [TimeController] Tick - currentTime: 2023-01-16T12:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20827.00
+ [TimeController] Tick - currentTime: 2023-01-16T12:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20788.00
+ [TimeController] Tick - currentTime: 2023-01-16T12:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T12:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20831.00
+ [TimeController] Tick - currentTime: 2023-01-16T13:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20818.00
+ [TimeController] Tick - currentTime: 2023-01-16T13:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20830.00
+ [TimeController] Tick - currentTime: 2023-01-16T13:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T13:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20798.00
+ [TimeController] Tick - currentTime: 2023-01-16T14:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20868.00
+ [TimeController] Tick - currentTime: 2023-01-16T14:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20861.00
+ [TimeController] Tick - currentTime: 2023-01-16T14:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20849.50
+ [TimeController] Tick - currentTime: 2023-01-16T14:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T14:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20667.50
+ [TimeController] Tick - currentTime: 2023-01-16T15:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20893.00
+ [TimeController] Tick - currentTime: 2023-01-16T15:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20970.50
+ [TimeController] Tick - currentTime: 2023-01-16T15:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20991.00
+ [TimeController] Tick - currentTime: 2023-01-16T15:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T15:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21029.50
+ [TimeController] Tick - currentTime: 2023-01-16T16:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20971.50
+ [TimeController] Tick - currentTime: 2023-01-16T16:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20953.00
+ [TimeController] Tick - currentTime: 2023-01-16T16:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20993.00
+ [TimeController] Tick - currentTime: 2023-01-16T16:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T16:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21003.50
+ [TimeController] Tick - currentTime: 2023-01-16T17:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21031.50
+ [TimeController] Tick - currentTime: 2023-01-16T17:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21082.00
+ [TimeController] Tick - currentTime: 2023-01-16T17:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21100.00
+ [TimeController] Tick - currentTime: 2023-01-16T17:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T17:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21071.00
+ [TimeController] Tick - currentTime: 2023-01-16T18:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21079.00
+ [TimeController] Tick - currentTime: 2023-01-16T18:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21132.50
+ [TimeController] Tick - currentTime: 2023-01-16T18:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21272.50
+ [TimeController] Tick - currentTime: 2023-01-16T18:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T18:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21343.00
+ [TimeController] Tick - currentTime: 2023-01-16T19:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21283.50
+ [TimeController] Tick - currentTime: 2023-01-16T19:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21338.50
+ [TimeController] Tick - currentTime: 2023-01-16T19:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21306.50
+ [TimeController] Tick - currentTime: 2023-01-16T19:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T19:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21251.50
+ [TimeController] Tick - currentTime: 2023-01-16T20:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21343.00
+ [TimeController] Tick - currentTime: 2023-01-16T20:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21283.00
+ [TimeController] Tick - currentTime: 2023-01-16T20:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21281.00
+ [TimeController] Tick - currentTime: 2023-01-16T20:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T20:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21220.50
+ [TimeController] Tick - currentTime: 2023-01-16T21:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21103.50
+ [TimeController] Tick - currentTime: 2023-01-16T21:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21120.50
+ [TimeController] Tick - currentTime: 2023-01-16T21:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21131.00
+ [TimeController] Tick - currentTime: 2023-01-16T21:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T21:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21182.00
+ [TimeController] Tick - currentTime: 2023-01-16T22:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21192.00
+ [TimeController] Tick - currentTime: 2023-01-16T22:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21159.50
+ [TimeController] Tick - currentTime: 2023-01-16T22:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21184.50
+ [TimeController] Tick - currentTime: 2023-01-16T22:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T22:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21135.00
+ [TimeController] Tick - currentTime: 2023-01-16T23:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21208.00
+ [TimeController] Tick - currentTime: 2023-01-16T23:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21169.50
+ [TimeController] Tick - currentTime: 2023-01-16T23:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21179.00
+ [TimeController] Tick - currentTime: 2023-01-16T23:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-16T23:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21269.50
+ [TimeController] Tick - currentTime: 2023-01-17T00:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21214.00
+ [TimeController] Tick - currentTime: 2023-01-17T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21149.50
+ [TimeController] Tick - currentTime: 2023-01-17T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21105.00
+ [TimeController] Tick - currentTime: 2023-01-17T00:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T00:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20959.50
+ [TimeController] Tick - currentTime: 2023-01-17T01:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 20987.50
+ [TimeController] Tick - currentTime: 2023-01-17T01:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21026.00
+ [TimeController] Tick - currentTime: 2023-01-17T01:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21035.50
+ [TimeController] Tick - currentTime: 2023-01-17T01:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T01:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21004.00
+ [TimeController] Tick - currentTime: 2023-01-17T02:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21033.50
+ [TimeController] Tick - currentTime: 2023-01-17T02:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21035.50
+ [TimeController] Tick - currentTime: 2023-01-17T02:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21095.00
+ [TimeController] Tick - currentTime: 2023-01-17T02:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T02:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21059.50
+ [TimeController] Tick - currentTime: 2023-01-17T03:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21083.50
+ [TimeController] Tick - currentTime: 2023-01-17T03:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21124.00
+ [TimeController] Tick - currentTime: 2023-01-17T03:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21121.50
+ [TimeController] Tick - currentTime: 2023-01-17T03:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T03:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21100.50
+ [TimeController] Tick - currentTime: 2023-01-17T04:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21210.50
+ [TimeController] Tick - currentTime: 2023-01-17T04:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21164.00
+ [TimeController] Tick - currentTime: 2023-01-17T04:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21153.50
+ [TimeController] Tick - currentTime: 2023-01-17T04:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T04:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21162.50
+ [TimeController] Tick - currentTime: 2023-01-17T05:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21125.50
+ [TimeController] Tick - currentTime: 2023-01-17T05:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21154.50
+ [TimeController] Tick - currentTime: 2023-01-17T05:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21142.50
+ [TimeController] Tick - currentTime: 2023-01-17T05:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T05:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21108.00
+ [TimeController] Tick - currentTime: 2023-01-17T06:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21113.00
+ [TimeController] Tick - currentTime: 2023-01-17T06:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21085.00
+ [TimeController] Tick - currentTime: 2023-01-17T06:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21063.00
+ [TimeController] Tick - currentTime: 2023-01-17T06:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T06:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21112.50
+ [TimeController] Tick - currentTime: 2023-01-17T07:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21095.50
+ [TimeController] Tick - currentTime: 2023-01-17T07:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21072.50
+ [TimeController] Tick - currentTime: 2023-01-17T07:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21129.50
+ [TimeController] Tick - currentTime: 2023-01-17T07:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T07:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21153.00
+ [TimeController] Tick - currentTime: 2023-01-17T08:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21190.50
+ [TimeController] Tick - currentTime: 2023-01-17T08:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21172.00
+ [TimeController] Tick - currentTime: 2023-01-17T08:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21193.00
+ [TimeController] Tick - currentTime: 2023-01-17T08:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T08:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21162.50
+ [TimeController] Tick - currentTime: 2023-01-17T09:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21152.50
+ [TimeController] Tick - currentTime: 2023-01-17T09:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21144.00
+ [TimeController] Tick - currentTime: 2023-01-17T09:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21166.00
+ [TimeController] Tick - currentTime: 2023-01-17T09:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T09:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21144.00
+ [TimeController] Tick - currentTime: 2023-01-17T10:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21110.50
+ [TimeController] Tick - currentTime: 2023-01-17T10:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21101.50
+ [TimeController] Tick - currentTime: 2023-01-17T10:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21123.00
+ [TimeController] Tick - currentTime: 2023-01-17T10:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T10:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21135.50
+ [TimeController] Tick - currentTime: 2023-01-17T11:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21174.50
+ [TimeController] Tick - currentTime: 2023-01-17T11:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21180.00
+ [TimeController] Tick - currentTime: 2023-01-17T11:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21217.50
+ [TimeController] Tick - currentTime: 2023-01-17T11:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T11:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21258.50
+ [TimeController] Tick - currentTime: 2023-01-17T12:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21286.00
+ [TimeController] Tick - currentTime: 2023-01-17T12:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21250.00
+ [TimeController] Tick - currentTime: 2023-01-17T12:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21243.00
+ [TimeController] Tick - currentTime: 2023-01-17T12:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T12:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21210.00
+ [TimeController] Tick - currentTime: 2023-01-17T13:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21234.00
+ [TimeController] Tick - currentTime: 2023-01-17T13:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21205.00
+ [TimeController] Tick - currentTime: 2023-01-17T13:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21223.00
+ [TimeController] Tick - currentTime: 2023-01-17T13:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T13:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21384.00
+ [TimeController] Tick - currentTime: 2023-01-17T14:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21268.00
+ [TimeController] Tick - currentTime: 2023-01-17T14:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21144.00
+ [TimeController] Tick - currentTime: 2023-01-17T14:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21278.00
+ [TimeController] Tick - currentTime: 2023-01-17T14:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T14:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21254.50
+ [TimeController] Tick - currentTime: 2023-01-17T15:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21264.00
+ [TimeController] Tick - currentTime: 2023-01-17T15:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TradingControls] Precio actualizado automáticamente: 21108.00
+ [TimeController] Tick - currentTime: 2023-01-17T15:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21170.50
+ [TimeController] Tick - currentTime: 2023-01-17T15:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T15:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TradingControls] Precio actualizado automáticamente: 21099.00
+ [TimeController] Tick - currentTime: 2023-01-17T16:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TradingControls] Precio actualizado automáticamente: 21154.00
+ [TimeController] Tick - currentTime: 2023-01-17T16:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21196.00
+ [TimeController] Tick - currentTime: 2023-01-17T16:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] Tick - currentTime: 2023-01-17T16:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TradingControls] Precio actualizado automáticamente: 21155.00
+ [TimeController] Tick - currentTime: 2023-01-17T16:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21140.00
+ [TimeController] Tick - currentTime: 2023-01-17T17:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21115.50
+ [TimeController] Tick - currentTime: 2023-01-17T17:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21163.00
+ [TimeController] Tick - currentTime: 2023-01-17T17:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21213.00
+ [TimeController] Tick - currentTime: 2023-01-17T17:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T17:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21187.00
+ [TimeController] Tick - currentTime: 2023-01-17T18:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21261.00
+ [TimeController] Tick - currentTime: 2023-01-17T18:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21316.50
+ [TimeController] Tick - currentTime: 2023-01-17T18:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21351.50
+ [TimeController] Tick - currentTime: 2023-01-17T18:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T18:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21312.50
+ [TimeController] Tick - currentTime: 2023-01-17T19:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21325.00
+ [TimeController] Tick - currentTime: 2023-01-17T19:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21349.00
+ [TimeController] Tick - currentTime: 2023-01-17T19:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21319.00
+ [TimeController] Tick - currentTime: 2023-01-17T19:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T19:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21370.50
+ [TimeController] Tick - currentTime: 2023-01-17T20:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21355.50
+ [TimeController] Tick - currentTime: 2023-01-17T20:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21305.50
+ [TimeController] Tick - currentTime: 2023-01-17T20:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21377.00
+ [TimeController] Tick - currentTime: 2023-01-17T20:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T20:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21289.00
+ [TimeController] Tick - currentTime: 2023-01-17T21:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21315.00
+ [TimeController] Tick - currentTime: 2023-01-17T21:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21266.50
+ [TimeController] Tick - currentTime: 2023-01-17T21:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21300.00
+ [TimeController] Tick - currentTime: 2023-01-17T21:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T21:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21284.50
+ [TimeController] Tick - currentTime: 2023-01-17T22:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21286.50
+ [TimeController] Tick - currentTime: 2023-01-17T22:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21240.50
+ [TimeController] Tick - currentTime: 2023-01-17T22:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21209.00
+ [TimeController] Tick - currentTime: 2023-01-17T22:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T22:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21242.50
+ [TimeController] Tick - currentTime: 2023-01-17T23:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21200.50
+ [TimeController] Tick - currentTime: 2023-01-17T23:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21147.00
+ [TimeController] Tick - currentTime: 2023-01-17T23:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21118.00
+ [TimeController] Tick - currentTime: 2023-01-17T23:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-17T23:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21101.50
+ [TimeController] Tick - currentTime: 2023-01-18T00:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21146.00
+ [TimeController] Tick - currentTime: 2023-01-18T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21220.00
+ [TimeController] Tick - currentTime: 2023-01-18T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21200.50
+ [TimeController] Tick - currentTime: 2023-01-18T00:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T00:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21238.50
+ [TimeController] Tick - currentTime: 2023-01-18T01:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21180.00
+ [TimeController] Tick - currentTime: 2023-01-18T01:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21215.50
+ [TimeController] Tick - currentTime: 2023-01-18T01:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] Tick - currentTime: 2023-01-18T01:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TradingControls] Precio actualizado automáticamente: 21239.00
+ [TimeController] Tick - currentTime: 2023-01-18T01:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [BacktestingApp] handlePause clicked
+TimeController.js:223 [TimeController] ⏸️ Pause
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 5 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 5 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 5 dibujos desde 1h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 1h] 🔄 Sincronizados 5 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 5 dibujos desde 4h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 4h] 🔄 Sincronizados 5 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+MiniChart.jsx:179 [BTCUSDT] Drawing tool changed to: select
+MiniChart.jsx:179 [BTCUSDT] Drawing tool changed to: select
+MiniChart.jsx:179 [BTCUSDT] Drawing tool changed to: select
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 5 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 5 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 5 dibujos
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 4 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 4 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 4 dibujos desde 1h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 1h] 🔄 Sincronizados 4 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 4 dibujos desde 4h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 4h] 🔄 Sincronizados 4 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 4 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 4 dibujos
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 4 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 4 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 4 dibujos
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 3 dibujos desde 15m a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 15m] 🔄 Sincronizados 3 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 3 dibujos desde 1h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 4h] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 1h] 🔄 Sincronizados 3 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:1007 [BacktestingApp] Sincronizando 3 dibujos desde 4h a otros tabs
+MiniChart.jsx:249 [MiniChart BTCUSDT 15m] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:249 [MiniChart BTCUSDT 1h] Dibujos cargados: 3 (sin sync)
+MiniChart.jsx:807 [BTCUSDT 4h] 🔄 Sincronizados 3 dibujos
+MiniChart.jsx:191 [BTCUSDT] Shape deleted with Delete key
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:840 [BacktestingApp] handlePause clicked

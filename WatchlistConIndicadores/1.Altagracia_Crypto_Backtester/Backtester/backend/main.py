@@ -16,8 +16,12 @@ CACHE_DIR.mkdir(exist_ok=True)
 BACKTESTING_CACHE_DIR = Path("backtesting_cache")
 BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
 
-# 🎯 Caché en memoria para velas de DTB (evitar enviar 11MB cada vez)
+# >> Caché en memoria para velas de DTB (evitar enviar 11MB cada vez)
 DTB_CANDLES_CACHE = {}
+
+# >> Caché en memoria para patrones DTB divididos por chunks (sin sesgo de supervivencia)
+DTB_PATTERNS_CACHE = {}
+# Formato: { "BTCUSDT_15m": { "2023-Q1": [...], "2023-Q2": [...], ... } }
 
 
 @asynccontextmanager
@@ -183,7 +187,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
         
-        print(f"[{symbol}] 📊 HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+        print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
         interval_minutes = get_interval_minutes(interval_final)
         minutes_in_period = days_to_fetch * 24 * 60
@@ -277,7 +281,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
 
         now_colombia = datetime.now(COLOMBIA_TZ)
         
-        print(f"[{symbol}] Historical: ✅ Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
+        print(f"[{symbol}] Historical: OK Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
         
         return {
             "symbol": symbol,
@@ -324,7 +328,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
         
-        print(f"[{symbol}] 📈 VOLUME DELTA: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+        print(f"[{symbol}] [CHART] VOLUME DELTA: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
         
         # CRÍTICO: Calcular cuántas velas necesitamos para days_to_fetch
         interval_minutes = get_interval_minutes(interval_final)
@@ -354,7 +358,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
                             "volume": candle["volume"]
                         })
                     
-                    print(f"[CACHE HIT] ✅ {symbol} {interval_final} devolviendo {len(processed_data)} velas desde cache")
+                    print(f"[CACHE HIT] OK {symbol} {interval_final} devolviendo {len(processed_data)} velas desde cache")
                     
                     return {
                         "symbol": symbol,
@@ -370,7 +374,7 @@ async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
                         "max_days_allowed": max_days_allowed
                     }
                 else:
-                    print(f"[CACHE MISS] ❌ {symbol} {interval_final} - Cache insuficiente, recalculando...")
+                    print(f"[CACHE MISS] [ERROR] {symbol} {interval_final} - Cache insuficiente, recalculando...")
         
         # Recalcular - USAR days_to_fetch (limitado)
         print(f"[CALCULATING] {symbol} {interval_final} Volume Delta con {days_to_fetch} días")
@@ -442,8 +446,8 @@ async def get_open_interest(
     symbol: str,
     interval: str = "15",
     days: int = 30,
-    start_timestamp_ms: int = None,  # 🎯 NUEVO: timestamp de inicio opcional (para backtesting)
-    end_timestamp_ms: int = None     # 🎯 NUEVO: timestamp de fin opcional (para backtesting)
+    start_timestamp_ms: int = None,  # >> NUEVO: timestamp de inicio opcional (para backtesting)
+    end_timestamp_ms: int = None     # >> NUEVO: timestamp de fin opcional (para backtesting)
 ):
     """
     Endpoint para obtener Open Interest de Bybit Futures
@@ -474,7 +478,7 @@ async def get_open_interest(
 
         print(f"[{symbol}] OPEN INTEREST: Recibido days={days}, aplicando limite -> days_to_fetch={days_to_fetch} (max: {max_days_allowed}) @ {interval_final}")
 
-        # 🎯 CORREGIDO: Intentar cargar del cache solo en modo LIVE (no backtesting)
+        # >> CORREGIDO: Intentar cargar del cache solo en modo LIVE (no backtesting)
         # En modo backtesting, el caché se maneja a nivel superior (backtesting cache)
         cached_data = None
         if start_timestamp_ms is None and end_timestamp_ms is None:
@@ -482,7 +486,7 @@ async def get_open_interest(
 
         if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
             cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] ✅ {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+            print(f"[CACHE HIT] OK {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
 
             return {
                 "symbol": symbol,
@@ -528,21 +532,21 @@ async def get_open_interest(
         minutes_in_period = days_to_fetch * 24 * 60
         total_points_needed = int(minutes_in_period / oi_interval_minutes)
 
-        print(f"[OI CALCULATION] interval_final={interval_final} → oi_interval={oi_interval} ({oi_interval_minutes} min)")
+        print(f"[OI CALCULATION] interval_final={interval_final} -> oi_interval={oi_interval} ({oi_interval_minutes} min)")
         print(f"[OI CALCULATION] {days_to_fetch} días × 24h × 60min / {oi_interval_minutes} min = {total_points_needed} puntos necesarios")
 
         # Bybit devuelve máximo 200 puntos por request
         limit_per_request = 200
 
         # Calcular timestamps
-        # 🎯 CORREGIDO: Si se proporcionan timestamps específicos (backtesting), usarlos
+        # >> CORREGIDO: Si se proporcionan timestamps específicos (backtesting), usarlos
         if start_timestamp_ms is not None and end_timestamp_ms is not None:
             start_ms = start_timestamp_ms
             end_ms = end_timestamp_ms
             print(f"[OI BACKTESTING MODE] Usando rango específico: {start_ms} - {end_ms}")
             start_date = datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
             end_date = datetime.fromtimestamp(end_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-            print(f"[OI BACKTESTING MODE] Rango: {start_date} → {end_date}")
+            print(f"[OI BACKTESTING MODE] Rango: {start_date} -> {end_date}")
         else:
             # Modo normal: desde ahora hacia atrás
             now_ms = int(time.time() * 1000)
@@ -570,13 +574,13 @@ async def get_open_interest(
                 # Convertir timestamp a fecha para debug
                 end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
                 print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
-                # 🎯 DEBUG: Log URL completa
+                # >> DEBUG: Log URL completa
                 print(f"[OI DEBUG] Full URL: {url}")
 
                 r = await client.get(url)
                 data = r.json()
 
-                # 🎯 DEBUG: Log respuesta de Bybit
+                # >> DEBUG: Log respuesta de Bybit
                 print(f"[OI DEBUG] Bybit retCode={data.get('retCode')}, retMsg={data.get('retMsg', 'OK')}")
                 if data.get("result"):
                     print(f"[OI DEBUG] Result list length: {len(data.get('result', {}).get('list', []))}")
@@ -603,7 +607,7 @@ async def get_open_interest(
                 # Log del batch recibido
                 batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
                 batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} -> {batch_newest}")
 
                 # oi_batch viene en orden descendente (más reciente primero)
                 # Agregar al inicio de all_oi_data para mantener orden cronológico
@@ -673,7 +677,7 @@ async def get_open_interest(
                     "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
                 })
 
-            # 🎯 CORREGIDO: Guardar en cache solo en modo LIVE (no backtesting)
+            # >> CORREGIDO: Guardar en cache solo en modo LIVE (no backtesting)
             if start_timestamp_ms is None and end_timestamp_ms is None:
                 cache_data = {
                     "symbol": symbol,
@@ -688,7 +692,7 @@ async def get_open_interest(
 
             print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
 
-            # 🎯 DEBUG: Log de respuesta final
+            # >> DEBUG: Log de respuesta final
             if len(processed_data) > 0:
                 print(f"[OI DEBUG FINAL] {symbol} interval={interval_final} oi_interval={oi_interval}")
                 print(f"[OI DEBUG FINAL] First 3 items: {processed_data[:3]}")
@@ -1163,7 +1167,7 @@ async def get_support_resistance(
 
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
 
-        print(f"[{symbol}] 📊 SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
+        print(f"[{symbol}] [DATA] SUPPORT/RESISTANCE: interval={interval_final}, days={days}, z_threshold={z_score_threshold}")
 
         # Intentar cargar del cache
         cache_key = f"sr_{volume_method}_{z_score_threshold}_{z_score_period}_{left_bars}_{right_bars}_{min_touches}_{cluster_distance}"
@@ -1171,7 +1175,7 @@ async def get_support_resistance(
 
         if cached_data and cached_data.get("symbol") == symbol:
             cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] ✅ {symbol} {interval_final} S/R desde cache (age: {cache_age:.0f}s)")
+            print(f"[CACHE HIT] OK {symbol} {interval_final} S/R desde cache (age: {cache_age:.0f}s)")
 
             return {
                 "symbol": symbol,
@@ -1352,6 +1356,36 @@ rejection_detector = RejectionDetector()
 double_detector = DoubleTopBottomDetector()
 
 
+# >> Helper function para dividir patrones en chunks trimestrales
+def divide_patterns_into_chunks(patterns):
+    """
+    Divide patrones en chunks por trimestre para evitar sesgo de supervivencia
+
+    Returns:
+        dict: { "2023-Q1": [...], "2023-Q2": [...], ... }
+    """
+    from datetime import datetime
+    from collections import defaultdict
+
+    chunks = defaultdict(list)
+
+    for pattern in patterns:
+        # Obtener timestamp del patrón (usar segundo extremo como referencia)
+        timestamp = pattern.get('secondExtreme', {}).get('timestamp', 0)
+
+        # Convertir a fecha
+        dt = datetime.fromtimestamp(timestamp / 1000)  # timestamp en ms
+
+        # Determinar trimestre
+        quarter = (dt.month - 1) // 3 + 1
+        chunk_key = f"{dt.year}-Q{quarter}"
+
+        chunks[chunk_key].append(pattern)
+
+    # Convertir defaultdict a dict normal y ordenar por clave
+    return dict(sorted(chunks.items()))
+
+
 @app.post("/api/rejection-patterns/detect")
 async def detect_rejection_patterns(request: Request):
     """
@@ -1405,7 +1439,7 @@ async def detect_rejection_patterns(request: Request):
         # Serialize patterns
         serialized_patterns = [serialize_pattern(p) for p in patterns]
 
-        print(f"[REJECTION PATTERNS] ✅ Detected {len(patterns)} patterns for {symbol}")
+        print(f"[REJECTION PATTERNS] OK Detected {len(patterns)} patterns for {symbol}")
 
         # Send alerts for high-confidence patterns
         if config.get('alertsEnabled', False):
@@ -1599,7 +1633,7 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
                 "volume": float(c[5])
             })
 
-        print(f"[BACKTESTING] ✅ {symbol} @ {interval}m - {len(candles)} velas descargadas")
+        print(f"[BACKTESTING] OK {symbol} @ {interval}m - {len(candles)} velas descargadas")
         return candles
 
     except Exception as e:
@@ -1614,7 +1648,7 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
     """
     Descarga y cachea 3 años de datos para backtesting
 
-    🎯 NUEVO: El caché NUNCA expira por antigüedad. Los datos históricos se mantienen indefinidamente.
+    NUEVO: El cache NUNCA expira por antiguedad. Los datos historicos se mantienen indefinidamente.
     Solo se invalida con force_refresh=True
 
     Retorna:
@@ -1649,12 +1683,12 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
         if not force_refresh:
             cached_data = load_backtesting_cache(symbol)
             if cached_data:
-                # 🎯 NUEVO: Caché NUNCA expira - siempre usar datos cacheados si existen
+                # >> NUEVO: Caché NUNCA expira - siempre usar datos cacheados si existen
                 cached_at = cached_data.get("metadata", {}).get("cached_at", 0)
                 now_ms = int(time.time() * 1000)
                 age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
 
-                print(f"[BACKTESTING CACHE] ✅ Usando caché existente ({age_hours:.1f} horas de antigüedad)")
+                print(f"[BACKTESTING CACHE] OK Usando caché existente ({age_hours:.1f} horas de antigüedad)")
                 return {
                     "success": True,
                     "from_cache": True,
@@ -1686,15 +1720,15 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
                 print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
                 continue
 
-            # 🎯 CORREGIDO: Calcular rango de timestamps de las velas para OI
+            # >> CORREGIDO: Calcular rango de timestamps de las velas para OI
             # Usar las velas principales para determinar el rango temporal exacto
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
 
             print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
-            print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} → {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
+            print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
 
-            # 🎯 CORREGIDO: Pasar timestamps exactos del rango de velas
+            # >> CORREGIDO: Pasar timestamps exactos del rango de velas
             oi_response = await get_open_interest(
                 symbol,
                 str(main_interval),
@@ -1708,7 +1742,7 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
                 "main": main_candles,
                 "subdivisions": subdivision_candles,
                 "subdivision_count": config["subdivisions"]["count"],
-                "open_interest": oi_data  # 🎯 AGREGADO
+                "open_interest": oi_data  # >> AGREGADO
             }
 
             print(f"[BACKTESTING] {tf_name} completado:")
@@ -1750,9 +1784,9 @@ async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
         # Guardar en caché
         save_backtesting_cache(symbol, response_data)
 
-        print(f"\n[BACKTESTING] ✅ Datos completos para {symbol} listos")
+        print(f"\n[BACKTESTING] OK Datos completos para {symbol} listos")
         print(f"  - Timeframes: {list(timeframes_data.keys())}")
-        print(f"  - Rango: {metadata['date_range']['start']} → {metadata['date_range']['end']}")
+        print(f"  - Rango: {metadata['date_range']['start']} -> {metadata['date_range']['end']}")
 
         return {
             "success": True,
@@ -1796,7 +1830,7 @@ async def delete_backtesting_cache(symbol: str):
 @app.post("/api/backtesting/update/{symbol}")
 async def update_backtesting_data(symbol: str):
     """
-    🎯 NUEVO: Actualiza solo los datos nuevos desde la última vela cacheada
+    >> NUEVO: Actualiza solo los datos nuevos desde la última vela cacheada
 
     Proceso:
     1. Lee el caché existente
@@ -1824,7 +1858,7 @@ async def update_backtesting_data(symbol: str):
                 "error": "No existe caché para actualizar. Use bulk-data primero."
             }
 
-        print(f"\n[BACKTESTING UPDATE] 🔄 Actualizando datos para {symbol}...")
+        print(f"\n[BACKTESTING UPDATE] [UPDATE] Actualizando datos para {symbol}...")
 
         total_new_candles = 0
         days = 1095  # 3 años por defecto
@@ -1835,7 +1869,7 @@ async def update_backtesting_data(symbol: str):
             subdivision_candles = tf_data.get("subdivisions", [])
 
             if not main_candles:
-                print(f"[BACKTESTING UPDATE] ⚠️ {tf_name}: Sin datos en caché, saltando...")
+                print(f"[BACKTESTING UPDATE] [WARN] {tf_name}: Sin datos en caché, saltando...")
                 continue
 
             # Obtener timestamp de la última vela
@@ -1924,7 +1958,7 @@ async def update_backtesting_data(symbol: str):
         save_backtesting_cache(symbol, cached_data)
 
         duration = time_module.time() - start_time
-        print(f"\n[BACKTESTING UPDATE] ✅ Actualización completada en {duration:.1f}s")
+        print(f"\n[BACKTESTING UPDATE] OK Actualización completada en {duration:.1f}s")
         print(f"[BACKTESTING UPDATE] Total de velas nuevas agregadas: {total_new_candles}")
 
         return {
@@ -1962,7 +1996,7 @@ async def get_drawings(symbol: str):
         if drawings_file.exists():
             with open(drawings_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                print(f"[DRAWINGS] ✅ Loaded {len(data.get('shapes', []))} shapes for {symbol}")
+                print(f"[DRAWINGS] Loaded {len(data.get('shapes', []))} shapes for {symbol}")
                 return data
         else:
             print(f"[DRAWINGS] No drawings found for {symbol}")
@@ -2013,7 +2047,7 @@ async def save_drawings(symbol: str, request: Request):
         with open(drawings_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        print(f"[DRAWINGS] ✅ Saved {len(shapes)} shapes for {symbol}")
+        print(f"[DRAWINGS] OK Saved {len(shapes)} shapes for {symbol}")
 
         return {
             "success": True,
@@ -2040,7 +2074,7 @@ async def delete_drawings(symbol: str):
 
         if drawings_file.exists():
             drawings_file.unlink()
-            print(f"[DRAWINGS] ✅ Deleted all drawings for {symbol}")
+            print(f"[DRAWINGS] OK Deleted all drawings for {symbol}")
             return {
                 "success": True,
                 "message": f"Drawings deleted for {symbol}"
@@ -2125,21 +2159,21 @@ async def detect_double_topbottom(request: Request):
         print(f"[DOUBLE TOP/BOTTOM] Detecting patterns for {symbol} {interval}")
         print(f"[DOUBLE TOP/BOTTOM] RELOADED V2 - detecting with updated algorithm")
 
-        # 🎯 Caché en memoria para velas (evitar enviar 11MB cada vez)
+        # >> Caché en memoria para velas (evitar enviar 11MB cada vez)
         cache_key = f"{symbol}_{interval}"
         candles = body.get('candles')
 
         if candles:
             # Guardar velas en caché
             DTB_CANDLES_CACHE[cache_key] = candles
-            print(f"[DOUBLE TOP/BOTTOM] ✅ Guardadas {len(candles)} velas en caché para {cache_key}")
+            print(f"[DOUBLE TOP/BOTTOM] OK Guardadas {len(candles)} velas en caché para {cache_key}")
             if len(candles) > 0:
                 print(f"[DOUBLE TOP/BOTTOM] Primera vela: timestamp={candles[0].get('timestamp')}")
                 print(f"[DOUBLE TOP/BOTTOM] Última vela: timestamp={candles[-1].get('timestamp')}")
         elif cache_key in DTB_CANDLES_CACHE:
             # Usar velas del caché
             candles = DTB_CANDLES_CACHE[cache_key]
-            print(f"[DOUBLE TOP/BOTTOM] 📦 Usando {len(candles)} velas del caché para {cache_key}")
+            print(f"[DOUBLE TOP/BOTTOM] [CACHE] Usando {len(candles)} velas del caché para {cache_key}")
         else:
             # Fetch desde Bybit API (modo normal)
             print(f"[DOUBLE TOP/BOTTOM] Fetching candles from Bybit API...")
@@ -2165,16 +2199,130 @@ async def detect_double_topbottom(request: Request):
 
         print(f"[DOUBLE TOP/BOTTOM] [OK] Detected {len(patterns)} patterns for {symbol}")
 
+        # >> Dividir patrones en chunks por trimestre y guardar en caché
+        cache_key = f"{symbol}_{interval}"
+        chunks = divide_patterns_into_chunks(serialized_patterns)
+        DTB_PATTERNS_CACHE[cache_key] = chunks
+
+        total_chunks = len(chunks)
+        print(f"[DOUBLE TOP/BOTTOM] [CACHE] Patrones divididos en {total_chunks} chunks y guardados en caché")
+        for chunk_key, chunk_patterns in list(chunks.items())[:3]:  # Mostrar primeros 3
+            print(f"  - {chunk_key}: {len(chunk_patterns)} patrones")
+        if total_chunks > 3:
+            print(f"  - ... y {total_chunks - 3} chunks más")
+
+        # Devolver metadata de chunks (no los patrones completos)
         return {
             "success": True,
             "symbol": symbol,
             "interval": interval,
-            "patterns": serialized_patterns,
-            "totalPatterns": len(patterns)
+            "cached": True,
+            "totalPatterns": len(patterns),
+            "chunks": list(chunks.keys()),
+            "message": f"Patrones calculados y guardados en {total_chunks} chunks. Use /api/double-topbottom/chunk para obtenerlos."
         }
 
     except Exception as e:
         print(f"[ERROR] Double top/bottom detection: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/double-topbottom/chunk")
+async def get_dtb_chunk(request: Request):
+    """
+    Obtiene un chunk específico de patrones DTB
+
+    Body:
+    {
+      "symbol": "BTCUSDT",
+      "interval": "15m",
+      "chunk": "2023-Q1"  // o "upTo": timestamp para obtener todos hasta esa fecha
+    }
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '15')
+        chunk_key = body.get('chunk')
+        up_to_timestamp = body.get('upTo')  # Timestamp límite
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        cache_key = f"{symbol}_{interval}"
+
+        # Verificar si hay patrones en caché
+        if cache_key not in DTB_PATTERNS_CACHE:
+            return {
+                "success": False,
+                "error": "No patterns in cache. Run /api/double-topbottom/detect first."
+            }
+
+        all_chunks = DTB_PATTERNS_CACHE[cache_key]
+
+        # Opción A: Obtener chunk específico
+        if chunk_key:
+            if chunk_key not in all_chunks:
+                return {
+                    "success": False,
+                    "error": f"Chunk {chunk_key} not found. Available: {list(all_chunks.keys())}"
+                }
+
+            patterns = all_chunks[chunk_key]
+            print(f"[DTB CHUNK] Devolviendo {len(patterns)} patrones del chunk {chunk_key}")
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "interval": interval,
+                "chunk": chunk_key,
+                "patterns": patterns,
+                "totalPatterns": len(patterns)
+            }
+
+        # Opción B: Obtener todos los patrones hasta cierta fecha
+        if up_to_timestamp:
+            from datetime import datetime
+
+            result_patterns = []
+            dt_limit = datetime.fromtimestamp(up_to_timestamp / 1000)
+            limit_quarter = (dt_limit.month - 1) // 3 + 1
+            limit_key = f"{dt_limit.year}-Q{limit_quarter}"
+
+            # Recopilar chunks hasta el límite
+            for chunk_name in sorted(all_chunks.keys()):
+                if chunk_name <= limit_key:
+                    chunk_patterns = all_chunks[chunk_name]
+                    # Filtrar patrones individuales por timestamp
+                    filtered = [
+                        p for p in chunk_patterns
+                        if p.get('secondExtreme', {}).get('timestamp', 0) <= up_to_timestamp
+                    ]
+                    result_patterns.extend(filtered)
+
+            print(f"[DTB CHUNK] Devolviendo {len(result_patterns)} patrones hasta {datetime.fromtimestamp(up_to_timestamp/1000)}")
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "interval": interval,
+                "upTo": up_to_timestamp,
+                "patterns": result_patterns,
+                "totalPatterns": len(result_patterns)
+            }
+
+        return {
+            "success": False,
+            "error": "Must provide either 'chunk' or 'upTo' parameter"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] DTB chunk retrieval: {str(e)}")
         import traceback
         traceback.print_exc()
         return {

@@ -256,12 +256,19 @@ const MiniChart = forwardRef(({
         console.log(`[MiniChart ${symbol} ${interval}] Canvas forzado a redibujar`);
       }
     },
+    // 🎯 NUEVO: Obtener el IndicatorManager (para acceso directo desde BacktestingApp)
+    getIndicatorManager: () => {
+      return indicatorManagerRef.current;
+    },
     // 🎯 NUEVO: Precalcular todos los indicadores con velas completas
-    precalculateIndicators: async (candles) => {
+    precalculateIndicators: async (candles, playbackStartTime = null) => {
       if (indicatorManagerRef.current && candles && candles.length > 0) {
         console.log(`[MiniChart ${symbol} ${interval}] 🚀 Iniciando precálculo de indicadores con ${candles.length} velas...`);
+        if (playbackStartTime) {
+          console.log(`[MiniChart ${symbol} ${interval}] 📅 playbackStartTime: ${new Date(playbackStartTime).toISOString()}`);
+        }
         try {
-          await indicatorManagerRef.current.precalculateAllIndicators(candles);
+          await indicatorManagerRef.current.precalculateAllIndicators(candles, playbackStartTime);
           console.log(`[MiniChart ${symbol} ${interval}] ✅ Precálculo completado`);
           return true;
         } catch (error) {

@@ -44,7 +44,10 @@
       "Bash(if exist __pycache__ rmdir /S /Q __pycache__)",
       "Bash(timeout:*)",
       "Bash(.venvScriptspython.exe -m uvicorn main:app --reload --port 8000)",
-      "Bash(....LOG_BACKEND_3.txt)"
+      "Bash(....LOG_BACKEND_3.txt)",
+      "Bash(ping:*)",
+      "Bash(del /S /Q \"node_modules\\.vite\" 2)",
+      "Bash(if exist \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\" rmdir /S /Q \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\")"
     ],
     "deny": [],
     "ask": []

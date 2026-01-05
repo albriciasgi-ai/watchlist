@@ -32,7 +32,7 @@ class AlertSender:
         """Start the alert sender service"""
         self.client = httpx.AsyncClient(timeout=5.0)
         self.is_running = True
-        logger.info(f"🚀 Alert sender started. Target: {self.alert_service_url}")
+        logger.info(f"[START] Alert sender started. Target: {self.alert_service_url}")
 
         # Start background task to process alert queue
         asyncio.create_task(self._process_alert_queue())
@@ -147,14 +147,14 @@ class AlertSender:
     def _get_pattern_emoji(self, pattern_type: str) -> str:
         """Returns emoji for pattern type"""
         emoji_map = {
-            "HAMMER": "🔨",
-            "SHOOTING_STAR": "⭐",
-            "ENGULFING_BULLISH": "📈",
-            "ENGULFING_BEARISH": "📉",
-            "DOJI_DRAGONFLY": "🐉",
-            "DOJI_GRAVESTONE": "🪦"
+            "HAMMER": "[HAMMER]",
+            "SHOOTING_STAR": "[STAR]",
+            "ENGULFING_BULLISH": "[CHART]",
+            "ENGULFING_BEARISH": "[DOWN]",
+            "DOJI_DRAGONFLY": "[DRAGON]",
+            "DOJI_GRAVESTONE": "[TOMB]"
         }
-        return emoji_map.get(pattern_type, "🔔")
+        return emoji_map.get(pattern_type, "[ALERT]")
 
     def _format_pattern_name(self, pattern_type: str) -> str:
         """Formats pattern name for display"""
@@ -204,7 +204,7 @@ class AlertSender:
 
     async def _process_alert_queue(self):
         """Background task to process queued alerts"""
-        logger.info("📬 Alert queue processor started")
+        logger.info("[MAILBOX] Alert queue processor started")
 
         while self.is_running:
             try:
@@ -218,17 +218,17 @@ class AlertSender:
                 success = await self._send_to_service(alert)
 
                 if success:
-                    logger.info(f"✅ Alert sent: {alert['title']}")
+                    logger.info(f"[OK] Alert sent: {alert['title']}")
                 else:
-                    logger.warning(f"⚠️ Failed to send alert: {alert['title']}")
+                    logger.warning(f"[WARN] Failed to send alert: {alert['title']}")
 
             except asyncio.TimeoutError:
                 # No alerts in queue, continue
                 continue
             except Exception as e:
-                logger.error(f"❌ Error processing alert: {str(e)}")
+                logger.error(f"[ERROR] Error processing alert: {str(e)}")
 
-        logger.info("📬 Alert queue processor stopped")
+        logger.info("[MAILBOX] Alert queue processor stopped")
 
     async def _send_to_service(self, alert: Dict) -> bool:
         """
@@ -241,7 +241,7 @@ class AlertSender:
             True if successful, False otherwise
         """
         if not self.client:
-            logger.error("❌ Client not initialized")
+            logger.error("[ERROR] Client not initialized")
             return False
 
         try:
@@ -253,20 +253,20 @@ class AlertSender:
             if response.status_code == 200:
                 return True
             else:
-                logger.warning(f"⚠️ Alert service returned status {response.status_code}")
+                logger.warning(f"[WARN] Alert service returned status {response.status_code}")
                 return False
 
         except httpx.ConnectError:
-            logger.error(f"❌ Cannot connect to alert service at {self.alert_service_url}")
-            logger.info("💡 Tip: Make sure alert listener is running on port 5000")
+            logger.error(f"[ERROR] Cannot connect to alert service at {self.alert_service_url}")
+            logger.info("[INFO] Tip: Make sure alert listener is running on port 5000")
             return False
 
         except httpx.TimeoutException:
-            logger.error("❌ Alert service timeout")
+            logger.error("[ERROR] Alert service timeout")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Error sending alert: {str(e)}")
+            logger.error(f"[ERROR] Error sending alert: {str(e)}")
             return False
 
     async def test_connection(self) -> bool:
@@ -285,19 +285,19 @@ class AlertSender:
             )
 
             if response.status_code == 200:
-                logger.info(f"✅ Alert service is reachable at {self.alert_service_url}")
+                logger.info(f"[OK] Alert service is reachable at {self.alert_service_url}")
                 return True
             else:
-                logger.warning(f"⚠️ Alert service returned status {response.status_code}")
+                logger.warning(f"[WARN] Alert service returned status {response.status_code}")
                 return False
 
         except httpx.ConnectError:
-            logger.warning(f"⚠️ Alert service not reachable at {self.alert_service_url}")
-            logger.info("💡 Alert service is optional. Alerts will be logged locally.")
+            logger.warning(f"[WARN] Alert service not reachable at {self.alert_service_url}")
+            logger.info("[INFO] Alert service is optional. Alerts will be logged locally.")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Error testing connection: {str(e)}")
+            logger.error(f"[ERROR] Error testing connection: {str(e)}")
             return False
 
 

@@ -70,7 +70,7 @@ class RejectionDetector:
         )
 
         if not reference_levels:
-            print(f"⚠️ No reference levels for {symbol}. "
+            print(f"[WARN] No reference levels for {symbol}. "
                   f"Detection disabled to avoid false positives.")
             return []
 

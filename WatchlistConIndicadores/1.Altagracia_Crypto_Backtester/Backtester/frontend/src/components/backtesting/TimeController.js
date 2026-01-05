@@ -194,10 +194,13 @@ class TimeController {
       }
 
       // Notificar cambio
+      console.log(`[TimeController] 🔍 DEBUG: onTimeUpdate exists? ${!!this.onTimeUpdate}, type: ${typeof this.onTimeUpdate}`);
       if (this.onTimeUpdate) {
+        console.log(`[TimeController] ✅ Calling onTimeUpdate with timestamp: ${this.currentTime}`);
         this.onTimeUpdate(this.currentTime);
+        console.log(`[TimeController] ✅ onTimeUpdate completed`);
       } else {
-        console.warn('[TimeController] No hay callback onTimeUpdate');
+        console.warn('[TimeController] ⚠️ No hay callback onTimeUpdate');
       }
 
       // Sincronizar con otras pestañas

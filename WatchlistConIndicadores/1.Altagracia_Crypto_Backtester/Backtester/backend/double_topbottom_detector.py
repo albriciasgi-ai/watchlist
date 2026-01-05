@@ -244,16 +244,11 @@ class DoubleTopBottomDetector:
 
         print(f"  [PRUEBA_DBT] After min_confidence filter ({min_confidence}): {len(detected_patterns)} patterns (filtered {patterns_before_conf_filter - len(detected_patterns)})")
 
-        # Step 8: Limitar a los mejores 1000 patrones para evitar bloqueo del navegador
-        MAX_PATTERNS = 1000
-        if len(detected_patterns) > MAX_PATTERNS:
-            # Ordenar por confidence descendente y tomar los mejores
-            detected_patterns.sort(key=lambda p: p.confidence, reverse=True)
-            patterns_before_limit = len(detected_patterns)
-            detected_patterns = detected_patterns[:MAX_PATTERNS]
-            print(f"  [PRUEBA_DBT] LIMITADO a {MAX_PATTERNS} mejores patrones (descartados {patterns_before_limit - MAX_PATTERNS} de menor confidence)")
+        # [TARGET] NOTA: Ya NO limitamos a 1000 porque usamos chunks para evitar sesgo de supervivencia
+        # El frontend solo carga patrones hasta la fecha actual de playback usando /api/double-topbottom/chunk
+        # Esto permite tener TODOS los patrones en memoria del backend pero solo mostrar los relevantes
 
-        print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
+        print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned (ALL patterns, no limit)")
         print(f"  [OK] Detected {len(detected_patterns)} patterns (after filtering)")
 
         return detected_patterns
@@ -475,6 +470,10 @@ class DoubleTopBottomDetector:
                 if variance_pct > price_margin:
                     continue  # Prices too different
 
+                # [FIX] Para Double Top, el nivel de resistencia es el TOP MAS BAJO
+                # (el precio que ambos extremos NO pudieron superar definitivamente)
+                resistance_level = min(h1_price, h2_price)
+
                 # NUEVO: Validar que el precio ENTRE los extremos no sobrepase el primer extremo
                 # Para double top: el precio entre h1 y h2 no debe superar h1 significativamente
                 # Si lo hace, indica un breakout y el patrón se invalida
@@ -536,7 +535,7 @@ class DoubleTopBottomDetector:
                         continue  # Volume not significant enough
 
                 # Calculate pattern metrics
-                level_price = price_avg
+                level_price = resistance_level  # [FIX] Usar el nivel de resistencia real, no el promedio
                 time_diff_ms = h2['timestamp'] - h1['timestamp']
                 duration_hours = time_diff_ms / (1000 * 60 * 60)
 
@@ -656,6 +655,10 @@ class DoubleTopBottomDetector:
                 if variance_pct > price_margin:
                     continue
 
+                # [FIX] Para Double Bottom, el nivel de soporte es el BOTTOM MAS ALTO
+                # (el precio que ambos extremos NO pudieron romper a la baja definitivamente)
+                support_level = max(l1_price, l2_price)
+
                 # NUEVO: Validar que el precio ENTRE los extremos no caiga por debajo del primer extremo
                 # Para double bottom: el precio entre l1 y l2 no debe caer por debajo de l1 significativamente
                 # Si lo hace, indica un breakdown y el patrón se invalida
@@ -716,7 +719,7 @@ class DoubleTopBottomDetector:
                         continue
 
                 # Calculate metrics
-                level_price = price_avg
+                level_price = support_level  # [FIX] Usar el nivel de soporte real, no el promedio
                 time_diff_ms = l2['timestamp'] - l1['timestamp']
                 duration_hours = time_diff_ms / (1000 * 60 * 60)
 

@@ -134,8 +134,9 @@ class IndicatorManager {
   /**
    * 🎯 NUEVO: Precalcular TODOS los indicadores con velas completas (modo backtesting)
    * @param {Array} candles - Todas las velas históricas del timeframe
+   * @param {number} playbackStartTime - Timestamp de inicio del playback (para evitar sesgo de supervivencia)
    */
-  async precalculateAllIndicators(candles) {
+  async precalculateAllIndicators(candles, playbackStartTime = null) {
     if (!candles || candles.length === 0) {
       console.warn(`[${this.symbol}] No candles provided for precalculation`);
       return;
@@ -146,6 +147,9 @@ class IndicatorManager {
 
     const startTime = Date.now();
     console.log(`[${this.symbol}] 🚀 PRECALCULANDO todos los indicadores con ${candles.length} velas...`);
+    if (playbackStartTime) {
+      console.log(`[${this.symbol}] 📅 playbackStartTime: ${new Date(playbackStartTime).toISOString()}`);
+    }
 
     try {
       const tasks = [];
@@ -156,11 +160,11 @@ class IndicatorManager {
           continue;
         }
 
-        // DTB: usa precalculateWithCandles
+        // DTB: usa precalculateWithCandles con playbackStartTime
         if (indicator.name === "Double Top/Bottom") {
           if (indicator.precalculateWithCandles) {
             console.log(`[${this.symbol}] 🔍 Precalculando ${indicator.name}...`);
-            tasks.push(indicator.precalculateWithCandles(candles));
+            tasks.push(indicator.precalculateWithCandles(candles, playbackStartTime));
           }
         }
         // Otros indicadores que puedan necesitar precálculo en el futuro
@@ -260,7 +264,7 @@ class IndicatorManager {
     console.log(`[${this.symbol}] ✅ Estados actualizados correctamente`);
   }
 
-  async applyConfig(name, config, candles = null) {
+  async applyConfig(name, config, candles = null, playbackStartTime = null) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.applyConfig) {
       // 🎯 Si se proporcionan velas, usarlas y actualizarlas en allCandles
@@ -268,7 +272,32 @@ class IndicatorManager {
         this.allCandles = candles;
       }
       // 🎯 CRÍTICO: Pasar velas al indicador para permitir precálculo al habilitar
-      await indicator.applyConfig(config, candles || this.allCandles);
+      // Si es DTB, también pasar playbackStartTime para evitar sesgo de supervivencia
+      if (name === "Double Top/Bottom" && playbackStartTime) {
+        await indicator.applyConfig(config, candles || this.allCandles, playbackStartTime);
+      } else {
+        await indicator.applyConfig(config, candles || this.allCandles);
+      }
+    }
+  }
+
+  /**
+   * 🎯 NUEVO: Actualizar fecha de playback para indicadores con chunks (DTB)
+   * @param {number} timestamp - Timestamp actual del playback
+   */
+  async updateDTBPlaybackDate(timestamp) {
+    console.log(`[${this.symbol}] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: ${timestamp} (${new Date(timestamp).toISOString()})`);
+    console.log(`[${this.symbol}] 🔍 Total indicators: ${this.indicators.length}`);
+
+    const dtbIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    console.log(`[${this.symbol}] 🔍 DTB indicator found: ${!!dtbIndicator}, has method: ${!!(dtbIndicator?.updatePlaybackDate)}`);
+
+    if (dtbIndicator && dtbIndicator.updatePlaybackDate) {
+      console.log(`[${this.symbol}] ✅ Calling DTB updatePlaybackDate`);
+      await dtbIndicator.updatePlaybackDate(timestamp);
+      console.log(`[${this.symbol}] ✅ DTB updatePlaybackDate completed`);
+    } else {
+      console.warn(`[${this.symbol}] ⚠️ DTB indicator not found or missing updatePlaybackDate method`);
     }
   }
 

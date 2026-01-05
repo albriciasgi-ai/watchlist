@@ -113,6 +113,7 @@ const BacktestingApp = () => {
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [startDate, setStartDate] = useState('2023-01-01'); // 🎯 Fijar en enero 2023 para testing DTB
   const [currentPrice, setCurrentPrice] = useState(null);
+  const [simulationStartTime, setSimulationStartTime] = useState(null); // 🎯 NUEVO: Guardar para reutilizar en applyConfig
 
   // Estado de UI
   const [activePanel, setActivePanel] = useState('trading'); // 'trading', 'performance', 'history'
@@ -202,6 +203,19 @@ const BacktestingApp = () => {
     '1h': 0,
     '4h': 0
   });
+
+  // 🎯 FIX: Referencias para evitar closure stale en handleTimeUpdate
+  const marketDataRef = useRef(null);
+  const activeTimeframeRef = useRef('15m');
+
+  // 🎯 FIX: Sincronizar refs con valores actuales
+  useEffect(() => {
+    marketDataRef.current = marketData;
+  }, [marketData]);
+
+  useEffect(() => {
+    activeTimeframeRef.current = activeTimeframe;
+  }, [activeTimeframe]);
 
   // 🎯 NUEVO: Handlers para divider redimensionable
   useEffect(() => {
@@ -654,6 +668,7 @@ const BacktestingApp = () => {
 
         // Usar la vela encontrada
         simulationStartTime = timeframeData.main[startCandleIndex].timestamp;
+        setSimulationStartTime(simulationStartTime); // 🎯 NUEVO: Guardar para usar en applyConfig
         console.log('[BacktestingApp] ✅ Usando fecha de inicio seleccionada:');
         console.log(`  - Fecha ingresada: ${startDate}`);
         console.log(`  - Timestamp: ${simulationStartTime}`);
@@ -668,10 +683,12 @@ const BacktestingApp = () => {
 
         if (defaultStartIndex !== -1) {
           simulationStartTime = timeframeData.main[defaultStartIndex].timestamp;
+          setSimulationStartTime(simulationStartTime); // 🎯 NUEVO: Guardar para usar en applyConfig
           console.log('[BacktestingApp] Sin fecha de inicio especificada, usando hace ~1 año:', new Date(simulationStartTime).toISOString());
         } else {
           // Fallback: usar el primer dato del historial
           simulationStartTime = firstCandle.timestamp;
+          setSimulationStartTime(simulationStartTime); // 🎯 NUEVO: Guardar para usar en applyConfig
           console.log('[BacktestingApp] Sin fecha de inicio especificada, usando primer dato:', new Date(simulationStartTime).toISOString());
         }
       }
@@ -737,6 +754,7 @@ const BacktestingApp = () => {
 
       // 🎯 NUEVO: PRECALCULAR todos los indicadores para todos los timeframes
       console.log('[BacktestingApp] 🚀 Iniciando precálculo de indicadores para todos los timeframes...');
+      console.log(`[BacktestingApp] 📅 simulationStartTime: ${new Date(simulationStartTime).toISOString()}`);
       const precalculateStartTime = Date.now();
 
       try {
@@ -749,8 +767,9 @@ const BacktestingApp = () => {
 
           if (miniChart && miniChart.precalculateIndicators && tfData && tfData.main) {
             console.log(`[BacktestingApp] 📊 Precalculando ${tf} con ${tfData.main.length} velas...`);
+            // 🎯 CRÍTICO: Pasar simulationStartTime para evitar sesgo de supervivencia en DTB
             precalculateTasks.push(
-              miniChart.precalculateIndicators(tfData.main)
+              miniChart.precalculateIndicators(tfData.main, simulationStartTime)
                 .then(() => {
                   console.log(`[BacktestingApp] ✅ ${tf} precálculo completado`);
                 })
@@ -785,14 +804,22 @@ const BacktestingApp = () => {
    * Callback cuando el tiempo cambia
    */
   const handleTimeUpdate = (newTime) => {
+    console.log(`[BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: ${newTime} (${new Date(newTime).toISOString()})`);
     setCurrentTime(newTime);
 
-    // Obtener precio actual de los datos del timeframe activo
-    if (marketData && marketData.timeframes && marketData.timeframes[activeTimeframe]) {
-      const timeframeData = marketData.timeframes[activeTimeframe];
+    // 🎯 FIX: Usar refs para acceder a valores actuales (no del closure)
+    const currentMarketData = marketDataRef.current;
+    const currentActiveTimeframe = activeTimeframeRef.current;
+
+    console.log(`[BacktestingApp] CHECK1: marketData=${!!currentMarketData}, timeframes=${!!currentMarketData?.timeframes}, activeTimeframe=${currentActiveTimeframe}, hasData=${!!currentMarketData?.timeframes?.[currentActiveTimeframe]}`);
+
+    if (currentMarketData && currentMarketData.timeframes && currentMarketData.timeframes[currentActiveTimeframe]) {
+      const timeframeData = currentMarketData.timeframes[currentActiveTimeframe];
+      console.log(`[BacktestingApp] CHECK2: timeframeData.main.length=${timeframeData.main?.length}`);
 
       // Buscar la vela más reciente que no exceda currentTime
       const visibleCandles = timeframeData.main.filter(c => c.timestamp <= newTime);
+      console.log(`[BacktestingApp] CHECK3: visibleCandles.length=${visibleCandles.length}`);
 
       if (visibleCandles.length > 0) {
         const lastCandle = visibleCandles[visibleCandles.length - 1];
@@ -801,6 +828,19 @@ const BacktestingApp = () => {
         // Actualizar órdenes con el precio actual
         if (orderManagerRef.current) {
           orderManagerRef.current.updateOrders(lastCandle.close, newTime);
+        }
+
+        // 🎯 NUEVO: Actualizar fecha de playback para Double Top/Bottom (chunks progresivos)
+        // Esto permite que nuevos patrones aparezcan a medida que avanza el playback
+        const miniChart = miniChartRefs.current[currentActiveTimeframe];
+        const indicatorManager = miniChart?.getIndicatorManager?.();
+        console.log(`[BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=${currentActiveTimeframe}, hasMiniChart=${!!miniChart}, hasManager=${!!indicatorManager}, hasMethod=${!!(indicatorManager?.updateDTBPlaybackDate)}`);
+
+        if (indicatorManager && indicatorManager.updateDTBPlaybackDate) {
+          console.log(`[BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: ${newTime} (${new Date(newTime).toISOString()})`);
+          indicatorManager.updateDTBPlaybackDate(newTime);
+        } else {
+          console.warn(`[BacktestingApp] ⚠️ Cannot update DTB: manager=${!!indicatorManager}, method=${!!(indicatorManager?.updateDTBPlaybackDate)}`);
         }
       }
     }
@@ -2030,7 +2070,39 @@ const BacktestingApp = () => {
 
                   if (candles && candles.length > 0) {
                     console.log(`[BacktestingApp] 📊 Aplicando config DTB con ${candles.length} velas...`);
-                    await indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig, candles);
+                    console.log(`[BacktestingApp] 📅 simulationStartTime: ${new Date(simulationStartTime).toISOString()}`);
+
+                    // 🎯 CRÍTICO: Pasar simulationStartTime para evitar sesgo de supervivencia
+                    await indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig, candles, simulationStartTime);
+
+                    // 🎯 CRÍTICO: Forzar redibujado del gráfico toggle el estado
+                    console.log(`[BacktestingApp] 🔄 Forzando redibujado después de aplicar config DTB...`);
+
+                    // Primero desactivar temporalmente
+                    setTabStates(prev => ({
+                      ...prev,
+                      [activeTimeframe]: {
+                        ...prev[activeTimeframe],
+                        indicatorStates: {
+                          ...prev[activeTimeframe].indicatorStates,
+                          'Double Top/Bottom': false
+                        }
+                      }
+                    }));
+
+                    // Luego reactivar con el valor correcto (después de un pequeño delay para garantizar re-render)
+                    setTimeout(() => {
+                      setTabStates(prev => ({
+                        ...prev,
+                        [activeTimeframe]: {
+                          ...prev[activeTimeframe],
+                          indicatorStates: {
+                            ...prev[activeTimeframe].indicatorStates,
+                            'Double Top/Bottom': newConfig.enabled
+                          }
+                        }
+                      }));
+                    }, 50);
                   } else {
                     // Fallback sin velas (modo normal, no backtesting)
                     await indicatorManagerRef.current.applyConfig('Double Top/Bottom', newConfig);
