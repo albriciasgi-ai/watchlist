@@ -1225,6 +1225,105 @@ const DoubleTopBottomSettings = ({
     </div>
   );
 
+  const renderRealTimeTab = () => (
+    <div style={styles.tabContent}>
+      <h3 style={styles.heading}>⚡ Real-time Detection</h3>
+
+      <div style={styles.settingGroup}>
+        <label style={styles.checkbox}>
+          <input
+            type="checkbox"
+            checked={config.realTimeDetection?.enabled || false}
+            onChange={(e) => updateConfig('realTimeDetection.enabled', e.target.checked)}
+          />
+          <span style={{ fontWeight: 'bold' }}>Enable Real-time Pattern Detection</span>
+        </label>
+        <p style={styles.description}>
+          When enabled, the indicator will automatically detect new Double Top/Bottom patterns
+          as candles close via WebSocket. Alerts will be sent immediately when patterns are found.
+        </p>
+      </div>
+
+      {config.realTimeDetection?.enabled && (
+        <>
+          <div style={styles.settingGroup}>
+            <label style={styles.label}>
+              <span>Lookback Candles (Analysis Window)</span>
+              <span style={styles.settingValue}>{config.realTimeDetection?.lookbackCandles || 100}</span>
+            </label>
+            <input
+              type="range"
+              min="50"
+              max="500"
+              step="10"
+              value={config.realTimeDetection?.lookbackCandles || 100}
+              onChange={(e) => updateConfig('realTimeDetection.lookbackCandles', parseInt(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <p style={styles.description}>
+              Number of recent candles to analyze when detecting patterns in real-time (50-500).
+              Lower values = faster performance, Higher values = more historical context.
+              <br />
+              <strong>Recommended:</strong> 100-200 candles for most timeframes
+            </p>
+          </div>
+
+          <div style={styles.settingGroup}>
+            <label style={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={config.realTimeDetection?.debugMode || false}
+                onChange={(e) => updateConfig('realTimeDetection.debugMode', e.target.checked)}
+              />
+              <span>Debug Mode (Console Logs)</span>
+            </label>
+            <p style={styles.description}>
+              Enable detailed console logging for real-time detection. Useful for troubleshooting
+              but may impact performance. Check browser console (F12) to see logs.
+            </p>
+          </div>
+
+          <div style={{
+            marginTop: '20px',
+            padding: '12px',
+            background: '#e3f2fd',
+            borderRadius: '4px',
+            border: '1px solid #90caf9'
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#1976d2' }}>
+              ℹ️ How Real-time Detection Works
+            </div>
+            <ul style={{ fontSize: '12px', color: '#555', margin: '0', paddingLeft: '20px' }}>
+              <li>Monitors WebSocket for candle close events</li>
+              <li>Analyzes only the last {config.realTimeDetection?.lookbackCandles || 100} candles for performance</li>
+              <li>Throttles detection to prevent excessive API calls (90% of interval duration)</li>
+              <li>Prevents duplicate alerts by tracking previously detected patterns</li>
+              <li>Sends alerts automatically if "Enable Automatic Alerts" is enabled below</li>
+            </ul>
+          </div>
+
+          <div style={{
+            marginTop: '12px',
+            padding: '12px',
+            background: '#fff3e0',
+            borderRadius: '4px',
+            border: '1px solid #ffb74d'
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#f57c00' }}>
+              ⚠️ Performance Considerations
+            </div>
+            <ul style={{ fontSize: '12px', color: '#555', margin: '0', paddingLeft: '20px' }}>
+              <li><strong>Lookback 50-100:</strong> Best for 1m-5m timeframes (fast detection)</li>
+              <li><strong>Lookback 100-200:</strong> Best for 15m-1h timeframes (balanced)</li>
+              <li><strong>Lookback 200-500:</strong> Best for 4h+ timeframes (maximum context)</li>
+              <li>Higher values may cause lag on candle close, especially with multiple symbols</li>
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   const renderAlertsTab = () => (
     <div style={styles.tabContent}>
       <h3 style={styles.heading}>🔔 Alert System Configuration</h3>
@@ -1673,6 +1772,21 @@ const DoubleTopBottomSettings = ({
           <button
             style={{
               padding: '6px 12px',
+              background: activeTab === 'realtime' ? '#4CAF50' : '#f0f0f0',
+              color: activeTab === 'realtime' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}
+            onClick={() => setActiveTab('realtime')}
+          >
+            ⚡ Real-time
+          </button>
+          <button
+            style={{
+              padding: '6px 12px',
               background: activeTab === 'alerts' ? '#4CAF50' : '#f0f0f0',
               color: activeTab === 'alerts' ? 'white' : '#333',
               border: 'none',
@@ -1698,6 +1812,7 @@ const DoubleTopBottomSettings = ({
         {activeTab === 'momentum' && renderMomentumTab()}
         {activeTab === 'filters' && renderFiltersTab()}
         {activeTab === 'visualization' && renderVisualizationTab()}
+        {activeTab === 'realtime' && renderRealTimeTab()}
         {activeTab === 'alerts' && renderAlertsTab()}
       </div>
 

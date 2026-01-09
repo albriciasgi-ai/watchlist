@@ -61,7 +61,8 @@
       "Bash(then \"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)",
       "Bash(else echo \"ERROR: venv directory not found\")",
       "Bash(fi)",
-      "Bash(\"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)"
+      "Bash(\"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)",
+      "Bash(cmd /c start_backend.bat)"
     ],
     "deny": [],
     "ask": []

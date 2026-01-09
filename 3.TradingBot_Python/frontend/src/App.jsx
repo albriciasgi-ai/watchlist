@@ -23,7 +23,7 @@ function App() {
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
-      const wsUrl = `ws://localhost:8001/ws`
+      const wsUrl = `ws://localhost:5000/ws`
       const websocket = new WebSocket(wsUrl)
 
       websocket.onopen = () => {

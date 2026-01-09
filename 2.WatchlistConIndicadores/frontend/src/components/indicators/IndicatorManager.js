@@ -1104,6 +1104,18 @@ class IndicatorManager {
   }
 
   /**
+   * Handler llamado cuando una vela se cierra (WebSocket confirm=true)
+   * Propaga el evento al indicador Double Top/Bottom para detección en tiempo real
+   */
+  onCandleClose(allCandles) {
+    const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    if (dbtIndicator && dbtIndicator.enabled) {
+      log.debug(`[${this.symbol}] 🕐 Vela cerrada - notificando a DBT indicator`);
+      dbtIndicator.onCandleClose(allCandles);
+    }
+  }
+
+  /**
    * Obtiene todos los niveles de referencia de todas las fuentes disponibles
    * Clasificados en highs importantes, lows importantes, y pivots
    *

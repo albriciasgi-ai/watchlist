@@ -890,34 +890,34 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
         if (!currentInProgress) {
           inProgressCandleRef.current = newCandle;
-          log.debug(`[${symbol}] 🆕 Primera vela en progreso`, {
-            timestamp: candleTimestamp,
-            datetime: datetime_colombia
-          });
-          
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] 🆕 Primera vela en progreso`, { timestamp: candleTimestamp, datetime: datetime_colombia });
+
         } else if (candleTimestamp > currentInProgress.timestamp) {
-          log.debug(`[${symbol}] 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior`, {
-            anterior: currentInProgress.timestamp,
-            nuevo: candleTimestamp
-          });
-          
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior`, { anterior: currentInProgress.timestamp, nuevo: candleTimestamp });
+
           candlesRef.current.push(currentInProgress);
-          
+
           if (candlesRef.current.length > 2000) {
             candlesRef.current.shift();
           }
-          
-          log.debug(`[${symbol}] ✅ Vela confirmada y agregada`, {
-            total_confirmadas: candlesRef.current.length
-          });
-          
+
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] ✅ Vela confirmada y agregada`, { total_confirmadas: candlesRef.current.length });
+
           inProgressCandleRef.current = newCandle;
-          log.trace(`[${symbol}] Estado: ${candlesRef.current.length} confirmadas, En progreso: ${true ? 'SÍ' : 'NO'}`);
-          
+          // Performance: Disabled frequent logging
+          // log.trace(`[${symbol}] Estado: ${candlesRef.current.length} confirmadas, En progreso: ${true ? 'SÍ' : 'NO'}`);
+
         } else if (candleTimestamp === currentInProgress.timestamp) {
           inProgressCandleRef.current = newCandle;
         }
-        
+
+        // 🚫 DISABLED: onCandleClose system - causes performance issues
+        // The array copy [...candlesRef.current] was creating 2000+ object copies every 15 seconds
+        // This was causing memory pressure and blocking the main thread
+
         if (!animationFrameRef.current) {
           animationFrameRef.current = requestAnimationFrame(() => {
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);

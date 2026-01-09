@@ -36,6 +36,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.notificationPermissionRequested = false;
     this.alertSystemStartTime = null; // Solo alertar patrones detectados después de este timestamp
 
+    // Real-time detection
+    this.lastRealtimeCheck = null; // Timestamp de última detección en tiempo real
+
     // Cargar historial desde localStorage
     this.loadAlertHistory();
 
@@ -89,6 +92,55 @@ class DoubleTopBottomIndicator extends IndicatorBase {
             minConfidence: 20,
             requireBothRejections: false
           };
+        }
+
+        // Asegurar que exista alertSettings (CRÍTICO para evitar errores)
+        if (!config.alertSettings) {
+          config.alertSettings = {
+            mode: 'smart',
+            confidenceLevels: {
+              critical: {
+                minConfidence: 80,
+                cooldownSeconds: 60,
+                color: '#F44336'
+              },
+              high: {
+                minConfidence: 60,
+                cooldownSeconds: 180,
+                color: '#FF9800'
+              },
+              medium: {
+                minConfidence: 40,
+                cooldownSeconds: 300,
+                color: '#FFC107'
+              }
+            },
+            vwapFilter: {
+              enabled: false,
+              deviationTolerance: 0.5,
+              requiredDeviations: {
+                second: true,
+                third: true
+              }
+            },
+            visualization: {
+              showDetectionCircle: true,
+              detectionCircleColor: '#2196F3',
+              detectionCircleSize: 8
+            }
+          };
+        } else {
+          // Asegurar que exista vwapFilter dentro de alertSettings
+          if (!config.alertSettings.vwapFilter) {
+            config.alertSettings.vwapFilter = {
+              enabled: false,
+              deviationTolerance: 0.5,
+              requiredDeviations: {
+                second: true,
+                third: true
+              }
+            };
+          }
         }
 
       } catch (e) {
@@ -229,6 +281,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
       debugMode: false,
       alertsEnabled: false,  // Sistema de alertas automáticas
+
+      // Real-time detection (NEW)
+      realTimeDetection: {
+        enabled: false,  // Usuario debe habilitar manualmente
+        lookbackCandles: 100,  // Analizar últimas N velas
+        throttleMs: null,  // Auto-calculado según intervalo
+        debugMode: false  // Logs extra para debugging
+      },
 
       // Sistema de alertas mejorado
       alertSettings: {
@@ -1083,6 +1143,162 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.notificationPermissionRequested = true;
+  }
+
+  /**
+   * Convierte intervalo de cadena a milisegundos
+   */
+  getIntervalMs() {
+    const map = {
+      '1': 60000,       // 1 min
+      '3': 180000,      // 3 min
+      '5': 300000,      // 5 min
+      '15': 900000,     // 15 min
+      '30': 1800000,    // 30 min
+      '60': 3600000,    // 1 hora
+      '120': 7200000,   // 2 horas
+      '240': 14400000,  // 4 horas
+      'D': 86400000,    // 1 día
+      'W': 604800000    // 1 semana
+    };
+    return map[this.interval] || 900000; // Default 15 min
+  }
+
+  /**
+   * Fusiona nuevos patrones detectados con los existentes, evitando duplicados
+   */
+  mergeNewPatterns(newPatterns) {
+    if (!newPatterns || newPatterns.length === 0) {
+      log.debug(`[${this.symbol}] No hay nuevos patrones para fusionar`);
+      return;
+    }
+
+    let addedCount = 0;
+    newPatterns.forEach(newPattern => {
+      const newId = this.getPatternId(newPattern);
+
+      // Verificar si ya existe en this.patterns
+      const existingPattern = this.patterns.find(p => this.getPatternId(p) === newId);
+
+      if (!existingPattern) {
+        this.patterns.push(newPattern);
+        addedCount++;
+        log.debug(`[${this.symbol}] ✅ Nuevo patrón agregado: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
+      } else {
+        log.debug(`[${this.symbol}] ⏭️ Patrón ya existe, saltando: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
+      }
+    });
+
+    log.debug(`[${this.symbol}] 📊 Fusión completa: ${addedCount} nuevos patrones agregados, ${this.patterns.length} patrones totales`);
+  }
+
+  /**
+   * Detecta patrones usando solo las últimas N velas (incremental)
+   * @param {Array} allCandles - Todas las velas disponibles
+   * @param {number} lookbackCount - Número de velas a analizar (null = usar config.realTimeDetection.lookbackCandles)
+   */
+  async detectIncrementalPattern(allCandles, lookbackCount = null) {
+    if (!this.config.realTimeDetection?.enabled) {
+      log.debug(`[${this.symbol}] Real-time detection deshabilitado`);
+      return [];
+    }
+
+    const lookback = lookbackCount || this.config.realTimeDetection.lookbackCandles || 100;
+    const recentCandles = allCandles.slice(-lookback);
+
+    log.debug(`[${this.symbol}] 🔍 Detección incremental con últimas ${recentCandles.length} velas (de ${allCandles.length} totales)`);
+
+    try {
+      const startTime = Date.now();
+      const requestPayload = {
+        symbol: this.symbol,
+        interval: this.interval,
+        days: this.days,
+        config: {
+          ...this.config,
+          doubleTopBottom: {
+            ...this.config.doubleTopBottom,
+            lookbackCandles: lookback  // Usar lookback reducido
+          }
+        },
+        candles: recentCandles  // Enviar solo velas recientes
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestPayload)
+      });
+
+      const result = await response.json();
+      const duration = Date.now() - startTime;
+
+      if (result.success && result.patterns) {
+        log.debug(`[${this.symbol}] ✅ Detección incremental: ${result.patterns.length} patrones en ${duration}ms`);
+        return result.patterns;
+      } else {
+        log.error(`[${this.symbol}] ❌ Error en detección incremental:`, result.error);
+        return [];
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] ❌ Excepción en detección incremental:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Handler llamado cuando se cierra una vela (WebSocket confirm=true)
+   * Incluye throttling para evitar detecciones excesivas
+   */
+  async onCandleClose(allCandles) {
+    if (!this.config.enabled) {
+      log.debug(`[${this.symbol}] DBT Indicator deshabilitado`);
+      return;
+    }
+
+    if (!this.config.realTimeDetection?.enabled) {
+      log.debug(`[${this.symbol}] Real-time detection deshabilitado`);
+      return;
+    }
+
+    const now = Date.now();
+    const throttleMs = this.getIntervalMs() * 0.9;
+
+    // Throttling: solo ejecutar si ha pasado suficiente tiempo
+    if (this.lastRealtimeCheck && (now - this.lastRealtimeCheck) < throttleMs) {
+      const elapsed = now - this.lastRealtimeCheck;
+      log.debug(`[${this.symbol}] ⏱️ Throttled: ${elapsed}ms < ${throttleMs}ms (esperando ${throttleMs - elapsed}ms más)`);
+      return;
+    }
+
+    this.lastRealtimeCheck = now;
+    log.debug(`[${this.symbol}] 🕐 Vela cerrada - detectando patrones DBT...`);
+
+    try {
+      const newPatterns = await this.detectIncrementalPattern(allCandles);
+
+      if (newPatterns.length > 0) {
+        log.debug(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
+        this.mergeNewPatterns(newPatterns);
+
+        // Enviar alertas si están habilitadas
+        if (this.config.alertsEnabled) {
+          log.debug(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
+          await this.checkAndSendAlerts();
+        }
+
+        // Forzar redibujado del chart
+        if (this.indicatorManager?.requestRedraw) {
+          this.indicatorManager.requestRedraw();
+        }
+      } else {
+        log.debug(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] ❌ Error en detección en tiempo real:`, error);
+    }
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
