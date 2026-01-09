@@ -469,26 +469,35 @@ class DoubleTopBottomDetector:
                         print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
-                # Validate rejection patterns at both extremes
-                rejection_h1 = self._validate_rejection_pattern(
-                    h1['candle'],
-                    all_candles[:h1['candle_index']],
-                    config,
-                    'bearish'  # Double top expects bearish rejection
-                )
+                # NUEVO: Verificar si se requiere validación de patrones
+                require_patterns = config.get('doubleTopBottom', {}).get('rejectionPatterns', {}).get('requirePatterns', True)
 
-                rejection_h2 = self._validate_rejection_pattern(
-                    h2['candle'],
-                    all_candles[:h2['candle_index']],
-                    config,
-                    'bearish'
-                )
+                if require_patterns:
+                    # Validate rejection patterns at both extremes
+                    rejection_h1 = self._validate_rejection_pattern(
+                        h1['candle'],
+                        all_candles[:h1['candle_index']],
+                        config,
+                        'bearish'  # Double top expects bearish rejection
+                    )
 
-                # Check if both rejections are required
-                require_both = config.get('filters', {}).get('requireBothRejections', True)
+                    rejection_h2 = self._validate_rejection_pattern(
+                        h2['candle'],
+                        all_candles[:h2['candle_index']],
+                        config,
+                        'bearish'
+                    )
 
-                if require_both and (not rejection_h1['has_pattern'] or not rejection_h2['has_pattern']):
-                    continue
+                    # Check if both rejections are required
+                    require_both = config.get('filters', {}).get('requireBothRejections', True)
+
+                    if require_both and (not rejection_h1['has_pattern'] or not rejection_h2['has_pattern']):
+                        continue
+                else:
+                    # Sin validación de patrones - aceptar todos los extremos
+                    rejection_h1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    rejection_h2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance if enabled
                 volume_ok_h1 = True
@@ -651,25 +660,34 @@ class DoubleTopBottomDetector:
                         print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
-                # Validate rejection patterns
-                rejection_l1 = self._validate_rejection_pattern(
-                    l1['candle'],
-                    all_candles[:l1['candle_index']],
-                    config,
-                    'bullish'  # Double bottom expects bullish rejection
-                )
+                # NUEVO: Verificar si se requiere validación de patrones
+                require_patterns = config.get('doubleTopBottom', {}).get('rejectionPatterns', {}).get('requirePatterns', True)
 
-                rejection_l2 = self._validate_rejection_pattern(
-                    l2['candle'],
-                    all_candles[:l2['candle_index']],
-                    config,
-                    'bullish'
-                )
+                if require_patterns:
+                    # Validate rejection patterns
+                    rejection_l1 = self._validate_rejection_pattern(
+                        l1['candle'],
+                        all_candles[:l1['candle_index']],
+                        config,
+                        'bullish'  # Double bottom expects bullish rejection
+                    )
 
-                require_both = config.get('filters', {}).get('requireBothRejections', True)
+                    rejection_l2 = self._validate_rejection_pattern(
+                        l2['candle'],
+                        all_candles[:l2['candle_index']],
+                        config,
+                        'bullish'
+                    )
 
-                if require_both and (not rejection_l1['has_pattern'] or not rejection_l2['has_pattern']):
-                    continue
+                    require_both = config.get('filters', {}).get('requireBothRejections', True)
+
+                    if require_both and (not rejection_l1['has_pattern'] or not rejection_l2['has_pattern']):
+                        continue
+                else:
+                    # Sin validación de patrones - aceptar todos los extremos
+                    rejection_l1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    rejection_l2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance
                 volume_ok_l1 = True

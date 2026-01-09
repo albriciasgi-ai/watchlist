@@ -16,6 +16,7 @@ function getDefaultConfig() {
       maxCandlesBetween: 80,
 
       rejectionPatterns: {
+        requirePatterns: true,  // NUEVO: Checkbox maestro para validación de patrones
         hammer: true,
         shootingStar: true,
         bullishEngulfing: true,
@@ -539,12 +540,31 @@ const DoubleTopBottomSettings = ({
 
       <h3>Rejection Patterns</h3>
 
-      <div className="checkbox-group">
+      {/* Checkbox maestro para desactivar validación de patrones */}
+      <div className="config-section" style={{ marginBottom: '15px', padding: '10px', border: '1px solid #555', borderRadius: '4px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+          <input
+            type="checkbox"
+            checked={config.doubleTopBottom.rejectionPatterns.requirePatterns}
+            onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.requirePatterns', e.target.checked)}
+          />
+          <span style={{ marginLeft: '8px' }}>
+            🔍 Require Rejection Pattern Validation
+          </span>
+        </label>
+        <p className="hint" style={{ marginTop: '5px', marginLeft: '24px', opacity: 0.8 }}>
+          When unchecked, patterns will be detected based only on price extremes without requiring specific candlestick patterns.
+          This may detect more patterns but with potentially lower reliability.
+        </p>
+      </div>
+
+      <div className="checkbox-group" style={{ opacity: config.doubleTopBottom.rejectionPatterns.requirePatterns ? 1 : 0.5 }}>
         <label>
           <input
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.hammer}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.hammer', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Hammer 🔨</span>
         </label>
@@ -554,6 +574,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.shootingStar}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.shootingStar', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Shooting Star ⭐</span>
         </label>
@@ -563,6 +584,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.bullishEngulfing}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.bullishEngulfing', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Bullish Engulfing 📈</span>
         </label>
@@ -572,6 +594,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.bearishEngulfing}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.bearishEngulfing', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Bearish Engulfing 📉</span>
         </label>

@@ -133,6 +133,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         maxCandlesBetween: 50,
 
         rejectionPatterns: {
+          requirePatterns: true,  // NUEVO: Checkbox maestro para validación de patrones
           hammer: true,
           shootingStar: true,
           bullishEngulfing: true,
