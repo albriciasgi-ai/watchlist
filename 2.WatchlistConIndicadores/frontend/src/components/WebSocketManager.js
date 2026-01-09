@@ -22,9 +22,9 @@ class WebSocketManager {
     this.ws = new WebSocket(wsUrl);
 
     this.ws.onopen = () => {
-      log.debug(`WebSocket Manager conectado [${interval}]`);
+      console.log(`WebSocket Manager conectado [${interval}]`);
       this.isConnected = true;
-      
+
       // Esperar 100ms antes de suscribir (Bybit necesita tiempo)
       setTimeout(() => {
         this.subscribeAll();
@@ -37,7 +37,7 @@ class WebSocketManager {
         
         // Log de respuesta de suscripciÃ³n
         if (data.op === "subscribe" && data.success) {
-          log.debug(`âœ“ Suscrito:`, data.ret_msg);
+          console.log(`✓ Suscrito:`, data.ret_msg);
         }
         
         if (data.topic) {
@@ -56,18 +56,18 @@ class WebSocketManager {
           }
         }
       } catch (err) {
-        log.error('Error parsing WebSocket message:', err);
+        console.error('Error parsing WebSocket message:', err);
       }
     };
 
     this.ws.onerror = (error) => {
-      log.error('WebSocket Manager error:', error);
+      console.error('WebSocket Manager error:', error);
     };
 
     this.ws.onclose = () => {
-      log.debug('WebSocket Manager cerrado');
+      console.log('WebSocket Manager cerrado');
       this.isConnected = false;
-      
+
       // Reconectar despuÃ©s de 3 segundos
       this.reconnectTimeout = setTimeout(() => {
         this.connect(this.currentInterval);
@@ -112,7 +112,7 @@ class WebSocketManager {
         ]
       }));
     } catch (err) {
-      log.error(`Error subscribing ${symbol}:`, err);
+      console.error(`Error subscribing ${symbol}:`, err);
     }
   }
 
@@ -128,7 +128,7 @@ class WebSocketManager {
         ]
       }));
     } catch (err) {
-      log.error(`Error unsubscribing ${symbol}:`, err);
+      console.error(`Error unsubscribing ${symbol}:`, err);
     }
   }
 

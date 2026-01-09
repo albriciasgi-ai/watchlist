@@ -54,7 +54,14 @@
       "Bash(timeout /t 2)",
       "Bash(.venvScriptspython.exe -m uvicorn main:app --reload --port 8000)",
       "Bash(\".venv\\Scripts\\python.exe\" -m uvicorn main:app --reload --port 8000)",
-      "Bash(start \"\" \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\test_dbt.html\")"
+      "Bash(start \"\" \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\test_dbt.html\")",
+      "Bash(venvScriptspython.exe -m uvicorn main:app --reload --port 8001)",
+      "Bash(start_backend.bat)",
+      "Bash(if [ -d \"venv\" ])",
+      "Bash(then \"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)",
+      "Bash(else echo \"ERROR: venv directory not found\")",
+      "Bash(fi)",
+      "Bash(\"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)"
     ],
     "deny": [],
     "ask": []

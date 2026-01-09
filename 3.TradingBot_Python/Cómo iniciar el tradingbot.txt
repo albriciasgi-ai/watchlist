@@ -1,0 +1,45 @@
+  TradingBot (Ejecución de Trades):
+  - 🌐 Frontend: http://localhost:3000
+  - ⚙️ Backend: http://localhost:5000
+
+  Watchlist (Detección de Patrones):
+  - 🌐 Frontend: http://localhost:5173
+  - ⚙️ Backend: http://localhost:8000
+
+  📋 Flujo de Inicialización Correcto
+
+  Para futuras sesiones, este es el orden de inicio:
+
+  1️⃣ Iniciar TradingBot Backend
+
+  cd WatchlistConIndicadores/TradingBot_Python/backend
+  python main.py
+
+  2️⃣ Iniciar TradingBot Frontend
+
+  cd WatchlistConIndicadores/TradingBot_Python/frontend
+  npm run dev
+
+  3️⃣ Iniciar Watchlist Backend
+
+  cd WatchlistConIndicadores/backend
+  python -m uvicorn main:app --reload --port 8000
+
+  4️⃣ Iniciar Watchlist Frontend
+
+  cd WatchlistConIndicadores/frontend
+  npm run dev
+
+  Ahora ya puedes:
+  1. Configurar credenciales en http://localhost:3000
+  2. Habilitar los símbolos que quieres tradear
+  3. Probar el botón "🧪 Test Alert" desde el watchlist
+  4. Las alertas del watchlist llegarán automáticamente al TradingBot
+  
+  ==================================
+  
+    Servicios ahora corriendo correctamente:
+  - ✅ Watchlist Frontend: http://localhost:5176
+  - ✅ Watchlist Backend: http://localhost:8000
+  - ✅ Alert Listener: http://localhost:5000 (recién reiniciado)
+  - ✅ TradingBot Backend: http://localhost:8001

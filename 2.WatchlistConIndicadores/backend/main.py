@@ -601,14 +601,14 @@ async def send_pattern_alert_endpoint(request: Request):
     from datetime import datetime
 
     print("\n" + "="*80)
-    print("🚨 [BACKEND] PATTERN ALERT REQUEST RECEIVED")
+    print("[BACKEND] PATTERN ALERT REQUEST RECEIVED")
     print("="*80)
-    print(f"⏰ Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     try:
         data = await request.json()
 
-        print(f"\n📥 STEP 1: Parsing request payload")
+        print(f"\nSTEP 1: Parsing request payload")
         print(f"   Raw Payload Size: {len(json.dumps(data))} bytes")
 
         symbol = data.get('symbol')
@@ -616,14 +616,14 @@ async def send_pattern_alert_endpoint(request: Request):
         pattern = data.get('pattern')
         config = data.get('config', {})
 
-        print(f"\n📊 STEP 2: Extracting fields")
+        print(f"\nSTEP 2: Extracting fields")
         print(f"   Symbol: {symbol}")
         print(f"   Interval: {interval}")
         print(f"   Pattern Present: {pattern is not None}")
         print(f"   Config Present: {config is not None}")
 
         if not symbol or not pattern:
-            print(f"\n❌ STEP 3: VALIDATION FAILED - Missing required fields")
+            print(f"\nSTEP 3: VALIDATION FAILED - Missing required fields")
             print(f"   Symbol provided: {symbol is not None}")
             print(f"   Pattern provided: {pattern is not None}")
             print("="*80 + "\n")
@@ -639,7 +639,7 @@ async def send_pattern_alert_endpoint(request: Request):
         pattern_direction = pattern.get('direction', 'N/A')
         pattern_level = pattern.get('level', 'N/A')
 
-        print(f"\n📋 STEP 3: Pattern Details")
+        print(f"\nSTEP 3: Pattern Details")
         print(f"   Type: {pattern_type}")
         print(f"   Price: ${pattern_price:.2f}" if isinstance(pattern_price, (int, float)) else f"   Price: {pattern_price}")
         print(f"   Confidence: {pattern_confidence}%")
@@ -649,12 +649,12 @@ async def send_pattern_alert_endpoint(request: Request):
         # Validate minimum confidence
         min_confidence = config.get('filters', {}).get('minConfidence', 60)
 
-        print(f"\n🔍 STEP 4: Confidence Validation")
+        print(f"\nSTEP 4: Confidence Validation")
         print(f"   Pattern Confidence: {pattern_confidence}%")
         print(f"   Minimum Required: {min_confidence}%")
 
         if pattern_confidence < min_confidence:
-            print(f"\n❌ STEP 5: CONFIDENCE CHECK FAILED")
+            print(f"\nSTEP 5: CONFIDENCE CHECK FAILED")
             print(f"   Rejection Reason: Confidence too low")
             print(f"   Delta: {min_confidence - pattern_confidence:.1f}% below threshold")
             print("="*80 + "\n")
@@ -665,10 +665,10 @@ async def send_pattern_alert_endpoint(request: Request):
                 "required": min_confidence
             }
 
-        print(f"   ✅ Confidence check PASSED ({pattern_confidence}% >= {min_confidence}%)")
+        print(f"   Confidence check PASSED ({pattern_confidence}% >= {min_confidence}%)")
 
         # Send alert using existing system
-        print(f"\n📤 STEP 5: Sending alert to alert service (port 5000)")
+        print(f"\nSTEP 5: Sending alert to alert service (port 5000)")
         print(f"   Calling: send_pattern_alert()")
         print(f"   Symbol: {symbol}")
         print(f"   Interval: {interval}")
@@ -676,11 +676,11 @@ async def send_pattern_alert_endpoint(request: Request):
 
         success = await send_pattern_alert(symbol, interval, pattern, config)
 
-        print(f"\n📬 STEP 6: Alert service response")
+        print(f"\nSTEP 6: Alert service response")
         print(f"   Success: {success}")
 
         if success:
-            print(f"\n✅ STEP 7: Alert sent successfully!")
+            print(f"\nSTEP 7: Alert sent successfully!")
             print(f"   Pattern: {pattern_type}")
             print(f"   Symbol: {symbol}")
             print(f"   Price: ${pattern_price:.2f}" if isinstance(pattern_price, (int, float)) else f"   Price: {pattern_price}")

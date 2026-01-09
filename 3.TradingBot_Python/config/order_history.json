@@ -2169,5 +2169,18 @@
     "pattern": "Double Bottom (ABRIR LONG)",
     "confidence": 85.5,
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-09T10:40:06.520451",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "entry_price": 50000.0,
+    "quantity_coin": 0.002,
+    "quantity_usdt": 100.0,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 85.5,
+    "status": "success"
   }
 ]
