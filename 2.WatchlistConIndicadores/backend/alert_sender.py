@@ -63,6 +63,15 @@ class AlertSender:
         Returns:
             True if sent successfully, False otherwise
         """
+        logger.debug("\n" + "="*80)
+        logger.debug(f"📨 [ALERT_SENDER] Preparing to send alert")
+        logger.debug("="*80)
+        logger.debug(f"   Symbol: {symbol}")
+        logger.debug(f"   Interval: {interval}")
+        logger.debug(f"   Pattern Type: {pattern.get('patternType', 'UNKNOWN')}")
+        logger.debug(f"   Price: ${pattern.get('price', 0):.2f}")
+        logger.debug(f"   Confidence: {pattern.get('confidence', 0)}%")
+
         alert_payload = self._build_alert_payload(
             symbol,
             interval,
@@ -70,8 +79,21 @@ class AlertSender:
             user_config
         )
 
+        logger.debug(f"\n📦 Built alert payload:")
+        logger.debug(f"   Pattern String: {alert_payload.get('pattern', 'N/A')}")
+        logger.debug(f"   Symbol: {alert_payload.get('symbol', 'N/A')}")
+        logger.debug(f"   Price: ${alert_payload.get('price', 0):.2f}")
+        logger.debug(f"   Confidence: {alert_payload.get('confidence', 0)}%")
+
         # Add to queue for asynchronous processing
+        logger.debug(f"\n📬 Adding alert to queue for async processing")
+        logger.debug(f"   Current queue size: {self.alert_queue.qsize()}")
+
         await self.alert_queue.put(alert_payload)
+
+        logger.debug(f"   ✅ Alert added to queue successfully")
+        logger.debug(f"   New queue size: {self.alert_queue.qsize()}")
+        logger.debug("="*80 + "\n")
 
         return True
 
@@ -250,50 +272,87 @@ class AlertSender:
         Returns:
             True if successful, False otherwise
         """
+        from datetime import datetime
+        start_time = datetime.now()
+
+        logger.debug("\n" + "="*80)
+        logger.debug(f"🌐 [HTTP] Sending alert to external service (port 5000)")
+        logger.debug("="*80)
+
         if not self.client:
-            logger.error("❌ Client not initialized")
+            logger.error("❌ HTTP client not initialized - cannot send alert")
+            logger.error("="*80 + "\n")
             return False
 
         endpoint = f"{self.alert_service_url}/api/watchlist-alert"
 
-        # 📝 DEBUG LOG: Sending alert details
-        logger.debug(f"[HTTP POST] Endpoint: {endpoint}")
-        logger.debug(f"[HTTP POST] Payload: {json.dumps(alert, indent=2)}")
+        logger.debug(f"📡 HTTP Request Details:")
+        logger.debug(f"   Method: POST")
+        logger.debug(f"   Endpoint: {endpoint}")
+        logger.debug(f"   Headers: Content-Type: application/json")
+        logger.debug(f"\n📦 Request Payload:")
+        logger.debug(f"{json.dumps(alert, indent=2)}")
 
         try:
+            logger.debug(f"\n⏳ Sending HTTP POST request...")
             response = await self.client.post(endpoint, json=alert)
+            duration = (datetime.now() - start_time).total_seconds()
 
-            # 📝 DEBUG LOG: Response details
-            logger.debug(f"[HTTP RESPONSE] Status: {response.status_code}")
+            logger.debug(f"\n📥 HTTP Response received ({duration:.3f}s)")
+            logger.debug(f"   Status Code: {response.status_code}")
+            logger.debug(f"   Status Text: {response.reason_phrase}")
 
             if response.status_code == 200:
+                logger.debug(f"\n✅ SUCCESS: Alert service accepted the alert")
+
                 try:
                     response_data = response.json()
-                    logger.debug(f"[HTTP RESPONSE] Body: {json.dumps(response_data, indent=2)}")
+                    logger.debug(f"   Response Body (JSON):")
+                    logger.debug(f"{json.dumps(response_data, indent=2)}")
                 except:
-                    logger.debug(f"[HTTP RESPONSE] Body: {response.text}")
+                    logger.debug(f"   Response Body (Text): {response.text}")
 
-                logger.info(f"✅ Alert successfully delivered to trading bot at {endpoint}")
+                logger.info(f"✅ Alert delivered to trading bot at {endpoint}")
+                logger.debug("="*80 + "\n")
                 return True
             else:
-                logger.warning(f"⚠️ Alert service returned status {response.status_code}")
-                logger.warning(f"⚠️ Response: {response.text}")
+                logger.warning(f"\n⚠️ REJECTED: Alert service returned non-200 status")
+                logger.warning(f"   Status Code: {response.status_code}")
+                logger.warning(f"   Response Body: {response.text}")
+                logger.debug("="*80 + "\n")
                 return False
 
-        except httpx.ConnectError:
-            logger.error(f"❌ Cannot connect to alert service at {self.alert_service_url}")
-            logger.info("💡 Tip: Make sure alert listener is running on port 5000")
-            logger.info("💡 You can start it with: python alert_listener.py")
+        except httpx.ConnectError as e:
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ CONNECTION ERROR ({duration:.3f}s)")
+            logger.error(f"   Cannot connect to alert service at {self.alert_service_url}")
+            logger.error(f"   Error: {str(e)}")
+            logger.error(f"\n💡 Troubleshooting:")
+            logger.error(f"   1. Check if alert listener is running:")
+            logger.error(f"      → python alert_listener.py")
+            logger.error(f"   2. Verify port 5000 is not blocked by firewall")
+            logger.error(f"   3. Confirm alert service is accessible at {self.alert_service_url}")
+            logger.debug("="*80 + "\n")
             return False
 
-        except httpx.TimeoutException:
-            logger.error(f"❌ Alert service timeout (>5s) at {endpoint}")
+        except httpx.TimeoutException as e:
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ TIMEOUT ERROR ({duration:.3f}s)")
+            logger.error(f"   Alert service took too long to respond (>5s)")
+            logger.error(f"   Endpoint: {endpoint}")
+            logger.error(f"   Error: {str(e)}")
+            logger.debug("="*80 + "\n")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Unexpected error sending alert: {str(e)}")
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ UNEXPECTED ERROR ({duration:.3f}s)")
+            logger.error(f"   Exception Type: {type(e).__name__}")
+            logger.error(f"   Exception Message: {str(e)}")
+            logger.error(f"\n🔍 Stack Trace:")
             import traceback
-            logger.error(f"[TRACEBACK] {traceback.format_exc()}")
+            logger.error(traceback.format_exc())
+            logger.debug("="*80 + "\n")
             return False
 
     async def test_connection(self) -> bool:

@@ -850,6 +850,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    * Envía patrón al backend usando formato de alertas
    */
   async sendPatternAlert(pattern, level = null) {
+    const startTime = Date.now();
+
+    console.log(`\n${'='.repeat(80)}`);
+    console.log(`🚨 [${this.symbol}] SENDING PATTERN ALERT`);
+    console.log(`${'='.repeat(80)}`);
+
     try {
       // Determinar dirección (con o sin momentum)
       const direction = pattern.entrySignal?.direction
@@ -881,8 +887,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         }
       };
 
-      log.debug(`📤 Sending POST to ${API_BASE_URL}/api/pattern-alert`);
-      log.debug(`Payload:`, payload);
+      console.log(`📤 STEP 1: Building payload`);
+      console.log(`   Symbol: ${this.symbol}`);
+      console.log(`   Interval: ${this.interval}`);
+      console.log(`   Pattern Type: ${pattern.type}`);
+      console.log(`   Price: $${pattern.levelPrice.toFixed(2)}`);
+      console.log(`   Confidence: ${pattern.confidence.toFixed(1)}%`);
+      console.log(`   Direction: ${direction}`);
+      console.log(`   Level: ${level || 'N/A'}`);
+      console.log(`   Alert Mode: ${this.config.alertSettings.mode}`);
+      console.log(`\n📤 STEP 2: Sending HTTP POST request`);
+      console.log(`   Endpoint: ${API_BASE_URL}/api/pattern-alert`);
+      console.log(`   Full Payload:`, JSON.stringify(payload, null, 2));
 
       const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
         method: 'POST',
@@ -890,23 +906,52 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         body: JSON.stringify(payload)
       });
 
-      log.debug(`📥 Response status: ${response.status} ${response.statusText}`);
+      const duration = Date.now() - startTime;
+
+      console.log(`\n📥 STEP 3: Received response (${duration}ms)`);
+      console.log(`   HTTP Status: ${response.status} ${response.statusText}`);
 
       const result = await response.json();
-      log.debug(`📥 Response body:`, result);
+      console.log(`   Response Body:`, JSON.stringify(result, null, 2));
 
       if (result.success) {
+        console.log(`\n✅ STEP 4: Alert sent successfully!`);
+        console.log(`   Pattern: ${result.pattern || pattern.type}`);
+        console.log(`   Symbol: ${result.symbol || this.symbol}`);
+        console.log(`   Price: $${result.price?.toFixed(2) || pattern.levelPrice.toFixed(2)}`);
+        console.log(`   Confidence: ${result.confidence || pattern.confidence}%`);
+        console.log(`   Total Duration: ${duration}ms`);
+        console.log(`${'='.repeat(80)}\n`);
+
         // Mostrar popup en navegador
         this.showAlertPopup(pattern, level);
         return true;
       } else {
-        log.error(`❌ Alert rejected: ${result.reason || result.error}`);
+        console.error(`\n❌ STEP 4: Alert REJECTED by backend`);
+        console.error(`   Reason: ${result.reason || result.error || 'Unknown'}`);
+        if (result.confidence !== undefined && result.required !== undefined) {
+          console.error(`   Confidence: ${result.confidence}% (required: ${result.required}%)`);
+        }
+        console.error(`   Duration: ${duration}ms`);
+        console.error(`${'='.repeat(80)}\n`);
         return false;
       }
 
     } catch (error) {
-      log.error(`❌ Error sending alert:`, error);
-      log.error(`Error stack:`, error.stack);
+      const duration = Date.now() - startTime;
+
+      console.error(`\n❌ STEP 4: EXCEPTION during alert send`);
+      console.error(`   Error Type: ${error.name}`);
+      console.error(`   Error Message: ${error.message}`);
+      console.error(`   Duration: ${duration}ms`);
+
+      if (error.message.includes('fetch')) {
+        console.error(`   Possible Cause: Backend not running or network error`);
+        console.error(`   Check: Is backend running on ${API_BASE_URL}?`);
+      }
+
+      console.error(`   Stack Trace:`, error.stack);
+      console.error(`${'='.repeat(80)}\n`);
       return false;
     }
   }
@@ -915,9 +960,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    * Envía una alerta de prueba para debugging
    */
   async sendTestAlert() {
-    log.debug(`\n${'='.repeat(80)}`);
-    log.debug(`🧪 [${this.symbol}] SENDING TEST ALERT`);
-    log.debug(`${'='.repeat(80)}`);
+    console.log(`\n${'='.repeat(80)}`);
+    console.log(`🧪 [${this.symbol}] SENDING TEST ALERT`);
+    console.log(`${'='.repeat(80)}`);
 
     // Crear un patrón de prueba
     const testPattern = {
@@ -945,30 +990,30 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       priceTolerance: 20.00
     };
 
-    log.debug(`Test Pattern:`, testPattern);
-    log.debug(`\nSending to backend...`);
+    console.log(`Test Pattern:`, testPattern);
+    console.log(`\nSending to backend...`);
 
     try {
       const success = await this.sendPatternAlert(testPattern);
 
-      log.debug(`\n📊 Test Alert Result:`);
+      console.log(`\n📊 Test Alert Result:`);
       if (success) {
-        log.debug(`  ✅ Test alert sent successfully!`);
-        log.debug(`  - Backend accepted the alert`);
-        log.debug(`  - Should appear in alert listener (port 5000) if running`);
-        log.debug(`  - Check browser notifications`);
+        console.log(`  ✅ Test alert sent successfully!`);
+        console.log(`  - Backend accepted the alert`);
+        console.log(`  - Should appear in alert listener (port 5000) if running`);
+        console.log(`  - Check browser notifications`);
       } else {
-        log.debug(`  ❌ Test alert failed to send`);
-        log.debug(`  - Check console for error details`);
-        log.debug(`  - Verify backend is running on port 8000`);
-        log.debug(`  - Check if alert service is running on port 5000`);
+        console.log(`  ❌ Test alert failed to send`);
+        console.log(`  - Check console for error details`);
+        console.log(`  - Verify backend is running on port 8000`);
+        console.log(`  - Check if alert service is running on port 5000`);
       }
-      log.debug(`${'='.repeat(80)}\n`);
+      console.log(`${'='.repeat(80)}\n`);
 
       return success;
     } catch (error) {
-      log.error(`  ❌ Test alert error:`, error);
-      log.debug(`${'='.repeat(80)}\n`);
+      console.error(`  ❌ Test alert error:`, error);
+      console.log(`${'='.repeat(80)}\n`);
       return false;
     }
   }

@@ -295,16 +295,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 1,       // Más permisivo
         maxCandlesBetween: 150,
         maxBreakoutPercent: 50,     // Muy permisivo para 1 minuto
-        lookbackBars: 2,
-        minBarsBetween: 1,
-        patternTimeLimit: 2000,
         filters: {
-          ...config.filters,
           minConfidence: 70,
           minPatternDuration: 0.1,
           maxPatternDuration: 4,
           duplicatePriceTolerancePercent: 1.0,
-          duplicateTimeToleranceHours: 1
+          duplicateTimeToleranceHours: 1,
+          requireBothRejections: false  // Más permisivo para 1m
         }
       },
       '5m': {
@@ -314,16 +311,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 2,
         maxCandlesBetween: 100,
         maxBreakoutPercent: 25,
-        lookbackBars: 3,
-        minBarsBetween: 2,
-        patternTimeLimit: 1200,
         filters: {
-          ...config.filters,
           minConfidence: 65,
           minPatternDuration: 0.5,
           maxPatternDuration: 12,
           duplicatePriceTolerancePercent: 1.5,
-          duplicateTimeToleranceHours: 3
+          duplicateTimeToleranceHours: 3,
+          requireBothRejections: false
         }
       },
       '15m': {
@@ -333,16 +327,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 3,
         maxCandlesBetween: 80,
         maxBreakoutPercent: 15,
-        lookbackBars: 5,
-        minBarsBetween: 3,
-        patternTimeLimit: 800,
         filters: {
-          ...config.filters,
           minConfidence: 70,
           minPatternDuration: 1,
           maxPatternDuration: 24,
           duplicatePriceTolerancePercent: 2.0,
-          duplicateTimeToleranceHours: 6
+          duplicateTimeToleranceHours: 6,
+          requireBothRejections: false
         }
       },
       '60m': {
@@ -352,16 +343,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 3,
         maxCandlesBetween: 80,
         maxBreakoutPercent: 10,
-        lookbackBars: 10,
-        minBarsBetween: 5,
-        patternTimeLimit: 500,
         filters: {
-          ...config.filters,
           minConfidence: 75,
           minPatternDuration: 3,
           maxPatternDuration: 168,
           duplicatePriceTolerancePercent: 2.5,
-          duplicateTimeToleranceHours: 24
+          duplicateTimeToleranceHours: 24,
+          requireBothRejections: true  // Más estricto para 1h
         }
       }
     };
@@ -380,7 +368,10 @@ const DoubleTopBottomSettings = ({
         maxCandlesBetween: preset.maxCandlesBetween,
         maxBreakoutPercent: preset.maxBreakoutPercent
       },
-      filters: preset.filters
+      filters: {
+        ...prev.filters,  // Mantener valores existentes
+        ...preset.filters  // Sobrescribir con valores del preset
+      }
     }));
 
     console.log(`[PRUEBA_DBT] ${symbol} - Applied ${timeframe} preset`);
@@ -1555,6 +1546,22 @@ const DoubleTopBottomSettings = ({
             }}
           >
             5 Minutes
+          </button>
+          <button
+            onClick={() => applyTimeframePreset('15m')}
+            style={{
+              padding: '8px 16px',
+              background: '#6C5CE7',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            15 Minutes
           </button>
           <button
             onClick={() => applyTimeframePreset('60m')}
