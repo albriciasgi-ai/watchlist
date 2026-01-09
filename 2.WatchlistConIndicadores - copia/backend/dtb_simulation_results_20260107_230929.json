@@ -1,0 +1,1772 @@
+{
+  "timestamp": "2026-01-07T23:09:29.755736",
+  "symbol": "BTCUSDT",
+  "interval": "1",
+  "days": 1,
+  "total_tests": 100,
+  "successful_tests": 100,
+  "top_10": [
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    }
+  ],
+  "all_results": [
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 100,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 200,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 5,
+        "patternTimeLimit": 300,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 10,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 20,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 30,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 40,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 0
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 1.5
+      },
+      "error": null
+    },
+    {
+      "success": true,
+      "pattern_count": 0,
+      "double_tops": 0,
+      "double_bottoms": 0,
+      "avg_confidence": 0,
+      "params": {
+        "maxBreakoutPercent": 3,
+        "lookbackBars": 3,
+        "minBarsBetween": 10,
+        "patternTimeLimit": 50,
+        "minConfidence": 50,
+        "volumeZScoreThreshold": 2
+      },
+      "error": null
+    }
+  ]
+}

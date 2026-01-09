@@ -1,0 +1,82 @@
+react-dom_client.js?v=2b7f99a5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:259 💡 Debug utilities available:
+Logger.js:260    window.toggleDebugMode() - Toggle all logs
+Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
+FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+SupportResistanceIndicator.js:59 [BTCUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/BTCUSDT?interval=1&days=1&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+SupportResistanceIndicator.js:59 [ETHUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ETHUSDT?interval=1&days=1&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
+ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
+FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
+SupportResistanceIndicator.js:70 [ETHUSDT] ✅ S/R loaded: 5 resistances, 2 supports, 2 zones
+FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+SupportResistanceIndicator.js:70 [BTCUSDT] ✅ S/R loaded: 1 resistances, 3 supports, 1 zones

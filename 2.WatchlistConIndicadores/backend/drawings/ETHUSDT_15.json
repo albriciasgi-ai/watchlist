@@ -1,0 +1,158 @@
+{
+  "symbol": "ETHUSDT",
+  "interval": "15",
+  "shapes": [
+    {
+      "type": "trendline",
+      "id": "trendline_1764005130610_0.5794327836199145",
+      "price1": 2757.992843641846,
+      "time1": 1763942400000,
+      "price2": 2849.5013151163853,
+      "time2": 1763994600000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764005138375_0.9246290289028856",
+      "price": 2800.569701897361,
+      "time": 1763908200000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1764005139384_0.6004987812407133",
+      "price": 2803.747079379116,
+      "time": 1763887500000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1764005141623_0.5705207469939805",
+      "price": 2876.826761459477,
+      "time": 1763892000000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1764005142738_0.24974765830961299",
+      "price": 2763.7121231090046,
+      "time": 1763893800000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1764005145872_0.5227399059527686",
+      "price1": 2927.6648011675547,
+      "time1": 1763913600000,
+      "price2": 2871.742957488669,
+      "time2": 1763939700000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "rectangle",
+      "id": "rectangle_1764005162016_0.9478111718689837",
+      "price1": 2805.6535058681684,
+      "time1": 1763916300000,
+      "price2": 2858.397972065299,
+      "time2": 1763936100000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1764005168592_0.3807352205609946",
+      "price1": 2767.52497608711,
+      "time1": 1763943300000,
+      "price2": 2852.043217101789,
+      "time2": 1763955900000
+    },
+    {
+      "type": "fibonacci",
+      "id": "fibonacci_1764005173939_0.3357133595947893",
+      "price1": 2937.8324091091704,
+      "time1": 1763896500000,
+      "price2": 2829.1660992331545,
+      "time2": 1763908200000
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1764005180768_0.2282462189483624",
+      "entryPrice": 2777.057108532375,
+      "tpPrice": 2888.13939287367,
+      "slPrice": 2721.5159663617274,
+      "time": 1763881200000,
+      "width": 100
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1764005185630_0.40714955686022136",
+      "entryPrice": 2791.673044948447,
+      "tpPrice": 2680.006123150509,
+      "slPrice": 2847.506505847416,
+      "time": 1763974800000,
+      "width": 100
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1764005190241_0.5680670455191336",
+      "price": 2940.3743110945743,
+      "time": 1763978400000,
+      "text": "sdsf",
+      "customWidth": null,
+      "customHeight": null,
+      "style": {
+        "bgColor": "#FBBF24ff",
+        "textColor": "#78350F",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 30
+      }
+    }
+  ],
+  "updated_at": "2025-11-24T17:40:15.467189+00:00",
+  "total_shapes": 12
+}

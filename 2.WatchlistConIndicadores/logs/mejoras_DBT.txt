@@ -1,0 +1,14 @@
+Esto es lo que encontré en las pruebas:
+1. No está identificando bien los double bottoms a pesar de cambiar los parámetros en el indicador. (mira la razón 5, puede ser esta respuesta).
+2. La línea que traza debe ser entre los dos picos del double top/bottom para que sea fácil identificarlos. Y que permita al usuario escoger que la línea se extienda hacia la derecha indefinidamente pero con menor grosor para que no se vuelve invasivo
+3. Hay muchos patrones que no ve que sí existen.
+4. Una vez que ha identificado algunos patrones, los borra.
+5. El problema en la falta de detección puede ser el lookback candles, sólo toma en cuenta hasta las últimas 200. Debe ser todo el histórico disponible
+6. El double bottom/top lo está calculando cuando el segundo pico sobrepasa al primero pero se cierra arriba? Sino, hace falta habilitar esa flexibilidad.
+Revisa los logs en los siguientes archivos: LOG_ETH_60MIN.txt, LOG_BTC_60MIN.txt,LOG_ETH_5MIN.txt 
+
+
+================
+
+el tema de zscore no sólo debe aplicarse al puntaje de la confianza porque le resta importancia al volumen
+es mejor tenerlo como un filtro extra, pasa o no pasa.

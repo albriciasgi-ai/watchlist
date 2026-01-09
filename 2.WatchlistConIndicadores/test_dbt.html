@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Double Top/Bottom Patterns</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 20px;
+        }
+        button {
+            background: #333;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #444;
+        }
+        pre {
+            background: #000;
+            padding: 10px;
+            border: 1px solid #333;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .info { color: #08f; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Double Top/Bottom Detection</h1>
+    <button onclick="testDetection()">Test BTCUSDT Pattern Detection</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+
+    <h2>Response:</h2>
+    <pre id="logs"></pre>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logs.innerHTML += `<span class="${color}">[${timestamp}] ${message}</span>\n`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        async function testDetection() {
+            log('Testing Double Top/Bottom detection...', 'info');
+
+            try {
+                // First fetch historical data
+                log('Fetching historical data...', 'info');
+                const histResponse = await fetch(`${API_URL}/api/historical/BTCUSDT?interval=60&days=90`);
+                const histData = await histResponse.json();
+
+                if (!histResponse.ok || !histData.data || histData.data.length === 0) {
+                    throw new Error('Failed to fetch historical data');
+                }
+
+                log(`✓ Historical data: ${histData.data.length} candles`, 'success');
+
+                // Now test pattern detection
+                log('Testing pattern detection...', 'info');
+
+                const config = {
+                    doubleTopBottom: {
+                        enabled: true,
+                        minConfidence: 20,
+                        lookbackCandles: 50,
+                        requireBothRejections: false,
+                        maxBreakoutPercent: 15,
+                        volumeFilter: {
+                            enabled: false
+                        }
+                    }
+                };
+
+                const response = await fetch(`${API_URL}/api/double-topbottom/detect`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: 'BTCUSDT',
+                        interval: '60',  // Should be string
+                        days: 90,
+                        config: config
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    if (data.patterns && data.patterns.length > 0) {
+                        log(`✅ SUCCESS: Found ${data.patterns.length} patterns!`, 'success');
+                        data.patterns.forEach((pattern, i) => {
+                            log(`Pattern ${i+1}: ${pattern.type} @ $${pattern.level_price.toFixed(2)} (confidence: ${pattern.confidence.toFixed(1)}%)`, 'success');
+                        });
+                    } else {
+                        log('⚠️ No patterns found (this could be normal)', 'info');
+                    }
+                    log('Full response:', 'info');
+                    log(JSON.stringify(data, null, 2), 'info');
+                } else {
+                    log(`❌ ERROR: ${data.error || data.detail || data.message || 'Unknown error'}`, 'error');
+                    log('Full error response:', 'error');
+                    log(JSON.stringify(data, null, 2), 'error');
+                }
+
+            } catch (error) {
+                log(`❌ EXCEPTION: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+            log('Logs cleared', 'info');
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            log('Test page loaded. Click the button to test pattern detection.', 'info');
+        };
+    </script>
+</body>
+</html>

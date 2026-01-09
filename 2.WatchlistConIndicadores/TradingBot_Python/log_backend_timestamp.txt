@@ -1,0 +1,141 @@
+INFO:     Started server process [360]
+INFO:     Waiting for application startup.
+ℹ️ 🚀 Trading Bot Backend starting...
+ℹ️ Loaded configuration for 16 symbols
+🔧 BybitClient initialized: https://api-demo.bybit.com (mode: demo)
+✅ Loaded credentials from file (Demo Trading)
+✅ ✅ Backend ready
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:7000 (Press CTRL+C to quit)
+INFO:     ('127.0.0.1', 50951) - "WebSocket /ws" [accepted]
+ℹ️ WebSocket client connected (total: 1)
+INFO:     connection open
+INFO:     ('127.0.0.1', 63045) - "WebSocket /ws" [accepted]
+ℹ️ WebSocket client connected (total: 2)
+INFO:     connection open
+INFO:     127.0.0.1:63047 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52922 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58734 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49780 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62919 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49166 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49897 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54432 - "GET /api/status HTTP/1.1" 200 OK
+🔧 BybitClient initialized: https://api-demo.bybit.com (mode: demo)
+ℹ️ Credentials saved to file (Demo Trading)
+✅ ✅ Credentials configured: Demo Trading (api-demo.bybit.com)
+⏰ Time synced: offset = 3695ms
+✅ ✅ Credentials validated successfully
+INFO:     127.0.0.1:57437 - "POST /api/credentials HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56705 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54743 - "GET /api/status HTTP/1.1" 200 OK
+✅ Alert parsed: Buy IOTAUSDT @ $0.2258
+🚫 Alert REJECTED: IOTAUSDT is DISABLED
+ℹ️ Processed 1 alerts: 0 successful, 1 failed
+INFO:     127.0.0.1:58932 - "POST /api/alert HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60645 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49672 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56999 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53472 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53473 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50874 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50875 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64444 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62924 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61984 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54853 - "GET /api/status HTTP/1.1" 200 OK
+✅ Alert parsed: Buy TRXUSDT @ $0.2258
+✅ Alert ALLOWED: TRXUSDT accepts Buy (direction=BOTH)
+INFO:     127.0.0.1:60915 - "GET /api/status HTTP/1.1" 200 OK
+⚠️ Position already exists for TRXUSDT, skipping
+ℹ️ Processed 1 alerts: 0 successful, 1 failed
+INFO:     127.0.0.1:62855 - "POST /api/alert HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50259 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64817 - "GET /api/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51806 - "GET /api/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53123 - "GET /api/status HTTP/1.1" 200 OK
+❌ Bybit API Error 10002: invalid request, please check your server timestamp or recv_window param: req_timestamp[1763762961920],server_timestamp[1763762967322],recv_window[5000]
+   Endpoint: GET /v5/position/list
+   Using: https://api-demo.bybit.com
+⚠️ Timestamp error, resyncing... (attempt 1)
+INFO:     127.0.0.1:55006 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55004 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55003 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55005 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54998 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3290ms
+INFO:     127.0.0.1:54997 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 2995ms
+⏰ Time synced: offset = 2995ms
+INFO:     127.0.0.1:64771 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64775 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64774 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57014 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57012 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65028 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51614 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51359 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65026 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51760 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+❌ Bybit API Error 10002: invalid request, please check your server timestamp or recv_window param: req_timestamp[1763762973201],server_timestamp[1763762978341],recv_window[5000]
+   Endpoint: GET /v5/position/list
+   Using: https://api-demo.bybit.com
+⚠️ Timestamp error, resyncing... (attempt 1)
+INFO:     127.0.0.1:56524 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3284ms
+INFO:     127.0.0.1:51148 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54957 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3261ms
+INFO:     127.0.0.1:61096 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3263ms
+INFO:     127.0.0.1:51759 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61098 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65127 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55459 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62943 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50629 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50299 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50301 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51667 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51665 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55629 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55380 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65505 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65503 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52762 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52760 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61742 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62644 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64654 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51989 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62643 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50401 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62642 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50399 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53967 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62169 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60160 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60342 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53969 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60162 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51182 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62268 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+❌ Bybit API Error 10002: invalid request, please check your server timestamp or recv_window param: req_timestamp[1763763002569],server_timestamp[1763763008129],recv_window[5000]
+   Endpoint: GET /v5/position/list
+   Using: https://api-demo.bybit.com
+⚠️ Timestamp error, resyncing... (attempt 1)
+INFO:     127.0.0.1:51181 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54701 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56997 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62270 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3259ms
+INFO:     127.0.0.1:53999 - "GET /api/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51991 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+⏰ Time synced: offset = 3237ms
+
+
+
+
+ESTA ABRIENDO SÓLO DE A UNA POSICION. sI HAY ERROR EN LA PRIMERA, DESHECHA LAS SIGUIENTES

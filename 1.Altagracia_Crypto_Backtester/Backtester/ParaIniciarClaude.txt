@@ -1,0 +1,43 @@
+Para volver a abrir Claude Code después de reiniciar el PC sin necesidad de reinstalar, sigue estos pasos:
+
+  Opción 1: Desde el Directorio del Proyecto
+
+  1. Abre una terminal (PowerShell o CMD)
+  2. Navega al directorio del proyecto:
+  cd "C:\Users\inven\OneDrive\Escritorio\backup Altagracia trading
+  platform--VolProf4_ListoXaIndicadores\WatchlistConIndicadores"
+  3. Ejecuta:
+  claude
+
+  Opción 2: Desde Cualquier Ubicación
+
+  Si instalaste Claude Code globalmente, simplemente abre una terminal en cualquier lugar y ejecuta:
+  claude
+
+  Luego navega al proyecto con:
+  cd "C:\Users\inven\OneDrive\Escritorio\backup Altagracia trading
+  platform--VolProf4_ListoXaIndicadores\WatchlistConIndicadores"
+
+  Opción 3: Crear un Acceso Directo (Recomendado)
+
+  Para no tener que escribir la ruta cada vez, puedes crear un script .bat:
+
+  1. Crea un archivo llamado abrir_claude.bat en el escritorio
+  2. Contenido:
+  @echo off
+  cd /d "C:\Users\inven\OneDrive\Escritorio\backup Altagracia trading
+  platform--VolProf4_ListoXaIndicadores\WatchlistConIndicadores"
+  claude
+  3. Doble clic en el archivo para abrir Claude Code directamente
+
+  Verificar Instalación
+
+  Si después de reiniciar obtienes un error de "comando no encontrado", verifica que Claude Code esté instalado:
+
+  claude --version
+
+  Si no está instalado, reinstala con:
+  npm install -g @anthropic-ai/claude-code
+
+  Nota: La instalación de Claude Code es permanente. No deberías necesitar reinstalar después de cada reinicio a
+  menos que haya algún problema con las variables de entorno o la instalación de Node.js.

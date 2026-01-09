@@ -1,0 +1,281 @@
+/* src/components/AlertHistoryPanel.css */
+/* Estilos para el panel de historial de alertas */
+
+.alert-history-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  max-width: 90vw;
+  max-height: 80vh;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.alert-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #2a2a2a;
+  border-bottom: 1px solid #444;
+  border-radius: 8px 8px 0 0;
+}
+
+.alert-history-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.alert-history-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.auto-refresh-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+  user-select: none;
+}
+
+.auto-refresh-toggle input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.auto-refresh-toggle span {
+  font-size: 12px;
+}
+
+.btn-refresh,
+.btn-clear,
+.btn-close {
+  background: transparent;
+  border: 1px solid #555;
+  color: #ccc;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+  background: #3a3a3a;
+  border-color: #2196F3;
+  color: #2196F3;
+}
+
+.btn-clear:hover {
+  background: #3a3a3a;
+  border-color: #F44336;
+  color: #F44336;
+}
+
+.btn-close {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 4px 12px;
+}
+
+.btn-close:hover {
+  background: #3a3a3a;
+  border-color: #fff;
+  color: #fff;
+}
+
+.alert-history-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  background: #1e1e1e;
+}
+
+.no-alerts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #777;
+  font-size: 14px;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alert-item {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-left: 4px solid #666;
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: all 0.2s;
+}
+
+.alert-item:hover {
+  background: #333;
+  border-left-color: #2196F3;
+}
+
+.alert-item.critical {
+  border-left-color: #F44336;
+}
+
+.alert-item.high {
+  border-left-color: #FF9800;
+}
+
+.alert-item.medium {
+  border-left-color: #FFC107;
+}
+
+.alert-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.alert-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.alert-type {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pattern-type {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.direction-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.direction-badge[data-direction="LONG"] {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+  border: 1px solid #4CAF50;
+}
+
+.direction-badge[data-direction="SHORT"] {
+  background: rgba(244, 67, 54, 0.2);
+  color: #F44336;
+  border: 1px solid #F44336;
+}
+
+.alert-time {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+}
+
+.alert-details-row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  border-top: 1px solid #333;
+}
+
+.alert-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.metric-label {
+  color: #888;
+}
+
+.metric-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+.level-badge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.alert-vwap-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #333;
+  font-size: 11px;
+}
+
+.vwap-label {
+  color: #888;
+}
+
+.vwap-status {
+  color: #fff;
+  font-weight: 500;
+}
+
+.alert-history-footer {
+  padding: 10px 16px;
+  background: #2a2a2a;
+  border-top: 1px solid #444;
+  border-radius: 0 0 8px 8px;
+  text-align: center;
+}
+
+.alerts-count {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Scrollbar personalizado */
+.alert-history-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.alert-history-body::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.alert-history-body::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.alert-history-body::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
