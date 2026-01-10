@@ -478,27 +478,55 @@ class DoubleTopBottomDetectorFixed:
         return patterns
 
     def _filter_duplicate_patterns(self, patterns: List[DoublePattern], config: Dict) -> List[DoublePattern]:
-        """Remove duplicate patterns in the same zone"""
+        """
+        Remove duplicate patterns in the same zone AND time period.
+
+        Two patterns are duplicates only if:
+        1. Same type (DOUBLE_TOP or DOUBLE_BOTTOM)
+        2. Price within 0.5% tolerance
+        3. Second extreme timestamps within 30 candles of each other
+
+        This allows multiple patterns at the same price level but different times
+        (e.g., testing support at 10am and again at 8pm are separate patterns)
+        """
         if not patterns:
             return patterns
 
         filtered = []
         price_tolerance = 0.005  # 0.5% tolerance
+        candle_time_tolerance = 30  # Consider patterns within 30 candles as potential duplicates
 
-        for pattern in patterns:
+        # Sort patterns by timestamp to process chronologically
+        sorted_patterns = sorted(patterns, key=lambda p: p.second_extreme['timestamp'])
+
+        stats = {'total': len(patterns), 'kept': 0, 'removed_price': 0, 'removed_time_and_price': 0}
+
+        for pattern in sorted_patterns:
             is_duplicate = False
             for existing in filtered:
                 if pattern.type == existing.type:
+                    # Check price similarity
                     price_diff = abs(pattern.level_price - existing.level_price) / existing.level_price
-                    if price_diff < price_tolerance:
+                    price_similar = price_diff < price_tolerance
+
+                    # Check temporal proximity (by candle index, not timestamp)
+                    candle_diff = abs(pattern.second_extreme['candle_index'] - existing.second_extreme['candle_index'])
+                    time_close = candle_diff < candle_time_tolerance
+
+                    # Only consider duplicate if BOTH price AND time are close
+                    if price_similar and time_close:
                         # Keep the one with higher confidence
                         if pattern.confidence > existing.confidence:
                             filtered.remove(existing)
                             filtered.append(pattern)
                         is_duplicate = True
+                        stats['removed_time_and_price'] += 1
                         break
 
             if not is_duplicate:
                 filtered.append(pattern)
+                stats['kept'] += 1
+
+        print(f"  [FILTER] {stats['total']} candidates -> {stats['kept']} kept ({stats['removed_time_and_price']} duplicates removed)")
 
         return filtered
