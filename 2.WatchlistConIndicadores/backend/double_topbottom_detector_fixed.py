@@ -318,7 +318,7 @@ class DoubleTopBottomDetectorFixed:
         z_score_threshold: float,
         volume_filter_enabled: bool
     ) -> List[DoublePattern]:
-        """Find double top patterns"""
+        """Find double top patterns with dominance validation"""
         patterns = []
 
         for i in range(len(highs)):
@@ -338,6 +338,21 @@ class DoubleTopBottomDetectorFixed:
 
                 if price_variance > price_margin_pct * 100:
                     continue
+
+                # DOMINANCE VALIDATION: No high between the two extremes should exceed both of them
+                # This ensures the two peaks are the dominant highs in this region
+                max_extreme_price = max(first['price'], second['price'])
+                has_higher_between = False
+
+                for k in range(first['candle_index'] + 1, second['candle_index']):
+                    if k < len(candles):
+                        between_high = float(candles[k].get('high', 0))
+                        if between_high > max_extreme_price * 1.0001:  # Small tolerance
+                            has_higher_between = True
+                            break
+
+                if has_higher_between:
+                    continue  # Invalid pattern - there's a higher high between the two peaks
 
                 # Calculate confidence
                 base_confidence = 70
@@ -387,7 +402,7 @@ class DoubleTopBottomDetectorFixed:
         z_score_threshold: float,
         volume_filter_enabled: bool
     ) -> List[DoublePattern]:
-        """Find double bottom patterns"""
+        """Find double bottom patterns with dominance validation"""
         patterns = []
 
         for i in range(len(lows)):
@@ -407,6 +422,21 @@ class DoubleTopBottomDetectorFixed:
 
                 if price_variance > price_margin_pct * 100:
                     continue
+
+                # DOMINANCE VALIDATION: No low between the two extremes should be lower than both
+                # This ensures the two troughs are the dominant lows in this region
+                min_extreme_price = min(first['price'], second['price'])
+                has_lower_between = False
+
+                for k in range(first['candle_index'] + 1, second['candle_index']):
+                    if k < len(candles):
+                        between_low = float(candles[k].get('low', float('inf')))
+                        if between_low < min_extreme_price * 0.9999:  # Small tolerance
+                            has_lower_between = True
+                            break
+
+                if has_lower_between:
+                    continue  # Invalid pattern - there's a lower low between the two troughs
 
                 # Calculate confidence
                 base_confidence = 70
