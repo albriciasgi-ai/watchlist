@@ -160,75 +160,50 @@ class DoubleTopBottomDetectorFixed:
         interval: str = None
     ) -> List[Dict]:
         """
-        FIXED VERSION: Encuentra extremos locales incluyendo bordes
-        y con tolerancia para timeframes cortos
+        FIXED VERSION: Encuentra extremos locales VERDADEROS.
+
+        Un punto es un extremo local si y solo si:
+        - Para highs: es el HIGH más alto en su ventana
+        - Para lows: es el LOW más bajo en su ventana
+
+        Se permite una pequeña tolerancia para precios "iguales" (0.01%)
         """
         extremes = []
         price_key = 'high' if extreme_type == 'high' else 'low'
         is_high = extreme_type == 'high'
 
-        # Tolerancia de precio para considerar valores "iguales" (0.01% para 1-min)
-        price_tolerance = 0.0001 if interval == "1" else 0
+        # Tolerancia para considerar precios como "iguales" (0.01%)
+        price_tolerance = 0.0001
 
-        # IMPORTANTE: Buscar en TODOS los índices, ajustando ventana en los bordes
         for i in range(len(candles)):
             candle = candles[i]
             current_price = float(candle[price_key])
 
-            # Definir ventana de comparación (ajustada en los bordes)
-            left_start = max(0, i - window_size)
-            left_end = i
-            right_start = i + 1
-            right_end = min(len(candles), i + window_size + 1)
+            # Definir ventana de comparación
+            window_start = max(0, i - window_size)
+            window_end = min(len(candles), i + window_size + 1)
 
-            # Para los bordes, requerir menos comparaciones
-            min_comparisons = window_size // 2 if i < window_size or i >= len(candles) - window_size else window_size
-
+            # Verificar que sea el extremo verdadero en la ventana
             is_extreme = True
-            higher_count = 0
-            lower_count = 0
 
-            # Verificar lado izquierdo
-            for j in range(left_start, left_end):
+            for j in range(window_start, window_end):
+                if j == i:
+                    continue  # No comparar consigo mismo
+
                 compare_price = float(candles[j][price_key])
-                price_diff = abs(current_price - compare_price) / current_price
 
                 if is_high:
+                    # Para un HIGH: ninguna vela en la ventana debe tener un high mayor
+                    # (con tolerancia para precios "iguales")
                     if compare_price > current_price * (1 + price_tolerance):
-                        higher_count += 1
-                        if higher_count > min_comparisons // 2:
-                            is_extreme = False
-                            break
+                        is_extreme = False
+                        break
                 else:
+                    # Para un LOW: ninguna vela en la ventana debe tener un low menor
                     if compare_price < current_price * (1 - price_tolerance):
-                        lower_count += 1
-                        if lower_count > min_comparisons // 2:
-                            is_extreme = False
-                            break
+                        is_extreme = False
+                        break
 
-            if not is_extreme:
-                continue
-
-            # Verificar lado derecho
-            for j in range(right_start, right_end):
-                if j < len(candles):
-                    compare_price = float(candles[j][price_key])
-                    price_diff = abs(current_price - compare_price) / current_price
-
-                    if is_high:
-                        if compare_price > current_price * (1 + price_tolerance):
-                            higher_count += 1
-                            if higher_count > min_comparisons // 2:
-                                is_extreme = False
-                                break
-                    else:
-                        if compare_price < current_price * (1 - price_tolerance):
-                            lower_count += 1
-                            if lower_count > min_comparisons // 2:
-                                is_extreme = False
-                                break
-
-            # Si es un extremo, agregarlo
             if is_extreme:
                 extremes.append({
                     'candle_index': i,
@@ -240,14 +215,6 @@ class DoubleTopBottomDetectorFixed:
                     'open': candle.get('open'),
                     'close': candle.get('close')
                 })
-
-        # Para timeframes de 1 minuto, agregar extremos adicionales
-        # basados en cambios de dirección significativos
-        if interval == "1" and len(extremes) < 20:
-            additional = self._find_swing_extremes(candles, extreme_type)
-            for ext in additional:
-                if not any(e['candle_index'] == ext['candle_index'] for e in extremes):
-                    extremes.append(ext)
 
         # Ordenar por índice
         extremes.sort(key=lambda x: x['candle_index'])
