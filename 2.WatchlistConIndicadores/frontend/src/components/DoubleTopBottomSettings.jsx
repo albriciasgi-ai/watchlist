@@ -293,7 +293,7 @@ const DoubleTopBottomSettings = ({
         candlesPerExtreme: 2,
         priceMarginPercent: 10.0,  // Aumentado para micro movimientos
         minCandlesBetween: 1,       // Más permisivo
-        maxCandlesBetween: 150,
+        maxCandlesBetween: 400,     // Aumentado para cubrir ~6.5 horas
         maxBreakoutPercent: 50,     // Muy permisivo para 1 minuto
         filters: {
           minConfidence: 70,
@@ -499,13 +499,13 @@ const DoubleTopBottomSettings = ({
         <input
           type="range"
           min="10"
-          max="150"
+          max="500"
           value={config.doubleTopBottom.maxCandlesBetween}
           onChange={(e) => updateConfig('doubleTopBottom.maxCandlesBetween', parseInt(e.target.value))}
           style={styles.rangeInput}
         />
         <p style={styles.description}>
-          Maximum candles between extremes (10-150)
+          Maximum candles between extremes (10-500)
         </p>
       </div>
 
