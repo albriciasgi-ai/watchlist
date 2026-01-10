@@ -78,9 +78,16 @@ class DoubleTopBottomDetectorFixed:
         z_score_threshold = config.get('doubleTopBottom', {}).get('volumeFilter', {}).get('zScoreThreshold', 1.5)
         z_score_period = config.get('doubleTopBottom', {}).get('volumeFilter', {}).get('zScorePeriod', 20)
 
-        # Calculate z-scores if needed
+        # High-volume extreme filter (different thresholds for each extreme)
+        high_vol_extremes_config = config.get('doubleTopBottom', {}).get('requireHighVolumeAtExtremes', {})
+        high_vol_extremes_enabled = high_vol_extremes_config.get('enabled', False)
+        z_score_threshold_first = high_vol_extremes_config.get('zScoreThresholdFirst', 1.5)
+        z_score_threshold_second = high_vol_extremes_config.get('zScoreThresholdSecond', 0.5)
+        volume_window_candles = high_vol_extremes_config.get('volumeWindowCandles', 3)
+
+        # Calculate z-scores if any volume filter is enabled
         z_scores = []
-        if volume_filter_enabled:
+        if volume_filter_enabled or high_vol_extremes_enabled:
             z_scores = self._calculate_z_scores(candles, z_score_period)
 
         # Use ALL available candles
@@ -119,7 +126,11 @@ class DoubleTopBottomDetectorFixed:
             max_candles_between,
             z_scores,
             z_score_threshold,
-            volume_filter_enabled
+            volume_filter_enabled,
+            high_vol_extremes_enabled,
+            z_score_threshold_first,
+            z_score_threshold_second,
+            volume_window_candles
         )
 
         detected_patterns.extend(double_tops)
@@ -134,7 +145,11 @@ class DoubleTopBottomDetectorFixed:
             max_candles_between,
             z_scores,
             z_score_threshold,
-            volume_filter_enabled
+            volume_filter_enabled,
+            high_vol_extremes_enabled,
+            z_score_threshold_first,
+            z_score_threshold_second,
+            volume_window_candles
         )
 
         detected_patterns.extend(double_bottoms)
@@ -307,6 +322,15 @@ class DoubleTopBottomDetectorFixed:
 
         return z_scores
 
+    def _get_max_zscore_in_window(self, z_scores: List[float], center_idx: int, window: int) -> float:
+        """Get max z-score in ±window candles around center_idx"""
+        if not z_scores:
+            return 0
+        start = max(0, center_idx - window)
+        end = min(len(z_scores), center_idx + window + 1)
+        window_scores = z_scores[start:end]
+        return max(window_scores) if window_scores else 0
+
     def _find_double_tops(
         self,
         highs: List[Dict],
@@ -317,9 +341,13 @@ class DoubleTopBottomDetectorFixed:
         max_candles_between: int,
         z_scores: List[float],
         z_score_threshold: float,
-        volume_filter_enabled: bool
+        volume_filter_enabled: bool,
+        high_vol_extremes_enabled: bool = False,
+        z_score_threshold_first: float = 1.5,
+        z_score_threshold_second: float = 0.5,
+        volume_window_candles: int = 3
     ) -> List[DoublePattern]:
-        """Find double top patterns with dominance validation"""
+        """Find double top patterns with dominance validation and volume filters"""
         patterns = []
 
         # Diagnostic stats
@@ -330,6 +358,7 @@ class DoubleTopBottomDetectorFixed:
             'rejected_price_diff': 0,
             'rejected_dominance': 0,
             'rejected_volume': 0,
+            'rejected_volume_extremes': 0,
             'accepted': 0
         }
 
@@ -358,30 +387,38 @@ class DoubleTopBottomDetectorFixed:
                     continue
 
                 # DOMINANCE VALIDATION: No high between the two extremes should exceed both of them
-                # This ensures the two peaks are the dominant highs in this region
                 max_extreme_price = max(first['price'], second['price'])
                 has_higher_between = False
 
                 for k in range(first['candle_index'] + 1, second['candle_index']):
                     if k < len(candles):
                         between_high = float(candles[k].get('high', 0))
-                        if between_high > max_extreme_price * 1.0001:  # Small tolerance
+                        if between_high > max_extreme_price * 1.0001:
                             has_higher_between = True
                             break
 
                 if has_higher_between:
                     stats['rejected_dominance'] += 1
-                    continue  # Invalid pattern - there's a higher high between the two peaks
+                    continue
 
-                # VOLUME FILTER: Check if volume at extremes meets threshold
-                first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
-                second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
-                avg_zscore = (first_zscore + second_zscore) / 2
+                # Get z-scores (with window search for high_vol_extremes)
+                if high_vol_extremes_enabled and z_scores:
+                    first_zscore = self._get_max_zscore_in_window(z_scores, first['candle_index'], volume_window_candles)
+                    second_zscore = self._get_max_zscore_in_window(z_scores, second['candle_index'], volume_window_candles)
+                else:
+                    first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
+                    second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
 
+                # VOLUME FILTER 1: Basic (max of both >= threshold)
                 if volume_filter_enabled and z_scores:
-                    # At least one extreme should have significant volume
                     if max(first_zscore, second_zscore) < z_score_threshold:
                         stats['rejected_volume'] += 1
+                        continue
+
+                # VOLUME FILTER 2: High-volume extremes (different thresholds for each)
+                if high_vol_extremes_enabled and z_scores:
+                    if first_zscore < z_score_threshold_first or second_zscore < z_score_threshold_second:
+                        stats['rejected_volume_extremes'] += 1
                         continue
 
                 stats['accepted'] += 1
@@ -390,7 +427,6 @@ class DoubleTopBottomDetectorFixed:
                 confidence = 50  # Base
 
                 # Price variance contribution (0-20 points)
-                # Better if extremes are at similar prices
                 if price_variance < 0.3:
                     confidence += 20
                 elif price_variance < 0.5:
@@ -400,26 +436,31 @@ class DoubleTopBottomDetectorFixed:
                 elif price_variance < 2.0:
                     confidence += 5
 
-                # Volume contribution (0-20 points)
-                # Higher volume at extremes = more significant pattern
-                if avg_zscore >= 2.5:
+                # Volume contribution (0-20 points) - use MAX of both extremes
+                max_zscore = max(first_zscore, second_zscore)
+                if max_zscore >= 2.5:
                     confidence += 20
-                elif avg_zscore >= 2.0:
+                elif max_zscore >= 2.0:
                     confidence += 15
-                elif avg_zscore >= 1.5:
+                elif max_zscore >= 1.5:
                     confidence += 10
-                elif avg_zscore >= 1.0:
+                elif max_zscore >= 1.0:
+                    confidence += 5
+
+                # Bonus if BOTH extremes have good volume (0-10 points)
+                min_zscore = min(first_zscore, second_zscore)
+                if min_zscore >= 1.5:
+                    confidence += 10
+                elif min_zscore >= 1.0:
                     confidence += 5
 
                 # Distance contribution (0-10 points)
-                # Optimal distance: 20-100 candles
                 if 20 <= candles_between <= 100:
                     confidence += 10
                 elif 10 <= candles_between <= 150:
                     confidence += 5
 
                 # Rejection pattern bonus (0-10 points)
-                # Check for shooting star at tops (small body, long upper wick)
                 first_candle = candles[first['candle_index']]
                 second_candle = candles[second['candle_index']]
                 rejection_bonus = 0
@@ -430,17 +471,16 @@ class DoubleTopBottomDetectorFixed:
                     total_range = float(candle.get('high', 0)) - float(candle.get('low', 0))
 
                     if total_range > 0:
-                        # Shooting star: upper wick > 60% of total range, body < 30%
                         if upper_wick / total_range > 0.6 and body / total_range < 0.3:
                             rejection_bonus += 5
 
-                confidence += min(rejection_bonus, 10)  # Cap at 10
+                confidence += min(rejection_bonus, 10)
 
                 # Create pattern
                 pattern = DoublePattern(
                     type="DOUBLE_TOP",
                     timestamp=second['timestamp'],
-                    confidence=min(confidence, 100),  # Cap at 100
+                    confidence=min(confidence, 100),
                     first_extreme={
                         'timestamp': first['timestamp'],
                         'price': first['price'],
@@ -460,7 +500,7 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
-        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dominance={stats['rejected_dominance']}, volume={stats.get('rejected_volume', 0)} | Accepted: {stats['accepted']}")
+        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']} | Accepted: {stats['accepted']}")
 
         return patterns
 
@@ -474,9 +514,13 @@ class DoubleTopBottomDetectorFixed:
         max_candles_between: int,
         z_scores: List[float],
         z_score_threshold: float,
-        volume_filter_enabled: bool
+        volume_filter_enabled: bool,
+        high_vol_extremes_enabled: bool = False,
+        z_score_threshold_first: float = 1.5,
+        z_score_threshold_second: float = 0.5,
+        volume_window_candles: int = 3
     ) -> List[DoublePattern]:
-        """Find double bottom patterns with dominance validation"""
+        """Find double bottom patterns with dominance validation and volume filters"""
         patterns = []
 
         # Diagnostic stats
@@ -487,6 +531,7 @@ class DoubleTopBottomDetectorFixed:
             'rejected_price_diff': 0,
             'rejected_dominance': 0,
             'rejected_volume': 0,
+            'rejected_volume_extremes': 0,
             'accepted': 0
         }
 
@@ -515,30 +560,38 @@ class DoubleTopBottomDetectorFixed:
                     continue
 
                 # DOMINANCE VALIDATION: No low between the two extremes should be lower than both
-                # This ensures the two troughs are the dominant lows in this region
                 min_extreme_price = min(first['price'], second['price'])
                 has_lower_between = False
 
                 for k in range(first['candle_index'] + 1, second['candle_index']):
                     if k < len(candles):
                         between_low = float(candles[k].get('low', float('inf')))
-                        if between_low < min_extreme_price * 0.9999:  # Small tolerance
+                        if between_low < min_extreme_price * 0.9999:
                             has_lower_between = True
                             break
 
                 if has_lower_between:
                     stats['rejected_dominance'] += 1
-                    continue  # Invalid pattern - there's a lower low between the two troughs
+                    continue
 
-                # VOLUME FILTER: Check if volume at extremes meets threshold
-                first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
-                second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
-                avg_zscore = (first_zscore + second_zscore) / 2
+                # Get z-scores (with window search for high_vol_extremes)
+                if high_vol_extremes_enabled and z_scores:
+                    first_zscore = self._get_max_zscore_in_window(z_scores, first['candle_index'], volume_window_candles)
+                    second_zscore = self._get_max_zscore_in_window(z_scores, second['candle_index'], volume_window_candles)
+                else:
+                    first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
+                    second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
 
+                # VOLUME FILTER 1: Basic (max of both >= threshold)
                 if volume_filter_enabled and z_scores:
-                    # At least one extreme should have significant volume
                     if max(first_zscore, second_zscore) < z_score_threshold:
                         stats['rejected_volume'] += 1
+                        continue
+
+                # VOLUME FILTER 2: High-volume extremes (different thresholds for each)
+                if high_vol_extremes_enabled and z_scores:
+                    if first_zscore < z_score_threshold_first or second_zscore < z_score_threshold_second:
+                        stats['rejected_volume_extremes'] += 1
                         continue
 
                 stats['accepted'] += 1
@@ -547,7 +600,6 @@ class DoubleTopBottomDetectorFixed:
                 confidence = 50  # Base
 
                 # Price variance contribution (0-20 points)
-                # Better if extremes are at similar prices
                 if price_variance < 0.3:
                     confidence += 20
                 elif price_variance < 0.5:
@@ -557,26 +609,31 @@ class DoubleTopBottomDetectorFixed:
                 elif price_variance < 2.0:
                     confidence += 5
 
-                # Volume contribution (0-20 points)
-                # Higher volume at extremes = more significant pattern
-                if avg_zscore >= 2.5:
+                # Volume contribution (0-20 points) - use MAX of both extremes
+                max_zscore = max(first_zscore, second_zscore)
+                if max_zscore >= 2.5:
                     confidence += 20
-                elif avg_zscore >= 2.0:
+                elif max_zscore >= 2.0:
                     confidence += 15
-                elif avg_zscore >= 1.5:
+                elif max_zscore >= 1.5:
                     confidence += 10
-                elif avg_zscore >= 1.0:
+                elif max_zscore >= 1.0:
+                    confidence += 5
+
+                # Bonus if BOTH extremes have good volume (0-10 points)
+                min_zscore = min(first_zscore, second_zscore)
+                if min_zscore >= 1.5:
+                    confidence += 10
+                elif min_zscore >= 1.0:
                     confidence += 5
 
                 # Distance contribution (0-10 points)
-                # Optimal distance: 20-100 candles
                 if 20 <= candles_between <= 100:
                     confidence += 10
                 elif 10 <= candles_between <= 150:
                     confidence += 5
 
-                # Rejection pattern bonus (0-10 points)
-                # Check for hammer at bottoms (small body, long lower wick)
+                # Rejection pattern bonus (0-10 points) - Hammer for bottoms
                 first_candle = candles[first['candle_index']]
                 second_candle = candles[second['candle_index']]
                 rejection_bonus = 0
@@ -587,17 +644,16 @@ class DoubleTopBottomDetectorFixed:
                     total_range = float(candle.get('high', 0)) - float(candle.get('low', 0))
 
                     if total_range > 0:
-                        # Hammer: lower wick > 60% of total range, body < 30%
                         if lower_wick / total_range > 0.6 and body / total_range < 0.3:
                             rejection_bonus += 5
 
-                confidence += min(rejection_bonus, 10)  # Cap at 10
+                confidence += min(rejection_bonus, 10)
 
                 # Create pattern
                 pattern = DoublePattern(
                     type="DOUBLE_BOTTOM",
                     timestamp=second['timestamp'],
-                    confidence=min(confidence, 100),  # Cap at 100
+                    confidence=min(confidence, 100),
                     first_extreme={
                         'timestamp': first['timestamp'],
                         'price': first['price'],
@@ -617,7 +673,7 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
-        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dominance={stats['rejected_dominance']}, volume={stats['rejected_volume']} | Accepted: {stats['accepted']}")
+        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']} | Accepted: {stats['accepted']}")
 
         return patterns
 
