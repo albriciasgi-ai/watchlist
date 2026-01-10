@@ -135,14 +135,14 @@ function getDefaultConfig() {
         }
       },
 
-      // Filtro VWAP (opcional)
-      vwapFilter: {
+      // Filtro VWAP Zone (detectar patrones en zonas extremas)
+      vwapZoneFilter: {
         enabled: false,
-        deviationTolerance: 0.5, // % de tolerancia
-        requiredDeviations: {
-          second: true,  // ±2σ
-          third: true    // ±3σ
-        }
+        mode: 'oneExtreme',     // 'oneExtreme' = al menos uno, 'bothExtremes' = ambos deben cumplir
+        minDeviation: 1,        // Desviación mínima requerida (1 = ±1σ, 2 = ±2σ, 3 = ±3σ)
+        marginPercent: 0.5,     // Margen de tolerancia en % (el precio puede estar X% por debajo/encima de la banda)
+        vwapType: 'session',    // Tipo de VWAP a usar: 'session', 'rolling', 'anchored'
+        rollingPeriod: 20       // Período para VWAP rolling
       },
 
       // Visualización del círculo de detección
@@ -1479,62 +1479,137 @@ const DoubleTopBottomSettings = ({
         </div>
       </div>
 
-      {/* VWAP Filter */}
+      {/* VWAP Zone Filter */}
       <div style={styles.settingGroup}>
         <h4 style={{ marginTop: 0, marginBottom: '12px', fontSize: '14px', color: '#555' }}>
-          🎯 VWAP Deviation Filter (Optional)
+          📊 VWAP Zone Filter (Filtro por Zonas Extremas)
         </h4>
         <label style={styles.checkbox}>
           <input
             type="checkbox"
-            checked={config.alertSettings?.vwapFilter?.enabled || false}
-            onChange={(e) => updateConfig('alertSettings.vwapFilter.enabled', e.target.checked)}
+            checked={config.alertSettings?.vwapZoneFilter?.enabled || false}
+            onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.enabled', e.target.checked)}
           />
-          <span>Require VWAP deviation alignment</span>
+          <span>Activar filtro VWAP Zone</span>
         </label>
         <p style={styles.description}>
-          When enabled, only send alerts for patterns near VWAP deviations:
-          <br />• LONG patterns: near -2σ or -3σ (lower deviations)
-          <br />• SHORT patterns: near +2σ or +3σ (upper deviations)
-          <br />⚠️ Patterns will still be graphed, this only affects alerts
+          Filtra patrones por ubicación respecto a bandas VWAP:
+          <br />• <strong>Double Top</strong>: extremo(s) deben estar <strong>ARRIBA</strong> de desviación positiva (+σ)
+          <br />• <strong>Double Bottom</strong>: extremo(s) deben estar <strong>ABAJO</strong> de desviación negativa (-σ)
+          <br />⚠️ Este filtro <strong>descarta</strong> patrones que no cumplan (no solo alertas)
         </p>
 
-        {config.alertSettings?.vwapFilter?.enabled && (
+        {config.alertSettings?.vwapZoneFilter?.enabled && (
           <div style={{ marginTop: '12px', padding: '12px', background: '#e3f2fd', borderRadius: '4px' }}>
+
+            {/* Modo: uno o ambos extremos */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ ...styles.label, marginBottom: '4px' }}>
+                <span>Condición de extremos</span>
+              </label>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <label style={{ ...styles.checkbox, marginBottom: 0 }}>
+                  <input
+                    type="radio"
+                    name="vwapMode"
+                    checked={config.alertSettings?.vwapZoneFilter?.mode === 'oneExtreme'}
+                    onChange={() => updateConfig('alertSettings.vwapZoneFilter.mode', 'oneExtreme')}
+                  />
+                  <span>Al menos un extremo</span>
+                </label>
+                <label style={{ ...styles.checkbox, marginBottom: 0 }}>
+                  <input
+                    type="radio"
+                    name="vwapMode"
+                    checked={config.alertSettings?.vwapZoneFilter?.mode === 'bothExtremes'}
+                    onChange={() => updateConfig('alertSettings.vwapZoneFilter.mode', 'bothExtremes')}
+                  />
+                  <span>Ambos extremos</span>
+                </label>
+              </div>
+              <p style={{ ...styles.description, marginTop: '4px' }}>
+                {config.alertSettings?.vwapZoneFilter?.mode === 'bothExtremes'
+                  ? '⚡ Estricto: ambos extremos deben estar en zona extrema'
+                  : '✓ Flexible: basta con que uno esté en zona extrema'}
+              </p>
+            </div>
+
+            {/* Desviación mínima */}
             <label style={styles.label}>
-              <span>Deviation tolerance (%)</span>
+              <span>Desviación mínima requerida</span>
               <span style={styles.settingValue}>
-                {config.alertSettings?.vwapFilter?.deviationTolerance || 0.5}%
+                ±{config.alertSettings?.vwapZoneFilter?.minDeviation || 1}σ
               </span>
             </label>
             <input
               type="range"
-              min="0.1"
-              max="2.0"
-              step="0.1"
-              value={config.alertSettings?.vwapFilter?.deviationTolerance || 0.5}
-              onChange={(e) => updateConfig('alertSettings.vwapFilter.deviationTolerance', parseFloat(e.target.value))}
+              min="1"
+              max="3"
+              step="1"
+              value={config.alertSettings?.vwapZoneFilter?.minDeviation || 1}
+              onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.minDeviation', parseInt(e.target.value))}
               style={styles.rangeInput}
             />
-
-            <div style={{ marginTop: '12px' }}>
-              <label style={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={config.alertSettings?.vwapFilter?.requiredDeviations?.second || false}
-                  onChange={(e) => updateConfig('alertSettings.vwapFilter.requiredDeviations.second', e.target.checked)}
-                />
-                <span>2nd deviation (±2σ)</span>
-              </label>
-              <label style={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={config.alertSettings?.vwapFilter?.requiredDeviations?.third || false}
-                  onChange={(e) => updateConfig('alertSettings.vwapFilter.requiredDeviations.third', e.target.checked)}
-                />
-                <span>3rd deviation (±3σ)</span>
-              </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888', marginBottom: '12px' }}>
+              <span>±1σ (menos estricto)</span>
+              <span>±2σ</span>
+              <span>±3σ (más estricto)</span>
             </div>
+
+            {/* Margen de tolerancia */}
+            <label style={styles.label}>
+              <span>Margen de tolerancia (%)</span>
+              <span style={styles.settingValue}>
+                {config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}%
+              </span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value={config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}
+              onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.marginPercent', parseFloat(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <p style={styles.description}>
+              Permite que el precio esté hasta un {config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}% por debajo (DT) o arriba (DB) de la banda.
+            </p>
+
+            {/* Tipo de VWAP */}
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ ...styles.label, marginBottom: '4px' }}>
+                <span>Tipo de VWAP</span>
+              </label>
+              <select
+                value={config.alertSettings?.vwapZoneFilter?.vwapType || 'session'}
+                onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.vwapType', e.target.value)}
+                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              >
+                <option value="session">Session (reset diario)</option>
+                <option value="rolling">Rolling (período móvil)</option>
+              </select>
+            </div>
+
+            {config.alertSettings?.vwapZoneFilter?.vwapType === 'rolling' && (
+              <div style={{ marginTop: '12px' }}>
+                <label style={styles.label}>
+                  <span>Período rolling</span>
+                  <span style={styles.settingValue}>
+                    {config.alertSettings?.vwapZoneFilter?.rollingPeriod || 20} velas
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  step="5"
+                  value={config.alertSettings?.vwapZoneFilter?.rollingPeriod || 20}
+                  onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.rollingPeriod', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

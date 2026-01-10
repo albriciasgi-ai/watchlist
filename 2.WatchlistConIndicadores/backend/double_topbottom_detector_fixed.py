@@ -12,6 +12,14 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
 import math
 
+# Import VWAP calculator for zone filter
+try:
+    from vwap_calculator import vwap_calculator
+    VWAP_AVAILABLE = True
+except ImportError:
+    VWAP_AVAILABLE = False
+    print("[DTB_FIXED] WARNING: vwap_calculator not available, VWAP zone filter disabled")
+
 
 @dataclass
 class DoublePattern:
@@ -85,6 +93,33 @@ class DoubleTopBottomDetectorFixed:
         z_score_threshold_second = high_vol_extremes_config.get('zScoreThresholdSecond', 0.5)
         volume_window_candles = high_vol_extremes_config.get('volumeWindowCandles', 3)
 
+        # ========== VWAP ZONE FILTER ==========
+        vwap_zone_config = config.get('alertSettings', {}).get('vwapZoneFilter', {})
+        vwap_zone_enabled = vwap_zone_config.get('enabled', False) and VWAP_AVAILABLE
+        vwap_zone_mode = vwap_zone_config.get('mode', 'oneExtreme')  # 'oneExtreme' or 'bothExtremes'
+        vwap_min_deviation = vwap_zone_config.get('minDeviation', 1)  # 1, 2, or 3
+        vwap_margin_percent = vwap_zone_config.get('marginPercent', 0.5)
+        vwap_type = vwap_zone_config.get('vwapType', 'session')
+        vwap_rolling_period = vwap_zone_config.get('rollingPeriod', 20)
+
+        # Calculate VWAP bands if filter is enabled
+        vwap_data = []
+        if vwap_zone_enabled:
+            try:
+                vwap_config = {
+                    'reset_hour': 0,
+                    'rolling_period': vwap_rolling_period,
+                    'band_multipliers': [1.0, 2.0, 3.0],
+                    'apply_crypto_adjustment': True
+                }
+                vwap_data = vwap_calculator.calculate_vwap_with_bands(candles, vwap_type, vwap_config)
+                print(f"  VWAP Zone Filter: ENABLED (mode={vwap_zone_mode}, min_dev=±{vwap_min_deviation}σ, margin={vwap_margin_percent}%)")
+            except Exception as e:
+                print(f"  VWAP Zone Filter: ERROR calculating VWAP - {e}")
+                vwap_zone_enabled = False
+        else:
+            print(f"  VWAP Zone Filter: disabled")
+
         # Calculate z-scores if any volume filter is enabled
         z_scores = []
         if volume_filter_enabled or high_vol_extremes_enabled:
@@ -130,7 +165,13 @@ class DoubleTopBottomDetectorFixed:
             high_vol_extremes_enabled,
             z_score_threshold_first,
             z_score_threshold_second,
-            volume_window_candles
+            volume_window_candles,
+            # VWAP Zone Filter params
+            vwap_zone_enabled,
+            vwap_data,
+            vwap_zone_mode,
+            vwap_min_deviation,
+            vwap_margin_percent
         )
 
         detected_patterns.extend(double_tops)
@@ -149,7 +190,13 @@ class DoubleTopBottomDetectorFixed:
             high_vol_extremes_enabled,
             z_score_threshold_first,
             z_score_threshold_second,
-            volume_window_candles
+            volume_window_candles,
+            # VWAP Zone Filter params
+            vwap_zone_enabled,
+            vwap_data,
+            vwap_zone_mode,
+            vwap_min_deviation,
+            vwap_margin_percent
         )
 
         detected_patterns.extend(double_bottoms)
@@ -331,6 +378,82 @@ class DoubleTopBottomDetectorFixed:
         window_scores = z_scores[start:end]
         return max(window_scores) if window_scores else 0
 
+    def _check_vwap_zone_filter(
+        self,
+        first_candle_idx: int,
+        second_candle_idx: int,
+        first_price: float,
+        second_price: float,
+        vwap_data: List[Dict],
+        mode: str,
+        min_deviation: int,
+        margin_percent: float,
+        pattern_type: str
+    ) -> bool:
+        """
+        Check if extremes are in the correct VWAP zone.
+
+        For DOUBLE_TOP: extremes should be ABOVE positive deviation (upper_N)
+        For DOUBLE_BOTTOM: extremes should be BELOW negative deviation (lower_N)
+
+        Args:
+            first_candle_idx: Index of first extreme candle
+            second_candle_idx: Index of second extreme candle
+            first_price: Price of first extreme
+            second_price: Price of second extreme
+            vwap_data: List of VWAP data with bands
+            mode: 'oneExtreme' (at least one) or 'bothExtremes' (both must pass)
+            min_deviation: Minimum deviation band to check (1, 2, or 3)
+            margin_percent: Tolerance margin in % (allows price to be X% away from band)
+            pattern_type: 'DOUBLE_TOP' or 'DOUBLE_BOTTOM'
+
+        Returns:
+            True if pattern passes the VWAP zone filter
+        """
+        if not vwap_data or len(vwap_data) == 0:
+            return True  # No VWAP data, skip filter
+
+        # Get VWAP data for each extreme
+        vwap_first = vwap_data[first_candle_idx] if first_candle_idx < len(vwap_data) else None
+        vwap_second = vwap_data[second_candle_idx] if second_candle_idx < len(vwap_data) else None
+
+        if not vwap_first or not vwap_second:
+            return True  # Missing data, skip filter
+
+        # Get the appropriate band level based on min_deviation
+        band_key = f'upper_{min_deviation}' if pattern_type == 'DOUBLE_TOP' else f'lower_{min_deviation}'
+
+        # Get band values (with fallback)
+        first_band = vwap_first.get('bands', {}).get(band_key)
+        second_band = vwap_second.get('bands', {}).get(band_key)
+
+        if first_band is None or second_band is None:
+            return True  # Missing band data, skip filter
+
+        # Calculate margin adjustment
+        # For DOUBLE_TOP: price can be up to margin_percent% BELOW the upper band
+        # For DOUBLE_BOTTOM: price can be up to margin_percent% ABOVE the lower band
+        margin_factor = margin_percent / 100.0
+
+        if pattern_type == 'DOUBLE_TOP':
+            # First extreme must be >= upper_band - margin
+            first_threshold = first_band * (1 - margin_factor)
+            second_threshold = second_band * (1 - margin_factor)
+            first_passes = first_price >= first_threshold
+            second_passes = second_price >= second_threshold
+        else:  # DOUBLE_BOTTOM
+            # First extreme must be <= lower_band + margin
+            first_threshold = first_band * (1 + margin_factor)
+            second_threshold = second_band * (1 + margin_factor)
+            first_passes = first_price <= first_threshold
+            second_passes = second_price <= second_threshold
+
+        # Apply mode logic
+        if mode == 'bothExtremes':
+            return first_passes and second_passes
+        else:  # 'oneExtreme' (default)
+            return first_passes or second_passes
+
     def _find_double_tops(
         self,
         highs: List[Dict],
@@ -345,10 +468,17 @@ class DoubleTopBottomDetectorFixed:
         high_vol_extremes_enabled: bool = False,
         z_score_threshold_first: float = 1.5,
         z_score_threshold_second: float = 0.5,
-        volume_window_candles: int = 3
+        volume_window_candles: int = 3,
+        # VWAP Zone Filter params
+        vwap_zone_enabled: bool = False,
+        vwap_data: List[Dict] = None,
+        vwap_zone_mode: str = 'oneExtreme',
+        vwap_min_deviation: int = 1,
+        vwap_margin_percent: float = 0.5
     ) -> List[DoublePattern]:
-        """Find double top patterns with dominance validation and volume filters"""
+        """Find double top patterns with dominance validation and volume/VWAP filters"""
         patterns = []
+        vwap_data = vwap_data or []
 
         # Diagnostic stats
         stats = {
@@ -359,6 +489,7 @@ class DoubleTopBottomDetectorFixed:
             'rejected_dominance': 0,
             'rejected_volume': 0,
             'rejected_volume_extremes': 0,
+            'rejected_vwap_zone': 0,
             'accepted': 0
         }
 
@@ -421,6 +552,23 @@ class DoubleTopBottomDetectorFixed:
                         stats['rejected_volume_extremes'] += 1
                         continue
 
+                # VWAP ZONE FILTER: Double Top extremes must be ABOVE positive deviation
+                if vwap_zone_enabled and vwap_data:
+                    passes_vwap = self._check_vwap_zone_filter(
+                        first['candle_index'],
+                        second['candle_index'],
+                        first['price'],
+                        second['price'],
+                        vwap_data,
+                        vwap_zone_mode,
+                        vwap_min_deviation,
+                        vwap_margin_percent,
+                        pattern_type='DOUBLE_TOP'
+                    )
+                    if not passes_vwap:
+                        stats['rejected_vwap_zone'] += 1
+                        continue
+
                 stats['accepted'] += 1
 
                 # ====== CALCULATE CONFIDENCE (weighted system) ======
@@ -461,7 +609,7 @@ class DoubleTopBottomDetectorFixed:
                 elif 10 <= candles_between <= 150:
                     confidence += 5
 
-                # Rejection pattern bonus (0-10 points)
+                # Rejection pattern bonus (0-10 points) - upper_wick for tops
                 first_candle = candles[first['candle_index']]
                 second_candle = candles[second['candle_index']]
                 rejection_bonus = 0
@@ -501,7 +649,7 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
-        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']} | Accepted: {stats['accepted']}")
+        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']}, vwap={stats['rejected_vwap_zone']} | Accepted: {stats['accepted']}")
 
         return patterns
 
@@ -519,10 +667,17 @@ class DoubleTopBottomDetectorFixed:
         high_vol_extremes_enabled: bool = False,
         z_score_threshold_first: float = 1.5,
         z_score_threshold_second: float = 0.5,
-        volume_window_candles: int = 3
+        volume_window_candles: int = 3,
+        # VWAP Zone Filter params
+        vwap_zone_enabled: bool = False,
+        vwap_data: List[Dict] = None,
+        vwap_zone_mode: str = 'oneExtreme',
+        vwap_min_deviation: int = 1,
+        vwap_margin_percent: float = 0.5
     ) -> List[DoublePattern]:
-        """Find double bottom patterns with dominance validation and volume filters"""
+        """Find double bottom patterns with dominance validation and volume/VWAP filters"""
         patterns = []
+        vwap_data = vwap_data or []
 
         # Diagnostic stats
         stats = {
@@ -533,6 +688,7 @@ class DoubleTopBottomDetectorFixed:
             'rejected_dominance': 0,
             'rejected_volume': 0,
             'rejected_volume_extremes': 0,
+            'rejected_vwap_zone': 0,
             'accepted': 0
         }
 
@@ -593,6 +749,23 @@ class DoubleTopBottomDetectorFixed:
                 if high_vol_extremes_enabled and z_scores:
                     if first_zscore < z_score_threshold_first or second_zscore < z_score_threshold_second:
                         stats['rejected_volume_extremes'] += 1
+                        continue
+
+                # VWAP ZONE FILTER: Double Bottom extremes must be BELOW negative deviation
+                if vwap_zone_enabled and vwap_data:
+                    passes_vwap = self._check_vwap_zone_filter(
+                        first['candle_index'],
+                        second['candle_index'],
+                        first['price'],
+                        second['price'],
+                        vwap_data,
+                        vwap_zone_mode,
+                        vwap_min_deviation,
+                        vwap_margin_percent,
+                        pattern_type='DOUBLE_BOTTOM'
+                    )
+                    if not passes_vwap:
+                        stats['rejected_vwap_zone'] += 1
                         continue
 
                 stats['accepted'] += 1
@@ -675,7 +848,7 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
-        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']} | Accepted: {stats['accepted']}")
+        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']}, vwap={stats['rejected_vwap_zone']} | Accepted: {stats['accepted']}")
 
         return patterns
 
