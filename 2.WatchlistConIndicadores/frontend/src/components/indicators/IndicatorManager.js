@@ -266,15 +266,15 @@ class IndicatorManager {
           }
         } else {
           // Indicadores no precargables (VWAP, Fibonacci, etc.)
-          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns", "Double Top/Bottom"];
+          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns"];
+
+          // ✅ NOTA: Double Top/Bottom NO está en needsFetch porque se carga cuando las velas están disponibles
+          // Se hace en onHistoricalCandlesLoaded() para garantizar que tenga las velas
 
           if (needsFetch.includes(name) && indicator.fetchData) {
             log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
 
-            // ✅ Para DBT, pasar las velas si están disponibles
-            const candlesParam = (name === "Double Top/Bottom" && this.allCandles) ? this.allCandles : undefined;
-
-            indicator.fetchData(candlesParam).then(() => {
+            indicator.fetchData().then(() => {
               log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
               if (this.requestRedraw) {
                 this.requestRedraw();
@@ -282,6 +282,9 @@ class IndicatorManager {
             }).catch(err => {
               log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
             });
+          } else if (name === "Double Top/Bottom") {
+            // DBT espera a que las velas estén disponibles
+            log.debug(`[${this.symbol}] 🕐 DBT habilitado - esperando velas históricas para análisis inicial`);
           }
         }
       }
@@ -1108,6 +1111,31 @@ class IndicatorManager {
       return this.fixedRangeIndicators;
     }
     return this.indicators.filter(ind => ind.constructor.name === type);
+  }
+
+  /**
+   * Handler para cuando se cargan las velas históricas iniciales
+   * Se llama UNA vez cuando el histórico está disponible
+   */
+  onHistoricalCandlesLoaded(allCandles) {
+    // ✅ Guardar referencia a las velas
+    this.allCandles = allCandles;
+
+    // ✅ Si DBT está habilitado y no ha hecho fetchData(), hacerlo ahora con las velas
+    const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    if (dbtIndicator && dbtIndicator.enabled && !dbtIndicator.hasRunFullAnalysis) {
+      log.info(`[${this.symbol}] 📊 Velas históricas cargadas (${allCandles.length} velas) - iniciando análisis DBT completo`);
+
+      // Llamar fetchData con las velas disponibles
+      dbtIndicator.fetchData(allCandles).then(() => {
+        log.debug(`[${this.symbol}] ✅ Análisis DBT inicial completado`);
+        if (this.requestRedraw) {
+          this.requestRedraw();
+        }
+      }).catch(err => {
+        log.error(`[${this.symbol}] ❌ Error en análisis DBT inicial:`, err);
+      });
+    }
   }
 
   /**

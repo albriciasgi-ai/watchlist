@@ -38,6 +38,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     // Real-time detection
     this.lastRealtimeCheck = null; // Timestamp de última detección en tiempo real
+    this.hasRunFullAnalysis = false; // Flag para saber si ya se hizo el análisis completo inicial
 
     // Cargar historial desde localStorage
     this.loadAlertHistory();
@@ -353,6 +354,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // Solo recargar config si no existe o si cambia el timeframe
     if (!this.config || this.lastLoadedInterval !== this.interval) {
       this.config = this.loadConfig();
+
+      // ✅ Si cambió el timeframe, resetear el flag para forzar análisis completo
+      if (this.lastLoadedInterval !== this.interval) {
+        log.info(`[${this.symbol}] 🔄 Timeframe cambió de ${this.lastLoadedInterval} a ${this.interval} - reseteando análisis completo`);
+        this.hasRunFullAnalysis = false;
+        this.patterns = [];  // Limpiar patrones del timeframe anterior
+      }
+
       this.lastLoadedInterval = this.interval;
     }
 
@@ -361,122 +370,117 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       return;
     }
 
-    log.info(`[${this.symbol}] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit`)
+    // ✅ NUEVA LÓGICA: Usar detectIncrementalPattern() si tenemos velas disponibles
+    if (allCandles && allCandles.length > 0) {
+      log.info(`[${this.symbol}] ✅ fetchData() tiene ${allCandles.length} velas - usando detectIncrementalPattern() con análisis COMPLETO`);
 
-    this.loading = true;
-    const startTime = Date.now();
+      this.loading = true;
+      const startTime = Date.now();
 
-    try {
-      log.trace(`[${this.symbol}] 🔍 DTB FETCH START ====================================`);
-      log.trace(`[${this.symbol}] Interval: ${this.interval}, Days: ${this.days}`);
-      log.trace(`[${this.symbol}] Config being sent to backend:`);
-      log.trace(`[${this.symbol}]   - maxBreakoutPercent: ${this.config.doubleTopBottom?.maxBreakoutPercent}%`);
-      log.trace(`[${this.symbol}]   - minConfidence: ${this.config.filters?.minConfidence}%`);
-      log.trace(`[${this.symbol}]   - requireBothRejections: ${this.config.filters?.requireBothRejections}`);
-      log.trace(`[${this.symbol}]   - volumeFilter.enabled: ${this.config.doubleTopBottom?.volumeFilter?.enabled}`);
-      log.trace(`[${this.symbol}]   - lookbackCandles: ${this.config.doubleTopBottom?.lookbackCandles}`);
-
-      // Timeout de 30 segundos para evitar bloqueos
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-      const requestPayload = {
-        symbol: this.symbol,
-        interval: this.interval,
-        days: this.days,
-        config: this.config
-        // ✅ NO enviar velas - el backend las obtendrá de Bybit
-      };
-
-      log.debug(`[${this.symbol}] Full request payload:`, JSON.stringify(requestPayload, null, 2));
-
-      const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestPayload),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      const result = await response.json();
-      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-
-      log.debug(`[${this.symbol}] 📥 DTB RESPONSE ====================================`);
-      log.debug(`[${this.symbol}] Success: ${result.success}`);
-      log.debug(`[${this.symbol}] Duration: ${duration}s`);
-      log.debug(`[${this.symbol}] Patterns received: ${result.patterns ? result.patterns.length : 0}`);
-
-      if (result.debug_info) {
-        log.debug(`[${this.symbol}] Debug info from backend:`, result.debug_info);
-      }
-
-      if (result.success && result.patterns) {
-        // 🔄 FUSIONAR patrones en lugar de reemplazar completamente
-        // Esto previene que patrones existentes se pierdan y luego se detecten como "nuevos"
-        const oldPatternsCount = this.patterns.length;
-
-        // Primero, limpiar flags _isNewPattern de patrones viejos
-        this.patterns.forEach(p => {
-          if (p._isNewPattern) {
-            p._isNewPattern = false;
-          }
-        });
-
-        // Luego, fusionar los nuevos patrones del backend (sin marcar como nuevos)
-        result.patterns.forEach(newPattern => {
-          const newId = this.getPatternId(newPattern);
-          const existingPattern = this.patterns.find(p => this.getPatternId(p) === newId);
-
-          if (!existingPattern) {
-            // Patrón del backend que no existía - agregar SIN marcar como nuevo
-            // (solo los detectados en tiempo real deben marcarse como nuevos)
-            this.patterns.push(newPattern);
-          }
-          // Si ya existe, no hacer nada (mantener el existente con sus flags)
-        });
-
-        log.debug(`[${this.symbol}] ✅ Double Top/Bottom: ${oldPatternsCount} → ${this.patterns.length} patterns (fusionados)`);
-
-        if (this.patterns.length > 0) {
-          log.debug(`[${this.symbol}] First pattern confidence: ${this.patterns[0].confidence}%`);
-          log.debug(`[${this.symbol}] Pattern types: ${this.patterns.map(p => p.type).join(', ')}`);
-        }
-
-        if (this.config.debugMode || this.patterns.length === 0) {
-          log.debug(`[${this.symbol}] All patterns:`, this.patterns);
-        }
-      } else {
-        log.error(`[${this.symbol}] ❌ Double Top/Bottom detection failed:`, result.error);
-        if (result.details) {
-          log.error(`[${this.symbol}] Error details:`, result.details);
-        }
+      try {
+        // Limpiar patrones anteriores para empezar fresco
         this.patterns = [];
+
+        // ✅ Usar detectIncrementalPattern con análisis completo (isFullAnalysis = true)
+        const newPatterns = await this.detectIncrementalPattern(allCandles, true);
+
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        log.info(`[${this.symbol}] ✅ Análisis completo finalizado en ${duration}s - ${newPatterns.length} patrones detectados`);
+
+        if (newPatterns.length > 0) {
+          // ✅ Fusionar patrones con isInitialLoad = true para NO marcarlos como nuevos
+          this.mergeNewPatterns(newPatterns, true);
+
+          log.info(`[${this.symbol}] 📊 fetchData() completado - ${this.patterns.length} patrones históricos cargados`);
+
+          if (this.patterns.length > 0) {
+            log.debug(`[${this.symbol}] First pattern confidence: ${this.patterns[0].confidence}%`);
+            log.debug(`[${this.symbol}] Pattern types: ${this.patterns.map(p => p.type).join(', ')}`);
+          }
+        } else {
+          log.info(`[${this.symbol}] ℹ️ No se detectaron patrones históricos`);
+        }
+
+        // ✅ Marcar que ya se hizo el análisis completo
+        this.hasRunFullAnalysis = true;
+        log.info(`[${this.symbol}] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales`);
+
+      } catch (error) {
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        log.error(`[${this.symbol}] ❌ Error en fetchData() después de ${duration}s:`, error);
+        this.patterns = [];
+        // ⚠️ Si falla, resetear flag para que onCandleClose() pueda hacer análisis completo
+        this.hasRunFullAnalysis = false;
+      } finally {
+        this.loading = false;
+
+        // NO enviar alertas en carga inicial (todos los patrones son históricos)
+        // Las alertas solo deben enviarse en detección en tiempo real
+
+        // Pedir permisos de notificación si alertas están habilitadas
+        if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
+          this.requestNotificationPermission();
+        }
       }
 
-    } catch (error) {
-      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      if (error.name === 'AbortError') {
-        log.error(`[${this.symbol}] ⏱️ Double Top/Bottom detection timeout after ${duration}s`);
-      } else {
-        log.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom patterns after ${duration}s:`, error);
-      }
-      this.patterns = [];
-    } finally {
-      this.loading = false;
+    } else {
+      // ⚠️ FALLBACK: Si no hay velas disponibles, usar el método antiguo del backend
+      log.warn(`[${this.symbol}] ⚠️ fetchData() sin velas disponibles - usando método legacy del backend`);
 
-      // Verificar y enviar alertas si están habilitadas
-      if (this.config.alertsEnabled && this.patterns.length > 0) {
-        this.checkAndSendAlerts().catch(err => {
-          log.error(`[${this.symbol}] Error checking alerts:`, err);
+      this.loading = true;
+      const startTime = Date.now();
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        const requestPayload = {
+          symbol: this.symbol,
+          interval: this.interval,
+          days: this.days,
+          config: this.config
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestPayload),
+          signal: controller.signal
         });
-      }
 
-      // Pedir permisos de notificación si alertas están habilitadas
-      if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
-        this.requestNotificationPermission();
+        clearTimeout(timeoutId);
+
+        const result = await response.json();
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+
+        if (result.success && result.patterns) {
+          // Limpiar patrones anteriores
+          this.patterns = [];
+
+          // Agregar patrones del backend sin marcar como nuevos
+          result.patterns.forEach(pattern => {
+            this.patterns.push(pattern);
+          });
+
+          log.info(`[${this.symbol}] ✅ fetchData() legacy completado - ${this.patterns.length} patrones cargados en ${duration}s`);
+
+          // ✅ Marcar que ya se hizo la carga desde backend
+          this.hasRunFullAnalysis = true;
+        } else {
+          log.error(`[${this.symbol}] ❌ fetchData() legacy falló:`, result.error);
+          this.patterns = [];
+          this.hasRunFullAnalysis = false;
+        }
+
+      } catch (error) {
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        log.error(`[${this.symbol}] ❌ Error en fetchData() legacy después de ${duration}s:`, error);
+        this.patterns = [];
+        this.hasRunFullAnalysis = false;
+      } finally {
+        this.loading = false;
       }
     }
   }
@@ -1196,8 +1200,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   /**
    * Fusiona nuevos patrones detectados con los existentes, evitando duplicados
    * MARCA los patrones verdaderamente nuevos con _isNewPattern flag para alertas
+   *
+   * @param {Array} newPatterns - Patrones detectados
+   * @param {boolean} isInitialLoad - Si es true, NO marca patrones como nuevos (son históricos)
    */
-  mergeNewPatterns(newPatterns) {
+  mergeNewPatterns(newPatterns, isInitialLoad = false) {
     if (!newPatterns || newPatterns.length === 0) {
       log.debug(`[${this.symbol}] No hay nuevos patrones para fusionar`);
       return;
@@ -1213,31 +1220,42 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const existingPattern = this.patterns.find(p => this.getPatternId(p) === newId);
 
       if (!existingPattern) {
-        // ✅ PATRÓN NUEVO: Marcar para alertas
-        newPattern._isNewPattern = true;
-        newPattern._detectionTime = currentTime;
+        // ✅ Agregar patrón
         this.patterns.push(newPattern);
         addedCount++;
 
-        // Formatear timestamp del segundo extremo (cuando se completó el patrón)
-        const patternDate = new Date(newPattern.secondExtreme.timestamp);
-        const formattedDate = patternDate.toLocaleString('es-CO', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        });
+        // Solo marcar como "nuevo" si NO es carga inicial
+        if (!isInitialLoad) {
+          newPattern._isNewPattern = true;
+          newPattern._detectionTime = currentTime;
 
-        log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+          // Formatear timestamp del segundo extremo (cuando se completó el patrón)
+          const patternDate = new Date(newPattern.secondExtreme.timestamp);
+          const formattedDate = patternDate.toLocaleString('es-CO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          });
+
+          log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+        } else {
+          // Carga inicial - solo log de debug
+          log.debug(`[${this.symbol}] 📌 Patrón histórico cargado: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
+        }
       } else {
         log.debug(`[${this.symbol}] ⏭️ Patrón ya existe, saltando: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
       }
     });
 
-    log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones NUEVOS agregados, ${this.patterns.length} patrones totales`);
+    if (isInitialLoad) {
+      log.info(`[${this.symbol}] 📊 Carga inicial completa: ${addedCount} patrones históricos cargados, ${this.patterns.length} patrones totales`);
+    } else {
+      log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones NUEVOS agregados, ${this.patterns.length} patrones totales`);
+    }
   }
 
   /**
@@ -1309,6 +1327,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   /**
    * Handler llamado cuando se cierra una vela (WebSocket confirm=true)
    * Incluye throttling para evitar detecciones excesivas
+   *
+   * ESTRATEGIA:
+   * - Primera ejecución: Análisis COMPLETO de todas las velas (carga inicial de patrones históricos)
+   * - Ejecuciones posteriores: Análisis INCREMENTAL de últimas 300 velas (detección en tiempo real)
    */
   async onCandleClose(allCandles) {
     if (!this.config.enabled) {
@@ -1332,17 +1354,37 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.lastRealtimeCheck = now;
-    log.info(`[${this.symbol}] 🕐 Vela cerrada - detectando patrones DBT...`);
 
     try {
-      const newPatterns = await this.detectIncrementalPattern(allCandles);
+      // ✅ DETECCIÓN INTELIGENTE: Primera vez = análisis completo, posteriores = incremental
+      // Usar FLAG explícito en lugar de this.patterns.length para evitar conflictos con fetchData()
+      const isFirstDetection = !this.hasRunFullAnalysis;
+
+      if (isFirstDetection) {
+        log.info(`[${this.symbol}] 🔄 Primera detección - analizando TODAS las velas para carga inicial (${allCandles.length} velas)`);
+      } else {
+        log.info(`[${this.symbol}] 🕐 Vela cerrada - detección incremental de patrones DBT...`);
+      }
+
+      const newPatterns = await this.detectIncrementalPattern(allCandles, isFirstDetection);
 
       if (newPatterns.length > 0) {
-        log.info(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
-        this.mergeNewPatterns(newPatterns);
+        if (isFirstDetection) {
+          log.info(`[${this.symbol}] 📊 Carga inicial: ${newPatterns.length} patrones históricos detectados`);
+        } else {
+          log.info(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
+        }
 
-        // Enviar alertas si están habilitadas
-        if (this.config.alertsEnabled) {
+        this.mergeNewPatterns(newPatterns, isFirstDetection);
+
+        // ✅ Marcar que ya se ejecutó el análisis completo
+        if (isFirstDetection) {
+          this.hasRunFullAnalysis = true;
+          log.info(`[${this.symbol}] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales`);
+        }
+
+        // Enviar alertas solo si NO es la primera detección (evitar alertas de patrones históricos)
+        if (!isFirstDetection && this.config.alertsEnabled) {
           log.info(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
           await this.checkAndSendAlerts();
         }
@@ -1352,7 +1394,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           this.indicatorManager.requestRedraw();
         }
       } else {
-        log.info(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
+        if (isFirstDetection) {
+          log.info(`[${this.symbol}] ℹ️ No se detectaron patrones históricos`);
+          // Aunque no haya patrones, marcar como ejecutado para evitar repetir análisis completo
+          this.hasRunFullAnalysis = true;
+        } else {
+          log.info(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
+        }
       }
     } catch (error) {
       log.error(`[${this.symbol}] ❌ Error en detección en tiempo real:`, error);

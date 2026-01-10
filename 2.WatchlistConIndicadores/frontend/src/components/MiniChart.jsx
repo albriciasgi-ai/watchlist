@@ -748,6 +748,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         candlesRef.current = historicalCandles;
         console.log(`[${symbol}] ✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
 
+        // ✅ NUEVO: Notificar a IndicatorManager que las velas están disponibles
+        // Esto permite que DBT pueda hacer análisis completo inicial
+        if (indicatorManagerRef.current) {
+          indicatorManagerRef.current.onHistoricalCandlesLoaded(historicalCandles);
+        }
+
         // 🎯 Resetear escala de precios para recalcular con nuevos datos
         priceScaleRef.current.minPrice = null;
         priceScaleRef.current.maxPrice = null;
