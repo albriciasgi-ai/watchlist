@@ -424,35 +424,36 @@ class DoubleTopBottomDetectorFixed:
                 stats['accepted'] += 1
 
                 # ====== CALCULATE CONFIDENCE (weighted system) ======
-                confidence = 50  # Base
+                # Base: 25, Max contributions: 75, Total range: 25-100
+                confidence = 25  # Base (reduced from 50 for better discrimination)
 
-                # Price variance contribution (0-20 points)
+                # Price variance contribution (0-25 points)
                 if price_variance < 0.3:
-                    confidence += 20
+                    confidence += 25
                 elif price_variance < 0.5:
-                    confidence += 15
+                    confidence += 20
                 elif price_variance < 1.0:
-                    confidence += 10
+                    confidence += 12
                 elif price_variance < 2.0:
-                    confidence += 5
+                    confidence += 6
 
-                # Volume contribution (0-20 points) - use MAX of both extremes
+                # Volume contribution (0-25 points) - use MAX of both extremes
                 max_zscore = max(first_zscore, second_zscore)
                 if max_zscore >= 2.5:
-                    confidence += 20
+                    confidence += 25
                 elif max_zscore >= 2.0:
-                    confidence += 15
+                    confidence += 18
                 elif max_zscore >= 1.5:
-                    confidence += 10
+                    confidence += 12
                 elif max_zscore >= 1.0:
-                    confidence += 5
+                    confidence += 6
 
-                # Bonus if BOTH extremes have good volume (0-10 points)
+                # Bonus if BOTH extremes have good volume (0-15 points)
                 min_zscore = min(first_zscore, second_zscore)
                 if min_zscore >= 1.5:
-                    confidence += 10
+                    confidence += 15
                 elif min_zscore >= 1.0:
-                    confidence += 5
+                    confidence += 8
 
                 # Distance contribution (0-10 points)
                 if 20 <= candles_between <= 100:
@@ -597,35 +598,36 @@ class DoubleTopBottomDetectorFixed:
                 stats['accepted'] += 1
 
                 # ====== CALCULATE CONFIDENCE (weighted system) ======
-                confidence = 50  # Base
+                # Base: 25, Max contributions: 75, Total range: 25-100
+                confidence = 25  # Base (reduced from 50 for better discrimination)
 
-                # Price variance contribution (0-20 points)
+                # Price variance contribution (0-25 points)
                 if price_variance < 0.3:
-                    confidence += 20
+                    confidence += 25
                 elif price_variance < 0.5:
-                    confidence += 15
+                    confidence += 20
                 elif price_variance < 1.0:
-                    confidence += 10
+                    confidence += 12
                 elif price_variance < 2.0:
-                    confidence += 5
+                    confidence += 6
 
-                # Volume contribution (0-20 points) - use MAX of both extremes
+                # Volume contribution (0-25 points) - use MAX of both extremes
                 max_zscore = max(first_zscore, second_zscore)
                 if max_zscore >= 2.5:
-                    confidence += 20
+                    confidence += 25
                 elif max_zscore >= 2.0:
-                    confidence += 15
+                    confidence += 18
                 elif max_zscore >= 1.5:
-                    confidence += 10
+                    confidence += 12
                 elif max_zscore >= 1.0:
-                    confidence += 5
+                    confidence += 6
 
-                # Bonus if BOTH extremes have good volume (0-10 points)
+                # Bonus if BOTH extremes have good volume (0-15 points)
                 min_zscore = min(first_zscore, second_zscore)
                 if min_zscore >= 1.5:
-                    confidence += 10
+                    confidence += 15
                 elif min_zscore >= 1.0:
-                    confidence += 5
+                    confidence += 8
 
                 # Distance contribution (0-10 points)
                 if 20 <= candles_between <= 100:
