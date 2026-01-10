@@ -1560,10 +1560,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   _drawLevelLine(ctx, pattern, bounds, priceToY, timeToX) {
-    const y = priceToY(pattern.levelPrice);
+    // Dibujar línea conectando los DOS extremos reales (no el promedio)
+    const y1 = priceToY(pattern.firstExtreme.price);
+    const y2 = priceToY(pattern.secondExtreme.price);
 
     // Check if line is within visible bounds
-    if (y < bounds.y || y > bounds.y + bounds.height) {
+    const minY = Math.min(y1, y2);
+    const maxY = Math.max(y1, y2);
+    if (maxY < bounds.y || minY > bounds.y + bounds.height) {
       return;
     }
 
@@ -1574,21 +1578,21 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const startX = timeToX(pattern.firstExtreme.timestamp);
     const endX = timeToX(pattern.secondExtreme.timestamp);
 
-    // Draw line ONLY BETWEEN the two extremes (no extension to the right)
+    // Draw line connecting the two ACTUAL extremes
     ctx.save();
     ctx.strokeStyle = color;
     ctx.lineWidth = this.config.visualization.lineStyle.width;
     ctx.setLineDash(this.config.visualization.lineStyle.dash);
 
     ctx.beginPath();
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
+    ctx.moveTo(startX, y1);  // First extreme at its actual price
+    ctx.lineTo(endX, y2);    // Second extreme at its actual price
     ctx.stroke();
 
     ctx.setLineDash([]);
     ctx.restore();
 
-    // Draw pattern label
+    // Draw pattern label at the first extreme
     ctx.save();
     ctx.font = 'bold 10px sans-serif';
     ctx.fillStyle = color;
@@ -1597,7 +1601,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     const labelText = pattern.type === 'DOUBLE_TOP' ? 'DT' : 'DB';
     const labelX = startX + 5;
-    const labelY = pattern.type === 'DOUBLE_TOP' ? y - 5 : y + 15;
+    const labelY = pattern.type === 'DOUBLE_TOP' ? y1 - 5 : y1 + 15;
 
     ctx.fillText(labelText, labelX, labelY);
     ctx.restore();
