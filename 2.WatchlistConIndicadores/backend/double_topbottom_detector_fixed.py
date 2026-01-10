@@ -90,6 +90,7 @@ class DoubleTopBottomDetectorFixed:
         print(f"  Interval: {interval}, Days: {days}")
         print(f"  Total candles: {len(candles)}")
         print(f"  Window size: {candles_per_extreme}")
+        print(f"  Price margin: {price_margin_pct*100:.2f}% | Min candles: {min_candles_between} | Max candles: {max_candles_between}")
 
         # Find local extremes with FIXED algorithm
         local_highs = self._find_local_extremes_fixed(
@@ -321,14 +322,29 @@ class DoubleTopBottomDetectorFixed:
         """Find double top patterns with dominance validation"""
         patterns = []
 
+        # Diagnostic stats
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_dominance': 0,
+            'accepted': 0
+        }
+
         for i in range(len(highs)):
             for j in range(i + 1, len(highs)):
                 first = highs[i]
                 second = highs[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance
                 candles_between = second['candle_index'] - first['candle_index']
-                if candles_between < min_candles_between or candles_between > max_candles_between:
+                if candles_between < min_candles_between:
+                    stats['rejected_too_close'] += 1
+                    continue
+                if candles_between > max_candles_between:
+                    stats['rejected_too_far'] += 1
                     continue
 
                 # Check price similarity
@@ -337,6 +353,7 @@ class DoubleTopBottomDetectorFixed:
                 price_variance = (price_diff / avg_price) * 100
 
                 if price_variance > price_margin_pct * 100:
+                    stats['rejected_price_diff'] += 1
                     continue
 
                 # DOMINANCE VALIDATION: No high between the two extremes should exceed both of them
@@ -352,7 +369,10 @@ class DoubleTopBottomDetectorFixed:
                             break
 
                 if has_higher_between:
+                    stats['rejected_dominance'] += 1
                     continue  # Invalid pattern - there's a higher high between the two peaks
+
+                stats['accepted'] += 1
 
                 # Calculate confidence
                 base_confidence = 70
@@ -388,6 +408,8 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
+        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dominance={stats['rejected_dominance']} | Accepted: {stats['accepted']}")
+
         return patterns
 
     def _find_double_bottoms(
@@ -405,14 +427,29 @@ class DoubleTopBottomDetectorFixed:
         """Find double bottom patterns with dominance validation"""
         patterns = []
 
+        # Diagnostic stats
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_dominance': 0,
+            'accepted': 0
+        }
+
         for i in range(len(lows)):
             for j in range(i + 1, len(lows)):
                 first = lows[i]
                 second = lows[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance
                 candles_between = second['candle_index'] - first['candle_index']
-                if candles_between < min_candles_between or candles_between > max_candles_between:
+                if candles_between < min_candles_between:
+                    stats['rejected_too_close'] += 1
+                    continue
+                if candles_between > max_candles_between:
+                    stats['rejected_too_far'] += 1
                     continue
 
                 # Check price similarity
@@ -421,6 +458,7 @@ class DoubleTopBottomDetectorFixed:
                 price_variance = (price_diff / avg_price) * 100
 
                 if price_variance > price_margin_pct * 100:
+                    stats['rejected_price_diff'] += 1
                     continue
 
                 # DOMINANCE VALIDATION: No low between the two extremes should be lower than both
@@ -436,7 +474,10 @@ class DoubleTopBottomDetectorFixed:
                             break
 
                 if has_lower_between:
+                    stats['rejected_dominance'] += 1
                     continue  # Invalid pattern - there's a lower low between the two troughs
+
+                stats['accepted'] += 1
 
                 # Calculate confidence
                 base_confidence = 70
@@ -471,6 +512,8 @@ class DoubleTopBottomDetectorFixed:
                 )
 
                 patterns.append(pattern)
+
+        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dominance={stats['rejected_dominance']} | Accepted: {stats['accepted']}")
 
         return patterns
 
