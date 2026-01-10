@@ -910,13 +910,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           // Performance: Disabled frequent logging
           // log.trace(`[${symbol}] Estado: ${candlesRef.current.length} confirmadas, En progreso: ${true ? 'SÍ' : 'NO'}`);
 
+          // ✅ REAL-TIME DETECTION: Notificar al IndicatorManager cuando se cierra una vela
+          // Usa referencia directa (sin spread operator) para evitar copia de 2000+ objetos
+          // El IndicatorManager tiene throttling interno (90% del intervalo) para prevenir exceso de detecciones
+          if (indicatorManagerRef.current && indicatorManagerRef.current.onCandleClose) {
+            indicatorManagerRef.current.onCandleClose(candlesRef.current);
+          }
+
         } else if (candleTimestamp === currentInProgress.timestamp) {
           inProgressCandleRef.current = newCandle;
         }
-
-        // 🚫 DISABLED: onCandleClose system - causes performance issues
-        // The array copy [...candlesRef.current] was creating 2000+ object copies every 15 seconds
-        // This was causing memory pressure and blocking the main thread
 
         if (!animationFrameRef.current) {
           animationFrameRef.current = requestAnimationFrame(() => {

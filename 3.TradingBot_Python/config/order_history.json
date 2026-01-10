@@ -2208,5 +2208,44 @@
     "pattern": "Double Bottom (ABRIR LONG)",
     "confidence": 85.5,
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-09T15:03:45.246320",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "entry_price": 50000.0,
+    "quantity_coin": 0.002,
+    "quantity_usdt": 100.0,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 85.5,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-09T15:04:42.677879",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 50000.0,
+    "quantity_coin": 0.01,
+    "quantity_usdt": 500.0,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 85.5,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-09T20:35:09.302990",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "entry_price": 50000.0,
+    "quantity_coin": 0.002,
+    "quantity_usdt": 100.0,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 85.5,
+    "status": "success"
   }
 ]

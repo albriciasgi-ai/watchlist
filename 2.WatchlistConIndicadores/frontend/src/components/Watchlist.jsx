@@ -453,7 +453,8 @@ const Watchlist = () => {
           log.debug(`[Watchlist] 🔄 Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
 
           try {
-            await dtbIndicator.fetchData();
+            // ✅ Pasar las velas del manager si están disponibles
+            await dtbIndicator.fetchData(manager.allCandles);
             const duration = ((Date.now() - startTime) / 1000).toFixed(2);
             log.debug(`[Watchlist] ✅ Patterns reloaded for ${selectedSymbolForDTB} in ${duration}s`);
 

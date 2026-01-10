@@ -5,56 +5,323 @@ Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
 useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
 useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
 useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorPreloader.js:36 [Preloader] 🚀 Iniciando precarga para 2 símbolos
 IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
 IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
 useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
 useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
 useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorPreloader.js:36 [Preloader] 🚀 Iniciando precarga para 2 símbolos
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
 RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
 RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
 RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
 RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Open Interest - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Open Interest - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Open Interest - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Open Interest - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 0.12s (6 exitosos, 0 fallidos)
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 0.131s (6 exitosos, 0 fallidos)
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 0 caches expirados
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 0 caches expirados
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: downtrend
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: downtrend
+WebSocketManager.js:25 WebSocket Manager conectado [60]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+WebSocketManager.js:68 WebSocket Manager cerrado
+WebSocketManager.js:25 WebSocket Manager conectado [1]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:273 
+🧪 [BTCUSDT] User clicked Test Alert button
+DoubleTopBottomIndicator.js:1023 
+================================================================================
+DoubleTopBottomIndicator.js:1024 🧪 [BTCUSDT] SENDING TEST ALERT
+DoubleTopBottomIndicator.js:1025 ================================================================================
+DoubleTopBottomIndicator.js:1053 Test Pattern: Object
+DoubleTopBottomIndicator.js:1054 
+Sending to backend...
+DoubleTopBottomIndicator.js:915 
+================================================================================
+DoubleTopBottomIndicator.js:916 🚨 [BTCUSDT] SENDING PATTERN ALERT
+DoubleTopBottomIndicator.js:917 ================================================================================
+DoubleTopBottomIndicator.js:950 📤 STEP 1: Building payload
+DoubleTopBottomIndicator.js:951    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:952    Interval: 1
+DoubleTopBottomIndicator.js:953    Pattern Type: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:954    Price: $50000.00
+DoubleTopBottomIndicator.js:955    Confidence: 85.5%
+DoubleTopBottomIndicator.js:956    Direction: LONG
+DoubleTopBottomIndicator.js:957    Level: N/A
+DoubleTopBottomIndicator.js:958    Alert Mode: pattern_complete
+DoubleTopBottomIndicator.js:959 
+📤 STEP 2: Sending HTTP POST request
+DoubleTopBottomIndicator.js:960    Endpoint: http://localhost:8000/api/pattern-alert
+DoubleTopBottomIndicator.js:961    Full Payload: {
+  "symbol": "BTCUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_BOTTOM",
+    "price": 50000,
+    "confidence": 85.5,
+    "timestamp": 1767989015402,
+    "direction": "LONG",
+    "level": null,
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1767985415402,
+        "price": 49980,
+        "index": 100
+      },
+      "secondExtreme": {
+        "timestamp": 1767989015402,
+        "price": 50020,
+        "index": 150
+      },
+      "entrySignal": {
+        "has_momentum": true,
+        "direction": "LONG",
+        "timestamp": 1767989015402,
+        "price": 50100,
+        "pattern_type": "MARUBOZU",
+        "quality": 0.95
+      },
+      "priceTolerance": 20,
+      "hasMomentum": true,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 20,
+      "requireBothRejections": false,
+      "minPatternDuration": 0.1,
+      "maxPatternDuration": 4,
+      "applyPostValidationToRealtimeSignals": true,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 0.5,
+      "duplicateTimeToleranceHours": 11
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      }
+    }
+  }
+}
+DoubleTopBottomIndicator.js:971 
+📥 STEP 3: Received response (11ms)
+DoubleTopBottomIndicator.js:972    HTTP Status: 200 OK
+DoubleTopBottomIndicator.js:975    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_BOTTOM",
+  "symbol": "BTCUSDT",
+  "price": 50000,
+  "confidence": 85.5
+}
+DoubleTopBottomIndicator.js:978 
+✅ STEP 4: Alert sent successfully!
+DoubleTopBottomIndicator.js:979    Pattern: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:980    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:981    Price: $50000.00
+DoubleTopBottomIndicator.js:982    Confidence: 85.5%
+DoubleTopBottomIndicator.js:983    Total Duration: 11ms
+DoubleTopBottomIndicator.js:984 ================================================================================
+
+DoubleTopBottomIndicator.js:1059 
+📊 Test Alert Result:
+DoubleTopBottomIndicator.js:1061   ✅ Test alert sent successfully!
+DoubleTopBottomIndicator.js:1062   - Backend accepted the alert
+DoubleTopBottomIndicator.js:1063   - Should appear in alert listener (port 5000) if running
+DoubleTopBottomIndicator.js:1064   - Check browser notifications
+DoubleTopBottomIndicator.js:1071 ================================================================================
+
+DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.enabled = true
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.lookbackCandles = 330
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.lookbackCandles = 240
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:273 
+🧪 [ETHUSDT] User clicked Test Alert button
+DoubleTopBottomIndicator.js:1023 
+================================================================================
+DoubleTopBottomIndicator.js:1024 🧪 [ETHUSDT] SENDING TEST ALERT
+DoubleTopBottomIndicator.js:1025 ================================================================================
+DoubleTopBottomIndicator.js:1053 Test Pattern: Object
+DoubleTopBottomIndicator.js:1054 
+Sending to backend...
+DoubleTopBottomIndicator.js:915 
+================================================================================
+DoubleTopBottomIndicator.js:916 🚨 [ETHUSDT] SENDING PATTERN ALERT
+DoubleTopBottomIndicator.js:917 ================================================================================
+DoubleTopBottomIndicator.js:950 📤 STEP 1: Building payload
+DoubleTopBottomIndicator.js:951    Symbol: ETHUSDT
+DoubleTopBottomIndicator.js:952    Interval: 1
+DoubleTopBottomIndicator.js:953    Pattern Type: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:954    Price: $50000.00
+DoubleTopBottomIndicator.js:955    Confidence: 85.5%
+DoubleTopBottomIndicator.js:956    Direction: LONG
+DoubleTopBottomIndicator.js:957    Level: N/A
+DoubleTopBottomIndicator.js:958    Alert Mode: momentum_required
+DoubleTopBottomIndicator.js:959 
+📤 STEP 2: Sending HTTP POST request
+DoubleTopBottomIndicator.js:960    Endpoint: http://localhost:8000/api/pattern-alert
+DoubleTopBottomIndicator.js:961    Full Payload: {
+  "symbol": "ETHUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_BOTTOM",
+    "price": 50000,
+    "confidence": 85.5,
+    "timestamp": 1767989070576,
+    "direction": "LONG",
+    "level": null,
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1767985470576,
+        "price": 49980,
+        "index": 100
+      },
+      "secondExtreme": {
+        "timestamp": 1767989070576,
+        "price": 50020,
+        "index": 150
+      },
+      "entrySignal": {
+        "has_momentum": true,
+        "direction": "LONG",
+        "timestamp": 1767989070576,
+        "price": 50100,
+        "pattern_type": "MARUBOZU",
+        "quality": 0.95
+      },
+      "priceTolerance": 20,
+      "hasMomentum": true,
+      "alertMode": "momentum_required"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 16,
+      "requireBothRejections": false,
+      "minPatternDuration": 0.1,
+      "maxPatternDuration": 336,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 2,
+      "applyPostValidationToRealtimeSignals": false
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "momentum_required",
+      "vwapFilter": {
+        "enabled": false,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      }
+    }
+  }
+}
+DoubleTopBottomIndicator.js:971 
+📥 STEP 3: Received response (7ms)
+DoubleTopBottomIndicator.js:972    HTTP Status: 200 OK
+DoubleTopBottomIndicator.js:975    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_BOTTOM",
+  "symbol": "ETHUSDT",
+  "price": 50000,
+  "confidence": 85.5
+}
+DoubleTopBottomIndicator.js:978 
+✅ STEP 4: Alert sent successfully!
+DoubleTopBottomIndicator.js:979    Pattern: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:980    Symbol: ETHUSDT
+DoubleTopBottomIndicator.js:981    Price: $50000.00
+DoubleTopBottomIndicator.js:982    Confidence: 85.5%
+DoubleTopBottomIndicator.js:983    Total Duration: 7ms
+DoubleTopBottomIndicator.js:984 ================================================================================
+
+DoubleTopBottomIndicator.js:1059 
+📊 Test Alert Result:
+DoubleTopBottomIndicator.js:1061   ✅ Test alert sent successfully!
+DoubleTopBottomIndicator.js:1062   - Backend accepted the alert
+DoubleTopBottomIndicator.js:1063   - Should appear in alert listener (port 5000) if running
+DoubleTopBottomIndicator.js:1064   - Check browser notifications
+DoubleTopBottomIndicator.js:1071 ================================================================================
+
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: alertSettings.mode = "pattern_complete"
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: doubleTopBottom.maxBreakoutPercent = 2.5
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] ETHUSDT - User clicked Save & Close - will reload patterns
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas

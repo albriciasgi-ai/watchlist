@@ -347,7 +347,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     log.debug(`[${this.symbol}] 🔄 Double Top/Bottom config updated, patterns will refresh`);
   }
 
-  async fetchData() {
+  async fetchData(allCandles = null) {
+    log.info(`[${this.symbol}] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos`);
+
     // Solo recargar config si no existe o si cambia el timeframe
     if (!this.config || this.lastLoadedInterval !== this.interval) {
       this.config = this.loadConfig();
@@ -355,9 +357,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     if (!this.config.enabled) {
-      log.trace(`[${this.symbol}] Double Top/Bottom indicator disabled`);
+      log.info(`[${this.symbol}] ⚠️ fetchData() ABORTADO - config.enabled es FALSE`);
       return;
     }
+
+    log.info(`[${this.symbol}] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit`)
 
     this.loading = true;
     const startTime = Date.now();
@@ -381,6 +385,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         interval: this.interval,
         days: this.days,
         config: this.config
+        // ✅ NO enviar velas - el backend las obtendrá de Bybit
       };
 
       log.debug(`[${this.symbol}] Full request payload:`, JSON.stringify(requestPayload, null, 2));
@@ -409,8 +414,31 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       }
 
       if (result.success && result.patterns) {
-        this.patterns = result.patterns;
-        log.debug(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns stored`);
+        // 🔄 FUSIONAR patrones en lugar de reemplazar completamente
+        // Esto previene que patrones existentes se pierdan y luego se detecten como "nuevos"
+        const oldPatternsCount = this.patterns.length;
+
+        // Primero, limpiar flags _isNewPattern de patrones viejos
+        this.patterns.forEach(p => {
+          if (p._isNewPattern) {
+            p._isNewPattern = false;
+          }
+        });
+
+        // Luego, fusionar los nuevos patrones del backend (sin marcar como nuevos)
+        result.patterns.forEach(newPattern => {
+          const newId = this.getPatternId(newPattern);
+          const existingPattern = this.patterns.find(p => this.getPatternId(p) === newId);
+
+          if (!existingPattern) {
+            // Patrón del backend que no existía - agregar SIN marcar como nuevo
+            // (solo los detectados en tiempo real deben marcarse como nuevos)
+            this.patterns.push(newPattern);
+          }
+          // Si ya existe, no hacer nada (mantener el existente con sus flags)
+        });
+
+        log.debug(`[${this.symbol}] ✅ Double Top/Bottom: ${oldPatternsCount} → ${this.patterns.length} patterns (fusionados)`);
 
         if (this.patterns.length > 0) {
           log.debug(`[${this.symbol}] First pattern confidence: ${this.patterns[0].confidence}%`);
@@ -755,7 +783,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const skipReasons = {
       alreadyAlerted: 0,
       failedValidation: 0,
-      historical: 0
+      notNewPattern: 0
     };
 
     for (const pattern of this.patterns) {
@@ -770,10 +798,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         continue;
       }
 
-      // Solo patrones detectados después del start time
-      if (patternTime < this.alertSystemStartTime) {
-        skipReasons.historical++;
-        log.debug(`  ⏭️  SKIP: Historical - ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate})`);
+      // ✅ NUEVA LÓGICA: Solo patrones marcados como nuevos en mergeNewPatterns()
+      if (!pattern._isNewPattern) {
+        skipReasons.notNewPattern++;
+        log.debug(`  ⏭️  SKIP: Not a new pattern - ${pattern.type} at $${pattern.levelPrice.toFixed(2)} (${patternDate})`);
         continue;
       }
 
@@ -791,16 +819,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       newPatterns.push(pattern);
     }
 
-    log.debug(`\nSummary:`);
-    log.debug(`  📊 Total patterns: ${this.patterns.length}`);
-    log.debug(`  ✅ NEW to alert: ${newPatterns.length}`);
-    log.debug(`  ⏭️  Already alerted: ${skipReasons.alreadyAlerted}`);
-    log.debug(`  ⏭️  Failed validation: ${skipReasons.failedValidation}`);
-    log.debug(`  ⏭️  Historical: ${skipReasons.historical}`);
+    log.info(`\nSummary:`);
+    log.info(`  📊 Total patterns: ${this.patterns.length}`);
+    log.info(`  ✅ NEW to alert: ${newPatterns.length}`);
+    log.info(`  ⏭️  Already alerted: ${skipReasons.alreadyAlerted}`);
+    log.info(`  ⏭️  Failed validation: ${skipReasons.failedValidation}`);
+    log.info(`  ⏭️  Not new patterns: ${skipReasons.notNewPattern}`);
 
     if (newPatterns.length === 0) {
-      log.debug(`\n❌ No new patterns to alert`);
-      log.debug(`${'='.repeat(80)}\n`);
+      log.info(`\n❌ No new patterns to alert`);
+      log.info(`${'='.repeat(80)}\n`);
       return;
     }
 
@@ -850,6 +878,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         this.alertedPatterns.add(patternId);
         pattern._alertSent = true;
         pattern._alertTimestamp = Date.now();
+        pattern._isNewPattern = false; // ✅ Limpiar flag para que no se alerte nuevamente
         this.markCooldown(pattern);
 
         // Agregar al historial
@@ -1166,6 +1195,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
   /**
    * Fusiona nuevos patrones detectados con los existentes, evitando duplicados
+   * MARCA los patrones verdaderamente nuevos con _isNewPattern flag para alertas
    */
   mergeNewPatterns(newPatterns) {
     if (!newPatterns || newPatterns.length === 0) {
@@ -1174,6 +1204,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     let addedCount = 0;
+    const currentTime = Date.now();
+
     newPatterns.forEach(newPattern => {
       const newId = this.getPatternId(newPattern);
 
@@ -1181,32 +1213,58 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const existingPattern = this.patterns.find(p => this.getPatternId(p) === newId);
 
       if (!existingPattern) {
+        // ✅ PATRÓN NUEVO: Marcar para alertas
+        newPattern._isNewPattern = true;
+        newPattern._detectionTime = currentTime;
         this.patterns.push(newPattern);
         addedCount++;
-        log.debug(`[${this.symbol}] ✅ Nuevo patrón agregado: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
+
+        // Formatear timestamp del segundo extremo (cuando se completó el patrón)
+        const patternDate = new Date(newPattern.secondExtreme.timestamp);
+        const formattedDate = patternDate.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+
+        log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
       } else {
         log.debug(`[${this.symbol}] ⏭️ Patrón ya existe, saltando: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
       }
     });
 
-    log.debug(`[${this.symbol}] 📊 Fusión completa: ${addedCount} nuevos patrones agregados, ${this.patterns.length} patrones totales`);
+    log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones NUEVOS agregados, ${this.patterns.length} patrones totales`);
   }
 
   /**
-   * Detecta patrones usando solo las últimas N velas (incremental)
+   * Detecta patrones usando análisis completo o incremental
    * @param {Array} allCandles - Todas las velas disponibles
-   * @param {number} lookbackCount - Número de velas a analizar (null = usar config.realTimeDetection.lookbackCandles)
+   * @param {boolean} isFullAnalysis - Si es true, analiza todas las velas (inicial/config). Si false, solo analiza velas recientes (tiempo real)
    */
-  async detectIncrementalPattern(allCandles, lookbackCount = null) {
+  async detectIncrementalPattern(allCandles, isFullAnalysis = false) {
     if (!this.config.realTimeDetection?.enabled) {
       log.debug(`[${this.symbol}] Real-time detection deshabilitado`);
       return [];
     }
 
-    const lookback = lookbackCount || this.config.realTimeDetection.lookbackCandles || 100;
-    const recentCandles = allCandles.slice(-lookback);
+    // ✅ OPTIMIZACIÓN: Solo hacer análisis completo en carga inicial o cambios de config
+    // Para tiempo real, analizar solo las últimas 300 velas (suficiente para patrones grandes)
+    let candlesToSend;
+    const realtimeLookback = 300; // Permite detectar patrones grandes sin re-procesar todo el histórico
 
-    log.debug(`[${this.symbol}] 🔍 Detección incremental con últimas ${recentCandles.length} velas (de ${allCandles.length} totales)`);
+    if (isFullAnalysis) {
+      // ANÁLISIS COMPLETO: Carga inicial, cambio de config, cambio de timeframe
+      candlesToSend = allCandles;
+      log.info(`[${this.symbol}] 🔍 Análisis COMPLETO: ${candlesToSend.length} velas`);
+    } else {
+      // TIEMPO REAL: Solo analizar velas recientes
+      candlesToSend = allCandles.slice(-realtimeLookback);
+      log.info(`[${this.symbol}] 🔍 Detección incremental: ${candlesToSend.length} velas recientes (últimas ${realtimeLookback})`);
+    }
 
     try {
       const startTime = Date.now();
@@ -1217,11 +1275,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         config: {
           ...this.config,
           doubleTopBottom: {
-            ...this.config.doubleTopBottom,
-            lookbackCandles: lookback  // Usar lookback reducido
+            ...this.config.doubleTopBottom
           }
         },
-        candles: recentCandles  // Enviar solo velas recientes
+        candles: candlesToSend
       };
 
       const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
@@ -1236,14 +1293,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const duration = Date.now() - startTime;
 
       if (result.success && result.patterns) {
-        log.debug(`[${this.symbol}] ✅ Detección incremental: ${result.patterns.length} patrones en ${duration}ms`);
+        const analysisType = isFullAnalysis ? 'COMPLETO' : 'incremental';
+        log.info(`[${this.symbol}] ✅ Análisis ${analysisType}: ${result.patterns.length} patrones en ${duration}ms`);
         return result.patterns;
       } else {
-        log.error(`[${this.symbol}] ❌ Error en detección incremental:`, result.error);
+        log.error(`[${this.symbol}] ❌ Error en detección:`, result.error);
         return [];
       }
     } catch (error) {
-      log.error(`[${this.symbol}] ❌ Excepción en detección incremental:`, error);
+      log.error(`[${this.symbol}] ❌ Excepción en detección:`, error);
       return [];
     }
   }
@@ -1274,18 +1332,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.lastRealtimeCheck = now;
-    log.debug(`[${this.symbol}] 🕐 Vela cerrada - detectando patrones DBT...`);
+    log.info(`[${this.symbol}] 🕐 Vela cerrada - detectando patrones DBT...`);
 
     try {
       const newPatterns = await this.detectIncrementalPattern(allCandles);
 
       if (newPatterns.length > 0) {
-        log.debug(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
+        log.info(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
         this.mergeNewPatterns(newPatterns);
 
         // Enviar alertas si están habilitadas
         if (this.config.alertsEnabled) {
-          log.debug(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
+          log.info(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
           await this.checkAndSendAlerts();
         }
 
@@ -1294,7 +1352,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           this.indicatorManager.requestRedraw();
         }
       } else {
-        log.debug(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
+        log.info(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
       }
     } catch (error) {
       log.error(`[${this.symbol}] ❌ Error en detección en tiempo real:`, error);

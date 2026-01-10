@@ -60,7 +60,8 @@
       "Bash(VWAPIndicator.js)",
       "Bash(git checkout:*)",
       "Bash(main.py)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cmd //c \"taskkill /PID 15620 /F /T 2>&1\")"
     ],
     "deny": [],
     "ask": []

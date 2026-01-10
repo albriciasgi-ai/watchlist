@@ -51,6 +51,9 @@ class IndicatorManager {
     // 🎯 NUEVO: Level Source Manager (for continuation patterns)
     this.levelSourceManager = null; // Gestión centralizada de niveles de múltiples fuentes
 
+    // ✅ NUEVO: Referencia a las velas históricas (necesario para fetchData en DBT)
+    this.allCandles = null;
+
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -267,7 +270,11 @@ class IndicatorManager {
 
           if (needsFetch.includes(name) && indicator.fetchData) {
             log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
-            indicator.fetchData().then(() => {
+
+            // ✅ Para DBT, pasar las velas si están disponibles
+            const candlesParam = (name === "Double Top/Bottom" && this.allCandles) ? this.allCandles : undefined;
+
+            indicator.fetchData(candlesParam).then(() => {
               log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
               if (this.requestRedraw) {
                 this.requestRedraw();
@@ -1108,9 +1115,12 @@ class IndicatorManager {
    * Propaga el evento al indicador Double Top/Bottom para detección en tiempo real
    */
   onCandleClose(allCandles) {
+    // ✅ Guardar referencia a las velas para fetchData()
+    this.allCandles = allCandles;
+
     const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
     if (dbtIndicator && dbtIndicator.enabled) {
-      log.debug(`[${this.symbol}] 🕐 Vela cerrada - notificando a DBT indicator`);
+      log.info(`[${this.symbol}] 🕐 Vela cerrada - notificando a DBT indicator`);
       dbtIndicator.onCandleClose(allCandles);
     }
   }
