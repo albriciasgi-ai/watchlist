@@ -14,6 +14,9 @@ const log = new Logger('DoubleTopBottom', { level: 'info' });
  * and optional momentum confirmation for entry signals.
  */
 class DoubleTopBottomIndicator extends IndicatorBase {
+  // Versión del indicador - incrementar cuando cambie el formato de IDs o datos
+  static VERSION = 'v2.1.0';
+
   constructor(symbol, interval, days = 90) {
     super(symbol, interval, days);
     this.name = "Double Top/Bottom";
@@ -40,10 +43,39 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.lastRealtimeCheck = null; // Timestamp de última detección en tiempo real
     this.hasRunFullAnalysis = false; // Flag para saber si ya se hizo el análisis completo inicial
 
+    // ✅ MIGRACIÓN: Limpiar datos legacy si la versión cambió
+    // Esto evita problemas con IDs de patrones que usaban formato anterior
+    this._migrateIfNeeded();
+
     // Cargar historial desde localStorage
     this.loadAlertHistory();
 
-    log.debug(`[${this.symbol}] 🔔 Double Top/Bottom alert system initialized with multi-level support`);
+    log.debug(`[${this.symbol}] 🔔 Double Top/Bottom ${DoubleTopBottomIndicator.VERSION} initialized`);
+  }
+
+  /**
+   * Migra datos legacy cuando la versión del indicador cambia.
+   * Limpia alertedPatterns y cooldowns para evitar conflictos con nuevos IDs.
+   */
+  _migrateIfNeeded() {
+    const versionKey = `dbt_version_${this.symbol}`;
+    const storedVersion = localStorage.getItem(versionKey);
+
+    if (storedVersion !== DoubleTopBottomIndicator.VERSION) {
+      log.info(`[${this.symbol}] 🔄 Migrando DBT de ${storedVersion || 'null'} a ${DoubleTopBottomIndicator.VERSION}`);
+
+      // Limpiar datos que dependen del formato de ID
+      this.alertedPatterns.clear();
+      this.alertCooldowns.clear();
+
+      // Limpiar historial de alertas (los IDs viejos no coincidirán)
+      localStorage.removeItem(`dbt_alert_history_${this.symbol}`);
+
+      // Guardar nueva versión
+      localStorage.setItem(versionKey, DoubleTopBottomIndicator.VERSION);
+
+      log.info(`[${this.symbol}] ✅ Migración completada - datos legacy limpiados`);
+    }
   }
 
   loadConfig() {
@@ -487,9 +519,25 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
   /**
    * Genera ID único para un patrón
+   *
+   * IMPORTANTE: Usamos secondExtreme.price (dato crudo del exchange: candle.high/low)
+   * en lugar de levelPrice (calculado) porque levelPrice puede variar ligeramente
+   * cuando el backend recibe diferentes cantidades de velas.
+   *
+   * @see Fix para detección en tiempo real v2.1.0
    */
   getPatternId(pattern) {
-    return `${pattern.type}_${pattern.levelPrice}_${pattern.firstExtreme.timestamp}_${pattern.secondExtreme.timestamp}`;
+    // Preferir secondExtreme.price (dato crudo estable), fallback a levelPrice si no existe
+    const price = pattern.secondExtreme?.price ?? pattern.levelPrice;
+    const priceStr = typeof price === 'number' ? price.toFixed(2) : '0.00';
+    const id = `${pattern.type}_${priceStr}_${pattern.firstExtreme.timestamp}_${pattern.secondExtreme.timestamp}`;
+
+    // Log diagnóstico solo si debugMode está habilitado
+    if (this.config?.debugMode) {
+      log.trace(`[${this.symbol}] 🔑 Pattern ID: ${id} (price used: ${priceStr}, levelPrice: ${pattern.levelPrice?.toFixed(2)})`);
+    }
+
+    return id;
   }
 
   /**
@@ -1201,6 +1249,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    * Fusiona nuevos patrones detectados con los existentes, evitando duplicados
    * MARCA los patrones verdaderamente nuevos con _isNewPattern flag para alertas
    *
+   * VALIDACIÓN TEMPORAL: Un patrón solo se considera "nuevo" si:
+   * 1. No es carga inicial (isInitialLoad = false)
+   * 2. El patrón se completó recientemente (dentro de MAX_NEW_PATTERN_AGE)
+   *
+   * Esto evita que patrones históricos sean marcados como "nuevos" cuando
+   * el algoritmo los re-detecta con parámetros ligeramente diferentes.
+   *
    * @param {Array} newPatterns - Patrones detectados
    * @param {boolean} isInitialLoad - Si es true, NO marca patrones como nuevos (son históricos)
    */
@@ -1211,7 +1266,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     let addedCount = 0;
+    let skippedAsHistorical = 0;
     const currentTime = Date.now();
+
+    // ✅ VALIDACIÓN TEMPORAL: Solo patrones completados en las últimas 2 velas + margen
+    // pueden ser considerados "nuevos"
+    const intervalMs = this.getIntervalMs();
+    const MAX_NEW_PATTERN_AGE_MS = intervalMs * 2.5; // 2.5 intervalos de margen
 
     newPatterns.forEach(newPattern => {
       const newId = this.getPatternId(newPattern);
@@ -1224,10 +1285,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         this.patterns.push(newPattern);
         addedCount++;
 
-        // Solo marcar como "nuevo" si NO es carga inicial
+        // Solo marcar como "nuevo" si NO es carga inicial Y es reciente
         if (!isInitialLoad) {
-          newPattern._isNewPattern = true;
-          newPattern._detectionTime = currentTime;
+          // ✅ NUEVA VALIDACIÓN: Verificar edad del patrón
+          const patternAge = currentTime - newPattern.secondExtreme.timestamp;
+          const isRecentPattern = patternAge <= MAX_NEW_PATTERN_AGE_MS;
 
           // Formatear timestamp del segundo extremo (cuando se completó el patrón)
           const patternDate = new Date(newPattern.secondExtreme.timestamp);
@@ -1241,7 +1303,20 @@ class DoubleTopBottomIndicator extends IndicatorBase {
             hour12: false
           });
 
-          log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+          if (isRecentPattern) {
+            // ✅ Patrón genuinamente nuevo (reciente)
+            newPattern._isNewPattern = true;
+            newPattern._detectionTime = currentTime;
+
+            log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+          } else {
+            // ⚠️ Patrón histórico detectado en análisis incremental - NO marcar como nuevo
+            newPattern._isNewPattern = false;
+            skippedAsHistorical++;
+
+            const ageMinutes = Math.round(patternAge / 60000);
+            log.debug(`[${this.symbol}] ⏭️ Patrón histórico (${ageMinutes}min antiguo) detectado en incremental, NO es nuevo: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+          }
         } else {
           // Carga inicial - solo log de debug
           log.debug(`[${this.symbol}] 📌 Patrón histórico cargado: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
@@ -1254,7 +1329,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     if (isInitialLoad) {
       log.info(`[${this.symbol}] 📊 Carga inicial completa: ${addedCount} patrones históricos cargados, ${this.patterns.length} patrones totales`);
     } else {
-      log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones NUEVOS agregados, ${this.patterns.length} patrones totales`);
+      const genuinelyNew = addedCount - skippedAsHistorical;
+      log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones agregados (${genuinelyNew} NUEVOS, ${skippedAsHistorical} históricos re-detectados), ${this.patterns.length} patrones totales`);
     }
   }
 
