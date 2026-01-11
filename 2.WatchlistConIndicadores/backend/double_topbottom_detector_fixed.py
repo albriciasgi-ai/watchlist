@@ -393,7 +393,8 @@ class DoubleTopBottomDetectorFixed:
         mode: str,
         min_deviation: int,
         margin_percent: float,
-        pattern_type: str
+        pattern_type: str,
+        debug_first_only: bool = False
     ) -> bool:
         """
         Check if extremes are in the correct VWAP zone.
@@ -416,6 +417,8 @@ class DoubleTopBottomDetectorFixed:
             True if pattern passes the VWAP zone filter
         """
         if not vwap_data or len(vwap_data) == 0:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] No VWAP data available")
             return True  # No VWAP data, skip filter
 
         # Get VWAP data for each extreme
@@ -423,6 +426,8 @@ class DoubleTopBottomDetectorFixed:
         vwap_second = vwap_data[second_candle_idx] if second_candle_idx < len(vwap_data) else None
 
         if not vwap_first or not vwap_second:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] Missing VWAP data for idx {first_candle_idx} or {second_candle_idx}, len={len(vwap_data)}")
             return True  # Missing data, skip filter
 
         # Get the appropriate band level based on min_deviation
@@ -432,7 +437,17 @@ class DoubleTopBottomDetectorFixed:
         first_band = vwap_first.get('bands', {}).get(band_key)
         second_band = vwap_second.get('bands', {}).get(band_key)
 
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] {pattern_type}: band_key={band_key}")
+            print(f"    [VWAP_FILTER] first_band={first_band}, second_band={second_band}")
+            print(f"    [VWAP_FILTER] first_price={first_price}, second_price={second_price}")
+            print(f"    [VWAP_FILTER] Sample VWAP data keys: {list(vwap_first.keys())}")
+            if 'bands' in vwap_first:
+                print(f"    [VWAP_FILTER] Sample bands keys: {list(vwap_first['bands'].keys())}")
+
         if first_band is None or second_band is None:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] Missing band data for key {band_key}")
             return True  # Missing band data, skip filter
 
         # Calculate margin adjustment
@@ -453,11 +468,20 @@ class DoubleTopBottomDetectorFixed:
             first_passes = first_price <= first_threshold
             second_passes = second_price <= second_threshold
 
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] thresholds: first={first_threshold:.2f}, second={second_threshold:.2f}")
+            print(f"    [VWAP_FILTER] passes: first={first_passes}, second={second_passes}, mode={mode}")
+
         # Apply mode logic
         if mode == 'bothExtremes':
-            return first_passes and second_passes
+            result = first_passes and second_passes
         else:  # 'oneExtreme' (default)
-            return first_passes or second_passes
+            result = first_passes or second_passes
+
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] RESULT: {result}")
+
+        return result
 
     def _find_double_tops(
         self,
@@ -484,6 +508,7 @@ class DoubleTopBottomDetectorFixed:
         """Find double top patterns with dominance validation and volume/VWAP filters"""
         patterns = []
         vwap_data = vwap_data or []
+        vwap_debug_done = False  # Only debug first VWAP check
 
         # Diagnostic stats
         stats = {
@@ -559,6 +584,11 @@ class DoubleTopBottomDetectorFixed:
 
                 # VWAP ZONE FILTER: Double Top extremes must be ABOVE positive deviation
                 if vwap_zone_enabled and vwap_data:
+                    # Debug first check only
+                    debug_this = not vwap_debug_done
+                    if debug_this:
+                        vwap_debug_done = True
+
                     passes_vwap = self._check_vwap_zone_filter(
                         first['candle_index'],
                         second['candle_index'],
@@ -568,7 +598,8 @@ class DoubleTopBottomDetectorFixed:
                         vwap_zone_mode,
                         vwap_min_deviation,
                         vwap_margin_percent,
-                        pattern_type='DOUBLE_TOP'
+                        pattern_type='DOUBLE_TOP',
+                        debug_first_only=debug_this
                     )
                     if not passes_vwap:
                         stats['rejected_vwap_zone'] += 1
@@ -683,6 +714,7 @@ class DoubleTopBottomDetectorFixed:
         """Find double bottom patterns with dominance validation and volume/VWAP filters"""
         patterns = []
         vwap_data = vwap_data or []
+        vwap_debug_done = False  # Only debug first VWAP check
 
         # Diagnostic stats
         stats = {
@@ -758,6 +790,11 @@ class DoubleTopBottomDetectorFixed:
 
                 # VWAP ZONE FILTER: Double Bottom extremes must be BELOW negative deviation
                 if vwap_zone_enabled and vwap_data:
+                    # Debug first check only
+                    debug_this = not vwap_debug_done
+                    if debug_this:
+                        vwap_debug_done = True
+
                     passes_vwap = self._check_vwap_zone_filter(
                         first['candle_index'],
                         second['candle_index'],
@@ -767,7 +804,8 @@ class DoubleTopBottomDetectorFixed:
                         vwap_zone_mode,
                         vwap_min_deviation,
                         vwap_margin_percent,
-                        pattern_type='DOUBLE_BOTTOM'
+                        pattern_type='DOUBLE_BOTTOM',
+                        debug_first_only=debug_this
                     )
                     if not passes_vwap:
                         stats['rejected_vwap_zone'] += 1
