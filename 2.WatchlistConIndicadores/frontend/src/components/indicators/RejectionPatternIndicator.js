@@ -1540,7 +1540,14 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
-    const patternsToShow = this.localPatterns;
+    let patternsToShow = this.localPatterns;
+
+    // ✅ NUEVO: Filtrar patrones por VWAP si el filtro está habilitado
+    // Cuando vwapFilter.enabled = true, solo mostrar patrones que pasen checkVWAPAlignment()
+    // Cuando vwapFilter.enabled = false, mostrar todos los patrones que cumplan otros criterios
+    if (this.config.vwapFilter?.enabled) {
+      patternsToShow = patternsToShow.filter(pattern => this.checkVWAPAlignment(pattern));
+    }
 
     if (patternsToShow.length === 0) {
       return;
