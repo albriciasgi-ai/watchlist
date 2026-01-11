@@ -595,19 +595,30 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     const newConfirmed = [];
+    let skippedNotNew = 0;
+    let skippedAlreadyAlerted = 0;
+    let skippedNotConfirmed = 0;
+    let skippedAlreadySent = 0;
 
-    // ✅ Iterar sin logging (el logging se hace cuando se ENVÍA la alerta, no aquí)
     for (let i = 0; i < this.localPatterns.length; i++) {
       const pattern = this.localPatterns[i];
       const patternId = this.getPatternId(pattern);
 
+      // ✅ FIX: Verificar si ya fue enviado (flag local)
+      if (pattern._alertSent) {
+        skippedAlreadySent++;
+        continue;
+      }
+
       // ✅ FIX #2: Verificar flag _isNewPattern del sistema de merge
       if (!pattern._isNewPattern) {
+        skippedNotNew++;
         continue; // No es un patrón genuinamente nuevo
       }
 
-      // Si ya fue alertado, skip
+      // Si ya fue alertado (persistido en localStorage), skip
       if (this.alertedPatterns.has(patternId)) {
+        skippedAlreadyAlerted++;
         continue;
       }
 
@@ -615,11 +626,17 @@ class RejectionPatternIndicator extends IndicatorBase {
       const isConfirmed = this.isPatternConfirmed(pattern, candles);
 
       if (!isConfirmed) {
+        skippedNotConfirmed++;
         continue;
       }
 
-      // Agregar a la lista sin logging (se loggea cuando se envía)
+      // Agregar a la lista
       newConfirmed.push(pattern);
+    }
+
+    // ✅ Log detallado solo si hay patrones o skipped significativo
+    if (newConfirmed.length > 0 || (skippedNotNew + skippedAlreadyAlerted + skippedNotConfirmed) > 0) {
+      this.logger.debug(`📊 Pattern check: ${this.localPatterns.length} total → ${newConfirmed.length} to alert (skip: ${skippedNotNew} notNew, ${skippedAlreadyAlerted} alerted, ${skippedAlreadySent} sent, ${skippedNotConfirmed} unconfirmed)`);
     }
 
     return newConfirmed;
@@ -668,15 +685,24 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.alertSystemStartTime = Date.now();
       this.saveAlertSystemStartTime(); // ✅ PERSISTIR para sobrevivir reloads
 
+      // ✅ Contar patrones por estado para debugging
+      let newCount = 0, oldCount = 0, alertedCount = 0;
+      this.localPatterns.forEach(p => {
+        if (p._isNewPattern) newCount++;
+        else oldCount++;
+        if (this.alertedPatterns.has(this.getPatternId(p))) alertedCount++;
+      });
+
       console.log(`\n${'='.repeat(80)}`);
       console.log(`📊 [${this.symbol}] ALERT SYSTEM ACTIVATED`);
       console.log(`${'='.repeat(80)}`);
       console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-      console.log(`All patterns before this time will be suppressed`);
-      console.log(`Only NEW patterns detected AFTER this time will trigger alerts`);
+      console.log(`Interval: ${this.interval} | Max age: ${Math.round(this.getIntervalMs() * this.getAgeMultiplier() / 60000)} minutes`);
+      console.log(`Pattern state: ${newCount} NEW (may alert), ${oldCount} OLD (won't alert), ${alertedCount} already alerted`);
+      console.log(`Only patterns with timestamp >= start time AND marked as NEW will trigger alerts`);
       console.log(`${'='.repeat(80)}\n`);
 
-      this.logger.alert(`✅ Alert system activated - suppressing all historical patterns`);
+      this.logger.alert(`✅ Alert system activated - ${newCount} patterns ready to alert`);
       return; // Salir en la primera ejecución para dar tiempo a la detección
     }
 
@@ -937,29 +963,27 @@ class RejectionPatternIndicator extends IndicatorBase {
         const existing = this.knownPatterns.get(patternId);
         // Preservar _isNewPattern del patrón existente
         newPattern._isNewPattern = existing._isNewPattern || false;
+        newPattern._alertSent = existing._alertSent || false; // ✅ FIX: Preservar _alertSent
         newPattern._firstSeenTime = existing._firstSeenTime;
         this.knownPatterns.set(patternId, newPattern);
         updatedCount++;
       } else {
-        // Patrón nuevo
+        // Patrón nuevo - SIEMPRE verificar edad (incluso en carga inicial)
         newPattern._firstSeenTime = currentTime;
+        const patternAge = currentTime - newPattern.timestamp;
 
-        if (isInitialLoad) {
-          // Carga inicial - no marcar como nuevo
-          newPattern._isNewPattern = false;
-        } else {
-          // Detección en tiempo real - verificar edad
-          const patternAge = currentTime - newPattern.timestamp;
-
-          if (patternAge <= maxAgeMs) {
-            // Patrón reciente - marcar como nuevo
-            newPattern._isNewPattern = true;
+        // ✅ FIX: Verificar edad independientemente de isInitialLoad
+        // El filtro por alertSystemStartTime se hace en checkAndSendAlerts()
+        if (patternAge <= maxAgeMs) {
+          // Patrón reciente - marcar como nuevo para posible alerta
+          newPattern._isNewPattern = true;
+          if (!isInitialLoad) {
             this.logger.debug(`✅ NEW pattern: ${newPattern.type} @ $${newPattern.price.toFixed(2)} (age: ${Math.round(patternAge/60000)}min)`);
-          } else {
-            // Patrón viejo re-detectado - no marcar como nuevo
-            newPattern._isNewPattern = false;
-            skippedAsOld++;
           }
+        } else {
+          // Patrón viejo re-detectado - no marcar como nuevo
+          newPattern._isNewPattern = false;
+          skippedAsOld++;
         }
 
         this.knownPatterns.set(patternId, newPattern);
