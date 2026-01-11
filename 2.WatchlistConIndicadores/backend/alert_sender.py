@@ -30,7 +30,7 @@ class AlertSender:
 
     async def start(self):
         """Start the alert sender service"""
-        self.client = httpx.AsyncClient(timeout=5.0)
+        self.client = httpx.AsyncClient(timeout=15.0)  # Increased from 5s to 15s for slow bot responses
         self.is_running = True
         logger.info(f"🚀 Alert sender started. Target: {self.alert_service_url}")
 
