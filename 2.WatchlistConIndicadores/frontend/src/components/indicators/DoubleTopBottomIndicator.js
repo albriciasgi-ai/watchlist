@@ -1271,8 +1271,23 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     // ✅ VALIDACIÓN TEMPORAL: Solo patrones completados en las últimas N velas
     // pueden ser considerados "nuevos" para alertas
+    // Multiplicador dinámico según timeframe (más grande = más margen)
     const intervalMs = this.getIntervalMs();
-    const MAX_NEW_PATTERN_AGE_MS = intervalMs * 10; // 10 intervalos de margen (10 min para 1m chart)
+    const getAgeMultiplier = () => {
+      switch (this.interval) {
+        case '1':   return 10;  // 1m: 10 intervalos = 10 min
+        case '3':   return 10;  // 3m: 10 intervalos = 30 min
+        case '5':   return 10;  // 5m: 10 intervalos = 50 min
+        case '15':  return 15;  // 15m: 15 intervalos = 3.75 horas
+        case '30':  return 15;  // 30m: 15 intervalos = 7.5 horas
+        case '60':  return 20;  // 1h: 20 intervalos = 20 horas
+        case '120': return 20;  // 2h: 20 intervalos = 40 horas
+        case '240': return 24;  // 4h: 24 intervalos = 4 días
+        case 'D':   return 30;  // 1D: 30 intervalos = 30 días
+        default:    return 10;
+      }
+    };
+    const MAX_NEW_PATTERN_AGE_MS = intervalMs * getAgeMultiplier();
 
     newPatterns.forEach(newPattern => {
       const newId = this.getPatternId(newPattern);
