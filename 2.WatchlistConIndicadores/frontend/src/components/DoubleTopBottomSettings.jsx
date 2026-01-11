@@ -141,8 +141,8 @@ function getDefaultConfig() {
         mode: 'oneExtreme',     // 'oneExtreme' = al menos uno, 'bothExtremes' = ambos deben cumplir
         minDeviation: 1,        // Desviación mínima requerida (1 = ±1σ, 2 = ±2σ, 3 = ±3σ)
         marginPercent: 0.5,     // Margen de tolerancia en % (el precio puede estar X% por debajo/encima de la banda)
-        vwapType: 'session',    // Tipo de VWAP a usar: 'session', 'rolling', 'anchored'
-        rollingPeriod: 20       // Período para VWAP rolling
+        vwapType: 'rolling',    // Tipo de VWAP a usar: 'session', 'rolling'
+        rollingPeriod: 200      // Período para VWAP rolling (50-500)
       },
 
       // Visualización del círculo de detección
@@ -1596,18 +1596,23 @@ const DoubleTopBottomSettings = ({
                 <label style={styles.label}>
                   <span>Período rolling</span>
                   <span style={styles.settingValue}>
-                    {config.alertSettings?.vwapZoneFilter?.rollingPeriod || 20} velas
+                    {config.alertSettings?.vwapZoneFilter?.rollingPeriod || 200} velas
                   </span>
                 </label>
                 <input
                   type="range"
-                  min="10"
-                  max="100"
-                  step="5"
-                  value={config.alertSettings?.vwapZoneFilter?.rollingPeriod || 20}
+                  min="50"
+                  max="500"
+                  step="10"
+                  value={config.alertSettings?.vwapZoneFilter?.rollingPeriod || 200}
                   onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.rollingPeriod', parseInt(e.target.value))}
                   style={styles.rangeInput}
                 />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888' }}>
+                  <span>50</span>
+                  <span>200</span>
+                  <span>500</span>
+                </div>
               </div>
             )}
           </div>
