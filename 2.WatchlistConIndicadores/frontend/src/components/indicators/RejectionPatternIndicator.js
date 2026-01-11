@@ -517,6 +517,26 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Obtiene tolerancia VWAP por defecto según timeframe
+   * Timeframes más pequeños necesitan tolerancias más ajustadas
+   */
+  getDefaultVWAPTolerance() {
+    switch (this.interval) {
+      case '1':   return 0.1;   // 1m: muy ajustado
+      case '3':   return 0.15;  // 3m
+      case '5':   return 0.2;   // 5m
+      case '15':  return 0.3;   // 15m
+      case '30':  return 0.5;   // 30m
+      case '60':  return 0.8;   // 1h
+      case '120': return 1.0;   // 2h
+      case '240': return 1.5;   // 4h
+      case 'D':   return 2.5;   // 1D
+      case 'W':   return 4.0;   // 1W
+      default:    return 0.5;
+    }
+  }
+
+  /**
    * ✅ NUEVO: Verifica alineación del patrón con desviaciones VWAP
    * Este es un FILTRO PASA/NO PASA - si no está en la desviación requerida, se rechaza
    *
@@ -550,7 +570,15 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     const patternPrice = pattern.price;
     const direction = pattern.direction; // 'LONG' o 'SHORT'
-    const tolerance = (vwapFilter.deviationTolerance || 0.5) / 100;
+
+    // ✅ Usar tolerancia del config, o default por timeframe si es 0 o "auto"
+    const configTolerance = vwapFilter.deviationTolerance;
+    const effectiveTolerance = (configTolerance === 0 || configTolerance === 'auto')
+      ? this.getDefaultVWAPTolerance()
+      : configTolerance;
+    const tolerance = effectiveTolerance / 100;
+
+    this.logger.debug(`VWAP tolerance: ${effectiveTolerance}% (config: ${configTolerance}, timeframe default: ${this.getDefaultVWAPTolerance()}%)`);
 
     // Para LONG (HAMMER, ENGULFING_BULLISH, DOJI_DRAGONFLY): buscar en desviaciones negativas (-2σ, -3σ)
     if (direction === 'LONG') {

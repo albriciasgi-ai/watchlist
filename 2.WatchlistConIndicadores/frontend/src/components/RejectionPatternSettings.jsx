@@ -1224,30 +1224,73 @@ const RejectionPatternSettings = ({
 
           {config.vwapFilter?.enabled && (
             <>
+              {/* Timeframe presets info */}
+              <div className="vwap-presets-info" style={{
+                background: '#1a2a1a',
+                padding: '10px',
+                borderRadius: '4px',
+                marginBottom: '10px',
+                fontSize: '12px'
+              }}>
+                <strong>📊 Timeframe Defaults:</strong>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px', color: '#aaa' }}>
+                  <span>1m: 0.1%</span>
+                  <span>5m: 0.2%</span>
+                  <span>15m: 0.3%</span>
+                  <span>1h: 0.8%</span>
+                  <span>4h: 1.5%</span>
+                  <span>1D: 2.5%</span>
+                </div>
+              </div>
+
               <div className="filter-item">
-                <label>
-                  Deviation Tolerance: {config.vwapFilter?.deviationTolerance || 0.5}%
-                  <input
-                    type="range"
-                    min="0.2"
-                    max="20"
-                    step="0.2"
-                    value={config.vwapFilter?.deviationTolerance || 0.5}
-                    onChange={(e) => {
-                      setConfig(prev => ({
-                        ...prev,
-                        vwapFilter: {
-                          ...prev.vwapFilter,
-                          deviationTolerance: parseFloat(e.target.value)
-                        }
-                      }));
-                      setActivePreset('custom');
-                    }}
-                    className="proximity-slider"
-                  />
-                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <label className="checkbox-label" style={{ margin: 0 }}>
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.deviationTolerance === 0 || config.vwapFilter?.deviationTolerance === 'auto'}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            deviationTolerance: e.target.checked ? 0 : 0.5
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>Use Auto (timeframe default)</span>
+                  </label>
+                </div>
+
+                {config.vwapFilter?.deviationTolerance !== 0 && config.vwapFilter?.deviationTolerance !== 'auto' && (
+                  <label>
+                    Custom Tolerance: {config.vwapFilter?.deviationTolerance || 0.5}%
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="20"
+                      step="0.1"
+                      value={config.vwapFilter?.deviationTolerance || 0.5}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            deviationTolerance: parseFloat(e.target.value)
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                      className="proximity-slider"
+                    />
+                  </label>
+                )}
                 <span className="filter-hint">
-                  How close to the deviation line the pattern must be (% of deviation price)
+                  {config.vwapFilter?.deviationTolerance === 0 || config.vwapFilter?.deviationTolerance === 'auto'
+                    ? '✅ Using automatic tolerance based on current timeframe'
+                    : 'How close to the deviation line the pattern must be (% of deviation price)'}
                 </span>
               </div>
 
