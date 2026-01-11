@@ -1631,17 +1631,29 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.restore();
     }
 
-    // Badge "✓" pequeño para patrones validados
+    // Badge para patrones validados
     if (isValidated) {
       ctx.save();
       ctx.font = 'bold 7px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#4CAF50';
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1.5;
-      ctx.strokeText('✓', x + radius + 2, dotY - radius - 2);
-      ctx.fillText('✓', x + radius + 2, dotY - radius - 2);
+
+      // ✅ NUEVO: Doble checkmark para patrones que enviaron alerta
+      if (pattern._alertSent) {
+        // Patrón que envió alerta exitosamente → doble checkmark verde brillante
+        ctx.fillStyle = '#00FF00';  // Verde brillante
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.strokeText('✓✓', x + radius + 4, dotY - radius - 2);
+        ctx.fillText('✓✓', x + radius + 4, dotY - radius - 2);
+      } else {
+        // Patrón validado pero sin alerta → checkmark simple
+        ctx.fillStyle = '#4CAF50';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.strokeText('✓', x + radius + 2, dotY - radius - 2);
+        ctx.fillText('✓', x + radius + 2, dotY - radius - 2);
+      }
       ctx.restore();
     }
   }
