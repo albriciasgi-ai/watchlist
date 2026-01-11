@@ -1340,8 +1340,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    * @param {boolean} isFullAnalysis - Si es true, analiza todas las velas (inicial/config). Si false, solo analiza velas recientes (tiempo real)
    */
   async detectIncrementalPattern(allCandles, isFullAnalysis = false) {
-    if (!this.config.realTimeDetection?.enabled) {
-      log.debug(`[${this.symbol}] Real-time detection deshabilitado`);
+    // ✅ Solo verificar realTimeDetection para detección incremental, NO para análisis completo inicial
+    if (!isFullAnalysis && !this.config.realTimeDetection?.enabled) {
+      log.debug(`[${this.symbol}] Real-time detection deshabilitado (solo afecta detección incremental)`);
       return [];
     }
 
