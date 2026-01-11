@@ -450,25 +450,38 @@ class DoubleTopBottomDetectorFixed:
                 print(f"    [VWAP_FILTER] Missing band data for key {band_key}")
             return True  # Missing band data, skip filter
 
-        # Calculate margin adjustment
-        # For DOUBLE_TOP: price can be up to margin_percent% BELOW the upper band
-        # For DOUBLE_BOTTOM: price can be up to margin_percent% ABOVE the lower band
+        # Get VWAP values for calculating deviation-based margin
+        first_vwap = vwap_first.get('vwap', 0)
+        second_vwap = vwap_second.get('vwap', 0)
+
+        # Calculate deviation (distance from VWAP to band)
+        # This is more meaningful than a % of price
+        first_deviation = abs(first_band - first_vwap)
+        second_deviation = abs(second_band - second_vwap)
+
+        # Margin as % of DEVIATION (not % of price!)
+        # e.g., 50% margin means price can be halfway between VWAP and band
         margin_factor = margin_percent / 100.0
+        first_margin_amount = first_deviation * margin_factor
+        second_margin_amount = second_deviation * margin_factor
 
         if pattern_type == 'DOUBLE_TOP':
-            # First extreme must be >= upper_band - margin
-            first_threshold = first_band * (1 - margin_factor)
-            second_threshold = second_band * (1 - margin_factor)
+            # For DT: price must be >= upper_band - margin (near or above the band)
+            first_threshold = first_band - first_margin_amount
+            second_threshold = second_band - second_margin_amount
             first_passes = first_price >= first_threshold
             second_passes = second_price >= second_threshold
         else:  # DOUBLE_BOTTOM
-            # First extreme must be <= lower_band + margin
-            first_threshold = first_band * (1 + margin_factor)
-            second_threshold = second_band * (1 + margin_factor)
+            # For DB: price must be <= lower_band + margin (near or below the band)
+            first_threshold = first_band + first_margin_amount
+            second_threshold = second_band + second_margin_amount
             first_passes = first_price <= first_threshold
             second_passes = second_price <= second_threshold
 
         if debug_first_only:
+            print(f"    [VWAP_FILTER] VWAP values: first={first_vwap:.2f}, second={second_vwap:.2f}")
+            print(f"    [VWAP_FILTER] Deviations: first={first_deviation:.2f}, second={second_deviation:.2f}")
+            print(f"    [VWAP_FILTER] Margin amounts: first={first_margin_amount:.2f}, second={second_margin_amount:.2f}")
             print(f"    [VWAP_FILTER] thresholds: first={first_threshold:.2f}, second={second_threshold:.2f}")
             print(f"    [VWAP_FILTER] passes: first={first_passes}, second={second_passes}, mode={mode}")
 

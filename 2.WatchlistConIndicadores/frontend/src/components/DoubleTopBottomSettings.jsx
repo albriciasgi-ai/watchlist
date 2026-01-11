@@ -140,7 +140,7 @@ function getDefaultConfig() {
         enabled: false,
         mode: 'oneExtreme',     // 'oneExtreme' = al menos uno, 'bothExtremes' = ambos deben cumplir
         minDeviation: 1,        // Desviación mínima requerida (1 = ±1σ, 2 = ±2σ, 3 = ±3σ)
-        marginPercent: 0.5,     // Margen de tolerancia en % (el precio puede estar X% por debajo/encima de la banda)
+        marginPercent: 20,      // Margen como % de la DESVIACIÓN (0=estricto, 50=a mitad, 100=permisivo)
         vwapType: 'rolling',    // Tipo de VWAP a usar: 'session', 'rolling'
         rollingPeriod: 200      // Período para VWAP rolling (50-500)
       },
@@ -1558,22 +1558,29 @@ const DoubleTopBottomSettings = ({
 
             {/* Margen de tolerancia */}
             <label style={styles.label}>
-              <span>Margen de tolerancia (%)</span>
+              <span>Margen de tolerancia</span>
               <span style={styles.settingValue}>
-                {config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}%
+                {config.alertSettings?.vwapZoneFilter?.marginPercent || 20}% de desviación
               </span>
             </label>
             <input
               type="range"
               min="0"
-              max="2"
-              step="0.1"
-              value={config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}
+              max="100"
+              step="5"
+              value={config.alertSettings?.vwapZoneFilter?.marginPercent || 20}
               onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.marginPercent', parseFloat(e.target.value))}
               style={styles.rangeInput}
             />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888' }}>
+              <span>0% (estricto)</span>
+              <span>50%</span>
+              <span>100% (permisivo)</span>
+            </div>
             <p style={styles.description}>
-              Permite que el precio esté hasta un {config.alertSettings?.vwapZoneFilter?.marginPercent || 0.5}% por debajo (DT) o arriba (DB) de la banda.
+              % de la distancia VWAP→banda como tolerancia.
+              <br />• 0% = precio debe estar EN o MÁS ALLÁ de la banda
+              <br />• 50% = precio puede estar a mitad de camino entre VWAP y banda
             </p>
 
             {/* Tipo de VWAP */}
