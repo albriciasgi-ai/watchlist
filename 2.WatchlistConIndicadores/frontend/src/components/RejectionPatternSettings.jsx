@@ -181,7 +181,16 @@ const RejectionPatternSettings = ({
         ...zone,
         signalDirection: zone.signalDirection || 'BOTH'  // ✅ FIX: Migrate null to 'BOTH'
       })),
-      debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode
+      debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode,
+      // ✅ NUEVO: Migrar vwapFilter
+      vwapFilter: {
+        ...defaultConfig.vwapFilter,
+        ...oldConfig.vwapFilter,
+        requiredDeviations: {
+          ...defaultConfig.vwapFilter.requiredDeviations,
+          ...oldConfig.vwapFilter?.requiredDeviations
+        }
+      }
     };
   };
 
@@ -1179,6 +1188,140 @@ const RejectionPatternSettings = ({
           )}
         </section>
 
+        {/* ✅ NUEVO: VWAP Deviation Filter */}
+        <section className="settings-section">
+          <h4>📈 VWAP Deviation Filter</h4>
+          <p className="help-text">
+            Filter patterns based on VWAP standard deviations. When enabled, only patterns near the configured deviations will trigger alerts.
+            <br />
+            <strong>LONG patterns</strong> → must be near -2σ or -3σ (below VWAP)
+            <br />
+            <strong>SHORT patterns</strong> → must be near +2σ or +3σ (above VWAP)
+          </p>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.vwapFilter?.enabled || false}
+                onChange={(e) => {
+                  setConfig(prev => ({
+                    ...prev,
+                    vwapFilter: {
+                      ...prev.vwapFilter,
+                      enabled: e.target.checked
+                    }
+                  }));
+                  setActivePreset('custom');
+                }}
+              />
+              <span>Enable VWAP Deviation Filter (Pass/Fail)</span>
+            </label>
+            <span className="filter-hint">
+              ⚠️ Requires VWAP indicator to be active on the chart
+            </span>
+          </div>
+
+          {config.vwapFilter?.enabled && (
+            <>
+              <div className="filter-item">
+                <label>
+                  Deviation Tolerance: {config.vwapFilter?.deviationTolerance || 0.5}%
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="2.0"
+                    step="0.1"
+                    value={config.vwapFilter?.deviationTolerance || 0.5}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        vwapFilter: {
+                          ...prev.vwapFilter,
+                          deviationTolerance: parseFloat(e.target.value)
+                        }
+                      }));
+                      setActivePreset('custom');
+                    }}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  How close to the deviation line the pattern must be
+                </span>
+              </div>
+
+              <div className="vwap-deviations-config">
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                  Required Deviations:
+                </label>
+
+                <div className="filter-item">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.requiredDeviations?.second !== false}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            requiredDeviations: {
+                              ...prev.vwapFilter?.requiredDeviations,
+                              second: e.target.checked
+                            }
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>±2σ (Second Deviation)</span>
+                  </label>
+                  <span className="filter-hint">
+                    LONG: -2σ | SHORT: +2σ
+                  </span>
+                </div>
+
+                <div className="filter-item">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.requiredDeviations?.third || false}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            requiredDeviations: {
+                              ...prev.vwapFilter?.requiredDeviations,
+                              third: e.target.checked
+                            }
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>±3σ (Third Deviation)</span>
+                  </label>
+                  <span className="filter-hint">
+                    LONG: -3σ | SHORT: +3σ (more extreme)
+                  </span>
+                </div>
+              </div>
+
+              <div className="debug-info-box" style={{ marginTop: '10px' }}>
+                <p>💡 <strong>How it works:</strong></p>
+                <ul style={{ margin: '8px 0', paddingLeft: '20px', fontSize: '12px', color: '#aaa' }}>
+                  <li>Pattern is detected normally</li>
+                  <li>Before sending alert, checks if price is near VWAP deviation</li>
+                  <li>If NOT near → pattern is REJECTED (no alert)</li>
+                  <li>If near → pattern PASSES → alert sent to port 5000</li>
+                </ul>
+              </div>
+            </>
+          )}
+        </section>
+
         {/* Section 4: Alerts */}
         <section className="settings-section">
           <h4>🔔 Alert Settings</h4>
@@ -1262,6 +1405,11 @@ const RejectionPatternSettings = ({
             {config.alertsEnabled && (
               <p className="info">
                 🔔 Alerts enabled → localhost:5000
+              </p>
+            )}
+            {config.vwapFilter?.enabled && (
+              <p className="info">
+                📈 VWAP Filter: {config.vwapFilter.requiredDeviations?.second ? '±2σ' : ''}{config.vwapFilter.requiredDeviations?.second && config.vwapFilter.requiredDeviations?.third ? ', ' : ''}{config.vwapFilter.requiredDeviations?.third ? '±3σ' : ''} (tolerance: {config.vwapFilter.deviationTolerance}%)
               </p>
             )}
           </div>
@@ -2234,7 +2382,16 @@ function getDefaultConfig() {
     signalDirection: {
       global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'
     },
-    manualPriceZones: []
+    manualPriceZones: [],
+    // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
+    vwapFilter: {
+      enabled: false,
+      deviationTolerance: 0.5,  // % de tolerancia
+      requiredDeviations: {
+        second: true,   // ±2σ
+        third: false    // ±3σ
+      }
+    }
   };
 }
 
