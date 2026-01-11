@@ -76,12 +76,20 @@ class RejectionPatternIndicator extends IndicatorBase {
         if (!config.vwapFilter) {
           config.vwapFilter = {
             enabled: false,
-            deviationTolerance: 0.5,
+            deviationTolerance: 10,  // % de σ
             requiredDeviations: {
               second: true,   // ±2σ
               third: false    // ±3σ
             }
           };
+        }
+
+        // ✅ Migración: Convertir tolerancia antigua (% de precio) a nueva (% de σ)
+        // Valores < 1 eran % de precio (ej: 0.5%), convertir a % de σ (ej: 10%)
+        if (config.vwapFilter && config.vwapFilter.deviationTolerance < 1 && config.vwapFilter.deviationTolerance !== 0) {
+          const oldValue = config.vwapFilter.deviationTolerance;
+          config.vwapFilter.deviationTolerance = 10; // Reset to default
+          console.log(`[${this.symbol}] ⚠️ Migrated VWAP tolerance from ${oldValue}% (price) to 10% (σ)`);
         }
 
         return config;
@@ -300,7 +308,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
       vwapFilter: {
         enabled: false,
-        deviationTolerance: 0.5,  // % de tolerancia
+        deviationTolerance: 10,  // % de σ (desviación estándar)
         requiredDeviations: {
           second: true,   // ±2σ - buscar patrones cerca de 2da desviación
           third: false    // ±3σ - buscar patrones cerca de 3ra desviación
@@ -518,27 +526,36 @@ class RejectionPatternIndicator extends IndicatorBase {
 
   /**
    * ✅ NUEVO: Obtiene tolerancia VWAP por defecto según timeframe
-   * Timeframes más pequeños necesitan tolerancias más ajustadas
+   * La tolerancia es un % de σ (desviación estándar), NO del precio.
+   * Ejemplo: 10% con σ=$1000 → margen de $100 alrededor de la línea de desviación
+   *
+   * Timeframes más pequeños tienen más ruido, necesitan tolerancias mayores.
+   * Timeframes más grandes son más estables, pueden tener tolerancias menores.
    */
   getDefaultVWAPTolerance() {
     switch (this.interval) {
-      case '1':   return 0.1;   // 1m: muy ajustado
-      case '3':   return 0.15;  // 3m
-      case '5':   return 0.2;   // 5m
-      case '15':  return 0.3;   // 15m
-      case '30':  return 0.5;   // 30m
-      case '60':  return 0.8;   // 1h
-      case '120': return 1.0;   // 2h
-      case '240': return 1.5;   // 4h
-      case 'D':   return 2.5;   // 1D
-      case 'W':   return 4.0;   // 1W
-      default:    return 0.5;
+      case '1':   return 15;    // 1m: más ruido → 15% de σ
+      case '3':   return 12;    // 3m: 12% de σ
+      case '5':   return 10;    // 5m: 10% de σ
+      case '15':  return 10;    // 15m: 10% de σ
+      case '30':  return 10;    // 30m: 10% de σ
+      case '60':  return 10;    // 1h: 10% de σ
+      case '120': return 10;    // 2h: 10% de σ
+      case '240': return 10;    // 4h: 10% de σ
+      case 'D':   return 10;    // 1D: 10% de σ
+      case 'W':   return 10;    // 1W: 10% de σ
+      default:    return 10;    // Default: 10% de σ
     }
   }
 
   /**
    * ✅ NUEVO: Verifica alineación del patrón con desviaciones VWAP
    * Este es un FILTRO PASA/NO PASA - si no está en la desviación requerida, se rechaza
+   *
+   * CÁLCULO DEL MARGEN:
+   * El margen (tolerance) se calcula como % de la desviación estándar (σ), NO del precio.
+   * Ejemplo: si VWAP=100,000 y σ=1,000, un margen del 10% = 100 (10% de 1,000)
+   * Esto permite ajustar con mayor sensibilidad y es más fácil de verificar visualmente.
    *
    * @param {Object} pattern - Patrón a validar
    * @returns {boolean} true si pasa el filtro (o filtro deshabilitado), false si no pasa
@@ -561,10 +578,31 @@ class RejectionPatternIndicator extends IndicatorBase {
       return true; // No bloquear si VWAP no está disponible
     }
 
-    // Obtener desviaciones
+    // Obtener desviaciones y VWAP
     const deviations = vwapIndicator.getDeviations();
     if (!deviations) {
       this.logger.warn(`VWAP indicator doesn't provide deviations`);
+      return true;
+    }
+
+    // Obtener valor del VWAP central
+    const vwapValue = deviations.vwap || vwapIndicator.getCurrentVWAP?.();
+    if (!vwapValue) {
+      this.logger.warn(`VWAP value not available`);
+      return true;
+    }
+
+    // ✅ Calcular σ (desviación estándar) desde las bandas
+    // σ = (upper2 - vwap) / 2 = (vwap - lower2) / 2
+    let sigma = null;
+    if (deviations.upper2 && vwapValue) {
+      sigma = (deviations.upper2 - vwapValue) / 2;
+    } else if (deviations.lower2 && vwapValue) {
+      sigma = (vwapValue - deviations.lower2) / 2;
+    }
+
+    if (!sigma || sigma <= 0) {
+      this.logger.warn(`Could not calculate σ from VWAP bands`);
       return true;
     }
 
@@ -576,9 +614,12 @@ class RejectionPatternIndicator extends IndicatorBase {
     const effectiveTolerance = (configTolerance === 0 || configTolerance === 'auto')
       ? this.getDefaultVWAPTolerance()
       : configTolerance;
-    const tolerance = effectiveTolerance / 100;
 
-    this.logger.debug(`VWAP tolerance: ${effectiveTolerance}% (config: ${configTolerance}, timeframe default: ${this.getDefaultVWAPTolerance()}%)`);
+    // ✅ NUEVO: El margen es un % de σ, no del precio
+    // Ejemplo: 10% de tolerancia con σ=1000 → margen de 100
+    const toleranceDistance = sigma * (effectiveTolerance / 100);
+
+    this.logger.debug(`VWAP tolerance: ${effectiveTolerance}% of σ (σ=$${sigma.toFixed(2)}, margin=$${toleranceDistance.toFixed(2)})`);
 
     // Para LONG (HAMMER, ENGULFING_BULLISH, DOJI_DRAGONFLY): buscar en desviaciones negativas (-2σ, -3σ)
     if (direction === 'LONG') {
@@ -589,9 +630,10 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (requireDev2 && deviations.lower2) {
         const dev2 = deviations.lower2;
-        const near2 = Math.abs(patternPrice - dev2) / dev2 <= tolerance;
+        const distance = Math.abs(patternPrice - dev2);
+        const near2 = distance <= toleranceDistance;
         if (near2) {
-          this.logger.debug(`✅ VWAP aligned: LONG pattern near -2σ ($${dev2.toFixed(2)})`);
+          this.logger.debug(`✅ VWAP aligned: LONG pattern near -2σ ($${dev2.toFixed(2)}, distance=$${distance.toFixed(2)} <= margin=$${toleranceDistance.toFixed(2)})`);
           pattern._vwapDeviation = '-2σ';
           aligned = true;
         }
@@ -599,16 +641,17 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (requireDev3 && deviations.lower3) {
         const dev3 = deviations.lower3;
-        const near3 = Math.abs(patternPrice - dev3) / dev3 <= tolerance;
+        const distance = Math.abs(patternPrice - dev3);
+        const near3 = distance <= toleranceDistance;
         if (near3) {
-          this.logger.debug(`✅ VWAP aligned: LONG pattern near -3σ ($${dev3.toFixed(2)})`);
+          this.logger.debug(`✅ VWAP aligned: LONG pattern near -3σ ($${dev3.toFixed(2)}, distance=$${distance.toFixed(2)} <= margin=$${toleranceDistance.toFixed(2)})`);
           pattern._vwapDeviation = '-3σ';
           aligned = true;
         }
       }
 
       if (!aligned) {
-        this.logger.debug(`❌ VWAP filter: LONG pattern at $${patternPrice.toFixed(2)} not near required deviations`);
+        this.logger.debug(`❌ VWAP filter: LONG pattern at $${patternPrice.toFixed(2)} not near required deviations (margin=$${toleranceDistance.toFixed(2)})`);
       }
       return aligned;
     }
@@ -622,9 +665,10 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (requireDev2 && deviations.upper2) {
         const dev2 = deviations.upper2;
-        const near2 = Math.abs(patternPrice - dev2) / dev2 <= tolerance;
+        const distance = Math.abs(patternPrice - dev2);
+        const near2 = distance <= toleranceDistance;
         if (near2) {
-          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +2σ ($${dev2.toFixed(2)})`);
+          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +2σ ($${dev2.toFixed(2)}, distance=$${distance.toFixed(2)} <= margin=$${toleranceDistance.toFixed(2)})`);
           pattern._vwapDeviation = '+2σ';
           aligned = true;
         }
@@ -632,16 +676,17 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (requireDev3 && deviations.upper3) {
         const dev3 = deviations.upper3;
-        const near3 = Math.abs(patternPrice - dev3) / dev3 <= tolerance;
+        const distance = Math.abs(patternPrice - dev3);
+        const near3 = distance <= toleranceDistance;
         if (near3) {
-          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +3σ ($${dev3.toFixed(2)})`);
+          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +3σ ($${dev3.toFixed(2)}, distance=$${distance.toFixed(2)} <= margin=$${toleranceDistance.toFixed(2)})`);
           pattern._vwapDeviation = '+3σ';
           aligned = true;
         }
       }
 
       if (!aligned) {
-        this.logger.debug(`❌ VWAP filter: SHORT pattern at $${patternPrice.toFixed(2)} not near required deviations`);
+        this.logger.debug(`❌ VWAP filter: SHORT pattern at $${patternPrice.toFixed(2)} not near required deviations (margin=$${toleranceDistance.toFixed(2)})`);
       }
       return aligned;
     }

@@ -1254,7 +1254,7 @@ const RejectionPatternSettings = ({
                           ...prev,
                           vwapFilter: {
                             ...prev.vwapFilter,
-                            deviationTolerance: e.target.checked ? 0 : 0.5
+                            deviationTolerance: e.target.checked ? 0 : 10
                           }
                         }));
                         setActivePreset('custom');
@@ -1266,13 +1266,13 @@ const RejectionPatternSettings = ({
 
                 {config.vwapFilter?.deviationTolerance !== 0 && config.vwapFilter?.deviationTolerance !== 'auto' && (
                   <label>
-                    Custom Tolerance: {config.vwapFilter?.deviationTolerance || 0.5}%
+                    Custom Tolerance: {config.vwapFilter?.deviationTolerance || 10}% of σ
                     <input
                       type="range"
-                      min="0.1"
-                      max="20"
-                      step="0.1"
-                      value={config.vwapFilter?.deviationTolerance || 0.5}
+                      min="1"
+                      max="50"
+                      step="1"
+                      value={config.vwapFilter?.deviationTolerance || 10}
                       onChange={(e) => {
                         setConfig(prev => ({
                           ...prev,
@@ -1290,7 +1290,7 @@ const RejectionPatternSettings = ({
                 <span className="filter-hint">
                   {config.vwapFilter?.deviationTolerance === 0 || config.vwapFilter?.deviationTolerance === 'auto'
                     ? '✅ Using automatic tolerance based on current timeframe'
-                    : 'How close to the deviation line the pattern must be (% of deviation price)'}
+                    : 'Margin as % of σ (standard deviation). E.g. 10% of σ=$100 → margin of $10'}
                 </span>
               </div>
 
@@ -1452,7 +1452,7 @@ const RejectionPatternSettings = ({
             )}
             {config.vwapFilter?.enabled && (
               <p className="info">
-                📈 VWAP Filter: {config.vwapFilter.requiredDeviations?.second ? '±2σ' : ''}{config.vwapFilter.requiredDeviations?.second && config.vwapFilter.requiredDeviations?.third ? ', ' : ''}{config.vwapFilter.requiredDeviations?.third ? '±3σ' : ''} (tolerance: {config.vwapFilter.deviationTolerance}%)
+                📈 VWAP Filter: {config.vwapFilter.requiredDeviations?.second ? '±2σ' : ''}{config.vwapFilter.requiredDeviations?.second && config.vwapFilter.requiredDeviations?.third ? ', ' : ''}{config.vwapFilter.requiredDeviations?.third ? '±3σ' : ''} (tolerance: {config.vwapFilter.deviationTolerance === 0 ? 'auto' : `${config.vwapFilter.deviationTolerance}% of σ`})
               </p>
             )}
           </div>
@@ -2429,7 +2429,7 @@ function getDefaultConfig() {
     // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
     vwapFilter: {
       enabled: false,
-      deviationTolerance: 0.5,  // % de tolerancia
+      deviationTolerance: 10,  // % de σ (desviación estándar)
       requiredDeviations: {
         second: true,   // ±2σ
         third: false    // ±3σ
