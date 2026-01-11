@@ -47,13 +47,8 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.alertedPatterns = this.loadAlertedPatterns(); // ✅ FIX #4: Cargar desde localStorage
     this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
     this.notificationPermissionRequested = false; // Flag para pedir permiso una sola vez
-    this.alertSystemStartTime = this.loadAlertSystemStartTime(); // ✅ PERSISTIDO: Cargar desde localStorage
+    this.alertSystemStartTime = null; // Timestamp cuando se inician las alertas
     this.logger = createLogger(this.symbol); // Logger con contexto del símbolo
-
-    // ✅ NUEVO: Sistema de merge de patrones (evita re-detección en cada render)
-    this.knownPatterns = new Map(); // Map de patternId -> pattern para tracking
-    this.lastDetectionTime = 0; // Timestamp de última detección completa
-    this.detectionThrottleMs = 1000; // Mínimo 1 segundo entre detecciones completas
 
     // ✅ FIX #3: Sistema de throttling para prevenir llamadas múltiples
     this.lastAlertCheckTime = 0;
@@ -125,89 +120,6 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.logger.debug(`💾 Saved ${data.length} alerted patterns to storage`);
     } catch (e) {
       console.error('Failed to save alerted patterns:', e);
-    }
-  }
-
-  /**
-   * ✅ NUEVO: Convierte intervalo a milisegundos
-   */
-  getIntervalMs() {
-    const map = {
-      '1': 60000,       // 1 min
-      '3': 180000,      // 3 min
-      '5': 300000,      // 5 min
-      '15': 900000,     // 15 min
-      '30': 1800000,    // 30 min
-      '60': 3600000,    // 1 hora
-      '120': 7200000,   // 2 horas
-      '240': 14400000,  // 4 horas
-      'D': 86400000,    // 1 día
-      'W': 604800000    // 1 semana
-    };
-    return map[this.interval] || 900000; // Default 15 min
-  }
-
-  /**
-   * ✅ NUEVO: Obtiene multiplicador de edad según timeframe
-   * Timeframes más grandes necesitan más margen
-   */
-  getAgeMultiplier() {
-    switch (this.interval) {
-      case '1':   return 10;  // 1m: 10 intervalos = 10 min
-      case '3':   return 10;  // 3m: 10 intervalos = 30 min
-      case '5':   return 10;  // 5m: 10 intervalos = 50 min
-      case '15':  return 15;  // 15m: 15 intervalos = 3.75 horas
-      case '30':  return 15;  // 30m: 15 intervalos = 7.5 horas
-      case '60':  return 20;  // 1h: 20 intervalos = 20 horas
-      case '120': return 20;  // 2h: 20 intervalos = 40 horas
-      case '240': return 24;  // 4h: 24 intervalos = 4 días
-      case 'D':   return 30;  // 1D: 30 intervalos = 30 días
-      default:    return 10;
-    }
-  }
-
-  /**
-   * ✅ NUEVO: Carga alertSystemStartTime desde localStorage
-   * Evita re-alertar patrones históricos después de recargar la página
-   */
-  loadAlertSystemStartTime() {
-    const storageKey = `rejection_alert_start_time_${this.symbol}_${this.interval}`;
-    const stored = localStorage.getItem(storageKey);
-
-    if (stored) {
-      try {
-        const data = JSON.parse(stored);
-        const age = Date.now() - data.timestamp;
-        const maxAge = 24 * 60 * 60 * 1000; // 24 horas
-
-        // Solo usar si tiene menos de 24 horas
-        if (age < maxAge) {
-          this.logger.debug(`📂 Loaded alertSystemStartTime from storage: ${new Date(data.timestamp).toLocaleString()}`);
-          return data.timestamp;
-        } else {
-          this.logger.debug(`⏰ alertSystemStartTime expired (${Math.round(age / 3600000)}h old), will reset`);
-        }
-      } catch (e) {
-        console.error('Failed to load alertSystemStartTime:', e);
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * ✅ NUEVO: Guarda alertSystemStartTime en localStorage
-   */
-  saveAlertSystemStartTime() {
-    const storageKey = `rejection_alert_start_time_${this.symbol}_${this.interval}`;
-
-    try {
-      localStorage.setItem(storageKey, JSON.stringify({
-        timestamp: this.alertSystemStartTime
-      }));
-      this.logger.debug(`💾 Saved alertSystemStartTime: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-    } catch (e) {
-      console.error('Failed to save alertSystemStartTime:', e);
     }
   }
 
@@ -290,8 +202,6 @@ class RejectionPatternIndicator extends IndicatorBase {
     // ✅ FIX BUG 1: Limpiar patrones para forzar re-detección en el próximo render
     // Esto asegura que al borrar zonas o cambiar configuración, los patrones se actualicen
     this.localPatterns = [];
-    this.knownPatterns.clear(); // ✅ FIX #2: Limpiar cache de patrones conocidos
-    this.lastDetectionTime = 0; // ✅ FIX #5: Forzar re-detección inmediata
     console.log(`[${this.symbol}] 🔄 Config updated - patterns will be re-detected on next render`);
   }
 
@@ -507,21 +417,21 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
-   * ✅ ESTABILIZADO: Genera ID único para un patrón
-   * Formato: tipo_timestamp_precio (sin candleIndex para estabilidad)
-   *
-   * NOTA: Se removió candleIndex porque cambia cuando el array de velas
-   * cambia (scroll, nuevas velas), causando IDs inestables y alertas duplicadas.
+   * ✅ NUEVO: Genera ID único para un patrón
+   * ✅ FIX #2: ID mejorado con candleIndex para mayor unicidad
+   * Formato: tipo_timestamp_precio_candleIndex
    */
   getPatternId(pattern) {
-    // Usar toFixed(0) para consistencia en el precio
+    // ✅ FIX #2: Usar toFixed(0) en vez de Math.round para mantener consistencia
     const priceKey = (pattern.price * 100).toFixed(0);
+
+    // ✅ FIX #2: Incluir candleIndex para diferenciar patrones en mismo timestamp
+    const candleIdx = pattern.candleIndex || pattern.candle_index || 0;
 
     // Asegurar timestamp válido
     const timestamp = pattern.timestamp || Date.now();
 
-    // ID estable: tipo + timestamp + precio (sin candleIndex)
-    return `${pattern.type}_${timestamp}_${priceKey}`;
+    return `${pattern.type}_${timestamp}_${priceKey}_${candleIdx}`;
   }
 
   /**
@@ -601,11 +511,6 @@ class RejectionPatternIndicator extends IndicatorBase {
       const pattern = this.localPatterns[i];
       const patternId = this.getPatternId(pattern);
 
-      // ✅ FIX #2: Verificar flag _isNewPattern del sistema de merge
-      if (!pattern._isNewPattern) {
-        continue; // No es un patrón genuinamente nuevo
-      }
-
       // Si ya fue alertado, skip
       if (this.alertedPatterns.has(patternId)) {
         continue;
@@ -666,7 +571,6 @@ class RejectionPatternIndicator extends IndicatorBase {
     // ✅ PRIMERA VEZ: Guardar timestamp de inicio del sistema de alertas
     if (this.alertSystemStartTime === null) {
       this.alertSystemStartTime = Date.now();
-      this.saveAlertSystemStartTime(); // ✅ PERSISTIR para sobrevivir reloads
 
       console.log(`\n${'='.repeat(80)}`);
       console.log(`📊 [${this.symbol}] ALERT SYSTEM ACTIVATED`);
@@ -684,42 +588,22 @@ class RejectionPatternIndicator extends IndicatorBase {
     const newConfirmedPatterns = this.getNewConfirmedPatterns(candles);
     if (newConfirmedPatterns.length === 0) return;
 
-    // ✅ VALIDACIÓN DE EDAD: Solo alertar patrones recientes (dentro de N intervalos)
-    const intervalMs = this.getIntervalMs();
-    const maxAgeMs = intervalMs * this.getAgeMultiplier();
-    const currentTime = Date.now();
+    // ✅ Filtrar solo patrones NUEVOS (timestamp >= alertSystemStartTime)
     const minConfidence = this.config.filters?.minConfidence || 50;
 
-    // ✅ Filtrar patrones que:
-    // 1. timestamp >= alertSystemStartTime (después de iniciar alertas)
-    // 2. No sean demasiado viejos (dentro de maxAgeMs)
-    const recentPatterns = newConfirmedPatterns.filter(p => {
-      // Condición 1: Después del inicio del sistema de alertas
-      if (p.timestamp < this.alertSystemStartTime) return false;
-
-      // Condición 2: No muy viejo (evita alertar patrones históricos re-detectados)
-      const patternAge = currentTime - p.timestamp;
-      if (patternAge > maxAgeMs) {
-        this.logger.debug(`⏭️ Pattern too old: ${p.type} age=${Math.round(patternAge/60000)}min > max=${Math.round(maxAgeMs/60000)}min`);
-        return false;
-      }
-
-      return true;
-    });
+    const recentPatterns = newConfirmedPatterns.filter(p => p.timestamp >= this.alertSystemStartTime);
 
     // Solo mostrar logging detallado si hay patrones que PASAN el filtro
     if (recentPatterns.length > 0) {
       console.log(`\n[${this.symbol}] 🔍 NEW PATTERNS DETECTED:`);
       console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-      console.log(`  Max pattern age: ${Math.round(maxAgeMs/60000)} minutes`);
       console.log(`  Total confirmed patterns: ${newConfirmedPatterns.length}`);
-      console.log(`  Historical/Old (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
+      console.log(`  Historical (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
       console.log(`  ✅ NEW patterns to alert: ${recentPatterns.length}`);
 
       // Detalles de patrones nuevos
       recentPatterns.forEach((p, i) => {
-        const ageMin = Math.round((currentTime - p.timestamp) / 60000);
-        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - age: ${ageMin}min - ${new Date(p.timestamp).toLocaleString()}`);
+        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - ${new Date(p.timestamp).toLocaleString()}`);
       });
       console.log('');
     }
@@ -768,10 +652,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       const success = await this.sendPatternAlert(pattern);
 
       if (success) {
-        // Marcar visualmente y limpiar flag de nuevo
+        // Marcar visualmente
         pattern._alertSent = true;
         pattern._alertTimestamp = Date.now();
-        pattern._isNewPattern = false; // ✅ FIX #2: Limpiar flag para que no se alerte nuevamente
 
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
         alertCount++;
@@ -909,96 +792,6 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
-   * ✅ FIX #2: Fusiona nuevos patrones con los existentes
-   * Evita crear duplicados y marca patrones genuinamente nuevos con _isNewPattern
-   *
-   * @param {Array} newPatterns - Patrones recién detectados
-   * @param {boolean} isInitialLoad - Si es true, no marca patrones como nuevos (son históricos)
-   */
-  mergeNewPatterns(newPatterns, isInitialLoad = false) {
-    if (!newPatterns || newPatterns.length === 0) {
-      return;
-    }
-
-    const currentTime = Date.now();
-    const intervalMs = this.getIntervalMs();
-    const maxAgeMs = intervalMs * this.getAgeMultiplier();
-
-    let addedCount = 0;
-    let updatedCount = 0;
-    let skippedAsOld = 0;
-
-    newPatterns.forEach(newPattern => {
-      const patternId = this.getPatternId(newPattern);
-
-      // Verificar si ya existe en knownPatterns
-      if (this.knownPatterns.has(patternId)) {
-        // Ya existe, actualizar datos pero NO marcar como nuevo
-        const existing = this.knownPatterns.get(patternId);
-        // Preservar _isNewPattern del patrón existente
-        newPattern._isNewPattern = existing._isNewPattern || false;
-        newPattern._firstSeenTime = existing._firstSeenTime;
-        this.knownPatterns.set(patternId, newPattern);
-        updatedCount++;
-      } else {
-        // Patrón nuevo
-        newPattern._firstSeenTime = currentTime;
-
-        if (isInitialLoad) {
-          // Carga inicial - no marcar como nuevo
-          newPattern._isNewPattern = false;
-        } else {
-          // Detección en tiempo real - verificar edad
-          const patternAge = currentTime - newPattern.timestamp;
-
-          if (patternAge <= maxAgeMs) {
-            // Patrón reciente - marcar como nuevo
-            newPattern._isNewPattern = true;
-            this.logger.debug(`✅ NEW pattern: ${newPattern.type} @ $${newPattern.price.toFixed(2)} (age: ${Math.round(patternAge/60000)}min)`);
-          } else {
-            // Patrón viejo re-detectado - no marcar como nuevo
-            newPattern._isNewPattern = false;
-            skippedAsOld++;
-          }
-        }
-
-        this.knownPatterns.set(patternId, newPattern);
-        addedCount++;
-      }
-    });
-
-    // Actualizar localPatterns desde knownPatterns
-    this.localPatterns = Array.from(this.knownPatterns.values());
-
-    if (!isInitialLoad && (addedCount > 0 || skippedAsOld > 0)) {
-      this.logger.debug(`📊 Merge: +${addedCount} added, ~${updatedCount} updated, ⏭️${skippedAsOld} old`);
-    }
-  }
-
-  /**
-   * ✅ Limpia patrones muy viejos del cache
-   * Se llama periódicamente para evitar acumulación
-   */
-  cleanOldPatterns() {
-    const currentTime = Date.now();
-    const maxAge = 24 * 60 * 60 * 1000; // 24 horas
-
-    let removed = 0;
-    for (const [id, pattern] of this.knownPatterns) {
-      const age = currentTime - pattern.timestamp;
-      if (age > maxAge) {
-        this.knownPatterns.delete(id);
-        removed++;
-      }
-    }
-
-    if (removed > 0) {
-      this.logger.debug(`🧹 Cleaned ${removed} old patterns from cache`);
-      this.localPatterns = Array.from(this.knownPatterns.values());
-    }
-  }
-
-  /**
    * Detecta patrones localmente en las velas dadas
    * @param {Array} candles - Array de velas OHLC
    * @param {Object} indicatorManager - Referencia al IndicatorManager para obtener niveles
@@ -1009,17 +802,6 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.localPatterns = [];
       return;
     }
-
-    // ✅ FIX #5: THROTTLING - Evitar re-detección en cada render
-    const now = Date.now();
-    const timeSinceLastDetection = now - this.lastDetectionTime;
-
-    if (timeSinceLastDetection < this.detectionThrottleMs && this.localPatterns.length > 0) {
-      // Ya tenemos patrones y no ha pasado suficiente tiempo, usar cached
-      return;
-    }
-
-    this.lastDetectionTime = now;
 
     // Obtener precio actual (última vela)
     const currentPrice = candles[candles.length - 1]?.close || null;
@@ -1139,9 +921,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // Si no hay IndicatorManager, solo retornar los patrones básicos
     if (!indicatorManager) {
-      // ✅ FIX #2: Usar merge en lugar de asignación directa
-      const isInitialLoad = this.knownPatterns.size === 0;
-      this.mergeNewPatterns(detectedPatterns, isInitialLoad);
+      this.localPatterns = detectedPatterns;
       return;
     }
 
@@ -1167,7 +947,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Calcular confidence para cada patrón
     const proximityPct = (this.config.filters?.proximityPercent || 1.0) / 100;
 
-    const enhancedPatterns = detectedPatterns.map(pattern =>
+    this.localPatterns = detectedPatterns.map(pattern =>
       this.enhancePatternConfidence(
         pattern,
         classifiedLevels.importantHighs,
@@ -1178,7 +958,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // Filtrar por minConfidence y dirección del nivel
     const minConfidence = this.config.filters?.minConfidence || 0;
-    const filteredPatterns = enhancedPatterns.filter(pattern => {
+    this.localPatterns = this.localPatterns.filter(pattern => {
       // Filtro 1: Confidence mínimo
       if (pattern.confidence < minConfidence) return false;
 
@@ -1195,15 +975,6 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       return true;
     });
-
-    // ✅ FIX #2: Usar merge en lugar de asignación directa
-    const isInitialLoad = this.knownPatterns.size === 0;
-    this.mergeNewPatterns(filteredPatterns, isInitialLoad);
-
-    // Limpiar patrones muy viejos periódicamente (cada 100 detecciones)
-    if (Math.random() < 0.01) {
-      this.cleanOldPatterns();
-    }
 
     // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before filters)`);
 
