@@ -60,6 +60,9 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.alertCheckThrottleMs = 2000; // Mínimo 2 segundos entre chequeos
     this.pendingAlertCheck = null; // Timer para debouncing
 
+    // ✅ NUEVO: Referencia al IndicatorManager para filtro VWAP
+    this.indicatorManager = null;
+
     this.logger.debug(`🔔 Alert system initialized (cooldown: ${this.alertCooldownMs/60000} min, throttle: ${this.alertCheckThrottleMs}ms)`);
   }
 
@@ -67,7 +70,21 @@ class RejectionPatternIndicator extends IndicatorBase {
     const saved = localStorage.getItem(`rejection_pattern_config_${this.symbol}`);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const config = JSON.parse(saved);
+
+        // ✅ Migración: Asegurar que exista vwapFilter
+        if (!config.vwapFilter) {
+          config.vwapFilter = {
+            enabled: false,
+            deviationTolerance: 0.5,
+            requiredDeviations: {
+              second: true,   // ±2σ
+              third: false    // ±3σ
+            }
+          };
+        }
+
+        return config;
       } catch (e) {
         console.error('Failed to load rejection pattern config:', e);
       }
@@ -279,7 +296,16 @@ class RejectionPatternIndicator extends IndicatorBase {
         // Los overrides por nivel se guardan en cada zona (zone.signalDirection)
       },
       // NUEVO: Zonas manuales de precio
-      manualPriceZones: []
+      manualPriceZones: [],
+      // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
+      vwapFilter: {
+        enabled: false,
+        deviationTolerance: 0.5,  // % de tolerancia
+        requiredDeviations: {
+          second: true,   // ±2σ - buscar patrones cerca de 2da desviación
+          third: false    // ±3σ - buscar patrones cerca de 3ra desviación
+        }
+      }
     };
   }
 
@@ -491,6 +517,111 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Verifica alineación del patrón con desviaciones VWAP
+   * Este es un FILTRO PASA/NO PASA - si no está en la desviación requerida, se rechaza
+   *
+   * @param {Object} pattern - Patrón a validar
+   * @returns {boolean} true si pasa el filtro (o filtro deshabilitado), false si no pasa
+   */
+  checkVWAPAlignment(pattern) {
+    const vwapFilter = this.config.vwapFilter;
+    if (!vwapFilter || !vwapFilter.enabled) {
+      return true; // Filtro deshabilitado - siempre pasa
+    }
+
+    // Obtener VWAPIndicator del manager
+    if (!this.indicatorManager) {
+      this.logger.warn(`IndicatorManager not available for VWAP filter`);
+      return true; // No bloquear si manager no está disponible
+    }
+
+    const vwapIndicator = this.indicatorManager.getVWAPIndicator();
+    if (!vwapIndicator || !vwapIndicator.enabled) {
+      this.logger.warn(`VWAP filter enabled but VWAP indicator not active`);
+      return true; // No bloquear si VWAP no está disponible
+    }
+
+    // Obtener desviaciones
+    const deviations = vwapIndicator.getDeviations();
+    if (!deviations) {
+      this.logger.warn(`VWAP indicator doesn't provide deviations`);
+      return true;
+    }
+
+    const patternPrice = pattern.price;
+    const direction = pattern.direction; // 'LONG' o 'SHORT'
+    const tolerance = (vwapFilter.deviationTolerance || 0.5) / 100;
+
+    // Para LONG (HAMMER, ENGULFING_BULLISH, DOJI_DRAGONFLY): buscar en desviaciones negativas (-2σ, -3σ)
+    if (direction === 'LONG') {
+      const requireDev2 = vwapFilter.requiredDeviations?.second;
+      const requireDev3 = vwapFilter.requiredDeviations?.third;
+
+      let aligned = false;
+
+      if (requireDev2 && deviations.lower2) {
+        const dev2 = deviations.lower2;
+        const near2 = Math.abs(patternPrice - dev2) / dev2 <= tolerance;
+        if (near2) {
+          this.logger.debug(`✅ VWAP aligned: LONG pattern near -2σ ($${dev2.toFixed(2)})`);
+          pattern._vwapDeviation = '-2σ';
+          aligned = true;
+        }
+      }
+
+      if (requireDev3 && deviations.lower3) {
+        const dev3 = deviations.lower3;
+        const near3 = Math.abs(patternPrice - dev3) / dev3 <= tolerance;
+        if (near3) {
+          this.logger.debug(`✅ VWAP aligned: LONG pattern near -3σ ($${dev3.toFixed(2)})`);
+          pattern._vwapDeviation = '-3σ';
+          aligned = true;
+        }
+      }
+
+      if (!aligned) {
+        this.logger.debug(`❌ VWAP filter: LONG pattern at $${patternPrice.toFixed(2)} not near required deviations`);
+      }
+      return aligned;
+    }
+
+    // Para SHORT (SHOOTING_STAR, ENGULFING_BEARISH, DOJI_GRAVESTONE): buscar en desviaciones positivas (+2σ, +3σ)
+    if (direction === 'SHORT') {
+      const requireDev2 = vwapFilter.requiredDeviations?.second;
+      const requireDev3 = vwapFilter.requiredDeviations?.third;
+
+      let aligned = false;
+
+      if (requireDev2 && deviations.upper2) {
+        const dev2 = deviations.upper2;
+        const near2 = Math.abs(patternPrice - dev2) / dev2 <= tolerance;
+        if (near2) {
+          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +2σ ($${dev2.toFixed(2)})`);
+          pattern._vwapDeviation = '+2σ';
+          aligned = true;
+        }
+      }
+
+      if (requireDev3 && deviations.upper3) {
+        const dev3 = deviations.upper3;
+        const near3 = Math.abs(patternPrice - dev3) / dev3 <= tolerance;
+        if (near3) {
+          this.logger.debug(`✅ VWAP aligned: SHORT pattern near +3σ ($${dev3.toFixed(2)})`);
+          pattern._vwapDeviation = '+3σ';
+          aligned = true;
+        }
+      }
+
+      if (!aligned) {
+        this.logger.debug(`❌ VWAP filter: SHORT pattern at $${patternPrice.toFixed(2)} not near required deviations`);
+      }
+      return aligned;
+    }
+
+    return true; // Dirección desconocida - no bloquear
+  }
+
+  /**
    * ✅ NUEVO: Formatea nombre del patrón según formato de alertas existente
    * Mantiene compatibilidad EXACTA con sistema actual
    */
@@ -699,6 +830,18 @@ class RejectionPatternIndicator extends IndicatorBase {
       console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
       console.log(`Interval: ${this.interval} | Max age: ${Math.round(this.getIntervalMs() * this.getAgeMultiplier() / 60000)} minutes`);
       console.log(`Pattern state: ${newCount} NEW (may alert), ${oldCount} OLD (won't alert), ${alertedCount} already alerted`);
+
+      // ✅ Mostrar estado del filtro VWAP
+      const vwapFilter = this.config.vwapFilter;
+      if (vwapFilter?.enabled) {
+        const devs = [];
+        if (vwapFilter.requiredDeviations?.second) devs.push('±2σ');
+        if (vwapFilter.requiredDeviations?.third) devs.push('±3σ');
+        console.log(`VWAP Filter: ENABLED (${devs.join(', ')}) - tolerance: ${vwapFilter.deviationTolerance}%`);
+      } else {
+        console.log(`VWAP Filter: DISABLED`);
+      }
+
       console.log(`Only patterns with timestamp >= start time AND marked as NEW will trigger alerts`);
       console.log(`${'='.repeat(80)}\n`);
 
@@ -776,6 +919,14 @@ class RejectionPatternIndicator extends IndicatorBase {
         continue;
       }
 
+      // ✅ FILTRO VWAP: Pasa/No pasa - si está habilitado, el patrón DEBE estar cerca de la desviación
+      if (this.config.vwapFilter?.enabled) {
+        if (!this.checkVWAPAlignment(pattern)) {
+          this.logger.debug(`⏭️ Pattern skipped: VWAP filter not met`);
+          continue; // NO envía alerta - no cumple con el filtro VWAP
+        }
+      }
+
       // Generar ID del patrón
       const patternId = this.getPatternId(pattern);
 
@@ -825,11 +976,13 @@ class RejectionPatternIndicator extends IndicatorBase {
           timestamp: pattern.timestamp,
           direction: pattern.direction,
           nearSRLevel: pattern.nearSRLevel,
-          nearLevel: pattern.nearLevel
+          nearLevel: pattern.nearLevel,
+          vwapDeviation: pattern._vwapDeviation || null  // ✅ Info de desviación VWAP si aplica
         },
         config: {
           filters: this.config.filters,
-          alertsEnabled: this.config.alertsEnabled
+          alertsEnabled: this.config.alertsEnabled,
+          vwapFilterEnabled: this.config.vwapFilter?.enabled || false
         }
       };
 
@@ -1032,6 +1185,11 @@ class RejectionPatternIndicator extends IndicatorBase {
     if (!candles || candles.length === 0) {
       this.localPatterns = [];
       return;
+    }
+
+    // ✅ Guardar referencia al indicatorManager para filtro VWAP
+    if (indicatorManager) {
+      this.indicatorManager = indicatorManager;
     }
 
     // ✅ FIX #5: THROTTLING - Evitar re-detección en cada render
