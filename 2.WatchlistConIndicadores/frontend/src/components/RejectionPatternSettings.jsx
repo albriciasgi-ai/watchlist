@@ -1229,9 +1229,9 @@ const RejectionPatternSettings = ({
                   Deviation Tolerance: {config.vwapFilter?.deviationTolerance || 0.5}%
                   <input
                     type="range"
-                    min="0.1"
-                    max="2.0"
-                    step="0.1"
+                    min="0.2"
+                    max="20"
+                    step="0.2"
                     value={config.vwapFilter?.deviationTolerance || 0.5}
                     onChange={(e) => {
                       setConfig(prev => ({
@@ -1247,7 +1247,7 @@ const RejectionPatternSettings = ({
                   />
                 </label>
                 <span className="filter-hint">
-                  How close to the deviation line the pattern must be
+                  How close to the deviation line the pattern must be (% of deviation price)
                 </span>
               </div>
 
