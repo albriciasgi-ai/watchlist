@@ -1300,41 +1300,40 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         this.patterns.push(newPattern);
         addedCount++;
 
-        // Solo marcar como "nuevo" si NO es carga inicial Y es reciente
-        if (!isInitialLoad) {
-          // ✅ NUEVA VALIDACIÓN: Verificar edad del patrón
-          const patternAge = currentTime - newPattern.secondExtreme.timestamp;
-          const isRecentPattern = patternAge <= MAX_NEW_PATTERN_AGE_MS;
+        // ✅ FIX: SIEMPRE verificar edad del patrón (incluso en carga inicial)
+        // El filtro por alertSystemStartTime se hace en checkAndSendAlerts()
+        const patternAge = currentTime - newPattern.secondExtreme.timestamp;
+        const isRecentPattern = patternAge <= MAX_NEW_PATTERN_AGE_MS;
 
-          // Formatear timestamp del segundo extremo (cuando se completó el patrón)
-          const patternDate = new Date(newPattern.secondExtreme.timestamp);
-          const formattedDate = patternDate.toLocaleString('es-CO', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-          });
+        // Formatear timestamp del segundo extremo (cuando se completó el patrón)
+        const patternDate = new Date(newPattern.secondExtreme.timestamp);
+        const formattedDate = patternDate.toLocaleString('es-CO', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
 
-          if (isRecentPattern) {
-            // ✅ Patrón genuinamente nuevo (reciente)
-            newPattern._isNewPattern = true;
-            newPattern._detectionTime = currentTime;
+        if (isRecentPattern) {
+          // ✅ Patrón reciente - marcar como nuevo para posible alerta
+          newPattern._isNewPattern = true;
+          newPattern._detectionTime = currentTime;
 
+          if (!isInitialLoad) {
             log.info(`[${this.symbol}] ✅ NUEVO patrón detectado en tiempo real: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
           } else {
-            // ⚠️ Patrón histórico detectado en análisis incremental - NO marcar como nuevo
-            newPattern._isNewPattern = false;
-            skippedAsHistorical++;
-
-            const ageMinutes = Math.round(patternAge / 60000);
-            log.debug(`[${this.symbol}] ⏭️ Patrón histórico (${ageMinutes}min antiguo) detectado en incremental, NO es nuevo: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+            log.debug(`[${this.symbol}] 📌 Patrón reciente cargado (puede alertar): ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
           }
         } else {
-          // Carga inicial - solo log de debug
-          log.debug(`[${this.symbol}] 📌 Patrón histórico cargado: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
+          // ⚠️ Patrón muy viejo - NO marcar como nuevo
+          newPattern._isNewPattern = false;
+          skippedAsHistorical++;
+
+          const ageMinutes = Math.round(patternAge / 60000);
+          log.debug(`[${this.symbol}] ⏭️ Patrón histórico (${ageMinutes}min antiguo), NO es nuevo: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
         }
       } else {
         log.debug(`[${this.symbol}] ⏭️ Patrón ya existe, saltando: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)}`);
