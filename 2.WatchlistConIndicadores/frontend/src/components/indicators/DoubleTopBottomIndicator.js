@@ -1269,10 +1269,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     let skippedAsHistorical = 0;
     const currentTime = Date.now();
 
-    // ✅ VALIDACIÓN TEMPORAL: Solo patrones completados en las últimas 2 velas + margen
-    // pueden ser considerados "nuevos"
+    // ✅ VALIDACIÓN TEMPORAL: Solo patrones completados en las últimas N velas
+    // pueden ser considerados "nuevos" para alertas
     const intervalMs = this.getIntervalMs();
-    const MAX_NEW_PATTERN_AGE_MS = intervalMs * 2.5; // 2.5 intervalos de margen
+    const MAX_NEW_PATTERN_AGE_MS = intervalMs * 10; // 10 intervalos de margen (10 min para 1m chart)
 
     newPatterns.forEach(newPattern => {
       const newId = this.getPatternId(newPattern);
