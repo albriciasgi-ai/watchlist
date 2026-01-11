@@ -102,6 +102,11 @@ class DoubleTopBottomDetectorFixed:
         vwap_type = vwap_zone_config.get('vwapType', 'session')
         vwap_rolling_period = vwap_zone_config.get('rollingPeriod', 20)
 
+        # DEBUG: Log what config we received
+        print(f"  [DEBUG] alertSettings received: {config.get('alertSettings', 'NOT FOUND')}")
+        print(f"  [DEBUG] vwapZoneFilter config: {vwap_zone_config}")
+        print(f"  [DEBUG] VWAP_AVAILABLE: {VWAP_AVAILABLE}, enabled in config: {vwap_zone_config.get('enabled', False)}")
+
         # Calculate VWAP bands if filter is enabled
         vwap_data = []
         if vwap_zone_enabled:
