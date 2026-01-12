@@ -271,7 +271,8 @@ class RejectionPatternIndicator extends IndicatorBase {
         enabled: true,
         leftBars: 5,
         rightBars: 5,
-        required: false  // Cambiado a false por defecto - más patrones visibles
+        required: false,     // Cambiado a false por defecto - más patrones visibles
+        swingOnlyMode: false // Si true, detecta swings sin requerir forma de patrón
       },
       // Nueva configuración de fuentes de niveles
       levelSources: {
@@ -287,7 +288,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       volumeZScore: {
         enabled: false,
         lookbackPeriod: 20,
-        minZScore: 1.0
+        minZScore: 1.0,
+        swingCandleRange: 1  // Cuántas velas alrededor del swing considerar (1 = solo la vela exacta)
       },
       filters: {
         minConfidence: 50,             // Reducido de 60 - más permisivo
@@ -724,7 +726,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       'ENGULFING_BULLISH': 'Bullish Engulfing (ABRIR LONG)',
       'ENGULFING_BEARISH': 'Bearish Engulfing (ABRIR SHORT)',
       'DOJI_DRAGONFLY': 'Dragonfly Doji (ABRIR LONG)',
-      'DOJI_GRAVESTONE': 'Gravestone Doji (ABRIR SHORT)'
+      'DOJI_GRAVESTONE': 'Gravestone Doji (ABRIR SHORT)',
+      'SWING_LOW': 'Swing Low (ABRIR LONG)',
+      'SWING_HIGH': 'Swing High (ABRIR SHORT)'
     };
     return names[patternType] || patternType;
   }
@@ -1305,14 +1309,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       enabled: true,
       leftBars: 5,
       rightBars: 5,
-      required: true  // Por defecto, requerir swing points
+      required: true,       // Por defecto, requerir swing points
+      swingOnlyMode: false  // Detectar swings sin requerir forma de patrón
     };
 
     // Configuración de volume Z-score
     const volumeConfig = this.config.volumeZScore || {
       enabled: false,
       lookbackPeriod: 20,
-      minZScore: 1.0
+      minZScore: 1.0,
+      swingCandleRange: 1   // Velas alrededor del swing a considerar
     };
 
     // Propagar debugMode a cada patrón si está habilitado globalmente
@@ -1843,7 +1849,7 @@ class RejectionPatternIndicator extends IndicatorBase {
   formatTooltip(pattern) {
     const { patternType, confidence, price, nearLevels, metrics } = pattern;
 
-    let tooltip = `${this.formatPatternName(patternType)}\n`;
+    let tooltip = `${this.formatPatternNameWithEmoji(patternType)}\n`;
     tooltip += `Confidence: ${confidence.toFixed(1)}%\n`;
     tooltip += `Price: $${price.toFixed(2)}\n`;
 
@@ -1865,14 +1871,16 @@ class RejectionPatternIndicator extends IndicatorBase {
     return tooltip;
   }
 
-  formatPatternName(patternType) {
+  formatPatternNameWithEmoji(patternType) {
     const names = {
       HAMMER: '🔨 Hammer',
       SHOOTING_STAR: '⭐ Shooting Star',
       ENGULFING_BULLISH: '📈 Bullish Engulfing',
       ENGULFING_BEARISH: '📉 Bearish Engulfing',
       DOJI_DRAGONFLY: '🐉 Dragonfly Doji',
-      DOJI_GRAVESTONE: '🪦 Gravestone Doji'
+      DOJI_GRAVESTONE: '🪦 Gravestone Doji',
+      SWING_LOW: '📍 Swing Low',
+      SWING_HIGH: '📍 Swing High'
     };
     return names[patternType] || patternType;
   }

@@ -995,6 +995,26 @@ const RejectionPatternSettings = ({
                   If enabled, patterns NOT at swing points will be hidden
                 </span>
               </div>
+
+              <div className="filter-item" style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,193,7,0.1)', borderRadius: '8px', border: '1px solid rgba(255,193,7,0.3)' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={config.swingDetection?.swingOnlyMode || false}
+                    onChange={(e) => updateSwingDetection('swingOnlyMode', e.target.checked)}
+                  />
+                  <span style={{ fontWeight: 'bold', color: '#ffc107' }}>⚡ Swing Only Mode (ignore candle shape)</span>
+                </label>
+                <span className="filter-hint" style={{ display: 'block', marginTop: '8px' }}>
+                  Detects ALL swing highs/lows without requiring specific candle patterns (Hammer, Shooting Star, etc.).
+                  <br />
+                  <strong>Use with:</strong> VWAP filter + Volume Z-Score + Manual Zones for best results.
+                  <br />
+                  <em>• Swing High → SHORT signal</em>
+                  <br />
+                  <em>• Swing Low → LONG signal</em>
+                </span>
+              </div>
             </>
           )}
         </section>
@@ -1089,16 +1109,6 @@ const RejectionPatternSettings = ({
             </span>
           </div>
 
-          <div className="filter-item">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={config.filters.requireVolumeSpike}
-                onChange={(e) => updateFilter('requireVolumeSpike', e.target.checked)}
-              />
-              <span>Require elevated volume on pattern candle (legacy)</span>
-            </label>
-          </div>
         </section>
 
         {/* Section 3.5: Volume Z-Score Filter */}
@@ -1106,7 +1116,7 @@ const RejectionPatternSettings = ({
           <h4>📊 Volume Z-Score Filter (Advanced)</h4>
           <p className="help-text">
             Filters patterns based on statistical volume significance (Z-score).
-            Only patterns with volume above the threshold are shown.
+            Evaluates volume around the swing point, not just the exact candle.
           </p>
 
           <div className="filter-item">
@@ -1182,6 +1192,34 @@ const RejectionPatternSettings = ({
                 </label>
                 <span className="filter-hint">
                   1.0σ = 84th percentile, 1.5σ = 93rd, 2.0σ = 97.5th, 3.0σ = 99.85th
+                </span>
+              </div>
+
+              <div className="filter-item">
+                <label>
+                  Candles around swing: {config.volumeZScore?.swingCandleRange || 1}
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    step="1"
+                    value={config.volumeZScore?.swingCandleRange || 1}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        volumeZScore: {
+                          ...prev.volumeZScore,
+                          swingCandleRange: parseInt(e.target.value)
+                        }
+                      }));
+                    }}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  {config.volumeZScore?.swingCandleRange === 1
+                    ? 'Only evaluates the exact swing candle'
+                    : `Evaluates max Z-score within ±${config.volumeZScore?.swingCandleRange || 1} candles of the swing`}
                 </span>
               </div>
             </>
@@ -2397,7 +2435,8 @@ function getDefaultConfig() {
       enabled: true,
       leftBars: 5,
       rightBars: 5,
-      required: false
+      required: false,
+      swingOnlyMode: false  // Si true, detecta swings sin requerir forma de patrón
     },
     referenceContexts: [],
     levelSources: {
@@ -2412,13 +2451,13 @@ function getDefaultConfig() {
     filters: {
       minConfidence: 50,
       requireNearLevel: false,
-      proximityPercent: 1.0,
-      requireVolumeSpike: false
+      proximityPercent: 1.0
     },
     volumeZScore: {
       enabled: false,
       lookbackPeriod: 20,
-      minZScore: 1.0
+      minZScore: 1.0,
+      swingCandleRange: 1  // Velas alrededor del swing a considerar para el Z-score
     },
     alertsEnabled: false,
     debugMode: false,
