@@ -568,21 +568,18 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // Obtener VWAPIndicator del manager
     if (!this.indicatorManager) {
-      console.warn(`[${this.symbol}] ⚠️ VWAP Filter: IndicatorManager not available`);
-      return true;
+      return true; // No bloquear si manager no está disponible
     }
 
     const vwapIndicator = this.indicatorManager.getVWAPIndicator();
     if (!vwapIndicator || !vwapIndicator.enabled) {
-      console.warn(`[${this.symbol}] ⚠️ VWAP Filter: VWAP indicator not active`);
-      return true;
+      return true; // No bloquear si VWAP no está activo
     }
 
     // Obtener desviaciones y VWAP
     const deviations = vwapIndicator.getDeviations();
     if (!deviations) {
-      console.warn(`[${this.symbol}] ⚠️ VWAP Filter: No deviations data`);
-      return true;
+      return true; // No bloquear si no hay datos
     }
 
     // ✅ Calcular VWAP y σ desde las bandas (más robusto)
@@ -605,8 +602,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     if (!vwapValue || !sigma || sigma <= 0) {
-      console.warn(`[${this.symbol}] ⚠️ VWAP Filter: Could not calculate VWAP/σ`, { vwapValue, sigma, deviations });
-      return true;
+      return true; // No bloquear si no se puede calcular
     }
 
     const patternPrice = pattern.price;
@@ -627,21 +623,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       const requireDev3 = vwapFilter.requiredDeviations?.third;
 
       let aligned = false;
-      let debugInfo = {
-        type: pattern.type,
-        price: patternPrice,
-        vwap: vwapValue,
-        sigma,
-        tolerance: `${effectiveTolerance}%`,
-        marginDistance: toleranceDistance
-      };
 
       if (requireDev2 && deviations.lower2) {
-        const dev2 = deviations.lower2;
-        const distance = Math.abs(patternPrice - dev2);
-        debugInfo.lower2 = dev2;
-        debugInfo.distanceToLower2 = distance;
-
+        const distance = Math.abs(patternPrice - deviations.lower2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '-2σ';
           aligned = true;
@@ -649,20 +633,13 @@ class RejectionPatternIndicator extends IndicatorBase {
       }
 
       if (!aligned && requireDev3 && deviations.lower3) {
-        const dev3 = deviations.lower3;
-        const distance = Math.abs(patternPrice - dev3);
-        debugInfo.lower3 = dev3;
-        debugInfo.distanceToLower3 = distance;
-
+        const distance = Math.abs(patternPrice - deviations.lower3);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '-3σ';
           aligned = true;
         }
       }
 
-      if (!aligned) {
-        console.log(`[${this.symbol}] ❌ VWAP Filter REJECTED LONG:`, debugInfo);
-      }
       return aligned;
     }
 
@@ -672,21 +649,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       const requireDev3 = vwapFilter.requiredDeviations?.third;
 
       let aligned = false;
-      let debugInfo = {
-        type: pattern.type,
-        price: patternPrice,
-        vwap: vwapValue,
-        sigma,
-        tolerance: `${effectiveTolerance}%`,
-        marginDistance: toleranceDistance
-      };
 
       if (requireDev2 && deviations.upper2) {
-        const dev2 = deviations.upper2;
-        const distance = Math.abs(patternPrice - dev2);
-        debugInfo.upper2 = dev2;
-        debugInfo.distanceToUpper2 = distance;
-
+        const distance = Math.abs(patternPrice - deviations.upper2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '+2σ';
           aligned = true;
@@ -694,25 +659,17 @@ class RejectionPatternIndicator extends IndicatorBase {
       }
 
       if (!aligned && requireDev3 && deviations.upper3) {
-        const dev3 = deviations.upper3;
-        const distance = Math.abs(patternPrice - dev3);
-        debugInfo.upper3 = dev3;
-        debugInfo.distanceToUpper3 = distance;
-
+        const distance = Math.abs(patternPrice - deviations.upper3);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '+3σ';
           aligned = true;
         }
       }
 
-      if (!aligned) {
-        console.log(`[${this.symbol}] ❌ VWAP Filter REJECTED SHORT:`, debugInfo);
-      }
       return aligned;
     }
 
-    // Dirección desconocida - rechazar por defecto (más seguro)
-    console.warn(`[${this.symbol}] ⚠️ VWAP Filter: Unknown direction '${direction}' for pattern ${pattern.type}`);
+    // Dirección desconocida - rechazar por defecto
     return false;
   }
 
