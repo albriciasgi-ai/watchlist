@@ -627,9 +627,19 @@ class RejectionPatternIndicator extends IndicatorBase {
       const requireDev3 = vwapFilter.requiredDeviations?.third;
 
       let aligned = false;
+      let debugInfo = {
+        type: pattern.type,
+        price: patternPrice.toFixed(2),
+        vwap: vwapValue.toFixed(2),
+        sigma: sigma.toFixed(2),
+        tolerance: `${effectiveTolerance}% of σ = ${toleranceDistance.toFixed(2)}`,
+        lower2: deviations.lower2?.toFixed(2) || 'N/A',
+        lower3: deviations.lower3?.toFixed(2) || 'N/A'
+      };
 
       if (requireDev2 && deviations.lower2) {
         const distance = Math.abs(patternPrice - deviations.lower2);
+        debugInfo.distanceTo2σ = distance.toFixed(2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '-2σ';
           aligned = true;
@@ -638,10 +648,18 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (!aligned && requireDev3 && deviations.lower3) {
         const distance = Math.abs(patternPrice - deviations.lower3);
+        debugInfo.distanceTo3σ = distance.toFixed(2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '-3σ';
           aligned = true;
         }
+      }
+
+      // ✅ DEBUG: Log para patrones LONG rechazados
+      if (!aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ❌ LONG pattern REJECTED by VWAP filter:`, debugInfo);
+      } else if (aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ✅ LONG pattern ACCEPTED (${pattern._vwapDeviation}):`, debugInfo);
       }
 
       return aligned;
@@ -653,9 +671,19 @@ class RejectionPatternIndicator extends IndicatorBase {
       const requireDev3 = vwapFilter.requiredDeviations?.third;
 
       let aligned = false;
+      let debugInfo = {
+        type: pattern.type,
+        price: patternPrice.toFixed(2),
+        vwap: vwapValue.toFixed(2),
+        sigma: sigma.toFixed(2),
+        tolerance: `${effectiveTolerance}% of σ = ${toleranceDistance.toFixed(2)}`,
+        upper2: deviations.upper2?.toFixed(2) || 'N/A',
+        upper3: deviations.upper3?.toFixed(2) || 'N/A'
+      };
 
       if (requireDev2 && deviations.upper2) {
         const distance = Math.abs(patternPrice - deviations.upper2);
+        debugInfo.distanceTo2σ = distance.toFixed(2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '+2σ';
           aligned = true;
@@ -664,10 +692,18 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (!aligned && requireDev3 && deviations.upper3) {
         const distance = Math.abs(patternPrice - deviations.upper3);
+        debugInfo.distanceTo3σ = distance.toFixed(2);
         if (distance <= toleranceDistance) {
           pattern._vwapDeviation = '+3σ';
           aligned = true;
         }
+      }
+
+      // ✅ DEBUG: Log para patrones SHORT rechazados
+      if (!aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ❌ SHORT pattern REJECTED by VWAP filter:`, debugInfo);
+      } else if (aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ✅ SHORT pattern ACCEPTED (${pattern._vwapDeviation}):`, debugInfo);
       }
 
       return aligned;

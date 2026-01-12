@@ -1270,7 +1270,7 @@ const RejectionPatternSettings = ({
                     <input
                       type="range"
                       min="1"
-                      max="50"
+                      max="80"
                       step="1"
                       value={config.vwapFilter?.deviationTolerance || 10}
                       onChange={(e) => {
