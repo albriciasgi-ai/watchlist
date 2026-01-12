@@ -576,8 +576,12 @@ class RejectionPatternIndicator extends IndicatorBase {
       return true; // No bloquear si VWAP no está activo
     }
 
-    // Obtener desviaciones y VWAP
-    const deviations = vwapIndicator.getDeviations();
+    // ✅ CORREGIDO: Obtener desviaciones HISTÓRICAS al timestamp del patrón
+    // Esto usa los valores VWAP que existían cuando la vela se formó, no los actuales
+    const deviations = pattern.timestamp
+      ? vwapIndicator.getDeviationsAtTimestamp(pattern.timestamp)
+      : vwapIndicator.getDeviations();
+
     if (!deviations) {
       return true; // No bloquear si no hay datos
     }

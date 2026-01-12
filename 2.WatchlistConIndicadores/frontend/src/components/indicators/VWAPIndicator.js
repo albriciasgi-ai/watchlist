@@ -1191,6 +1191,46 @@ class VWAPIndicator extends IndicatorBase {
       lower3: latest.bands.lower_3
     };
   }
+
+  /**
+   * ✅ NUEVO: Obtiene desviaciones VWAP en un timestamp específico (histórico)
+   * Usa el dataMap para buscar los valores exactos en ese momento
+   * @param {number} timestamp - Timestamp de la vela a buscar
+   * @returns {Object|null} Desviaciones en ese momento o null si no existe
+   */
+  getDeviationsAtTimestamp(timestamp) {
+    if (!this.dataMap || this.dataMap.size === 0) {
+      return null;
+    }
+
+    // Buscar exactamente por timestamp
+    let point = this.dataMap.get(timestamp);
+
+    // Si no existe exacto, buscar el más cercano anterior
+    if (!point && this.vwapData && this.vwapData.length > 0) {
+      // Buscar el punto más cercano que sea <= timestamp
+      for (let i = this.vwapData.length - 1; i >= 0; i--) {
+        if (this.vwapData[i].timestamp <= timestamp) {
+          point = this.vwapData[i];
+          break;
+        }
+      }
+    }
+
+    if (!point || !point.bands) {
+      return null;
+    }
+
+    return {
+      vwap: point.value,
+      upper1: point.bands.upper_1,
+      upper2: point.bands.upper_2,
+      upper3: point.bands.upper_3,
+      lower1: point.bands.lower_1,
+      lower2: point.bands.lower_2,
+      lower3: point.bands.lower_3
+    };
+  }
 }
 
 export default VWAPIndicator;
