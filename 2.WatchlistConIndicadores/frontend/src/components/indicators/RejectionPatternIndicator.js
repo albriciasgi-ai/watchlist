@@ -32,7 +32,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       ENGULFING_BULLISH: '#2196F3',
       ENGULFING_BEARISH: '#FF9800',
       DOJI_DRAGONFLY: '#9C27B0',
-      DOJI_GRAVESTONE: '#607D8B'
+      DOJI_GRAVESTONE: '#607D8B',
+      SWING_LOW: '#00E676',   // Verde brillante para LONG
+      SWING_HIGH: '#FF1744'   // Rojo brillante para SHORT
     };
     this.icons = {
       HAMMER: '🔨',
@@ -40,7 +42,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       ENGULFING_BULLISH: '📈',
       ENGULFING_BEARISH: '📉',
       DOJI_DRAGONFLY: '🐉',
-      DOJI_GRAVESTONE: '🪦'
+      DOJI_GRAVESTONE: '🪦',
+      SWING_LOW: '↑',    // Flecha arriba para LONG
+      SWING_HIGH: '↓'    // Flecha abajo para SHORT
     };
 
     // ✅ NUEVO: Sistema de alertas automáticas
@@ -1664,6 +1668,12 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     const color = this.colors[patternType] || '#888';
 
+    // ✅ ESPECIAL: Dibujar flechas para SWING_LOW y SWING_HIGH
+    if (patternType === 'SWING_LOW' || patternType === 'SWING_HIGH') {
+      this.drawSwingArrow(ctx, x, y, patternType, score, isValidated, pattern._alertSent);
+      return;
+    }
+
     // Determinar si es patrón alcista o bajista
     const isBullish = patternType === 'HAMMER' ||
                       patternType === 'ENGULFING_BULLISH' ||
@@ -1734,6 +1744,75 @@ class RejectionPatternIndicator extends IndicatorBase {
       }
       ctx.restore();
     }
+  }
+
+  /**
+   * ✅ NUEVO: Dibuja flechas para patrones SWING_LOW y SWING_HIGH
+   * - Verde hacia arriba para SWING_LOW (señal LONG)
+   * - Rojo hacia abajo para SWING_HIGH (señal SHORT)
+   */
+  drawSwingArrow(ctx, x, y, patternType, score, isValidated, alertSent) {
+    const isLong = patternType === 'SWING_LOW';
+    const color = isLong ? this.colors.SWING_LOW : this.colors.SWING_HIGH;
+
+    // Tamaño de la flecha basado en score
+    const baseSize = isValidated ? 12 : 10;
+    const size = baseSize + (score / 100) * 4; // Max: 16 o 14
+
+    // Posición: SWING_LOW debajo de la vela, SWING_HIGH arriba
+    const arrowY = isLong ? y + 25 : y - 25;
+
+    ctx.save();
+
+    // Alpha basado en score
+    const baseAlpha = isValidated ? 0.95 : 0.8;
+    const alpha = Math.max(baseAlpha * 0.7, (score / 100) * baseAlpha);
+
+    // Dibujar flecha
+    ctx.beginPath();
+    if (isLong) {
+      // Flecha hacia ARRIBA (LONG) - triángulo apuntando arriba
+      ctx.moveTo(x, arrowY - size);           // Punta superior
+      ctx.lineTo(x - size * 0.6, arrowY + size * 0.4);  // Esquina inferior izquierda
+      ctx.lineTo(x + size * 0.6, arrowY + size * 0.4);  // Esquina inferior derecha
+    } else {
+      // Flecha hacia ABAJO (SHORT) - triángulo apuntando abajo
+      ctx.moveTo(x, arrowY + size);           // Punta inferior
+      ctx.lineTo(x - size * 0.6, arrowY - size * 0.4);  // Esquina superior izquierda
+      ctx.lineTo(x + size * 0.6, arrowY - size * 0.4);  // Esquina superior derecha
+    }
+    ctx.closePath();
+
+    // Relleno
+    ctx.fillStyle = this.hexToRgba(color, alpha);
+    ctx.fill();
+
+    // Borde
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isValidated ? 2 : 1.5;
+    ctx.stroke();
+
+    // Efecto glow para alta confianza
+    if (isValidated && score >= 70) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Badge de alerta enviada
+    if (alertSent) {
+      ctx.font = 'bold 8px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#00FF00';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      const badgeY = isLong ? arrowY + size + 8 : arrowY - size - 8;
+      ctx.strokeText('✓✓', x, badgeY);
+      ctx.fillText('✓✓', x, badgeY);
+    }
+
+    ctx.restore();
   }
 
   hexToRgba(hex, alpha) {
