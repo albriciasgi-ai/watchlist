@@ -69,7 +69,8 @@ const Watchlist = () => {
     "VWAP": true,            // Activo (esencial para estrategia)
     "Fibonacci": false,
     "Continuation Patterns": false,
-    "Double Top/Bottom": true  // Activo (esencial para estrategia)
+    "Double Top/Bottom": true,  // Activo (esencial para estrategia)
+    "Support & Resistance": false  // S/R indicator (off by default)
   });
 
   // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
@@ -857,6 +858,15 @@ const Watchlist = () => {
                 onChange={() => toggleIndicator("Double Top/Bottom")}
               />
               Double Top/Bottom
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Support & Resistance"]}
+                onChange={() => toggleIndicator("Support & Resistance")}
+              />
+              Support & Resistance
             </label>
 
             {/* 🧪 Test Alert Buttons */}

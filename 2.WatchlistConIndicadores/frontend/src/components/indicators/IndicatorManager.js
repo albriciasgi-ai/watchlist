@@ -81,12 +81,16 @@ class IndicatorManager {
       this.indicators.push(new DoubleTopBottomIndicator(this.symbol, this.interval, this.days));
     }
 
-    // Support & Resistance - solo si está habilitado
+    // Support & Resistance - siempre crear para que el checkbox funcione
+    this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+    // Habilitar si está activo en indicatorStates
     if (indicatorStates['Support & Resistance'] === true) {
-      console.log(`[${this.symbol}] Creando Support & Resistance porque está habilitado`);
-      this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
-      this.indicators.push(this.supportResistanceIndicator);
+      console.log(`[${this.symbol}] Support & Resistance habilitado desde inicio`);
+      this.supportResistanceIndicator.enabled = true;
+    } else {
+      this.supportResistanceIndicator.enabled = false;
     }
+    this.indicators.push(this.supportResistanceIndicator);
 
     // VWAP (suele estar habilitado)
     if (indicatorStates['VWAP'] !== false) {
