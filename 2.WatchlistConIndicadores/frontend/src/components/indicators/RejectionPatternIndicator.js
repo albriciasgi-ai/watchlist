@@ -319,6 +319,13 @@ class RejectionPatternIndicator extends IndicatorBase {
           second: true,   // ±2σ - buscar patrones cerca de 2da desviación
           third: false    // ±3σ - buscar patrones cerca de 3ra desviación
         }
+      },
+      // ✅ NUEVO: Configuración visual de flechas de swing
+      swingArrowStyle: {
+        size: 10,           // Tamaño base de la flecha (5-20)
+        longColor: '#00E676',   // Verde para LONG (swing low)
+        shortColor: '#FF1744',  // Rojo para SHORT (swing high)
+        offset: 8          // Distancia desde el high/low de la vela
       }
     };
   }
@@ -1651,15 +1658,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       if (!pattern) continue;
 
       const x = bounds.x + i * candleWidth + candleWidth / 2;
-      const y = priceToY(candle.high) - 20; // Position above the candle
+      const highY = priceToY(candle.high);
+      const lowY = priceToY(candle.low);
 
       // Draw pattern marker (diferente visualización según modo)
       const isValidated = this.showMode === 'validated';
-      this.drawPatternMarker(ctx, x, y, pattern, isValidated);
+      this.drawPatternMarker(ctx, x, highY, lowY, pattern, isValidated);
     }
   }
 
-  drawPatternMarker(ctx, x, y, pattern, isValidated = false) {
+  drawPatternMarker(ctx, x, highY, lowY, pattern, isValidated = false) {
     // Normalizar el tipo de patrón (puede venir como 'type' o 'patternType')
     const patternType = pattern.type || pattern.patternType;
 
@@ -1670,7 +1678,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // ✅ ESPECIAL: Dibujar flechas para SWING_LOW y SWING_HIGH
     if (patternType === 'SWING_LOW' || patternType === 'SWING_HIGH') {
-      this.drawSwingArrow(ctx, x, y, patternType, score, isValidated, pattern._alertSent);
+      this.drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, pattern._alertSent);
       return;
     }
 
@@ -1679,8 +1687,8 @@ class RejectionPatternIndicator extends IndicatorBase {
                       patternType === 'ENGULFING_BULLISH' ||
                       patternType === 'DOJI_DRAGONFLY';
 
-    // Posicionar el punto: arriba para bajista, abajo para alcista
-    const dotY = isBullish ? y + 8 : y - 8;
+    // Posicionar el punto: arriba para bajista (sobre el high), abajo para alcista (bajo el low)
+    const dotY = isBullish ? lowY + 8 : highY - 8;
 
     // Tamaño del punto basado en score y validación
     const baseRadius = isValidated ? 5 : 4;
@@ -1748,35 +1756,44 @@ class RejectionPatternIndicator extends IndicatorBase {
 
   /**
    * ✅ NUEVO: Dibuja flechas para patrones SWING_LOW y SWING_HIGH
-   * - Verde hacia arriba para SWING_LOW (señal LONG)
-   * - Rojo hacia abajo para SWING_HIGH (señal SHORT)
+   * - Verde hacia arriba para SWING_LOW (señal LONG) - debajo del mínimo de la vela
+   * - Rojo hacia abajo para SWING_HIGH (señal SHORT) - encima del máximo de la vela
    */
-  drawSwingArrow(ctx, x, y, patternType, score, isValidated, alertSent) {
+  drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, alertSent) {
     const isLong = patternType === 'SWING_LOW';
-    const color = isLong ? this.colors.SWING_LOW : this.colors.SWING_HIGH;
 
-    // Tamaño de la flecha basado en score
-    const baseSize = isValidated ? 12 : 10;
-    const size = baseSize + (score / 100) * 4; // Max: 16 o 14
+    // Obtener configuración de estilo desde config (con valores por defecto)
+    const arrowStyle = this.config.swingArrowStyle || {};
+    const baseSize = arrowStyle.size || 10;
+    const offset = arrowStyle.offset || 8;
 
-    // Posición: SWING_LOW debajo de la vela, SWING_HIGH arriba
-    const arrowY = isLong ? y + 25 : y - 25;
+    // Colores configurables
+    const longColor = arrowStyle.longColor || this.colors.SWING_LOW || '#00E676';
+    const shortColor = arrowStyle.shortColor || this.colors.SWING_HIGH || '#FF1744';
+    const color = isLong ? longColor : shortColor;
+
+    // Tamaño de la flecha (el baseSize del config, sin escalar por score para mantener consistencia)
+    const size = baseSize;
+
+    // Posición: SWING_LOW debajo del mínimo (lowY), SWING_HIGH encima del máximo (highY)
+    // Nota: en canvas Y crece hacia abajo, así que lowY > highY
+    const arrowY = isLong ? lowY + offset + size : highY - offset - size;
 
     ctx.save();
 
     // Alpha basado en score
-    const baseAlpha = isValidated ? 0.95 : 0.8;
-    const alpha = Math.max(baseAlpha * 0.7, (score / 100) * baseAlpha);
+    const baseAlpha = isValidated ? 0.95 : 0.85;
+    const alpha = Math.max(baseAlpha * 0.8, (score / 100) * baseAlpha);
 
     // Dibujar flecha
     ctx.beginPath();
     if (isLong) {
-      // Flecha hacia ARRIBA (LONG) - triángulo apuntando arriba
+      // Flecha hacia ARRIBA (LONG) - triángulo apuntando arriba, debajo del low
       ctx.moveTo(x, arrowY - size);           // Punta superior
       ctx.lineTo(x - size * 0.6, arrowY + size * 0.4);  // Esquina inferior izquierda
       ctx.lineTo(x + size * 0.6, arrowY + size * 0.4);  // Esquina inferior derecha
     } else {
-      // Flecha hacia ABAJO (SHORT) - triángulo apuntando abajo
+      // Flecha hacia ABAJO (SHORT) - triángulo apuntando abajo, encima del high
       ctx.moveTo(x, arrowY + size);           // Punta inferior
       ctx.lineTo(x - size * 0.6, arrowY - size * 0.4);  // Esquina superior izquierda
       ctx.lineTo(x + size * 0.6, arrowY - size * 0.4);  // Esquina superior derecha
@@ -1795,7 +1812,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Efecto glow para alta confianza
     if (isValidated && score >= 70) {
       ctx.shadowColor = color;
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = 6;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
@@ -1807,7 +1824,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.fillStyle = '#00FF00';
       ctx.strokeStyle = '#000';
       ctx.lineWidth = 2;
-      const badgeY = isLong ? arrowY + size + 8 : arrowY - size - 8;
+      const badgeY = isLong ? arrowY + size + 10 : arrowY - size - 10;
       ctx.strokeText('✓✓', x, badgeY);
       ctx.fillText('✓✓', x, badgeY);
     }

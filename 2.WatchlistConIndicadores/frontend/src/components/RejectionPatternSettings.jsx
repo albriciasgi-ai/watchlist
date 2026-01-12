@@ -190,6 +190,11 @@ const RejectionPatternSettings = ({
           ...defaultConfig.vwapFilter.requiredDeviations,
           ...oldConfig.vwapFilter?.requiredDeviations
         }
+      },
+      // ✅ NUEVO: Migrar swingArrowStyle
+      swingArrowStyle: {
+        ...defaultConfig.swingArrowStyle,
+        ...oldConfig.swingArrowStyle
       }
     };
   };
@@ -1015,6 +1020,107 @@ const RejectionPatternSettings = ({
                   <em>• Swing Low → LONG signal</em>
                 </span>
               </div>
+
+              {/* ✅ NUEVO: Swing Arrow Style */}
+              {config.swingDetection?.swingOnlyMode && (
+                <div className="swing-arrow-style" style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                  <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                    🎨 Swing Arrow Style
+                  </h5>
+
+                  <div className="filter-item">
+                    <label>
+                      Arrow Size: {config.swingArrowStyle?.size || 10}px
+                      <input
+                        type="range"
+                        min="5"
+                        max="20"
+                        step="1"
+                        value={config.swingArrowStyle?.size || 10}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            swingArrowStyle: {
+                              ...prev.swingArrowStyle,
+                              size: parseInt(e.target.value)
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                        className="proximity-slider"
+                      />
+                    </label>
+                    <span className="filter-hint">
+                      Size of the arrow triangles (5-20 pixels)
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '20px', marginTop: '12px' }}>
+                    <div className="color-setting">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#00E676' }}>▲</span> LONG Color:
+                        <input
+                          type="color"
+                          value={config.swingArrowStyle?.longColor || '#00E676'}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              swingArrowStyle: {
+                                ...prev.swingArrowStyle,
+                                longColor: e.target.value
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="color-setting">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#FF1744' }}>▼</span> SHORT Color:
+                        <input
+                          type="color"
+                          value={config.swingArrowStyle?.shortColor || '#FF1744'}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              swingArrowStyle: {
+                                ...prev.swingArrowStyle,
+                                shortColor: e.target.value
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                    <button
+                      className="utility-button"
+                      style={{ fontSize: '11px', padding: '4px 8px' }}
+                      onClick={() => {
+                        setConfig(prev => ({
+                          ...prev,
+                          swingArrowStyle: {
+                            size: 10,
+                            longColor: '#00E676',
+                            shortColor: '#FF1744',
+                            offset: 8
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    >
+                      Reset to defaults
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </section>
@@ -2473,6 +2579,13 @@ function getDefaultConfig() {
         second: true,   // ±2σ
         third: false    // ±3σ
       }
+    },
+    // ✅ NUEVO: Estilo visual de flechas de swing
+    swingArrowStyle: {
+      size: 10,           // Tamaño base de la flecha (5-20)
+      longColor: '#00E676',   // Verde para LONG (swing low)
+      shortColor: '#FF1744',  // Rojo para SHORT (swing high)
+      offset: 8          // Distancia desde el high/low de la vela
     }
   };
 }
