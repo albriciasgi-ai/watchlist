@@ -1142,6 +1142,7 @@ class RejectionPatternIndicator extends IndicatorBase {
   /**
    * ✅ FIX #2: Fusiona nuevos patrones con los existentes
    * Evita crear duplicados y marca patrones genuinamente nuevos con _isNewPattern
+   * También verifica alineación VWAP al momento de detección (no después)
    *
    * @param {Array} newPatterns - Patrones recién detectados
    * @param {boolean} isInitialLoad - Si es true, no marca patrones como nuevos (son históricos)
@@ -1164,32 +1165,33 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       // Verificar si ya existe en knownPatterns
       if (this.knownPatterns.has(patternId)) {
-        // Ya existe, actualizar datos pero NO marcar como nuevo
+        // Ya existe, actualizar datos pero preservar flags importantes
         const existing = this.knownPatterns.get(patternId);
-        // Preservar _isNewPattern del patrón existente
         newPattern._isNewPattern = existing._isNewPattern || false;
-        newPattern._alertSent = existing._alertSent || false; // ✅ FIX: Preservar _alertSent
+        newPattern._alertSent = existing._alertSent || false;
         newPattern._firstSeenTime = existing._firstSeenTime;
+        newPattern._vwapAligned = existing._vwapAligned; // ✅ Preservar resultado VWAP
+        newPattern._vwapDeviation = existing._vwapDeviation;
         this.knownPatterns.set(patternId, newPattern);
         updatedCount++;
       } else {
-        // Patrón nuevo - SIEMPRE verificar edad (incluso en carga inicial)
+        // Patrón nuevo - verificar edad y VWAP
         newPattern._firstSeenTime = currentTime;
         const patternAge = currentTime - newPattern.timestamp;
 
-        // ✅ FIX: Verificar edad independientemente de isInitialLoad
-        // El filtro por alertSystemStartTime se hace en checkAndSendAlerts()
         if (patternAge <= maxAgeMs) {
-          // Patrón reciente - marcar como nuevo para posible alerta
           newPattern._isNewPattern = true;
-          if (!isInitialLoad) {
-            this.logger.debug(`✅ NEW pattern: ${newPattern.type} @ $${newPattern.price.toFixed(2)} (age: ${Math.round(patternAge/60000)}min)`);
-          }
         } else {
-          // Patrón viejo re-detectado - no marcar como nuevo
           newPattern._isNewPattern = false;
           skippedAsOld++;
         }
+
+        // ✅ NUEVO: Verificar alineación VWAP al momento de detección
+        // Esto se hace UNA VEZ y se guarda el resultado
+        if (this.config.vwapFilter?.enabled) {
+          newPattern._vwapAligned = this.checkVWAPAlignment(newPattern);
+        }
+        // Si filtro está deshabilitado, _vwapAligned queda undefined (se muestra siempre)
 
         this.knownPatterns.set(patternId, newPattern);
         addedCount++;
@@ -1566,11 +1568,10 @@ class RejectionPatternIndicator extends IndicatorBase {
     // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
     let patternsToShow = this.localPatterns;
 
-    // ✅ NUEVO: Filtrar patrones por VWAP si el filtro está habilitado
-    // Cuando vwapFilter.enabled = true, solo mostrar patrones que pasen checkVWAPAlignment()
-    // Cuando vwapFilter.enabled = false, mostrar todos los patrones que cumplan otros criterios
+    // ✅ OPTIMIZADO: Filtrar por VWAP usando el flag pre-calculado (_vwapAligned)
+    // El check se hace UNA VEZ en mergeNewPatterns, no en cada render
     if (this.config.vwapFilter?.enabled) {
-      patternsToShow = patternsToShow.filter(pattern => this.checkVWAPAlignment(pattern));
+      patternsToShow = patternsToShow.filter(pattern => pattern._vwapAligned === true);
     }
 
     if (patternsToShow.length === 0) {
