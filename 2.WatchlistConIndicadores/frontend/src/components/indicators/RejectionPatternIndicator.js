@@ -1250,6 +1250,10 @@ class RejectionPatternIndicator extends IndicatorBase {
         newPattern._firstSeenTime = existing._firstSeenTime;
         newPattern._vwapAligned = existing._vwapAligned; // ✅ Preservar resultado VWAP
         newPattern._vwapDeviation = existing._vwapDeviation;
+        // ✅ Preservar estrategia calculada (solo si el nuevo no trae una)
+        if (!newPattern._strategy && existing._strategy) {
+          newPattern._strategy = existing._strategy;
+        }
         this.knownPatterns.set(patternId, newPattern);
         updatedCount++;
       } else {
@@ -1451,6 +1455,11 @@ class RejectionPatternIndicator extends IndicatorBase {
       }
       // CASO 3: Solo zonas (sin S/R) - Ya filtrado por LocalPatternDetector
       // No hacer nada adicional
+    }
+
+    // ✅ ESTRATEGIA: Calcular niveles de estrategia para cada patrón ANTES del merge
+    if (this.config.strategy?.enabled) {
+      this.calculateStrategyForPatterns(detectedPatterns, candles);
     }
 
     // Si no hay IndicatorManager, solo retornar los patrones básicos
@@ -1684,20 +1693,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       const highY = priceToY(candle.high);
       const lowY = priceToY(candle.low);
 
-      // ✅ CORREGIDO: Calcular niveles de estrategia usando allCandles y el candleIndex real del patrón
-      if (this.config.strategy?.enabled && !pattern._strategy) {
-        // Usar el candleIndex del patrón si existe, sino buscarlo en allCandles
-        let realIndex = pattern.candleIndex;
-        if (realIndex === undefined && allCandles) {
-          realIndex = allCandles.findIndex(c => c.timestamp === pattern.timestamp);
-        }
-        if (realIndex !== undefined && realIndex >= 0 && allCandles) {
-          pattern._strategy = this.calculateStrategyLevels(pattern, allCandles, realIndex);
-        }
-      }
-
-      // ✅ NUEVO: Dibujar líneas de estrategia ANTES del marcador (para que queden detrás)
-      if (pattern._strategy) {
+      // ✅ Dibujar líneas de estrategia si existen (ya calculadas en detectLocalPatterns)
+      if (this.config.strategy?.enabled && pattern._strategy) {
         this.drawStrategyLines(ctx, bounds, pattern, x, priceToY, candleWidth);
       }
 
@@ -1880,6 +1877,26 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Calcula estrategia para todos los patrones de una vez
+   * @param {Array} patterns - Array de patrones detectados
+   * @param {Array} candles - Array de velas
+   */
+  calculateStrategyForPatterns(patterns, candles) {
+    if (!this.config.strategy?.enabled || !patterns || !candles) return;
+
+    patterns.forEach(pattern => {
+      // Solo calcular si no tiene estrategia ya calculada
+      if (pattern._strategy) return;
+
+      // Usar candleIndex del patrón
+      const patternIndex = pattern.candleIndex;
+      if (patternIndex === undefined || patternIndex < 0) return;
+
+      pattern._strategy = this.calculateStrategyLevels(pattern, candles, patternIndex);
+    });
+  }
+
+  /**
    * ✅ NUEVO: Calcula niveles de estrategia (Entry, Stop Loss, Take Profit)
    * @param {Object} pattern - Patrón detectado
    * @param {Array} candles - Array de velas
@@ -1942,7 +1959,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       takeProfit,
       slPercent: Math.round(slPercent * 100) / 100,
       tpPercent: Math.round(tpPercent * 100) / 100,
-      riskRewardRatio: rrRatio
+      riskRewardRatio: rrRatio,
+      direction: isLong ? 'LONG' : 'SHORT'
     };
   }
 
@@ -2092,9 +2110,10 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.textAlign = 'left';
       const labelX = endX + 4;
 
-      // Entry label
+      // Entry label con dirección (LONG/SHORT)
       ctx.fillStyle = config.entryColor || '#03A9F4';
-      ctx.fillText(`Entry: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
+      const dirLabel = strategy.direction || 'ENTRY';
+      ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
 
       // SL label con %
       ctx.fillStyle = config.stopLossColor || '#FF1744';
