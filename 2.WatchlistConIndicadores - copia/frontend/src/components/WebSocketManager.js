@@ -24,7 +24,7 @@ class WebSocketManager {
     this.ws.onopen = () => {
       console.log(`WebSocket Manager conectado [${interval}]`);
       this.isConnected = true;
-      
+
       // Esperar 100ms antes de suscribir (Bybit necesita tiempo)
       setTimeout(() => {
         this.subscribeAll();
@@ -37,7 +37,7 @@ class WebSocketManager {
         
         // Log de respuesta de suscripciÃ³n
         if (data.op === "subscribe" && data.success) {
-          console.log(`âœ“ Suscrito:`, data.ret_msg);
+          console.log(`✓ Suscrito:`, data.ret_msg);
         }
         
         if (data.topic) {
@@ -67,7 +67,7 @@ class WebSocketManager {
     this.ws.onclose = () => {
       console.log('WebSocket Manager cerrado');
       this.isConnected = false;
-      
+
       // Reconectar despuÃ©s de 3 segundos
       this.reconnectTimeout = setTimeout(() => {
         this.connect(this.currentInterval);

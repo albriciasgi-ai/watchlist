@@ -117,7 +117,8 @@ class LocalPatternDetector {
     const volumeConfig = config.volumeZScore || {
       enabled: false,
       lookbackPeriod: 20,
-      minZScore: 1.0
+      minZScore: 1.0,
+      swingCandleRange: 1  // Cuántas velas alrededor del swing considerar para el Z-score
     };
 
     // Configuración de swing detection
@@ -125,7 +126,8 @@ class LocalPatternDetector {
       enabled: false,
       leftBars: 5,
       rightBars: 5,
-      required: false  // Si true, rechaza patrones que no estén en swing points
+      required: false,     // Si true, rechaza patrones que no estén en swing points
+      swingOnlyMode: false // Si true, detecta swings sin requerir forma de patrón específica
     };
 
     // NUEVO: Configuración de filtro de dirección
@@ -150,9 +152,10 @@ class LocalPatternDetector {
     const volumeZScores = volumeConfig.enabled ? this.calculateVolumeZScores(candles, volumeConfig.lookbackPeriod) : null;
 
     // Determinar rango de iteración
-    // Si swing detection está habilitado y es required, necesitamos leftBars y rightBars
-    const startIndex = swingConfig.enabled && swingConfig.required ? swingConfig.leftBars : 1;
-    const endIndex = swingConfig.enabled && swingConfig.required ? candles.length - swingConfig.rightBars : candles.length;
+    // Si swing detection está habilitado y es required/swingOnlyMode, necesitamos leftBars y rightBars
+    const needsSwingMargin = swingConfig.enabled && (swingConfig.required || swingConfig.swingOnlyMode);
+    const startIndex = needsSwingMargin ? swingConfig.leftBars : 1;
+    const endIndex = needsSwingMargin ? candles.length - swingConfig.rightBars : candles.length;
 
     // Detectar patrones para cada vela
     for (let i = startIndex; i < endIndex; i++) {
@@ -162,20 +165,34 @@ class LocalPatternDetector {
       // Skip invalid candles
       if (!this.isValidCandle(current)) continue;
 
-      // Validar volumen si está habilitado
-      if (volumeConfig.enabled && volumeZScores) {
-        const zScore = volumeZScores[i];
-        if (zScore === null || zScore < volumeConfig.minZScore) {
-          continue; // Skip this candle if volume is not significant
-        }
-      }
-
-      // Pre-calcular swing points si está habilitado
+      // Pre-calcular swing points si está habilitado (antes del filtro de volumen para swingOnlyMode)
       let isAtSwingLow = false;
       let isAtSwingHigh = false;
       if (swingConfig.enabled) {
         isAtSwingLow = this.isSwingLow(candles, i, swingConfig.leftBars, swingConfig.rightBars);
         isAtSwingHigh = this.isSwingHigh(candles, i, swingConfig.leftBars, swingConfig.rightBars);
+      }
+
+      // ✅ MEJORADO: Validar volumen considerando varias velas alrededor del swing
+      if (volumeConfig.enabled && volumeZScores) {
+        const swingRange = volumeConfig.swingCandleRange || 1;
+        let maxZScore = volumeZScores[i]; // Default: solo la vela actual
+
+        // Si swingRange > 1, buscar el máximo Z-score en el rango
+        if (swingRange > 1) {
+          const rangeStart = Math.max(0, i - swingRange);
+          const rangeEnd = Math.min(candles.length - 1, i + swingRange);
+
+          for (let j = rangeStart; j <= rangeEnd; j++) {
+            if (volumeZScores[j] !== null && volumeZScores[j] > maxZScore) {
+              maxZScore = volumeZScores[j];
+            }
+          }
+        }
+
+        if (maxZScore === null || maxZScore < volumeConfig.minZScore) {
+          continue; // Skip if no significant volume in the swing area
+        }
       }
 
       // Hammer - patrón bullish, debe estar en swing low
@@ -287,6 +304,63 @@ class LocalPatternDetector {
               volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
               direction: isDragonfly ? 'LONG' : 'SHORT'  // NUEVO: Marcar dirección
             });
+          }
+        }
+      }
+
+      // ⚡ NUEVO: Swing Only Mode - detectar swings sin requerir forma de patrón
+      if (swingConfig.enabled && swingConfig.swingOnlyMode) {
+        // Swing Low → LONG signal
+        if (isAtSwingLow) {
+          // Verificar que no se haya detectado ya un patrón LONG en esta vela
+          const alreadyDetectedLong = patterns.some(p =>
+            p.timestamp === current.timestamp && p.direction === 'LONG'
+          );
+
+          if (!alreadyDetectedLong) {
+            // Validar con zonas manuales
+            if (this.passesZoneFilters(current.close, 'LONG', manualZones, globalSignalDirection, validationMode)) {
+              patterns.push({
+                type: 'SWING_LOW',
+                timestamp: current.timestamp,
+                price: current.low,
+                candle: current,
+                quality: 75, // Calidad base para swings
+                atSwingPoint: true,
+                swingType: 'low',
+                candleIndex: i,
+                volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+                direction: 'LONG',
+                isSwingOnly: true // Marcador para identificar que es swing-only
+              });
+            }
+          }
+        }
+
+        // Swing High → SHORT signal
+        if (isAtSwingHigh) {
+          // Verificar que no se haya detectado ya un patrón SHORT en esta vela
+          const alreadyDetectedShort = patterns.some(p =>
+            p.timestamp === current.timestamp && p.direction === 'SHORT'
+          );
+
+          if (!alreadyDetectedShort) {
+            // Validar con zonas manuales
+            if (this.passesZoneFilters(current.close, 'SHORT', manualZones, globalSignalDirection, validationMode)) {
+              patterns.push({
+                type: 'SWING_HIGH',
+                timestamp: current.timestamp,
+                price: current.high,
+                candle: current,
+                quality: 75, // Calidad base para swings
+                atSwingPoint: true,
+                swingType: 'high',
+                candleIndex: i,
+                volumeZScore: volumeZScores ? volumeZScores[i] : undefined,
+                direction: 'SHORT',
+                isSwingOnly: true // Marcador para identificar que es swing-only
+              });
+            }
           }
         }
       }

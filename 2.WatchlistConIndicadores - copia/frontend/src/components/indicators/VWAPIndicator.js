@@ -3,6 +3,10 @@
 
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
+import Logger from '../../utils/Logger.js';
+
+// Logger instance
+const log = new Logger('VWAP', { level: 'info' });
 
 class VWAPIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 7, config = {}) {
@@ -38,7 +42,7 @@ class VWAPIndicator extends IndicatorBase {
     this.bandWidthThresholds = config.bandWidthThresholds || this._getDefaultBandWidthThresholds(interval);
 
     // Log thresholds for debugging
-    console.log(`[${symbol}] BandWidth thresholds for ${interval}:`, this.bandWidthThresholds);
+    log.debug(`[${symbol}] BandWidth thresholds for ${interval}:`, this.bandWidthThresholds);
 
     // BBWP configuration
     this.bbwpLookback = config.bbwpLookback || 252; // 1 year of daily candles
@@ -113,7 +117,7 @@ class VWAPIndicator extends IndicatorBase {
       }
 
       const url = `${API_BASE_URL}/api/vwap/${this.symbol}?${params}`;
-      console.log(`[${this.symbol}] Fetching VWAP:`, url);
+      log.debug(`[${this.symbol}] Fetching VWAP:`, url);
 
       const response = await fetch(url);
       const json = await response.json();
@@ -127,18 +131,18 @@ class VWAPIndicator extends IndicatorBase {
           this.dataMap.set(point.timestamp, point);
         });
 
-        console.log(`[${this.symbol}] ✅ VWAP loaded: ${this.vwapData.length} points`);
+        log.debug(`[${this.symbol}] ✅ VWAP loaded: ${this.vwapData.length} points`);
 
         // Iniciar auto-refresh si no está activo
         this.startAutoRefresh();
 
         return true;
       } else {
-        console.error(`[${this.symbol}] ❌ VWAP error:`, json.error);
+        log.error(`[${this.symbol}] ❌ VWAP error:`, json.error);
         return false;
       }
     } catch (error) {
-      console.error(`[${this.symbol}] ❌ VWAP fetch error:`, error);
+      log.error(`[${this.symbol}] ❌ VWAP fetch error:`, error);
       return false;
     } finally {
       this.loading = false;
@@ -152,19 +156,19 @@ class VWAPIndicator extends IndicatorBase {
     // Iniciar nuevo timer
     this.refreshInterval = setInterval(() => {
       if (this.enabled && !this.loading) {
-        console.log(`[${this.symbol}] 🔄 Auto-refreshing VWAP...`);
+        log.debug(`[${this.symbol}] 🔄 Auto-refreshing VWAP...`);
         this.fetchData();
       }
     }, this.refreshIntervalMs);
 
-    console.log(`[${this.symbol}] ⏰ VWAP auto-refresh started (every ${this.refreshIntervalMs/1000}s)`);
+    log.debug(`[${this.symbol}] ⏰ VWAP auto-refresh started (every ${this.refreshIntervalMs/1000}s)`);
   }
 
   stopAutoRefresh() {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
       this.refreshInterval = null;
-      console.log(`[${this.symbol}] ⏹️ VWAP auto-refresh stopped`);
+      log.debug(`[${this.symbol}] ⏹️ VWAP auto-refresh stopped`);
     }
   }
 
@@ -1185,6 +1189,46 @@ class VWAPIndicator extends IndicatorBase {
       lower1: latest.bands.lower_1,
       lower2: latest.bands.lower_2,
       lower3: latest.bands.lower_3
+    };
+  }
+
+  /**
+   * ✅ NUEVO: Obtiene desviaciones VWAP en un timestamp específico (histórico)
+   * Usa el dataMap para buscar los valores exactos en ese momento
+   * @param {number} timestamp - Timestamp de la vela a buscar
+   * @returns {Object|null} Desviaciones en ese momento o null si no existe
+   */
+  getDeviationsAtTimestamp(timestamp) {
+    if (!this.dataMap || this.dataMap.size === 0) {
+      return null;
+    }
+
+    // Buscar exactamente por timestamp
+    let point = this.dataMap.get(timestamp);
+
+    // Si no existe exacto, buscar el más cercano anterior
+    if (!point && this.vwapData && this.vwapData.length > 0) {
+      // Buscar el punto más cercano que sea <= timestamp
+      for (let i = this.vwapData.length - 1; i >= 0; i--) {
+        if (this.vwapData[i].timestamp <= timestamp) {
+          point = this.vwapData[i];
+          break;
+        }
+      }
+    }
+
+    if (!point || !point.bands) {
+      return null;
+    }
+
+    return {
+      vwap: point.value,
+      upper1: point.bands.upper_1,
+      upper2: point.bands.upper_2,
+      upper3: point.bands.upper_3,
+      lower1: point.bands.lower_1,
+      lower2: point.bands.lower_2,
+      lower3: point.bands.lower_3
     };
   }
 }

@@ -1,0 +1,296 @@
+react-dom_client.js?v=2b7f99a5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:259 💡 Debug utilities available:
+Logger.js:260    window.toggleDebugMode() - Toggle all logs
+Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:37 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+WebSocketManager.js:25 WebSocket Manager conectado [60]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [9:11:42 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [9:11:43 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom]   📊 Total patterns: 531
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 531
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [9:11:46 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom]   📊 Total patterns: 289
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 289
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [9:11:47 p. m.] [DoubleTopBottom] ================================================================================
+
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:11:49 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+WebSocketManager.js:68 WebSocket Manager cerrado
+WebSocketManager.js:25 WebSocket Manager conectado [1]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+Logger.js:100 ✅ [9:11:53 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [9:11:53 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [9:11:59 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+Logger.js:100 ✅ [9:12:01 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+Logger.js:100 ✅ [9:12:03 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:12:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:12:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 1661ms
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $91406.55 | Completado: 08/01/2026, 21:27:00
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $91872.75 | Completado: 09/01/2026, 11:14:00
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $91322.80 | Completado: 08/01/2026, 21:28:00
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 3 patrones NUEVOS agregados, 9 patrones totales
+Logger.js:100 ✅ [9:12:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:12:06 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:12:06 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:12:06 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:12:07 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 8 patrones en 1249ms
+Logger.js:100 ✅ [9:12:07 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:12:07 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3117.93 | Completado: 08/01/2026, 21:27:00
+Logger.js:100 ✅ [9:12:07 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 9 patrones totales
+Logger.js:100 ✅ [9:12:07 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:13:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:13:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:13:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:13:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 1403ms
+Logger.js:100 ✅ [9:13:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:13:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $91244.25 | Completado: 08/01/2026, 21:33:00
+Logger.js:100 ✅ [9:13:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 10 patrones totales
+Logger.js:100 ✅ [9:13:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:13:04 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:13:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:13:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:13:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 8 patrones en 1292ms
+Logger.js:100 ✅ [9:13:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:13:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3121.55 | Completado: 08/01/2026, 21:31:00
+Logger.js:100 ✅ [9:13:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 10 patrones totales
+Logger.js:100 ✅ [9:13:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:14:02 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:14:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:14:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:14:03 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:14:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:14:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 8 patrones en 2928ms
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3121.64 | Completado: 08/01/2026, 21:31:00
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 11 patrones totales
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 2379ms
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones NUEVOS agregados, 10 patrones totales
+Logger.js:100 ✅ [9:14:05 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:15:02 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:15:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:15:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:15:03 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:15:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:15:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:15:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 8 patrones en 2516ms
+Logger.js:100 ✅ [9:15:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:15:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones NUEVOS agregados, 11 patrones totales
+Logger.js:100 ✅ [9:15:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:15:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 2596ms
+Logger.js:100 ✅ [9:15:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:15:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones NUEVOS agregados, 10 patrones totales
+Logger.js:100 ✅ [9:15:05 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:16:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:16:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:16:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:16:03 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:16:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:16:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:16:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 2372ms
+Logger.js:100 ✅ [9:16:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:16:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $91383.90 | Completado: 08/01/2026, 21:27:00
+Logger.js:100 ✅ [9:16:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 11 patrones totales
+Logger.js:100 ✅ [9:16:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 9 patrones en 2042ms
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3122.64 | Completado: 08/01/2026, 21:31:00
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3106.41 | Completado: 09/01/2026, 03:41:00
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3090.05 | Completado: 09/01/2026, 07:21:00
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3073.73 | Completado: 09/01/2026, 15:57:00
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 4 patrones NUEVOS agregados, 15 patrones totales
+Logger.js:100 ✅ [9:16:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+Logger.js:100 ✅ [9:16:29 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [9:16:29 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() CONTINUANDO - El backend obtendrá las velas de Bybit
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom]   📊 Total patterns: 11
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 11
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [9:16:30 p. m.] [DoubleTopBottom] ================================================================================
+
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [9:17:04 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:17:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:17:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:17:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 9 patrones en 1481ms
+Logger.js:100 ✅ [9:17:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:17:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3117.91 | Completado: 08/01/2026, 21:28:00
+Logger.js:100 ✅ [9:17:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 16 patrones totales
+Logger.js:100 ✅ [9:17:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:17:06 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:17:06 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:17:06 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 1515ms
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $91365.15 | Completado: 08/01/2026, 21:31:00
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $90875.20 | Completado: 09/01/2026, 03:04:00
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $90412.30 | Completado: 09/01/2026, 04:00:00
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 3 patrones NUEVOS agregados, 14 patrones totales
+Logger.js:100 ✅ [9:17:07 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:18:03 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:18:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:18:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:18:03 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:18:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:18:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:18:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 1499ms
+Logger.js:100 ✅ [9:18:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:18:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones NUEVOS agregados, 14 patrones totales
+Logger.js:100 ✅ [9:18:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 9 patrones en 2195ms
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3116.87 | Completado: 08/01/2026, 21:33:00
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3098.11 | Completado: 09/01/2026, 03:32:00
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 2 patrones NUEVOS agregados, 18 patrones totales
+Logger.js:100 ✅ [9:18:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:19:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:19:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:19:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:19:02 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:19:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:19:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 2907ms
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $91256.35 | Completado: 08/01/2026, 21:33:00
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones NUEVOS agregados, 15 patrones totales
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 10 patrones en 2847ms
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 10 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3113.64 | Completado: 08/01/2026, 21:40:00
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3096.57 | Completado: 09/01/2026, 03:38:00
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $3129.98 | Completado: 09/01/2026, 11:55:00
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 3 patrones NUEVOS agregados, 21 patrones totales
+Logger.js:100 ✅ [9:19:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [9:20:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+Logger.js:100 ✅ [9:20:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [9:20:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 7 patrones en 1949ms
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $91360.55 | Completado: 08/01/2026, 21:31:00
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_BOTTOM @ $91168.80 | Completado: 08/01/2026, 21:40:00
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 2 patrones NUEVOS agregados, 17 patrones totales
+Logger.js:100 ✅ [9:20:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...

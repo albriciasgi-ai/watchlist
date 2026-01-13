@@ -30,7 +30,7 @@ class AlertSender:
 
     async def start(self):
         """Start the alert sender service"""
-        self.client = httpx.AsyncClient(timeout=5.0)
+        self.client = httpx.AsyncClient(timeout=15.0)  # Increased from 5s to 15s for slow bot responses
         self.is_running = True
         logger.info(f"🚀 Alert sender started. Target: {self.alert_service_url}")
 
@@ -63,6 +63,15 @@ class AlertSender:
         Returns:
             True if sent successfully, False otherwise
         """
+        logger.debug("\n" + "="*80)
+        logger.debug(f"📨 [ALERT_SENDER] Preparing to send alert")
+        logger.debug("="*80)
+        logger.debug(f"   Symbol: {symbol}")
+        logger.debug(f"   Interval: {interval}")
+        logger.debug(f"   Pattern Type: {pattern.get('patternType', 'UNKNOWN')}")
+        logger.debug(f"   Price: ${pattern.get('price', 0):.2f}")
+        logger.debug(f"   Confidence: {pattern.get('confidence', 0)}%")
+
         alert_payload = self._build_alert_payload(
             symbol,
             interval,
@@ -70,8 +79,21 @@ class AlertSender:
             user_config
         )
 
+        logger.debug(f"\n📦 Built alert payload:")
+        logger.debug(f"   Pattern String: {alert_payload.get('pattern', 'N/A')}")
+        logger.debug(f"   Symbol: {alert_payload.get('symbol', 'N/A')}")
+        logger.debug(f"   Price: ${alert_payload.get('price', 0):.2f}")
+        logger.debug(f"   Confidence: {alert_payload.get('confidence', 0)}%")
+
         # Add to queue for asynchronous processing
+        logger.debug(f"\n📬 Adding alert to queue for async processing")
+        logger.debug(f"   Current queue size: {self.alert_queue.qsize()}")
+
         await self.alert_queue.put(alert_payload)
+
+        logger.debug(f"   ✅ Alert added to queue successfully")
+        logger.debug(f"   New queue size: {self.alert_queue.qsize()}")
+        logger.debug("="*80 + "\n")
 
         return True
 
@@ -108,6 +130,19 @@ class AlertSender:
             "confidence": confidence
         }
 
+        # Include strategy data if present (Entry, Stop Loss, Take Profit)
+        strategy = pattern.get('strategy')
+        if strategy:
+            payload["strategy"] = {
+                "entry": strategy.get('entry'),
+                "stopLoss": strategy.get('stopLoss'),
+                "takeProfit": strategy.get('takeProfit'),
+                "slPercent": strategy.get('slPercent'),
+                "tpPercent": strategy.get('tpPercent'),
+                "riskRewardRatio": strategy.get('riskRewardRatio')
+            }
+            logger.info(f"[STRATEGY] Entry: ${strategy.get('entry', 0):.2f} | SL: ${strategy.get('stopLoss', 0):.2f} ({strategy.get('slPercent', 0):.2f}%) | TP: ${strategy.get('takeProfit', 0):.2f} ({strategy.get('tpPercent', 0):.2f}%)")
+
         logger.info(f"[ALERT PAYLOAD] {symbol} | {pattern_with_action} @ ${price:.2f} (conf: {confidence}%)")
 
         return payload
@@ -123,14 +158,16 @@ class AlertSender:
             "HAMMER",              # Bullish pin bar reversal
             "ENGULFING_BULLISH",   # Bullish engulfing
             "DOJI_DRAGONFLY",      # Bullish doji
-            "DOUBLE_BOTTOM"        # Double bottom reversal
+            "DOUBLE_BOTTOM",       # Double bottom reversal
+            "SWING_LOW"            # Swing low - LONG signal
         }
 
         bearish_patterns = {
             "SHOOTING_STAR",       # Bearish pin bar reversal
             "ENGULFING_BEARISH",   # Bearish engulfing
             "DOJI_GRAVESTONE",     # Bearish doji
-            "DOUBLE_TOP"           # Double top reversal
+            "DOUBLE_TOP",          # Double top reversal
+            "SWING_HIGH"           # Swing high - SHORT signal
         }
 
         if pattern_type in bullish_patterns:
@@ -151,7 +188,9 @@ class AlertSender:
             "DOJI_DRAGONFLY": "🐉",
             "DOJI_GRAVESTONE": "🪦",
             "DOUBLE_BOTTOM": "⏫",
-            "DOUBLE_TOP": "⏬"
+            "DOUBLE_TOP": "⏬",
+            "SWING_LOW": "↑",
+            "SWING_HIGH": "↓"
         }
         return emoji_map.get(pattern_type, "🔔")
 
@@ -165,7 +204,9 @@ class AlertSender:
             "DOJI_DRAGONFLY": "Dragonfly Doji",
             "DOJI_GRAVESTONE": "Gravestone Doji",
             "DOUBLE_BOTTOM": "Double Bottom",
-            "DOUBLE_TOP": "Double Top"
+            "DOUBLE_TOP": "Double Top",
+            "SWING_LOW": "Swing Low",
+            "SWING_HIGH": "Swing High"
         }
         return name_map.get(pattern_type, pattern_type)
 
@@ -250,50 +291,87 @@ class AlertSender:
         Returns:
             True if successful, False otherwise
         """
+        from datetime import datetime
+        start_time = datetime.now()
+
+        logger.debug("\n" + "="*80)
+        logger.debug(f"🌐 [HTTP] Sending alert to external service (port 5000)")
+        logger.debug("="*80)
+
         if not self.client:
-            logger.error("❌ Client not initialized")
+            logger.error("❌ HTTP client not initialized - cannot send alert")
+            logger.error("="*80 + "\n")
             return False
 
         endpoint = f"{self.alert_service_url}/api/watchlist-alert"
 
-        # 📝 DEBUG LOG: Sending alert details
-        logger.debug(f"[HTTP POST] Endpoint: {endpoint}")
-        logger.debug(f"[HTTP POST] Payload: {json.dumps(alert, indent=2)}")
+        logger.debug(f"📡 HTTP Request Details:")
+        logger.debug(f"   Method: POST")
+        logger.debug(f"   Endpoint: {endpoint}")
+        logger.debug(f"   Headers: Content-Type: application/json")
+        logger.debug(f"\n📦 Request Payload:")
+        logger.debug(f"{json.dumps(alert, indent=2)}")
 
         try:
+            logger.debug(f"\n⏳ Sending HTTP POST request...")
             response = await self.client.post(endpoint, json=alert)
+            duration = (datetime.now() - start_time).total_seconds()
 
-            # 📝 DEBUG LOG: Response details
-            logger.debug(f"[HTTP RESPONSE] Status: {response.status_code}")
+            logger.debug(f"\n📥 HTTP Response received ({duration:.3f}s)")
+            logger.debug(f"   Status Code: {response.status_code}")
+            logger.debug(f"   Status Text: {response.reason_phrase}")
 
             if response.status_code == 200:
+                logger.debug(f"\n✅ SUCCESS: Alert service accepted the alert")
+
                 try:
                     response_data = response.json()
-                    logger.debug(f"[HTTP RESPONSE] Body: {json.dumps(response_data, indent=2)}")
+                    logger.debug(f"   Response Body (JSON):")
+                    logger.debug(f"{json.dumps(response_data, indent=2)}")
                 except:
-                    logger.debug(f"[HTTP RESPONSE] Body: {response.text}")
+                    logger.debug(f"   Response Body (Text): {response.text}")
 
-                logger.info(f"✅ Alert successfully delivered to trading bot at {endpoint}")
+                logger.info(f"✅ Alert delivered to trading bot at {endpoint}")
+                logger.debug("="*80 + "\n")
                 return True
             else:
-                logger.warning(f"⚠️ Alert service returned status {response.status_code}")
-                logger.warning(f"⚠️ Response: {response.text}")
+                logger.warning(f"\n⚠️ REJECTED: Alert service returned non-200 status")
+                logger.warning(f"   Status Code: {response.status_code}")
+                logger.warning(f"   Response Body: {response.text}")
+                logger.debug("="*80 + "\n")
                 return False
 
-        except httpx.ConnectError:
-            logger.error(f"❌ Cannot connect to alert service at {self.alert_service_url}")
-            logger.info("💡 Tip: Make sure alert listener is running on port 5000")
-            logger.info("💡 You can start it with: python alert_listener.py")
+        except httpx.ConnectError as e:
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ CONNECTION ERROR ({duration:.3f}s)")
+            logger.error(f"   Cannot connect to alert service at {self.alert_service_url}")
+            logger.error(f"   Error: {str(e)}")
+            logger.error(f"\n💡 Troubleshooting:")
+            logger.error(f"   1. Check if alert listener is running:")
+            logger.error(f"      → python alert_listener.py")
+            logger.error(f"   2. Verify port 5000 is not blocked by firewall")
+            logger.error(f"   3. Confirm alert service is accessible at {self.alert_service_url}")
+            logger.debug("="*80 + "\n")
             return False
 
-        except httpx.TimeoutException:
-            logger.error(f"❌ Alert service timeout (>5s) at {endpoint}")
+        except httpx.TimeoutException as e:
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ TIMEOUT ERROR ({duration:.3f}s)")
+            logger.error(f"   Alert service took too long to respond (>5s)")
+            logger.error(f"   Endpoint: {endpoint}")
+            logger.error(f"   Error: {str(e)}")
+            logger.debug("="*80 + "\n")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Unexpected error sending alert: {str(e)}")
+            duration = (datetime.now() - start_time).total_seconds()
+            logger.error(f"\n❌ UNEXPECTED ERROR ({duration:.3f}s)")
+            logger.error(f"   Exception Type: {type(e).__name__}")
+            logger.error(f"   Exception Message: {str(e)}")
+            logger.error(f"\n🔍 Stack Trace:")
             import traceback
-            logger.error(f"[TRACEBACK] {traceback.format_exc()}")
+            logger.error(traceback.format_exc())
+            logger.debug("="*80 + "\n")
             return False
 
     async def test_connection(self) -> bool:

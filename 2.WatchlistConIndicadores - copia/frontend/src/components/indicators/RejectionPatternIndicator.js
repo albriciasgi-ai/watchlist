@@ -32,7 +32,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       ENGULFING_BULLISH: '#2196F3',
       ENGULFING_BEARISH: '#FF9800',
       DOJI_DRAGONFLY: '#9C27B0',
-      DOJI_GRAVESTONE: '#607D8B'
+      DOJI_GRAVESTONE: '#607D8B',
+      SWING_LOW: '#00E676',   // Verde brillante para LONG
+      SWING_HIGH: '#FF1744'   // Rojo brillante para SHORT
     };
     this.icons = {
       HAMMER: '🔨',
@@ -40,20 +42,30 @@ class RejectionPatternIndicator extends IndicatorBase {
       ENGULFING_BULLISH: '📈',
       ENGULFING_BEARISH: '📉',
       DOJI_DRAGONFLY: '🐉',
-      DOJI_GRAVESTONE: '🪦'
+      DOJI_GRAVESTONE: '🪦',
+      SWING_LOW: '↑',    // Flecha arriba para LONG
+      SWING_HIGH: '↓'    // Flecha abajo para SHORT
     };
 
     // ✅ NUEVO: Sistema de alertas automáticas
     this.alertedPatterns = this.loadAlertedPatterns(); // ✅ FIX #4: Cargar desde localStorage
     this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
     this.notificationPermissionRequested = false; // Flag para pedir permiso una sola vez
-    this.alertSystemStartTime = null; // Timestamp cuando se inician las alertas
+    this.alertSystemStartTime = this.loadAlertSystemStartTime(); // ✅ PERSISTIDO: Cargar desde localStorage
     this.logger = createLogger(this.symbol); // Logger con contexto del símbolo
+
+    // ✅ NUEVO: Sistema de merge de patrones (evita re-detección en cada render)
+    this.knownPatterns = new Map(); // Map de patternId -> pattern para tracking
+    this.lastDetectionTime = 0; // Timestamp de última detección completa
+    this.detectionThrottleMs = 1000; // Mínimo 1 segundo entre detecciones completas
 
     // ✅ FIX #3: Sistema de throttling para prevenir llamadas múltiples
     this.lastAlertCheckTime = 0;
     this.alertCheckThrottleMs = 2000; // Mínimo 2 segundos entre chequeos
     this.pendingAlertCheck = null; // Timer para debouncing
+
+    // ✅ NUEVO: Referencia al IndicatorManager para filtro VWAP
+    this.indicatorManager = null;
 
     this.logger.debug(`🔔 Alert system initialized (cooldown: ${this.alertCooldownMs/60000} min, throttle: ${this.alertCheckThrottleMs}ms)`);
   }
@@ -62,7 +74,29 @@ class RejectionPatternIndicator extends IndicatorBase {
     const saved = localStorage.getItem(`rejection_pattern_config_${this.symbol}`);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const config = JSON.parse(saved);
+
+        // ✅ Migración: Asegurar que exista vwapFilter
+        if (!config.vwapFilter) {
+          config.vwapFilter = {
+            enabled: false,
+            deviationTolerance: 10,  // % de σ
+            requiredDeviations: {
+              second: true,   // ±2σ
+              third: false    // ±3σ
+            }
+          };
+        }
+
+        // ✅ Migración: Convertir tolerancia antigua (% de precio) a nueva (% de σ)
+        // Valores < 1 eran % de precio (ej: 0.5%), convertir a % de σ (ej: 10%)
+        if (config.vwapFilter && config.vwapFilter.deviationTolerance < 1 && config.vwapFilter.deviationTolerance !== 0) {
+          const oldValue = config.vwapFilter.deviationTolerance;
+          config.vwapFilter.deviationTolerance = 10; // Reset to default
+          console.log(`[${this.symbol}] ⚠️ Migrated VWAP tolerance from ${oldValue}% (price) to 10% (σ)`);
+        }
+
+        return config;
       } catch (e) {
         console.error('Failed to load rejection pattern config:', e);
       }
@@ -123,6 +157,89 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
   }
 
+  /**
+   * ✅ NUEVO: Convierte intervalo a milisegundos
+   */
+  getIntervalMs() {
+    const map = {
+      '1': 60000,       // 1 min
+      '3': 180000,      // 3 min
+      '5': 300000,      // 5 min
+      '15': 900000,     // 15 min
+      '30': 1800000,    // 30 min
+      '60': 3600000,    // 1 hora
+      '120': 7200000,   // 2 horas
+      '240': 14400000,  // 4 horas
+      'D': 86400000,    // 1 día
+      'W': 604800000    // 1 semana
+    };
+    return map[this.interval] || 900000; // Default 15 min
+  }
+
+  /**
+   * ✅ NUEVO: Obtiene multiplicador de edad según timeframe
+   * Timeframes más grandes necesitan más margen
+   */
+  getAgeMultiplier() {
+    switch (this.interval) {
+      case '1':   return 10;  // 1m: 10 intervalos = 10 min
+      case '3':   return 10;  // 3m: 10 intervalos = 30 min
+      case '5':   return 10;  // 5m: 10 intervalos = 50 min
+      case '15':  return 15;  // 15m: 15 intervalos = 3.75 horas
+      case '30':  return 15;  // 30m: 15 intervalos = 7.5 horas
+      case '60':  return 20;  // 1h: 20 intervalos = 20 horas
+      case '120': return 20;  // 2h: 20 intervalos = 40 horas
+      case '240': return 24;  // 4h: 24 intervalos = 4 días
+      case 'D':   return 30;  // 1D: 30 intervalos = 30 días
+      default:    return 10;
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Carga alertSystemStartTime desde localStorage
+   * Evita re-alertar patrones históricos después de recargar la página
+   */
+  loadAlertSystemStartTime() {
+    const storageKey = `rejection_alert_start_time_${this.symbol}_${this.interval}`;
+    const stored = localStorage.getItem(storageKey);
+
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        const age = Date.now() - data.timestamp;
+        const maxAge = 24 * 60 * 60 * 1000; // 24 horas
+
+        // Solo usar si tiene menos de 24 horas
+        if (age < maxAge) {
+          this.logger.debug(`📂 Loaded alertSystemStartTime from storage: ${new Date(data.timestamp).toLocaleString()}`);
+          return data.timestamp;
+        } else {
+          this.logger.debug(`⏰ alertSystemStartTime expired (${Math.round(age / 3600000)}h old), will reset`);
+        }
+      } catch (e) {
+        console.error('Failed to load alertSystemStartTime:', e);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * ✅ NUEVO: Guarda alertSystemStartTime en localStorage
+   */
+  saveAlertSystemStartTime() {
+    const storageKey = `rejection_alert_start_time_${this.symbol}_${this.interval}`;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        timestamp: this.alertSystemStartTime
+      }));
+      this.logger.debug(`💾 Saved alertSystemStartTime: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+    } catch (e) {
+      console.error('Failed to save alertSystemStartTime:', e);
+    }
+  }
+
   getDefaultConfig() {
     return {
       enabled: true,
@@ -158,7 +275,8 @@ class RejectionPatternIndicator extends IndicatorBase {
         enabled: true,
         leftBars: 5,
         rightBars: 5,
-        required: false  // Cambiado a false por defecto - más patrones visibles
+        required: false,     // Cambiado a false por defecto - más patrones visibles
+        swingOnlyMode: false // Si true, detecta swings sin requerir forma de patrón
       },
       // Nueva configuración de fuentes de niveles
       levelSources: {
@@ -174,7 +292,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       volumeZScore: {
         enabled: false,
         lookbackPeriod: 20,
-        minZScore: 1.0
+        minZScore: 1.0,
+        swingCandleRange: 1  // Cuántas velas alrededor del swing considerar (1 = solo la vela exacta)
       },
       filters: {
         minConfidence: 50,             // Reducido de 60 - más permisivo
@@ -191,7 +310,43 @@ class RejectionPatternIndicator extends IndicatorBase {
         // Los overrides por nivel se guardan en cada zona (zone.signalDirection)
       },
       // NUEVO: Zonas manuales de precio
-      manualPriceZones: []
+      manualPriceZones: [],
+      // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
+      vwapFilter: {
+        enabled: false,
+        deviationTolerance: 10,  // % de σ (desviación estándar)
+        requiredDeviations: {
+          second: true,   // ±2σ - buscar patrones cerca de 2da desviación
+          third: false    // ±3σ - buscar patrones cerca de 3ra desviación
+        }
+      },
+      // ✅ NUEVO: Configuración visual de flechas de swing
+      swingArrowStyle: {
+        size: 10,           // Tamaño base de la flecha (5-20)
+        longColor: '#00E676',   // Verde para LONG (swing low)
+        shortColor: '#FF1744',  // Rojo para SHORT (swing high)
+        offset: 8          // Distancia desde el high/low de la vela
+      },
+      // ✅ NUEVO: Configuración de estrategia (Entry/SL/TP)
+      strategy: {
+        enabled: false,
+        riskRewardRatio: 2.0,    // TP = SL distance * ratio
+        lineLengthCandles: 5,    // Velas hacia atrás y adelante
+        entryColor: '#03A9F4',   // Azul claro para entrada
+        stopLossColor: '#FF1744', // Rojo para SL
+        takeProfitColor: '#00E676', // Verde para TP
+        showLabels: true,        // Mostrar etiquetas con precio y %
+        includeInAlert: true,    // Incluir SL/TP en alertas
+        showBox: true,           // Mostrar rectángulos de zona
+        slBoxColor: '#FF1744',   // Rojo para zona SL-Entry
+        tpBoxColor: '#00E676',   // Verde para zona Entry-TP
+        boxOpacity: 0.15,        // Opacidad de las zonas
+        slSwingLeftBars: 3,      // Barras izquierda para detección de swing
+        slSwingRightBars: 3,     // Barras derecha para detección de swing
+        slSwingLookback: 50,     // Velas hacia atrás para buscar swing
+        slBufferPercent: 20,     // Buffer fallback si no hay swing
+        slMinPercent: 0.5        // SL mínimo para viabilidad
+      }
     };
   }
 
@@ -202,6 +357,8 @@ class RejectionPatternIndicator extends IndicatorBase {
     // ✅ FIX BUG 1: Limpiar patrones para forzar re-detección en el próximo render
     // Esto asegura que al borrar zonas o cambiar configuración, los patrones se actualicen
     this.localPatterns = [];
+    this.knownPatterns.clear(); // ✅ FIX #2: Limpiar cache de patrones conocidos
+    this.lastDetectionTime = 0; // ✅ FIX #5: Forzar re-detección inmediata
     console.log(`[${this.symbol}] 🔄 Config updated - patterns will be re-detected on next render`);
   }
 
@@ -401,6 +558,195 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Obtiene tolerancia VWAP por defecto según timeframe
+   * La tolerancia es un % de σ (desviación estándar), NO del precio.
+   * Ejemplo: 10% con σ=$1000 → margen de $100 alrededor de la línea de desviación
+   *
+   * Timeframes más pequeños tienen más ruido, necesitan tolerancias mayores.
+   * Timeframes más grandes son más estables, pueden tener tolerancias menores.
+   */
+  getDefaultVWAPTolerance() {
+    switch (this.interval) {
+      case '1':   return 15;    // 1m: más ruido → 15% de σ
+      case '3':   return 12;    // 3m: 12% de σ
+      case '5':   return 10;    // 5m: 10% de σ
+      case '15':  return 10;    // 15m: 10% de σ
+      case '30':  return 10;    // 30m: 10% de σ
+      case '60':  return 10;    // 1h: 10% de σ
+      case '120': return 10;    // 2h: 10% de σ
+      case '240': return 10;    // 4h: 10% de σ
+      case 'D':   return 10;    // 1D: 10% de σ
+      case 'W':   return 10;    // 1W: 10% de σ
+      default:    return 10;    // Default: 10% de σ
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Verifica alineación del patrón con desviaciones VWAP
+   * Este es un FILTRO PASA/NO PASA - si no está en la desviación requerida, se rechaza
+   *
+   * CÁLCULO DEL MARGEN:
+   * El margen (tolerance) se calcula como % de la desviación estándar (σ), NO del precio.
+   * Ejemplo: si VWAP=100,000 y σ=1,000, un margen del 10% = 100 (10% de 1,000)
+   * Esto permite ajustar con mayor sensibilidad y es más fácil de verificar visualmente.
+   *
+   * @param {Object} pattern - Patrón a validar
+   * @returns {boolean} true si pasa el filtro (o filtro deshabilitado), false si no pasa
+   */
+  checkVWAPAlignment(pattern) {
+    const vwapFilter = this.config.vwapFilter;
+    if (!vwapFilter || !vwapFilter.enabled) {
+      return true; // Filtro deshabilitado - siempre pasa
+    }
+
+    // Obtener VWAPIndicator del manager
+    if (!this.indicatorManager) {
+      return true; // No bloquear si manager no está disponible
+    }
+
+    const vwapIndicator = this.indicatorManager.getVWAPIndicator();
+    if (!vwapIndicator || !vwapIndicator.enabled) {
+      return true; // No bloquear si VWAP no está activo
+    }
+
+    // ✅ CORREGIDO: Obtener desviaciones HISTÓRICAS al timestamp del patrón
+    // Esto usa los valores VWAP que existían cuando la vela se formó, no los actuales
+    const deviations = pattern.timestamp
+      ? vwapIndicator.getDeviationsAtTimestamp(pattern.timestamp)
+      : vwapIndicator.getDeviations();
+
+    if (!deviations) {
+      return true; // No bloquear si no hay datos
+    }
+
+    // ✅ Calcular VWAP y σ desde las bandas (más robusto)
+    let vwapValue = deviations.vwap;
+    let sigma = null;
+
+    // Si tenemos ambas bandas, podemos calcular VWAP y σ directamente
+    if (deviations.upper2 && deviations.lower2) {
+      // upper2 = VWAP + 2σ, lower2 = VWAP - 2σ
+      // VWAP = (upper2 + lower2) / 2
+      // 4σ = upper2 - lower2 → σ = (upper2 - lower2) / 4
+      if (!vwapValue) {
+        vwapValue = (deviations.upper2 + deviations.lower2) / 2;
+      }
+      sigma = (deviations.upper2 - deviations.lower2) / 4;
+    } else if (vwapValue && deviations.upper2) {
+      sigma = (deviations.upper2 - vwapValue) / 2;
+    } else if (vwapValue && deviations.lower2) {
+      sigma = (vwapValue - deviations.lower2) / 2;
+    }
+
+    if (!vwapValue || !sigma || sigma <= 0) {
+      return true; // No bloquear si no se puede calcular
+    }
+
+    const patternPrice = pattern.price;
+    const direction = pattern.direction; // 'LONG' o 'SHORT'
+
+    // ✅ Usar tolerancia del config, o default por timeframe si es 0 o "auto"
+    const configTolerance = vwapFilter.deviationTolerance;
+    const effectiveTolerance = (configTolerance === 0 || configTolerance === 'auto')
+      ? this.getDefaultVWAPTolerance()
+      : configTolerance;
+
+    // ✅ El margen es un % de σ
+    const toleranceDistance = sigma * (effectiveTolerance / 100);
+
+    // Para LONG: buscar en desviaciones negativas (-2σ, -3σ) - DEBAJO del VWAP
+    if (direction === 'LONG') {
+      const requireDev2 = vwapFilter.requiredDeviations?.second;
+      const requireDev3 = vwapFilter.requiredDeviations?.third;
+
+      let aligned = false;
+      let debugInfo = {
+        type: pattern.type,
+        price: patternPrice.toFixed(2),
+        vwap: vwapValue.toFixed(2),
+        sigma: sigma.toFixed(2),
+        tolerance: `${effectiveTolerance}% of σ = ${toleranceDistance.toFixed(2)}`,
+        lower2: deviations.lower2?.toFixed(2) || 'N/A',
+        lower3: deviations.lower3?.toFixed(2) || 'N/A'
+      };
+
+      if (requireDev2 && deviations.lower2) {
+        const distance = Math.abs(patternPrice - deviations.lower2);
+        debugInfo.distanceTo2σ = distance.toFixed(2);
+        if (distance <= toleranceDistance) {
+          pattern._vwapDeviation = '-2σ';
+          aligned = true;
+        }
+      }
+
+      if (!aligned && requireDev3 && deviations.lower3) {
+        const distance = Math.abs(patternPrice - deviations.lower3);
+        debugInfo.distanceTo3σ = distance.toFixed(2);
+        if (distance <= toleranceDistance) {
+          pattern._vwapDeviation = '-3σ';
+          aligned = true;
+        }
+      }
+
+      // ✅ DEBUG: Log para patrones LONG rechazados
+      if (!aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ❌ LONG pattern REJECTED by VWAP filter:`, debugInfo);
+      } else if (aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ✅ LONG pattern ACCEPTED (${pattern._vwapDeviation}):`, debugInfo);
+      }
+
+      return aligned;
+    }
+
+    // Para SHORT: buscar en desviaciones positivas (+2σ, +3σ) - ENCIMA del VWAP
+    if (direction === 'SHORT') {
+      const requireDev2 = vwapFilter.requiredDeviations?.second;
+      const requireDev3 = vwapFilter.requiredDeviations?.third;
+
+      let aligned = false;
+      let debugInfo = {
+        type: pattern.type,
+        price: patternPrice.toFixed(2),
+        vwap: vwapValue.toFixed(2),
+        sigma: sigma.toFixed(2),
+        tolerance: `${effectiveTolerance}% of σ = ${toleranceDistance.toFixed(2)}`,
+        upper2: deviations.upper2?.toFixed(2) || 'N/A',
+        upper3: deviations.upper3?.toFixed(2) || 'N/A'
+      };
+
+      if (requireDev2 && deviations.upper2) {
+        const distance = Math.abs(patternPrice - deviations.upper2);
+        debugInfo.distanceTo2σ = distance.toFixed(2);
+        if (distance <= toleranceDistance) {
+          pattern._vwapDeviation = '+2σ';
+          aligned = true;
+        }
+      }
+
+      if (!aligned && requireDev3 && deviations.upper3) {
+        const distance = Math.abs(patternPrice - deviations.upper3);
+        debugInfo.distanceTo3σ = distance.toFixed(2);
+        if (distance <= toleranceDistance) {
+          pattern._vwapDeviation = '+3σ';
+          aligned = true;
+        }
+      }
+
+      // ✅ DEBUG: Log para patrones SHORT rechazados
+      if (!aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ❌ SHORT pattern REJECTED by VWAP filter:`, debugInfo);
+      } else if (aligned && this.config.debugMode) {
+        console.log(`[${this.symbol}] ✅ SHORT pattern ACCEPTED (${pattern._vwapDeviation}):`, debugInfo);
+      }
+
+      return aligned;
+    }
+
+    // Dirección desconocida - rechazar por defecto
+    return false;
+  }
+
+  /**
    * ✅ NUEVO: Formatea nombre del patrón según formato de alertas existente
    * Mantiene compatibilidad EXACTA con sistema actual
    */
@@ -411,27 +757,29 @@ class RejectionPatternIndicator extends IndicatorBase {
       'ENGULFING_BULLISH': 'Bullish Engulfing (ABRIR LONG)',
       'ENGULFING_BEARISH': 'Bearish Engulfing (ABRIR SHORT)',
       'DOJI_DRAGONFLY': 'Dragonfly Doji (ABRIR LONG)',
-      'DOJI_GRAVESTONE': 'Gravestone Doji (ABRIR SHORT)'
+      'DOJI_GRAVESTONE': 'Gravestone Doji (ABRIR SHORT)',
+      'SWING_LOW': 'Swing Low (ABRIR LONG)',
+      'SWING_HIGH': 'Swing High (ABRIR SHORT)'
     };
     return names[patternType] || patternType;
   }
 
   /**
-   * ✅ NUEVO: Genera ID único para un patrón
-   * ✅ FIX #2: ID mejorado con candleIndex para mayor unicidad
-   * Formato: tipo_timestamp_precio_candleIndex
+   * ✅ ESTABILIZADO: Genera ID único para un patrón
+   * Formato: tipo_timestamp_precio (sin candleIndex para estabilidad)
+   *
+   * NOTA: Se removió candleIndex porque cambia cuando el array de velas
+   * cambia (scroll, nuevas velas), causando IDs inestables y alertas duplicadas.
    */
   getPatternId(pattern) {
-    // ✅ FIX #2: Usar toFixed(0) en vez de Math.round para mantener consistencia
+    // Usar toFixed(0) para consistencia en el precio
     const priceKey = (pattern.price * 100).toFixed(0);
-
-    // ✅ FIX #2: Incluir candleIndex para diferenciar patrones en mismo timestamp
-    const candleIdx = pattern.candleIndex || pattern.candle_index || 0;
 
     // Asegurar timestamp válido
     const timestamp = pattern.timestamp || Date.now();
 
-    return `${pattern.type}_${timestamp}_${priceKey}_${candleIdx}`;
+    // ID estable: tipo + timestamp + precio (sin candleIndex)
+    return `${pattern.type}_${timestamp}_${priceKey}`;
   }
 
   /**
@@ -505,14 +853,30 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     const newConfirmed = [];
+    let skippedNotNew = 0;
+    let skippedAlreadyAlerted = 0;
+    let skippedNotConfirmed = 0;
+    let skippedAlreadySent = 0;
 
-    // ✅ Iterar sin logging (el logging se hace cuando se ENVÍA la alerta, no aquí)
     for (let i = 0; i < this.localPatterns.length; i++) {
       const pattern = this.localPatterns[i];
       const patternId = this.getPatternId(pattern);
 
-      // Si ya fue alertado, skip
+      // ✅ FIX: Verificar si ya fue enviado (flag local)
+      if (pattern._alertSent) {
+        skippedAlreadySent++;
+        continue;
+      }
+
+      // ✅ FIX #2: Verificar flag _isNewPattern del sistema de merge
+      if (!pattern._isNewPattern) {
+        skippedNotNew++;
+        continue; // No es un patrón genuinamente nuevo
+      }
+
+      // Si ya fue alertado (persistido en localStorage), skip
       if (this.alertedPatterns.has(patternId)) {
+        skippedAlreadyAlerted++;
         continue;
       }
 
@@ -520,11 +884,17 @@ class RejectionPatternIndicator extends IndicatorBase {
       const isConfirmed = this.isPatternConfirmed(pattern, candles);
 
       if (!isConfirmed) {
+        skippedNotConfirmed++;
         continue;
       }
 
-      // Agregar a la lista sin logging (se loggea cuando se envía)
+      // Agregar a la lista
       newConfirmed.push(pattern);
+    }
+
+    // ✅ Log detallado solo si hay patrones o skipped significativo
+    if (newConfirmed.length > 0 || (skippedNotNew + skippedAlreadyAlerted + skippedNotConfirmed) > 0) {
+      this.logger.debug(`📊 Pattern check: ${this.localPatterns.length} total → ${newConfirmed.length} to alert (skip: ${skippedNotNew} notNew, ${skippedAlreadyAlerted} alerted, ${skippedAlreadySent} sent, ${skippedNotConfirmed} unconfirmed)`);
     }
 
     return newConfirmed;
@@ -571,16 +941,38 @@ class RejectionPatternIndicator extends IndicatorBase {
     // ✅ PRIMERA VEZ: Guardar timestamp de inicio del sistema de alertas
     if (this.alertSystemStartTime === null) {
       this.alertSystemStartTime = Date.now();
+      this.saveAlertSystemStartTime(); // ✅ PERSISTIR para sobrevivir reloads
+
+      // ✅ Contar patrones por estado para debugging
+      let newCount = 0, oldCount = 0, alertedCount = 0;
+      this.localPatterns.forEach(p => {
+        if (p._isNewPattern) newCount++;
+        else oldCount++;
+        if (this.alertedPatterns.has(this.getPatternId(p))) alertedCount++;
+      });
 
       console.log(`\n${'='.repeat(80)}`);
       console.log(`📊 [${this.symbol}] ALERT SYSTEM ACTIVATED`);
       console.log(`${'='.repeat(80)}`);
       console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-      console.log(`All patterns before this time will be suppressed`);
-      console.log(`Only NEW patterns detected AFTER this time will trigger alerts`);
+      console.log(`Interval: ${this.interval} | Max age: ${Math.round(this.getIntervalMs() * this.getAgeMultiplier() / 60000)} minutes`);
+      console.log(`Pattern state: ${newCount} NEW (may alert), ${oldCount} OLD (won't alert), ${alertedCount} already alerted`);
+
+      // ✅ Mostrar estado del filtro VWAP
+      const vwapFilter = this.config.vwapFilter;
+      if (vwapFilter?.enabled) {
+        const devs = [];
+        if (vwapFilter.requiredDeviations?.second) devs.push('±2σ');
+        if (vwapFilter.requiredDeviations?.third) devs.push('±3σ');
+        console.log(`VWAP Filter: ENABLED (${devs.join(', ')}) - tolerance: ${vwapFilter.deviationTolerance}%`);
+      } else {
+        console.log(`VWAP Filter: DISABLED`);
+      }
+
+      console.log(`Only patterns with timestamp >= start time AND marked as NEW will trigger alerts`);
       console.log(`${'='.repeat(80)}\n`);
 
-      this.logger.alert(`✅ Alert system activated - suppressing all historical patterns`);
+      this.logger.alert(`✅ Alert system activated - ${newCount} patterns ready to alert`);
       return; // Salir en la primera ejecución para dar tiempo a la detección
     }
 
@@ -588,22 +980,42 @@ class RejectionPatternIndicator extends IndicatorBase {
     const newConfirmedPatterns = this.getNewConfirmedPatterns(candles);
     if (newConfirmedPatterns.length === 0) return;
 
-    // ✅ Filtrar solo patrones NUEVOS (timestamp >= alertSystemStartTime)
+    // ✅ VALIDACIÓN DE EDAD: Solo alertar patrones recientes (dentro de N intervalos)
+    const intervalMs = this.getIntervalMs();
+    const maxAgeMs = intervalMs * this.getAgeMultiplier();
+    const currentTime = Date.now();
     const minConfidence = this.config.filters?.minConfidence || 50;
 
-    const recentPatterns = newConfirmedPatterns.filter(p => p.timestamp >= this.alertSystemStartTime);
+    // ✅ Filtrar patrones que:
+    // 1. timestamp >= alertSystemStartTime (después de iniciar alertas)
+    // 2. No sean demasiado viejos (dentro de maxAgeMs)
+    const recentPatterns = newConfirmedPatterns.filter(p => {
+      // Condición 1: Después del inicio del sistema de alertas
+      if (p.timestamp < this.alertSystemStartTime) return false;
+
+      // Condición 2: No muy viejo (evita alertar patrones históricos re-detectados)
+      const patternAge = currentTime - p.timestamp;
+      if (patternAge > maxAgeMs) {
+        this.logger.debug(`⏭️ Pattern too old: ${p.type} age=${Math.round(patternAge/60000)}min > max=${Math.round(maxAgeMs/60000)}min`);
+        return false;
+      }
+
+      return true;
+    });
 
     // Solo mostrar logging detallado si hay patrones que PASAN el filtro
     if (recentPatterns.length > 0) {
       console.log(`\n[${this.symbol}] 🔍 NEW PATTERNS DETECTED:`);
       console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
+      console.log(`  Max pattern age: ${Math.round(maxAgeMs/60000)} minutes`);
       console.log(`  Total confirmed patterns: ${newConfirmedPatterns.length}`);
-      console.log(`  Historical (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
+      console.log(`  Historical/Old (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
       console.log(`  ✅ NEW patterns to alert: ${recentPatterns.length}`);
 
       // Detalles de patrones nuevos
       recentPatterns.forEach((p, i) => {
-        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - ${new Date(p.timestamp).toLocaleString()}`);
+        const ageMin = Math.round((currentTime - p.timestamp) / 60000);
+        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - age: ${ageMin}min - ${new Date(p.timestamp).toLocaleString()}`);
       });
       console.log('');
     }
@@ -634,6 +1046,14 @@ class RejectionPatternIndicator extends IndicatorBase {
         continue;
       }
 
+      // ✅ FILTRO VWAP: Pasa/No pasa - si está habilitado, el patrón DEBE estar cerca de la desviación
+      if (this.config.vwapFilter?.enabled) {
+        if (!this.checkVWAPAlignment(pattern)) {
+          this.logger.debug(`⏭️ Pattern skipped: VWAP filter not met`);
+          continue; // NO envía alerta - no cumple con el filtro VWAP
+        }
+      }
+
       // Generar ID del patrón
       const patternId = this.getPatternId(pattern);
 
@@ -652,9 +1072,10 @@ class RejectionPatternIndicator extends IndicatorBase {
       const success = await this.sendPatternAlert(pattern);
 
       if (success) {
-        // Marcar visualmente
+        // Marcar visualmente y limpiar flag de nuevo
         pattern._alertSent = true;
         pattern._alertTimestamp = Date.now();
+        pattern._isNewPattern = false; // ✅ FIX #2: Limpiar flag para que no se alerte nuevamente
 
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
         alertCount++;
@@ -682,13 +1103,27 @@ class RejectionPatternIndicator extends IndicatorBase {
           timestamp: pattern.timestamp,
           direction: pattern.direction,
           nearSRLevel: pattern.nearSRLevel,
-          nearLevel: pattern.nearLevel
+          nearLevel: pattern.nearLevel,
+          vwapDeviation: pattern._vwapDeviation || null  // ✅ Info de desviación VWAP si aplica
         },
         config: {
           filters: this.config.filters,
-          alertsEnabled: this.config.alertsEnabled
+          alertsEnabled: this.config.alertsEnabled,
+          vwapFilterEnabled: this.config.vwapFilter?.enabled || false
         }
       };
+
+      // ✅ NUEVO: Incluir datos de estrategia si está habilitado
+      if (this.config.strategy?.enabled && this.config.strategy?.includeInAlert && pattern._strategy) {
+        payload.strategy = {
+          entry: pattern._strategy.entry,
+          stopLoss: pattern._strategy.stopLoss,
+          takeProfit: pattern._strategy.takeProfit,
+          slPercent: pattern._strategy.slPercent,
+          tpPercent: pattern._strategy.tpPercent,
+          riskRewardRatio: pattern._strategy.riskRewardRatio
+        };
+      }
 
       const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
         method: 'POST',
@@ -792,6 +1227,100 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ FIX #2: Fusiona nuevos patrones con los existentes
+   * Evita crear duplicados y marca patrones genuinamente nuevos con _isNewPattern
+   * También verifica alineación VWAP al momento de detección (no después)
+   *
+   * @param {Array} newPatterns - Patrones recién detectados
+   * @param {boolean} isInitialLoad - Si es true, no marca patrones como nuevos (son históricos)
+   */
+  mergeNewPatterns(newPatterns, isInitialLoad = false) {
+    if (!newPatterns || newPatterns.length === 0) {
+      return;
+    }
+
+    const currentTime = Date.now();
+    const intervalMs = this.getIntervalMs();
+    const maxAgeMs = intervalMs * this.getAgeMultiplier();
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    let skippedAsOld = 0;
+
+    newPatterns.forEach(newPattern => {
+      const patternId = this.getPatternId(newPattern);
+
+      // Verificar si ya existe en knownPatterns
+      if (this.knownPatterns.has(patternId)) {
+        // Ya existe, actualizar datos pero preservar flags importantes
+        const existing = this.knownPatterns.get(patternId);
+        newPattern._isNewPattern = existing._isNewPattern || false;
+        newPattern._alertSent = existing._alertSent || false;
+        newPattern._firstSeenTime = existing._firstSeenTime;
+        newPattern._vwapAligned = existing._vwapAligned; // ✅ Preservar resultado VWAP
+        newPattern._vwapDeviation = existing._vwapDeviation;
+        // ✅ Preservar estrategia calculada (solo si el nuevo no trae una)
+        if (!newPattern._strategy && existing._strategy) {
+          newPattern._strategy = existing._strategy;
+        }
+        this.knownPatterns.set(patternId, newPattern);
+        updatedCount++;
+      } else {
+        // Patrón nuevo - verificar edad y VWAP
+        newPattern._firstSeenTime = currentTime;
+        const patternAge = currentTime - newPattern.timestamp;
+
+        if (patternAge <= maxAgeMs) {
+          newPattern._isNewPattern = true;
+        } else {
+          newPattern._isNewPattern = false;
+          skippedAsOld++;
+        }
+
+        // ✅ NUEVO: Verificar alineación VWAP al momento de detección
+        // Esto se hace UNA VEZ y se guarda el resultado
+        if (this.config.vwapFilter?.enabled) {
+          newPattern._vwapAligned = this.checkVWAPAlignment(newPattern);
+        }
+        // Si filtro está deshabilitado, _vwapAligned queda undefined (se muestra siempre)
+
+        this.knownPatterns.set(patternId, newPattern);
+        addedCount++;
+      }
+    });
+
+    // Actualizar localPatterns desde knownPatterns
+    this.localPatterns = Array.from(this.knownPatterns.values());
+
+    if (!isInitialLoad && (addedCount > 0 || skippedAsOld > 0)) {
+      this.logger.debug(`📊 Merge: +${addedCount} added, ~${updatedCount} updated, ⏭️${skippedAsOld} old`);
+    }
+  }
+
+  /**
+   * ✅ Limpia patrones muy viejos del cache
+   * Se llama periódicamente para evitar acumulación
+   */
+  cleanOldPatterns() {
+    const currentTime = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 horas
+
+    let removed = 0;
+    for (const [id, pattern] of this.knownPatterns) {
+      const age = currentTime - pattern.timestamp;
+      if (age > maxAge) {
+        this.knownPatterns.delete(id);
+        removed++;
+      }
+    }
+
+    if (removed > 0) {
+      this.logger.debug(`🧹 Cleaned ${removed} old patterns from cache`);
+      this.localPatterns = Array.from(this.knownPatterns.values());
+    }
+  }
+
+  /**
    * Detecta patrones localmente en las velas dadas
    * @param {Array} candles - Array de velas OHLC
    * @param {Object} indicatorManager - Referencia al IndicatorManager para obtener niveles
@@ -803,6 +1332,22 @@ class RejectionPatternIndicator extends IndicatorBase {
       return;
     }
 
+    // ✅ Guardar referencia al indicatorManager para filtro VWAP
+    if (indicatorManager) {
+      this.indicatorManager = indicatorManager;
+    }
+
+    // ✅ FIX #5: THROTTLING - Evitar re-detección en cada render
+    const now = Date.now();
+    const timeSinceLastDetection = now - this.lastDetectionTime;
+
+    if (timeSinceLastDetection < this.detectionThrottleMs && this.localPatterns.length > 0) {
+      // Ya tenemos patrones y no ha pasado suficiente tiempo, usar cached
+      return;
+    }
+
+    this.lastDetectionTime = now;
+
     // Obtener precio actual (última vela)
     const currentPrice = candles[candles.length - 1]?.close || null;
 
@@ -811,14 +1356,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       enabled: true,
       leftBars: 5,
       rightBars: 5,
-      required: true  // Por defecto, requerir swing points
+      required: true,       // Por defecto, requerir swing points
+      swingOnlyMode: false  // Detectar swings sin requerir forma de patrón
     };
 
     // Configuración de volume Z-score
     const volumeConfig = this.config.volumeZScore || {
       enabled: false,
       lookbackPeriod: 20,
-      minZScore: 1.0
+      minZScore: 1.0,
+      swingCandleRange: 1   // Velas alrededor del swing a considerar
     };
 
     // Propagar debugMode a cada patrón si está habilitado globalmente
@@ -919,9 +1466,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       // No hacer nada adicional
     }
 
+    // ✅ ESTRATEGIA: Calcular niveles de estrategia para cada patrón ANTES del merge
+    if (this.config.strategy?.enabled) {
+      this.calculateStrategyForPatterns(detectedPatterns, candles);
+    }
+
     // Si no hay IndicatorManager, solo retornar los patrones básicos
     if (!indicatorManager) {
-      this.localPatterns = detectedPatterns;
+      // ✅ FIX #2: Usar merge en lugar de asignación directa
+      const isInitialLoad = this.knownPatterns.size === 0;
+      this.mergeNewPatterns(detectedPatterns, isInitialLoad);
       return;
     }
 
@@ -947,7 +1501,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Calcular confidence para cada patrón
     const proximityPct = (this.config.filters?.proximityPercent || 1.0) / 100;
 
-    this.localPatterns = detectedPatterns.map(pattern =>
+    const enhancedPatterns = detectedPatterns.map(pattern =>
       this.enhancePatternConfidence(
         pattern,
         classifiedLevels.importantHighs,
@@ -958,7 +1512,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // Filtrar por minConfidence y dirección del nivel
     const minConfidence = this.config.filters?.minConfidence || 0;
-    this.localPatterns = this.localPatterns.filter(pattern => {
+    const filteredPatterns = enhancedPatterns.filter(pattern => {
       // Filtro 1: Confidence mínimo
       if (pattern.confidence < minConfidence) return false;
 
@@ -975,6 +1529,15 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       return true;
     });
+
+    // ✅ FIX #2: Usar merge en lugar de asignación directa
+    const isInitialLoad = this.knownPatterns.size === 0;
+    this.mergeNewPatterns(filteredPatterns, isInitialLoad);
+
+    // Limpiar patrones muy viejos periódicamente (cada 100 detecciones)
+    if (Math.random() < 0.01) {
+      this.cleanOldPatterns();
+    }
 
     // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before filters)`);
 
@@ -1101,7 +1664,13 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
-    const patternsToShow = this.localPatterns;
+    let patternsToShow = this.localPatterns;
+
+    // ✅ OPTIMIZADO: Filtrar por VWAP usando el flag pre-calculado (_vwapAligned)
+    // El check se hace UNA VEZ en mergeNewPatterns, no en cada render
+    if (this.config.vwapFilter?.enabled) {
+      patternsToShow = patternsToShow.filter(pattern => pattern._vwapAligned === true);
+    }
 
     if (patternsToShow.length === 0) {
       return;
@@ -1130,15 +1699,21 @@ class RejectionPatternIndicator extends IndicatorBase {
       if (!pattern) continue;
 
       const x = bounds.x + i * candleWidth + candleWidth / 2;
-      const y = priceToY(candle.high) - 20; // Position above the candle
+      const highY = priceToY(candle.high);
+      const lowY = priceToY(candle.low);
+
+      // ✅ Dibujar líneas de estrategia si existen (ya calculadas en detectLocalPatterns)
+      if (this.config.strategy?.enabled && pattern._strategy) {
+        this.drawStrategyLines(ctx, bounds, pattern, x, priceToY, candleWidth);
+      }
 
       // Draw pattern marker (diferente visualización según modo)
       const isValidated = this.showMode === 'validated';
-      this.drawPatternMarker(ctx, x, y, pattern, isValidated);
+      this.drawPatternMarker(ctx, x, highY, lowY, pattern, isValidated);
     }
   }
 
-  drawPatternMarker(ctx, x, y, pattern, isValidated = false) {
+  drawPatternMarker(ctx, x, highY, lowY, pattern, isValidated = false) {
     // Normalizar el tipo de patrón (puede venir como 'type' o 'patternType')
     const patternType = pattern.type || pattern.patternType;
 
@@ -1147,13 +1722,19 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     const color = this.colors[patternType] || '#888';
 
+    // ✅ ESPECIAL: Dibujar flechas para SWING_LOW y SWING_HIGH
+    if (patternType === 'SWING_LOW' || patternType === 'SWING_HIGH') {
+      this.drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, pattern._alertSent);
+      return;
+    }
+
     // Determinar si es patrón alcista o bajista
     const isBullish = patternType === 'HAMMER' ||
                       patternType === 'ENGULFING_BULLISH' ||
                       patternType === 'DOJI_DRAGONFLY';
 
-    // Posicionar el punto: arriba para bajista, abajo para alcista
-    const dotY = isBullish ? y + 8 : y - 8;
+    // Posicionar el punto: arriba para bajista (sobre el high), abajo para alcista (bajo el low)
+    const dotY = isBullish ? lowY + 8 : highY - 8;
 
     // Tamaño del punto basado en score y validación
     const baseRadius = isValidated ? 5 : 4;
@@ -1192,19 +1773,109 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.restore();
     }
 
-    // Badge "✓" pequeño para patrones validados
+    // Badge para patrones validados
     if (isValidated) {
       ctx.save();
       ctx.font = 'bold 7px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#4CAF50';
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1.5;
-      ctx.strokeText('✓', x + radius + 2, dotY - radius - 2);
-      ctx.fillText('✓', x + radius + 2, dotY - radius - 2);
+
+      // ✅ NUEVO: Doble checkmark para patrones que enviaron alerta
+      if (pattern._alertSent) {
+        // Patrón que envió alerta exitosamente → doble checkmark verde brillante
+        ctx.fillStyle = '#00FF00';  // Verde brillante
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.strokeText('✓✓', x + radius + 4, dotY - radius - 2);
+        ctx.fillText('✓✓', x + radius + 4, dotY - radius - 2);
+      } else {
+        // Patrón validado pero sin alerta → checkmark simple
+        ctx.fillStyle = '#4CAF50';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.strokeText('✓', x + radius + 2, dotY - radius - 2);
+        ctx.fillText('✓', x + radius + 2, dotY - radius - 2);
+      }
       ctx.restore();
     }
+  }
+
+  /**
+   * ✅ NUEVO: Dibuja flechas para patrones SWING_LOW y SWING_HIGH
+   * - Verde hacia arriba para SWING_LOW (señal LONG) - debajo del mínimo de la vela
+   * - Rojo hacia abajo para SWING_HIGH (señal SHORT) - encima del máximo de la vela
+   */
+  drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, alertSent) {
+    const isLong = patternType === 'SWING_LOW';
+
+    // Obtener configuración de estilo desde config (con valores por defecto)
+    const arrowStyle = this.config.swingArrowStyle || {};
+    const baseSize = arrowStyle.size || 10;
+    const offset = arrowStyle.offset || 8;
+
+    // Colores configurables
+    const longColor = arrowStyle.longColor || this.colors.SWING_LOW || '#00E676';
+    const shortColor = arrowStyle.shortColor || this.colors.SWING_HIGH || '#FF1744';
+    const color = isLong ? longColor : shortColor;
+
+    // Tamaño de la flecha (el baseSize del config, sin escalar por score para mantener consistencia)
+    const size = baseSize;
+
+    // Posición: SWING_LOW debajo del mínimo (lowY), SWING_HIGH encima del máximo (highY)
+    // Nota: en canvas Y crece hacia abajo, así que lowY > highY
+    const arrowY = isLong ? lowY + offset + size : highY - offset - size;
+
+    ctx.save();
+
+    // Alpha basado en score
+    const baseAlpha = isValidated ? 0.95 : 0.85;
+    const alpha = Math.max(baseAlpha * 0.8, (score / 100) * baseAlpha);
+
+    // Dibujar flecha
+    ctx.beginPath();
+    if (isLong) {
+      // Flecha hacia ARRIBA (LONG) - triángulo apuntando arriba, debajo del low
+      ctx.moveTo(x, arrowY - size);           // Punta superior
+      ctx.lineTo(x - size * 0.6, arrowY + size * 0.4);  // Esquina inferior izquierda
+      ctx.lineTo(x + size * 0.6, arrowY + size * 0.4);  // Esquina inferior derecha
+    } else {
+      // Flecha hacia ABAJO (SHORT) - triángulo apuntando abajo, encima del high
+      ctx.moveTo(x, arrowY + size);           // Punta inferior
+      ctx.lineTo(x - size * 0.6, arrowY - size * 0.4);  // Esquina superior izquierda
+      ctx.lineTo(x + size * 0.6, arrowY - size * 0.4);  // Esquina superior derecha
+    }
+    ctx.closePath();
+
+    // Relleno
+    ctx.fillStyle = this.hexToRgba(color, alpha);
+    ctx.fill();
+
+    // Borde
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isValidated ? 2 : 1.5;
+    ctx.stroke();
+
+    // Efecto glow para alta confianza
+    if (isValidated && score >= 70) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Badge de alerta enviada
+    if (alertSent) {
+      ctx.font = 'bold 8px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#00FF00';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      const badgeY = isLong ? arrowY + size + 10 : arrowY - size - 10;
+      ctx.strokeText('✓✓', x, badgeY);
+      ctx.fillText('✓✓', x, badgeY);
+    }
+
+    ctx.restore();
   }
 
   hexToRgba(hex, alpha) {
@@ -1212,6 +1883,371 @@ class RejectionPatternIndicator extends IndicatorBase {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /**
+   * ✅ NUEVO: Calcula estrategia para todos los patrones de una vez
+   * @param {Array} patterns - Array de patrones detectados
+   * @param {Array} candles - Array de velas
+   */
+  calculateStrategyForPatterns(patterns, candles) {
+    if (!this.config.strategy?.enabled || !patterns || !candles) return;
+
+    patterns.forEach(pattern => {
+      // Solo calcular si no tiene estrategia ya calculada
+      if (pattern._strategy) return;
+
+      // Usar candleIndex del patrón
+      const patternIndex = pattern.candleIndex;
+      if (patternIndex === undefined || patternIndex < 0) return;
+
+      pattern._strategy = this.calculateStrategyLevels(pattern, candles, patternIndex);
+    });
+  }
+
+  /**
+   * ✅ NUEVO: Calcula niveles de estrategia (Entry, Stop Loss, Take Profit)
+   * @param {Object} pattern - Patrón detectado
+   * @param {Array} candles - Array de velas
+   * @param {number} patternIndex - Índice de la vela del patrón
+   * @returns {Object} {entry, stopLoss, takeProfit, slPercent, tpPercent}
+   */
+  calculateStrategyLevels(pattern, candles, patternIndex) {
+    if (!this.config.strategy?.enabled) return null;
+
+    const patternCandle = candles[patternIndex];
+    if (!patternCandle) return null;
+
+    const isLong = pattern.direction === 'LONG';
+    const rrRatio = this.config.strategy.riskRewardRatio || 2.0;
+    const strategyConfig = this.config.strategy;
+
+    // Obtener parámetros de swing de la configuración
+    const swingConfig = this.config.swingDetection || {};
+    const rightBars = swingConfig.rightBars || 5;
+
+    // ✅ FIX: Entry = close de la vela de CONFIRMACIÓN (patternIndex + rightBars)
+    const confirmationIndex = patternIndex + rightBars;
+    const confirmationCandle = candles[confirmationIndex] || patternCandle;
+    const entry = confirmationCandle.close;
+
+    // Parámetros para buscar swing del SL (pueden ser diferentes a los de detección)
+    const slSwingLeftBars = strategyConfig.slSwingLeftBars || swingConfig.leftBars || 3;
+    const slSwingRightBars = strategyConfig.slSwingRightBars || swingConfig.rightBars || 3;
+    const slSwingLookback = strategyConfig.slSwingLookback || 50;
+    const slBufferPercent = strategyConfig.slBufferPercent || 20; // % extra de seguridad (10-100%)
+
+    // Buscar el swing anterior significativo
+    let stopLoss;
+    let usedFallback = false;
+
+    if (isLong) {
+      // Para LONG: SL debe estar POR DEBAJO del entry
+      const swingLow = this.findPreviousSignificantLow(candles, patternIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
+
+      if (swingLow !== null && swingLow < entry) {
+        stopLoss = swingLow;
+      } else {
+        // Fallback: usar el mínimo de la vela del patrón + buffer
+        usedFallback = true;
+        const patternLow = patternCandle.low;
+        const distanceToLow = entry - patternLow;
+        const buffer = distanceToLow * (slBufferPercent / 100);
+        stopLoss = patternLow - buffer;
+      }
+    } else {
+      // Para SHORT: SL debe estar POR ENCIMA del entry
+      const swingHigh = this.findPreviousSignificantHigh(candles, patternIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
+
+      if (swingHigh !== null && swingHigh > entry) {
+        stopLoss = swingHigh;
+      } else {
+        // Fallback: usar el máximo de la vela del patrón + buffer
+        usedFallback = true;
+        const patternHigh = patternCandle.high;
+        const distanceToHigh = patternHigh - entry;
+        const buffer = distanceToHigh * (slBufferPercent / 100);
+        stopLoss = patternHigh + buffer;
+      }
+    }
+
+    // Calcular distancia del SL como porcentaje
+    let slDistance = Math.abs(entry - stopLoss);
+    let slPercent = (slDistance / entry) * 100;
+
+    // ✅ NUEVO: Aplicar SL mínimo si está configurado
+    const slMinPercent = strategyConfig.slMinPercent || 0.5;
+    if (slPercent < slMinPercent) {
+      // Recalcular SL para que sea al menos el mínimo %
+      slPercent = slMinPercent;
+      slDistance = entry * (slMinPercent / 100);
+      if (isLong) {
+        stopLoss = entry - slDistance;
+      } else {
+        stopLoss = entry + slDistance;
+      }
+    }
+
+    // Take Profit = Entry ± (SL distance * RR ratio)
+    let takeProfit;
+    if (isLong) {
+      takeProfit = entry + (slDistance * rrRatio);
+    } else {
+      takeProfit = entry - (slDistance * rrRatio);
+    }
+
+    const tpPercent = slPercent * rrRatio;
+
+    return {
+      entry,
+      stopLoss,
+      takeProfit,
+      slPercent: Math.round(slPercent * 100) / 100,
+      tpPercent: Math.round(tpPercent * 100) / 100,
+      riskRewardRatio: rrRatio,
+      direction: isLong ? 'LONG' : 'SHORT',
+      usedFallback,
+      confirmationTimestamp: confirmationCandle.timestamp  // ✅ Para posicionar las líneas en la vela de confirmación
+    };
+  }
+
+  /**
+   * Busca el low significativo anterior (swing low o mínimo local)
+   */
+  findPreviousSignificantLow(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
+    // Primero intentar encontrar un swing low confirmado
+    const swingLow = this.findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars);
+    if (swingLow !== null) return swingLow;
+
+    // Si no hay swing confirmado, buscar el mínimo en las últimas N velas
+    const lookback = Math.min(beforeIndex, maxLookback);
+    let lowestLow = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (lowestLow === null || candles[i].low < lowestLow) {
+          lowestLow = candles[i].low;
+        }
+      }
+    }
+    return lowestLow;
+  }
+
+  /**
+   * Busca el high significativo anterior (swing high o máximo local)
+   */
+  findPreviousSignificantHigh(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
+    // Primero intentar encontrar un swing high confirmado
+    const swingHigh = this.findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars);
+    if (swingHigh !== null) return swingHigh;
+
+    // Si no hay swing confirmado, buscar el máximo en las últimas N velas
+    const lookback = Math.min(beforeIndex, maxLookback);
+    let highestHigh = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (highestHigh === null || candles[i].high > highestHigh) {
+          highestHigh = candles[i].high;
+        }
+      }
+    }
+    return highestHigh;
+  }
+
+  /**
+   * Busca el swing low anterior más cercano al índice dado
+   * @param {Array} candles - Array de velas
+   * @param {number} beforeIndex - Buscar antes de este índice
+   * @param {number} leftBars - Velas a la izquierda para confirmar swing
+   * @param {number} rightBars - Velas a la derecha para confirmar swing
+   * @returns {number|null} Precio del swing low o null si no se encuentra
+   */
+  findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars) {
+    // Buscar hacia atrás desde beforeIndex - rightBars (para que el swing esté completamente confirmado)
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingLow(candles, i, leftBars, rightBars)) {
+        return candles[i].low;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Busca el swing high anterior más cercano al índice dado
+   * @param {Array} candles - Array de velas
+   * @param {number} beforeIndex - Buscar antes de este índice
+   * @param {number} leftBars - Velas a la izquierda para confirmar swing
+   * @param {number} rightBars - Velas a la derecha para confirmar swing
+   * @returns {number|null} Precio del swing high o null si no se encuentra
+   */
+  findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars) {
+    // Buscar hacia atrás desde beforeIndex - rightBars (para que el swing esté completamente confirmado)
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingHigh(candles, i, leftBars, rightBars)) {
+        return candles[i].high;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Verifica si una vela es un swing low (mínimo local)
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela a verificar
+   * @param {number} leftBars - Velas a la izquierda
+   * @param {number} rightBars - Velas a la derecha
+   * @returns {boolean}
+   */
+  isSwingLow(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentLow = candles[index].low;
+
+    // Verificar que el low actual es el mínimo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].low <= currentLow) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Verifica si una vela es un swing high (máximo local)
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela a verificar
+   * @param {number} leftBars - Velas a la izquierda
+   * @param {number} rightBars - Velas a la derecha
+   * @returns {boolean}
+   */
+  isSwingHigh(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentHigh = candles[index].high;
+
+    // Verificar que el high actual es el máximo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].high >= currentHigh) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * ✅ NUEVO: Dibuja las líneas de estrategia (Entry, SL, TP)
+   * @param {CanvasRenderingContext2D} ctx - Contexto del canvas
+   * @param {Object} bounds - Límites del área de dibujo
+   * @param {Object} pattern - Patrón con datos de estrategia
+   * @param {number} patternX - Posición X del patrón
+   * @param {Function} priceToY - Función para convertir precio a Y
+   * @param {number} candleWidth - Ancho de cada vela
+   */
+  drawStrategyLines(ctx, bounds, pattern, patternX, priceToY, candleWidth) {
+    if (!this.config.strategy?.enabled || !pattern._strategy) return;
+
+    const strategy = pattern._strategy;
+    const config = this.config.strategy;
+    const lineLength = (config.lineLengthCandles || 5) * candleWidth;
+
+    // ✅ FIX: Si hay confirmationTimestamp, usar esa posición en lugar de la del patrón
+    // La diferencia en timestamps nos da cuántas velas avanzar desde el patrón
+    let actualX = patternX;
+    if (strategy.confirmationTimestamp && pattern.timestamp) {
+      const swingConfig = this.config.swingDetection || {};
+      const rightBars = swingConfig.rightBars || 5;
+      // Mover X hacia adelante por el número de velas de confirmación
+      actualX = patternX + (rightBars * candleWidth);
+    }
+
+    // Coordenadas X: desde 5 velas antes hasta 5 velas después
+    const startX = Math.max(bounds.x, actualX - lineLength);
+    const endX = Math.min(bounds.x + bounds.width, actualX + lineLength);
+
+    // Coordenadas Y
+    const entryY = priceToY(strategy.entry);
+    const slY = priceToY(strategy.stopLoss);
+    const tpY = priceToY(strategy.takeProfit);
+
+    ctx.save();
+
+    // ✅ NUEVO: Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
+    if (config.showBox !== false) {
+      const boxOpacity = config.boxOpacity || 0.15;
+
+      // Box 1: Entre SL y Entry (rojo/pérdida)
+      const slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+      const slBoxTopY = Math.min(slY, entryY);
+      const slBoxBottomY = Math.max(slY, entryY);
+      const slBoxHeight = slBoxBottomY - slBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(slBoxColor, boxOpacity);
+      ctx.fillRect(startX, slBoxTopY, endX - startX, slBoxHeight);
+
+      // Box 2: Entre Entry y TP (verde/ganancia)
+      const tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+      const tpBoxTopY = Math.min(entryY, tpY);
+      const tpBoxBottomY = Math.max(entryY, tpY);
+      const tpBoxHeight = tpBoxBottomY - tpBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(tpBoxColor, boxOpacity);
+      ctx.fillRect(startX, tpBoxTopY, endX - startX, tpBoxHeight);
+    }
+
+    ctx.setLineDash([4, 2]); // Línea punteada
+
+    // === Línea de Entry (azul) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.entryColor || '#03A9F4';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, entryY);
+    ctx.lineTo(endX, entryY);
+    ctx.stroke();
+
+    // === Línea de Stop Loss (rojo) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.stopLossColor || '#FF1744';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, slY);
+    ctx.lineTo(endX, slY);
+    ctx.stroke();
+
+    // === Línea de Take Profit (verde) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.takeProfitColor || '#00E676';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, tpY);
+    ctx.lineTo(endX, tpY);
+    ctx.stroke();
+
+    ctx.setLineDash([]); // Resetear línea punteada
+
+    // === Etiquetas con precio y % ===
+    if (config.showLabels !== false) {
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'left';
+      const labelX = endX + 4;
+
+      // Entry label con dirección (LONG/SHORT)
+      const dirLabel = strategy.direction || 'ENTRY';
+      ctx.fillStyle = config.entryColor || '#03A9F4';
+      ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
+
+      // SL label con dirección y %
+      ctx.fillStyle = config.stopLossColor || '#FF1744';
+      ctx.fillText(`SL ${dirLabel}: $${strategy.stopLoss.toFixed(2)} (${strategy.slPercent}%)`, labelX, slY + 3);
+
+      // TP label con dirección y %
+      ctx.fillStyle = config.takeProfitColor || '#00E676';
+      ctx.fillText(`TP ${dirLabel}: $${strategy.takeProfit.toFixed(2)} (${strategy.tpPercent}%)`, labelX, tpY + 3);
+    }
+
+    ctx.restore();
   }
 
   /**
@@ -1320,7 +2356,7 @@ class RejectionPatternIndicator extends IndicatorBase {
   formatTooltip(pattern) {
     const { patternType, confidence, price, nearLevels, metrics } = pattern;
 
-    let tooltip = `${this.formatPatternName(patternType)}\n`;
+    let tooltip = `${this.formatPatternNameWithEmoji(patternType)}\n`;
     tooltip += `Confidence: ${confidence.toFixed(1)}%\n`;
     tooltip += `Price: $${price.toFixed(2)}\n`;
 
@@ -1342,14 +2378,16 @@ class RejectionPatternIndicator extends IndicatorBase {
     return tooltip;
   }
 
-  formatPatternName(patternType) {
+  formatPatternNameWithEmoji(patternType) {
     const names = {
       HAMMER: '🔨 Hammer',
       SHOOTING_STAR: '⭐ Shooting Star',
       ENGULFING_BULLISH: '📈 Bullish Engulfing',
       ENGULFING_BEARISH: '📉 Bearish Engulfing',
       DOJI_DRAGONFLY: '🐉 Dragonfly Doji',
-      DOJI_GRAVESTONE: '🪦 Gravestone Doji'
+      DOJI_GRAVESTONE: '🪦 Gravestone Doji',
+      SWING_LOW: '📍 Swing Low',
+      SWING_HIGH: '📍 Swing High'
     };
     return names[patternType] || patternType;
   }

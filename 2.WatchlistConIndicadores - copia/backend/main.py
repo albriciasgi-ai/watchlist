@@ -597,29 +597,67 @@ async def send_pattern_alert_endpoint(request: Request):
         }
     }
     """
-    print("[ALERT_ENDPOINT] Received pattern alert request")
+    import json
+    from datetime import datetime
+
+    print("\n" + "="*80)
+    print("[BACKEND] PATTERN ALERT REQUEST RECEIVED")
+    print("="*80)
+    print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
     try:
         data = await request.json()
-        print(f"[ALERT_ENDPOINT] Payload: {data}")
+
+        print(f"\nSTEP 1: Parsing request payload")
+        print(f"   Raw Payload Size: {len(json.dumps(data))} bytes")
 
         symbol = data.get('symbol')
         interval = data.get('interval')
         pattern = data.get('pattern')
         config = data.get('config', {})
 
+        print(f"\nSTEP 2: Extracting fields")
+        print(f"   Symbol: {symbol}")
+        print(f"   Interval: {interval}")
+        print(f"   Pattern Present: {pattern is not None}")
+        print(f"   Config Present: {config is not None}")
+
         if not symbol or not pattern:
-            print("[ALERT_ENDPOINT] Missing required fields")
+            print(f"\nSTEP 3: VALIDATION FAILED - Missing required fields")
+            print(f"   Symbol provided: {symbol is not None}")
+            print(f"   Pattern provided: {pattern is not None}")
+            print("="*80 + "\n")
             return {
                 "success": False,
                 "error": "Missing required fields: symbol, pattern"
             }
 
+        # Extract pattern details
+        pattern_type = pattern.get('patternType', 'UNKNOWN')
+        pattern_price = pattern.get('price', 0)
+        pattern_confidence = pattern.get('confidence', 0)
+        pattern_direction = pattern.get('direction', 'N/A')
+        pattern_level = pattern.get('level', 'N/A')
+
+        print(f"\nSTEP 3: Pattern Details")
+        print(f"   Type: {pattern_type}")
+        print(f"   Price: ${pattern_price:.2f}" if isinstance(pattern_price, (int, float)) else f"   Price: {pattern_price}")
+        print(f"   Confidence: {pattern_confidence}%")
+        print(f"   Direction: {pattern_direction}")
+        print(f"   Level: {pattern_level}")
+
         # Validate minimum confidence
         min_confidence = config.get('filters', {}).get('minConfidence', 60)
-        pattern_confidence = pattern.get('confidence', 0)
+
+        print(f"\nSTEP 4: Confidence Validation")
+        print(f"   Pattern Confidence: {pattern_confidence}%")
+        print(f"   Minimum Required: {min_confidence}%")
 
         if pattern_confidence < min_confidence:
-            print(f"[{symbol}] [ALERT] Pattern alert rejected: confidence {pattern_confidence} < {min_confidence}")
+            print(f"\nSTEP 5: CONFIDENCE CHECK FAILED")
+            print(f"   Rejection Reason: Confidence too low")
+            print(f"   Delta: {min_confidence - pattern_confidence:.1f}% below threshold")
+            print("="*80 + "\n")
             return {
                 "success": False,
                 "reason": "confidence_too_low",
@@ -627,23 +665,58 @@ async def send_pattern_alert_endpoint(request: Request):
                 "required": min_confidence
             }
 
-        # Send alert using existing system
-        print(f"[{symbol}] [ALERT] Sending pattern alert: {pattern.get('patternType')} at ${pattern.get('price')}")
-        await send_pattern_alert(symbol, interval, pattern, config)
-        print(f"[{symbol}] [ALERT] Alert sent successfully")
+        print(f"   Confidence check PASSED ({pattern_confidence}% >= {min_confidence}%)")
 
-        return {
-            "success": True,
-            "pattern": pattern.get('patternType'),
-            "symbol": symbol,
-            "price": pattern.get('price'),
-            "confidence": pattern_confidence
-        }
+        # Send alert using existing system
+        print(f"\nSTEP 5: Sending alert to alert service (port 5000)")
+        print(f"   Calling: send_pattern_alert()")
+        print(f"   Symbol: {symbol}")
+        print(f"   Interval: {interval}")
+        print(f"   Pattern Type: {pattern_type}")
+
+        success = await send_pattern_alert(symbol, interval, pattern, config)
+
+        print(f"\nSTEP 6: Alert service response")
+        print(f"   Success: {success}")
+
+        if success:
+            print(f"\nSTEP 7: Alert sent successfully!")
+            print(f"   Pattern: {pattern_type}")
+            print(f"   Symbol: {symbol}")
+            print(f"   Price: ${pattern_price:.2f}" if isinstance(pattern_price, (int, float)) else f"   Price: {pattern_price}")
+            print(f"   Confidence: {pattern_confidence}%")
+            print("="*80 + "\n")
+
+            return {
+                "success": True,
+                "pattern": pattern_type,
+                "symbol": symbol,
+                "price": pattern_price,
+                "confidence": pattern_confidence
+            }
+        else:
+            print(f"\n⚠️ STEP 7: Alert service returned failure")
+            print(f"   Possible causes:")
+            print(f"     - Alert listener not running on port 5000")
+            print(f"     - Network connectivity issues")
+            print(f"     - Alert service rejected the payload")
+            print("="*80 + "\n")
+
+            return {
+                "success": False,
+                "error": "Alert service failed to process alert",
+                "pattern": pattern_type,
+                "symbol": symbol
+            }
 
     except Exception as e:
-        print(f"[ALERT_ENDPOINT] ERROR: {e}")
+        print(f"\n❌ STEP X: EXCEPTION OCCURRED")
+        print(f"   Exception Type: {type(e).__name__}")
+        print(f"   Exception Message: {str(e)}")
+        print(f"\n🔍 Stack Trace:")
         import traceback
         traceback.print_exc()
+        print("="*80 + "\n")
         return {"success": False, "error": str(e)}
 
 

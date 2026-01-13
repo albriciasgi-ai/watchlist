@@ -12,6 +12,14 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
 import math
 
+# Import VWAP calculator for zone filter
+try:
+    from vwap_calculator import vwap_calculator
+    VWAP_AVAILABLE = True
+except ImportError:
+    VWAP_AVAILABLE = False
+    print("[DTB_FIXED] WARNING: vwap_calculator not available, VWAP zone filter disabled")
+
 
 @dataclass
 class DoublePattern:
@@ -78,9 +86,48 @@ class DoubleTopBottomDetectorFixed:
         z_score_threshold = config.get('doubleTopBottom', {}).get('volumeFilter', {}).get('zScoreThreshold', 1.5)
         z_score_period = config.get('doubleTopBottom', {}).get('volumeFilter', {}).get('zScorePeriod', 20)
 
-        # Calculate z-scores if needed
+        # High-volume extreme filter (different thresholds for each extreme)
+        high_vol_extremes_config = config.get('doubleTopBottom', {}).get('requireHighVolumeAtExtremes', {})
+        high_vol_extremes_enabled = high_vol_extremes_config.get('enabled', False)
+        z_score_threshold_first = high_vol_extremes_config.get('zScoreThresholdFirst', 1.5)
+        z_score_threshold_second = high_vol_extremes_config.get('zScoreThresholdSecond', 0.5)
+        volume_window_candles = high_vol_extremes_config.get('volumeWindowCandles', 3)
+
+        # ========== VWAP ZONE FILTER ==========
+        vwap_zone_config = config.get('alertSettings', {}).get('vwapZoneFilter', {})
+        vwap_zone_enabled = vwap_zone_config.get('enabled', False) and VWAP_AVAILABLE
+        vwap_zone_mode = vwap_zone_config.get('mode', 'oneExtreme')  # 'oneExtreme' or 'bothExtremes'
+        vwap_min_deviation = vwap_zone_config.get('minDeviation', 1)  # 1, 2, or 3
+        vwap_margin_percent = vwap_zone_config.get('marginPercent', 0.5)
+        vwap_type = vwap_zone_config.get('vwapType', 'session')
+        vwap_rolling_period = vwap_zone_config.get('rollingPeriod', 20)
+
+        # DEBUG: Log what config we received
+        print(f"  [DEBUG] alertSettings received: {config.get('alertSettings', 'NOT FOUND')}")
+        print(f"  [DEBUG] vwapZoneFilter config: {vwap_zone_config}")
+        print(f"  [DEBUG] VWAP_AVAILABLE: {VWAP_AVAILABLE}, enabled in config: {vwap_zone_config.get('enabled', False)}")
+
+        # Calculate VWAP bands if filter is enabled
+        vwap_data = []
+        if vwap_zone_enabled:
+            try:
+                vwap_config = {
+                    'reset_hour': 0,
+                    'rolling_period': vwap_rolling_period,
+                    'band_multipliers': [1.0, 2.0, 3.0],
+                    'apply_crypto_adjustment': True
+                }
+                vwap_data = vwap_calculator.calculate_vwap_with_bands(candles, vwap_type, vwap_config)
+                print(f"  VWAP Zone Filter: ENABLED (mode={vwap_zone_mode}, min_dev=±{vwap_min_deviation}σ, margin={vwap_margin_percent}%)")
+            except Exception as e:
+                print(f"  VWAP Zone Filter: ERROR calculating VWAP - {e}")
+                vwap_zone_enabled = False
+        else:
+            print(f"  VWAP Zone Filter: disabled")
+
+        # Calculate z-scores if any volume filter is enabled
         z_scores = []
-        if volume_filter_enabled:
+        if volume_filter_enabled or high_vol_extremes_enabled:
             z_scores = self._calculate_z_scores(candles, z_score_period)
 
         # Use ALL available candles
@@ -90,6 +137,7 @@ class DoubleTopBottomDetectorFixed:
         print(f"  Interval: {interval}, Days: {days}")
         print(f"  Total candles: {len(candles)}")
         print(f"  Window size: {candles_per_extreme}")
+        print(f"  Price margin: {price_margin_pct*100:.2f}% | Min candles: {min_candles_between} | Max candles: {max_candles_between}")
 
         # Find local extremes with FIXED algorithm
         local_highs = self._find_local_extremes_fixed(
@@ -118,7 +166,17 @@ class DoubleTopBottomDetectorFixed:
             max_candles_between,
             z_scores,
             z_score_threshold,
-            volume_filter_enabled
+            volume_filter_enabled,
+            high_vol_extremes_enabled,
+            z_score_threshold_first,
+            z_score_threshold_second,
+            volume_window_candles,
+            # VWAP Zone Filter params
+            vwap_zone_enabled,
+            vwap_data,
+            vwap_zone_mode,
+            vwap_min_deviation,
+            vwap_margin_percent
         )
 
         detected_patterns.extend(double_tops)
@@ -133,7 +191,17 @@ class DoubleTopBottomDetectorFixed:
             max_candles_between,
             z_scores,
             z_score_threshold,
-            volume_filter_enabled
+            volume_filter_enabled,
+            high_vol_extremes_enabled,
+            z_score_threshold_first,
+            z_score_threshold_second,
+            volume_window_candles,
+            # VWAP Zone Filter params
+            vwap_zone_enabled,
+            vwap_data,
+            vwap_zone_mode,
+            vwap_min_deviation,
+            vwap_margin_percent
         )
 
         detected_patterns.extend(double_bottoms)
@@ -160,75 +228,50 @@ class DoubleTopBottomDetectorFixed:
         interval: str = None
     ) -> List[Dict]:
         """
-        FIXED VERSION: Encuentra extremos locales incluyendo bordes
-        y con tolerancia para timeframes cortos
+        FIXED VERSION: Encuentra extremos locales VERDADEROS.
+
+        Un punto es un extremo local si y solo si:
+        - Para highs: es el HIGH más alto en su ventana
+        - Para lows: es el LOW más bajo en su ventana
+
+        Se permite una pequeña tolerancia para precios "iguales" (0.01%)
         """
         extremes = []
         price_key = 'high' if extreme_type == 'high' else 'low'
         is_high = extreme_type == 'high'
 
-        # Tolerancia de precio para considerar valores "iguales" (0.01% para 1-min)
-        price_tolerance = 0.0001 if interval == "1" else 0
+        # Tolerancia para considerar precios como "iguales" (0.01%)
+        price_tolerance = 0.0001
 
-        # IMPORTANTE: Buscar en TODOS los índices, ajustando ventana en los bordes
         for i in range(len(candles)):
             candle = candles[i]
             current_price = float(candle[price_key])
 
-            # Definir ventana de comparación (ajustada en los bordes)
-            left_start = max(0, i - window_size)
-            left_end = i
-            right_start = i + 1
-            right_end = min(len(candles), i + window_size + 1)
+            # Definir ventana de comparación
+            window_start = max(0, i - window_size)
+            window_end = min(len(candles), i + window_size + 1)
 
-            # Para los bordes, requerir menos comparaciones
-            min_comparisons = window_size // 2 if i < window_size or i >= len(candles) - window_size else window_size
-
+            # Verificar que sea el extremo verdadero en la ventana
             is_extreme = True
-            higher_count = 0
-            lower_count = 0
 
-            # Verificar lado izquierdo
-            for j in range(left_start, left_end):
+            for j in range(window_start, window_end):
+                if j == i:
+                    continue  # No comparar consigo mismo
+
                 compare_price = float(candles[j][price_key])
-                price_diff = abs(current_price - compare_price) / current_price
 
                 if is_high:
+                    # Para un HIGH: ninguna vela en la ventana debe tener un high mayor
+                    # (con tolerancia para precios "iguales")
                     if compare_price > current_price * (1 + price_tolerance):
-                        higher_count += 1
-                        if higher_count > min_comparisons // 2:
-                            is_extreme = False
-                            break
+                        is_extreme = False
+                        break
                 else:
+                    # Para un LOW: ninguna vela en la ventana debe tener un low menor
                     if compare_price < current_price * (1 - price_tolerance):
-                        lower_count += 1
-                        if lower_count > min_comparisons // 2:
-                            is_extreme = False
-                            break
+                        is_extreme = False
+                        break
 
-            if not is_extreme:
-                continue
-
-            # Verificar lado derecho
-            for j in range(right_start, right_end):
-                if j < len(candles):
-                    compare_price = float(candles[j][price_key])
-                    price_diff = abs(current_price - compare_price) / current_price
-
-                    if is_high:
-                        if compare_price > current_price * (1 + price_tolerance):
-                            higher_count += 1
-                            if higher_count > min_comparisons // 2:
-                                is_extreme = False
-                                break
-                    else:
-                        if compare_price < current_price * (1 - price_tolerance):
-                            lower_count += 1
-                            if lower_count > min_comparisons // 2:
-                                is_extreme = False
-                                break
-
-            # Si es un extremo, agregarlo
             if is_extreme:
                 extremes.append({
                     'candle_index': i,
@@ -240,14 +283,6 @@ class DoubleTopBottomDetectorFixed:
                     'open': candle.get('open'),
                     'close': candle.get('close')
                 })
-
-        # Para timeframes de 1 minuto, agregar extremos adicionales
-        # basados en cambios de dirección significativos
-        if interval == "1" and len(extremes) < 20:
-            additional = self._find_swing_extremes(candles, extreme_type)
-            for ext in additional:
-                if not any(e['candle_index'] == ext['candle_index'] for e in extremes):
-                    extremes.append(ext)
 
         # Ordenar por índice
         extremes.sort(key=lambda x: x['candle_index'])
@@ -339,6 +374,128 @@ class DoubleTopBottomDetectorFixed:
 
         return z_scores
 
+    def _get_max_zscore_in_window(self, z_scores: List[float], center_idx: int, window: int) -> float:
+        """Get max z-score in ±window candles around center_idx"""
+        if not z_scores:
+            return 0
+        start = max(0, center_idx - window)
+        end = min(len(z_scores), center_idx + window + 1)
+        window_scores = z_scores[start:end]
+        return max(window_scores) if window_scores else 0
+
+    def _check_vwap_zone_filter(
+        self,
+        first_candle_idx: int,
+        second_candle_idx: int,
+        first_price: float,
+        second_price: float,
+        vwap_data: List[Dict],
+        mode: str,
+        min_deviation: int,
+        margin_percent: float,
+        pattern_type: str,
+        debug_first_only: bool = False
+    ) -> bool:
+        """
+        Check if extremes are in the correct VWAP zone.
+
+        For DOUBLE_TOP: extremes should be ABOVE positive deviation (upper_N)
+        For DOUBLE_BOTTOM: extremes should be BELOW negative deviation (lower_N)
+
+        Args:
+            first_candle_idx: Index of first extreme candle
+            second_candle_idx: Index of second extreme candle
+            first_price: Price of first extreme
+            second_price: Price of second extreme
+            vwap_data: List of VWAP data with bands
+            mode: 'oneExtreme' (at least one) or 'bothExtremes' (both must pass)
+            min_deviation: Minimum deviation band to check (1, 2, or 3)
+            margin_percent: Tolerance margin in % (allows price to be X% away from band)
+            pattern_type: 'DOUBLE_TOP' or 'DOUBLE_BOTTOM'
+
+        Returns:
+            True if pattern passes the VWAP zone filter
+        """
+        if not vwap_data or len(vwap_data) == 0:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] No VWAP data available")
+            return True  # No VWAP data, skip filter
+
+        # Get VWAP data for each extreme
+        vwap_first = vwap_data[first_candle_idx] if first_candle_idx < len(vwap_data) else None
+        vwap_second = vwap_data[second_candle_idx] if second_candle_idx < len(vwap_data) else None
+
+        if not vwap_first or not vwap_second:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] Missing VWAP data for idx {first_candle_idx} or {second_candle_idx}, len={len(vwap_data)}")
+            return True  # Missing data, skip filter
+
+        # Get the appropriate band level based on min_deviation
+        band_key = f'upper_{min_deviation}' if pattern_type == 'DOUBLE_TOP' else f'lower_{min_deviation}'
+
+        # Get band values (with fallback)
+        first_band = vwap_first.get('bands', {}).get(band_key)
+        second_band = vwap_second.get('bands', {}).get(band_key)
+
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] {pattern_type}: band_key={band_key}")
+            print(f"    [VWAP_FILTER] first_band={first_band}, second_band={second_band}")
+            print(f"    [VWAP_FILTER] first_price={first_price}, second_price={second_price}")
+            print(f"    [VWAP_FILTER] Sample VWAP data keys: {list(vwap_first.keys())}")
+            if 'bands' in vwap_first:
+                print(f"    [VWAP_FILTER] Sample bands keys: {list(vwap_first['bands'].keys())}")
+
+        if first_band is None or second_band is None:
+            if debug_first_only:
+                print(f"    [VWAP_FILTER] Missing band data for key {band_key}")
+            return True  # Missing band data, skip filter
+
+        # Get VWAP values for calculating deviation-based margin
+        first_vwap = vwap_first.get('vwap', 0)
+        second_vwap = vwap_second.get('vwap', 0)
+
+        # Calculate deviation (distance from VWAP to band)
+        # This is more meaningful than a % of price
+        first_deviation = abs(first_band - first_vwap)
+        second_deviation = abs(second_band - second_vwap)
+
+        # Margin as % of DEVIATION (not % of price!)
+        # e.g., 50% margin means price can be halfway between VWAP and band
+        margin_factor = margin_percent / 100.0
+        first_margin_amount = first_deviation * margin_factor
+        second_margin_amount = second_deviation * margin_factor
+
+        if pattern_type == 'DOUBLE_TOP':
+            # For DT: price must be >= upper_band - margin (near or above the band)
+            first_threshold = first_band - first_margin_amount
+            second_threshold = second_band - second_margin_amount
+            first_passes = first_price >= first_threshold
+            second_passes = second_price >= second_threshold
+        else:  # DOUBLE_BOTTOM
+            # For DB: price must be <= lower_band + margin (near or below the band)
+            first_threshold = first_band + first_margin_amount
+            second_threshold = second_band + second_margin_amount
+            first_passes = first_price <= first_threshold
+            second_passes = second_price <= second_threshold
+
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] VWAP values: first={first_vwap:.2f}, second={second_vwap:.2f}")
+            print(f"    [VWAP_FILTER] Deviations: first={first_deviation:.2f}, second={second_deviation:.2f}")
+            print(f"    [VWAP_FILTER] Margin amounts: first={first_margin_amount:.2f}, second={second_margin_amount:.2f}")
+            print(f"    [VWAP_FILTER] thresholds: first={first_threshold:.2f}, second={second_threshold:.2f}")
+            print(f"    [VWAP_FILTER] passes: first={first_passes}, second={second_passes}, mode={mode}")
+
+        # Apply mode logic
+        if mode == 'bothExtremes':
+            result = first_passes and second_passes
+        else:  # 'oneExtreme' (default)
+            result = first_passes or second_passes
+
+        if debug_first_only:
+            print(f"    [VWAP_FILTER] RESULT: {result}")
+
+        return result
+
     def _find_double_tops(
         self,
         highs: List[Dict],
@@ -349,19 +506,49 @@ class DoubleTopBottomDetectorFixed:
         max_candles_between: int,
         z_scores: List[float],
         z_score_threshold: float,
-        volume_filter_enabled: bool
+        volume_filter_enabled: bool,
+        high_vol_extremes_enabled: bool = False,
+        z_score_threshold_first: float = 1.5,
+        z_score_threshold_second: float = 0.5,
+        volume_window_candles: int = 3,
+        # VWAP Zone Filter params
+        vwap_zone_enabled: bool = False,
+        vwap_data: List[Dict] = None,
+        vwap_zone_mode: str = 'oneExtreme',
+        vwap_min_deviation: int = 1,
+        vwap_margin_percent: float = 0.5
     ) -> List[DoublePattern]:
-        """Find double top patterns"""
+        """Find double top patterns with dominance validation and volume/VWAP filters"""
         patterns = []
+        vwap_data = vwap_data or []
+        vwap_debug_done = False  # Only debug first VWAP check
+
+        # Diagnostic stats
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_dominance': 0,
+            'rejected_volume': 0,
+            'rejected_volume_extremes': 0,
+            'rejected_vwap_zone': 0,
+            'accepted': 0
+        }
 
         for i in range(len(highs)):
             for j in range(i + 1, len(highs)):
                 first = highs[i]
                 second = highs[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance
                 candles_between = second['candle_index'] - first['candle_index']
-                if candles_between < min_candles_between or candles_between > max_candles_between:
+                if candles_between < min_candles_between:
+                    stats['rejected_too_close'] += 1
+                    continue
+                if candles_between > max_candles_between:
+                    stats['rejected_too_far'] += 1
                     continue
 
                 # Check price similarity
@@ -370,34 +557,139 @@ class DoubleTopBottomDetectorFixed:
                 price_variance = (price_diff / avg_price) * 100
 
                 if price_variance > price_margin_pct * 100:
+                    stats['rejected_price_diff'] += 1
                     continue
 
-                # Calculate confidence
-                base_confidence = 70
-                if price_variance < 1:
-                    base_confidence += 20
-                elif price_variance < 2:
-                    base_confidence += 10
+                # DOMINANCE VALIDATION: No high between the two extremes should exceed both of them
+                max_extreme_price = max(first['price'], second['price'])
+                has_higher_between = False
 
-                if candles_between >= 10 and candles_between <= 50:
-                    base_confidence += 10
+                for k in range(first['candle_index'] + 1, second['candle_index']):
+                    if k < len(candles):
+                        between_high = float(candles[k].get('high', 0))
+                        if between_high > max_extreme_price * 1.0001:
+                            has_higher_between = True
+                            break
+
+                if has_higher_between:
+                    stats['rejected_dominance'] += 1
+                    continue
+
+                # Get z-scores (with window search for high_vol_extremes)
+                if high_vol_extremes_enabled and z_scores:
+                    first_zscore = self._get_max_zscore_in_window(z_scores, first['candle_index'], volume_window_candles)
+                    second_zscore = self._get_max_zscore_in_window(z_scores, second['candle_index'], volume_window_candles)
+                else:
+                    first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
+                    second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
+
+                # VOLUME FILTER 1: Basic (max of both >= threshold)
+                if volume_filter_enabled and z_scores:
+                    if max(first_zscore, second_zscore) < z_score_threshold:
+                        stats['rejected_volume'] += 1
+                        continue
+
+                # VOLUME FILTER 2: High-volume extremes (different thresholds for each)
+                if high_vol_extremes_enabled and z_scores:
+                    if first_zscore < z_score_threshold_first or second_zscore < z_score_threshold_second:
+                        stats['rejected_volume_extremes'] += 1
+                        continue
+
+                # VWAP ZONE FILTER: Double Top extremes must be ABOVE positive deviation
+                if vwap_zone_enabled and vwap_data:
+                    # Debug first check only
+                    debug_this = not vwap_debug_done
+                    if debug_this:
+                        vwap_debug_done = True
+
+                    passes_vwap = self._check_vwap_zone_filter(
+                        first['candle_index'],
+                        second['candle_index'],
+                        first['price'],
+                        second['price'],
+                        vwap_data,
+                        vwap_zone_mode,
+                        vwap_min_deviation,
+                        vwap_margin_percent,
+                        pattern_type='DOUBLE_TOP',
+                        debug_first_only=debug_this
+                    )
+                    if not passes_vwap:
+                        stats['rejected_vwap_zone'] += 1
+                        continue
+
+                stats['accepted'] += 1
+
+                # ====== CALCULATE CONFIDENCE (weighted system) ======
+                # Base: 25, Max contributions: 75, Total range: 25-100
+                confidence = 25  # Base (reduced from 50 for better discrimination)
+
+                # Price variance contribution (0-25 points)
+                if price_variance < 0.3:
+                    confidence += 25
+                elif price_variance < 0.5:
+                    confidence += 20
+                elif price_variance < 1.0:
+                    confidence += 12
+                elif price_variance < 2.0:
+                    confidence += 6
+
+                # Volume contribution (0-25 points) - use MAX of both extremes
+                max_zscore = max(first_zscore, second_zscore)
+                if max_zscore >= 2.5:
+                    confidence += 25
+                elif max_zscore >= 2.0:
+                    confidence += 18
+                elif max_zscore >= 1.5:
+                    confidence += 12
+                elif max_zscore >= 1.0:
+                    confidence += 6
+
+                # Bonus if BOTH extremes have good volume (0-15 points)
+                min_zscore = min(first_zscore, second_zscore)
+                if min_zscore >= 1.5:
+                    confidence += 15
+                elif min_zscore >= 1.0:
+                    confidence += 8
+
+                # Distance contribution (0-10 points)
+                if 20 <= candles_between <= 100:
+                    confidence += 10
+                elif 10 <= candles_between <= 150:
+                    confidence += 5
+
+                # Rejection pattern bonus (0-10 points) - upper_wick for tops
+                first_candle = candles[first['candle_index']]
+                second_candle = candles[second['candle_index']]
+                rejection_bonus = 0
+
+                for candle in [first_candle, second_candle]:
+                    body = abs(float(candle.get('close', 0)) - float(candle.get('open', 0)))
+                    upper_wick = float(candle.get('high', 0)) - max(float(candle.get('close', 0)), float(candle.get('open', 0)))
+                    total_range = float(candle.get('high', 0)) - float(candle.get('low', 0))
+
+                    if total_range > 0:
+                        if upper_wick / total_range > 0.6 and body / total_range < 0.3:
+                            rejection_bonus += 5
+
+                confidence += min(rejection_bonus, 10)
 
                 # Create pattern
                 pattern = DoublePattern(
                     type="DOUBLE_TOP",
                     timestamp=second['timestamp'],
-                    confidence=base_confidence,
+                    confidence=min(confidence, 100),
                     first_extreme={
                         'timestamp': first['timestamp'],
                         'price': first['price'],
                         'candle_index': first['candle_index'],
-                        'volume_zscore': z_scores[first['candle_index']] if z_scores else 0
+                        'volume_zscore': first_zscore
                     },
                     second_extreme={
                         'timestamp': second['timestamp'],
                         'price': second['price'],
                         'candle_index': second['candle_index'],
-                        'volume_zscore': z_scores[second['candle_index']] if z_scores else 0
+                        'volume_zscore': second_zscore
                     },
                     level_price=avg_price,
                     price_variance=price_variance,
@@ -405,6 +697,8 @@ class DoubleTopBottomDetectorFixed:
                 )
 
                 patterns.append(pattern)
+
+        print(f"  [DT] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']}, vwap={stats['rejected_vwap_zone']} | Accepted: {stats['accepted']}")
 
         return patterns
 
@@ -418,19 +712,49 @@ class DoubleTopBottomDetectorFixed:
         max_candles_between: int,
         z_scores: List[float],
         z_score_threshold: float,
-        volume_filter_enabled: bool
+        volume_filter_enabled: bool,
+        high_vol_extremes_enabled: bool = False,
+        z_score_threshold_first: float = 1.5,
+        z_score_threshold_second: float = 0.5,
+        volume_window_candles: int = 3,
+        # VWAP Zone Filter params
+        vwap_zone_enabled: bool = False,
+        vwap_data: List[Dict] = None,
+        vwap_zone_mode: str = 'oneExtreme',
+        vwap_min_deviation: int = 1,
+        vwap_margin_percent: float = 0.5
     ) -> List[DoublePattern]:
-        """Find double bottom patterns"""
+        """Find double bottom patterns with dominance validation and volume/VWAP filters"""
         patterns = []
+        vwap_data = vwap_data or []
+        vwap_debug_done = False  # Only debug first VWAP check
+
+        # Diagnostic stats
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_dominance': 0,
+            'rejected_volume': 0,
+            'rejected_volume_extremes': 0,
+            'rejected_vwap_zone': 0,
+            'accepted': 0
+        }
 
         for i in range(len(lows)):
             for j in range(i + 1, len(lows)):
                 first = lows[i]
                 second = lows[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance
                 candles_between = second['candle_index'] - first['candle_index']
-                if candles_between < min_candles_between or candles_between > max_candles_between:
+                if candles_between < min_candles_between:
+                    stats['rejected_too_close'] += 1
+                    continue
+                if candles_between > max_candles_between:
+                    stats['rejected_too_far'] += 1
                     continue
 
                 # Check price similarity
@@ -439,34 +763,139 @@ class DoubleTopBottomDetectorFixed:
                 price_variance = (price_diff / avg_price) * 100
 
                 if price_variance > price_margin_pct * 100:
+                    stats['rejected_price_diff'] += 1
                     continue
 
-                # Calculate confidence
-                base_confidence = 70
-                if price_variance < 1:
-                    base_confidence += 20
-                elif price_variance < 2:
-                    base_confidence += 10
+                # DOMINANCE VALIDATION: No low between the two extremes should be lower than both
+                min_extreme_price = min(first['price'], second['price'])
+                has_lower_between = False
 
-                if candles_between >= 10 and candles_between <= 50:
-                    base_confidence += 10
+                for k in range(first['candle_index'] + 1, second['candle_index']):
+                    if k < len(candles):
+                        between_low = float(candles[k].get('low', float('inf')))
+                        if between_low < min_extreme_price * 0.9999:
+                            has_lower_between = True
+                            break
+
+                if has_lower_between:
+                    stats['rejected_dominance'] += 1
+                    continue
+
+                # Get z-scores (with window search for high_vol_extremes)
+                if high_vol_extremes_enabled and z_scores:
+                    first_zscore = self._get_max_zscore_in_window(z_scores, first['candle_index'], volume_window_candles)
+                    second_zscore = self._get_max_zscore_in_window(z_scores, second['candle_index'], volume_window_candles)
+                else:
+                    first_zscore = z_scores[first['candle_index']] if z_scores and first['candle_index'] < len(z_scores) else 0
+                    second_zscore = z_scores[second['candle_index']] if z_scores and second['candle_index'] < len(z_scores) else 0
+
+                # VOLUME FILTER 1: Basic (max of both >= threshold)
+                if volume_filter_enabled and z_scores:
+                    if max(first_zscore, second_zscore) < z_score_threshold:
+                        stats['rejected_volume'] += 1
+                        continue
+
+                # VOLUME FILTER 2: High-volume extremes (different thresholds for each)
+                if high_vol_extremes_enabled and z_scores:
+                    if first_zscore < z_score_threshold_first or second_zscore < z_score_threshold_second:
+                        stats['rejected_volume_extremes'] += 1
+                        continue
+
+                # VWAP ZONE FILTER: Double Bottom extremes must be BELOW negative deviation
+                if vwap_zone_enabled and vwap_data:
+                    # Debug first check only
+                    debug_this = not vwap_debug_done
+                    if debug_this:
+                        vwap_debug_done = True
+
+                    passes_vwap = self._check_vwap_zone_filter(
+                        first['candle_index'],
+                        second['candle_index'],
+                        first['price'],
+                        second['price'],
+                        vwap_data,
+                        vwap_zone_mode,
+                        vwap_min_deviation,
+                        vwap_margin_percent,
+                        pattern_type='DOUBLE_BOTTOM',
+                        debug_first_only=debug_this
+                    )
+                    if not passes_vwap:
+                        stats['rejected_vwap_zone'] += 1
+                        continue
+
+                stats['accepted'] += 1
+
+                # ====== CALCULATE CONFIDENCE (weighted system) ======
+                # Base: 25, Max contributions: 75, Total range: 25-100
+                confidence = 25  # Base (reduced from 50 for better discrimination)
+
+                # Price variance contribution (0-25 points)
+                if price_variance < 0.3:
+                    confidence += 25
+                elif price_variance < 0.5:
+                    confidence += 20
+                elif price_variance < 1.0:
+                    confidence += 12
+                elif price_variance < 2.0:
+                    confidence += 6
+
+                # Volume contribution (0-25 points) - use MAX of both extremes
+                max_zscore = max(first_zscore, second_zscore)
+                if max_zscore >= 2.5:
+                    confidence += 25
+                elif max_zscore >= 2.0:
+                    confidence += 18
+                elif max_zscore >= 1.5:
+                    confidence += 12
+                elif max_zscore >= 1.0:
+                    confidence += 6
+
+                # Bonus if BOTH extremes have good volume (0-15 points)
+                min_zscore = min(first_zscore, second_zscore)
+                if min_zscore >= 1.5:
+                    confidence += 15
+                elif min_zscore >= 1.0:
+                    confidence += 8
+
+                # Distance contribution (0-10 points)
+                if 20 <= candles_between <= 100:
+                    confidence += 10
+                elif 10 <= candles_between <= 150:
+                    confidence += 5
+
+                # Rejection pattern bonus (0-10 points) - Hammer for bottoms
+                first_candle = candles[first['candle_index']]
+                second_candle = candles[second['candle_index']]
+                rejection_bonus = 0
+
+                for candle in [first_candle, second_candle]:
+                    body = abs(float(candle.get('close', 0)) - float(candle.get('open', 0)))
+                    lower_wick = min(float(candle.get('close', 0)), float(candle.get('open', 0))) - float(candle.get('low', 0))
+                    total_range = float(candle.get('high', 0)) - float(candle.get('low', 0))
+
+                    if total_range > 0:
+                        if lower_wick / total_range > 0.6 and body / total_range < 0.3:
+                            rejection_bonus += 5
+
+                confidence += min(rejection_bonus, 10)
 
                 # Create pattern
                 pattern = DoublePattern(
                     type="DOUBLE_BOTTOM",
                     timestamp=second['timestamp'],
-                    confidence=base_confidence,
+                    confidence=min(confidence, 100),
                     first_extreme={
                         'timestamp': first['timestamp'],
                         'price': first['price'],
                         'candle_index': first['candle_index'],
-                        'volume_zscore': z_scores[first['candle_index']] if z_scores else 0
+                        'volume_zscore': first_zscore
                     },
                     second_extreme={
                         'timestamp': second['timestamp'],
                         'price': second['price'],
                         'candle_index': second['candle_index'],
-                        'volume_zscore': z_scores[second['candle_index']] if z_scores else 0
+                        'volume_zscore': second_zscore
                     },
                     level_price=avg_price,
                     price_variance=price_variance,
@@ -475,30 +904,60 @@ class DoubleTopBottomDetectorFixed:
 
                 patterns.append(pattern)
 
+        print(f"  [DB] Pairs: {stats['pairs_evaluated']} | Rejected: close={stats['rejected_too_close']}, far={stats['rejected_too_far']}, price={stats['rejected_price_diff']}, dom={stats['rejected_dominance']}, vol={stats['rejected_volume']}, volExt={stats['rejected_volume_extremes']}, vwap={stats['rejected_vwap_zone']} | Accepted: {stats['accepted']}")
+
         return patterns
 
     def _filter_duplicate_patterns(self, patterns: List[DoublePattern], config: Dict) -> List[DoublePattern]:
-        """Remove duplicate patterns in the same zone"""
+        """
+        Remove duplicate patterns in the same zone AND time period.
+
+        Two patterns are duplicates only if:
+        1. Same type (DOUBLE_TOP or DOUBLE_BOTTOM)
+        2. Price within 0.5% tolerance
+        3. Second extreme timestamps within 30 candles of each other
+
+        This allows multiple patterns at the same price level but different times
+        (e.g., testing support at 10am and again at 8pm are separate patterns)
+        """
         if not patterns:
             return patterns
 
         filtered = []
         price_tolerance = 0.005  # 0.5% tolerance
+        candle_time_tolerance = 30  # Consider patterns within 30 candles as potential duplicates
 
-        for pattern in patterns:
+        # Sort patterns by timestamp to process chronologically
+        sorted_patterns = sorted(patterns, key=lambda p: p.second_extreme['timestamp'])
+
+        stats = {'total': len(patterns), 'kept': 0, 'removed_price': 0, 'removed_time_and_price': 0}
+
+        for pattern in sorted_patterns:
             is_duplicate = False
             for existing in filtered:
                 if pattern.type == existing.type:
+                    # Check price similarity
                     price_diff = abs(pattern.level_price - existing.level_price) / existing.level_price
-                    if price_diff < price_tolerance:
+                    price_similar = price_diff < price_tolerance
+
+                    # Check temporal proximity (by candle index, not timestamp)
+                    candle_diff = abs(pattern.second_extreme['candle_index'] - existing.second_extreme['candle_index'])
+                    time_close = candle_diff < candle_time_tolerance
+
+                    # Only consider duplicate if BOTH price AND time are close
+                    if price_similar and time_close:
                         # Keep the one with higher confidence
                         if pattern.confidence > existing.confidence:
                             filtered.remove(existing)
                             filtered.append(pattern)
                         is_duplicate = True
+                        stats['removed_time_and_price'] += 1
                         break
 
             if not is_duplicate:
                 filtered.append(pattern)
+                stats['kept'] += 1
+
+        print(f"  [FILTER] {stats['total']} candidates -> {stats['kept']} kept ({stats['removed_time_and_price']} duplicates removed)")
 
         return filtered

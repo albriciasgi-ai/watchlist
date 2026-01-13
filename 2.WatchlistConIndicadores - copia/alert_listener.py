@@ -71,9 +71,9 @@ async def forward_to_trading_bot(request: Request):
 
         # Log received alert
         print(f"\n{'='*60}")
-        print(f"🔔 ALERT RECEIVED FROM WATCHLIST")
+        print(f"ALERT RECEIVED FROM WATCHLIST")
         print(f"{'='*60}")
-        print(f"📊 Pattern: {alert.get('pattern', 'UNKNOWN')}")
+        print(f"Pattern: {alert.get('pattern', 'UNKNOWN')}")
         print(f"   Symbol: {alert.get('symbol', 'N/A')}")
         print(f"   Price: ${alert.get('price', 0):.2f}")
         print(f"   Confidence: {alert.get('confidence', 0)}%")
@@ -88,7 +88,7 @@ async def forward_to_trading_bot(request: Request):
         # Forward to TradingBot on port 8001
         async with httpx.AsyncClient() as client:
             try:
-                print(f"⏩ Forwarding to TradingBot at http://localhost:8001/api/watchlist-alert...")
+                print(f">> Forwarding to TradingBot at http://localhost:8001/api/watchlist-alert...")
                 response = await client.post(
                     "http://localhost:8001/api/watchlist-alert",
                     json=alert,
@@ -98,25 +98,25 @@ async def forward_to_trading_bot(request: Request):
                 if response.status_code == 200:
                     result = response.json()
                     if result.get("success"):
-                        print(f"✅ TradingBot: Trade executed successfully!")
+                        print(f"[OK] TradingBot: Trade executed successfully!")
                     else:
-                        print(f"⚠️ TradingBot: Trade failed - {result}")
+                        print(f"[WARNING] TradingBot: Trade failed - {result}")
                 else:
-                    print(f"❌ TradingBot returned status {response.status_code}")
+                    print(f"[ERROR] TradingBot returned status {response.status_code}")
 
                 return result
 
             except httpx.ConnectError:
-                print(f"❌ Cannot connect to TradingBot on port 8001")
+                print(f"[ERROR] Cannot connect to TradingBot on port 8001")
                 print(f"   Make sure TradingBot is running: cd 3.TradingBot_Python/backend && python -m uvicorn main:app --reload --port 8001")
                 return {"success": False, "error": "Cannot connect to TradingBot"}
 
             except Exception as e:
-                print(f"❌ Error forwarding to TradingBot: {str(e)}")
+                print(f"[ERROR] Error forwarding to TradingBot: {str(e)}")
                 return {"success": False, "error": str(e)}
 
     except Exception as e:
-        print(f"❌ Error processing alert: {str(e)}")
+        print(f"[ERROR] Error processing alert: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
@@ -152,12 +152,12 @@ async def receive_alert(request: Request):
 
         # Log to console
         print(f"\n{'='*60}")
-        print(f"🔔 NEW ALERT RECEIVED")
+        print(f"NEW ALERT RECEIVED")
         print(f"{'='*60}")
 
         # Show simple format for trading bot (primary)
         if 'message' in alert:
-            print(f"📊 TRADING SIGNAL: {alert['message']}")
+            print(f"TRADING SIGNAL: {alert['message']}")
             print(f"   Symbol: {alert.get('symbol', 'N/A')}")
             print(f"   Action: {alert.get('action', 'N/A')}")
             print(f"   Price: {alert.get('price', 'N/A')}")
@@ -178,7 +178,7 @@ async def receive_alert(request: Request):
         }
 
     except Exception as e:
-        print(f"❌ Error processing alert: {str(e)}")
+        print(f"[ERROR] Error processing alert: {str(e)}")
         return {
             "success": False,
             "error": str(e)

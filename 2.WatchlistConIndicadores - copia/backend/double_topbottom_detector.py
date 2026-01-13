@@ -417,20 +417,35 @@ class DoubleTopBottomDetector:
         """
         patterns = []
 
+        # ✅ DIAGNÓSTICO: Contadores para entender rechazos
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_breakout': 0,
+            'rejected_no_rejection_pattern': 0,
+            'rejected_volume': 0,
+            'accepted': 0
+        }
+
         # Try to pair each high with subsequent highs
         for i in range(len(highs) - 1):
             h1 = highs[i]
 
             for j in range(i + 1, len(highs)):
                 h2 = highs[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance constraints
                 candles_distance = h2['candle_index'] - h1['candle_index']
 
                 if candles_distance < min_candles:
+                    stats['rejected_too_close'] += 1
                     continue  # Too close
 
                 if candles_distance > max_candles:
+                    stats['rejected_too_far'] += 1
                     break  # Too far, no need to check further
 
                 # Check price similarity
@@ -452,6 +467,7 @@ class DoubleTopBottomDetector:
                 variance_pct = price_diff / price_avg
 
                 if variance_pct > price_margin:
+                    stats['rejected_price_diff'] += 1
                     continue  # Prices too different
 
                 # NUEVO: Validar que el precio ENTRE los extremos no sobrepase el primer extremo
@@ -466,29 +482,40 @@ class DoubleTopBottomDetector:
 
                     if breakout_amount > breakout_tolerance_pct:
                         # El precio sobrepasó el primer extremo - patrón invalidado
+                        stats['rejected_breakout'] += 1
                         print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
-                # Validate rejection patterns at both extremes
-                rejection_h1 = self._validate_rejection_pattern(
-                    h1['candle'],
-                    all_candles[:h1['candle_index']],
-                    config,
-                    'bearish'  # Double top expects bearish rejection
-                )
+                # NUEVO: Verificar si se requiere validación de patrones
+                require_patterns = config.get('doubleTopBottom', {}).get('rejectionPatterns', {}).get('requirePatterns', True)
 
-                rejection_h2 = self._validate_rejection_pattern(
-                    h2['candle'],
-                    all_candles[:h2['candle_index']],
-                    config,
-                    'bearish'
-                )
+                if require_patterns:
+                    # Validate rejection patterns at both extremes
+                    rejection_h1 = self._validate_rejection_pattern(
+                        h1['candle'],
+                        all_candles[:h1['candle_index']],
+                        config,
+                        'bearish'  # Double top expects bearish rejection
+                    )
 
-                # Check if both rejections are required
-                require_both = config.get('filters', {}).get('requireBothRejections', True)
+                    rejection_h2 = self._validate_rejection_pattern(
+                        h2['candle'],
+                        all_candles[:h2['candle_index']],
+                        config,
+                        'bearish'
+                    )
 
-                if require_both and (not rejection_h1['has_pattern'] or not rejection_h2['has_pattern']):
-                    continue
+                    # Check if both rejections are required
+                    require_both = config.get('filters', {}).get('requireBothRejections', True)
+
+                    if require_both and (not rejection_h1['has_pattern'] or not rejection_h2['has_pattern']):
+                        stats['rejected_no_rejection_pattern'] += 1
+                        continue
+                else:
+                    # Sin validación de patrones - aceptar todos los extremos
+                    rejection_h1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    rejection_h2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance if enabled
                 volume_ok_h1 = True
@@ -515,7 +542,8 @@ class DoubleTopBottomDetector:
                         continue  # Volume not significant enough
 
                 # Calculate pattern metrics
-                level_price = price_avg
+                # Para Double Top: usar el máximo de los highs de los extremos
+                level_price = max(h1['candle']['high'], h2['candle']['high'])
                 time_diff_ms = h2['timestamp'] - h1['timestamp']
                 duration_hours = time_diff_ms / (1000 * 60 * 60)
 
@@ -567,6 +595,7 @@ class DoubleTopBottomDetector:
                 )
 
                 patterns.append(pattern)
+                stats['accepted'] += 1
 
                 # Detailed logging for detected pattern
                 print(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
@@ -578,6 +607,17 @@ class DoubleTopBottomDetector:
                 print(f"      Duration: {duration_hours:.2f} hours")
                 print(f"      Avg volume: {volume_avg:.2f}")
                 print(f"      Confidence: {confidence:.1f}/100")
+
+        # ✅ DIAGNÓSTICO: Imprimir resumen de rechazos
+        print(f"  [PRUEBA_DBT] 📊 DOUBLE TOP Stats:")
+        print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
+        print(f"    - Rejected (too close): {stats['rejected_too_close']}")
+        print(f"    - Rejected (too far): {stats['rejected_too_far']}")
+        print(f"    - Rejected (price diff): {stats['rejected_price_diff']}")
+        print(f"    - Rejected (breakout): {stats['rejected_breakout']}")
+        print(f"    - Rejected (no rejection pattern): {stats['rejected_no_rejection_pattern']}")
+        print(f"    - Rejected (volume): {stats['rejected_volume']}")
+        print(f"    - ✅ ACCEPTED: {stats['accepted']}")
 
         return patterns
 
@@ -598,20 +638,35 @@ class DoubleTopBottomDetector:
         """
         patterns = []
 
+        # ✅ DIAGNÓSTICO: Contadores para entender rechazos
+        stats = {
+            'pairs_evaluated': 0,
+            'rejected_too_close': 0,
+            'rejected_too_far': 0,
+            'rejected_price_diff': 0,
+            'rejected_breakout': 0,
+            'rejected_no_rejection_pattern': 0,
+            'rejected_volume': 0,
+            'accepted': 0
+        }
+
         # Try to pair each low with subsequent lows
         for i in range(len(lows) - 1):
             l1 = lows[i]
 
             for j in range(i + 1, len(lows)):
                 l2 = lows[j]
+                stats['pairs_evaluated'] += 1
 
                 # Check distance constraints
                 candles_distance = l2['candle_index'] - l1['candle_index']
 
                 if candles_distance < min_candles:
+                    stats['rejected_too_close'] += 1
                     continue
 
                 if candles_distance > max_candles:
+                    stats['rejected_too_far'] += 1
                     break
 
                 # Check price similarity
@@ -633,6 +688,7 @@ class DoubleTopBottomDetector:
                 variance_pct = price_diff / price_avg
 
                 if variance_pct > price_margin:
+                    stats['rejected_price_diff'] += 1
                     continue
 
                 # NUEVO: Validar que el precio ENTRE los extremos no caiga por debajo del primer extremo
@@ -647,28 +703,39 @@ class DoubleTopBottomDetector:
 
                     if breakdown_amount > breakout_tolerance_pct:
                         # El precio cayó por debajo del primer extremo - patrón invalidado
+                        stats['rejected_breakout'] += 1
                         print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
-                # Validate rejection patterns
-                rejection_l1 = self._validate_rejection_pattern(
-                    l1['candle'],
-                    all_candles[:l1['candle_index']],
-                    config,
-                    'bullish'  # Double bottom expects bullish rejection
-                )
+                # NUEVO: Verificar si se requiere validación de patrones
+                require_patterns = config.get('doubleTopBottom', {}).get('rejectionPatterns', {}).get('requirePatterns', True)
 
-                rejection_l2 = self._validate_rejection_pattern(
-                    l2['candle'],
-                    all_candles[:l2['candle_index']],
-                    config,
-                    'bullish'
-                )
+                if require_patterns:
+                    # Validate rejection patterns
+                    rejection_l1 = self._validate_rejection_pattern(
+                        l1['candle'],
+                        all_candles[:l1['candle_index']],
+                        config,
+                        'bullish'  # Double bottom expects bullish rejection
+                    )
 
-                require_both = config.get('filters', {}).get('requireBothRejections', True)
+                    rejection_l2 = self._validate_rejection_pattern(
+                        l2['candle'],
+                        all_candles[:l2['candle_index']],
+                        config,
+                        'bullish'
+                    )
 
-                if require_both and (not rejection_l1['has_pattern'] or not rejection_l2['has_pattern']):
-                    continue
+                    require_both = config.get('filters', {}).get('requireBothRejections', True)
+
+                    if require_both and (not rejection_l1['has_pattern'] or not rejection_l2['has_pattern']):
+                        stats['rejected_no_rejection_pattern'] += 1
+                        continue
+                else:
+                    # Sin validación de patrones - aceptar todos los extremos
+                    rejection_l1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    rejection_l2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
+                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance
                 volume_ok_l1 = True
@@ -695,7 +762,8 @@ class DoubleTopBottomDetector:
                         continue
 
                 # Calculate metrics
-                level_price = price_avg
+                # Para Double Bottom: usar el mínimo de los lows de los extremos
+                level_price = min(l1['candle']['low'], l2['candle']['low'])
                 time_diff_ms = l2['timestamp'] - l1['timestamp']
                 duration_hours = time_diff_ms / (1000 * 60 * 60)
 
@@ -744,6 +812,7 @@ class DoubleTopBottomDetector:
                 )
 
                 patterns.append(pattern)
+                stats['accepted'] += 1
 
                 # Detailed logging for detected pattern
                 print(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
@@ -755,6 +824,17 @@ class DoubleTopBottomDetector:
                 print(f"      Duration: {duration_hours:.2f} hours")
                 print(f"      Avg volume: {volume_avg:.2f}")
                 print(f"      Confidence: {confidence:.1f}/100")
+
+        # ✅ DIAGNÓSTICO: Imprimir resumen de rechazos
+        print(f"  [PRUEBA_DBT] 📊 DOUBLE BOTTOM Stats:")
+        print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
+        print(f"    - Rejected (too close): {stats['rejected_too_close']}")
+        print(f"    - Rejected (too far): {stats['rejected_too_far']}")
+        print(f"    - Rejected (price diff): {stats['rejected_price_diff']}")
+        print(f"    - Rejected (breakout): {stats['rejected_breakout']}")
+        print(f"    - Rejected (no rejection pattern): {stats['rejected_no_rejection_pattern']}")
+        print(f"    - Rejected (volume): {stats['rejected_volume']}")
+        print(f"    - ✅ ACCEPTED: {stats['accepted']}")
 
         return patterns
 

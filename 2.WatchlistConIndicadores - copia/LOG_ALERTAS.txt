@@ -1,0 +1,63 @@
+[BACKEND] PATTERN ALERT REQUEST RECEIVED
+================================================================================
+Timestamp: 2026-01-11 09:12:03
+
+STEP 1: Parsing request payload
+   Raw Payload Size: 1491 bytes
+
+STEP 2: Extracting fields
+   Symbol: BTCUSDT
+   Interval: 1
+   Pattern Present: True
+   Config Present: True
+
+STEP 3: Pattern Details
+   Type: DOUBLE_BOTTOM
+   Price: $90777.15
+   Confidence: 60%
+   Direction: LONG
+   Level: high
+
+STEP 4: Confidence Validation
+   Pattern Confidence: 60%
+   Minimum Required: 20%
+   Confidence check PASSED (60% >= 20%)
+
+STEP 5: Sending alert to alert service (port 5000)
+   Calling: send_pattern_alert()
+   Symbol: BTCUSDT
+   Interval: 1
+   Pattern Type: DOUBLE_BOTTOM
+INFO:alert_sender:[ALERT PAYLOAD] BTCUSDT | Double Bottom (ABRIR LONG) @ $90777.15 (conf: 60%)
+
+STEP 6: Alert service response
+   Success: True
+
+STEP 7: Alert sent successfully!
+   Pattern: DOUBLE_BOTTOM
+   Symbol: BTCUSDT
+   Price: $90777.15
+   Confidence: 60%
+================================================================================
+
+INFO:     127.0.0.1:59777 - "POST /api/pattern-alert HTTP/1.1" 200 OK
+ERROR:alert_sender:
+❌ TIMEOUT ERROR (5.272s)
+ERROR:alert_sender:   Alert service took too long to respond (>5s)
+ERROR:alert_sender:   Endpoint: http://localhost:5000/api/watchlist-alert
+ERROR:alert_sender:   Error:
+WARNING:alert_sender:⚠️ Failed to send alert: BTCUSDT | Double Bottom (ABRIR LONG)
+
+
+Hay también este error:
+INFO:     127.0.0.1:59177 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768142013350 HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto

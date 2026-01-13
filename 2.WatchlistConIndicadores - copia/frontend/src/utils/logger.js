@@ -1,129 +1,263 @@
 /**
- * Sistema de logging con niveles configurables
+ * Logger - Sistema de logging condicional para eliminar console.log en producción
  *
- * Niveles de log:
- * - ERROR: Errores críticos (siempre se muestran)
- * - WARN: Advertencias importantes (siempre se muestran)
- * - INFO: Información importante (alertas, eventos clave)
- * - DEBUG: Información de depuración detallada (oculta por defecto)
+ * Uso:
+ * import Logger from './utils/Logger';
+ * const log = new Logger('ComponentName');
+ * log.info('mensaje');
+ * log.error('error');
  */
 
-const LOG_LEVELS = {
-  ERROR: 0,
-  WARN: 1,
-  INFO: 2,
-  DEBUG: 3
-};
-
-// ✅ Configuración: Cambiar a LOG_LEVELS.DEBUG para ver todos los logs
-const CURRENT_LOG_LEVEL = LOG_LEVELS.INFO;
-
-// ✅ Categorías específicas que siempre se muestran (incluso si DEBUG está desactivado)
-const ALWAYS_SHOW_CATEGORIES = [
-  'ALERT',      // Sistema de alertas
-  'PATTERN',    // Detección de patrones
-  'ERROR'       // Errores
-];
-
 class Logger {
-  constructor(context = '') {
+  constructor(context = 'App', options = {}) {
     this.context = context;
+    this.enabled = this.shouldBeEnabled(options);
+    this.logLevel = options.level || 'info';
+    this.useEmoji = options.emoji !== false;
+
+    // Niveles de log
+    this.levels = {
+      error: 0,
+      warn: 1,
+      info: 2,
+      debug: 3,
+      trace: 4
+    };
   }
 
-  _shouldLog(level, category = '') {
-    // Siempre mostrar errores y warnings
-    if (level <= LOG_LEVELS.WARN) return true;
-
-    // Siempre mostrar categorías importantes
-    if (category && ALWAYS_SHOW_CATEGORIES.includes(category.toUpperCase())) {
-      return true;
+  /**
+   * Determina si el logger debe estar activo
+   */
+  shouldBeEnabled(options) {
+    // Prioridad: opción específica > localStorage > entorno
+    if (options.forceEnable !== undefined) {
+      return options.forceEnable;
     }
 
-    // Para otros logs, verificar nivel
-    return level <= CURRENT_LOG_LEVEL;
-  }
-
-  _formatMessage(level, category, message, data) {
-    const timestamp = new Date().toLocaleTimeString();
-    const levelIcon = {
-      [LOG_LEVELS.ERROR]: '❌',
-      [LOG_LEVELS.WARN]: '⚠️',
-      [LOG_LEVELS.INFO]: 'ℹ️',
-      [LOG_LEVELS.DEBUG]: '🔍'
-    }[level] || '';
-
-    const categoryStr = category ? `[${category}]` : '';
-    const contextStr = this.context ? `[${this.context}]` : '';
-
-    return `${levelIcon} ${timestamp} ${contextStr}${categoryStr} ${message}`;
-  }
-
-  error(message, data = null) {
-    const formatted = this._formatMessage(LOG_LEVELS.ERROR, 'ERROR', message, data);
-    if (data) {
-      console.error(formatted, data);
-    } else {
-      console.error(formatted);
+    // Check localStorage para debug mode
+    if (typeof window !== 'undefined') {
+      const debugMode = localStorage.getItem('DEBUG_MODE');
+      if (debugMode === 'true') return true;
+      if (debugMode === 'false') return false;
     }
+
+    // En desarrollo siempre activo, en producción desactivado
+    return process.env.NODE_ENV === 'development';
   }
 
-  warn(message, data = null) {
-    if (!this._shouldLog(LOG_LEVELS.WARN)) return;
+  /**
+   * Formatea el mensaje con contexto y timestamp
+   */
+  format(level, message, ...args) {
+    const timestamp = new Date().toLocaleTimeString('es-CO');
+    const emoji = this.getEmoji(level);
+    const prefix = this.useEmoji ? emoji : `[${level.toUpperCase()}]`;
 
-    const formatted = this._formatMessage(LOG_LEVELS.WARN, '', message, data);
-    if (data) {
-      console.warn(formatted, data);
-    } else {
-      console.warn(formatted);
-    }
+    return [`${prefix} [${timestamp}] [${this.context}] ${message}`, ...args];
   }
 
-  info(message, data = null) {
-    if (!this._shouldLog(LOG_LEVELS.INFO)) return;
-
-    const formatted = this._formatMessage(LOG_LEVELS.INFO, '', message, data);
-    if (data) {
-      console.log(formatted, data);
-    } else {
-      console.log(formatted);
-    }
+  /**
+   * Obtiene emoji según el nivel
+   */
+  getEmoji(level) {
+    const emojis = {
+      error: '❌',
+      warn: '⚠️',
+      info: '✅',
+      debug: '🔍',
+      trace: '📍'
+    };
+    return emojis[level] || '📝';
   }
 
-  debug(message, data = null) {
-    if (!this._shouldLog(LOG_LEVELS.DEBUG)) return;
+  /**
+   * Verifica si debe loggear según el nivel
+   */
+  shouldLog(level) {
+    if (!this.enabled) return false;
 
-    const formatted = this._formatMessage(LOG_LEVELS.DEBUG, '', message, data);
-    if (data) {
-      console.log(formatted, data);
-    } else {
-      console.log(formatted);
-    }
+    const currentLevel = this.levels[this.logLevel] || 2;
+    const messageLevel = this.levels[level] || 2;
+
+    return messageLevel <= currentLevel;
   }
 
-  // ✅ Métodos especiales para categorías importantes (siempre se muestran)
-  alert(message, data = null) {
-    const formatted = this._formatMessage(LOG_LEVELS.INFO, 'ALERT', message, data);
-    if (data) {
-      console.log(formatted, data);
-    } else {
-      console.log(formatted);
+  // Métodos de logging
+  error(message, ...args) {
+    if (this.shouldLog('error')) {
+      console.error(...this.format('error', message, ...args));
     }
   }
 
-  pattern(message, data = null) {
-    const formatted = this._formatMessage(LOG_LEVELS.INFO, 'PATTERN', message, data);
-    if (data) {
-      console.log(formatted, data);
-    } else {
-      console.log(formatted);
+  warn(message, ...args) {
+    if (this.shouldLog('warn')) {
+      console.warn(...this.format('warn', message, ...args));
+    }
+  }
+
+  info(message, ...args) {
+    if (this.shouldLog('info')) {
+      console.log(...this.format('info', message, ...args));
+    }
+  }
+
+  debug(message, ...args) {
+    if (this.shouldLog('debug')) {
+      console.log(...this.format('debug', message, ...args));
+    }
+  }
+
+  trace(message, ...args) {
+    if (this.shouldLog('trace')) {
+      console.log(...this.format('trace', message, ...args));
+    }
+  }
+
+  // Alias para compatibilidad
+  log(message, ...args) {
+    this.info(message, ...args);
+  }
+
+  // Método para medir tiempo
+  time(label) {
+    if (this.enabled) {
+      console.time(`[${this.context}] ${label}`);
+    }
+  }
+
+  timeEnd(label) {
+    if (this.enabled) {
+      console.timeEnd(`[${this.context}] ${label}`);
+    }
+  }
+
+  // Método para tablas
+  table(data) {
+    if (this.enabled) {
+      console.log(`[${this.context}] Table:`);
+      console.table(data);
+    }
+  }
+
+  // Método para grupos
+  group(label) {
+    if (this.enabled) {
+      console.group(`[${this.context}] ${label}`);
+    }
+  }
+
+  groupEnd() {
+    if (this.enabled) {
+      console.groupEnd();
+    }
+  }
+
+  // Método para limpiar consola
+  clear() {
+    if (this.enabled) {
+      console.clear();
     }
   }
 }
 
-// Factory function para crear loggers con contexto
-export const createLogger = (context) => new Logger(context);
+// Singleton global para configuración
+class LoggerConfig {
+  static instance = null;
 
-// Logger global por defecto
-export const logger = new Logger();
+  constructor() {
+    if (LoggerConfig.instance) {
+      return LoggerConfig.instance;
+    }
 
-export default logger;
+    this.globalEnabled = process.env.NODE_ENV === 'development';
+    this.contexts = new Map(); // Configuración por contexto
+
+    LoggerConfig.instance = this;
+  }
+
+  static getInstance() {
+    if (!LoggerConfig.instance) {
+      LoggerConfig.instance = new LoggerConfig();
+    }
+    return LoggerConfig.instance;
+  }
+
+  // Habilitar/deshabilitar logging globalmente
+  setGlobalEnabled(enabled) {
+    this.globalEnabled = enabled;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('DEBUG_MODE', enabled ? 'true' : 'false');
+    }
+  }
+
+  // Habilitar/deshabilitar contextos específicos
+  setContextEnabled(context, enabled) {
+    this.contexts.set(context, enabled);
+  }
+
+  isContextEnabled(context) {
+    if (!this.globalEnabled) return false;
+    if (this.contexts.has(context)) {
+      return this.contexts.get(context);
+    }
+    return true;
+  }
+
+  // Método de utilidad para deshabilitar logs pesados
+  disableHeavyLogs() {
+    const heavyContexts = [
+      'WebSocket',
+      'IndicatorManager',
+      'DoubleTopBottom',
+      'VWAP',
+      'RejectionPattern',
+      'VolumeProfile'
+    ];
+
+    heavyContexts.forEach(ctx => {
+      this.setContextEnabled(ctx, false);
+    });
+
+    console.log('🔇 Heavy logs disabled. Contexts:', heavyContexts);
+  }
+
+  // Método para obtener estadísticas
+  getStats() {
+    return {
+      globalEnabled: this.globalEnabled,
+      contexts: Array.from(this.contexts.entries())
+    };
+  }
+}
+
+// Exportar tanto la clase como la instancia de configuración
+export default Logger;
+export { LoggerConfig };
+
+// Función de utilidad para crear logger rápidamente
+export function createLogger(context, options) {
+  return new Logger(context, options);
+}
+
+// Función global para toggle debug mode
+if (typeof window !== 'undefined') {
+  window.toggleDebugMode = () => {
+    const config = LoggerConfig.getInstance();
+    const currentState = localStorage.getItem('DEBUG_MODE') === 'true';
+    config.setGlobalEnabled(!currentState);
+    console.log(`🔧 Debug mode: ${!currentState ? 'ENABLED' : 'DISABLED'}`);
+    return !currentState;
+  };
+
+  window.disableHeavyLogs = () => {
+    const config = LoggerConfig.getInstance();
+    config.disableHeavyLogs();
+  };
+
+  // Mostrar estado al cargar
+  if (process.env.NODE_ENV === 'development') {
+    console.log('💡 Debug utilities available:');
+    console.log('   window.toggleDebugMode() - Toggle all logs');
+    console.log('   window.disableHeavyLogs() - Disable performance-heavy logs');
+  }
+}

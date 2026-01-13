@@ -18,6 +18,10 @@ import LevelSourceManager from "./LevelSourceManager";
 import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: minConfidence 20%
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
+import Logger from '../../utils/Logger.js';
+
+// Logger instance
+const log = new Logger('Manager', { level: 'info' });
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -47,28 +51,63 @@ class IndicatorManager {
     // 🎯 NUEVO: Level Source Manager (for continuation patterns)
     this.levelSourceManager = null; // Gestión centralizada de niveles de múltiples fuentes
 
-    console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
+    // ✅ NUEVO: Referencia a las velas históricas (necesario para fetchData en DBT)
+    this.allCandles = null;
+
+    log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
-  async initialize() {
-    // Crear el indicador de S/R
+  async initialize(indicatorStates = {}) {
+    // Solo crear indicadores habilitados para optimizar rendimiento
+    this.indicators = [];
+
+    // Siempre crear los básicos que suelen estar habilitados
+    this.indicators.push(new VolumeProfileIndicator(this.symbol, this.interval, this.days));
+    this.indicators.push(new VolumeIndicator(this.symbol, this.interval, this.days));
+    this.indicators.push(new CVDIndicator(this.symbol, this.interval, this.days));
+
+    // Solo crear OpenInterest si está habilitado
+    if (indicatorStates['OpenInterest'] !== false) {
+      this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+      this.indicators.push(this.openInterestIndicator);
+    }
+
+    // Rejection Patterns (suele estar habilitado)
+    this.indicators.push(new RejectionPatternIndicator(this.symbol, this.interval, this.days));
+
+    // Double Top/Bottom (suele estar habilitado)
+    if (indicatorStates['Double Top/Bottom'] !== false) {
+      console.log(`[${this.symbol}] Creando Double Top/Bottom porque está habilitado`);
+      this.indicators.push(new DoubleTopBottomIndicator(this.symbol, this.interval, this.days));
+    }
+
+    // Support & Resistance - siempre crear para que el checkbox funcione
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+    // Habilitar si está activo en indicatorStates
+    if (indicatorStates['Support & Resistance'] === true) {
+      console.log(`[${this.symbol}] Support & Resistance habilitado desde inicio`);
+      this.supportResistanceIndicator.enabled = true;
+    } else {
+      this.supportResistanceIndicator.enabled = false;
+    }
+    this.indicators.push(this.supportResistanceIndicator);
 
-    // Crear el indicador de Open Interest
-    this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+    // VWAP (suele estar habilitado)
+    if (indicatorStates['VWAP'] !== false) {
+      this.indicators.push(new VWAPIndicator(this.symbol, this.interval, this.days));
+    }
 
-    this.indicators = [
-      new VolumeProfileIndicator(this.symbol, this.interval, this.days),
-      new VolumeIndicator(this.symbol, this.interval, this.days),
-      new CVDIndicator(this.symbol, this.interval, this.days),
-      this.openInterestIndicator,
-      new RejectionPatternIndicator(this.symbol, this.interval, this.days),
-      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days),
-      this.supportResistanceIndicator,
-      new VWAPIndicator(this.symbol, this.interval, this.days),
-      new FibonacciLevelCalculator(this.symbol, this.interval, this.days),
-      new ContinuationPatternIndicator(this.symbol, this.interval, this.days)
-    ];
+    // Fibonacci - solo si está habilitado
+    if (indicatorStates['Fibonacci'] === true) {
+      console.log(`[${this.symbol}] Creando Fibonacci porque está habilitado`);
+      this.indicators.push(new FibonacciLevelCalculator(this.symbol, this.interval, this.days));
+    }
+
+    // Continuation Patterns - solo si está habilitado
+    if (indicatorStates['Continuation Patterns'] === true) {
+      console.log(`[${this.symbol}] Creando Continuation Patterns porque está habilitado`);
+      this.indicators.push(new ContinuationPatternIndicator(this.symbol, this.interval, this.days));
+    }
 
     // Asignar referencia al manager a todos los indicadores
     this.indicators.forEach(indicator => {
@@ -77,7 +116,7 @@ class IndicatorManager {
 
     // 🎯 NUEVO: Inicializar Level Source Manager
     this.levelSourceManager = new LevelSourceManager(this);
-    console.log(`[${this.symbol}] 🎯 LevelSourceManager inicializado`);
+    log.debug(`[${this.symbol}] 🎯 LevelSourceManager inicializado`);
 
     // Habilitar el indicador de patrones por defecto
     const patternIndicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
@@ -98,7 +137,7 @@ class IndicatorManager {
 
   // ✅ NUEVO: Método para cargar datos precargados
   loadPreloadedData() {
-    console.log(`[${this.symbol}] 📂 Cargando datos precargados...`);
+    log.debug(`[${this.symbol}] 📂 Cargando datos precargados...`);
 
     this.indicators.forEach(indicator => {
       const preloadableIndicators = [
@@ -119,10 +158,10 @@ class IndicatorManager {
           // Usar método setPreloadedData() del indicador (lo implementaremos)
           if (indicator.setPreloadedData) {
             indicator.setPreloadedData(data);
-            console.log(`[${this.symbol}] ✅ ${indicator.name} cargado desde precarga`);
+            log.debug(`[${this.symbol}] ✅ ${indicator.name} cargado desde precarga`);
           }
         } else {
-          console.warn(`[${this.symbol}] ⚠️ ${indicator.name} no tiene datos precargados`);
+          log.warn(`[${this.symbol}] ⚠️ ${indicator.name} no tiene datos precargados`);
         }
       }
     });
@@ -153,14 +192,14 @@ class IndicatorManager {
       this.fixedRangeIndicators.push(indicator);
     });
     
-    console.log(`[${this.symbol}] 🔄 Sincronizadas ${this.fixedRangeIndicators.length} instancias de Fixed Ranges`);
+    log.debug(`[${this.symbol}] 🔄 Sincronizadas ${this.fixedRangeIndicators.length} instancias de Fixed Ranges`);
   }
 
 
   // ✅ SIMPLIFICADO: refresh para Volume Profile, Open Interest y Support & Resistance
   async refresh() {
     const startTime = Date.now();
-    console.log(`[${this.symbol}] 🔄 Refrescando indicadores...`);
+    log.debug(`[${this.symbol}] 🔄 Refrescando indicadores...`);
 
     try {
       await Promise.all(
@@ -168,7 +207,7 @@ class IndicatorManager {
           if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance")) {
             // ✅ FIX: Actualizar days del indicador antes de fetchData
             if (indicator.days !== this.days) {
-              console.log(`[${this.symbol}] 🔄 Actualizando days de ${indicator.name}: ${indicator.days} → ${this.days}`);
+              log.debug(`[${this.symbol}] 🔄 Actualizando days de ${indicator.name}: ${indicator.days} → ${this.days}`);
               indicator.days = this.days;
             }
             await indicator.fetchData();
@@ -177,9 +216,9 @@ class IndicatorManager {
       );
 
       const duration = Date.now() - startTime;
-      console.log(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
+      log.debug(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
     } catch (error) {
-      console.error(`[${this.symbol}] ❌ Error en refresh:`, error);
+      log.error(`[${this.symbol}] ❌ Error en refresh:`, error);
     }
   }
 
@@ -208,7 +247,7 @@ class IndicatorManager {
 
           if (data && indicator.setPreloadedData) {
             // Tenemos datos precargados, usarlos
-            console.log(`[${this.symbol}] ⚡ ${name} activado (datos precargados)`);
+            log.debug(`[${this.symbol}] ⚡ ${name} activado (datos precargados)`);
             indicator.setPreloadedData(data);
 
             // Forzar redibujado
@@ -217,32 +256,39 @@ class IndicatorManager {
             }
           } else {
             // No hay datos precargados, hacer fetch (fallback)
-            console.log(`[${this.symbol}] 📥 ${name}: No hay precarga, cargando desde backend...`);
+            log.debug(`[${this.symbol}] 📥 ${name}: No hay precarga, cargando desde backend...`);
             if (indicator.fetchData) {
               indicator.fetchData().then(() => {
-                console.log(`[${this.symbol}] ✅ Datos de ${name} cargados desde backend`);
+                log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados desde backend`);
                 if (this.requestRedraw) {
                   this.requestRedraw();
                 }
               }).catch(err => {
-                console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+                log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
               });
             }
           }
         } else {
           // Indicadores no precargables (VWAP, Fibonacci, etc.)
-          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns", "Double Top/Bottom"];
+          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns"];
+
+          // ✅ NOTA: Double Top/Bottom NO está en needsFetch porque se carga cuando las velas están disponibles
+          // Se hace en onHistoricalCandlesLoaded() para garantizar que tenga las velas
 
           if (needsFetch.includes(name) && indicator.fetchData) {
-            console.log(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+            log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+
             indicator.fetchData().then(() => {
-              console.log(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+              log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
               if (this.requestRedraw) {
                 this.requestRedraw();
               }
             }).catch(err => {
-              console.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+              log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
             });
+          } else if (name === "Double Top/Bottom") {
+            // DBT espera a que las velas estén disponibles
+            log.debug(`[${this.symbol}] 🕐 DBT habilitado - esperando velas históricas para análisis inicial`);
           }
         }
       }
@@ -292,12 +338,12 @@ class IndicatorManager {
         if (indicator.name === "Volume Profile") {
           // Debug: mostrar estado del indicador
           if (indicator.hideWhenFixedRanges) {
-            console.log(`[${this.symbol}] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=${hasActiveFixedRanges}`);
+            log.trace(`[ Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=${hasActiveFixedRanges}`);
           }
 
           if (indicator.hideWhenFixedRanges && hasActiveFixedRanges) {
             // No renderizar el Volume Profile dinámico
-            console.log(`[${this.symbol}] 👁️ Volume Profile OCULTO (hay ${activeFixedRanges.length} Fixed Ranges activos)`);
+            log.debug(`[${this.symbol}] 👁️ Volume Profile OCULTO (hay ${activeFixedRanges.length} Fixed Ranges activos)`);
             return;
           }
         }
@@ -352,7 +398,7 @@ class IndicatorManager {
           indicator.renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext);
         }
       } catch (error) {
-        console.error(`[${this.symbol}] Error renderizando fixed range ${indicator.rangeId}:`, error);
+        log.error(`[${this.symbol}] Error renderizando fixed range ${indicator.rangeId}:`, error);
       }
     });
   }
@@ -412,7 +458,7 @@ class IndicatorManager {
     indicator.loadFromData(newProfile);
     this.fixedRangeIndicators.push(indicator);
     
-    console.log(`[${this.symbol}] 📊 Fixed Range creado: ${rangeId}`, {
+    log.debug(`[${this.symbol}] 📊 Fixed Range creado: ${rangeId}`, {
       start: new Date(startTimestamp).toISOString(),
       end: new Date(endTimestamp).toISOString()
     });
@@ -432,7 +478,7 @@ class IndicatorManager {
       ind => ind.rangeId !== rangeId
     );
 
-    console.log(`[${this.symbol}] 🗑️ Fixed Range eliminado: ${rangeId}`);
+    log.debug(`[${this.symbol}] 🗑️ Fixed Range eliminado: ${rangeId}`);
   }
 
   // ✅ NUEVO: Método para borrar todos los Fixed Range Profiles de este símbolo
@@ -451,7 +497,7 @@ class IndicatorManager {
     // Guardar en localStorage
     this.saveFixedRangeProfilesToStorage();
 
-    console.log(`[${this.symbol}] 🗑️ TODOS los Fixed Ranges eliminados: ${count} perfiles`);
+    log.debug(`[${this.symbol}] 🗑️ TODOS los Fixed Ranges eliminados: ${count} perfiles`);
     return count;
   }
 
@@ -468,7 +514,7 @@ class IndicatorManager {
       indicator.enabled = enabled;
     }
     
-    console.log(`[${this.symbol}] 🔄 Fixed Range ${enabled ? 'habilitado' : 'deshabilitado'}: ${rangeId}`);
+    log.debug(`[${this.symbol}] 🔄 Fixed Range ${enabled ? 'habilitado' : 'deshabilitado'}: ${rangeId}`);
   }
 
   updateFixedRangeConfig(rangeId, config) {
@@ -484,15 +530,15 @@ class IndicatorManager {
       indicator.loadFromData(profile);
     }
     
-    console.log(`[${this.symbol}] ⚙️ Fixed Range configurado: ${rangeId}`);
+    log.debug(`[${this.symbol}] ⚙️ Fixed Range configurado: ${rangeId}`);
   }
 
   saveFixedRangeProfilesToStorage() {
     try {
       localStorage.setItem('fixedRangeProfiles', JSON.stringify(this.fixedRangeProfiles));
-      console.log(`[${this.symbol}] 💾 Fixed Ranges guardados en localStorage`);
+      log.debug(`[${this.symbol}] 💾 Fixed Ranges guardados en localStorage`);
     } catch (error) {
-      console.error('Error saving fixed range profiles:', error);
+      log.error('Error saving fixed range profiles:', error);
     }
   }
 
@@ -502,10 +548,10 @@ class IndicatorManager {
       if (stored) {
         this.fixedRangeProfiles = JSON.parse(stored);
         const count = this.fixedRangeProfiles.filter(p => p.symbol === this.symbol).length;
-        console.log(`[${this.symbol}] 📂 ${count} Fixed Ranges cargados desde localStorage`);
+        log.debug(`[${this.symbol}] 📂 ${count} Fixed Ranges cargados desde localStorage`);
       }
     } catch (error) {
-      console.error('Error loading fixed range profiles:', error);
+      log.error('Error loading fixed range profiles:', error);
       this.fixedRangeProfiles = [];
     }
   }
@@ -526,7 +572,7 @@ class IndicatorManager {
     if (!this.rangeDetector) {
       // 🎯 Usar ATRBasedRangeDetector (inspirado en LuxAlgo)
       this.rangeDetector = new ATRBasedRangeDetector(this.symbol, this.interval, this.days);
-      console.log(`[${this.symbol}] 🎯 Range Detection HABILITADO (ATR-Based)`);
+      log.debug(`[${this.symbol}] 🎯 Range Detection HABILITADO (ATR-Based)`);
     }
 
     if (Object.keys(config).length > 0) {
@@ -543,7 +589,7 @@ class IndicatorManager {
   disableRangeDetection() {
     if (this.rangeDetector) {
       this.rangeDetector.setEnabled(false);
-      console.log(`[${this.symbol}] 🎯 Range Detection DESHABILITADO`);
+      log.debug(`[${this.symbol}] 🎯 Range Detection DESHABILITADO`);
     }
     this.saveRangeDetectionConfig();
   }
@@ -571,7 +617,7 @@ class IndicatorManager {
   setRangeDetectionDateFilter(startDate, endDate) {
     if (this.rangeDetector) {
       this.rangeDetector.setDateFilter(startDate, endDate);
-      console.log(`[${this.symbol}] 📅 Filtro de fecha aplicado: ${new Date(startDate).toISOString()} → ${new Date(endDate).toISOString()}`);
+      log.debug(`[${this.symbol}] 📅 Filtro de fecha aplicado: ${new Date(startDate).toISOString()} → ${new Date(endDate).toISOString()}`);
     }
   }
 
@@ -581,7 +627,7 @@ class IndicatorManager {
   clearRangeDetectionDateFilter() {
     if (this.rangeDetector) {
       this.rangeDetector.clearDateFilter();
-      console.log(`[${this.symbol}] 📅 Filtro de fecha eliminado`);
+      log.debug(`[${this.symbol}] 📅 Filtro de fecha eliminado`);
     }
   }
 
@@ -590,15 +636,15 @@ class IndicatorManager {
    * @param {Array} allCandles - Todas las velas disponibles
    */
   analyzeRanges(allCandles) {
-    console.log(`[${this.symbol}] 🎯 IndicatorManager.analyzeRanges() llamado con ${allCandles?.length || 0} velas`);
+    log.debug(`[${this.symbol}] 🎯 IndicatorManager.analyzeRanges() llamado con ${allCandles?.length || 0} velas`);
 
     if (!this.rangeDetector) {
-      console.log(`[${this.symbol}] ❌ No hay rangeDetector`);
+      log.debug(`[${this.symbol}] ❌ No hay rangeDetector`);
       return [];
     }
 
     if (!this.rangeDetector.enabled) {
-      console.log(`[${this.symbol}] ❌ rangeDetector está deshabilitado`);
+      log.debug(`[${this.symbol}] ❌ rangeDetector está deshabilitado`);
       return [];
     }
 
@@ -606,8 +652,8 @@ class IndicatorManager {
     const cutoffTime = Date.now() - (this.days * 24 * 60 * 60 * 1000);
     const filteredCandles = allCandles.filter(c => c.timestamp >= cutoffTime);
 
-    console.log(`[${this.symbol}] ✅ Filtrando velas: ${allCandles.length} total → ${filteredCandles.length} en últimos ${this.days} días`);
-    console.log(`[${this.symbol}] ✅ Llamando a rangeDetector.analyze()...`);
+    log.debug(`[${this.symbol}] ✅ Filtrando velas: ${allCandles.length} total → ${filteredCandles.length} en últimos ${this.days} días`);
+    log.debug(`[${this.symbol}] ✅ Llamando a rangeDetector.analyze()...`);
     const detectedRanges = this.rangeDetector.analyze(filteredCandles);
 
     // Procesar rangos confirmados y crear/actualizar Fixed Ranges automáticamente
@@ -645,7 +691,7 @@ class IndicatorManager {
     if (existingProfile) {
       // 🎯 ACTUALIZAR el rango existente si se extendió
       if (existingProfile.endTimestamp !== range.endTimestamp) {
-        console.log(`[${this.symbol}] 🔄 Actualizando Volume Profile del rango ${range.id}: ${new Date(existingProfile.endTimestamp).toISOString()} → ${new Date(range.endTimestamp).toISOString()}`);
+        log.debug(`[${this.symbol}] 🔄 Actualizando Volume Profile del rango ${range.id}: ${new Date(existingProfile.endTimestamp).toISOString()} → ${new Date(range.endTimestamp).toISOString()}`);
 
         existingProfile.endTimestamp = range.endTimestamp;
         existingProfile.startTimestamp = range.startTimestamp; // Podría cambiar también
@@ -717,7 +763,7 @@ class IndicatorManager {
     // Guardar en localStorage
     this.saveFixedRangeProfilesToStorage();
 
-    console.log(`[${this.symbol}] ✨ AUTO Fixed Range creado [${rangeLabel}]:`, {
+    log.debug(`[${this.symbol}] ✨ AUTO Fixed Range creado [${rangeLabel}]:`, {
       id: range.id,
       label: rangeLabel,
       start: new Date(range.startTimestamp).toISOString(),
@@ -732,7 +778,7 @@ class IndicatorManager {
    */
   createTrendProfilesBetweenRanges() {
     if (!this.rangeDetector || !this.rangeDetector.config.createTrendProfiles) {
-      console.log(`[${this.symbol}] ⏭️ createTrendProfiles desactivado o no hay detector`);
+      log.debug(`[${this.symbol}] ⏭️ createTrendProfiles desactivado o no hay detector`);
       return; // No crear si la opción está desactivada
     }
 
@@ -741,10 +787,10 @@ class IndicatorManager {
       .filter(p => !p.isTrendProfile) // Excluir los VP de tendencia ya creados
       .sort((a, b) => a.startTimestamp - b.startTimestamp);
 
-    console.log(`[${this.symbol}] 📊 createTrendProfiles - Rangos encontrados: ${autoRanges.length}`);
+    log.debug(`[${this.symbol}] 📊 createTrendProfiles - Rangos encontrados: ${autoRanges.length}`);
 
     if (autoRanges.length < 2) {
-      console.log(`[${this.symbol}] ⚠️ Se necesitan al menos 2 rangos para crear tendencias (encontrados: ${autoRanges.length})`);
+      log.debug(`[${this.symbol}] ⚠️ Se necesitan al menos 2 rangos para crear tendencias (encontrados: ${autoRanges.length})`);
       return; // Necesitamos al menos 2 rangos para crear gaps
     }
 
@@ -757,7 +803,7 @@ class IndicatorManager {
       const gapStart = currentRange.endTimestamp;
       const gapEnd = nextRange.startTimestamp;
 
-      console.log(`[${this.symbol}] 🔍 Gap ${i + 1}: ${new Date(gapStart).toISOString()} → ${new Date(gapEnd).toISOString()} (${(gapEnd - gapStart) / 60000} min)`);
+      log.trace(`[ Gap ${i + 1}: ${new Date(gapStart).toISOString()} → ${new Date(gapEnd).toISOString()} (${(gapEnd - gapStart) / 60000} min)`);
 
       // Verificar si ya existe un VP de tendencia para este gap
       const gapExists = this.fixedRangeProfiles.some(p =>
@@ -767,13 +813,13 @@ class IndicatorManager {
       );
 
       if (gapExists) {
-        console.log(`[${this.symbol}] ⏭️ Gap ya existe, saltando...`);
+        log.debug(`[${this.symbol}] ⏭️ Gap ya existe, saltando...`);
         continue; // Ya existe VP para este gap
       }
 
       // Verificar que hay un gap real (más de 1 timestamp de diferencia)
       if (gapEnd - gapStart > 60000) { // Al menos 1 minuto de diferencia
-        console.log(`[${this.symbol}] ✅ Creando Trend Profile para gap de ${(gapEnd - gapStart) / 60000} min`);
+        log.debug(`[${this.symbol}] ✅ Creando Trend Profile para gap de ${(gapEnd - gapStart) / 60000} min`);
         // Crear VP de tendencia con color diferenciado (azul/verde)
         const trendRangeId = `trend_${gapStart}_${gapEnd}`;
 
@@ -813,7 +859,7 @@ class IndicatorManager {
         indicator.loadFromData(trendProfile);
         this.fixedRangeIndicators.push(indicator);
 
-        console.log(`[${this.symbol}] 📈 Trend Profile creado:`, {
+        log.debug(`[${this.symbol}] 📈 Trend Profile creado:`, {
           id: trendRangeId,
           start: new Date(gapStart).toISOString(),
           end: new Date(gapEnd).toISOString(),
@@ -853,7 +899,7 @@ class IndicatorManager {
     }
 
     this.saveFixedRangeProfilesToStorage();
-    console.log(`[${this.symbol}] 🗑️ ${autoRangeIds.length} rangos auto-detectados eliminados`);
+    log.debug(`[${this.symbol}] 🗑️ ${autoRangeIds.length} rangos auto-detectados eliminados`);
   }
 
   /**
@@ -886,9 +932,9 @@ class IndicatorManager {
       }
 
       localStorage.setItem('range_detection_enabled_symbols', JSON.stringify(enabledSymbols));
-      console.log(`[${this.symbol}@${this.interval}] 💾 Config de Range Detection guardada`);
+      log.debug(`[${this.symbol}@${this.interval}] 💾 Config de Range Detection guardada`);
     } catch (error) {
-      console.error(`[${this.symbol}] ❌ Error guardando config:`, error);
+      log.error(`[${this.symbol}] ❌ Error guardando config:`, error);
     }
   }
 
@@ -900,7 +946,7 @@ class IndicatorManager {
   loadRangeDetectionConfig() {
     // ✅ FIX: Range Detector deshabilitado por default
     // El usuario debe habilitarlo manualmente desde el settings modal
-    console.log(`[${this.symbol}] ⚪ Range Detection deshabilitado por default`);
+    log.debug(`[${this.symbol}] ⚪ Range Detection deshabilitado por default`);
 
     /* ANTERIOR: Cargaba automáticamente desde localStorage
     try {
@@ -916,19 +962,19 @@ class IndicatorManager {
         if (stored) {
           const { config } = JSON.parse(stored);
           this.enableRangeDetection(config);
-          console.log(`[${this.symbol}] 📂 Config de Range Detection cargada`);
+          log.debug(`[${this.symbol}] 📂 Config de Range Detection cargada`);
         } else {
           this.enableRangeDetection();
         }
       }
     } catch (error) {
-      console.error(`[${this.symbol}] ❌ Error cargando config:`, error);
+      log.error(`[${this.symbol}] ❌ Error cargando config:`, error);
     }
     */
   }
 
   destroy() {
-    console.log(`[${this.symbol}] 🧹 IndicatorManager destruido`);
+    log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
     // Limpiar instancias
     this.fixedRangeIndicators = [];
     this.rangeDetector = null;
@@ -959,7 +1005,7 @@ class IndicatorManager {
     const indicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
     if (indicator) {
       indicator.updateConfig(config);
-      console.log(`[${this.symbol}] 🎯 Rejection Pattern config updated`);
+      log.debug(`[${this.symbol}] 🎯 Rejection Pattern config updated`);
     }
   }
 
@@ -970,7 +1016,7 @@ class IndicatorManager {
     const indicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
     if (indicator && indicator.enabled) {
       await indicator.fetchData();
-      console.log(`[${this.symbol}] 🔍 Rejection patterns detected: ${indicator.getPatternCount()}`);
+      log.trace(`[ Rejection patterns detected: ${indicator.getPatternCount()}`);
       return indicator.patterns;
     }
     return [];
@@ -1072,6 +1118,46 @@ class IndicatorManager {
   }
 
   /**
+   * Handler para cuando se cargan las velas históricas iniciales
+   * Se llama UNA vez cuando el histórico está disponible
+   */
+  onHistoricalCandlesLoaded(allCandles) {
+    // ✅ Guardar referencia a las velas
+    this.allCandles = allCandles;
+
+    // ✅ Si DBT está habilitado y no ha hecho fetchData(), hacerlo ahora con las velas
+    const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    if (dbtIndicator && dbtIndicator.enabled && !dbtIndicator.hasRunFullAnalysis) {
+      log.info(`[${this.symbol}] 📊 Velas históricas cargadas (${allCandles.length} velas) - iniciando análisis DBT completo`);
+
+      // Llamar fetchData con las velas disponibles
+      dbtIndicator.fetchData(allCandles).then(() => {
+        log.debug(`[${this.symbol}] ✅ Análisis DBT inicial completado`);
+        if (this.requestRedraw) {
+          this.requestRedraw();
+        }
+      }).catch(err => {
+        log.error(`[${this.symbol}] ❌ Error en análisis DBT inicial:`, err);
+      });
+    }
+  }
+
+  /**
+   * Handler llamado cuando una vela se cierra (WebSocket confirm=true)
+   * Propaga el evento al indicador Double Top/Bottom para detección en tiempo real
+   */
+  onCandleClose(allCandles) {
+    // ✅ Guardar referencia a las velas para fetchData()
+    this.allCandles = allCandles;
+
+    const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    if (dbtIndicator && dbtIndicator.enabled) {
+      log.info(`[${this.symbol}] 🕐 Vela cerrada - notificando a DBT indicator`);
+      dbtIndicator.onCandleClose(allCandles);
+    }
+  }
+
+  /**
    * Obtiene todos los niveles de referencia de todas las fuentes disponibles
    * Clasificados en highs importantes, lows importantes, y pivots
    *
@@ -1119,8 +1205,8 @@ class IndicatorManager {
     // ✅ Solo loggear cuando hay cambio de cache (no en cada llamada)
     const isNewCalculation = this._referenceLevelsCacheKey !== cacheKey;
     if (isNewCalculation) {
-      console.log(`[${this.symbol}] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)`);
-      console.log(`[${this.symbol}] 📍 Current price:`, currentPrice);
+      log.trace(`[ getAllReferenceLevels() RECALCULATING (cache miss)`);
+      log.debug(`[${this.symbol}] 📍 Current price:`, currentPrice);
     }
 
     const importantHighs = [];
@@ -1346,7 +1432,7 @@ class IndicatorManager {
 
     if (sources.manualLevels && manualLevels && manualLevels.length > 0) {
       if (hasActiveManualZones && isNewCalculation) {
-        console.log(`[${this.symbol}]   ⏭️ Skipping ${manualLevels.length} manual horizontal lines (${activeManualZonesCount} manual zones active)`);
+        log.debug(`[${this.symbol}]   ⏭️ Skipping ${manualLevels.length} manual horizontal lines (${activeManualZonesCount} manual zones active)`);
       } else if (!hasActiveManualZones) {
         manualLevels.forEach(drawing => {
           if (drawing.type === 'horizontal' && drawing.price) {
@@ -1456,7 +1542,7 @@ class IndicatorManager {
 
     // Solo loggear cuando recalculamos (no en cache hits)
     if (isNewCalculation) {
-      console.log(`[${this.symbol}] 📊 getAllReferenceLevels() COMPLETE - Total levels: ${totalLevels} (${importantHighs.length} highs, ${importantLows.length} lows, ${pivots.length} pivots)`);
+      log.debug(`[${this.symbol}] 📊 getAllReferenceLevels() COMPLETE - Total levels: ${totalLevels} (${importantHighs.length} highs, ${importantLows.length} lows, ${pivots.length} pivots)`);
     }
 
     return result;

@@ -16,6 +16,7 @@ function getDefaultConfig() {
       maxCandlesBetween: 80,
 
       rejectionPatterns: {
+        requirePatterns: true,  // NUEVO: Checkbox maestro para validación de patrones
         hammer: true,
         shootingStar: true,
         bullishEngulfing: true,
@@ -110,6 +111,27 @@ function getDefaultConfig() {
     debugMode: false,
     alertsEnabled: false,  // Sistema de alertas automáticas
 
+    // Strategy (Entry/SL/TP)
+    strategy: {
+      enabled: false,
+      riskRewardRatio: 2.0,
+      lineLengthCandles: 5,
+      entryColor: '#03A9F4',
+      stopLossColor: '#FF1744',
+      takeProfitColor: '#00E676',
+      showLabels: true,
+      includeInAlert: true,
+      showBox: true,
+      slBoxColor: '#FF1744',  // Rojo para zona SL-Entry
+      tpBoxColor: '#00E676',  // Verde para zona Entry-TP
+      boxOpacity: 0.15,
+      slSwingLeftBars: 3,
+      slSwingRightBars: 3,
+      slSwingLookback: 50,
+      slBufferPercent: 20,
+      slMinPercent: 0.5
+    },
+
     // Sistema de alertas mejorado
     alertSettings: {
       // Modo de alerta
@@ -134,14 +156,14 @@ function getDefaultConfig() {
         }
       },
 
-      // Filtro VWAP (opcional)
-      vwapFilter: {
+      // Filtro VWAP Zone (detectar patrones en zonas extremas)
+      vwapZoneFilter: {
         enabled: false,
-        deviationTolerance: 0.5, // % de tolerancia
-        requiredDeviations: {
-          second: true,  // ±2σ
-          third: true    // ±3σ
-        }
+        mode: 'oneExtreme',     // 'oneExtreme' = al menos uno, 'bothExtremes' = ambos deben cumplir
+        minDeviation: 1,        // Desviación mínima requerida (1 = ±1σ, 2 = ±2σ, 3 = ±3σ)
+        marginPercent: 20,      // Margen como % de la DESVIACIÓN (0=estricto, 50=a mitad, 100=permisivo)
+        vwapType: 'rolling',    // Tipo de VWAP a usar: 'session', 'rolling'
+        rollingPeriod: 200      // Período para VWAP rolling (50-500)
       },
 
       // Visualización del círculo de detección
@@ -292,18 +314,15 @@ const DoubleTopBottomSettings = ({
         candlesPerExtreme: 2,
         priceMarginPercent: 10.0,  // Aumentado para micro movimientos
         minCandlesBetween: 1,       // Más permisivo
-        maxCandlesBetween: 150,
+        maxCandlesBetween: 400,     // Aumentado para cubrir ~6.5 horas
         maxBreakoutPercent: 50,     // Muy permisivo para 1 minuto
-        lookbackBars: 2,
-        minBarsBetween: 1,
-        patternTimeLimit: 2000,
         filters: {
-          ...config.filters,
           minConfidence: 70,
           minPatternDuration: 0.1,
           maxPatternDuration: 4,
           duplicatePriceTolerancePercent: 1.0,
-          duplicateTimeToleranceHours: 1
+          duplicateTimeToleranceHours: 1,
+          requireBothRejections: false  // Más permisivo para 1m
         }
       },
       '5m': {
@@ -313,16 +332,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 2,
         maxCandlesBetween: 100,
         maxBreakoutPercent: 25,
-        lookbackBars: 3,
-        minBarsBetween: 2,
-        patternTimeLimit: 1200,
         filters: {
-          ...config.filters,
           minConfidence: 65,
           minPatternDuration: 0.5,
           maxPatternDuration: 12,
           duplicatePriceTolerancePercent: 1.5,
-          duplicateTimeToleranceHours: 3
+          duplicateTimeToleranceHours: 3,
+          requireBothRejections: false
         }
       },
       '15m': {
@@ -332,16 +348,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 3,
         maxCandlesBetween: 80,
         maxBreakoutPercent: 15,
-        lookbackBars: 5,
-        minBarsBetween: 3,
-        patternTimeLimit: 800,
         filters: {
-          ...config.filters,
           minConfidence: 70,
           minPatternDuration: 1,
           maxPatternDuration: 24,
           duplicatePriceTolerancePercent: 2.0,
-          duplicateTimeToleranceHours: 6
+          duplicateTimeToleranceHours: 6,
+          requireBothRejections: false
         }
       },
       '60m': {
@@ -351,16 +364,13 @@ const DoubleTopBottomSettings = ({
         minCandlesBetween: 3,
         maxCandlesBetween: 80,
         maxBreakoutPercent: 10,
-        lookbackBars: 10,
-        minBarsBetween: 5,
-        patternTimeLimit: 500,
         filters: {
-          ...config.filters,
           minConfidence: 75,
           minPatternDuration: 3,
           maxPatternDuration: 168,
           duplicatePriceTolerancePercent: 2.5,
-          duplicateTimeToleranceHours: 24
+          duplicateTimeToleranceHours: 24,
+          requireBothRejections: true  // Más estricto para 1h
         }
       }
     };
@@ -379,7 +389,10 @@ const DoubleTopBottomSettings = ({
         maxCandlesBetween: preset.maxCandlesBetween,
         maxBreakoutPercent: preset.maxBreakoutPercent
       },
-      filters: preset.filters
+      filters: {
+        ...prev.filters,  // Mantener valores existentes
+        ...preset.filters  // Sobrescribir con valores del preset
+      }
     }));
 
     console.log(`[PRUEBA_DBT] ${symbol} - Applied ${timeframe} preset`);
@@ -507,13 +520,13 @@ const DoubleTopBottomSettings = ({
         <input
           type="range"
           min="10"
-          max="150"
+          max="500"
           value={config.doubleTopBottom.maxCandlesBetween}
           onChange={(e) => updateConfig('doubleTopBottom.maxCandlesBetween', parseInt(e.target.value))}
           style={styles.rangeInput}
         />
         <p style={styles.description}>
-          Maximum candles between extremes (10-150)
+          Maximum candles between extremes (10-500)
         </p>
       </div>
 
@@ -539,12 +552,31 @@ const DoubleTopBottomSettings = ({
 
       <h3>Rejection Patterns</h3>
 
-      <div className="checkbox-group">
+      {/* Checkbox maestro para desactivar validación de patrones */}
+      <div className="config-section" style={{ marginBottom: '15px', padding: '10px', border: '1px solid #555', borderRadius: '4px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+          <input
+            type="checkbox"
+            checked={config.doubleTopBottom.rejectionPatterns.requirePatterns}
+            onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.requirePatterns', e.target.checked)}
+          />
+          <span style={{ marginLeft: '8px' }}>
+            🔍 Require Rejection Pattern Validation
+          </span>
+        </label>
+        <p className="hint" style={{ marginTop: '5px', marginLeft: '24px', opacity: 0.8 }}>
+          When unchecked, patterns will be detected based only on price extremes without requiring specific candlestick patterns.
+          This may detect more patterns but with potentially lower reliability.
+        </p>
+      </div>
+
+      <div className="checkbox-group" style={{ opacity: config.doubleTopBottom.rejectionPatterns.requirePatterns ? 1 : 0.5 }}>
         <label>
           <input
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.hammer}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.hammer', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Hammer 🔨</span>
         </label>
@@ -554,6 +586,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.shootingStar}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.shootingStar', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Shooting Star ⭐</span>
         </label>
@@ -563,6 +596,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.bullishEngulfing}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.bullishEngulfing', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Bullish Engulfing 📈</span>
         </label>
@@ -572,6 +606,7 @@ const DoubleTopBottomSettings = ({
             type="checkbox"
             checked={config.doubleTopBottom.rejectionPatterns.bearishEngulfing}
             onChange={(e) => updateConfig('doubleTopBottom.rejectionPatterns.bearishEngulfing', e.target.checked)}
+            disabled={!config.doubleTopBottom.rejectionPatterns.requirePatterns}
           />
           <span>Bearish Engulfing 📉</span>
         </label>
@@ -1211,6 +1246,105 @@ const DoubleTopBottomSettings = ({
     </div>
   );
 
+  const renderRealTimeTab = () => (
+    <div style={styles.tabContent}>
+      <h3 style={styles.heading}>⚡ Real-time Detection</h3>
+
+      <div style={styles.settingGroup}>
+        <label style={styles.checkbox}>
+          <input
+            type="checkbox"
+            checked={config.realTimeDetection?.enabled || false}
+            onChange={(e) => updateConfig('realTimeDetection.enabled', e.target.checked)}
+          />
+          <span style={{ fontWeight: 'bold' }}>Enable Real-time Pattern Detection</span>
+        </label>
+        <p style={styles.description}>
+          When enabled, the indicator will automatically detect new Double Top/Bottom patterns
+          as candles close via WebSocket. Alerts will be sent immediately when patterns are found.
+        </p>
+      </div>
+
+      {config.realTimeDetection?.enabled && (
+        <>
+          <div style={styles.settingGroup}>
+            <label style={styles.label}>
+              <span>Lookback Candles (Analysis Window)</span>
+              <span style={styles.settingValue}>{config.realTimeDetection?.lookbackCandles || 100}</span>
+            </label>
+            <input
+              type="range"
+              min="50"
+              max="500"
+              step="10"
+              value={config.realTimeDetection?.lookbackCandles || 100}
+              onChange={(e) => updateConfig('realTimeDetection.lookbackCandles', parseInt(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <p style={styles.description}>
+              Number of recent candles to analyze when detecting patterns in real-time (50-500).
+              Lower values = faster performance, Higher values = more historical context.
+              <br />
+              <strong>Recommended:</strong> 100-200 candles for most timeframes
+            </p>
+          </div>
+
+          <div style={styles.settingGroup}>
+            <label style={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={config.realTimeDetection?.debugMode || false}
+                onChange={(e) => updateConfig('realTimeDetection.debugMode', e.target.checked)}
+              />
+              <span>Debug Mode (Console Logs)</span>
+            </label>
+            <p style={styles.description}>
+              Enable detailed console logging for real-time detection. Useful for troubleshooting
+              but may impact performance. Check browser console (F12) to see logs.
+            </p>
+          </div>
+
+          <div style={{
+            marginTop: '20px',
+            padding: '12px',
+            background: '#e3f2fd',
+            borderRadius: '4px',
+            border: '1px solid #90caf9'
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#1976d2' }}>
+              ℹ️ How Real-time Detection Works
+            </div>
+            <ul style={{ fontSize: '12px', color: '#555', margin: '0', paddingLeft: '20px' }}>
+              <li>Monitors WebSocket for candle close events</li>
+              <li>Analyzes only the last {config.realTimeDetection?.lookbackCandles || 100} candles for performance</li>
+              <li>Throttles detection to prevent excessive API calls (90% of interval duration)</li>
+              <li>Prevents duplicate alerts by tracking previously detected patterns</li>
+              <li>Sends alerts automatically if "Enable Automatic Alerts" is enabled below</li>
+            </ul>
+          </div>
+
+          <div style={{
+            marginTop: '12px',
+            padding: '12px',
+            background: '#fff3e0',
+            borderRadius: '4px',
+            border: '1px solid #ffb74d'
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#f57c00' }}>
+              ⚠️ Performance Considerations
+            </div>
+            <ul style={{ fontSize: '12px', color: '#555', margin: '0', paddingLeft: '20px' }}>
+              <li><strong>Lookback 50-100:</strong> Best for 1m-5m timeframes (fast detection)</li>
+              <li><strong>Lookback 100-200:</strong> Best for 15m-1h timeframes (balanced)</li>
+              <li><strong>Lookback 200-500:</strong> Best for 4h+ timeframes (maximum context)</li>
+              <li>Higher values may cause lag on candle close, especially with multiple symbols</li>
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   const renderAlertsTab = () => (
     <div style={styles.tabContent}>
       <h3 style={styles.heading}>🔔 Alert System Configuration</h3>
@@ -1366,62 +1500,149 @@ const DoubleTopBottomSettings = ({
         </div>
       </div>
 
-      {/* VWAP Filter */}
+      {/* VWAP Zone Filter */}
       <div style={styles.settingGroup}>
         <h4 style={{ marginTop: 0, marginBottom: '12px', fontSize: '14px', color: '#555' }}>
-          🎯 VWAP Deviation Filter (Optional)
+          📊 VWAP Zone Filter (Filtro por Zonas Extremas)
         </h4>
         <label style={styles.checkbox}>
           <input
             type="checkbox"
-            checked={config.alertSettings?.vwapFilter?.enabled || false}
-            onChange={(e) => updateConfig('alertSettings.vwapFilter.enabled', e.target.checked)}
+            checked={config.alertSettings?.vwapZoneFilter?.enabled || false}
+            onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.enabled', e.target.checked)}
           />
-          <span>Require VWAP deviation alignment</span>
+          <span>Activar filtro VWAP Zone</span>
         </label>
         <p style={styles.description}>
-          When enabled, only send alerts for patterns near VWAP deviations:
-          <br />• LONG patterns: near -2σ or -3σ (lower deviations)
-          <br />• SHORT patterns: near +2σ or +3σ (upper deviations)
-          <br />⚠️ Patterns will still be graphed, this only affects alerts
+          Filtra patrones por ubicación respecto a bandas VWAP:
+          <br />• <strong>Double Top</strong>: extremo(s) deben estar <strong>ARRIBA</strong> de desviación positiva (+σ)
+          <br />• <strong>Double Bottom</strong>: extremo(s) deben estar <strong>ABAJO</strong> de desviación negativa (-σ)
+          <br />⚠️ Este filtro <strong>descarta</strong> patrones que no cumplan (no solo alertas)
         </p>
 
-        {config.alertSettings?.vwapFilter?.enabled && (
+        {config.alertSettings?.vwapZoneFilter?.enabled && (
           <div style={{ marginTop: '12px', padding: '12px', background: '#e3f2fd', borderRadius: '4px' }}>
+
+            {/* Modo: uno o ambos extremos */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ ...styles.label, marginBottom: '4px' }}>
+                <span>Condición de extremos</span>
+              </label>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <label style={{ ...styles.checkbox, marginBottom: 0 }}>
+                  <input
+                    type="radio"
+                    name="vwapMode"
+                    checked={config.alertSettings?.vwapZoneFilter?.mode === 'oneExtreme'}
+                    onChange={() => updateConfig('alertSettings.vwapZoneFilter.mode', 'oneExtreme')}
+                  />
+                  <span>Al menos un extremo</span>
+                </label>
+                <label style={{ ...styles.checkbox, marginBottom: 0 }}>
+                  <input
+                    type="radio"
+                    name="vwapMode"
+                    checked={config.alertSettings?.vwapZoneFilter?.mode === 'bothExtremes'}
+                    onChange={() => updateConfig('alertSettings.vwapZoneFilter.mode', 'bothExtremes')}
+                  />
+                  <span>Ambos extremos</span>
+                </label>
+              </div>
+              <p style={{ ...styles.description, marginTop: '4px' }}>
+                {config.alertSettings?.vwapZoneFilter?.mode === 'bothExtremes'
+                  ? '⚡ Estricto: ambos extremos deben estar en zona extrema'
+                  : '✓ Flexible: basta con que uno esté en zona extrema'}
+              </p>
+            </div>
+
+            {/* Desviación mínima */}
             <label style={styles.label}>
-              <span>Deviation tolerance (%)</span>
+              <span>Desviación mínima requerida</span>
               <span style={styles.settingValue}>
-                {config.alertSettings?.vwapFilter?.deviationTolerance || 0.5}%
+                ±{config.alertSettings?.vwapZoneFilter?.minDeviation || 1}σ
               </span>
             </label>
             <input
               type="range"
-              min="0.1"
-              max="2.0"
-              step="0.1"
-              value={config.alertSettings?.vwapFilter?.deviationTolerance || 0.5}
-              onChange={(e) => updateConfig('alertSettings.vwapFilter.deviationTolerance', parseFloat(e.target.value))}
+              min="1"
+              max="3"
+              step="1"
+              value={config.alertSettings?.vwapZoneFilter?.minDeviation || 1}
+              onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.minDeviation', parseInt(e.target.value))}
               style={styles.rangeInput}
             />
-
-            <div style={{ marginTop: '12px' }}>
-              <label style={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={config.alertSettings?.vwapFilter?.requiredDeviations?.second || false}
-                  onChange={(e) => updateConfig('alertSettings.vwapFilter.requiredDeviations.second', e.target.checked)}
-                />
-                <span>2nd deviation (±2σ)</span>
-              </label>
-              <label style={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={config.alertSettings?.vwapFilter?.requiredDeviations?.third || false}
-                  onChange={(e) => updateConfig('alertSettings.vwapFilter.requiredDeviations.third', e.target.checked)}
-                />
-                <span>3rd deviation (±3σ)</span>
-              </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888', marginBottom: '12px' }}>
+              <span>±1σ (menos estricto)</span>
+              <span>±2σ</span>
+              <span>±3σ (más estricto)</span>
             </div>
+
+            {/* Margen de tolerancia */}
+            <label style={styles.label}>
+              <span>Margen de tolerancia</span>
+              <span style={styles.settingValue}>
+                {config.alertSettings?.vwapZoneFilter?.marginPercent || 20}% de desviación
+              </span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="5"
+              value={config.alertSettings?.vwapZoneFilter?.marginPercent || 20}
+              onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.marginPercent', parseFloat(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888' }}>
+              <span>0% (estricto)</span>
+              <span>50%</span>
+              <span>100% (permisivo)</span>
+            </div>
+            <p style={styles.description}>
+              % de la distancia VWAP→banda como tolerancia.
+              <br />• 0% = precio debe estar EN o MÁS ALLÁ de la banda
+              <br />• 50% = precio puede estar a mitad de camino entre VWAP y banda
+            </p>
+
+            {/* Tipo de VWAP */}
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ ...styles.label, marginBottom: '4px' }}>
+                <span>Tipo de VWAP</span>
+              </label>
+              <select
+                value={config.alertSettings?.vwapZoneFilter?.vwapType || 'session'}
+                onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.vwapType', e.target.value)}
+                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              >
+                <option value="session">Session (reset diario)</option>
+                <option value="rolling">Rolling (período móvil)</option>
+              </select>
+            </div>
+
+            {config.alertSettings?.vwapZoneFilter?.vwapType === 'rolling' && (
+              <div style={{ marginTop: '12px' }}>
+                <label style={styles.label}>
+                  <span>Período rolling</span>
+                  <span style={styles.settingValue}>
+                    {config.alertSettings?.vwapZoneFilter?.rollingPeriod || 200} velas
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min="50"
+                  max="500"
+                  step="10"
+                  value={config.alertSettings?.vwapZoneFilter?.rollingPeriod || 200}
+                  onChange={(e) => updateConfig('alertSettings.vwapZoneFilter.rollingPeriod', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#888' }}>
+                  <span>50</span>
+                  <span>200</span>
+                  <span>500</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -1475,6 +1696,287 @@ const DoubleTopBottomSettings = ({
           </div>
         )}
       </div>
+    </div>
+  );
+
+  const renderStrategyTab = () => (
+    <div style={styles.tabContent}>
+      <h3 style={styles.heading}>
+        📊 Strategy (Entry / SL / TP)
+      </h3>
+
+      {/* Enable Strategy */}
+      <div style={styles.settingGroup}>
+        <label style={styles.checkbox}>
+          <input
+            type="checkbox"
+            checked={config.strategy?.enabled || false}
+            onChange={(e) => updateConfig('strategy.enabled', e.target.checked)}
+          />
+          <span style={{ fontWeight: 'bold', color: '#03A9F4' }}>Enable Strategy Lines</span>
+        </label>
+        <p style={styles.description}>
+          Shows Entry, Stop Loss and Take Profit lines on detected patterns
+        </p>
+      </div>
+
+      {config.strategy?.enabled && (
+        <>
+          {/* Risk:Reward Ratio */}
+          <div style={styles.settingGroup}>
+            <label style={styles.label}>
+              <span>Risk:Reward Ratio</span>
+              <span style={styles.settingValue}>{config.strategy?.riskRewardRatio || 2.0}x</span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="0.5"
+              value={config.strategy?.riskRewardRatio || 2.0}
+              onChange={(e) => updateConfig('strategy.riskRewardRatio', parseFloat(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <p style={styles.description}>
+              Take Profit = Stop Loss distance × this ratio
+            </p>
+          </div>
+
+          {/* Include in Alert */}
+          <div style={styles.settingGroup}>
+            <label style={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={config.strategy?.includeInAlert !== false}
+                onChange={(e) => updateConfig('strategy.includeInAlert', e.target.checked)}
+              />
+              <span>Include Entry/SL/TP in alerts (port 5000)</span>
+            </label>
+          </div>
+
+          {/* Line Colors */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#f5f5f5',
+            borderRadius: '8px',
+            border: '1px solid #ddd'
+          }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#666' }}>
+              🎨 Line Colors
+            </h4>
+
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Entry:
+                <input
+                  type="color"
+                  value={config.strategy?.entryColor || '#03A9F4'}
+                  onChange={(e) => updateConfig('strategy.entryColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Stop Loss:
+                <input
+                  type="color"
+                  value={config.strategy?.stopLossColor || '#FF1744'}
+                  onChange={(e) => updateConfig('strategy.stopLossColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Take Profit:
+                <input
+                  type="color"
+                  value={config.strategy?.takeProfitColor || '#00E676'}
+                  onChange={(e) => updateConfig('strategy.takeProfitColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+            </div>
+
+            {/* Box settings */}
+            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ccc' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <label style={styles.checkbox}>
+                  <input
+                    type="checkbox"
+                    checked={config.strategy?.showBox !== false}
+                    onChange={(e) => updateConfig('strategy.showBox', e.target.checked)}
+                  />
+                  <span>Show connecting box</span>
+                </label>
+
+                {config.strategy?.showBox !== false && (
+                  <>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#FF6B6B' }}>SL Box:</span>
+                      <input
+                        type="color"
+                        value={config.strategy?.slBoxColor || '#FF1744'}
+                        onChange={(e) => updateConfig('strategy.slBoxColor', e.target.value)}
+                        style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                      />
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#4CAF50' }}>TP Box:</span>
+                      <input
+                        type="color"
+                        value={config.strategy?.tpBoxColor || '#00E676'}
+                        onChange={(e) => updateConfig('strategy.tpBoxColor', e.target.value)}
+                        style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                      />
+                    </label>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', color: '#666' }}>Opacity:</span>
+                      <input
+                        type="range"
+                        min="0.05"
+                        max="0.4"
+                        step="0.05"
+                        value={config.strategy?.boxOpacity || 0.15}
+                        onChange={(e) => updateConfig('strategy.boxOpacity', parseFloat(e.target.value))}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666' }}>{Math.round((config.strategy?.boxOpacity || 0.15) * 100)}%</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Stop Loss Swing Detection Parameters */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#f5f5f5',
+            borderRadius: '8px',
+            border: '1px solid #ddd'
+          }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#666' }}>
+              🎯 Stop Loss - Swing Detection
+            </h4>
+            <p style={{ ...styles.description, marginBottom: '12px' }}>
+              Parameters to find the previous swing high/low for Stop Loss placement
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span>Left Bars</span>
+                  <span style={styles.settingValue}>{config.strategy?.slSwingLeftBars || 3}</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={config.strategy?.slSwingLeftBars || 3}
+                  onChange={(e) => updateConfig('strategy.slSwingLeftBars', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span>Right Bars</span>
+                  <span style={styles.settingValue}>{config.strategy?.slSwingRightBars || 3}</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={config.strategy?.slSwingRightBars || 3}
+                  onChange={(e) => updateConfig('strategy.slSwingRightBars', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+            </div>
+
+            <div style={{ ...styles.settingGroup, marginTop: '12px' }}>
+              <label style={styles.label}>
+                <span>Lookback Candles</span>
+                <span style={styles.settingValue}>{config.strategy?.slSwingLookback || 50}</span>
+              </label>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                step="5"
+                value={config.strategy?.slSwingLookback || 50}
+                onChange={(e) => updateConfig('strategy.slSwingLookback', parseInt(e.target.value))}
+                style={styles.rangeInput}
+              />
+              <p style={styles.description}>
+                How far back to search for a swing point
+              </p>
+            </div>
+
+            {/* Fallback Buffer */}
+            <div style={{
+              marginTop: '16px',
+              padding: '10px',
+              background: '#fff3e0',
+              borderRadius: '6px',
+              border: '1px solid #ffb74d'
+            }}>
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span style={{ color: '#F57C00' }}>⚠️ Fallback Buffer</span>
+                  <span style={{ ...styles.settingValue, color: '#F57C00' }}>{config.strategy?.slBufferPercent || 20}%</span>
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  step="5"
+                  value={config.strategy?.slBufferPercent || 20}
+                  onChange={(e) => updateConfig('strategy.slBufferPercent', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+                <p style={styles.description}>
+                  When no swing is found, SL = pattern low/high + this % extra safety margin
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Minimum SL % */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#e8f5e9',
+            borderRadius: '8px',
+            border: '1px solid #81c784'
+          }}>
+            <div style={styles.settingGroup}>
+              <label style={styles.label}>
+                <span style={{ color: '#388E3C' }}>🔒 Minimum SL</span>
+                <span style={{ ...styles.settingValue, color: '#388E3C' }}>{config.strategy?.slMinPercent || 0.5}%</span>
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="2"
+                step="0.1"
+                value={config.strategy?.slMinPercent || 0.5}
+                onChange={(e) => updateConfig('strategy.slMinPercent', parseFloat(e.target.value))}
+                style={styles.rangeInput}
+              />
+              <p style={styles.description}>
+                If calculated SL is smaller than this %, force it to this minimum (for exchange viability)
+              </p>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -1532,6 +2034,22 @@ const DoubleTopBottomSettings = ({
             }}
           >
             5 Minutes
+          </button>
+          <button
+            onClick={() => applyTimeframePreset('15m')}
+            style={{
+              padding: '8px 16px',
+              background: '#6C5CE7',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            15 Minutes
           </button>
           <button
             onClick={() => applyTimeframePreset('60m')}
@@ -1643,6 +2161,21 @@ const DoubleTopBottomSettings = ({
           <button
             style={{
               padding: '6px 12px',
+              background: activeTab === 'realtime' ? '#4CAF50' : '#f0f0f0',
+              color: activeTab === 'realtime' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}
+            onClick={() => setActiveTab('realtime')}
+          >
+            ⚡ Real-time
+          </button>
+          <button
+            style={{
+              padding: '6px 12px',
               background: activeTab === 'alerts' ? '#4CAF50' : '#f0f0f0',
               color: activeTab === 'alerts' ? 'white' : '#333',
               border: 'none',
@@ -1654,6 +2187,21 @@ const DoubleTopBottomSettings = ({
             onClick={() => setActiveTab('alerts')}
           >
             🔔 Alerts
+          </button>
+          <button
+            style={{
+              padding: '6px 12px',
+              background: activeTab === 'strategy' ? '#4CAF50' : '#f0f0f0',
+              color: activeTab === 'strategy' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}
+            onClick={() => setActiveTab('strategy')}
+          >
+            📊 Strategy
           </button>
         </div>
       </div>
@@ -1668,7 +2216,9 @@ const DoubleTopBottomSettings = ({
         {activeTab === 'momentum' && renderMomentumTab()}
         {activeTab === 'filters' && renderFiltersTab()}
         {activeTab === 'visualization' && renderVisualizationTab()}
+        {activeTab === 'realtime' && renderRealTimeTab()}
         {activeTab === 'alerts' && renderAlertsTab()}
+        {activeTab === 'strategy' && renderStrategyTab()}
       </div>
 
       <div style={{

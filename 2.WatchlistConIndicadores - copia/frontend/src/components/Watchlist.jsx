@@ -14,14 +14,29 @@ import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
 import IndicatorPreloader from "../utils/IndicatorPreloader";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
+import Logger from '../utils/Logger.js';
+
+// Logger instance
+const log = new Logger('Watchlist', { level: 'info' });
 
 const symbols = [
   "BTCUSDT", "ETHUSDT"
 ];
 
+// OPTIMIZADO: Días por defecto por timeframe (para reducir carga)
+const DEFAULT_DAYS_BY_INTERVAL = {
+  "1": 1,     // 1 minuto → 1 día (1,440 velas)
+  "5": 5,     // 5 minutos → 5 días (1,440 velas)
+  "15": 15,   // 15 minutos → 15 días (1,440 velas)
+  "60": 90,   // 1 hora → 90 días (2,160 velas)
+  "240": 300, // 4 horas → 300 días (1,800 velas)
+  "D": 730,   // 1 día → 730 días (730 velas)
+  "W": 730    // 1 semana → 730 días (~104 velas)
+};
+
 // CORREGIDO: Límites máximos de días por timeframe (deben coincidir con el backend)
 const MAX_DAYS_BY_INTERVAL = {
-  "1": 5,  // Aumentado de 1 a 5 días para mejor detección de patrones DTB
+  "1": 5,
   "5": 30,
   "15": 90,
   "30": 150,
@@ -33,7 +48,7 @@ const MAX_DAYS_BY_INTERVAL = {
 
 // CORREGIDO: Opciones de días permitidas por timeframe
 const DAYS_OPTIONS_BY_INTERVAL = {
-  "1": [1, 2, 3, 4, 5],  // Aumentado opciones para timeframe de 1 minuto
+  "1": [1, 2, 3, 4, 5],
   "5": [1, 2, 5, 7, 10, 15, 20, 30],
   "15": [1, 2, 5, 7, 10, 15, 30, 60, 90],
   "30": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 150],
@@ -49,16 +64,17 @@ const Watchlist = () => {
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
-    "Volume Profile": false,
+    "Volume Profile": false,  // Desactivado por defecto (pesado)
     "Open Interest": false,
-    "VWAP": false,
+    "VWAP": true,            // Activo (esencial para estrategia)
     "Fibonacci": false,
     "Continuation Patterns": false,
-    "Double Top/Bottom": true
+    "Double Top/Bottom": true,  // Activo (esencial para estrategia)
+    "Support & Resistance": false  // S/R indicator (off by default)
   });
 
-  // 🚀 Estados para precarga de indicadores
-  const [isPreloading, setIsPreloading] = useState(true);
+  // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
+  const [isPreloading, setIsPreloading] = useState(false);
   const [preloadProgress, setPreloadProgress] = useState({ current: 0, total: 0 });
 
   const [vpConfig, setVpConfig] = useState({
@@ -116,30 +132,36 @@ const Watchlist = () => {
   const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
   const [isDTBReloading, setIsDTBReloading] = useState(false); // Estado de carga
 
-  // CORREGIDO: Ajustar días al cambiar timeframe solo si excede el máximo
+  // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
   useEffect(() => {
+    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[interval];
     const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
     const currentDays = parseInt(days);
-    
-    if (currentDays > maxDays) {
-      // Si los días actuales exceden el máximo, ajustar al máximo permitido
+
+    // Siempre usar el valor por defecto optimizado al cambiar timeframe
+    if (defaultDays) {
+      setDays(defaultDays.toString());
+      log.debug(`[Watchlist] Días ajustados a ${defaultDays} (valor optimizado para ${interval})`);
+    } else if (currentDays > maxDays) {
+      // Fallback: Si no hay default, usar el máximo si se excede
       setDays(maxDays.toString());
-      console.log(`[Watchlist] Días ajustados de ${currentDays} a ${maxDays} por límite de timeframe ${interval}`);
+      log.debug(`[Watchlist] Días ajustados a ${maxDays} (límite máximo para ${interval})`);
     }
-    // IMPORTANTE: Si currentDays <= maxDays, NO ajustar (mantener la selección del usuario)
-  }, [interval]); // Removido 'days' de las dependencias para evitar loops
+  }, [interval]); // Solo se ejecuta cuando cambia el interval
 
   useEffect(() => {
     wsManager.changeInterval(interval);
   }, [interval]);
 
-  // 🚀 Precarga de indicadores al montar (NO BLOQUEANTE)
+  // 🚀 Precarga de indicadores DESHABILITADA para optimización
   useEffect(() => {
-    // Precarga en background, NO bloquea renderizado de charts
+    // OPTIMIZACIÓN: Precarga deshabilitada para evitar carga inicial pesada
+    // Si necesitas habilitarla, descomenta el código siguiente:
+    /*
     setIsPreloading(true);
 
     const preload = async () => {
-      console.log('🚀 Iniciando precarga de indicadores en background...');
+      log.debug('🚀 Iniciando precarga de indicadores en background...');
       const startTime = Date.now();
 
       // Limpiar cache expirado primero
@@ -156,7 +178,7 @@ const Watchlist = () => {
           // Ocultar banner cuando llegue al 100%
           if (current === total) {
             const duration = (Date.now() - startTime) / 1000;
-            console.log(`✅ Precarga completada en ${duration}s`);
+            log.debug(`✅ Precarga completada en ${duration}s`);
             setTimeout(() => setIsPreloading(false), 500); // Pequeño delay para mostrar 100%
           }
         }
@@ -172,6 +194,7 @@ const Watchlist = () => {
     };
 
     preload();
+    */
   }, [interval, days]); // Re-precargar si cambian timeframe o días
 
   const toggleIndicator = (indicatorName) => {
@@ -305,17 +328,17 @@ const Watchlist = () => {
         const vwapIndicator = manager.getVWAPIndicator();
         if (vwapIndicator) {
           vwapIndicator.updateConfig(config);
-          console.log(`[Watchlist] Updated VWAP config for ${selectedSymbolForVWAP}`);
+          log.debug(`[Watchlist] Updated VWAP config for ${selectedSymbolForVWAP}`);
           PresetManager.updateSymbolOverride(selectedSymbolForVWAP, "VWAP", config);
-          console.log(`[Watchlist] 🔧 VWAP override guardado para ${selectedSymbolForVWAP}`);
+          log.debug(`[Watchlist] 🔧 VWAP override guardado para ${selectedSymbolForVWAP}`);
         }
       }
     } else {
       // Modo global: actualizar TODOS los símbolos que NO tengan override
-      console.log(`[Watchlist] 🌐 Aplicando preset global de VWAP a todos los símbolos sin override`);
+      log.debug(`[Watchlist] 🌐 Aplicando preset global de VWAP a todos los símbolos sin override`);
 
       const registeredSymbols = IndicatorManagerRegistry.getAllSymbols();
-      console.log(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`);
+      log.debug(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`);
 
       symbols.forEach(symbol => {
         const hasOverride = PresetManager.hasOverride(symbol, "VWAP");
@@ -325,13 +348,13 @@ const Watchlist = () => {
             const vwapIndicator = manager.getVWAPIndicator();
             if (vwapIndicator) {
               vwapIndicator.updateConfig(config);
-              console.log(`[Watchlist] ✅ ${symbol}: VWAP actualizado con preset global`);
+              log.debug(`[Watchlist] ✅ ${symbol}: VWAP actualizado con preset global`);
             }
           } else {
-            console.log(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en registro`);
+            log.debug(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en registro`);
           }
         } else {
-          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+          log.debug(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
         }
       });
     }
@@ -345,14 +368,14 @@ const Watchlist = () => {
         const fibIndicator = manager.getFibonacciIndicator();
         if (fibIndicator) {
           fibIndicator.updateConfig(config);
-          console.log(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
+          log.debug(`[Watchlist] Updated Fibonacci config for ${selectedSymbolForFib}`);
           PresetManager.updateSymbolOverride(selectedSymbolForFib, "Fibonacci", config);
-          console.log(`[Watchlist] 🔧 Fibonacci override guardado para ${selectedSymbolForFib}`);
+          log.debug(`[Watchlist] 🔧 Fibonacci override guardado para ${selectedSymbolForFib}`);
         }
       }
     } else {
       // Modo global: actualizar TODOS los símbolos que NO tengan override
-      console.log(`[Watchlist] 🌐 Aplicando preset global de Fibonacci a todos los símbolos sin override`);
+      log.debug(`[Watchlist] 🌐 Aplicando preset global de Fibonacci a todos los símbolos sin override`);
 
       symbols.forEach(symbol => {
         const hasOverride = PresetManager.hasOverride(symbol, "Fibonacci");
@@ -362,11 +385,11 @@ const Watchlist = () => {
             const fibIndicator = manager.getFibonacciIndicator();
             if (fibIndicator) {
               fibIndicator.updateConfig(config);
-              console.log(`[Watchlist] ✅ ${symbol}: Fibonacci actualizado con preset global`);
+              log.debug(`[Watchlist] ✅ ${symbol}: Fibonacci actualizado con preset global`);
             }
           }
         } else {
-          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+          log.debug(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
         }
       });
     }
@@ -381,15 +404,15 @@ const Watchlist = () => {
         if (cpIndicator) {
           cpIndicator.updateConfig(config);
           PresetManager.updateSymbolOverride(selectedSymbolForCP, "Continuation Patterns", config);
-          console.log(`[Watchlist] 🔧 Continuation Patterns override guardado para ${selectedSymbolForCP}`);
+          log.debug(`[Watchlist] 🔧 Continuation Patterns override guardado para ${selectedSymbolForCP}`);
         }
       }
     } else {
       // Modo global: actualizar TODOS los símbolos que NO tengan override
-      console.log(`[Watchlist] 🌐 Aplicando preset global de Continuation Patterns a todos los símbolos sin override`);
+      log.debug(`[Watchlist] 🌐 Aplicando preset global de Continuation Patterns a todos los símbolos sin override`);
 
       const registeredSymbols = IndicatorManagerRegistry.getAllSymbols();
-      console.log(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`, registeredSymbols);
+      log.debug(`[Watchlist] 📋 Símbolos registrados: ${registeredSymbols.length}/${symbols.length}`, registeredSymbols);
 
       symbols.forEach(symbol => {
         const hasOverride = PresetManager.hasOverride(symbol, "Continuation Patterns");
@@ -399,15 +422,15 @@ const Watchlist = () => {
             const cpIndicator = manager.getContinuationPatternIndicator();
             if (cpIndicator) {
               cpIndicator.updateConfig(config);
-              console.log(`[Watchlist] ✅ ${symbol}: Continuation Patterns actualizado con preset global`);
+              log.debug(`[Watchlist] ✅ ${symbol}: Continuation Patterns actualizado con preset global`);
             } else {
-              console.log(`[Watchlist] ⚠️ ${symbol}: getContinuationPatternIndicator() devolvió null`);
+              log.debug(`[Watchlist] ⚠️ ${symbol}: getContinuationPatternIndicator() devolvió null`);
             }
           } else {
-            console.log(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en Registry`);
+            log.debug(`[Watchlist] ⚠️ ${symbol}: Manager no encontrado en Registry`);
           }
         } else {
-          console.log(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
+          log.debug(`[Watchlist] ⏭️ ${symbol}: Tiene override, no se actualiza`);
         }
       });
     }
@@ -422,25 +445,26 @@ const Watchlist = () => {
       if (dtbIndicator) {
         // Actualizar config inmediatamente (localStorage)
         dtbIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated Double Top/Bottom config for ${selectedSymbolForDTB}`);
+        log.debug(`[Watchlist] Updated Double Top/Bottom config for ${selectedSymbolForDTB}`);
 
         // Recargar patrones con la nueva configuración INMEDIATAMENTE (solo una vez)
         if (dtbIndicator.enabled) {
           setIsDTBReloading(true); // Mostrar indicador de carga
           const startTime = Date.now();
-          console.log(`[Watchlist] 🔄 Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
+          log.debug(`[Watchlist] 🔄 Reloading Double Top/Bottom patterns for ${selectedSymbolForDTB}...`);
 
           try {
-            await dtbIndicator.fetchData();
+            // ✅ Pasar las velas del manager si están disponibles
+            await dtbIndicator.fetchData(manager.allCandles);
             const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-            console.log(`[Watchlist] ✅ Patterns reloaded for ${selectedSymbolForDTB} in ${duration}s`);
+            log.debug(`[Watchlist] ✅ Patterns reloaded for ${selectedSymbolForDTB} in ${duration}s`);
 
             // Forzar redibujado del chart
             if (manager.requestRedraw) {
               manager.requestRedraw();
             }
           } catch (error) {
-            console.error(`[Watchlist] ❌ Error reloading patterns:`, error);
+            log.error(`[Watchlist] ❌ Error reloading patterns:`, error);
           } finally {
             setIsDTBReloading(false); // Ocultar indicador de carga
           }
@@ -460,12 +484,12 @@ const Watchlist = () => {
     const manager = indicatorManagers[selectedSymbolForRP]?.manager;
     if (manager) {
       manager.updateRejectionPatternConfig(config);
-      console.log(`[Watchlist] Updated rejection pattern config for ${selectedSymbolForRP}`);
+      log.debug(`[Watchlist] Updated rejection pattern config for ${selectedSymbolForRP}`);
 
       // ✅ Guardar como override del símbolo
       if (saveAsOverride) {
         PresetManager.updateSymbolOverride(selectedSymbolForRP, "Rejection Patterns", config);
-        console.log(`[Watchlist] 🔧 Rejection Patterns override guardado para ${selectedSymbolForRP}`);
+        log.debug(`[Watchlist] 🔧 Rejection Patterns override guardado para ${selectedSymbolForRP}`);
       }
     }
   };
@@ -477,12 +501,12 @@ const Watchlist = () => {
       const srIndicator = manager.getSupportResistanceIndicator();
       if (srIndicator) {
         srIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated Support & Resistance config for ${selectedSymbolForSR}`);
+        log.debug(`[Watchlist] Updated Support & Resistance config for ${selectedSymbolForSR}`);
 
         // ✅ Guardar como override del símbolo
         if (saveAsOverride) {
           PresetManager.updateSymbolOverride(selectedSymbolForSR, "Support & Resistance", config);
-          console.log(`[Watchlist] 🔧 Support & Resistance override guardado para ${selectedSymbolForSR}`);
+          log.debug(`[Watchlist] 🔧 Support & Resistance override guardado para ${selectedSymbolForSR}`);
         }
       }
     }
@@ -495,12 +519,12 @@ const Watchlist = () => {
       const rdIndicator = manager.getRangeDetector();
       if (rdIndicator) {
         rdIndicator.updateConfig(config);
-        console.log(`[Watchlist] Updated Range Detection config for ${selectedSymbolForRD}`);
+        log.debug(`[Watchlist] Updated Range Detection config for ${selectedSymbolForRD}`);
 
         // ✅ Guardar como override del símbolo
         if (saveAsOverride) {
           PresetManager.updateSymbolOverride(selectedSymbolForRD, "Range Detection", config);
-          console.log(`[Watchlist] 🔧 Range Detection override guardado para ${selectedSymbolForRD}`);
+          log.debug(`[Watchlist] 🔧 Range Detection override guardado para ${selectedSymbolForRD}`);
         }
       }
     }
@@ -508,13 +532,13 @@ const Watchlist = () => {
 
   // 🧪 NUEVO: Handler para enviar alerta de prueba
   const handleTestAlert = async () => {
-    console.log('\n' + '='.repeat(80));
-    console.log('[TEST ALERT] 🧪 Initiating test alert from frontend...');
-    console.log('='.repeat(80));
-    console.log('[TEST ALERT] Target: http://localhost:8000/api/test-alert');
+    log.debug('\n' + '='.repeat(80));
+    log.debug('[TEST ALERT] 🧪 Initiating test alert from frontend...');
+    log.debug('='.repeat(80));
+    log.debug('[TEST ALERT] Target: http://localhost:8000/api/test-alert');
 
     try {
-      console.log('[TEST ALERT] Sending POST request...');
+      log.debug('[TEST ALERT] Sending POST request...');
       const response = await fetch('http://localhost:8000/api/test-alert', {
         method: 'POST',
         headers: {
@@ -522,14 +546,14 @@ const Watchlist = () => {
         }
       });
 
-      console.log(`[TEST ALERT] Response status: ${response.status}`);
+      log.debug(`[TEST ALERT] Response status: ${response.status}`);
       const result = await response.json();
-      console.log('[TEST ALERT] Response body:', result);
+      log.debug('[TEST ALERT] Response body:', result);
 
       if (result.success) {
         const payload = result.payload;
-        console.log('[TEST ALERT] ✅ Test alert sent successfully!');
-        console.log('[TEST ALERT] Payload sent to bot:', payload);
+        log.debug('[TEST ALERT] ✅ Test alert sent successfully!');
+        log.debug('[TEST ALERT] Payload sent to bot:', payload);
 
         alert(`✅ Alerta de prueba enviada al bot!\n\n` +
               `Endpoint: ${result.endpoint}\n\n` +
@@ -543,40 +567,40 @@ const Watchlist = () => {
               `${result.note || ''}\n\n` +
               `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000 para confirmar que la recibió.`);
       } else {
-        console.error('[TEST ALERT] ❌ Failed:', result.message || result.error);
+        log.error('[TEST ALERT] ❌ Failed:', result.message || result.error);
 
         alert(`❌ Error al enviar alerta de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
               `Endpoint: ${result.endpoint || 'http://localhost:5000/api/watchlist-alert'}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {
-      console.error('[TEST ALERT] ❌ Exception:', error);
+      log.error('[TEST ALERT] ❌ Exception:', error);
 
       alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
             `Verifica que:\n` +
             `1. El backend esté corriendo en puerto 8000\n` +
             `2. Tu bot esté corriendo en puerto 5000`);
-      console.error('Error sending test alert:', error);
+      log.error('Error sending test alert:', error);
     }
 
-    console.log('='.repeat(80) + '\n');
+    log.debug('='.repeat(80) + '\n');
   };
 
   // 🚀 NUEVO: Handler para enviar múltiples alertas de prueba
   const handleTestAlertBatch = async () => {
     if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto tomará ~20 segundos (2s delay entre cada alerta).')) {
-      console.log('[BATCH TEST] User cancelled batch test');
+      log.debug('[BATCH TEST] User cancelled batch test');
       return;
     }
 
-    console.log('\n' + '='.repeat(80));
-    console.log('[BATCH TEST] 🚀 Starting batch test (10 alerts)...');
-    console.log('='.repeat(80));
-    console.log('[BATCH TEST] Target: http://localhost:8000/api/test-alert-batch');
-    console.log('[BATCH TEST] Expected duration: ~20 seconds');
+    log.debug('\n' + '='.repeat(80));
+    log.debug('[BATCH TEST] 🚀 Starting batch test (10 alerts)...');
+    log.debug('='.repeat(80));
+    log.debug('[BATCH TEST] Target: http://localhost:8000/api/test-alert-batch');
+    log.debug('[BATCH TEST] Expected duration: ~20 seconds');
 
     try {
-      console.log('[BATCH TEST] Sending POST request...');
+      log.debug('[BATCH TEST] Sending POST request...');
       const startTime = Date.now();
 
       const response = await fetch('http://localhost:8000/api/test-alert-batch', {
@@ -587,15 +611,15 @@ const Watchlist = () => {
       });
 
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-      console.log(`[BATCH TEST] Response received after ${elapsed}s`);
-      console.log(`[BATCH TEST] Response status: ${response.status}`);
+      log.debug(`[BATCH TEST] Response received after ${elapsed}s`);
+      log.debug(`[BATCH TEST] Response status: ${response.status}`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('[BATCH TEST] Response body:', result);
+      log.debug('[BATCH TEST] Response body:', result);
 
       if (result.success || result.total_sent > 0) {
         const successful = result.total_sent;
@@ -627,33 +651,33 @@ const Watchlist = () => {
 
         message += `Revisa los logs de tu bot en puerto 5000 o el dashboard en http://localhost:3000.`;
 
-        console.log(`[BATCH TEST] ✅ Batch complete: ${successful}/${total} successful`);
-        console.log(`[BATCH TEST] Successful alerts:`, result.results.filter(r => r.success));
+        log.debug(`[BATCH TEST] ✅ Batch complete: ${successful}/${total} successful`);
+        log.debug(`[BATCH TEST] Successful alerts:`, result.results.filter(r => r.success));
         if (failed) {
-          console.log(`[BATCH TEST] ❌ Failed alerts:`, result.results.filter(r => !r.success));
+          log.debug(`[BATCH TEST] ❌ Failed alerts:`, result.results.filter(r => !r.success));
         }
-        console.log('='.repeat(80) + '\n');
+        log.debug('='.repeat(80) + '\n');
 
         alert(message);
       } else {
-        console.error(`[BATCH TEST] ❌ Batch failed: ${result.message || result.error}`);
-        console.error('[BATCH TEST] Results:', result);
-        console.log('='.repeat(80) + '\n');
+        log.error(`[BATCH TEST] ❌ Batch failed: ${result.message || result.error}`);
+        log.error('[BATCH TEST] Results:', result);
+        log.debug('='.repeat(80) + '\n');
 
         alert(`❌ Error al enviar alertas de prueba:\n\n${result.message || result.error || 'Error desconocido'}\n\n` +
               `Total enviado: ${result.total_sent || 0}/${result.total_attempted || 0}\n\n` +
               `Asegúrate de que tu bot esté corriendo en el puerto 5000.`);
       }
     } catch (error) {
-      console.error('[BATCH TEST] ❌ Exception:', error);
-      console.log('='.repeat(80) + '\n');
+      log.error('[BATCH TEST] ❌ Exception:', error);
+      log.debug('='.repeat(80) + '\n');
 
       alert(`❌ Error de conexión:\n\n${error.message}\n\n` +
             `Verifica que:\n` +
             `1. El backend esté corriendo en puerto 8000\n` +
             `2. Tu bot esté corriendo en puerto 5000\n` +
             `3. El backend haya terminado de procesar (toma ~20s)`);
-      console.error('Error sending batch test alert:', error);
+      log.error('Error sending batch test alert:', error);
     }
   };
 
@@ -834,6 +858,15 @@ const Watchlist = () => {
                 onChange={() => toggleIndicator("Double Top/Bottom")}
               />
               Double Top/Bottom
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Support & Resistance"]}
+                onChange={() => toggleIndicator("Support & Resistance")}
+              />
+              Support & Resistance
             </label>
 
             {/* 🧪 Test Alert Buttons */}

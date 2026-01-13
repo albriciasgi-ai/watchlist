@@ -1,1365 +1,327 @@
 react-dom_client.js?v=2b7f99a5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
- [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
- [useProximityAlerts] Enabled alerts: 0
- [useProximityAlerts] No enabled alerts, stopping polling
- [414] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
- [415] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
- [BTCUSDT] 🔧 Creando nuevo IndicatorManager
- [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
- [SupportResistanceIndicator] VERSION 1.0 LOADED
- [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
- [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
- [BTCUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
- [BTCUSDT] BandWidth thresholds for 60: {squeeze: 2.5, consolidation: 4.5, normal: 7}
- [BTCUSDT] 🎯 LevelSourceManager inicializado
- [BTCUSDT] Pattern show mode: validated
- [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
- [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
- [BTCUSDT] ⚪ Range Detection deshabilitado por default
- [426] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
- [427] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
- [428] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
- [ETHUSDT] 🔧 Creando nuevo IndicatorManager
- [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
- [SupportResistanceIndicator] VERSION 1.0 LOADED
- [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
- [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
- [ETHUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
- [ETHUSDT] BandWidth thresholds for 60: {squeeze: 2.5, consolidation: 4.5, normal: 7}
- [ETHUSDT] 🎯 LevelSourceManager inicializado
- [ETHUSDT] Pattern show mode: validated
- [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
- [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
- [ETHUSDT] ⚪ Range Detection deshabilitado por default
- [433] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
- 🚀 Iniciando precarga de indicadores en background...
- [Preloader] 🚀 Iniciando precarga para 2 símbolos
- [438] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
- [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
- [BTCUSDT] 🧹 IndicatorManager destruido
- [439] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
- [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
- [ETHUSDT] 🧹 IndicatorManager destruido
- [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
- [useProximityAlerts] Enabled alerts: 0
- [useProximityAlerts] No enabled alerts, stopping polling
- [442] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
- [442] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
- [BTCUSDT] 🔧 Creando nuevo IndicatorManager
- [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
- [SupportResistanceIndicator] VERSION 1.0 LOADED
- [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
- [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
- [BTCUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
- [BTCUSDT] BandWidth thresholds for 60: {squeeze: 2.5, consolidation: 4.5, normal: 7}
- [BTCUSDT] 🎯 LevelSourceManager inicializado
- [BTCUSDT] Pattern show mode: validated
- [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
- [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
- [BTCUSDT] ⚪ Range Detection deshabilitado por default
-MiniChart.jsx:42 [445] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
-MiniChart.jsx:36 [446] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [447] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
-MiniChart.jsx:1349 [ETHUSDT] 🔧 Creando nuevo IndicatorManager
-IndicatorManager.js:50 [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 60
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:259 💡 Debug utilities available:
+Logger.js:260    window.toggleDebugMode() - Toggle all logs
+Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-DoubleTopBottomIndicator.js:83 [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
-DoubleTopBottomIndicator.js:37 [ETHUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
-VWAPIndicator.js:41 [ETHUSDT] BandWidth thresholds for 60: {squeeze: 2.5, consolidation: 4.5, normal: 7}
-IndicatorManager.js:80 [ETHUSDT] 🎯 LevelSourceManager inicializado
-RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManager.js:505 [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
-IndicatorManager.js:156 [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
-IndicatorManager.js:903 [ETHUSDT] ⚪ Range Detection deshabilitado por default
-MiniChart.jsx:42 [450] 📡 ETHUSDT | Suscrito a WebSocket @ 60 
-Watchlist.jsx:142 🚀 Iniciando precarga de indicadores en background...
-IndicatorPreloader.js:36 [Preloader] 🚀 Iniciando precarga para 2 símbolos
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-MiniChart.jsx:1365 [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
-IndicatorManager.js:237 [BTCUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [BTCUSDT] Using maxBreakoutPercent: 2% for interval 60
-MiniChart.jsx:1403 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [461] 📊 BTCUSDT | ✅ Indicadores inicializados 
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-MiniChart.jsx:1365 [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
-IndicatorManager.js:237 [ETHUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [ETHUSDT] Using maxBreakoutPercent: 2% for interval 60
-MiniChart.jsx:1403 [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [468] 📊 ETHUSDT | ✅ Indicadores inicializados 
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
-MiniChart.jsx:1365 [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
-IndicatorManager.js:237 [BTCUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [BTCUSDT] Using maxBreakoutPercent: 2% for interval 60
-MiniChart.jsx:1403 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [472] 📊 BTCUSDT | ✅ Indicadores inicializados 
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-MiniChart.jsx:1365 [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=60&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
-IndicatorManager.js:237 [ETHUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 2% for interval 60, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [ETHUSDT] Using maxBreakoutPercent: 2% for interval 60
-MiniChart.jsx:1403 [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [476] 📊 ETHUSDT | ✅ Indicadores inicializados 
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 0 caches expirados
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 0 caches expirados
-VWAPIndicator.js:130 [BTCUSDT] ✅ VWAP loaded: 2160 points
-VWAPIndicator.js:160 [BTCUSDT] ⏰ VWAP auto-refresh started (every 30s)
-VWAPIndicator.js:130 [ETHUSDT] ✅ VWAP loaded: 2160 points
-VWAPIndicator.js:160 [ETHUSDT] ⏰ VWAP auto-refresh started (every 30s)
-Watchlist.jsx:159 ✅ Precarga completada en 0.456s
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 0.455s (6 exitosos, 0 fallidos)
-WebSocketManager.js:25 WebSocket Manager conectado [60]
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: uptrend
-VWAPIndicator.js:130 [BTCUSDT] ✅ VWAP loaded: 2160 points
-VWAPIndicator.js:167 [BTCUSDT] ⏹️ VWAP auto-refresh stopped
-VWAPIndicator.js:160 [BTCUSDT] ⏰ VWAP auto-refresh started (every 30s)
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: uptrend
-VWAPIndicator.js:130 [ETHUSDT] ✅ VWAP loaded: 2160 points
-VWAPIndicator.js:167 [ETHUSDT] ⏹️ VWAP auto-refresh stopped
-VWAPIndicator.js:160 [ETHUSDT] ⏰ VWAP auto-refresh started (every 30s)
-MiniChart.jsx:36 [618] 🕯️  BTCUSDT | 🆕 Primera vela en progreso {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-WebSocketManager.js:40 âœ“ Suscrito: 
-MiniChart.jsx:36 [627] 🕯️  ETHUSDT | 🆕 Primera vela en progreso {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-WebSocketManager.js:40 âœ“ Suscrito: 
-MiniChart.jsx:36 [535] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
-IndicatorManager.js:931 [BTCUSDT] 🧹 IndicatorManager destruido
-MiniChart.jsx:36 [536] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
-IndicatorManager.js:931 [ETHUSDT] 🧹 IndicatorManager destruido
-MiniChart.jsx:36 [536] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [537] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 1 
- [BTCUSDT] 🔧 Creando nuevo IndicatorManager
- [BTCUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 1
- [SupportResistanceIndicator] VERSION 1.0 LOADED
- [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
- [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
- [BTCUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
- [BTCUSDT] BandWidth thresholds for 1: {squeeze: 8, consolidation: 12, normal: 18}
- [BTCUSDT] 🎯 LevelSourceManager inicializado
- [BTCUSDT] Pattern show mode: validated
- [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
- [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
- [BTCUSDT] ⚪ Range Detection deshabilitado por default
- [540] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
- [541] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
- [541] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 1 
- [ETHUSDT] 🔧 Creando nuevo IndicatorManager
- [ETHUSDT] 🔧 IndicatorManager: Inicializando con 90 días @ 1
- [SupportResistanceIndicator] VERSION 1.0 LOADED
- [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
- [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
- [ETHUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
- [ETHUSDT] BandWidth thresholds for 1: {squeeze: 8, consolidation: 12, normal: 18}
- [ETHUSDT] 🎯 LevelSourceManager inicializado
- [ETHUSDT] Pattern show mode: validated
- [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
- [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
- [ETHUSDT] ⚪ Range Detection deshabilitado por default
- [544] 📡 ETHUSDT | Suscrito a WebSocket @ 1 
- [Watchlist] Días ajustados de 90 a 1 por límite de timeframe 1
- 🚀 Iniciando precarga de indicadores en background...
- [Preloader] 🚀 Iniciando precarga para 2 símbolos
- [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
- [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
- [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
- [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=1&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
- [BTCUSDT] Fetching Fibonacci levels...
- [BTCUSDT] Fetching continuation patterns...
- [BTCUSDT] 📥 Cargando datos para Double Top/Bottom...
- [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
- [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
- [BTCUSDT] Using maxBreakoutPercent: 7% for interval 1
- [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
- [550] 📊 BTCUSDT | ✅ Indicadores inicializados 
- [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
- [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
- [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
- [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=1&days=90&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
- [ETHUSDT] Fetching Fibonacci levels...
- [ETHUSDT] Fetching continuation patterns...
- [ETHUSDT] 📥 Cargando datos para Double Top/Bottom...
- [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
- [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
- [ETHUSDT] Using maxBreakoutPercent: 7% for interval 1
- [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
- [554] 📊 ETHUSDT | ✅ Indicadores inicializados 
- [559] 🕯️  BTCUSDT | 🛑 Componente desmontado, limpiando... 
- [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
- [BTCUSDT] 🧹 IndicatorManager destruido
- [560] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
- [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
- [ETHUSDT] 🧹 IndicatorManager destruido
- [561] 📊 BTCUSDT | Días cambiados de 90 a 1 
- [BTCUSDT] 💾 Fixed Ranges guardados en localStorage
- [BTCUSDT] 🗑️ 0 rangos auto-detectados eliminados
- [BTCUSDT] 🔄 Refrescando indicadores...
- [BTCUSDT] 🔄 Actualizando days de Support & Resistance: 90 → 1
- [BTCUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/BTCUSDT?interval=1&days=1&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
-MiniChart.jsx:36 [563] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [564] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
-MiniChart.jsx:1349 [BTCUSDT] 🔧 Creando nuevo IndicatorManager
-IndicatorManager.js:50 [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1 días @ 1
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-DoubleTopBottomIndicator.js:83 [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
-DoubleTopBottomIndicator.js:37 [BTCUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
-VWAPIndicator.js:41 [BTCUSDT] BandWidth thresholds for 1: {squeeze: 8, consolidation: 12, normal: 18}
-IndicatorManager.js:80 [BTCUSDT] 🎯 LevelSourceManager inicializado
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-IndicatorManager.js:505 [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
-IndicatorManager.js:156 [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
-IndicatorManager.js:903 [BTCUSDT] ⚪ Range Detection deshabilitado por default
-MiniChart.jsx:42 [567] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
-MiniChart.jsx:48 [567] 📊 ETHUSDT | Días cambiados de 90 a 1 
-IndicatorManager.js:493 [ETHUSDT] 💾 Fixed Ranges guardados en localStorage
-IndicatorManager.js:856 [ETHUSDT] 🗑️ 0 rangos auto-detectados eliminados
-IndicatorManager.js:163 [ETHUSDT] 🔄 Refrescando indicadores...
-IndicatorManager.js:171 [ETHUSDT] 🔄 Actualizando days de Support & Resistance: 90 → 1
-SupportResistanceIndicator.js:59 [ETHUSDT] 📊 S/R: Fetching from http://localhost:8000/api/support-resistance/ETHUSDT?interval=1&days=1&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
-MiniChart.jsx:36 [569] 🕯️  ETHUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [569] 🕯️  ETHUSDT | Solicitando histórico: 1 días @ 1 
-MiniChart.jsx:1349 [ETHUSDT] 🔧 Creando nuevo IndicatorManager
-IndicatorManager.js:50 [ETHUSDT] 🔧 IndicatorManager: Inicializando con 1 días @ 1
-SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
 OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-DoubleTopBottomIndicator.js:83 [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
-DoubleTopBottomIndicator.js:37 [ETHUSDT] 🔔 Double Top/Bottom alert system initialized with multi-level support
-VWAPIndicator.js:41 [ETHUSDT] BandWidth thresholds for 1: {squeeze: 8, consolidation: 12, normal: 18}
-IndicatorManager.js:80 [ETHUSDT] 🎯 LevelSourceManager inicializado
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
 RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManager.js:505 [ETHUSDT] 📂 0 Fixed Ranges cargados desde localStorage
-IndicatorManager.js:156 [ETHUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
-IndicatorManager.js:903 [ETHUSDT] ⚪ Range Detection deshabilitado por default
-MiniChart.jsx:42 [572] 📡 ETHUSDT | Suscrito a WebSocket @ 1 
-Watchlist.jsx:142 🚀 Iniciando precarga de indicadores en background...
-IndicatorPreloader.js:36 [Preloader] 🚀 Iniciando precarga para 2 símbolos
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-MiniChart.jsx:1365 [BTCUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
 RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [BTCUSDT] Fetching VWAP: http://localhost:8000/api/vwap/BTCUSDT?interval=1&days=1&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [BTCUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [BTCUSDT] Fetching continuation patterns...
-IndicatorManager.js:237 [BTCUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [BTCUSDT] Using maxBreakoutPercent: 7% for interval 1
-MiniChart.jsx:1403 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [580] 📊 BTCUSDT | ✅ Indicadores inicializados 
 IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-MiniChart.jsx:1365 [ETHUSDT] 🎛️ Aplicando presets efectivos (global + overrides)
 RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-VWAPIndicator.js:116 [ETHUSDT] Fetching VWAP: http://localhost:8000/api/vwap/ETHUSDT?interval=1&days=1&vwap_type=session&reset_hour=0&rolling_period=20&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true
-FibonacciLevelCalculator.js:48 [ETHUSDT] Fetching Fibonacci levels...
-ContinuationPatternIndicator.js:169 [ETHUSDT] Fetching continuation patterns...
-IndicatorManager.js:237 [ETHUSDT] 📥 Cargando datos para Double Top/Bottom...
-DoubleTopBottomIndicator.js:83 [ETHUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
-DoubleTopBottomIndicator.js:283 [ETHUSDT] 🔍 Fetching Double Top/Bottom patterns...
-DoubleTopBottomIndicator.js:284 [ETHUSDT] Using maxBreakoutPercent: 7% for interval 1
-MiniChart.jsx:1403 [ETHUSDT] ✅ Sincronizados 0 Fixed Range Profiles
-MiniChart.jsx:48 [584] 📊 ETHUSDT | ✅ Indicadores inicializados 
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 BTCUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Volume Profile - desde IndexedDB
-IndicatorPreloader.js:90 [Preloader] 💾 ETHUSDT Support & Resistance - desde IndexedDB
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 4 caches expirados
-IndicatorPreloader.js:261 [Preloader] 🧹 Limpiados 2 caches expirados
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+WebSocketManager.js:25 WebSocket Manager conectado [60]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
 WebSocketManager.js:68 WebSocket Manager cerrado
-MiniChart.jsx:36 [325] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-MiniChart.jsx:36 [326] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
-MiniChart.jsx:59 [326] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: NO
-MiniChart.jsx:36 [327] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [327] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 91332
-IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-RejectionPatternIndicator.js:575 
-================================================================================
-RejectionPatternIndicator.js:576 📊 [BTCUSDT] ALERT SYSTEM ACTIVATED
-RejectionPatternIndicator.js:577 ================================================================================
-RejectionPatternIndicator.js:578 Start time: 7/1/2026, 7:45:20 p.m.
-RejectionPatternIndicator.js:579 All patterns before this time will be suppressed
-RejectionPatternIndicator.js:580 Only NEW patterns detected AFTER this time will trigger alerts
-RejectionPatternIndicator.js:581 ================================================================================
-
-logger.js:109 ℹ️ 7:45:20 p.m. [BTCUSDT][ALERT] ✅ Alert system activated - suppressing all historical patterns
-MiniChart.jsx:36 [395] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-MiniChart.jsx:36 [396] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
-MiniChart.jsx:59 [396] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: NO
-MiniChart.jsx:36 [396] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [396] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-MiniChart.jsx:36 [463] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-MiniChart.jsx:36 [463] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
-MiniChart.jsx:59 [463] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: NO
-MiniChart.jsx:36 [463] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [464] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 3167.3
-IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-RejectionPatternIndicator.js:575 
-================================================================================
-RejectionPatternIndicator.js:576 📊 [ETHUSDT] ALERT SYSTEM ACTIVATED
-RejectionPatternIndicator.js:577 ================================================================================
-RejectionPatternIndicator.js:578 Start time: 7/1/2026, 7:45:20 p.m.
-RejectionPatternIndicator.js:579 All patterns before this time will be suppressed
-RejectionPatternIndicator.js:580 Only NEW patterns detected AFTER this time will trigger alerts
-RejectionPatternIndicator.js:581 ================================================================================
-
-logger.js:109 ℹ️ 7:45:20 p.m. [ETHUSDT][ALERT] ✅ Alert system activated - suppressing all historical patterns
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: uptrend
 WebSocketManager.js:25 WebSocket Manager conectado [1]
-DoubleTopBottomIndicator.js:311 [BTCUSDT] ✅ Double Top/Bottom: 104 patterns detected in 4.74s
-DoubleTopBottomIndicator.js:622 
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:273 
+🧪 [BTCUSDT] User clicked Test Alert button
+DoubleTopBottomIndicator.js:1023 
 ================================================================================
-DoubleTopBottomIndicator.js:623 📊 [BTCUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:21 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 104
-DoubleTopBottomIndicator.js:630 ================================================================================
-
-IndicatorManager.js:239 [BTCUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [BTCUSDT] 🔄 Redraw requested by indicator
-MiniChart.jsx:36 [429] 🕯️  BTCUSDT | 🆕 Primera vela en progreso {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 91263.9
-IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-WebSocketManager.js:40 âœ“ Suscrito: 
-MiniChart.jsx:36 [434] 🕯️  ETHUSDT | 🆕 Primera vela en progreso {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-WebSocketManager.js:40 âœ“ Suscrito: 
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: uptrend
-IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 91267.9
-IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-MiniChart.jsx:36 [521] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767830400000, datetime: '2026-01-07 19:00:00'}
-MiniChart.jsx:36 [521] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
-MiniChart.jsx:59 [522] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
-MiniChart.jsx:36 [522] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [522] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-Watchlist.jsx:159 ✅ Precarga completada en 6.082s
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 6.082s (6 exitosos, 0 fallidos)
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: uptrend
-VWAPIndicator.js:130 [BTCUSDT] ✅ VWAP loaded: 1440 points
-VWAPIndicator.js:160 [BTCUSDT] ⏰ VWAP auto-refresh started (every 30s)
-DoubleTopBottomIndicator.js:311 [ETHUSDT] ✅ Double Top/Bottom: 108 patterns detected in 8.20s
-DoubleTopBottomIndicator.js:622 
+DoubleTopBottomIndicator.js:1024 🧪 [BTCUSDT] SENDING TEST ALERT
+DoubleTopBottomIndicator.js:1025 ================================================================================
+DoubleTopBottomIndicator.js:1053 Test Pattern: Object
+DoubleTopBottomIndicator.js:1054 
+Sending to backend...
+DoubleTopBottomIndicator.js:915 
 ================================================================================
-DoubleTopBottomIndicator.js:623 📊 [ETHUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:24 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 108
-DoubleTopBottomIndicator.js:630 ================================================================================
+DoubleTopBottomIndicator.js:916 🚨 [BTCUSDT] SENDING PATTERN ALERT
+DoubleTopBottomIndicator.js:917 ================================================================================
+DoubleTopBottomIndicator.js:950 📤 STEP 1: Building payload
+DoubleTopBottomIndicator.js:951    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:952    Interval: 1
+DoubleTopBottomIndicator.js:953    Pattern Type: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:954    Price: $50000.00
+DoubleTopBottomIndicator.js:955    Confidence: 85.5%
+DoubleTopBottomIndicator.js:956    Direction: LONG
+DoubleTopBottomIndicator.js:957    Level: N/A
+DoubleTopBottomIndicator.js:958    Alert Mode: pattern_complete
+DoubleTopBottomIndicator.js:959 
+📤 STEP 2: Sending HTTP POST request
+DoubleTopBottomIndicator.js:960    Endpoint: http://localhost:8000/api/pattern-alert
+DoubleTopBottomIndicator.js:961    Full Payload: {
+  "symbol": "BTCUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_BOTTOM",
+    "price": 50000,
+    "confidence": 85.5,
+    "timestamp": 1767989015402,
+    "direction": "LONG",
+    "level": null,
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1767985415402,
+        "price": 49980,
+        "index": 100
+      },
+      "secondExtreme": {
+        "timestamp": 1767989015402,
+        "price": 50020,
+        "index": 150
+      },
+      "entrySignal": {
+        "has_momentum": true,
+        "direction": "LONG",
+        "timestamp": 1767989015402,
+        "price": 50100,
+        "pattern_type": "MARUBOZU",
+        "quality": 0.95
+      },
+      "priceTolerance": 20,
+      "hasMomentum": true,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 20,
+      "requireBothRejections": false,
+      "minPatternDuration": 0.1,
+      "maxPatternDuration": 4,
+      "applyPostValidationToRealtimeSignals": true,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 0.5,
+      "duplicateTimeToleranceHours": 11
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      }
+    }
+  }
+}
+DoubleTopBottomIndicator.js:971 
+📥 STEP 3: Received response (11ms)
+DoubleTopBottomIndicator.js:972    HTTP Status: 200 OK
+DoubleTopBottomIndicator.js:975    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_BOTTOM",
+  "symbol": "BTCUSDT",
+  "price": 50000,
+  "confidence": 85.5
+}
+DoubleTopBottomIndicator.js:978 
+✅ STEP 4: Alert sent successfully!
+DoubleTopBottomIndicator.js:979    Pattern: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:980    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:981    Price: $50000.00
+DoubleTopBottomIndicator.js:982    Confidence: 85.5%
+DoubleTopBottomIndicator.js:983    Total Duration: 11ms
+DoubleTopBottomIndicator.js:984 ================================================================================
 
-IndicatorManager.js:239 [ETHUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [ETHUSDT] 🔄 Redraw requested by indicator
-DoubleTopBottomIndicator.js:311 [BTCUSDT] ✅ Double Top/Bottom: 104 patterns detected in 8.54s
-DoubleTopBottomIndicator.js:635 
+DoubleTopBottomIndicator.js:1059 
+📊 Test Alert Result:
+DoubleTopBottomIndicator.js:1061   ✅ Test alert sent successfully!
+DoubleTopBottomIndicator.js:1062   - Backend accepted the alert
+DoubleTopBottomIndicator.js:1063   - Should appear in alert listener (port 5000) if running
+DoubleTopBottomIndicator.js:1064   - Check browser notifications
+DoubleTopBottomIndicator.js:1071 ================================================================================
+
+DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.enabled = true
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.lookbackCandles = 330
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: realTimeDetection.lookbackCandles = 240
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:273 
+🧪 [ETHUSDT] User clicked Test Alert button
+DoubleTopBottomIndicator.js:1023 
 ================================================================================
-DoubleTopBottomIndicator.js:636 🔔 [BTCUSDT] DBT ALERT CHECK - 7/1/2026, 7:45:25 p.m.
-DoubleTopBottomIndicator.js:637 ================================================================================
-DoubleTopBottomIndicator.js:638 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:639 Total patterns: 104
-DoubleTopBottomIndicator.js:640 Already alerted: 0
-DoubleTopBottomIndicator.js:641 VWAP Filter: DISABLED
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $112309.55 (12/10/2025, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $115902.95 (13/10/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $113530.00 (15/10/2025, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $111897.15 (16/10/2025, 7:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $107449.45 (18/10/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $107325.10 (18/10/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $111668.25 (20/10/2025, 10:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $109777.70 (23/10/2025, 1:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $111604.10 (25/10/2025, 7:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $111913.80 (25/10/2025, 7:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $114346.90 (26/10/2025, 5:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $115908.55 (28/10/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $111359.45 (31/10/2025, 10:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $111173.50 (2/11/2025, 7:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $110608.20 (2/11/2025, 7:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $107779.35 (3/11/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $104656.75 (5/11/2025, 3:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $104333.50 (5/11/2025, 11:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $102467.40 (8/11/2025, 6:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $106610.25 (10/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $105404.25 (12/11/2025, 7:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $97080.20 (14/11/2025, 10:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $96320.55 (17/11/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $93475.00 (20/11/2025, 12:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $92825.00 (20/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $85563.95 (21/11/2025, 7:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88104.70 (25/11/2025, 12:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88163.25 (25/11/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $91875.75 (27/11/2025, 4:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $91546.30 (30/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $87106.55 (1/12/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $92305.90 (3/12/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $93892.65 (4/12/2025, 4:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $89749.50 (6/12/2025, 11:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $91696.20 (7/12/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $94503.90 (10/12/2025, 3:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $94001.35 (11/12/2025, 4:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $93087.65 (12/12/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $90287.90 (14/12/2025, 9:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $89968.00 (15/12/2025, 4:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88040.05 (16/12/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $89912.25 (18/12/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88389.85 (20/12/2025, 4:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88497.85 (21/12/2025, 7:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $89890.40 (22/12/2025, 7:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $88455.65 (25/12/2025, 10:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $87890.95 (26/12/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $89304.00 (26/12/2025, 8:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $88011.00 (28/12/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $88127.00 (31/12/2025, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $90703.15 (2/1/2026, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $91681.00 (4/1/2026, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $93590.30 (6/1/2026, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $94123.00 (6/1/2026, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $109751.70 (11/10/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $113923.65 (13/10/2025, 6:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $109666.50 (16/10/2025, 4:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $110177.20 (15/10/2025, 7:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $106245.45 (19/10/2025, 4:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $107392.90 (21/10/2025, 12:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $107590.55 (21/10/2025, 7:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $106606.90 (22/10/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $108897.35 (23/10/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $111148.40 (25/10/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $113069.30 (28/10/2025, 12:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $112885.75 (28/10/2025, 8:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $108776.85 (29/10/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $109632.45 (2/11/2025, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $105464.10 (3/11/2025, 5:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $100678.65 (6/11/2025, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $99911.80 (7/11/2025, 7:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $101429.35 (9/11/2025, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $102250.25 (12/11/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $94630.45 (15/11/2025, 8:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $94488.40 (16/11/2025, 6:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $88907.35 (19/11/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $89725.10 (19/11/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $83617.75 (22/11/2025, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $85291.30 (24/11/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $85630.55 (25/11/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $90507.00 (27/11/2025, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $90280.95 (29/11/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $90240.65 (29/11/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $91219.20 (4/12/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87841.05 (7/12/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $88887.30 (7/12/2025, 5:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $89487.20 (9/12/2025, 12:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $91702.00 (10/12/2025, 10:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $89376.60 (12/12/2025, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $89564.70 (13/12/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $85151.00 (15/12/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $86071.60 (17/12/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87123.35 (21/12/2025, 8:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87828.80 (21/12/2025, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87421.35 (23/12/2025, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $86490.95 (26/12/2025, 10:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $86717.25 (26/12/2025, 10:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87317.00 (28/12/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87594.60 (30/12/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $86978.50 (31/12/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $87346.40 (31/12/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $88834.35 (3/1/2026, 2:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $91013.10 (6/1/2026, 1:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $92628.00 (6/1/2026, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:684 
-Summary:
-DoubleTopBottomIndicator.js:685   📊 Total patterns: 104
-DoubleTopBottomIndicator.js:686   ✅ NEW to alert: 0
-DoubleTopBottomIndicator.js:687   ⏭️  Already alerted: 0
-DoubleTopBottomIndicator.js:688   ⏭️  Failed validation: 0
-DoubleTopBottomIndicator.js:689   ⏭️  Historical: 104
-DoubleTopBottomIndicator.js:692 
-❌ No new patterns to alert
-DoubleTopBottomIndicator.js:693 ================================================================================
-
-IndicatorManager.js:239 [BTCUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [BTCUSDT] 🔄 Redraw requested by indicator
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: uptrend
-VWAPIndicator.js:130 [ETHUSDT] ✅ VWAP loaded: 1440 points
-VWAPIndicator.js:160 [ETHUSDT] ⏰ VWAP auto-refresh started (every 30s)
-DoubleTopBottomIndicator.js:311 [BTCUSDT] ✅ Double Top/Bottom: 4 patterns detected in 6.22s
-DoubleTopBottomIndicator.js:622 
+DoubleTopBottomIndicator.js:1024 🧪 [ETHUSDT] SENDING TEST ALERT
+DoubleTopBottomIndicator.js:1025 ================================================================================
+DoubleTopBottomIndicator.js:1053 Test Pattern: Object
+DoubleTopBottomIndicator.js:1054 
+Sending to backend...
+DoubleTopBottomIndicator.js:915 
 ================================================================================
-DoubleTopBottomIndicator.js:623 📊 [BTCUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:25 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 4
-DoubleTopBottomIndicator.js:630 ================================================================================
+DoubleTopBottomIndicator.js:916 🚨 [ETHUSDT] SENDING PATTERN ALERT
+DoubleTopBottomIndicator.js:917 ================================================================================
+DoubleTopBottomIndicator.js:950 📤 STEP 1: Building payload
+DoubleTopBottomIndicator.js:951    Symbol: ETHUSDT
+DoubleTopBottomIndicator.js:952    Interval: 1
+DoubleTopBottomIndicator.js:953    Pattern Type: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:954    Price: $50000.00
+DoubleTopBottomIndicator.js:955    Confidence: 85.5%
+DoubleTopBottomIndicator.js:956    Direction: LONG
+DoubleTopBottomIndicator.js:957    Level: N/A
+DoubleTopBottomIndicator.js:958    Alert Mode: momentum_required
+DoubleTopBottomIndicator.js:959 
+📤 STEP 2: Sending HTTP POST request
+DoubleTopBottomIndicator.js:960    Endpoint: http://localhost:8000/api/pattern-alert
+DoubleTopBottomIndicator.js:961    Full Payload: {
+  "symbol": "ETHUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_BOTTOM",
+    "price": 50000,
+    "confidence": 85.5,
+    "timestamp": 1767989070576,
+    "direction": "LONG",
+    "level": null,
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1767985470576,
+        "price": 49980,
+        "index": 100
+      },
+      "secondExtreme": {
+        "timestamp": 1767989070576,
+        "price": 50020,
+        "index": 150
+      },
+      "entrySignal": {
+        "has_momentum": true,
+        "direction": "LONG",
+        "timestamp": 1767989070576,
+        "price": 50100,
+        "pattern_type": "MARUBOZU",
+        "quality": 0.95
+      },
+      "priceTolerance": 20,
+      "hasMomentum": true,
+      "alertMode": "momentum_required"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 16,
+      "requireBothRejections": false,
+      "minPatternDuration": 0.1,
+      "maxPatternDuration": 336,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 2,
+      "applyPostValidationToRealtimeSignals": false
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "momentum_required",
+      "vwapFilter": {
+        "enabled": false,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      }
+    }
+  }
+}
+DoubleTopBottomIndicator.js:971 
+📥 STEP 3: Received response (7ms)
+DoubleTopBottomIndicator.js:972    HTTP Status: 200 OK
+DoubleTopBottomIndicator.js:975    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_BOTTOM",
+  "symbol": "ETHUSDT",
+  "price": 50000,
+  "confidence": 85.5
+}
+DoubleTopBottomIndicator.js:978 
+✅ STEP 4: Alert sent successfully!
+DoubleTopBottomIndicator.js:979    Pattern: DOUBLE_BOTTOM
+DoubleTopBottomIndicator.js:980    Symbol: ETHUSDT
+DoubleTopBottomIndicator.js:981    Price: $50000.00
+DoubleTopBottomIndicator.js:982    Confidence: 85.5%
+DoubleTopBottomIndicator.js:983    Total Duration: 7ms
+DoubleTopBottomIndicator.js:984 ================================================================================
 
-IndicatorManager.js:239 [BTCUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [BTCUSDT] 🔄 Redraw requested by indicator
-SupportResistanceIndicator.js:70 [BTCUSDT] ✅ S/R loaded: 4 resistances, 1 supports, 1 zones
-IndicatorManager.js:180 [BTCUSDT] ✅ IndicatorManager: Refresh completado en 6210ms
-SupportResistanceIndicator.js:70 [ETHUSDT] ✅ S/R loaded: 4 resistances, 2 supports, 2 zones
-IndicatorManager.js:180 [ETHUSDT] ✅ IndicatorManager: Refresh completado en 6208ms
-VWAPIndicator.js:130 [BTCUSDT] ✅ VWAP loaded: 1440 points
-VWAPIndicator.js:160 [BTCUSDT] ⏰ VWAP auto-refresh started (every 30s)
-FibonacciLevelCalculator.js:60 [BTCUSDT] ✅ Fibonacci loaded: uptrend
-FibonacciLevelCalculator.js:60 [ETHUSDT] ✅ Fibonacci loaded: uptrend
-DoubleTopBottomIndicator.js:311 [ETHUSDT] ✅ Double Top/Bottom: 108 patterns detected in 10.09s
-DoubleTopBottomIndicator.js:635 
-================================================================================
-DoubleTopBottomIndicator.js:636 🔔 [ETHUSDT] DBT ALERT CHECK - 7/1/2026, 7:45:26 p.m.
-DoubleTopBottomIndicator.js:637 ================================================================================
-DoubleTopBottomIndicator.js:638 Mode: PATTERN_COMPLETE
- Total patterns: 108
- Already alerted: 0
- VWAP Filter: DISABLED
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4177.90 (13/10/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4174.16 (15/10/2025, 3:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4066.68 (16/10/2025, 7:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3832.97 (17/10/2025, 9:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3974.46 (19/10/2025, 12:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4097.41 (21/10/2025, 11:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3919.86 (23/10/2025, 11:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3950.88 (25/10/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4243.82 (27/10/2025, 1:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4142.26 (28/10/2025, 1:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $4032.55 (29/10/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3924.89 (31/10/2025, 2:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3884.60 (1/11/2025, 3:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3911.72 (2/11/2025, 6:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3743.65 (3/11/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3475.40 (7/11/2025, 5:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3471.85 (8/11/2025, 3:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3652.69 (10/11/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3590.32 (12/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3575.88 (13/11/2025, 2:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3263.64 (14/11/2025, 11:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3195.01 (15/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3235.68 (17/11/2025, 6:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3056.57 (20/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2810.07 (23/11/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2854.66 (23/11/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2972.45 (25/11/2025, 1:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3043.80 (27/11/2025, 4:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3047.54 (28/11/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3052.39 (30/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3032.91 (30/11/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2819.83 (2/12/2025, 1:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3232.08 (4/12/2025, 10:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3169.32 (5/12/2025, 10:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3048.70 (7/12/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3054.74 (7/12/2025, 8:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3163.32 (8/12/2025, 9:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3141.76 (8/12/2025, 11:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3387.27 (10/12/2025, 5:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3267.62 (12/12/2025, 1:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3139.09 (14/12/2025, 9:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3163.30 (15/12/2025, 5:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2975.23 (16/12/2025, 8:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2963.40 (17/12/2025, 2:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3024.25 (19/12/2025, 10:00:00 a.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2984.03 (20/12/2025, 3:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $2994.70 (21/12/2025, 2:00:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $3068.27 (22/12/2025, 7:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $2969.49 (23/12/2025, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $2977.94 (26/12/2025, 8:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $2950.55 (29/12/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3015.95 (31/12/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3017.27 (1/1/2026, 12:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3007.14 (1/1/2026, 6:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3148.82 (4/1/2026, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3230.49 (6/1/2026, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_TOP at $3257.92 (7/1/2026, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3725.97 (11/10/2025, 2:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $4079.30 (13/10/2025, 6:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3904.01 (15/10/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3930.61 (16/10/2025, 4:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3820.55 (19/10/2025, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3838.85 (19/10/2025, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3832.05 (22/10/2025, 6:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3753.90 (22/10/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3811.22 (23/10/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $4054.70 (28/10/2025, 12:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $4079.88 (28/10/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3971.57 (29/10/2025, 4:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3834.03 (29/10/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3821.71 (31/10/2025, 7:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3858.05 (1/11/2025, 7:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3557.53 (3/11/2025, 4:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3272.35 (6/11/2025, 8:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3366.24 (6/11/2025, 2:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3257.40 (6/11/2025, 8:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3392.50 (9/11/2025, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3368.27 (9/11/2025, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3537.28 (11/11/2025, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3076.79 (14/11/2025, 6:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3010.72 (16/11/2025, 6:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2950.45 (17/11/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2633.53 (21/11/2025, 7:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2704.37 (22/11/2025, 6:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2768.49 (23/11/2025, 7:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2784.26 (24/11/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2896.45 (25/11/2025, 4:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3000.72 (28/11/2025, 2:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2993.03 (29/11/2025, 1:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2991.78 (29/11/2025, 1:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3053.47 (4/12/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3007.90 (6/12/2025, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3080.15 (8/12/2025, 10:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3170.34 (11/12/2025, 3:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2883.34 (15/12/2025, 11:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2780.81 (18/12/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2936.28 (21/12/2025, 8:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2964.34 (21/12/2025, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2952.30 (23/12/2025, 1:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2892.19 (24/12/2025, 9:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2904.07 (27/12/2025, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2914.35 (29/12/2025, 1:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2928.32 (30/12/2025, 2:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2961.94 (31/12/2025, 3:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $2982.97 (1/1/2026, 9:00:00 p.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3084.47 (3/1/2026, 11:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3205.49 (6/1/2026, 2:00:00 a.m.)
-DoubleTopBottomIndicator.js:666   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $3227.22 (7/1/2026, 5:00:00 a.m.)
-DoubleTopBottomIndicator.js:684 
-Summary:
-DoubleTopBottomIndicator.js:685   📊 Total patterns: 108
-DoubleTopBottomIndicator.js:686   ✅ NEW to alert: 0
-DoubleTopBottomIndicator.js:687   ⏭️  Already alerted: 0
-DoubleTopBottomIndicator.js:688   ⏭️  Failed validation: 0
-DoubleTopBottomIndicator.js:689   ⏭️  Historical: 108
-DoubleTopBottomIndicator.js:692 
-❌ No new patterns to alert
-DoubleTopBottomIndicator.js:693 ================================================================================
+DoubleTopBottomIndicator.js:1059 
+📊 Test Alert Result:
+DoubleTopBottomIndicator.js:1061   ✅ Test alert sent successfully!
+DoubleTopBottomIndicator.js:1062   - Backend accepted the alert
+DoubleTopBottomIndicator.js:1063   - Should appear in alert listener (port 5000) if running
+DoubleTopBottomIndicator.js:1064   - Check browser notifications
+DoubleTopBottomIndicator.js:1071 ================================================================================
 
-IndicatorManager.js:239 [ETHUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [ETHUSDT] 🔄 Redraw requested by indicator
-DoubleTopBottomIndicator.js:311 [BTCUSDT] ✅ Double Top/Bottom: 4 patterns detected in 8.70s
-DoubleTopBottomIndicator.js:622 
-================================================================================
-DoubleTopBottomIndicator.js:623 📊 [BTCUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:28 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 4
-DoubleTopBottomIndicator.js:630 ================================================================================
-
-IndicatorManager.js:239 [BTCUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [BTCUSDT] 🔄 Redraw requested by indicator
-VWAPIndicator.js:130 [ETHUSDT] ✅ VWAP loaded: 1440 points
-VWAPIndicator.js:160 [ETHUSDT] ⏰ VWAP auto-refresh started (every 30s)
-Watchlist.jsx:159 ✅ Precarga completada en 8.798s
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 8.799s (6 exitosos, 0 fallidos)
-Watchlist.jsx:159 ✅ Precarga completada en 8.781s
-IndicatorPreloader.js:64 [Preloader] ✅ Precarga completada en 8.781s (6 exitosos, 0 fallidos)
-DoubleTopBottomIndicator.js:311 [ETHUSDT] ✅ Double Top/Bottom: 6 patterns detected in 9.29s
-DoubleTopBottomIndicator.js:622 
-================================================================================
-DoubleTopBottomIndicator.js:623 📊 [ETHUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:28 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 6
-DoubleTopBottomIndicator.js:630 ================================================================================
-
-IndicatorManager.js:239 [ETHUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [ETHUSDT] 🔄 Redraw requested by indicator
-DoubleTopBottomIndicator.js:311 [ETHUSDT] ✅ Double Top/Bottom: 6 patterns detected in 10.10s
-DoubleTopBottomIndicator.js:622 
-================================================================================
-DoubleTopBottomIndicator.js:623 📊 [ETHUSDT] DBT ALERT SYSTEM ACTIVATED
-DoubleTopBottomIndicator.js:624 ================================================================================
-DoubleTopBottomIndicator.js:625 Mode: PATTERN_COMPLETE
-DoubleTopBottomIndicator.js:626 Start time: 7/1/2026, 7:45:29 p.m.
-DoubleTopBottomIndicator.js:627 All patterns before this time will be suppressed
-DoubleTopBottomIndicator.js:628 Only NEW patterns detected AFTER this time will trigger alerts
-DoubleTopBottomIndicator.js:629 Total patterns in historical data: 6
-DoubleTopBottomIndicator.js:630 ================================================================================
-
-IndicatorManager.js:239 [ETHUSDT] ✅ Datos de Double Top/Bottom cargados
-MiniChart.jsx:1356 [ETHUSDT] 🔄 Redraw requested by indicator
-MiniChart.jsx:36 [105] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-MiniChart.jsx:36 [105] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
-MiniChart.jsx:59 [105] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
-MiniChart.jsx:36 [105] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [106] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-MiniChart.jsx:36 [295] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-MiniChart.jsx:36 [295] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
-MiniChart.jsx:59 [295] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
-MiniChart.jsx:36 [296] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [296] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-MiniChart.jsx:36 [627] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-MiniChart.jsx:36 [628] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
-MiniChart.jsx:59 [628] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
-MiniChart.jsx:36 [628] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [628] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-MiniChart.jsx:36 [661] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
-MiniChart.jsx:36 [662] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
-MiniChart.jsx:59 [662] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
-MiniChart.jsx:36 [663] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
-MiniChart.jsx:36 [663] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
-IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 91269.9
-IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 3168.49
-IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
-IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 91278.3
-IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
-MiniChart.jsx:36 [201] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [202] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
-MiniChart.jsx:1326 [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
-MiniChart.jsx:48 [203] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
-MiniChart.jsx:42 [203] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
-MiniChart.jsx:36 [205] 🕯️  BTCUSDT | 🎯 Fullscreen: zoom ajustado a 0.10 para ~1222 velas 
-MiniChart.jsx:1521 [BTCUSDT] ⏭️ Skipping cleanup (external manager)
-MiniChart.jsx:36 [206] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
-MiniChart.jsx:36 [206] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
-MiniChart.jsx:1326 [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
-MiniChart.jsx:48 [207] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
-MiniChart.jsx:42 [208] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
-IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3168.72
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [749] 🕯️  BTCUSDT | 🆕 Primera vela en progreso {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
- [964] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
- [964] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [964] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [964] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [965] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [586] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833100000, datetime: '2026-01-07 19:45:00'}
- [586] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [586] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [586] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [587] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
- [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
- [BTCUSDT] 🔄 Double Top/Bottom config updated, patterns will refresh
- [Watchlist] Updated Double Top/Bottom config for BTCUSDT
- [Watchlist] 🔄 Reloading Double Top/Bottom patterns for BTCUSDT...
- [BTCUSDT] DTB Config loaded - maxBreakoutPercent: 7% for interval 1, volumeFilter: disabled
- [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
- [BTCUSDT] Using maxBreakoutPercent: 7% for interval 1
- [BTCUSDT] ✅ Double Top/Bottom: 4 patterns detected in 4.63s
- 
-================================================================================
- 🔔 [BTCUSDT] DBT ALERT CHECK - 7/1/2026, 7:45:45 p.m.
- ================================================================================
- Mode: PATTERN_COMPLETE
- Total patterns: 4
- Already alerted: 0
- VWAP Filter: DISABLED
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $92929.50 (6/1/2026, 8:11:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_TOP at $91027.05 (7/1/2026, 2:21:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $92746.10 (6/1/2026, 7:59:00 p.m.)
-   ⏭️  SKIP: Historical - DOUBLE_BOTTOM at $90897.20 (7/1/2026, 1:58:00 p.m.)
- 
-Summary:
-   📊 Total patterns: 4
-   ✅ NEW to alert: 0
-   ⏭️  Already alerted: 0
-   ⏭️  Failed validation: 0
-   ⏭️  Historical: 4
- 
-❌ No new patterns to alert
- ================================================================================
-
- [Watchlist] ✅ Patterns reloaded for BTCUSDT in 4.63s
- [BTCUSDT] 🔄 Redraw requested by indicator
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91283.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.5
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91300.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.63
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.35
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [742] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833100000, nuevo: 1767833160000}
- [743] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [743] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [743] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833100000, nuevo: 1767833160000}
- [744] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [744] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [981] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833100000, nuevo: 1767833160000}
- [982] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [982] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.59
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91307.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91310
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91310.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.2
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91319.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.63
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91324.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91324.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91324.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91324.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91324.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91322.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91320.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91313.8
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91313.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91312
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.28
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91305
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.12
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91308.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91305.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91311.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91311.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.96
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91319
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91351.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3173.84
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3173.47
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91358.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91367
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3173.59
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91369.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91365.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3173.31
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91363.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91358
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91351.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [824] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833160000, nuevo: 1767833220000}
- [824] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [825] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [825] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833160000, nuevo: 1767833220000}
- [825] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [825] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91350
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [986] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833160000, nuevo: 1767833220000}
- [987] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [987] 🔍 ETHUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.87
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91341.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.36
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91340.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.67
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91354.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91350
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91343
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91349.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.59
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.38
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91347.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.74
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91341.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.31
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91336.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.61
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91340.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91332
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91331.2
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3172.48
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91322.2
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91320.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91318.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91316.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [764] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833220000, nuevo: 1767833280000}
- [765] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [765] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [765] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833220000, nuevo: 1767833280000}
- [766] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [766] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [000] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833220000, nuevo: 1767833280000}
- [001] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [001] 🔍 ETHUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.45
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91314
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91316.2
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91322.4
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91329.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.55
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3171.48
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91323.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91316.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.48
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [769] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833280000, nuevo: 1767833340000}
- [770] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [771] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [771] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833280000, nuevo: 1767833340000}
- [771] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [772] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [410] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833280000, nuevo: 1767833340000}
- [411] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [411] 🔍 ETHUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91320.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91317.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91302.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.27
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.05
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3170.56
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [770] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833340000, nuevo: 1767833400000}
- [770] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [771] 🔍 BTCUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [772] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833340000, nuevo: 1767833400000}
- [772] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [772] 🔍 BTCUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [015] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833340000, nuevo: 1767833400000}
- [016] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [016] 🔍 ETHUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91308.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91279.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.63
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.2
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91261.8
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91255
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91269.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [577] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [577] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [578] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
- [578] 🕯️  ETHUSDT | Solicitando histórico: 1 días @ 1 
- [920] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833400000, datetime: '2026-01-07 19:50:00'}
- [920] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [920] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [921] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
- [921] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [953] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833400000, datetime: '2026-01-07 19:50:00'}
- [953] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [953] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [954] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
- [954] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91266
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91268.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91268.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [219] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [220] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [220] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [221] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [033] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833400000, datetime: '2026-01-07 19:50:00'}
- [034] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [034] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [034] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [034] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [169] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833400000, datetime: '2026-01-07 19:50:00'}
- [170] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [170] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [170] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [170] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91266.8
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3168.48
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91263.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [748] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833400000, nuevo: 1767833460000}
- [748] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [748] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [749] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833400000, nuevo: 1767833460000}
- [749] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [749] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91259
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [992] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833400000, nuevo: 1767833460000}
- [992] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [993] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91255.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91255
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91260.1
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [750] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833460000, nuevo: 1767833520000}
- [751] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [751] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [751] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833460000, nuevo: 1767833520000}
- [752] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [752] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [994] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833460000, nuevo: 1767833520000}
- [995] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [995] 🔍 ETHUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [795] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833520000, nuevo: 1767833580000}
- [796] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [796] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [796] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833520000, nuevo: 1767833580000}
- [796] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [797] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [013] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833520000, nuevo: 1767833580000}
- [013] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [013] 🔍 ETHUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [764] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833580000, nuevo: 1767833640000}
- [765] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [765] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [765] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833580000, nuevo: 1767833640000}
- [766] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [766] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [023] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833580000, nuevo: 1767833640000}
- [024] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [024] 🔍 ETHUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [757] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833640000, nuevo: 1767833700000}
- [758] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [758] 🔍 BTCUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [758] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833640000, nuevo: 1767833700000}
- [758] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [759] 🔍 BTCUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [998] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833640000, nuevo: 1767833700000}
- [999] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1444}
- [999] 🔍 ETHUSDT | Estado: 1444 confirmadas, En progreso: SÍ
- [432] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [433] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [434] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
- [434] 🕯️  ETHUSDT | Solicitando histórico: 1 días @ 1 
- [490] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833700000, datetime: '2026-01-07 19:55:00'}
- [490] 🕯️  ETHUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [490] 🔍 ETHUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [518] 🕯️  ETHUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
- [519] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3173.45
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [538] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833700000, datetime: '2026-01-07 19:55:00'}
- [539] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [539] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [539] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~573 velas 
- [539] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91375
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [439] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [440] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [441] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
- [441] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [513] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833700000, datetime: '2026-01-07 19:55:00'}
- [514] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [514] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [514] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [514] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91387.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [643] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833700000, datetime: '2026-01-07 19:55:00'}
- [644] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [644] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: SÍ
- [644] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [644] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [757] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833700000, nuevo: 1767833760000}
- [758] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [758] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [759] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833700000, nuevo: 1767833760000}
- [759] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [759] 🔍 BTCUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [002] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833700000, nuevo: 1767833760000}
- [003] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1440}
- [003] 🔍 ETHUSDT | Estado: 1440 confirmadas, En progreso: SÍ
- [757] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833760000, nuevo: 1767833820000}
- [757] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [758] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [758] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833760000, nuevo: 1767833820000}
- [758] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [758] 🔍 BTCUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [003] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833760000, nuevo: 1767833820000}
- [003] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1441}
- [004] 🔍 ETHUSDT | Estado: 1441 confirmadas, En progreso: SÍ
- [766] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833820000, nuevo: 1767833880000}
- [766] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [767] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [767] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833820000, nuevo: 1767833880000}
- [767] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [767] 🔍 BTCUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [003] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833820000, nuevo: 1767833880000}
- [003] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1442}
- [004] 🔍 ETHUSDT | Estado: 1442 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91336.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.28
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [766] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833880000, nuevo: 1767833940000}
- [766] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [766] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [767] 🕯️  BTCUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833880000, nuevo: 1767833940000}
- [767] 🕯️  BTCUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [768] 🔍 BTCUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [045] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior {anterior: 1767833880000, nuevo: 1767833940000}
- [046] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada {total_confirmadas: 1443}
- [046] 🔍 ETHUSDT | Estado: 1443 confirmadas, En progreso: SÍ
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91350
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.76
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91355.7
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] ⏭️ Skipping cleanup (external manager)
- [630] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
- [630] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
- [631] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
- [632] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
- [634] 🕯️  BTCUSDT | 🎯 Fullscreen: zoom ajustado a 0.10 para ~1222 velas 
- [BTCUSDT] ⏭️ Skipping cleanup (external manager)
- [634] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
- [635] 🕯️  BTCUSDT | Solicitando histórico: 1 días @ 1 
- [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
- [636] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
- [636] 📡 BTCUSDT | Suscrito a WebSocket @ 1 
- [643] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833940000, datetime: '2026-01-07 19:59:00'}
- [644] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [644] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: NO
- [644] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [644] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91336.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [815] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1767833940000, datetime: '2026-01-07 19:59:00'}
- [815] 🕯️  BTCUSDT | ✅ Histórico cargado: 1439 velas confirmadas 
- [816] 🔍 BTCUSDT | Estado: 1439 confirmadas, En progreso: NO
- [816] 🕯️  BTCUSDT | 🎯 Zoom inicial ajustado: 0.11 para mostrar ~1222 velas 
- [816] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91355.6
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91336.9
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [760] 🕯️  BTCUSDT | 🆕 Primera vela en progreso {timestamp: 1767833940000, datetime: '2026-01-07 19:59:00'}
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91355.5
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [ETHUSDT] 📍 Current price: 3169.41
- [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
- [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
- [BTCUSDT] 📍 Current price: 91349.3
- [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: alertSettings.mode = "pattern_complete"
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:387 [PRUEBA_DBT] Config change: doubleTopBottom.maxBreakoutPercent = 2.5
+DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
+DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] ETHUSDT - User clicked Save & Close - will reload patterns
+MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas

@@ -20,45 +20,16 @@ import TPSLBoxShort from "./drawing/shapes/TPSLBoxShort";
 import MeasurementShape from "./drawing/shapes/MeasurementShape";
 import TextBox from "./drawing/shapes/TextBox";
 import AlertHistoryPanel from "./AlertHistoryPanel";
+import Logger from '../utils/Logger.js';
+import RenderManager from '../utils/RenderManager.js';
 
-// ==================== LOGGING SYSTEM ====================
-const DEBUG_MODE = true;
+// Logger instance
+const log = new Logger('MiniChart', { level: 'info' });
 
 // ==================== CONFIGURACIÓN ====================
 // Opacidad de los dibujos en el minichart (0.0 = transparente, 1.0 = opaco)
 // Ajusta este valor si los dibujos no se ven bien en el minichart
 const DRAWING_OPACITY = 0.7;
-
-const log = {
-  candle: (symbol, message, data = null) => {
-    if (!DEBUG_MODE) return;
-    const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false, fractionalSecondDigits: 3 });
-    console.log(`[${timestamp}] 🕯️  ${symbol} | ${message}`, data || '');
-  },
-  
-  ws: (symbol, message, data = null) => {
-    if (!DEBUG_MODE) return;
-    const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false, fractionalSecondDigits: 3 });
-    console.log(`[${timestamp}] 📡 ${symbol} | ${message}`, data || '');
-  },
-  
-  indicator: (symbol, message, data = null) => {
-    if (!DEBUG_MODE) return;
-    const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false, fractionalSecondDigits: 3 });
-    console.log(`[${timestamp}] 📊 ${symbol} | ${message}`, data || '');
-  },
-  
-  error: (symbol, message, error = null) => {
-    const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false, fractionalSecondDigits: 3 });
-    console.error(`[${timestamp}] ❌ ${symbol} | ${message}`, error || '');
-  },
-  
-  state: (symbol, candlesCount, hasInProgress) => {
-    if (!DEBUG_MODE) return;
-    const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false, fractionalSecondDigits: 3 });
-    console.log(`[${timestamp}] 🔍 ${symbol} | Estado: ${candlesCount} confirmadas, En progreso: ${hasInProgress ? 'SÍ' : 'NO'}`);
-  }
-};
 
 // ==================== HELPERS ====================
 
@@ -142,6 +113,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
   const drawingsRef = useRef([]);
+  const renderManagerRef = useRef(null);
 
   // ✅ NUEVO: Referencia para chequeo de gaps
   const gapCheckIntervalRef = useRef(null);
@@ -172,7 +144,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const calculatedZoom = chartWidth / (targetCandles * 8);
       viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
 
-      log.candle(symbol, `🎯 Fullscreen: zoom ajustado a ${viewStateRef.current.zoom.toFixed(2)} para ~${targetCandles} velas`);
+      log.debug(`[${symbol}] 🎯 Fullscreen: zoom ajustado a ${viewStateRef.current.zoom.toFixed(2)} para ~${targetCandles} velas`);
 
       // Forzar redibujado
       setTimeout(() => {
@@ -221,7 +193,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       case 'textbox':
         return TextBox.deserialize(data);
       default:
-        console.warn('Unknown shape type:', data.type);
+        log.warn('Unknown shape type:', data.type);
         return null;
     }
   };
@@ -242,7 +214,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // ✅ FIX: Incrementar versión para forzar re-render y mostrar trendlines
       setDrawingsVersion(v => v + 1);
     } catch (error) {
-      console.error(`Error loading drawings for ${symbol}:`, error);
+      log.error(`Error loading drawings for ${symbol}:`, error);
       drawingsRef.current = [];
       setDrawingsVersion(v => v + 1); // Forzar re-render incluso en error
     }
@@ -511,7 +483,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         try {
           shape.render(ctx, scaleConverter, false, false, false);
         } catch (error) {
-          console.error('Error rendering shape:', error);
+          log.error('Error rendering shape:', error);
         }
       });
       ctx.globalAlpha = 1.0;
@@ -744,8 +716,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     try {
       const timestamp = Date.now();
       const url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
-      
-      log.candle(symbol, `Solicitando histórico: ${days} días @ ${interval}`);
+
+      console.log(`[${symbol}] Solicitando histórico: ${days} días @ ${interval}`);
       
       const res = await fetch(url, {
         cache: 'no-cache',
@@ -765,7 +737,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         const currentTimeframeStart = Math.floor(now / intervalMs) * intervalMs;
         
         if (lastCandle.timestamp >= currentTimeframeStart) {
-          log.candle(symbol, '⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo', {
+          log.debug(`[${symbol}] ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo`, {
             timestamp: lastCandle.timestamp,
             datetime: lastCandle.datetime_colombia
           });
@@ -774,8 +746,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
         
         candlesRef.current = historicalCandles;
-        log.candle(symbol, `✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
-        log.state(symbol, candlesRef.current.length, inProgressCandleRef.current !== null);
+        console.log(`[${symbol}] ✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
+
+        // ✅ NUEVO: Notificar a IndicatorManager que las velas están disponibles
+        // Esto permite que DBT pueda hacer análisis completo inicial
+        if (indicatorManagerRef.current) {
+          indicatorManagerRef.current.onHistoricalCandlesLoaded(historicalCandles);
+        }
 
         // 🎯 Resetear escala de precios para recalcular con nuevos datos
         priceScaleRef.current.minPrice = null;
@@ -798,7 +775,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           const calculatedZoom = chartWidth / (targetCandles * 8);
           viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
 
-          log.candle(symbol, `🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas`);
+          log.debug(`[${symbol}] 🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas`);
         }
 
         // ✅ NUEVO: Verificar si hay gap después de cargar
@@ -810,21 +787,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
         // 🎯 NUEVO: Analizar rangos de consolidación
         if (indicatorManagerRef.current && indicatorManagerRef.current.isRangeDetectionEnabled()) {
-          log.candle(symbol, `🔍 Range Detection habilitado - programando análisis en 1.5s`);
+          log.debug(`[${symbol}] 🔍 Range Detection habilitado - programando análisis en 1.5s`);
           setTimeout(() => {
-            log.candle(symbol, `🚀 Ejecutando analyzeRanges() con ${candlesRef.current.length} velas`);
+            log.debug(`[${symbol}] 🚀 Ejecutando analyzeRanges() con ${candlesRef.current.length} velas`);
             indicatorManagerRef.current.analyzeRanges(candlesRef.current);
           }, 1500);
         } else {
-          log.candle(symbol, `⏸️ Range Detection NO habilitado o indicatorManager no existe`);
+          log.debug(`[${symbol}] ⏸️ Range Detection NO habilitado o indicatorManager no existe`);
         }
 
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
       } else {
-        log.error(symbol, 'Error en respuesta histórica', json);
+        console.error(`[${symbol}] Error en respuesta histórica`, json);
       }
     } catch (err) {
-      log.error(symbol, 'Error cargando histórico', err);
+      console.error(`[${symbol}] Error cargando histórico`, err);
     }
   };
 
@@ -833,13 +810,61 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const handleWebSocketMessage = (data) => {
     if (!mountedRef.current) return;
 
+    // Si el RenderManager existe, usarlo para optimización
+    if (renderManagerRef.current) {
+      renderManagerRef.current.handleWebSocketUpdate(data, {
+        onPriceUpdate: (updateData) => {
+          // Actualización de precio (alta frecuencia)
+          if (updateData && updateData.topic && updateData.topic.startsWith("tickers.")) {
+            const tickerData = updateData.data;
+            if (tickerData && tickerData.lastPrice) {
+              const newPrice = parseFloat(tickerData.lastPrice);
+              lastPriceRef.current = newPrice;
+
+              if (!animationFrameRef.current) {
+                animationFrameRef.current = requestAnimationFrame(() => {
+                  drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+                  animationFrameRef.current = null;
+                });
+              }
+            }
+          }
+        },
+        onIndicatorUpdate: (updateData) => {
+          // Actualización de indicadores (solo al cerrar velas)
+          log.debug(`[${symbol}] 🕐 Vela cerrada - actualizando indicadores`);
+
+          if (indicatorManagerRef.current) {
+            // Actualizar indicadores con nuevos datos
+            indicatorManagerRef.current.checkAndRefreshIfNeeded(candlesRef.current);
+
+            // Analizar rangos si está habilitado
+            if (indicatorManagerRef.current.isRangeDetectionEnabled()) {
+              log.debug(`[${symbol}] 🔄 Analizando rangos tras cierre de vela`);
+              indicatorManagerRef.current.analyzeRanges(candlesRef.current);
+            }
+          }
+
+          // Redibujar con indicadores actualizados
+          if (!animationFrameRef.current) {
+            animationFrameRef.current = requestAnimationFrame(() => {
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+              animationFrameRef.current = null;
+            });
+          }
+        }
+      });
+    }
+
+    // IMPORTANTE: Procesar datos de ticker para precio actual
     if (data.topic && data.topic.startsWith("tickers.")) {
       const tickerData = data.data;
       if (tickerData && tickerData.lastPrice) {
         const newPrice = parseFloat(tickerData.lastPrice);
         lastPriceRef.current = newPrice;
-        
-        if (!animationFrameRef.current) {
+
+        // Si no hay RenderManager, actualizar siempre
+        if (!renderManagerRef.current && !animationFrameRef.current) {
           animationFrameRef.current = requestAnimationFrame(() => {
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
             animationFrameRef.current = null;
@@ -847,14 +872,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
       }
     }
-    
+
+    // Procesar datos de velas (mantener lógica existente SIEMPRE)
     if (data.topic && data.topic.startsWith("kline.")) {
       const klineData = data.data;
       if (klineData && klineData.length > 0) {
         const candle = klineData[0];
         const candleTimestamp = parseInt(candle.start);
         const datetime_colombia = formatDateTimeColombia(candleTimestamp);
-        
+
         const newCandle = {
           timestamp: candleTimestamp,
           open: parseFloat(candle.open),
@@ -870,45 +896,37 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
         if (!currentInProgress) {
           inProgressCandleRef.current = newCandle;
-          log.candle(symbol, '🆕 Primera vela en progreso', {
-            timestamp: candleTimestamp,
-            datetime: datetime_colombia
-          });
-          
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] 🆕 Primera vela en progreso`, { timestamp: candleTimestamp, datetime: datetime_colombia });
+
         } else if (candleTimestamp > currentInProgress.timestamp) {
-          log.candle(symbol, '🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior', {
-            anterior: currentInProgress.timestamp,
-            nuevo: candleTimestamp
-          });
-          
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior`, { anterior: currentInProgress.timestamp, nuevo: candleTimestamp });
+
           candlesRef.current.push(currentInProgress);
-          
+
           if (candlesRef.current.length > 2000) {
             candlesRef.current.shift();
           }
-          
-          log.candle(symbol, '✅ Vela confirmada y agregada', {
-            total_confirmadas: candlesRef.current.length
-          });
-          
+
+          // Performance: Disabled frequent logging
+          // log.debug(`[${symbol}] ✅ Vela confirmada y agregada`, { total_confirmadas: candlesRef.current.length });
+
           inProgressCandleRef.current = newCandle;
-          log.state(symbol, candlesRef.current.length, true);
+          // Performance: Disabled frequent logging
+          // log.trace(`[${symbol}] Estado: ${candlesRef.current.length} confirmadas, En progreso: ${true ? 'SÍ' : 'NO'}`);
 
-          // ✅ Verificar gap cuando se confirma una vela
-          if (indicatorManagerRef.current) {
-            indicatorManagerRef.current.checkAndRefreshIfNeeded(candlesRef.current);
+          // ✅ REAL-TIME DETECTION: Notificar al IndicatorManager cuando se cierra una vela
+          // Usa referencia directa (sin spread operator) para evitar copia de 2000+ objetos
+          // El IndicatorManager tiene throttling interno (90% del intervalo) para prevenir exceso de detecciones
+          if (indicatorManagerRef.current && indicatorManagerRef.current.onCandleClose) {
+            indicatorManagerRef.current.onCandleClose(candlesRef.current);
           }
 
-          // 🎯 NUEVO: Analizar rangos cuando se confirma nueva vela
-          if (indicatorManagerRef.current && indicatorManagerRef.current.isRangeDetectionEnabled()) {
-            log.candle(symbol, `🔄 Nueva vela confirmada - analizando rangos`);
-            indicatorManagerRef.current.analyzeRanges(candlesRef.current);
-          }
-          
         } else if (candleTimestamp === currentInProgress.timestamp) {
           inProgressCandleRef.current = newCandle;
         }
-        
+
         if (!animationFrameRef.current) {
           animationFrameRef.current = requestAnimationFrame(() => {
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
@@ -1172,7 +1190,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         };
         globalRanges.push(newRange);
         localStorage.setItem('vp_fixed_ranges_global', JSON.stringify(globalRanges));
-        console.log(`✅ Fixed Range guardado globalmente para todas las monedas:`, newRange);
+        log.debug(`✅ Fixed Range guardado globalmente para todas las monedas:`, newRange);
 
         // Forzar actualización en todos los componentes (esto se hace a través de un refresh global)
         window.dispatchEvent(new CustomEvent('globalFixedRangeCreated', { detail: newRange }));
@@ -1203,7 +1221,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const count = indicatorManagerRef.current.deleteAllFixedRangeProfiles();
       setFixedRangeProfiles([]); // Limpiar estado
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-      console.log(`✅ ${count} Fixed Range Profiles eliminados para ${symbol}`);
+      log.debug(`✅ ${count} Fixed Range Profiles eliminados para ${symbol}`);
     }
   };
 
@@ -1222,7 +1240,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     window.dispatchEvent(new CustomEvent('globalFixedRangesDeleted'));
 
     drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-    console.log(`✅ Todos los VP Fixed Ranges eliminados GLOBALMENTE`);
+    log.debug(`✅ Todos los VP Fixed Ranges eliminados GLOBALMENTE`);
   };
 
   const handleToggleFixedRangeProfile = (rangeId, enabled) => {
@@ -1280,7 +1298,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   useEffect(() => {
     if (indicatorManagerRef.current && indicatorManagerRef.current.days !== parseInt(days)) {
-      log.indicator(symbol, `Días cambiados de ${indicatorManagerRef.current.days} a ${days}`);
+      log.debug(`[${symbol}] 📊 Días cambiados de ${indicatorManagerRef.current.days} a ${days}`);
 
       // ✅ NUEVO: Limpiar rangos auto-detectados cuando cambia la selección de días
       indicatorManagerRef.current.clearAutoDetectedRanges();
@@ -1317,13 +1335,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   useEffect(() => {
     mountedRef.current = true;
-    
-    log.candle(symbol, '🚀 Componente montado, iniciando...');
-    
+
+    console.log(`[${symbol}] 🚀 Componente montado, iniciando...`);
+
+    // Inicializar RenderManager
+    renderManagerRef.current = new RenderManager(symbol, interval);
+
     const initIndicators = async () => {
       // ✅ Si hay manager externo (fullscreen), usarlo directamente
       if (externalIndicatorManager) {
-        console.log(`[${symbol}] 🔗 Usando IndicatorManager externo (fullscreen)`);
+        log.debug(`[${symbol}] 🔗 Usando IndicatorManager externo (fullscreen)`);
         indicatorManagerRef.current = externalIndicatorManager;
 
         // Sincronizar estados de indicadores visuales
@@ -1334,26 +1355,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         if (!externalIndicatorManager.requestRedraw) {
           externalIndicatorManager.requestRedraw = () => {
             if (candlesRef.current && candlesRef.current.length > 0) {
-              console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
+              log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
               drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
             }
           };
         }
 
-        log.indicator(symbol, '✅ IndicatorManager externo conectado');
+        log.debug(`[${symbol}] 📊 ✅ IndicatorManager externo conectado`);
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         return; // NO crear nuevo manager
       }
 
       // ✅ Si no hay externo, crear nuevo (comportamiento normal)
-      console.log(`[${symbol}] 🔧 Creando nuevo IndicatorManager`);
+      log.debug(`[${symbol}] 🔧 Creando nuevo IndicatorManager`);
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
-      await indicatorManagerRef.current.initialize();
+      await indicatorManagerRef.current.initialize(indicatorStates);
 
       // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
       indicatorManagerRef.current.requestRedraw = () => {
         if (candlesRef.current && candlesRef.current.length > 0) {
-          console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
+          log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
           drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         }
       };
@@ -1362,7 +1383,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       IndicatorManagerRegistry.register(symbol, indicatorManagerRef.current);
 
       // 🎛️ Aplicar presets globales con overrides por símbolo
-      console.log(`[${symbol}] 🎛️ Aplicando presets efectivos (global + overrides)`);
+      log.debug(`[${symbol}] 🎛️ Aplicando presets efectivos (global + overrides)`);
       const indicatorsWithPresets = [
         "Rejection Patterns",
         "Support & Resistance",
@@ -1400,12 +1421,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       if (indicatorManagerRef.current) {
         const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
         setFixedRangeProfiles(profiles);
-        console.log(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
+        log.debug(`[${symbol}] ✅ Sincronizados ${profiles.length} Fixed Range Profiles`);
 
         // ✅ NUEVO: Cargar rangos globales (aplicados a todas las monedas)
         const globalRanges = JSON.parse(localStorage.getItem('vp_fixed_ranges_global') || '[]');
         if (globalRanges.length > 0) {
-          console.log(`[${symbol}] 📂 Cargando ${globalRanges.length} rangos globales`);
+          log.debug(`[${symbol}] 📂 Cargando ${globalRanges.length} rangos globales`);
           globalRanges.forEach(range => {
             const existingProfile = profiles.find(p =>
               p.startTimestamp === range.startTimestamp && p.endTimestamp === range.endTimestamp
@@ -1423,7 +1444,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           viewStateRef.current.verticalOffset = 0;
         }
       }
-      log.indicator(symbol, '✅ Indicadores inicializados');
+      log.debug(`[${symbol}] 📊 ✅ Indicadores inicializados`);
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     };
     
@@ -1435,11 +1456,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     wsManager.connect(bybitInterval);
     wsManager.subscribe(symbol, handleWebSocketMessage);
     
-    log.ws(symbol, `Suscrito a WebSocket @ ${bybitInterval}`);
+    log.debug(`[${symbol}] 📡 Suscrito a WebSocket @ ${bybitInterval}`);
 
     // ✅ REDUCIDO: Recarga cada 5 minutos (el auto-refresh de indicadores se hace cada 1 min)
     const reloadInterval = setInterval(() => {
-      log.candle(symbol, '🔄 Recarga periódica histórico (5 min)');
+      log.debug(`[${symbol}] 🔄 Recarga periódica histórico (5 min)`);
       loadHistoricalData();
     }, 300000);
 
@@ -1453,15 +1474,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // 🎯 NUEVO: Detección de patrones de rechazo cada 2 minutos
     const patternDetectionInterval = setInterval(async () => {
       if (indicatorManagerRef.current && rejectionPatternConfig) {
-        log.indicator(symbol, '🔍 Ejecutando detección de patrones de rechazo...');
+        log.debug(`[${symbol}] 📊 🔍 Ejecutando detección de patrones de rechazo...`);
         try {
           const patterns = await indicatorManagerRef.current.detectRejectionPatterns();
           if (patterns && patterns.length > 0) {
-            log.indicator(symbol, `✅ Detectados ${patterns.length} patrones`);
+            log.debug(`[${symbol}] 📊 ✅ Detectados ${patterns.length} patrones`);
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
           }
         } catch (error) {
-          log.error(symbol, 'Error en detección de patrones', error);
+          log.error(`[${symbol}] Error en detección de patrones`, error);
         }
       }
     }, 120000); // Cada 2 minutos
@@ -1481,7 +1502,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     return () => {
       // ✅ Solo limpiar si NO es manager externo
       if (!externalIndicatorManager) {
-        log.candle(symbol, '🛑 Componente desmontado, limpiando...');
+        log.debug(`[${symbol}] 🛑 Componente desmontado, limpiando...`);
 
         // 📋 Desregistrar del registro global
         IndicatorManagerRegistry.unregister(symbol);
@@ -1510,6 +1531,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           indicatorManagerRef.current.destroy();
         }
 
+        // Destruir RenderManager
+        if (renderManagerRef.current) {
+          renderManagerRef.current.destroy();
+          renderManagerRef.current = null;
+        }
+
         candlesRef.current = [];
         inProgressCandleRef.current = null;
 
@@ -1518,7 +1545,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           canvas.removeEventListener('dblclick', handleDoubleClick);
         }
       } else {
-        console.log(`[${symbol}] ⏭️ Skipping cleanup (external manager)`);
+        log.debug(`[${symbol}] ⏭️ Skipping cleanup (external manager)`);
       }
     };
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
@@ -1535,7 +1562,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         );
 
         if (!alreadyExists) {
-          console.log(`[${symbol}] 📥 Creando Fixed Range desde evento global`);
+          log.debug(`[${symbol}] 📥 Creando Fixed Range desde evento global`);
           indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
           const updatedProfiles = indicatorManagerRef.current.getFixedRangeProfiles();
           setFixedRangeProfiles(updatedProfiles);
@@ -1553,7 +1580,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // ✅ NUEVO: Handler para borrar todos los VP globalmente
     const handleGlobalRangesDeleted = () => {
       if (indicatorManagerRef.current) {
-        console.log(`[${symbol}] 🗑️ Eliminando todos los VP Fixed Ranges (evento global)`);
+        log.debug(`[${symbol}] 🗑️ Eliminando todos los VP Fixed Ranges (evento global)`);
         indicatorManagerRef.current.deleteAllFixedRangeProfiles();
         setFixedRangeProfiles([]);
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);

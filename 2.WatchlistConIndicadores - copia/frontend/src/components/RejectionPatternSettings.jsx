@@ -26,6 +26,7 @@ const RejectionPatternSettings = ({
   const [showMode, setShowMode] = useState('validated');
   const [activePreset, setActivePreset] = useState('custom');
   const [showAddZoneModal, setShowAddZoneModal] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({ strategy: false });
 
   // ✅ NUEVO: Leer el modo actual del indicador al montar
   useEffect(() => {
@@ -181,7 +182,26 @@ const RejectionPatternSettings = ({
         ...zone,
         signalDirection: zone.signalDirection || 'BOTH'  // ✅ FIX: Migrate null to 'BOTH'
       })),
-      debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode
+      debugMode: oldConfig.debugMode !== undefined ? oldConfig.debugMode : defaultConfig.debugMode,
+      // ✅ NUEVO: Migrar vwapFilter
+      vwapFilter: {
+        ...defaultConfig.vwapFilter,
+        ...oldConfig.vwapFilter,
+        requiredDeviations: {
+          ...defaultConfig.vwapFilter.requiredDeviations,
+          ...oldConfig.vwapFilter?.requiredDeviations
+        }
+      },
+      // ✅ NUEVO: Migrar swingArrowStyle
+      swingArrowStyle: {
+        ...defaultConfig.swingArrowStyle,
+        ...oldConfig.swingArrowStyle
+      },
+      // ✅ NUEVO: Migrar strategy
+      strategy: {
+        ...defaultConfig.strategy,
+        ...oldConfig.strategy
+      }
     };
   };
 
@@ -986,6 +1006,523 @@ const RejectionPatternSettings = ({
                   If enabled, patterns NOT at swing points will be hidden
                 </span>
               </div>
+
+              <div className="filter-item" style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,193,7,0.1)', borderRadius: '8px', border: '1px solid rgba(255,193,7,0.3)' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={config.swingDetection?.swingOnlyMode || false}
+                    onChange={(e) => updateSwingDetection('swingOnlyMode', e.target.checked)}
+                  />
+                  <span style={{ fontWeight: 'bold', color: '#ffc107' }}>⚡ Swing Only Mode (ignore candle shape)</span>
+                </label>
+                <span className="filter-hint" style={{ display: 'block', marginTop: '8px' }}>
+                  Detects ALL swing highs/lows without requiring specific candle patterns (Hammer, Shooting Star, etc.).
+                  <br />
+                  <strong>Use with:</strong> VWAP filter + Volume Z-Score + Manual Zones for best results.
+                  <br />
+                  <em>• Swing High → SHORT signal</em>
+                  <br />
+                  <em>• Swing Low → LONG signal</em>
+                </span>
+              </div>
+
+              {/* ✅ NUEVO: Swing Arrow Style */}
+              {config.swingDetection?.swingOnlyMode && (
+                <div className="swing-arrow-style" style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                  <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                    🎨 Swing Arrow Style
+                  </h5>
+
+                  <div className="filter-item">
+                    <label>
+                      Arrow Size: {config.swingArrowStyle?.size || 10}px
+                      <input
+                        type="range"
+                        min="5"
+                        max="20"
+                        step="1"
+                        value={config.swingArrowStyle?.size || 10}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            swingArrowStyle: {
+                              ...prev.swingArrowStyle,
+                              size: parseInt(e.target.value)
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                        className="proximity-slider"
+                      />
+                    </label>
+                    <span className="filter-hint">
+                      Size of the arrow triangles (5-20 pixels)
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '20px', marginTop: '12px' }}>
+                    <div className="color-setting">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#00E676' }}>▲</span> LONG Color:
+                        <input
+                          type="color"
+                          value={config.swingArrowStyle?.longColor || '#00E676'}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              swingArrowStyle: {
+                                ...prev.swingArrowStyle,
+                                longColor: e.target.value
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="color-setting">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#FF1744' }}>▼</span> SHORT Color:
+                        <input
+                          type="color"
+                          value={config.swingArrowStyle?.shortColor || '#FF1744'}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              swingArrowStyle: {
+                                ...prev.swingArrowStyle,
+                                shortColor: e.target.value
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                    <button
+                      className="utility-button"
+                      style={{ fontSize: '11px', padding: '4px 8px' }}
+                      onClick={() => {
+                        setConfig(prev => ({
+                          ...prev,
+                          swingArrowStyle: {
+                            size: 10,
+                            longColor: '#00E676',
+                            shortColor: '#FF1744',
+                            offset: 8
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    >
+                      Reset to defaults
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* ✅ NUEVO: Section Strategy (Entry/SL/TP) */}
+        <section className="settings-section">
+          <h4
+            className="section-header collapsible"
+            onClick={() => setExpandedSections(prev => ({ ...prev, strategy: !prev.strategy }))}
+          >
+            📊 Strategy (Entry / SL / TP)
+            <span className="toggle-icon">{expandedSections.strategy ? '▼' : '▶'}</span>
+          </h4>
+
+          {expandedSections.strategy && (
+            <>
+              <div className="filter-item" style={{ marginBottom: '16px' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={config.strategy?.enabled || false}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        strategy: {
+                          ...prev.strategy,
+                          enabled: e.target.checked
+                        }
+                      }));
+                      setActivePreset('custom');
+                    }}
+                  />
+                  <span style={{ fontWeight: 'bold', color: '#03A9F4' }}>Enable Strategy Lines</span>
+                </label>
+                <span className="filter-hint">
+                  Shows Entry, Stop Loss and Take Profit lines on detected patterns
+                </span>
+              </div>
+
+              {config.strategy?.enabled && (
+                <>
+                  <div className="filter-item">
+                    <label>
+                      Risk:Reward Ratio: {config.strategy?.riskRewardRatio || 2.0}x
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        step="0.5"
+                        value={config.strategy?.riskRewardRatio || 2.0}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            strategy: {
+                              ...prev.strategy,
+                              riskRewardRatio: parseFloat(e.target.value)
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                        className="proximity-slider"
+                      />
+                    </label>
+                    <span className="filter-hint">
+                      Take Profit = Stop Loss distance × this ratio
+                    </span>
+                  </div>
+
+                  <div className="filter-item">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={config.strategy?.includeInAlert !== false}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            strategy: {
+                              ...prev.strategy,
+                              includeInAlert: e.target.checked
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                      />
+                      Include Entry/SL/TP in alerts (port 5000)
+                    </label>
+                  </div>
+
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                    <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                      🎨 Line Colors
+                    </h5>
+
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Entry:
+                          <input
+                            type="color"
+                            value={config.strategy?.entryColor || '#03A9F4'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  entryColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Stop Loss:
+                          <input
+                            type="color"
+                            value={config.strategy?.stopLossColor || '#FF1744'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  stopLossColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Take Profit:
+                          <input
+                            type="color"
+                            value={config.strategy?.takeProfitColor || '#00E676'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  takeProfitColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Box settings */}
+                    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #444' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                        <label className="checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={config.strategy?.showBox !== false}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  showBox: e.target.checked
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                          />
+                          Show connecting box
+                        </label>
+
+                        {config.strategy?.showBox !== false && (
+                          <>
+                            <div className="color-setting">
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ color: '#FF6B6B' }}>SL Box:</span>
+                                <input
+                                  type="color"
+                                  value={config.strategy?.slBoxColor || '#FF1744'}
+                                  onChange={(e) => {
+                                    setConfig(prev => ({
+                                      ...prev,
+                                      strategy: {
+                                        ...prev.strategy,
+                                        slBoxColor: e.target.value
+                                      }
+                                    }));
+                                    setActivePreset('custom');
+                                  }}
+                                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                                />
+                              </label>
+                            </div>
+
+                            <div className="color-setting">
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ color: '#4CAF50' }}>TP Box:</span>
+                                <input
+                                  type="color"
+                                  value={config.strategy?.tpBoxColor || '#00E676'}
+                                  onChange={(e) => {
+                                    setConfig(prev => ({
+                                      ...prev,
+                                      strategy: {
+                                        ...prev.strategy,
+                                        tpBoxColor: e.target.value
+                                      }
+                                    }));
+                                    setActivePreset('custom');
+                                  }}
+                                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                                />
+                              </label>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '12px', color: '#888' }}>Opacity:</span>
+                              <input
+                                type="range"
+                                min="0.05"
+                                max="0.4"
+                                step="0.05"
+                                value={config.strategy?.boxOpacity || 0.15}
+                                onChange={(e) => {
+                                  setConfig(prev => ({
+                                    ...prev,
+                                    strategy: {
+                                      ...prev.strategy,
+                                      boxOpacity: parseFloat(e.target.value)
+                                    }
+                                  }));
+                                  setActivePreset('custom');
+                                }}
+                                style={{ width: '80px' }}
+                              />
+                              <span style={{ fontSize: '11px', color: '#666' }}>{Math.round((config.strategy?.boxOpacity || 0.15) * 100)}%</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stop Loss Swing Detection Parameters */}
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                    <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                      🎯 Stop Loss - Swing Detection
+                    </h5>
+                    <span className="filter-hint" style={{ display: 'block', marginBottom: '12px' }}>
+                      Parameters to find the previous swing high/low for Stop Loss placement
+                    </span>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div className="filter-item">
+                        <label>
+                          Left Bars: {config.strategy?.slSwingLeftBars || 3}
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            step="1"
+                            value={config.strategy?.slSwingLeftBars || 3}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  slSwingLeftBars: parseInt(e.target.value)
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            className="proximity-slider"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="filter-item">
+                        <label>
+                          Right Bars: {config.strategy?.slSwingRightBars || 3}
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            step="1"
+                            value={config.strategy?.slSwingRightBars || 3}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  slSwingRightBars: parseInt(e.target.value)
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            className="proximity-slider"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="filter-item" style={{ marginTop: '12px' }}>
+                      <label>
+                        Lookback Candles: {config.strategy?.slSwingLookback || 50}
+                        <input
+                          type="range"
+                          min="10"
+                          max="100"
+                          step="5"
+                          value={config.strategy?.slSwingLookback || 50}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slSwingLookback: parseInt(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        How far back to search for a swing point
+                      </span>
+                    </div>
+
+                    <div className="filter-item" style={{ marginTop: '16px', padding: '10px', background: '#2a1a1a', borderRadius: '6px', border: '1px solid #443' }}>
+                      <label>
+                        <span style={{ color: '#FF9800' }}>⚠️ Fallback Buffer: {config.strategy?.slBufferPercent || 20}%</span>
+                        <input
+                          type="range"
+                          min="10"
+                          max="100"
+                          step="5"
+                          value={config.strategy?.slBufferPercent || 20}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slBufferPercent: parseInt(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        When no swing is found, SL = pattern low/high + this % extra safety margin
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Minimum SL % */}
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a2a1a', borderRadius: '8px', border: '1px solid #343' }}>
+                    <div className="filter-item">
+                      <label>
+                        <span style={{ color: '#4CAF50' }}>🔒 Minimum SL: {config.strategy?.slMinPercent || 0.5}%</span>
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="2"
+                          step="0.1"
+                          value={config.strategy?.slMinPercent || 0.5}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slMinPercent: parseFloat(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        If calculated SL is smaller than this %, force it to this minimum (for exchange viability)
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </section>
@@ -1080,16 +1617,6 @@ const RejectionPatternSettings = ({
             </span>
           </div>
 
-          <div className="filter-item">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={config.filters.requireVolumeSpike}
-                onChange={(e) => updateFilter('requireVolumeSpike', e.target.checked)}
-              />
-              <span>Require elevated volume on pattern candle (legacy)</span>
-            </label>
-          </div>
         </section>
 
         {/* Section 3.5: Volume Z-Score Filter */}
@@ -1097,7 +1624,7 @@ const RejectionPatternSettings = ({
           <h4>📊 Volume Z-Score Filter (Advanced)</h4>
           <p className="help-text">
             Filters patterns based on statistical volume significance (Z-score).
-            Only patterns with volume above the threshold are shown.
+            Evaluates volume around the swing point, not just the exact candle.
           </p>
 
           <div className="filter-item">
@@ -1174,6 +1701,211 @@ const RejectionPatternSettings = ({
                 <span className="filter-hint">
                   1.0σ = 84th percentile, 1.5σ = 93rd, 2.0σ = 97.5th, 3.0σ = 99.85th
                 </span>
+              </div>
+
+              <div className="filter-item">
+                <label>
+                  Candles around swing: {config.volumeZScore?.swingCandleRange || 1}
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    step="1"
+                    value={config.volumeZScore?.swingCandleRange || 1}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        volumeZScore: {
+                          ...prev.volumeZScore,
+                          swingCandleRange: parseInt(e.target.value)
+                        }
+                      }));
+                    }}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  {config.volumeZScore?.swingCandleRange === 1
+                    ? 'Only evaluates the exact swing candle'
+                    : `Evaluates max Z-score within ±${config.volumeZScore?.swingCandleRange || 1} candles of the swing`}
+                </span>
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* ✅ NUEVO: VWAP Deviation Filter */}
+        <section className="settings-section">
+          <h4>📈 VWAP Deviation Filter</h4>
+          <p className="help-text">
+            Filter patterns based on VWAP standard deviations. When enabled, only patterns near the configured deviations will trigger alerts.
+            <br />
+            <strong>LONG patterns</strong> → must be near -2σ or -3σ (below VWAP)
+            <br />
+            <strong>SHORT patterns</strong> → must be near +2σ or +3σ (above VWAP)
+          </p>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.vwapFilter?.enabled || false}
+                onChange={(e) => {
+                  setConfig(prev => ({
+                    ...prev,
+                    vwapFilter: {
+                      ...prev.vwapFilter,
+                      enabled: e.target.checked
+                    }
+                  }));
+                  setActivePreset('custom');
+                }}
+              />
+              <span>Enable VWAP Deviation Filter (Pass/Fail)</span>
+            </label>
+            <span className="filter-hint">
+              ⚠️ Requires VWAP indicator to be active on the chart
+            </span>
+          </div>
+
+          {config.vwapFilter?.enabled && (
+            <>
+              {/* Timeframe presets info */}
+              <div className="vwap-presets-info" style={{
+                background: '#1a2a1a',
+                padding: '10px',
+                borderRadius: '4px',
+                marginBottom: '10px',
+                fontSize: '12px'
+              }}>
+                <strong>📊 Timeframe Defaults:</strong>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '6px', color: '#aaa' }}>
+                  <span>1m: 0.1%</span>
+                  <span>5m: 0.2%</span>
+                  <span>15m: 0.3%</span>
+                  <span>1h: 0.8%</span>
+                  <span>4h: 1.5%</span>
+                  <span>1D: 2.5%</span>
+                </div>
+              </div>
+
+              <div className="filter-item">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <label className="checkbox-label" style={{ margin: 0 }}>
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.deviationTolerance === 0 || config.vwapFilter?.deviationTolerance === 'auto'}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            deviationTolerance: e.target.checked ? 0 : 10
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>Use Auto (timeframe default)</span>
+                  </label>
+                </div>
+
+                {config.vwapFilter?.deviationTolerance !== 0 && config.vwapFilter?.deviationTolerance !== 'auto' && (
+                  <label>
+                    Custom Tolerance: {config.vwapFilter?.deviationTolerance || 10}% of σ
+                    <input
+                      type="range"
+                      min="1"
+                      max="80"
+                      step="1"
+                      value={config.vwapFilter?.deviationTolerance || 10}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            deviationTolerance: parseFloat(e.target.value)
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                      className="proximity-slider"
+                    />
+                  </label>
+                )}
+                <span className="filter-hint">
+                  {config.vwapFilter?.deviationTolerance === 0 || config.vwapFilter?.deviationTolerance === 'auto'
+                    ? '✅ Using automatic tolerance based on current timeframe'
+                    : 'Margin as % of σ (standard deviation). E.g. 10% of σ=$100 → margin of $10'}
+                </span>
+              </div>
+
+              <div className="vwap-deviations-config">
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+                  Required Deviations:
+                </label>
+
+                <div className="filter-item">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.requiredDeviations?.second !== false}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            requiredDeviations: {
+                              ...prev.vwapFilter?.requiredDeviations,
+                              second: e.target.checked
+                            }
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>±2σ (Second Deviation)</span>
+                  </label>
+                  <span className="filter-hint">
+                    LONG: -2σ | SHORT: +2σ
+                  </span>
+                </div>
+
+                <div className="filter-item">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={config.vwapFilter?.requiredDeviations?.third || false}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          vwapFilter: {
+                            ...prev.vwapFilter,
+                            requiredDeviations: {
+                              ...prev.vwapFilter?.requiredDeviations,
+                              third: e.target.checked
+                            }
+                          }
+                        }));
+                        setActivePreset('custom');
+                      }}
+                    />
+                    <span>±3σ (Third Deviation)</span>
+                  </label>
+                  <span className="filter-hint">
+                    LONG: -3σ | SHORT: +3σ (more extreme)
+                  </span>
+                </div>
+              </div>
+
+              <div className="debug-info-box" style={{ marginTop: '10px' }}>
+                <p>💡 <strong>How it works:</strong></p>
+                <ul style={{ margin: '8px 0', paddingLeft: '20px', fontSize: '12px', color: '#aaa' }}>
+                  <li>Pattern is detected normally</li>
+                  <li>Before sending alert, checks if price is near VWAP deviation</li>
+                  <li>If NOT near → pattern is REJECTED (no alert)</li>
+                  <li>If near → pattern PASSES → alert sent to port 5000</li>
+                </ul>
               </div>
             </>
           )}
@@ -1262,6 +1994,11 @@ const RejectionPatternSettings = ({
             {config.alertsEnabled && (
               <p className="info">
                 🔔 Alerts enabled → localhost:5000
+              </p>
+            )}
+            {config.vwapFilter?.enabled && (
+              <p className="info">
+                📈 VWAP Filter: {config.vwapFilter.requiredDeviations?.second ? '±2σ' : ''}{config.vwapFilter.requiredDeviations?.second && config.vwapFilter.requiredDeviations?.third ? ', ' : ''}{config.vwapFilter.requiredDeviations?.third ? '±3σ' : ''} (tolerance: {config.vwapFilter.deviationTolerance === 0 ? 'auto' : `${config.vwapFilter.deviationTolerance}% of σ`})
               </p>
             )}
           </div>
@@ -2206,7 +2943,8 @@ function getDefaultConfig() {
       enabled: true,
       leftBars: 5,
       rightBars: 5,
-      required: false
+      required: false,
+      swingOnlyMode: false  // Si true, detecta swings sin requerir forma de patrón
     },
     referenceContexts: [],
     levelSources: {
@@ -2221,20 +2959,58 @@ function getDefaultConfig() {
     filters: {
       minConfidence: 50,
       requireNearLevel: false,
-      proximityPercent: 1.0,
-      requireVolumeSpike: false
+      proximityPercent: 1.0
     },
     volumeZScore: {
       enabled: false,
       lookbackPeriod: 20,
-      minZScore: 1.0
+      minZScore: 1.0,
+      swingCandleRange: 1  // Velas alrededor del swing a considerar para el Z-score
     },
     alertsEnabled: false,
     debugMode: false,
     signalDirection: {
       global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'
     },
-    manualPriceZones: []
+    manualPriceZones: [],
+    // ✅ NUEVO: Filtro VWAP (pasa/no pasa)
+    vwapFilter: {
+      enabled: false,
+      deviationTolerance: 10,  // % de σ (desviación estándar)
+      requiredDeviations: {
+        second: true,   // ±2σ
+        third: false    // ±3σ
+      }
+    },
+    // ✅ NUEVO: Estilo visual de flechas de swing
+    swingArrowStyle: {
+      size: 10,           // Tamaño base de la flecha (5-20)
+      longColor: '#00E676',   // Verde para LONG (swing low)
+      shortColor: '#FF1744',  // Rojo para SHORT (swing high)
+      offset: 8          // Distancia desde el high/low de la vela
+    },
+    // ✅ NUEVO: Configuración de estrategia (Entry/SL/TP)
+    strategy: {
+      enabled: false,
+      riskRewardRatio: 2.0,
+      lineLengthCandles: 5,
+      entryColor: '#03A9F4',
+      stopLossColor: '#FF1744',
+      takeProfitColor: '#00E676',
+      showLabels: true,
+      includeInAlert: true,
+      // Box settings
+      showBox: true,
+      slBoxColor: '#FF1744',  // Rojo para zona SL-Entry
+      tpBoxColor: '#00E676',  // Verde para zona Entry-TP
+      boxOpacity: 0.15,
+      // SL Swing Detection parameters
+      slSwingLeftBars: 3,
+      slSwingRightBars: 3,
+      slSwingLookback: 50,
+      slBufferPercent: 20,
+      slMinPercent: 0.5
+    }
   };
 }
 
