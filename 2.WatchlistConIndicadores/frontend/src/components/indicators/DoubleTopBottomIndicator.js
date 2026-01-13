@@ -363,6 +363,28 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           detectionCircleColor: '#2196F3',
           detectionCircleSize: 8
         }
+      },
+
+      // ✅ NUEVO: Strategy (Entry/SL/TP)
+      strategy: {
+        enabled: false,
+        riskRewardRatio: 2.0,
+        lineLengthCandles: 5,
+        entryColor: '#03A9F4',
+        stopLossColor: '#FF1744',
+        takeProfitColor: '#00E676',
+        showLabels: true,
+        includeInAlert: true,
+        // Box settings
+        showBox: true,
+        boxColor: '#03A9F4',
+        boxOpacity: 0.15,
+        // SL Swing Detection parameters
+        slSwingLeftBars: 3,
+        slSwingRightBars: 3,
+        slSwingLookback: 50,
+        slBufferPercent: 20,
+        slMinPercent: 0.5
       }
     };
   }
@@ -668,10 +690,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       return true; // No bloquear si VWAP no está disponible
     }
 
-    // Obtener desviaciones
-    const deviations = vwapIndicator.getDeviations();
+    // ✅ FIX: Obtener desviaciones HISTÓRICAS al timestamp del patrón
+    // Esto usa los valores VWAP que existían cuando el patrón se completó, no los actuales
+    const patternTimestamp = pattern.secondExtreme?.timestamp;
+    const deviations = patternTimestamp
+      ? vwapIndicator.getDeviationsAtTimestamp(patternTimestamp)
+      : vwapIndicator.getDeviations();
+
     if (!deviations) {
-      log.warn(`[${this.symbol}] VWAP indicator doesn't provide deviations`);
+      log.warn(`[${this.symbol}] VWAP indicator doesn't provide deviations for timestamp ${patternTimestamp}`);
       return true;
     }
 
@@ -1505,8 +1532,21 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     const { priceToY, timeToX } = priceContext;
 
+    // Calcular ancho de vela para Strategy lines
+    const candleWidth = visibleCandles.length > 0 ? bounds.width / visibleCandles.length : 10;
+
     // Render each pattern
     this.patterns.forEach(pattern => {
+      // ✅ NUEVO: Calcular Strategy si está habilitado y no existe
+      if (this.config.strategy?.enabled && !pattern._strategy && allCandles) {
+        pattern._strategy = this.calculateStrategyLevels(pattern, allCandles);
+      }
+
+      // ✅ NUEVO: Dibujar Strategy lines PRIMERO (fondo)
+      if (this.config.strategy?.enabled && pattern._strategy) {
+        this.drawStrategyLines(ctx, pattern, allCandles, priceToY, timeToX, candleWidth);
+      }
+
       // Draw level line
       if (this.config.visualization.showLines) {
         this._drawLevelLine(ctx, pattern, bounds, priceToY, timeToX);
@@ -1755,6 +1795,304 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
   _findCandleByTimestamp(candles, timestamp) {
     return candles.find(c => c.timestamp === timestamp);
+  }
+
+  // =====================================================
+  // ✅ STRATEGY FUNCTIONS (Entry / Stop Loss / Take Profit)
+  // =====================================================
+
+  /**
+   * Calcula niveles de estrategia para un patrón DTB
+   * @param {Object} pattern - Patrón DTB detectado
+   * @param {Array} candles - Array de velas
+   * @returns {Object} {entry, stopLoss, takeProfit, slPercent, tpPercent, direction}
+   */
+  calculateStrategyLevels(pattern, candles) {
+    if (!this.config.strategy?.enabled) return null;
+
+    const strategyConfig = this.config.strategy;
+    const isLong = pattern.type === 'DOUBLE_BOTTOM';
+    const rrRatio = strategyConfig.riskRewardRatio || 2.0;
+
+    // Encontrar la vela de confirmación (secondExtreme)
+    const confirmationTimestamp = pattern.secondExtreme?.timestamp;
+    const confirmationCandle = candles.find(c => c.timestamp === confirmationTimestamp);
+    if (!confirmationCandle) return null;
+
+    // Entry = close de la vela de confirmación
+    const entry = confirmationCandle.close;
+
+    // Encontrar índice de la vela de confirmación para buscar swings anteriores
+    const confirmationIndex = candles.findIndex(c => c.timestamp === confirmationTimestamp);
+    if (confirmationIndex < 0) return null;
+
+    // Parámetros para buscar swing del SL
+    const slSwingLeftBars = strategyConfig.slSwingLeftBars || 3;
+    const slSwingRightBars = strategyConfig.slSwingRightBars || 3;
+    const slSwingLookback = strategyConfig.slSwingLookback || 50;
+    const slBufferPercent = strategyConfig.slBufferPercent || 20;
+
+    // Buscar el swing anterior significativo
+    let stopLoss;
+    let usedFallback = false;
+
+    if (isLong) {
+      // Para LONG (Double Bottom): SL debe estar POR DEBAJO del entry
+      const swingLow = this.findPreviousSignificantLow(candles, confirmationIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
+
+      if (swingLow !== null && swingLow < entry) {
+        stopLoss = swingLow;
+      } else {
+        // Fallback: usar el mínimo del patrón + buffer
+        usedFallback = true;
+        const patternLow = Math.min(pattern.firstExtreme.price, pattern.secondExtreme.price);
+        const distanceToLow = entry - patternLow;
+        const buffer = distanceToLow * (slBufferPercent / 100);
+        stopLoss = patternLow - buffer;
+      }
+    } else {
+      // Para SHORT (Double Top): SL debe estar POR ENCIMA del entry
+      const swingHigh = this.findPreviousSignificantHigh(candles, confirmationIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
+
+      if (swingHigh !== null && swingHigh > entry) {
+        stopLoss = swingHigh;
+      } else {
+        // Fallback: usar el máximo del patrón + buffer
+        usedFallback = true;
+        const patternHigh = Math.max(pattern.firstExtreme.price, pattern.secondExtreme.price);
+        const distanceToHigh = patternHigh - entry;
+        const buffer = distanceToHigh * (slBufferPercent / 100);
+        stopLoss = patternHigh + buffer;
+      }
+    }
+
+    // Calcular distancia del SL como porcentaje
+    let slDistance = Math.abs(entry - stopLoss);
+    let slPercent = (slDistance / entry) * 100;
+
+    // Aplicar SL mínimo si está configurado
+    const slMinPercent = strategyConfig.slMinPercent || 0.5;
+    if (slPercent < slMinPercent) {
+      slPercent = slMinPercent;
+      slDistance = entry * (slMinPercent / 100);
+      if (isLong) {
+        stopLoss = entry - slDistance;
+      } else {
+        stopLoss = entry + slDistance;
+      }
+    }
+
+    // Take Profit = Entry ± (SL distance * RR ratio)
+    let takeProfit;
+    if (isLong) {
+      takeProfit = entry + (slDistance * rrRatio);
+    } else {
+      takeProfit = entry - (slDistance * rrRatio);
+    }
+
+    const tpPercent = slPercent * rrRatio;
+
+    return {
+      entry,
+      stopLoss,
+      takeProfit,
+      slPercent: Math.round(slPercent * 100) / 100,
+      tpPercent: Math.round(tpPercent * 100) / 100,
+      riskRewardRatio: rrRatio,
+      direction: isLong ? 'LONG' : 'SHORT',
+      usedFallback
+    };
+  }
+
+  /**
+   * Busca el low significativo anterior
+   */
+  findPreviousSignificantLow(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
+    const swingLow = this.findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars);
+    if (swingLow !== null) return swingLow;
+
+    const lookback = Math.min(beforeIndex, maxLookback);
+    let lowestLow = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (lowestLow === null || candles[i].low < lowestLow) {
+          lowestLow = candles[i].low;
+        }
+      }
+    }
+    return lowestLow;
+  }
+
+  /**
+   * Busca el high significativo anterior
+   */
+  findPreviousSignificantHigh(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
+    const swingHigh = this.findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars);
+    if (swingHigh !== null) return swingHigh;
+
+    const lookback = Math.min(beforeIndex, maxLookback);
+    let highestHigh = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (highestHigh === null || candles[i].high > highestHigh) {
+          highestHigh = candles[i].high;
+        }
+      }
+    }
+    return highestHigh;
+  }
+
+  /**
+   * Busca el swing low anterior
+   */
+  findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars) {
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingLow(candles, i, leftBars, rightBars)) {
+        return candles[i].low;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Busca el swing high anterior
+   */
+  findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars) {
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingHigh(candles, i, leftBars, rightBars)) {
+        return candles[i].high;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Verifica si una vela es un swing low
+   */
+  isSwingLow(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+    const currentLow = candles[index].low;
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].low <= currentLow) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Verifica si una vela es un swing high
+   */
+  isSwingHigh(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+    const currentHigh = candles[index].high;
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].high >= currentHigh) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Dibuja las líneas de estrategia
+   */
+  drawStrategyLines(ctx, pattern, allCandles, priceToY, timeToX, candleWidth) {
+    if (!this.config.strategy?.enabled || !pattern._strategy) return;
+
+    const strategy = pattern._strategy;
+    const config = this.config.strategy;
+
+    // Usar timestamp del segundo extremo para posicionar las líneas
+    const patternTimestamp = pattern.secondExtreme?.timestamp;
+    if (!patternTimestamp) return;
+
+    const patternX = timeToX(patternTimestamp);
+    const lineLength = (config.lineLengthCandles || 5) * candleWidth;
+
+    const startX = patternX - lineLength;
+    const endX = patternX + lineLength;
+
+    const entryY = priceToY(strategy.entry);
+    const slY = priceToY(strategy.stopLoss);
+    const tpY = priceToY(strategy.takeProfit);
+
+    ctx.save();
+
+    // Rectángulo traslúcido que conecta las 3 líneas
+    if (config.showBox !== false) {
+      const boxColor = config.boxColor || '#03A9F4';
+      const boxOpacity = config.boxOpacity || 0.15;
+      const topY = Math.min(entryY, slY, tpY);
+      const bottomY = Math.max(entryY, slY, tpY);
+      const boxHeight = bottomY - topY;
+
+      ctx.fillStyle = this.hexToRgba(boxColor, boxOpacity);
+      ctx.fillRect(startX, topY, endX - startX, boxHeight);
+    }
+
+    ctx.setLineDash([4, 2]);
+
+    // Línea de Entry
+    ctx.beginPath();
+    ctx.strokeStyle = config.entryColor || '#03A9F4';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, entryY);
+    ctx.lineTo(endX, entryY);
+    ctx.stroke();
+
+    // Línea de Stop Loss
+    ctx.beginPath();
+    ctx.strokeStyle = config.stopLossColor || '#FF1744';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, slY);
+    ctx.lineTo(endX, slY);
+    ctx.stroke();
+
+    // Línea de Take Profit
+    ctx.beginPath();
+    ctx.strokeStyle = config.takeProfitColor || '#00E676';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, tpY);
+    ctx.lineTo(endX, tpY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // Etiquetas
+    if (config.showLabels !== false) {
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'left';
+      const labelX = endX + 4;
+
+      const dirLabel = strategy.direction || 'ENTRY';
+
+      ctx.fillStyle = config.entryColor || '#03A9F4';
+      ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
+
+      ctx.fillStyle = config.stopLossColor || '#FF1744';
+      ctx.fillText(`SL ${dirLabel}: $${strategy.stopLoss.toFixed(2)} (${strategy.slPercent}%)`, labelX, slY + 3);
+
+      ctx.fillStyle = config.takeProfitColor || '#00E676';
+      ctx.fillText(`TP ${dirLabel}: $${strategy.takeProfit.toFixed(2)} (${strategy.tpPercent}%)`, labelX, tpY + 3);
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * Convierte hex a rgba
+   */
+  hexToRgba(hex, alpha) {
+    if (!hex || hex.length < 7) return `rgba(0, 0, 0, ${alpha})`;
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
   // Required by IndicatorBase but not used (overlay indicator)

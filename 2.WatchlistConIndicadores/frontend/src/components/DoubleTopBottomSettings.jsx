@@ -111,6 +111,26 @@ function getDefaultConfig() {
     debugMode: false,
     alertsEnabled: false,  // Sistema de alertas automáticas
 
+    // Strategy (Entry/SL/TP)
+    strategy: {
+      enabled: false,
+      riskRewardRatio: 2.0,
+      lineLengthCandles: 5,
+      entryColor: '#03A9F4',
+      stopLossColor: '#FF1744',
+      takeProfitColor: '#00E676',
+      showLabels: true,
+      includeInAlert: true,
+      showBox: true,
+      boxColor: '#03A9F4',
+      boxOpacity: 0.15,
+      slSwingLeftBars: 3,
+      slSwingRightBars: 3,
+      slSwingLookback: 50,
+      slBufferPercent: 20,
+      slMinPercent: 0.5
+    },
+
     // Sistema de alertas mejorado
     alertSettings: {
       // Modo de alerta
@@ -1678,6 +1698,277 @@ const DoubleTopBottomSettings = ({
     </div>
   );
 
+  const renderStrategyTab = () => (
+    <div style={styles.tabContent}>
+      <h3 style={styles.heading}>
+        📊 Strategy (Entry / SL / TP)
+      </h3>
+
+      {/* Enable Strategy */}
+      <div style={styles.settingGroup}>
+        <label style={styles.checkbox}>
+          <input
+            type="checkbox"
+            checked={config.strategy?.enabled || false}
+            onChange={(e) => updateConfig('strategy.enabled', e.target.checked)}
+          />
+          <span style={{ fontWeight: 'bold', color: '#03A9F4' }}>Enable Strategy Lines</span>
+        </label>
+        <p style={styles.description}>
+          Shows Entry, Stop Loss and Take Profit lines on detected patterns
+        </p>
+      </div>
+
+      {config.strategy?.enabled && (
+        <>
+          {/* Risk:Reward Ratio */}
+          <div style={styles.settingGroup}>
+            <label style={styles.label}>
+              <span>Risk:Reward Ratio</span>
+              <span style={styles.settingValue}>{config.strategy?.riskRewardRatio || 2.0}x</span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="0.5"
+              value={config.strategy?.riskRewardRatio || 2.0}
+              onChange={(e) => updateConfig('strategy.riskRewardRatio', parseFloat(e.target.value))}
+              style={styles.rangeInput}
+            />
+            <p style={styles.description}>
+              Take Profit = Stop Loss distance × this ratio
+            </p>
+          </div>
+
+          {/* Include in Alert */}
+          <div style={styles.settingGroup}>
+            <label style={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={config.strategy?.includeInAlert !== false}
+                onChange={(e) => updateConfig('strategy.includeInAlert', e.target.checked)}
+              />
+              <span>Include Entry/SL/TP in alerts (port 5000)</span>
+            </label>
+          </div>
+
+          {/* Line Colors */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#f5f5f5',
+            borderRadius: '8px',
+            border: '1px solid #ddd'
+          }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#666' }}>
+              🎨 Line Colors
+            </h4>
+
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Entry:
+                <input
+                  type="color"
+                  value={config.strategy?.entryColor || '#03A9F4'}
+                  onChange={(e) => updateConfig('strategy.entryColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Stop Loss:
+                <input
+                  type="color"
+                  value={config.strategy?.stopLossColor || '#FF1744'}
+                  onChange={(e) => updateConfig('strategy.stopLossColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                Take Profit:
+                <input
+                  type="color"
+                  value={config.strategy?.takeProfitColor || '#00E676'}
+                  onChange={(e) => updateConfig('strategy.takeProfitColor', e.target.value)}
+                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                />
+              </label>
+            </div>
+
+            {/* Box settings */}
+            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ccc' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <label style={styles.checkbox}>
+                  <input
+                    type="checkbox"
+                    checked={config.strategy?.showBox !== false}
+                    onChange={(e) => updateConfig('strategy.showBox', e.target.checked)}
+                  />
+                  <span>Show connecting box</span>
+                </label>
+
+                {config.strategy?.showBox !== false && (
+                  <>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                      Box Color:
+                      <input
+                        type="color"
+                        value={config.strategy?.boxColor || '#03A9F4'}
+                        onChange={(e) => updateConfig('strategy.boxColor', e.target.value)}
+                        style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                      />
+                    </label>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', color: '#666' }}>Opacity:</span>
+                      <input
+                        type="range"
+                        min="0.05"
+                        max="0.4"
+                        step="0.05"
+                        value={config.strategy?.boxOpacity || 0.15}
+                        onChange={(e) => updateConfig('strategy.boxOpacity', parseFloat(e.target.value))}
+                        style={{ width: '80px' }}
+                      />
+                      <span style={{ fontSize: '11px', color: '#666' }}>{Math.round((config.strategy?.boxOpacity || 0.15) * 100)}%</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Stop Loss Swing Detection Parameters */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#f5f5f5',
+            borderRadius: '8px',
+            border: '1px solid #ddd'
+          }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#666' }}>
+              🎯 Stop Loss - Swing Detection
+            </h4>
+            <p style={{ ...styles.description, marginBottom: '12px' }}>
+              Parameters to find the previous swing high/low for Stop Loss placement
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span>Left Bars</span>
+                  <span style={styles.settingValue}>{config.strategy?.slSwingLeftBars || 3}</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={config.strategy?.slSwingLeftBars || 3}
+                  onChange={(e) => updateConfig('strategy.slSwingLeftBars', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span>Right Bars</span>
+                  <span style={styles.settingValue}>{config.strategy?.slSwingRightBars || 3}</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={config.strategy?.slSwingRightBars || 3}
+                  onChange={(e) => updateConfig('strategy.slSwingRightBars', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+              </div>
+            </div>
+
+            <div style={{ ...styles.settingGroup, marginTop: '12px' }}>
+              <label style={styles.label}>
+                <span>Lookback Candles</span>
+                <span style={styles.settingValue}>{config.strategy?.slSwingLookback || 50}</span>
+              </label>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                step="5"
+                value={config.strategy?.slSwingLookback || 50}
+                onChange={(e) => updateConfig('strategy.slSwingLookback', parseInt(e.target.value))}
+                style={styles.rangeInput}
+              />
+              <p style={styles.description}>
+                How far back to search for a swing point
+              </p>
+            </div>
+
+            {/* Fallback Buffer */}
+            <div style={{
+              marginTop: '16px',
+              padding: '10px',
+              background: '#fff3e0',
+              borderRadius: '6px',
+              border: '1px solid #ffb74d'
+            }}>
+              <div style={styles.settingGroup}>
+                <label style={styles.label}>
+                  <span style={{ color: '#F57C00' }}>⚠️ Fallback Buffer</span>
+                  <span style={{ ...styles.settingValue, color: '#F57C00' }}>{config.strategy?.slBufferPercent || 20}%</span>
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  step="5"
+                  value={config.strategy?.slBufferPercent || 20}
+                  onChange={(e) => updateConfig('strategy.slBufferPercent', parseInt(e.target.value))}
+                  style={styles.rangeInput}
+                />
+                <p style={styles.description}>
+                  When no swing is found, SL = pattern low/high + this % extra safety margin
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Minimum SL % */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px',
+            background: '#e8f5e9',
+            borderRadius: '8px',
+            border: '1px solid #81c784'
+          }}>
+            <div style={styles.settingGroup}>
+              <label style={styles.label}>
+                <span style={{ color: '#388E3C' }}>🔒 Minimum SL</span>
+                <span style={{ ...styles.settingValue, color: '#388E3C' }}>{config.strategy?.slMinPercent || 0.5}%</span>
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="2"
+                step="0.1"
+                value={config.strategy?.slMinPercent || 0.5}
+                onChange={(e) => updateConfig('strategy.slMinPercent', parseFloat(e.target.value))}
+                style={styles.rangeInput}
+              />
+              <p style={styles.description}>
+                If calculated SL is smaller than this %, force it to this minimum (for exchange viability)
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <div style={{ padding: '0' }}>
       {/* DTB Profiles Manager - Sistema de perfiles optimizados */}
@@ -1886,6 +2177,21 @@ const DoubleTopBottomSettings = ({
           >
             🔔 Alerts
           </button>
+          <button
+            style={{
+              padding: '6px 12px',
+              background: activeTab === 'strategy' ? '#4CAF50' : '#f0f0f0',
+              color: activeTab === 'strategy' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}
+            onClick={() => setActiveTab('strategy')}
+          >
+            📊 Strategy
+          </button>
         </div>
       </div>
 
@@ -1901,6 +2207,7 @@ const DoubleTopBottomSettings = ({
         {activeTab === 'visualization' && renderVisualizationTab()}
         {activeTab === 'realtime' && renderRealTimeTab()}
         {activeTab === 'alerts' && renderAlertsTab()}
+        {activeTab === 'strategy' && renderStrategyTab()}
       </div>
 
       <div style={{
