@@ -52,8 +52,27 @@ export function useGlobalAlerts() {
     return value.toFixed(decimals).replace('.', ',');
   };
 
+  // Calcular P/L para una alerta
+  const calculatePL = (alert, riskAmount) => {
+    if (!alert.outcome || alert.outcome === 'PENDING') {
+      return { plPercent: null, plUSDT: null };
+    }
+
+    const slPercent = Math.abs(alert.slPercent || 0);
+    const tpPercent = Math.abs(alert.tpPercent || 0);
+    const rr = slPercent > 0 ? tpPercent / slPercent : 0;
+
+    if (alert.outcome === 'WIN') {
+      return { plPercent: tpPercent, plUSDT: riskAmount * rr };
+    } else if (alert.outcome === 'LOSS') {
+      return { plPercent: -slPercent, plUSDT: -riskAmount };
+    }
+
+    return { plPercent: null, plUSDT: null };
+  };
+
   // Exportar alertas a CSV (formato español: separador de campos = ;, decimal = ,)
-  const exportToCSV = useCallback(() => {
+  const exportToCSV = useCallback((riskAmount = 100) => {
     if (alerts.length === 0) {
       alert('No hay alertas para exportar');
       return;
@@ -66,42 +85,78 @@ export function useGlobalAlerts() {
       'Hora',
       'Timeframe',
       'Indicador',
-      'Patron',
       'Direccion',
       'Entrada',
       'StopLoss ($)',
       'StopLoss (%)',
       'TakeProfit ($)',
       'TakeProfit (%)',
-      'Confianza',
-      'Estado'
+      'Resultado',
+      'P/L (%)',
+      'P/L ($)'
     ];
 
+    // Calcular totales
+    let totalWins = 0;
+    let totalLosses = 0;
+    let totalPLPercent = 0;
+    let totalPLUSDT = 0;
+
     // Convertir alertas a filas CSV
-    const rows = alerts.map(alert => {
-      const date = new Date(alert.timestamp);
+    const rows = alerts.map(alertItem => {
+      const date = new Date(alertItem.timestamp);
+      const { plPercent, plUSDT } = calculatePL(alertItem, riskAmount);
+
+      // Acumular totales
+      if (alertItem.outcome === 'WIN') totalWins++;
+      if (alertItem.outcome === 'LOSS') totalLosses++;
+      if (plPercent !== null) totalPLPercent += plPercent;
+      if (plUSDT !== null) totalPLUSDT += plUSDT;
+
       return [
-        alert.symbol || '',
+        alertItem.symbol || '',
         date.toLocaleDateString('es-CO'),
         date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        alert.interval || '',
-        alert.indicator || '',
-        alert.patternType || '',
-        alert.direction || '',
-        formatNumberForCSV(alert.entry),
-        formatNumberForCSV(alert.stopLoss),
-        formatNumberForCSV(alert.slPercent),
-        formatNumberForCSV(alert.takeProfit),
-        formatNumberForCSV(alert.tpPercent),
-        alert.confidence ? formatNumberForCSV(alert.confidence, 1) + '%' : '',
-        alert.status || ''
+        alertItem.interval || '',
+        alertItem.indicator || '',
+        alertItem.direction || '',
+        formatNumberForCSV(alertItem.entry),
+        formatNumberForCSV(alertItem.stopLoss),
+        formatNumberForCSV(alertItem.slPercent),
+        formatNumberForCSV(alertItem.takeProfit),
+        formatNumberForCSV(alertItem.tpPercent),
+        alertItem.outcome || 'PENDING',
+        plPercent !== null ? formatNumberForCSV(plPercent) : '',
+        plUSDT !== null ? formatNumberForCSV(plUSDT) : ''
       ];
     });
+
+    // Fila de totales
+    const completedTrades = totalWins + totalLosses;
+    const winRate = completedTrades > 0 ? (totalWins / completedTrades * 100).toFixed(1) : '0';
+    const summaryRow = [
+      'TOTAL',
+      `${completedTrades} trades`,
+      `${totalWins}W / ${totalLosses}L`,
+      `WR: ${winRate}%`,
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      totalPLUSDT >= 0 ? 'PROFIT' : 'LOSS',
+      formatNumberForCSV(totalPLPercent),
+      formatNumberForCSV(totalPLUSDT)
+    ];
 
     // Construir contenido CSV con separador de campos semicolon (;) para Excel español
     const csvContent = [
       headers.join(';'),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(';')),
+      '', // Línea vacía antes del total
+      summaryRow.map(cell => `"${cell}"`).join(';')
     ].join('\n');
 
     // Crear y descargar archivo

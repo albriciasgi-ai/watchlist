@@ -26,7 +26,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 900px;
+  width: 1150px;
   max-width: 95vw;
   height: 100vh;
   background: #1a1a2e;
@@ -99,10 +99,65 @@
 /* Toolbar */
 .panel-toolbar {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
   padding: 12px 20px;
   background: #1e1e2e;
   border-bottom: 1px solid #333;
+}
+
+.risk-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-input-container label {
+  color: #aaa;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.risk-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #2a2a3a;
+  border-radius: 6px;
+  border: 1px solid #444;
+  padding: 0 10px;
+}
+
+.currency-symbol {
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.risk-input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  width: 80px;
+  padding: 8px 6px;
+  outline: none;
+}
+
+.risk-input::-webkit-outer-spin-button,
+.risk-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.risk-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 8px;
 }
 
 .toolbar-btn {
@@ -367,6 +422,92 @@
 
 .cell-tp, .cell-tp-pct {
   color: #69F0AE;
+}
+
+/* Outcome badges */
+.cell-outcome {
+  padding: 4px 8px;
+}
+
+.outcome-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  min-width: 55px;
+  text-align: center;
+}
+
+.outcome-badge.outcome-win {
+  background: #1B5E20;
+  color: #69F0AE;
+  border: 1px solid #4CAF50;
+}
+
+.outcome-badge.outcome-loss {
+  background: #B71C1C;
+  color: #FF8A80;
+  border: 1px solid #F44336;
+}
+
+.outcome-badge.outcome-pending {
+  background: #37474F;
+  color: #90A4AE;
+  border: 1px solid #607D8B;
+}
+
+/* P/L cells */
+.cell-pl {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.cell-pl.positive {
+  color: #69F0AE;
+}
+
+.cell-pl.negative {
+  color: #FF5252;
+}
+
+.cell-pl.total {
+  font-size: 13px;
+}
+
+/* Summary row */
+.alerts-table tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.summary-row {
+  background: #1a2744 !important;
+  border-top: 2px solid #4CAF50;
+}
+
+.summary-row td {
+  padding: 12px 10px;
+  border-bottom: none;
+}
+
+.summary-label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.summary-label strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+.summary-stats {
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 400;
 }
 
 /* Footer */

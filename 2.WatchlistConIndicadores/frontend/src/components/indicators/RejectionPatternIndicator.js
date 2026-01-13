@@ -187,6 +187,94 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * Evalúa el resultado (WIN/LOSS) de alertas pendientes basándose en datos de velas.
+   * Para cada alerta PENDING, verifica si el precio alcanzó TP (WIN) o SL (LOSS) primero.
+   * @param {Array} candles - Array de velas con open, high, low, close, time
+   */
+  evaluatePendingTradeOutcomes(candles) {
+    if (!candles || candles.length === 0) return;
+
+    try {
+      const GLOBAL_KEY = 'watchlist_global_alert_history';
+      const existing = localStorage.getItem(GLOBAL_KEY);
+      if (!existing) return;
+
+      let globalHistory = JSON.parse(existing);
+      let updated = false;
+
+      globalHistory = globalHistory.map(alert => {
+        // Solo evaluar alertas de este símbolo/intervalo con outcome PENDING
+        if (alert.outcome !== 'PENDING') return alert;
+        if (alert.symbol !== this.symbol || alert.interval !== this.interval) return alert;
+        if (!alert.entry || !alert.stopLoss || !alert.takeProfit) return alert;
+
+        const alertTime = alert.timestamp;
+        const entry = alert.entry;
+        const sl = alert.stopLoss;
+        const tp = alert.takeProfit;
+        const direction = alert.direction;
+
+        // Filtrar velas posteriores a la alerta
+        const candlesAfterAlert = candles.filter(c => {
+          const candleTime = c.time || c.timestamp || c.openTime;
+          return candleTime > alertTime;
+        });
+
+        if (candlesAfterAlert.length === 0) return alert;
+
+        // Evaluar cada vela para ver si tocó SL o TP primero
+        for (const candle of candlesAfterAlert) {
+          const high = candle.high;
+          const low = candle.low;
+
+          if (direction === 'LONG') {
+            // LONG: SL está debajo del entry, TP está arriba
+            if (low <= sl) {
+              alert.outcome = 'LOSS';
+              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              updated = true;
+              this.logger.info(`📉 Trade LOSS: ${alert.patternType} - precio tocó SL ${sl.toFixed(2)}`);
+              break;
+            }
+            if (high >= tp) {
+              alert.outcome = 'WIN';
+              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              updated = true;
+              this.logger.info(`📈 Trade WIN: ${alert.patternType} - precio alcanzó TP ${tp.toFixed(2)}`);
+              break;
+            }
+          } else if (direction === 'SHORT') {
+            // SHORT: SL está arriba del entry, TP está abajo
+            if (high >= sl) {
+              alert.outcome = 'LOSS';
+              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              updated = true;
+              this.logger.info(`📉 Trade LOSS: ${alert.patternType} - precio tocó SL ${sl.toFixed(2)}`);
+              break;
+            }
+            if (low <= tp) {
+              alert.outcome = 'WIN';
+              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              updated = true;
+              this.logger.info(`📈 Trade WIN: ${alert.patternType} - precio alcanzó TP ${tp.toFixed(2)}`);
+              break;
+            }
+          }
+        }
+
+        return alert;
+      });
+
+      if (updated) {
+        localStorage.setItem(GLOBAL_KEY, JSON.stringify(globalHistory));
+        this.logger.debug(`Trade outcomes updated in global history`);
+      }
+    } catch (error) {
+      console.error('Error evaluating trade outcomes:', error);
+    }
+  }
+
+  /**
    * ✅ NUEVO: Convierte intervalo a milisegundos
    */
   getIntervalMs() {
@@ -1123,7 +1211,8 @@ class RejectionPatternIndicator extends IndicatorBase {
           stopLoss: strategy.stopLoss || null,
           takeProfit: strategy.takeProfit || null,
           slPercent: strategy.slPercent || null,
-          tpPercent: strategy.tpPercent || null
+          tpPercent: strategy.tpPercent || null,
+          outcome: 'PENDING'  // WIN/LOSS se evalúa con velas posteriores
         };
         this.saveToGlobalAlertHistory(alertRecord);
 
@@ -1711,6 +1800,9 @@ class RejectionPatternIndicator extends IndicatorBase {
     // El modo se pasa a detectLocalPatterns que internamente lo pasa a LocalPatternDetector
     if (allCandles && allCandles.length > 0) {
       this.detectLocalPatterns(allCandles, indicatorManager, manualLevels);
+
+      // ✅ Evaluar resultados de trades pendientes (WIN/LOSS)
+      this.evaluatePendingTradeOutcomes(allCandles);
     }
 
     // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
