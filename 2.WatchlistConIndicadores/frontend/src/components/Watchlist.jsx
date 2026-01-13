@@ -1,5 +1,5 @@
 // src/components/Watchlist.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
@@ -142,18 +142,19 @@ const Watchlist = () => {
   const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
   const [fullscreenInterval, setFullscreenInterval] = useState(null);
 
-  // Handler para cambios de fullscreen desde MiniChart
-  const handleFullscreenChange = (symbol, chartInterval, isFullscreen) => {
+  // Handler para cambios de fullscreen desde MiniChart (memoizado para estabilidad)
+  const handleFullscreenChange = useCallback((sym, chartInterval, isFullscreen) => {
+    console.log(`[Watchlist] 🖥️ Fullscreen change: ${sym} (${chartInterval}) - isFullscreen: ${isFullscreen}`);
     if (isFullscreen) {
-      setFullscreenSymbol(symbol);
+      setFullscreenSymbol(sym);
       setFullscreenInterval(chartInterval);
-      log.debug(`[Watchlist] 🖥️ Fullscreen opened: ${symbol} (${chartInterval})`);
+      log.debug(`[Watchlist] 🖥️ Fullscreen opened: ${sym} (${chartInterval})`);
     } else {
       setFullscreenSymbol(null);
       setFullscreenInterval(null);
       log.debug(`[Watchlist] 🖥️ Fullscreen closed`);
     }
-  };
+  }, []);
 
   // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
   useEffect(() => {

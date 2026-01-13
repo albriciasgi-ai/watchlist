@@ -155,6 +155,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // 📡 Notificar al padre cuando cambia el estado fullscreen
   useEffect(() => {
+    console.log(`[MiniChart ${symbol}] 🖥️ Fullscreen effect: isFullscreen=${isFullscreen}, hasCallback=${!!onFullscreenChange}`);
     if (onFullscreenChange) {
       onFullscreenChange(symbol, interval, isFullscreen);
     }

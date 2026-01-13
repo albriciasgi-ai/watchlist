@@ -9,6 +9,8 @@ const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
  * Permite hacer backtesting sobre datos históricos del símbolo en fullscreen
  */
 const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => {
+  // Debug: log props
+  console.log(`[StrategyTesterTab] Props: fullscreenSymbol=${fullscreenSymbol}, fullscreenInterval=${fullscreenInterval}`);
   const [profiles, setProfiles] = useState(() => {
     try {
       const stored = localStorage.getItem(PROFILES_KEY);
