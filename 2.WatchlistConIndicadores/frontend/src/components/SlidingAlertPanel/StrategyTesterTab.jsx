@@ -4,6 +4,16 @@ import { API_BASE_URL } from '../../config';
 const PROFILES_KEY = 'watchlist_strategy_profiles';
 const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
 
+// Intervalos disponibles para backtesting
+const AVAILABLE_INTERVALS = [
+  { value: '1', label: '1m' },
+  { value: '5', label: '5m' },
+  { value: '15', label: '15m' },
+  { value: '60', label: '1h' },
+  { value: '240', label: '4h' },
+  { value: 'D', label: '1D' }
+];
+
 /**
  * Tab de Tester de Estrategias
  * Permite hacer backtesting sobre datos históricos del símbolo en fullscreen
@@ -11,6 +21,7 @@ const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
 const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => {
   // Debug: log props
   console.log(`[StrategyTesterTab] Props: fullscreenSymbol=${fullscreenSymbol}, fullscreenInterval=${fullscreenInterval}`);
+
   const [profiles, setProfiles] = useState(() => {
     try {
       const stored = localStorage.getItem(PROFILES_KEY);
@@ -26,6 +37,19 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
   const [testDays, setTestDays] = useState(30);
   const [showNewProfileForm, setShowNewProfileForm] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
+
+  // Estado para el intervalo seleccionado (independiente del fullscreen)
+  const [selectedInterval, setSelectedInterval] = useState(fullscreenInterval || '60');
+
+  // Estado para el filtro de intervalo (all = todas las alertas, specific = solo del intervalo seleccionado)
+  const [intervalFilter, setIntervalFilter] = useState('all');
+
+  // Actualizar intervalo seleccionado cuando cambia el fullscreen
+  useEffect(() => {
+    if (fullscreenInterval) {
+      setSelectedInterval(fullscreenInterval);
+    }
+  }, [fullscreenInterval]);
 
   // Guardar perfiles en localStorage
   useEffect(() => {
@@ -89,7 +113,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
   // Evaluar estrategia con datos históricos
   const runBacktest = useCallback(async () => {
-    if (!fullscreenSymbol || !fullscreenInterval) {
+    if (!fullscreenSymbol) {
       alert('Necesitas tener un símbolo en fullscreen para hacer backtesting');
       return;
     }
@@ -98,9 +122,11 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
     setTestResults([]);
 
     try {
-      // Fetch historical candles
+      console.log(`[StrategyTester] Starting backtest for ${fullscreenSymbol}, interval: ${selectedInterval}, days: ${testDays}`);
+
+      // Fetch historical candles using selected interval
       const response = await fetch(
-        `${API_BASE_URL}/api/historical/${fullscreenSymbol}?interval=${fullscreenInterval}&days=${testDays}`
+        `${API_BASE_URL}/api/historical/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}`
       );
 
       if (!response.ok) {
@@ -110,24 +136,36 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
       const data = await response.json();
       const candles = data.success ? (data.data || data.candles || []) : [];
 
+      console.log(`[StrategyTester] Fetched ${candles.length} candles for interval ${selectedInterval}`);
+
       if (candles.length === 0) {
         alert('No se encontraron datos históricos');
         return;
       }
 
-      // Fetch alerts from global history for this symbol/interval
+      // Fetch alerts from global history for this symbol
       const GLOBAL_KEY = 'watchlist_global_alert_history';
       const stored = localStorage.getItem(GLOBAL_KEY);
       const allAlerts = stored ? JSON.parse(stored) : [];
 
-      // Filter alerts for this symbol/interval
-      const symbolAlerts = allAlerts.filter(
-        a => a.symbol === fullscreenSymbol && a.interval === fullscreenInterval
-      );
+      console.log(`[StrategyTester] Total alerts in localStorage: ${allAlerts.length}`);
+
+      // Filter alerts for this symbol (optionally by interval)
+      let symbolAlerts;
+      if (intervalFilter === 'all') {
+        // Get all alerts for this symbol, regardless of interval
+        symbolAlerts = allAlerts.filter(a => a.symbol === fullscreenSymbol);
+      } else {
+        // Filter by specific interval
+        symbolAlerts = allAlerts.filter(
+          a => a.symbol === fullscreenSymbol && a.interval === selectedInterval
+        );
+      }
+
+      console.log(`[StrategyTester] Filtered alerts for ${fullscreenSymbol}: ${symbolAlerts.length} (filter: ${intervalFilter})`);
 
       if (symbolAlerts.length === 0) {
-        // No hay alertas históricas, intentar detectar patrones simulados
-        alert('No hay alertas históricas para este símbolo. Activa los indicadores y genera alertas primero.');
+        alert(`No hay alertas históricas para ${fullscreenSymbol}. Activa los indicadores y genera alertas primero.`);
         return;
       }
 
@@ -205,7 +243,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
     } finally {
       setIsEvaluating(false);
     }
-  }, [fullscreenSymbol, fullscreenInterval, testDays, activeProfileId, profiles, riskAmount]);
+  }, [fullscreenSymbol, selectedInterval, intervalFilter, testDays, activeProfileId, profiles, riskAmount]);
 
   // Calcular estadísticas
   const stats = useMemo(() => {
@@ -263,8 +301,31 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           <div className="symbol-display">
             <span className="symbol-label">Símbolo:</span>
             <span className={`symbol-value ${fullscreenSymbol ? '' : 'no-symbol'}`}>
-              {fullscreenSymbol ? `${fullscreenSymbol} (${fullscreenInterval})` : 'Sin fullscreen'}
+              {fullscreenSymbol || 'Sin fullscreen'}
             </span>
+          </div>
+          <div className="interval-selector">
+            <label>Intervalo:</label>
+            <select
+              value={selectedInterval}
+              onChange={(e) => setSelectedInterval(e.target.value)}
+              className="interval-select"
+            >
+              {AVAILABLE_INTERVALS.map(int => (
+                <option key={int.value} value={int.value}>{int.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-selector">
+            <label>Alertas:</label>
+            <select
+              value={intervalFilter}
+              onChange={(e) => setIntervalFilter(e.target.value)}
+              className="filter-select"
+            >
+              <option value="all">Todos los TF</option>
+              <option value="specific">Solo {AVAILABLE_INTERVALS.find(i => i.value === selectedInterval)?.label}</option>
+            </select>
           </div>
         </div>
         <div className="toolbar-right">
