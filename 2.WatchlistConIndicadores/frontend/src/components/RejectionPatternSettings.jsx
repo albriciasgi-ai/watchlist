@@ -1399,6 +1399,36 @@ const RejectionPatternSettings = ({
                       </span>
                     </div>
                   </div>
+
+                  {/* Minimum SL % */}
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a2a1a', borderRadius: '8px', border: '1px solid #343' }}>
+                    <div className="filter-item">
+                      <label>
+                        <span style={{ color: '#4CAF50' }}>🔒 Minimum SL: {config.strategy?.slMinPercent || 0.5}%</span>
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="2"
+                          step="0.1"
+                          value={config.strategy?.slMinPercent || 0.5}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slMinPercent: parseFloat(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        If calculated SL is smaller than this %, force it to this minimum (for exchange viability)
+                      </span>
+                    </div>
+                  </div>
                 </>
               )}
             </>
@@ -2881,7 +2911,8 @@ function getDefaultConfig() {
       slSwingLeftBars: 3,
       slSwingRightBars: 3,
       slSwingLookback: 50,
-      slBufferPercent: 20
+      slBufferPercent: 20,
+      slMinPercent: 0.5
     }
   };
 }

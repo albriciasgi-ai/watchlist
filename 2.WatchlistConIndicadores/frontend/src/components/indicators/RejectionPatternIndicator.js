@@ -1963,8 +1963,21 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     // Calcular distancia del SL como porcentaje
-    const slDistance = Math.abs(entry - stopLoss);
-    const slPercent = (slDistance / entry) * 100;
+    let slDistance = Math.abs(entry - stopLoss);
+    let slPercent = (slDistance / entry) * 100;
+
+    // ✅ NUEVO: Aplicar SL mínimo si está configurado
+    const slMinPercent = strategyConfig.slMinPercent || 0.5;
+    if (slPercent < slMinPercent) {
+      // Recalcular SL para que sea al menos el mínimo %
+      slPercent = slMinPercent;
+      slDistance = entry * (slMinPercent / 100);
+      if (isLong) {
+        stopLoss = entry - slDistance;
+      } else {
+        stopLoss = entry + slDistance;
+      }
+    }
 
     // Take Profit = Entry ± (SL distance * RR ratio)
     let takeProfit;
