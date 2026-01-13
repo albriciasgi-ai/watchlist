@@ -1285,6 +1285,120 @@ const RejectionPatternSettings = ({
                       </div>
                     </div>
                   </div>
+
+                  {/* Stop Loss Swing Detection Parameters */}
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                    <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                      🎯 Stop Loss - Swing Detection
+                    </h5>
+                    <span className="filter-hint" style={{ display: 'block', marginBottom: '12px' }}>
+                      Parameters to find the previous swing high/low for Stop Loss placement
+                    </span>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div className="filter-item">
+                        <label>
+                          Left Bars: {config.strategy?.slSwingLeftBars || 3}
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            step="1"
+                            value={config.strategy?.slSwingLeftBars || 3}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  slSwingLeftBars: parseInt(e.target.value)
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            className="proximity-slider"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="filter-item">
+                        <label>
+                          Right Bars: {config.strategy?.slSwingRightBars || 3}
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            step="1"
+                            value={config.strategy?.slSwingRightBars || 3}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  slSwingRightBars: parseInt(e.target.value)
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            className="proximity-slider"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="filter-item" style={{ marginTop: '12px' }}>
+                      <label>
+                        Lookback Candles: {config.strategy?.slSwingLookback || 50}
+                        <input
+                          type="range"
+                          min="10"
+                          max="100"
+                          step="5"
+                          value={config.strategy?.slSwingLookback || 50}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slSwingLookback: parseInt(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        How far back to search for a swing point
+                      </span>
+                    </div>
+
+                    <div className="filter-item" style={{ marginTop: '16px', padding: '10px', background: '#2a1a1a', borderRadius: '6px', border: '1px solid #443' }}>
+                      <label>
+                        <span style={{ color: '#FF9800' }}>⚠️ Fallback Buffer: {config.strategy?.slBufferPercent || 20}%</span>
+                        <input
+                          type="range"
+                          min="10"
+                          max="100"
+                          step="5"
+                          value={config.strategy?.slBufferPercent || 20}
+                          onChange={(e) => {
+                            setConfig(prev => ({
+                              ...prev,
+                              strategy: {
+                                ...prev.strategy,
+                                slBufferPercent: parseInt(e.target.value)
+                              }
+                            }));
+                            setActivePreset('custom');
+                          }}
+                          className="proximity-slider"
+                        />
+                      </label>
+                      <span className="filter-hint">
+                        When no swing is found, SL = pattern low/high + this % extra safety margin
+                      </span>
+                    </div>
+                  </div>
                 </>
               )}
             </>
@@ -2762,7 +2876,12 @@ function getDefaultConfig() {
       stopLossColor: '#FF1744',
       takeProfitColor: '#00E676',
       showLabels: true,
-      includeInAlert: true
+      includeInAlert: true,
+      // SL Swing Detection parameters
+      slSwingLeftBars: 3,
+      slSwingRightBars: 3,
+      slSwingLookback: 50,
+      slBufferPercent: 20
     }
   };
 }

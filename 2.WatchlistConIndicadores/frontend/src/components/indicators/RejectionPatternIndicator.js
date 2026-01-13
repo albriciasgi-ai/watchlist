@@ -1911,57 +1911,54 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     const isLong = pattern.direction === 'LONG';
     const rrRatio = this.config.strategy.riskRewardRatio || 2.0;
-
-    // Entry = precio de cierre de la vela de confirmación
-    const entry = patternCandle.close;
+    const strategyConfig = this.config.strategy;
 
     // Obtener parámetros de swing de la configuración
     const swingConfig = this.config.swingDetection || {};
-    const leftBars = swingConfig.leftBars || 5;
     const rightBars = swingConfig.rightBars || 5;
+
+    // ✅ FIX: Entry = close de la vela de CONFIRMACIÓN (patternIndex + rightBars)
+    const confirmationIndex = patternIndex + rightBars;
+    const confirmationCandle = candles[confirmationIndex] || patternCandle;
+    const entry = confirmationCandle.close;
+
+    // Parámetros para buscar swing del SL (pueden ser diferentes a los de detección)
+    const slSwingLeftBars = strategyConfig.slSwingLeftBars || swingConfig.leftBars || 3;
+    const slSwingRightBars = strategyConfig.slSwingRightBars || swingConfig.rightBars || 3;
+    const slSwingLookback = strategyConfig.slSwingLookback || 50;
+    const slBufferPercent = strategyConfig.slBufferPercent || 20; // % extra de seguridad (10-100%)
 
     // Buscar el swing anterior significativo
     let stopLoss;
+    let usedFallback = false;
 
     if (isLong) {
       // Para LONG: SL debe estar POR DEBAJO del entry
-      // Buscar swing low anterior O el mínimo de las últimas velas
-      const swingLow = this.findPreviousSignificantLow(candles, patternIndex, leftBars, rightBars);
-      stopLoss = swingLow !== null ? swingLow : patternCandle.low;
+      const swingLow = this.findPreviousSignificantLow(candles, patternIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
 
-      // Validar: SL debe estar por debajo del entry
-      if (stopLoss >= entry) {
-        // Usar el mínimo de la vela del patrón como fallback
-        stopLoss = patternCandle.low;
-        // Si aún es >= entry, buscar el mínimo en velas recientes
-        if (stopLoss >= entry) {
-          const lookback = Math.min(patternIndex, 20);
-          for (let i = patternIndex; i >= patternIndex - lookback; i--) {
-            if (candles[i] && candles[i].low < stopLoss) {
-              stopLoss = candles[i].low;
-            }
-          }
-        }
+      if (swingLow !== null && swingLow < entry) {
+        stopLoss = swingLow;
+      } else {
+        // Fallback: usar el mínimo de la vela del patrón + buffer
+        usedFallback = true;
+        const patternLow = patternCandle.low;
+        const distanceToLow = entry - patternLow;
+        const buffer = distanceToLow * (slBufferPercent / 100);
+        stopLoss = patternLow - buffer;
       }
     } else {
       // Para SHORT: SL debe estar POR ENCIMA del entry
-      // Buscar swing high anterior O el máximo de las últimas velas
-      const swingHigh = this.findPreviousSignificantHigh(candles, patternIndex, leftBars, rightBars);
-      stopLoss = swingHigh !== null ? swingHigh : patternCandle.high;
+      const swingHigh = this.findPreviousSignificantHigh(candles, patternIndex, slSwingLeftBars, slSwingRightBars, slSwingLookback);
 
-      // Validar: SL debe estar por encima del entry
-      if (stopLoss <= entry) {
-        // Usar el máximo de la vela del patrón como fallback
-        stopLoss = patternCandle.high;
-        // Si aún es <= entry, buscar el máximo en velas recientes
-        if (stopLoss <= entry) {
-          const lookback = Math.min(patternIndex, 20);
-          for (let i = patternIndex; i >= patternIndex - lookback; i--) {
-            if (candles[i] && candles[i].high > stopLoss) {
-              stopLoss = candles[i].high;
-            }
-          }
-        }
+      if (swingHigh !== null && swingHigh > entry) {
+        stopLoss = swingHigh;
+      } else {
+        // Fallback: usar el máximo de la vela del patrón + buffer
+        usedFallback = true;
+        const patternHigh = patternCandle.high;
+        const distanceToHigh = patternHigh - entry;
+        const buffer = distanceToHigh * (slBufferPercent / 100);
+        stopLoss = patternHigh + buffer;
       }
     }
 
@@ -1986,20 +1983,21 @@ class RejectionPatternIndicator extends IndicatorBase {
       slPercent: Math.round(slPercent * 100) / 100,
       tpPercent: Math.round(tpPercent * 100) / 100,
       riskRewardRatio: rrRatio,
-      direction: isLong ? 'LONG' : 'SHORT'
+      direction: isLong ? 'LONG' : 'SHORT',
+      usedFallback
     };
   }
 
   /**
    * Busca el low significativo anterior (swing low o mínimo local)
    */
-  findPreviousSignificantLow(candles, beforeIndex, leftBars, rightBars) {
+  findPreviousSignificantLow(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
     // Primero intentar encontrar un swing low confirmado
     const swingLow = this.findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars);
     if (swingLow !== null) return swingLow;
 
     // Si no hay swing confirmado, buscar el mínimo en las últimas N velas
-    const lookback = Math.min(beforeIndex, 30);
+    const lookback = Math.min(beforeIndex, maxLookback);
     let lowestLow = null;
     for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
       if (candles[i]) {
@@ -2014,13 +2012,13 @@ class RejectionPatternIndicator extends IndicatorBase {
   /**
    * Busca el high significativo anterior (swing high o máximo local)
    */
-  findPreviousSignificantHigh(candles, beforeIndex, leftBars, rightBars) {
+  findPreviousSignificantHigh(candles, beforeIndex, leftBars, rightBars, maxLookback = 50) {
     // Primero intentar encontrar un swing high confirmado
     const swingHigh = this.findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars);
     if (swingHigh !== null) return swingHigh;
 
     // Si no hay swing confirmado, buscar el máximo en las últimas N velas
-    const lookback = Math.min(beforeIndex, 30);
+    const lookback = Math.min(beforeIndex, maxLookback);
     let highestHigh = null;
     for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
       if (candles[i]) {
