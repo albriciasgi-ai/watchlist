@@ -4,6 +4,97 @@ import { API_BASE_URL } from '../../config';
 const PROFILES_KEY = 'watchlist_strategy_profiles';
 const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
 
+/**
+ * Calcula niveles de estrategia (Entry, SL, TP) para un patrón DTB
+ * Replica la lógica del DoubleTopBottomIndicator.calculateStrategyLevels
+ */
+const calculateStrategyLevels = (pattern, candles, config) => {
+  const strategyConfig = config.strategy || {};
+  const filtersConfig = config.filters || {};
+
+  const isLong = pattern.type === 'DOUBLE_BOTTOM';
+  const rrRatio = strategyConfig.riskRewardRatio || 2.0;
+
+  // Número de velas de confirmación después del segundo extremo
+  const confirmationCandlesCount = filtersConfig.postPatternValidationCandles || 5;
+
+  // Encontrar el índice de la vela del patrón (segundo extremo)
+  const patternTimestamp = pattern.secondExtreme?.timestamp;
+  const patternIndex = candles.findIndex(c => c.timestamp === patternTimestamp);
+  if (patternIndex < 0) return null;
+
+  // Calcular el índice de la vela de confirmación
+  const confirmationIndex = Math.min(patternIndex + confirmationCandlesCount, candles.length - 1);
+  const confirmationCandle = candles[confirmationIndex];
+
+  if (!confirmationCandle) return null;
+
+  // Entry = close de la vela de confirmación
+  const entry = parseFloat(confirmationCandle.close);
+
+  // Parámetros para SL
+  const slBufferPercent = strategyConfig.slBufferPercent || 20;
+  const slMinPercent = strategyConfig.slMinPercent || 0.5;
+
+  // Calcular SL basado en el patrón
+  let stopLoss;
+  if (isLong) {
+    // Para LONG: SL debajo del patrón
+    const patternLow = Math.min(
+      parseFloat(pattern.firstExtreme.price),
+      parseFloat(pattern.secondExtreme.price)
+    );
+    const distanceToLow = entry - patternLow;
+    const buffer = distanceToLow * (slBufferPercent / 100);
+    stopLoss = patternLow - buffer;
+  } else {
+    // Para SHORT: SL encima del patrón
+    const patternHigh = Math.max(
+      parseFloat(pattern.firstExtreme.price),
+      parseFloat(pattern.secondExtreme.price)
+    );
+    const distanceToHigh = patternHigh - entry;
+    const buffer = distanceToHigh * (slBufferPercent / 100);
+    stopLoss = patternHigh + buffer;
+  }
+
+  // Calcular distancia del SL como porcentaje
+  let slDistance = Math.abs(entry - stopLoss);
+  let slPercent = (slDistance / entry) * 100;
+
+  // Aplicar SL mínimo si es necesario
+  if (slPercent < slMinPercent) {
+    slPercent = slMinPercent;
+    slDistance = entry * (slMinPercent / 100);
+    if (isLong) {
+      stopLoss = entry - slDistance;
+    } else {
+      stopLoss = entry + slDistance;
+    }
+  }
+
+  // Take Profit basado en Risk:Reward ratio
+  let takeProfit;
+  if (isLong) {
+    takeProfit = entry + (slDistance * rrRatio);
+  } else {
+    takeProfit = entry - (slDistance * rrRatio);
+  }
+
+  const tpPercent = slPercent * rrRatio;
+
+  return {
+    entry,
+    stopLoss,
+    takeProfit,
+    slPercent: Math.round(slPercent * 100) / 100,
+    tpPercent: Math.round(tpPercent * 100) / 100,
+    riskRewardRatio: rrRatio,
+    direction: isLong ? 'LONG' : 'SHORT',
+    confirmationTimestamp: confirmationCandle.timestamp
+  };
+};
+
 // Intervalos disponibles para backtesting
 const AVAILABLE_INTERVALS = [
   { value: '1', label: '1m' },
@@ -124,17 +215,17 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
     try {
       console.log(`[StrategyTester] Starting backtest for ${fullscreenSymbol}, interval: ${selectedInterval}, days: ${testDays}`);
 
-      // Fetch historical candles using selected interval
-      const response = await fetch(
+      // 1. Fetch historical candles
+      const candlesResponse = await fetch(
         `${API_BASE_URL}/api/historical/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}`
       );
 
-      if (!response.ok) {
+      if (!candlesResponse.ok) {
         throw new Error('Error fetching historical data');
       }
 
-      const data = await response.json();
-      const candles = data.success ? (data.data || data.candles || []) : [];
+      const candlesData = await candlesResponse.json();
+      const candles = candlesData.success ? (candlesData.data || candlesData.candles || []) : [];
 
       console.log(`[StrategyTester] Fetched ${candles.length} candles for interval ${selectedInterval}`);
 
@@ -143,82 +234,195 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         return;
       }
 
-      // Fetch alerts from global history for this symbol
-      const GLOBAL_KEY = 'watchlist_global_alert_history';
-      const stored = localStorage.getItem(GLOBAL_KEY);
-      const allAlerts = stored ? JSON.parse(stored) : [];
+      // 2. Detect patterns using DTB backend API
+      console.log(`[StrategyTester] Calling DTB detection API...`);
 
-      console.log(`[StrategyTester] Total alerts in localStorage: ${allAlerts.length}`);
+      const dtbConfig = {
+        enabled: true,
+        doubleTopBottom: {
+          minDistanceBars: 5,
+          maxDistanceBars: 100,
+          priceTolerancePercent: 1.5,
+          maxBreakoutPercent: 3.0,
+          volumeFilter: { enabled: false }
+        },
+        filters: {
+          minConfidence: 20,
+          requireBothRejections: false,
+          postPatternValidationCandles: 5
+        },
+        strategy: {
+          enabled: true,
+          riskRewardRatio: 2.0,
+          slMinPercent: 0.5,
+          slBufferPercent: 20,
+          slSwingLeftBars: 3,
+          slSwingRightBars: 3,
+          slSwingLookback: 50
+        }
+      };
 
-      // Filter alerts for this symbol (optionally by interval)
-      let symbolAlerts;
-      if (intervalFilter === 'all') {
-        // Get all alerts for this symbol, regardless of interval
-        symbolAlerts = allAlerts.filter(a => a.symbol === fullscreenSymbol);
-      } else {
-        // Filter by specific interval
-        symbolAlerts = allAlerts.filter(
-          a => a.symbol === fullscreenSymbol && a.interval === selectedInterval
-        );
-      }
+      const detectResponse = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: fullscreenSymbol,
+          interval: selectedInterval,
+          days: testDays,
+          config: dtbConfig,
+          candles: candles
+        })
+      });
 
-      console.log(`[StrategyTester] Filtered alerts for ${fullscreenSymbol}: ${symbolAlerts.length} (filter: ${intervalFilter})`);
+      const detectResult = await detectResponse.json();
 
-      if (symbolAlerts.length === 0) {
-        alert(`No hay alertas históricas para ${fullscreenSymbol}. Activa los indicadores y genera alertas primero.`);
+      if (!detectResult.success || !detectResult.patterns) {
+        console.log(`[StrategyTester] No patterns detected or API error`);
+        alert('No se detectaron patrones DTB en el período seleccionado');
         return;
       }
 
-      // Evaluate each alert against historical data
-      const evaluatedResults = symbolAlerts.map(alert => {
-        if (!alert.entry || !alert.stopLoss || !alert.takeProfit) {
-          return { ...alert, outcome: 'INCOMPLETE', reason: 'Sin datos de estrategia' };
+      const patterns = detectResult.patterns;
+      console.log(`[StrategyTester] Detected ${patterns.length} DTB patterns`);
+
+      if (patterns.length === 0) {
+        alert('No se detectaron patrones DTB en el período seleccionado');
+        return;
+      }
+
+      // 3. Calculate strategy levels and evaluate each pattern
+      const evaluatedResults = patterns.map((pattern, idx) => {
+        // Calculate strategy levels (entry, SL, TP)
+        const strategy = calculateStrategyLevels(pattern, candles, dtbConfig);
+
+        if (!strategy) {
+          return {
+            id: `pattern_${idx}`,
+            type: pattern.type,
+            timestamp: pattern.secondExtreme?.timestamp,
+            outcome: 'INCOMPLETE',
+            reason: 'No se pudo calcular estrategia'
+          };
         }
 
-        const alertTime = alert.timestamp;
-        const sl = alert.stopLoss;
-        const tp = alert.takeProfit;
-        const direction = alert.direction;
+        const { entry, stopLoss, takeProfit, direction, slPercent, tpPercent, confirmationTimestamp } = strategy;
 
-        // Get candles after alert
+        // Find candles after confirmation
         const getCandleTime = (c) => {
           const t = c.timestamp || c.time || c.openTime || c.start;
           return t < 1000000000000 ? t * 1000 : t;
         };
 
-        const candlesAfterAlert = candles
-          .filter(c => getCandleTime(c) > alertTime)
+        const candlesAfterEntry = candles
+          .filter(c => getCandleTime(c) > confirmationTimestamp)
           .sort((a, b) => getCandleTime(a) - getCandleTime(b));
 
-        if (candlesAfterAlert.length === 0) {
-          return { ...alert, outcome: 'PENDING', reason: 'Sin datos posteriores' };
+        if (candlesAfterEntry.length === 0) {
+          return {
+            id: `pattern_${idx}`,
+            type: pattern.type,
+            timestamp: confirmationTimestamp,
+            entry,
+            stopLoss,
+            takeProfit,
+            direction,
+            slPercent,
+            tpPercent,
+            outcome: 'PENDING',
+            reason: 'Sin datos posteriores'
+          };
         }
 
-        // Evaluate
-        for (const candle of candlesAfterAlert) {
+        // Evaluate outcome
+        for (const candle of candlesAfterEntry) {
           const high = parseFloat(candle.high);
           const low = parseFloat(candle.low);
 
           if (direction === 'LONG') {
-            if (low <= sl) {
-              return { ...alert, outcome: 'LOSS', exitPrice: sl, exitTime: getCandleTime(candle) };
+            if (low <= stopLoss) {
+              return {
+                id: `pattern_${idx}`,
+                type: pattern.type,
+                timestamp: confirmationTimestamp,
+                entry,
+                stopLoss,
+                takeProfit,
+                direction,
+                slPercent,
+                tpPercent,
+                outcome: 'LOSS',
+                exitPrice: stopLoss,
+                exitTime: getCandleTime(candle)
+              };
             }
-            if (high >= tp) {
-              return { ...alert, outcome: 'WIN', exitPrice: tp, exitTime: getCandleTime(candle) };
+            if (high >= takeProfit) {
+              return {
+                id: `pattern_${idx}`,
+                type: pattern.type,
+                timestamp: confirmationTimestamp,
+                entry,
+                stopLoss,
+                takeProfit,
+                direction,
+                slPercent,
+                tpPercent,
+                outcome: 'WIN',
+                exitPrice: takeProfit,
+                exitTime: getCandleTime(candle)
+              };
             }
-          } else if (direction === 'SHORT') {
-            if (high >= sl) {
-              return { ...alert, outcome: 'LOSS', exitPrice: sl, exitTime: getCandleTime(candle) };
+          } else { // SHORT
+            if (high >= stopLoss) {
+              return {
+                id: `pattern_${idx}`,
+                type: pattern.type,
+                timestamp: confirmationTimestamp,
+                entry,
+                stopLoss,
+                takeProfit,
+                direction,
+                slPercent,
+                tpPercent,
+                outcome: 'LOSS',
+                exitPrice: stopLoss,
+                exitTime: getCandleTime(candle)
+              };
             }
-            if (low <= tp) {
-              return { ...alert, outcome: 'WIN', exitPrice: tp, exitTime: getCandleTime(candle) };
+            if (low <= takeProfit) {
+              return {
+                id: `pattern_${idx}`,
+                type: pattern.type,
+                timestamp: confirmationTimestamp,
+                entry,
+                stopLoss,
+                takeProfit,
+                direction,
+                slPercent,
+                tpPercent,
+                outcome: 'WIN',
+                exitPrice: takeProfit,
+                exitTime: getCandleTime(candle)
+              };
             }
           }
         }
 
-        return { ...alert, outcome: 'PENDING', reason: 'Trade aún abierto' };
+        return {
+          id: `pattern_${idx}`,
+          type: pattern.type,
+          timestamp: confirmationTimestamp,
+          entry,
+          stopLoss,
+          takeProfit,
+          direction,
+          slPercent,
+          tpPercent,
+          outcome: 'PENDING',
+          reason: 'Trade aún abierto'
+        };
       });
 
+      console.log(`[StrategyTester] Evaluated ${evaluatedResults.length} patterns`);
       setTestResults(evaluatedResults);
 
       // Guardar resultados en el perfil
@@ -229,7 +433,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
                 ...p,
                 results: evaluatedResults,
                 symbol: fullscreenSymbol,
-                interval: fullscreenInterval,
+                interval: selectedInterval,
                 lastTestAt: Date.now(),
                 settings: { riskAmount, testDays }
               }
