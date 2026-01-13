@@ -1684,9 +1684,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       const highY = priceToY(candle.high);
       const lowY = priceToY(candle.low);
 
-      // ✅ NUEVO: Calcular niveles de estrategia si está habilitado
+      // ✅ CORREGIDO: Calcular niveles de estrategia usando allCandles y el candleIndex real del patrón
       if (this.config.strategy?.enabled && !pattern._strategy) {
-        pattern._strategy = this.calculateStrategyLevels(pattern, visibleCandles, i);
+        // Usar el candleIndex del patrón si existe, sino buscarlo en allCandles
+        let realIndex = pattern.candleIndex;
+        if (realIndex === undefined && allCandles) {
+          realIndex = allCandles.findIndex(c => c.timestamp === pattern.timestamp);
+        }
+        if (realIndex !== undefined && realIndex >= 0 && allCandles) {
+          pattern._strategy = this.calculateStrategyLevels(pattern, allCandles, realIndex);
+        }
       }
 
       // ✅ NUEVO: Dibujar líneas de estrategia ANTES del marcador (para que queden detrás)
