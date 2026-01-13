@@ -308,10 +308,12 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
       <div className="profiles-bar">
         <div className="profiles-list">
           {profiles.map(profile => (
-            <button
+            <div
               key={profile.id}
               className={`profile-btn ${profile.id === activeProfileId ? 'active' : ''}`}
               onClick={() => handleSelectProfile(profile.id)}
+              role="button"
+              tabIndex={0}
             >
               <span className="profile-name">{profile.name}</span>
               {profile.results?.length > 0 && (
@@ -324,7 +326,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               >
                 ×
               </button>
-            </button>
+            </div>
           ))}
           {!showNewProfileForm ? (
             <button className="profile-btn add-profile" onClick={() => setShowNewProfileForm(true)}>
