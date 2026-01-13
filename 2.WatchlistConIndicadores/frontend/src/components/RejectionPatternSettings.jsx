@@ -1284,6 +1284,77 @@ const RejectionPatternSettings = ({
                         </label>
                       </div>
                     </div>
+
+                    {/* Box settings */}
+                    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #444' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                        <label className="checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={config.strategy?.showBox !== false}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  showBox: e.target.checked
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                          />
+                          Show connecting box
+                        </label>
+
+                        {config.strategy?.showBox !== false && (
+                          <>
+                            <div className="color-setting">
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                Box Color:
+                                <input
+                                  type="color"
+                                  value={config.strategy?.boxColor || '#03A9F4'}
+                                  onChange={(e) => {
+                                    setConfig(prev => ({
+                                      ...prev,
+                                      strategy: {
+                                        ...prev.strategy,
+                                        boxColor: e.target.value
+                                      }
+                                    }));
+                                    setActivePreset('custom');
+                                  }}
+                                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                                />
+                              </label>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '12px', color: '#888' }}>Opacity:</span>
+                              <input
+                                type="range"
+                                min="0.05"
+                                max="0.4"
+                                step="0.05"
+                                value={config.strategy?.boxOpacity || 0.15}
+                                onChange={(e) => {
+                                  setConfig(prev => ({
+                                    ...prev,
+                                    strategy: {
+                                      ...prev.strategy,
+                                      boxOpacity: parseFloat(e.target.value)
+                                    }
+                                  }));
+                                  setActivePreset('custom');
+                                }}
+                                style={{ width: '80px' }}
+                              />
+                              <span style={{ fontSize: '11px', color: '#666' }}>{Math.round((config.strategy?.boxOpacity || 0.15) * 100)}%</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Stop Loss Swing Detection Parameters */}
@@ -2907,6 +2978,10 @@ function getDefaultConfig() {
       takeProfitColor: '#00E676',
       showLabels: true,
       includeInAlert: true,
+      // Box settings
+      showBox: true,
+      boxColor: '#03A9F4',
+      boxOpacity: 0.15,
       // SL Swing Detection parameters
       slSwingLeftBars: 3,
       slSwingRightBars: 3,

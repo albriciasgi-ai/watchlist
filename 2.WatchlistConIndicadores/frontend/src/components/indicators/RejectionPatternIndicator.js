@@ -2155,6 +2155,19 @@ class RejectionPatternIndicator extends IndicatorBase {
     const tpY = priceToY(strategy.takeProfit);
 
     ctx.save();
+
+    // ✅ NUEVO: Rectángulo traslúcido que conecta las 3 líneas
+    if (config.showBox !== false) {
+      const boxColor = config.boxColor || '#03A9F4';
+      const boxOpacity = config.boxOpacity || 0.15;
+      const topY = Math.min(entryY, slY, tpY);
+      const bottomY = Math.max(entryY, slY, tpY);
+      const boxHeight = bottomY - topY;
+
+      ctx.fillStyle = this.hexToRgba(boxColor, boxOpacity);
+      ctx.fillRect(startX, topY, endX - startX, boxHeight);
+    }
+
     ctx.setLineDash([4, 2]); // Línea punteada
 
     // === Línea de Entry (azul) ===
