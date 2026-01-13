@@ -326,6 +326,17 @@ class RejectionPatternIndicator extends IndicatorBase {
         longColor: '#00E676',   // Verde para LONG (swing low)
         shortColor: '#FF1744',  // Rojo para SHORT (swing high)
         offset: 8          // Distancia desde el high/low de la vela
+      },
+      // ✅ NUEVO: Configuración de estrategia (Entry/SL/TP)
+      strategy: {
+        enabled: false,
+        riskRewardRatio: 2.0,    // TP = SL distance * ratio
+        lineLengthCandles: 5,    // Velas hacia atrás y adelante
+        entryColor: '#03A9F4',   // Azul claro para entrada
+        stopLossColor: '#FF1744', // Rojo para SL
+        takeProfitColor: '#00E676', // Verde para TP
+        showLabels: true,        // Mostrar etiquetas con precio y %
+        includeInAlert: true     // Incluir SL/TP en alertas
       }
     };
   }
@@ -1093,6 +1104,18 @@ class RejectionPatternIndicator extends IndicatorBase {
         }
       };
 
+      // ✅ NUEVO: Incluir datos de estrategia si está habilitado
+      if (this.config.strategy?.enabled && this.config.strategy?.includeInAlert && pattern._strategy) {
+        payload.strategy = {
+          entry: pattern._strategy.entry,
+          stopLoss: pattern._strategy.stopLoss,
+          takeProfit: pattern._strategy.takeProfit,
+          slPercent: pattern._strategy.slPercent,
+          tpPercent: pattern._strategy.tpPercent,
+          riskRewardRatio: pattern._strategy.riskRewardRatio
+        };
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1661,6 +1684,16 @@ class RejectionPatternIndicator extends IndicatorBase {
       const highY = priceToY(candle.high);
       const lowY = priceToY(candle.low);
 
+      // ✅ NUEVO: Calcular niveles de estrategia si está habilitado
+      if (this.config.strategy?.enabled && !pattern._strategy) {
+        pattern._strategy = this.calculateStrategyLevels(pattern, visibleCandles, i);
+      }
+
+      // ✅ NUEVO: Dibujar líneas de estrategia ANTES del marcador (para que queden detrás)
+      if (pattern._strategy) {
+        this.drawStrategyLines(ctx, bounds, pattern, x, priceToY, candleWidth);
+      }
+
       // Draw pattern marker (diferente visualización según modo)
       const isValidated = this.showMode === 'validated';
       this.drawPatternMarker(ctx, x, highY, lowY, pattern, isValidated);
@@ -1837,6 +1870,151 @@ class RejectionPatternIndicator extends IndicatorBase {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  /**
+   * ✅ NUEVO: Calcula niveles de estrategia (Entry, Stop Loss, Take Profit)
+   * @param {Object} pattern - Patrón detectado
+   * @param {Array} candles - Array de velas
+   * @param {number} patternIndex - Índice de la vela del patrón
+   * @returns {Object} {entry, stopLoss, takeProfit, slPercent, tpPercent}
+   */
+  calculateStrategyLevels(pattern, candles, patternIndex) {
+    if (!this.config.strategy?.enabled) return null;
+
+    const patternCandle = candles[patternIndex];
+    if (!patternCandle) return null;
+
+    const isLong = pattern.direction === 'LONG';
+    const rrRatio = this.config.strategy.riskRewardRatio || 2.0;
+
+    // Entry = precio de cierre de la vela de confirmación
+    const entry = patternCandle.close;
+
+    // Para LONG: SL en el mínimo del patrón (o swing low anterior)
+    // Para SHORT: SL en el máximo del patrón (o swing high anterior)
+    let stopLoss;
+
+    if (isLong) {
+      // Buscar el mínimo más bajo en las últimas N velas (incluyendo la del patrón)
+      const lookbackStart = Math.max(0, patternIndex - 10);
+      let lowestLow = patternCandle.low;
+      for (let i = lookbackStart; i <= patternIndex; i++) {
+        if (candles[i] && candles[i].low < lowestLow) {
+          lowestLow = candles[i].low;
+        }
+      }
+      stopLoss = lowestLow;
+    } else {
+      // Buscar el máximo más alto en las últimas N velas
+      const lookbackStart = Math.max(0, patternIndex - 10);
+      let highestHigh = patternCandle.high;
+      for (let i = lookbackStart; i <= patternIndex; i++) {
+        if (candles[i] && candles[i].high > highestHigh) {
+          highestHigh = candles[i].high;
+        }
+      }
+      stopLoss = highestHigh;
+    }
+
+    // Calcular distancia del SL como porcentaje
+    const slDistance = Math.abs(entry - stopLoss);
+    const slPercent = (slDistance / entry) * 100;
+
+    // Take Profit = Entry ± (SL distance * RR ratio)
+    let takeProfit;
+    if (isLong) {
+      takeProfit = entry + (slDistance * rrRatio);
+    } else {
+      takeProfit = entry - (slDistance * rrRatio);
+    }
+
+    const tpPercent = slPercent * rrRatio;
+
+    return {
+      entry,
+      stopLoss,
+      takeProfit,
+      slPercent: Math.round(slPercent * 100) / 100,
+      tpPercent: Math.round(tpPercent * 100) / 100,
+      riskRewardRatio: rrRatio
+    };
+  }
+
+  /**
+   * ✅ NUEVO: Dibuja las líneas de estrategia (Entry, SL, TP)
+   * @param {CanvasRenderingContext2D} ctx - Contexto del canvas
+   * @param {Object} bounds - Límites del área de dibujo
+   * @param {Object} pattern - Patrón con datos de estrategia
+   * @param {number} patternX - Posición X del patrón
+   * @param {Function} priceToY - Función para convertir precio a Y
+   * @param {number} candleWidth - Ancho de cada vela
+   */
+  drawStrategyLines(ctx, bounds, pattern, patternX, priceToY, candleWidth) {
+    if (!this.config.strategy?.enabled || !pattern._strategy) return;
+
+    const strategy = pattern._strategy;
+    const config = this.config.strategy;
+    const lineLength = (config.lineLengthCandles || 5) * candleWidth;
+
+    // Coordenadas X: desde 5 velas antes hasta 5 velas después
+    const startX = Math.max(bounds.x, patternX - lineLength);
+    const endX = Math.min(bounds.x + bounds.width, patternX + lineLength);
+
+    // Coordenadas Y
+    const entryY = priceToY(strategy.entry);
+    const slY = priceToY(strategy.stopLoss);
+    const tpY = priceToY(strategy.takeProfit);
+
+    ctx.save();
+    ctx.setLineDash([4, 2]); // Línea punteada
+
+    // === Línea de Entry (azul) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.entryColor || '#03A9F4';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, entryY);
+    ctx.lineTo(endX, entryY);
+    ctx.stroke();
+
+    // === Línea de Stop Loss (rojo) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.stopLossColor || '#FF1744';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, slY);
+    ctx.lineTo(endX, slY);
+    ctx.stroke();
+
+    // === Línea de Take Profit (verde) ===
+    ctx.beginPath();
+    ctx.strokeStyle = config.takeProfitColor || '#00E676';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(startX, tpY);
+    ctx.lineTo(endX, tpY);
+    ctx.stroke();
+
+    ctx.setLineDash([]); // Resetear línea punteada
+
+    // === Etiquetas con precio y % ===
+    if (config.showLabels !== false) {
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'left';
+      const labelX = endX + 4;
+
+      // Entry label
+      ctx.fillStyle = config.entryColor || '#03A9F4';
+      ctx.fillText(`Entry: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
+
+      // SL label con %
+      ctx.fillStyle = config.stopLossColor || '#FF1744';
+      ctx.fillText(`SL: $${strategy.stopLoss.toFixed(2)} (-${strategy.slPercent}%)`, labelX, slY + 3);
+
+      // TP label con %
+      ctx.fillStyle = config.takeProfitColor || '#00E676';
+      ctx.fillText(`TP: $${strategy.takeProfit.toFixed(2)} (+${strategy.tpPercent}%)`, labelX, tpY + 3);
+    }
+
+    ctx.restore();
   }
 
   /**

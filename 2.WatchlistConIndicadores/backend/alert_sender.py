@@ -130,6 +130,19 @@ class AlertSender:
             "confidence": confidence
         }
 
+        # Include strategy data if present (Entry, Stop Loss, Take Profit)
+        strategy = pattern.get('strategy')
+        if strategy:
+            payload["strategy"] = {
+                "entry": strategy.get('entry'),
+                "stopLoss": strategy.get('stopLoss'),
+                "takeProfit": strategy.get('takeProfit'),
+                "slPercent": strategy.get('slPercent'),
+                "tpPercent": strategy.get('tpPercent'),
+                "riskRewardRatio": strategy.get('riskRewardRatio')
+            }
+            logger.info(f"[STRATEGY] Entry: ${strategy.get('entry', 0):.2f} | SL: ${strategy.get('stopLoss', 0):.2f} ({strategy.get('slPercent', 0):.2f}%) | TP: ${strategy.get('takeProfit', 0):.2f} ({strategy.get('tpPercent', 0):.2f}%)")
+
         logger.info(f"[ALERT PAYLOAD] {symbol} | {pattern_with_action} @ ${price:.2f} (conf: {confidence}%)")
 
         return payload

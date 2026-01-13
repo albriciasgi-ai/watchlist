@@ -195,6 +195,11 @@ const RejectionPatternSettings = ({
       swingArrowStyle: {
         ...defaultConfig.swingArrowStyle,
         ...oldConfig.swingArrowStyle
+      },
+      // ✅ NUEVO: Migrar strategy
+      strategy: {
+        ...defaultConfig.strategy,
+        ...oldConfig.strategy
       }
     };
   };
@@ -1120,6 +1125,166 @@ const RejectionPatternSettings = ({
                     </button>
                   </div>
                 </div>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* ✅ NUEVO: Section Strategy (Entry/SL/TP) */}
+        <section className="settings-section">
+          <h4
+            className="section-header collapsible"
+            onClick={() => setExpandedSections(prev => ({ ...prev, strategy: !prev.strategy }))}
+          >
+            📊 Strategy (Entry / SL / TP)
+            <span className="toggle-icon">{expandedSections.strategy ? '▼' : '▶'}</span>
+          </h4>
+
+          {expandedSections.strategy && (
+            <>
+              <div className="filter-item" style={{ marginBottom: '16px' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={config.strategy?.enabled || false}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        strategy: {
+                          ...prev.strategy,
+                          enabled: e.target.checked
+                        }
+                      }));
+                      setActivePreset('custom');
+                    }}
+                  />
+                  <span style={{ fontWeight: 'bold', color: '#03A9F4' }}>Enable Strategy Lines</span>
+                </label>
+                <span className="filter-hint">
+                  Shows Entry, Stop Loss and Take Profit lines on detected patterns
+                </span>
+              </div>
+
+              {config.strategy?.enabled && (
+                <>
+                  <div className="filter-item">
+                    <label>
+                      Risk:Reward Ratio: {config.strategy?.riskRewardRatio || 2.0}x
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        step="0.5"
+                        value={config.strategy?.riskRewardRatio || 2.0}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            strategy: {
+                              ...prev.strategy,
+                              riskRewardRatio: parseFloat(e.target.value)
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                        className="proximity-slider"
+                      />
+                    </label>
+                    <span className="filter-hint">
+                      Take Profit = Stop Loss distance × this ratio
+                    </span>
+                  </div>
+
+                  <div className="filter-item">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={config.strategy?.includeInAlert !== false}
+                        onChange={(e) => {
+                          setConfig(prev => ({
+                            ...prev,
+                            strategy: {
+                              ...prev.strategy,
+                              includeInAlert: e.target.checked
+                            }
+                          }));
+                          setActivePreset('custom');
+                        }}
+                      />
+                      Include Entry/SL/TP in alerts (port 5000)
+                    </label>
+                  </div>
+
+                  <div style={{ marginTop: '16px', padding: '12px', background: '#1a1a2e', borderRadius: '8px', border: '1px solid #333' }}>
+                    <h5 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#888' }}>
+                      🎨 Line Colors
+                    </h5>
+
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Entry:
+                          <input
+                            type="color"
+                            value={config.strategy?.entryColor || '#03A9F4'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  entryColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Stop Loss:
+                          <input
+                            type="color"
+                            value={config.strategy?.stopLossColor || '#FF1744'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  stopLossColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="color-setting">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          Take Profit:
+                          <input
+                            type="color"
+                            value={config.strategy?.takeProfitColor || '#00E676'}
+                            onChange={(e) => {
+                              setConfig(prev => ({
+                                ...prev,
+                                strategy: {
+                                  ...prev.strategy,
+                                  takeProfitColor: e.target.value
+                                }
+                              }));
+                              setActivePreset('custom');
+                            }}
+                            style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </>
           )}
@@ -2586,6 +2751,17 @@ function getDefaultConfig() {
       longColor: '#00E676',   // Verde para LONG (swing low)
       shortColor: '#FF1744',  // Rojo para SHORT (swing high)
       offset: 8          // Distancia desde el high/low de la vela
+    },
+    // ✅ NUEVO: Configuración de estrategia (Entry/SL/TP)
+    strategy: {
+      enabled: false,
+      riskRewardRatio: 2.0,
+      lineLengthCandles: 5,
+      entryColor: '#03A9F4',
+      stopLossColor: '#FF1744',
+      takeProfitColor: '#00E676',
+      showLabels: true,
+      includeInAlert: true
     }
   };
 }
