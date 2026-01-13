@@ -673,65 +673,75 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       let globalHistory = JSON.parse(existing);
       let updated = false;
 
+      // Helper para obtener timestamp de vela (normalizar a ms)
+      const getCandleTime = (candle) => {
+        const t = candle.timestamp || candle.time || candle.openTime || candle.start;
+        // Si el timestamp es muy pequeño (< año 2000 en ms), probablemente está en segundos
+        return t < 1000000000000 ? t * 1000 : t;
+      };
+
       globalHistory = globalHistory.map(alert => {
-        // Solo evaluar alertas de este símbolo/intervalo con outcome PENDING
+        // Solo evaluar alertas con outcome PENDING
         if (alert.outcome !== 'PENDING') return alert;
+        // Solo evaluar alertas de este símbolo/intervalo
         if (alert.symbol !== this.symbol || alert.interval !== this.interval) return alert;
+        // Necesitamos entry, SL y TP para evaluar
         if (!alert.entry || !alert.stopLoss || !alert.takeProfit) return alert;
 
         const alertTime = alert.timestamp;
-        const entry = alert.entry;
         const sl = alert.stopLoss;
         const tp = alert.takeProfit;
         const direction = alert.direction;
 
         // Filtrar velas posteriores a la alerta
         const candlesAfterAlert = candles.filter(c => {
-          const candleTime = c.time || c.timestamp || c.openTime;
+          const candleTime = getCandleTime(c);
           return candleTime > alertTime;
         });
 
-        if (candlesAfterAlert.length === 0) return alert;
+        if (candlesAfterAlert.length === 0) {
+          return alert;
+        }
+
+        // Ordenar velas por timestamp para evaluar en orden cronológico
+        candlesAfterAlert.sort((a, b) => getCandleTime(a) - getCandleTime(b));
 
         // Evaluar cada vela para ver si tocó SL o TP primero
         for (const candle of candlesAfterAlert) {
-          const high = candle.high;
-          const low = candle.low;
+          const high = parseFloat(candle.high);
+          const low = parseFloat(candle.low);
 
           if (direction === 'LONG') {
             // LONG: SL está debajo del entry, TP está arriba
-            // LOSS si low <= SL
-            // WIN si high >= TP
+            // Primero verificar LOSS (SL), ya que en la misma vela podría tocar ambos
             if (low <= sl) {
               alert.outcome = 'LOSS';
-              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              alert.outcomeTimestamp = getCandleTime(candle);
               updated = true;
-              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - precio tocó SL ${sl.toFixed(2)}`);
+              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - low ${low.toFixed(2)} tocó SL ${sl.toFixed(2)}`);
               break;
             }
             if (high >= tp) {
               alert.outcome = 'WIN';
-              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              alert.outcomeTimestamp = getCandleTime(candle);
               updated = true;
-              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - precio alcanzó TP ${tp.toFixed(2)}`);
+              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - high ${high.toFixed(2)} alcanzó TP ${tp.toFixed(2)}`);
               break;
             }
           } else if (direction === 'SHORT') {
             // SHORT: SL está arriba del entry, TP está abajo
-            // LOSS si high >= SL
-            // WIN si low <= TP
             if (high >= sl) {
               alert.outcome = 'LOSS';
-              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              alert.outcomeTimestamp = getCandleTime(candle);
               updated = true;
-              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - precio tocó SL ${sl.toFixed(2)}`);
+              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - high ${high.toFixed(2)} tocó SL ${sl.toFixed(2)}`);
               break;
             }
             if (low <= tp) {
               alert.outcome = 'WIN';
-              alert.outcomeTimestamp = candle.time || candle.timestamp || candle.openTime;
+              alert.outcomeTimestamp = getCandleTime(candle);
               updated = true;
-              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - precio alcanzó TP ${tp.toFixed(2)}`);
+              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - low ${low.toFixed(2)} alcanzó TP ${tp.toFixed(2)}`);
               break;
             }
           }
