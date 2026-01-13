@@ -26,6 +26,7 @@ const RejectionPatternSettings = ({
   const [showMode, setShowMode] = useState('validated');
   const [activePreset, setActivePreset] = useState('custom');
   const [showAddZoneModal, setShowAddZoneModal] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({ strategy: false });
 
   // ✅ NUEVO: Leer el modo actual del indicador al montar
   useEffect(() => {
