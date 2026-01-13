@@ -1891,30 +1891,28 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Entry = precio de cierre de la vela de confirmación
     const entry = patternCandle.close;
 
-    // Para LONG: SL en el mínimo del patrón (o swing low anterior)
-    // Para SHORT: SL en el máximo del patrón (o swing high anterior)
+    // Obtener parámetros de swing de la configuración
+    const swingConfig = this.config.swingDetection || {};
+    const leftBars = swingConfig.leftBars || 5;
+    const rightBars = swingConfig.rightBars || 5;
+
+    // Buscar el swing anterior significativo (usando la misma lógica de detección)
     let stopLoss;
 
     if (isLong) {
-      // Buscar el mínimo más bajo en las últimas N velas (incluyendo la del patrón)
-      const lookbackStart = Math.max(0, patternIndex - 10);
-      let lowestLow = patternCandle.low;
-      for (let i = lookbackStart; i <= patternIndex; i++) {
-        if (candles[i] && candles[i].low < lowestLow) {
-          lowestLow = candles[i].low;
-        }
+      // Para LONG: buscar el swing low anterior
+      stopLoss = this.findPreviousSwingLow(candles, patternIndex, leftBars, rightBars);
+      // Fallback: si no hay swing anterior, usar el mínimo de la vela del patrón
+      if (stopLoss === null) {
+        stopLoss = patternCandle.low;
       }
-      stopLoss = lowestLow;
     } else {
-      // Buscar el máximo más alto en las últimas N velas
-      const lookbackStart = Math.max(0, patternIndex - 10);
-      let highestHigh = patternCandle.high;
-      for (let i = lookbackStart; i <= patternIndex; i++) {
-        if (candles[i] && candles[i].high > highestHigh) {
-          highestHigh = candles[i].high;
-        }
+      // Para SHORT: buscar el swing high anterior
+      stopLoss = this.findPreviousSwingHigh(candles, patternIndex, leftBars, rightBars);
+      // Fallback: si no hay swing anterior, usar el máximo de la vela del patrón
+      if (stopLoss === null) {
+        stopLoss = patternCandle.high;
       }
-      stopLoss = highestHigh;
     }
 
     // Calcular distancia del SL como porcentaje
@@ -1939,6 +1937,92 @@ class RejectionPatternIndicator extends IndicatorBase {
       tpPercent: Math.round(tpPercent * 100) / 100,
       riskRewardRatio: rrRatio
     };
+  }
+
+  /**
+   * Busca el swing low anterior más cercano al índice dado
+   * @param {Array} candles - Array de velas
+   * @param {number} beforeIndex - Buscar antes de este índice
+   * @param {number} leftBars - Velas a la izquierda para confirmar swing
+   * @param {number} rightBars - Velas a la derecha para confirmar swing
+   * @returns {number|null} Precio del swing low o null si no se encuentra
+   */
+  findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars) {
+    // Buscar hacia atrás desde beforeIndex - rightBars (para que el swing esté completamente confirmado)
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingLow(candles, i, leftBars, rightBars)) {
+        return candles[i].low;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Busca el swing high anterior más cercano al índice dado
+   * @param {Array} candles - Array de velas
+   * @param {number} beforeIndex - Buscar antes de este índice
+   * @param {number} leftBars - Velas a la izquierda para confirmar swing
+   * @param {number} rightBars - Velas a la derecha para confirmar swing
+   * @returns {number|null} Precio del swing high o null si no se encuentra
+   */
+  findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars) {
+    // Buscar hacia atrás desde beforeIndex - rightBars (para que el swing esté completamente confirmado)
+    for (let i = beforeIndex - rightBars - 1; i >= leftBars; i--) {
+      if (this.isSwingHigh(candles, i, leftBars, rightBars)) {
+        return candles[i].high;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Verifica si una vela es un swing low (mínimo local)
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela a verificar
+   * @param {number} leftBars - Velas a la izquierda
+   * @param {number} rightBars - Velas a la derecha
+   * @returns {boolean}
+   */
+  isSwingLow(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentLow = candles[index].low;
+
+    // Verificar que el low actual es el mínimo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].low <= currentLow) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Verifica si una vela es un swing high (máximo local)
+   * @param {Array} candles - Array de velas
+   * @param {number} index - Índice de la vela a verificar
+   * @param {number} leftBars - Velas a la izquierda
+   * @param {number} rightBars - Velas a la derecha
+   * @returns {boolean}
+   */
+  isSwingHigh(candles, index, leftBars, rightBars) {
+    if (index < leftBars || index >= candles.length - rightBars) {
+      return false;
+    }
+
+    const currentHigh = candles[index].high;
+
+    // Verificar que el high actual es el máximo en toda la ventana
+    for (let i = index - leftBars; i <= index + rightBars; i++) {
+      if (i !== index && candles[i].high >= currentHigh) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**
