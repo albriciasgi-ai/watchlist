@@ -2006,7 +2006,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       tpPercent: Math.round(tpPercent * 100) / 100,
       riskRewardRatio: rrRatio,
       direction: isLong ? 'LONG' : 'SHORT',
-      usedFallback
+      usedFallback,
+      confirmationTimestamp: confirmationCandle.timestamp  // ✅ Para posicionar las líneas en la vela de confirmación
     };
   }
 
@@ -2154,9 +2155,19 @@ class RejectionPatternIndicator extends IndicatorBase {
     const config = this.config.strategy;
     const lineLength = (config.lineLengthCandles || 5) * candleWidth;
 
+    // ✅ FIX: Si hay confirmationTimestamp, usar esa posición en lugar de la del patrón
+    // La diferencia en timestamps nos da cuántas velas avanzar desde el patrón
+    let actualX = patternX;
+    if (strategy.confirmationTimestamp && pattern.timestamp) {
+      const swingConfig = this.config.swingDetection || {};
+      const rightBars = swingConfig.rightBars || 5;
+      // Mover X hacia adelante por el número de velas de confirmación
+      actualX = patternX + (rightBars * candleWidth);
+    }
+
     // Coordenadas X: desde 5 velas antes hasta 5 velas después
-    const startX = Math.max(bounds.x, patternX - lineLength);
-    const endX = Math.min(bounds.x + bounds.width, patternX + lineLength);
+    const startX = Math.max(bounds.x, actualX - lineLength);
+    const endX = Math.min(bounds.x + bounds.width, actualX + lineLength);
 
     // Coordenadas Y
     const entryY = priceToY(strategy.entry);

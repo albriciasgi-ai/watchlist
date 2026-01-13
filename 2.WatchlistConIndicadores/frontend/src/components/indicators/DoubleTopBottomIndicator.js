@@ -1831,17 +1831,26 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const isLong = pattern.type === 'DOUBLE_BOTTOM';
     const rrRatio = strategyConfig.riskRewardRatio || 2.0;
 
-    // Encontrar la vela de confirmación (secondExtreme)
-    const confirmationTimestamp = pattern.secondExtreme?.timestamp;
-    const confirmationCandle = candles.find(c => c.timestamp === confirmationTimestamp);
+    // ✅ FIX: Usar la vela de CONFIRMACIÓN real, no la vela del pico/valle
+    // La vela de confirmación es N velas DESPUÉS del segundo extremo
+    const confirmationCandlesCount = this.config.filters?.postPatternValidationCandles || 5;
+
+    // Encontrar el índice de la vela del patrón (segundo extremo)
+    const patternTimestamp = pattern.secondExtreme?.timestamp;
+    const patternIndex = candles.findIndex(c => c.timestamp === patternTimestamp);
+    if (patternIndex < 0) return null;
+
+    // Calcular el índice de la vela de confirmación (N velas después del patrón)
+    const confirmationIndex = patternIndex + confirmationCandlesCount;
+
+    // Si no hay suficientes velas para la confirmación, usar la última vela disponible
+    const actualConfirmationIndex = Math.min(confirmationIndex, candles.length - 1);
+    const confirmationCandle = candles[actualConfirmationIndex];
+
     if (!confirmationCandle) return null;
 
-    // Entry = close de la vela de confirmación
+    // Entry = close de la vela de confirmación REAL (no la del pico/valle)
     const entry = confirmationCandle.close;
-
-    // Encontrar índice de la vela de confirmación para buscar swings anteriores
-    const confirmationIndex = candles.findIndex(c => c.timestamp === confirmationTimestamp);
-    if (confirmationIndex < 0) return null;
 
     // Parámetros para buscar swing del SL
     const slSwingLeftBars = strategyConfig.slSwingLeftBars || 3;
@@ -1917,7 +1926,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       tpPercent: Math.round(tpPercent * 100) / 100,
       riskRewardRatio: rrRatio,
       direction: isLong ? 'LONG' : 'SHORT',
-      usedFallback
+      usedFallback,
+      confirmationTimestamp: confirmationCandle.timestamp  // ✅ Para posicionar las líneas en la vela de confirmación
     };
   }
 
@@ -2024,15 +2034,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const strategy = pattern._strategy;
     const config = this.config.strategy;
 
-    // Usar timestamp del segundo extremo para posicionar las líneas
-    const patternTimestamp = pattern.secondExtreme?.timestamp;
-    if (!patternTimestamp) return;
+    // ✅ FIX: Usar timestamp de la vela de CONFIRMACIÓN para posicionar las líneas
+    // Esto representa donde realmente se haría la entrada en tiempo real
+    const confirmationTimestamp = strategy.confirmationTimestamp || pattern.secondExtreme?.timestamp;
+    if (!confirmationTimestamp) return;
 
-    const patternX = timeToX(patternTimestamp);
+    const confirmationX = timeToX(confirmationTimestamp);
     const lineLength = (config.lineLengthCandles || 5) * candleWidth;
 
-    const startX = patternX - lineLength;
-    const endX = patternX + lineLength;
+    const startX = confirmationX - lineLength;
+    const endX = confirmationX + lineLength;
 
     const entryY = priceToY(strategy.entry);
     const slY = priceToY(strategy.stopLoss);
