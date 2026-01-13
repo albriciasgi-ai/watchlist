@@ -138,6 +138,23 @@ const Watchlist = () => {
   const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
   const [isDTBReloading, setIsDTBReloading] = useState(false); // Estado de carga
 
+  // 🖥️ NUEVO: Estado para tracking del símbolo en fullscreen
+  const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
+  const [fullscreenInterval, setFullscreenInterval] = useState(null);
+
+  // Handler para cambios de fullscreen desde MiniChart
+  const handleFullscreenChange = (symbol, chartInterval, isFullscreen) => {
+    if (isFullscreen) {
+      setFullscreenSymbol(symbol);
+      setFullscreenInterval(chartInterval);
+      log.debug(`[Watchlist] 🖥️ Fullscreen opened: ${symbol} (${chartInterval})`);
+    } else {
+      setFullscreenSymbol(null);
+      setFullscreenInterval(null);
+      log.debug(`[Watchlist] 🖥️ Fullscreen closed`);
+    }
+  };
+
   // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
   useEffect(() => {
     const defaultDays = DEFAULT_DAYS_BY_INTERVAL[interval];
@@ -945,6 +962,7 @@ const Watchlist = () => {
             onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
             onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
+            onFullscreenChange={handleFullscreenChange}
           />
         ))}
       </div>
@@ -1231,6 +1249,8 @@ const Watchlist = () => {
       <SlidingAlertPanel
         isOpen={isAlertPanelOpen}
         onClose={() => setIsAlertPanelOpen(false)}
+        fullscreenSymbol={fullscreenSymbol}
+        fullscreenInterval={fullscreenInterval}
       />
 
       {/* 📊 Botón flotante para abrir panel de alertas */}

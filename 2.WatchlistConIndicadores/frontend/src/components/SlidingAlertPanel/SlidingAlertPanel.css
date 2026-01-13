@@ -47,9 +47,45 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 0 20px 0 0;
   background: #16213e;
   border-bottom: 1px solid #333;
+}
+
+/* Tab system */
+.header-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+
+.tab-btn.active {
+  color: #fff;
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.tab-icon {
+  font-size: 16px;
 }
 
 .header-title {
@@ -620,4 +656,291 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* ============================================
+   Toolbar Extensions
+   ============================================ */
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Time filter */
+.time-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-filter-container label {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.time-filter-select {
+  background: #2a2a3a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+.time-filter-select:hover {
+  border-color: #666;
+}
+
+/* ============================================
+   Strategy Tester Styles
+   ============================================ */
+
+.tester-toolbar {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.symbol-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.symbol-label {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.symbol-value {
+  background: #4CAF50;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.symbol-value.no-symbol {
+  background: #666;
+  color: #aaa;
+}
+
+.test-config {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-config label {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.days-input {
+  background: #2a2a3a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px 10px;
+  width: 60px;
+  font-size: 13px;
+  outline: none;
+}
+
+.run-btn {
+  background: linear-gradient(135deg, #7B1FA2 0%, #4CAF50 100%);
+  color: white;
+  padding: 8px 20px;
+}
+
+.run-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.run-btn.evaluating {
+  background: #FF9800;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Profiles bar */
+.profiles-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #1a1a2e;
+  border-bottom: 1px solid #333;
+  overflow-x: auto;
+}
+
+.profiles-list {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #2a2a3a;
+  border: 1px solid #444;
+  border-radius: 20px;
+  color: #aaa;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.profile-btn:hover {
+  border-color: #666;
+  color: #fff;
+}
+
+.profile-btn.active {
+  background: #4CAF50;
+  border-color: #4CAF50;
+  color: white;
+}
+
+.profile-name {
+  font-weight: 500;
+}
+
+.profile-count {
+  background: rgba(0,0,0,0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+.profile-delete {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.profile-delete:hover {
+  opacity: 1;
+  color: #FF5252;
+}
+
+.profile-btn.add-profile {
+  background: transparent;
+  border-style: dashed;
+  color: #4CAF50;
+}
+
+.profile-btn.add-profile:hover {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: #4CAF50;
+}
+
+/* New profile form */
+.new-profile-form {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.profile-name-input {
+  background: #2a2a3a;
+  border: 1px solid #4CAF50;
+  border-radius: 4px;
+  padding: 6px 10px;
+  color: #fff;
+  font-size: 12px;
+  width: 150px;
+  outline: none;
+}
+
+.profile-save, .profile-cancel {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.profile-save {
+  color: #4CAF50;
+}
+
+.profile-save:hover {
+  background: rgba(76, 175, 80, 0.2);
+}
+
+.profile-cancel {
+  color: #F44336;
+}
+
+.profile-cancel:hover {
+  background: rgba(244, 67, 54, 0.2);
+}
+
+/* Stats bar */
+.stats-bar {
+  display: flex;
+  gap: 20px;
+  padding: 12px 20px;
+  background: #1e1e2e;
+  border-bottom: 1px solid #333;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-label {
+  color: #888;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stat-item.wins .stat-value {
+  color: #4CAF50;
+}
+
+.stat-item.losses .stat-value {
+  color: #F44336;
+}
+
+.stat-item.profit .stat-value {
+  color: #69F0AE;
+}
+
+.stat-item.loss .stat-value {
+  color: #FF5252;
+}
+
+/* Exit cell */
+.cell-exit {
+  color: #888;
+  font-size: 11px;
 }
