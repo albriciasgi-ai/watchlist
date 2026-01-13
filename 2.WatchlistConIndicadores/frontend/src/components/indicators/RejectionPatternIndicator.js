@@ -158,6 +158,35 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Guarda alerta en historial global (para panel deslizante)
+   * Este historial es compartido entre todos los símbolos e indicadores
+   */
+  saveToGlobalAlertHistory(alertRecord) {
+    try {
+      const GLOBAL_KEY = 'watchlist_global_alert_history';
+      const MAX_GLOBAL_ALERTS = 100;
+
+      // Cargar historial existente
+      const existing = localStorage.getItem(GLOBAL_KEY);
+      let globalHistory = existing ? JSON.parse(existing) : [];
+
+      // Agregar nueva alerta al inicio
+      globalHistory.unshift(alertRecord);
+
+      // Limitar a máximo de alertas
+      if (globalHistory.length > MAX_GLOBAL_ALERTS) {
+        globalHistory = globalHistory.slice(0, MAX_GLOBAL_ALERTS);
+      }
+
+      // Guardar
+      localStorage.setItem(GLOBAL_KEY, JSON.stringify(globalHistory));
+      this.logger.debug(`Alert saved to global history (${globalHistory.length} total)`);
+    } catch (error) {
+      console.error('Error saving to global alert history:', error);
+    }
+  }
+
+  /**
    * ✅ NUEVO: Convierte intervalo a milisegundos
    */
   getIntervalMs() {
@@ -1076,6 +1105,27 @@ class RejectionPatternIndicator extends IndicatorBase {
         pattern._alertSent = true;
         pattern._alertTimestamp = Date.now();
         pattern._isNewPattern = false; // ✅ FIX #2: Limpiar flag para que no se alerte nuevamente
+
+        // ✅ NUEVO: Guardar en historial global para panel deslizante
+        const strategy = pattern._strategy || {};
+        const alertRecord = {
+          id: `rp_alert_${Date.now()}_${this.symbol}`,
+          timestamp: Date.now(),
+          symbol: this.symbol,
+          interval: this.interval,
+          indicator: 'Rejection',  // Identificador del indicador
+          patternType: pattern.type,
+          direction: pattern.direction,
+          price: pattern.price,
+          confidence: pattern.confidence,
+          status: 'sent',
+          entry: strategy.entry || null,
+          stopLoss: strategy.stopLoss || null,
+          takeProfit: strategy.takeProfit || null,
+          slPercent: strategy.slPercent || null,
+          tpPercent: strategy.tpPercent || null
+        };
+        this.saveToGlobalAlertHistory(alertRecord);
 
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
         alertCount++;
