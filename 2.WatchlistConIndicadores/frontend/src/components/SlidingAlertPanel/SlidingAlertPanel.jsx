@@ -9,7 +9,7 @@ const RISK_AMOUNT_KEY = 'watchlist_risk_amount';
  * Se despliega desde el lado derecho de la pantalla
  */
 const SlidingAlertPanel = ({ isOpen, onClose }) => {
-  const { alerts, isLoading, clearAlerts, exportToCSV, alertCount } = useGlobalAlerts();
+  const { alerts, isLoading, isEvaluating, clearAlerts, exportToCSV, alertCount, evaluatePendingOutcomes } = useGlobalAlerts();
   const [showConfirmClear, setShowConfirmClear] = useState(false);
   const [riskAmount, setRiskAmount] = useState(() => {
     const stored = localStorage.getItem(RISK_AMOUNT_KEY);
@@ -20,6 +20,13 @@ const SlidingAlertPanel = ({ isOpen, onClose }) => {
   useEffect(() => {
     localStorage.setItem(RISK_AMOUNT_KEY, riskAmount.toString());
   }, [riskAmount]);
+
+  // Evaluar cuando se abre el panel
+  useEffect(() => {
+    if (isOpen) {
+      evaluatePendingOutcomes();
+    }
+  }, [isOpen, evaluatePendingOutcomes]);
 
   const handleClearClick = () => {
     setShowConfirmClear(true);
@@ -188,6 +195,14 @@ const SlidingAlertPanel = ({ isOpen, onClose }) => {
             </div>
           </div>
           <div className="toolbar-buttons">
+            <button
+              className={`toolbar-btn refresh-btn ${isEvaluating ? 'evaluating' : ''}`}
+              onClick={evaluatePendingOutcomes}
+              disabled={isEvaluating || alertCount === 0}
+              title="Actualizar resultados de trades"
+            >
+              {isEvaluating ? '⏳' : '🔄'} {isEvaluating ? 'Evaluando...' : 'Evaluar'}
+            </button>
             <button
               className="toolbar-btn export-btn"
               onClick={() => exportToCSV(riskAmount)}
