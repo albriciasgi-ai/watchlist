@@ -46,7 +46,13 @@ export function useGlobalAlerts() {
     }
   }, [alerts]);
 
-  // Exportar alertas a CSV
+  // Formatear número con coma como separador decimal (formato español/europeo)
+  const formatNumberForCSV = (value, decimals = 2) => {
+    if (value === null || value === undefined || isNaN(value)) return '';
+    return value.toFixed(decimals).replace('.', ',');
+  };
+
+  // Exportar alertas a CSV (formato español: separador de campos = ;, decimal = ,)
   const exportToCSV = useCallback(() => {
     if (alerts.length === 0) {
       alert('No hay alertas para exportar');
@@ -82,20 +88,20 @@ export function useGlobalAlerts() {
         alert.indicator || '',
         alert.patternType || '',
         alert.direction || '',
-        alert.entry ? alert.entry.toFixed(2) : '',
-        alert.stopLoss ? alert.stopLoss.toFixed(2) : '',
-        alert.slPercent ? alert.slPercent.toFixed(2) : '',
-        alert.takeProfit ? alert.takeProfit.toFixed(2) : '',
-        alert.tpPercent ? alert.tpPercent.toFixed(2) : '',
-        alert.confidence ? alert.confidence.toFixed(1) + '%' : '',
+        formatNumberForCSV(alert.entry),
+        formatNumberForCSV(alert.stopLoss),
+        formatNumberForCSV(alert.slPercent),
+        formatNumberForCSV(alert.takeProfit),
+        formatNumberForCSV(alert.tpPercent),
+        alert.confidence ? formatNumberForCSV(alert.confidence, 1) + '%' : '',
         alert.status || ''
       ];
     });
 
-    // Construir contenido CSV
+    // Construir contenido CSV con separador de campos semicolon (;) para Excel español
     const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      headers.join(';'),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
     ].join('\n');
 
     // Crear y descargar archivo
