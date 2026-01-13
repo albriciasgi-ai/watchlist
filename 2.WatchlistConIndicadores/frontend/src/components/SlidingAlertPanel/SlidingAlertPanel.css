@@ -333,6 +333,29 @@
   color: white;
 }
 
+.cell-direction {
+  padding: 4px 8px;
+}
+
+.direction-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.direction-badge.long {
+  background: #4CAF50;
+  color: white;
+}
+
+.direction-badge.short {
+  background: #F44336;
+  color: white;
+}
+
 .cell-price {
   font-weight: 500;
   color: #03A9F4;

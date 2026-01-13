@@ -140,6 +140,7 @@ const SlidingAlertPanel = ({ isOpen, onClose }) => {
                     <th>Hora</th>
                     <th>TF</th>
                     <th>Indicador</th>
+                    <th>Dirección</th>
                     <th>Entrada</th>
                     <th>SL ($)</th>
                     <th>SL (%)</th>
@@ -159,6 +160,11 @@ const SlidingAlertPanel = ({ isOpen, onClose }) => {
                       <td className="cell-indicator">
                         <span className={`indicator-badge ${alert.indicator?.toLowerCase()}`}>
                           {alert.indicator}
+                        </span>
+                      </td>
+                      <td className="cell-direction">
+                        <span className={`direction-badge ${alert.direction?.toLowerCase()}`}>
+                          {alert.direction}
                         </span>
                       </td>
                       <td className="cell-price">{formatPrice(alert.entry)}</td>
