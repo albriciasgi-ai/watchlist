@@ -2481,5 +2481,44 @@
     "pattern": "Double Top (ABRIR SHORT)",
     "confidence": 95.0,
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-13T16:45:15.839456",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 3208.95,
+    "quantity_coin": 0.02,
+    "quantity_usdt": 64.179,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 77.0,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-13T17:12:22.670444",
+    "symbol": "ETHUSDT",
+    "side": "Sell",
+    "entry_price": 3220.415,
+    "quantity_coin": 0.02,
+    "quantity_usdt": 64.4083,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Top (ABRIR SHORT)",
+    "confidence": 95.0,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-13T17:13:19.299000",
+    "symbol": "BTCUSDT",
+    "side": "Sell",
+    "entry_price": 94435.6,
+    "quantity_coin": 0.001,
+    "quantity_usdt": 94.4356,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Top (ABRIR SHORT)",
+    "confidence": 100.0,
+    "status": "success"
   }
 ]
