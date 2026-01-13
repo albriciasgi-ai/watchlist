@@ -629,6 +629,35 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Guarda alerta en historial global (para panel deslizante)
+   * Este historial es compartido entre todos los símbolos e indicadores
+   */
+  saveToGlobalAlertHistory(alertRecord) {
+    try {
+      const GLOBAL_KEY = 'watchlist_global_alert_history';
+      const MAX_GLOBAL_ALERTS = 100;
+
+      // Cargar historial existente
+      const existing = localStorage.getItem(GLOBAL_KEY);
+      let globalHistory = existing ? JSON.parse(existing) : [];
+
+      // Agregar nueva alerta al inicio
+      globalHistory.unshift(alertRecord);
+
+      // Limitar a máximo de alertas
+      if (globalHistory.length > MAX_GLOBAL_ALERTS) {
+        globalHistory = globalHistory.slice(0, MAX_GLOBAL_ALERTS);
+      }
+
+      // Guardar
+      localStorage.setItem(GLOBAL_KEY, JSON.stringify(globalHistory));
+      log.debug(`[${this.symbol}] Alert saved to global history (${globalHistory.length} total)`);
+    } catch (error) {
+      console.error('Error saving to global alert history:', error);
+    }
+  }
+
+  /**
    * Determina el nivel de confianza del patrón (critical/high/medium/null)
    */
   getConfidenceLevel(pattern) {
@@ -978,11 +1007,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         this.markCooldown(pattern);
 
         // Agregar al historial
+        const strategy = pattern._strategy || {};
         const alertRecord = {
           id: `dbt_alert_${Date.now()}_${this.symbol}`,
           timestamp: Date.now(),
           symbol: this.symbol,
           interval: this.interval,
+          indicator: 'DTB',  // ✅ Identificador del indicador
           patternType: pattern.type,
           direction: direction,
           price: pattern.levelPrice,
@@ -991,10 +1022,19 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           status: 'sent',
           vwapAligned: vwapAligned,
           momentumConfirmed: pattern.entrySignal?.has_momentum || false,
-          detectionTimestamp: pattern.secondExtreme.timestamp
+          detectionTimestamp: pattern.secondExtreme.timestamp,
+          // ✅ NUEVO: Datos de Strategy
+          entry: strategy.entry || null,
+          stopLoss: strategy.stopLoss || null,
+          takeProfit: strategy.takeProfit || null,
+          slPercent: strategy.slPercent || null,
+          tpPercent: strategy.tpPercent || null
         };
 
         this.addToAlertHistory(alertRecord);
+
+        // ✅ NUEVO: También guardar en historial global
+        this.saveToGlobalAlertHistory(alertRecord);
 
         log.debug(`     ✅ ALERT SENT SUCCESSFULLY`);
         alertCount++;
@@ -1002,11 +1042,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         log.debug(`     ❌ ALERT FAILED TO SEND`);
 
         // Agregar al historial como fallida
+        const strategyFailed = pattern._strategy || {};
         const alertRecord = {
           id: `dbt_alert_${Date.now()}_${this.symbol}`,
           timestamp: Date.now(),
           symbol: this.symbol,
           interval: this.interval,
+          indicator: 'DTB',
           patternType: pattern.type,
           direction: direction,
           price: pattern.levelPrice,
@@ -1015,7 +1057,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           status: 'failed',
           vwapAligned: vwapAligned,
           momentumConfirmed: pattern.entrySignal?.has_momentum || false,
-          detectionTimestamp: pattern.secondExtreme.timestamp
+          detectionTimestamp: pattern.secondExtreme.timestamp,
+          // Datos de Strategy
+          entry: strategyFailed.entry || null,
+          stopLoss: strategyFailed.stopLoss || null,
+          takeProfit: strategyFailed.takeProfit || null,
+          slPercent: strategyFailed.slPercent || null,
+          tpPercent: strategyFailed.tpPercent || null
         };
 
         this.addToAlertHistory(alertRecord);

@@ -11,6 +11,8 @@ import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
 import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
+import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
+import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
 import IndicatorPreloader from "../utils/IndicatorPreloader";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
@@ -76,6 +78,10 @@ const Watchlist = () => {
   // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
   const [isPreloading, setIsPreloading] = useState(false);
   const [preloadProgress, setPreloadProgress] = useState({ current: 0, total: 0 });
+
+  // 📊 Panel deslizante de historial de alertas
+  const [isAlertPanelOpen, setIsAlertPanelOpen] = useState(false);
+  const { alertCount } = useGlobalAlerts();
 
   const [vpConfig, setVpConfig] = useState({
     mode: "dynamic",
@@ -1220,6 +1226,18 @@ const Watchlist = () => {
           </div>
         </div>
       )}
+
+      {/* 📊 Panel deslizante de historial de alertas */}
+      <SlidingAlertPanel
+        isOpen={isAlertPanelOpen}
+        onClose={() => setIsAlertPanelOpen(false)}
+      />
+
+      {/* 📊 Botón flotante para abrir panel de alertas */}
+      <AlertPanelToggle
+        onClick={() => setIsAlertPanelOpen(true)}
+        alertCount={alertCount}
+      />
     </div>
   );
 };
