@@ -1310,16 +1310,37 @@ const RejectionPatternSettings = ({
                           <>
                             <div className="color-setting">
                               <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                Box Color:
+                                <span style={{ color: '#FF6B6B' }}>SL Box:</span>
                                 <input
                                   type="color"
-                                  value={config.strategy?.boxColor || '#03A9F4'}
+                                  value={config.strategy?.slBoxColor || '#FF1744'}
                                   onChange={(e) => {
                                     setConfig(prev => ({
                                       ...prev,
                                       strategy: {
                                         ...prev.strategy,
-                                        boxColor: e.target.value
+                                        slBoxColor: e.target.value
+                                      }
+                                    }));
+                                    setActivePreset('custom');
+                                  }}
+                                  style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                                />
+                              </label>
+                            </div>
+
+                            <div className="color-setting">
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ color: '#4CAF50' }}>TP Box:</span>
+                                <input
+                                  type="color"
+                                  value={config.strategy?.tpBoxColor || '#00E676'}
+                                  onChange={(e) => {
+                                    setConfig(prev => ({
+                                      ...prev,
+                                      strategy: {
+                                        ...prev.strategy,
+                                        tpBoxColor: e.target.value
                                       }
                                     }));
                                     setActivePreset('custom');
@@ -2980,7 +3001,8 @@ function getDefaultConfig() {
       includeInAlert: true,
       // Box settings
       showBox: true,
-      boxColor: '#03A9F4',
+      slBoxColor: '#FF1744',  // Rojo para zona SL-Entry
+      tpBoxColor: '#00E676',  // Verde para zona Entry-TP
       boxOpacity: 0.15,
       // SL Swing Detection parameters
       slSwingLeftBars: 3,

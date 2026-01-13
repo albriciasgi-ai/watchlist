@@ -336,7 +336,16 @@ class RejectionPatternIndicator extends IndicatorBase {
         stopLossColor: '#FF1744', // Rojo para SL
         takeProfitColor: '#00E676', // Verde para TP
         showLabels: true,        // Mostrar etiquetas con precio y %
-        includeInAlert: true     // Incluir SL/TP en alertas
+        includeInAlert: true,    // Incluir SL/TP en alertas
+        showBox: true,           // Mostrar rectángulos de zona
+        slBoxColor: '#FF1744',   // Rojo para zona SL-Entry
+        tpBoxColor: '#00E676',   // Verde para zona Entry-TP
+        boxOpacity: 0.15,        // Opacidad de las zonas
+        slSwingLeftBars: 3,      // Barras izquierda para detección de swing
+        slSwingRightBars: 3,     // Barras derecha para detección de swing
+        slSwingLookback: 50,     // Velas hacia atrás para buscar swing
+        slBufferPercent: 20,     // Buffer fallback si no hay swing
+        slMinPercent: 0.5        // SL mínimo para viabilidad
       }
     };
   }
@@ -2156,16 +2165,27 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     ctx.save();
 
-    // ✅ NUEVO: Rectángulo traslúcido que conecta las 3 líneas
+    // ✅ NUEVO: Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
     if (config.showBox !== false) {
-      const boxColor = config.boxColor || '#03A9F4';
       const boxOpacity = config.boxOpacity || 0.15;
-      const topY = Math.min(entryY, slY, tpY);
-      const bottomY = Math.max(entryY, slY, tpY);
-      const boxHeight = bottomY - topY;
 
-      ctx.fillStyle = this.hexToRgba(boxColor, boxOpacity);
-      ctx.fillRect(startX, topY, endX - startX, boxHeight);
+      // Box 1: Entre SL y Entry (rojo/pérdida)
+      const slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+      const slBoxTopY = Math.min(slY, entryY);
+      const slBoxBottomY = Math.max(slY, entryY);
+      const slBoxHeight = slBoxBottomY - slBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(slBoxColor, boxOpacity);
+      ctx.fillRect(startX, slBoxTopY, endX - startX, slBoxHeight);
+
+      // Box 2: Entre Entry y TP (verde/ganancia)
+      const tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+      const tpBoxTopY = Math.min(entryY, tpY);
+      const tpBoxBottomY = Math.max(entryY, tpY);
+      const tpBoxHeight = tpBoxBottomY - tpBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(tpBoxColor, boxOpacity);
+      ctx.fillRect(startX, tpBoxTopY, endX - startX, tpBoxHeight);
     }
 
     ctx.setLineDash([4, 2]); // Línea punteada

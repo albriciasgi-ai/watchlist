@@ -122,7 +122,8 @@ function getDefaultConfig() {
       showLabels: true,
       includeInAlert: true,
       showBox: true,
-      boxColor: '#03A9F4',
+      slBoxColor: '#FF1744',  // Rojo para zona SL-Entry
+      tpBoxColor: '#00E676',  // Verde para zona Entry-TP
       boxOpacity: 0.15,
       slSwingLeftBars: 3,
       slSwingRightBars: 3,
@@ -1812,11 +1813,21 @@ const DoubleTopBottomSettings = ({
                 {config.strategy?.showBox !== false && (
                   <>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                      Box Color:
+                      <span style={{ color: '#FF6B6B' }}>SL Box:</span>
                       <input
                         type="color"
-                        value={config.strategy?.boxColor || '#03A9F4'}
-                        onChange={(e) => updateConfig('strategy.boxColor', e.target.value)}
+                        value={config.strategy?.slBoxColor || '#FF1744'}
+                        onChange={(e) => updateConfig('strategy.slBoxColor', e.target.value)}
+                        style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
+                      />
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#4CAF50' }}>TP Box:</span>
+                      <input
+                        type="color"
+                        value={config.strategy?.tpBoxColor || '#00E676'}
+                        onChange={(e) => updateConfig('strategy.tpBoxColor', e.target.value)}
                         style={{ width: '40px', height: '25px', border: 'none', cursor: 'pointer' }}
                       />
                     </label>

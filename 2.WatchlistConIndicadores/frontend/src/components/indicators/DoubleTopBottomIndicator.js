@@ -377,7 +377,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         includeInAlert: true,
         // Box settings
         showBox: true,
-        boxColor: '#03A9F4',
+        slBoxColor: '#FF1744',    // Rojo para zona SL-Entry
+        tpBoxColor: '#00E676',    // Verde para zona Entry-TP
         boxOpacity: 0.15,
         // SL Swing Detection parameters
         slSwingLeftBars: 3,
@@ -771,6 +772,21 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   shouldSendAlert(pattern) {
     const mode = this.config.alertSettings.mode;
 
+    // ✅ NUEVO: Verificar que han pasado suficientes velas de confirmación
+    // Esto evita alertas en el pico/valle antes de confirmar el patrón
+    const confirmationCandles = this.config.filters?.postPatternValidationCandles || 5;
+    const intervalMs = this.getIntervalMs();
+    const requiredTimeMs = confirmationCandles * intervalMs;
+    const patternTimestamp = pattern.secondExtreme?.timestamp || 0;
+    const currentTime = Date.now();
+    const elapsedMs = currentTime - patternTimestamp;
+
+    if (elapsedMs < requiredTimeMs) {
+      const candlesElapsed = Math.floor(elapsedMs / intervalMs);
+      log.debug(`[${this.symbol}] ⏳ Pattern waiting for confirmation: ${candlesElapsed}/${confirmationCandles} candles (${Math.round(elapsedMs/1000)}s / ${Math.round(requiredTimeMs/1000)}s)`);
+      return false; // Aún no han pasado suficientes velas de confirmación
+    }
+
     // Modo 1: Momentum Required
     if (mode === 'momentum_required') {
       if (!pattern.entrySignal || !pattern.entrySignal.has_momentum) {
@@ -815,6 +831,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       return false;
     }
 
+    log.info(`[${this.symbol}] ✅ Pattern CONFIRMED after ${confirmationCandles} candles - ready for alert`);
     return true;
   }
 
@@ -2023,16 +2040,27 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     ctx.save();
 
-    // Rectángulo traslúcido que conecta las 3 líneas
+    // Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
     if (config.showBox !== false) {
-      const boxColor = config.boxColor || '#03A9F4';
       const boxOpacity = config.boxOpacity || 0.15;
-      const topY = Math.min(entryY, slY, tpY);
-      const bottomY = Math.max(entryY, slY, tpY);
-      const boxHeight = bottomY - topY;
 
-      ctx.fillStyle = this.hexToRgba(boxColor, boxOpacity);
-      ctx.fillRect(startX, topY, endX - startX, boxHeight);
+      // Box 1: Entre SL y Entry (rojo/pérdida)
+      const slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+      const slBoxTopY = Math.min(slY, entryY);
+      const slBoxBottomY = Math.max(slY, entryY);
+      const slBoxHeight = slBoxBottomY - slBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(slBoxColor, boxOpacity);
+      ctx.fillRect(startX, slBoxTopY, endX - startX, slBoxHeight);
+
+      // Box 2: Entre Entry y TP (verde/ganancia)
+      const tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+      const tpBoxTopY = Math.min(entryY, tpY);
+      const tpBoxBottomY = Math.max(entryY, tpY);
+      const tpBoxHeight = tpBoxBottomY - tpBoxTopY;
+
+      ctx.fillStyle = this.hexToRgba(tpBoxColor, boxOpacity);
+      ctx.fillRect(startX, tpBoxTopY, endX - startX, tpBoxHeight);
     }
 
     ctx.setLineDash([4, 2]);
