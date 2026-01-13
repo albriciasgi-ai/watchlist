@@ -1920,22 +1920,48 @@ class RejectionPatternIndicator extends IndicatorBase {
     const leftBars = swingConfig.leftBars || 5;
     const rightBars = swingConfig.rightBars || 5;
 
-    // Buscar el swing anterior significativo (usando la misma lógica de detección)
+    // Buscar el swing anterior significativo
     let stopLoss;
 
     if (isLong) {
-      // Para LONG: buscar el swing low anterior
-      stopLoss = this.findPreviousSwingLow(candles, patternIndex, leftBars, rightBars);
-      // Fallback: si no hay swing anterior, usar el mínimo de la vela del patrón
-      if (stopLoss === null) {
+      // Para LONG: SL debe estar POR DEBAJO del entry
+      // Buscar swing low anterior O el mínimo de las últimas velas
+      const swingLow = this.findPreviousSignificantLow(candles, patternIndex, leftBars, rightBars);
+      stopLoss = swingLow !== null ? swingLow : patternCandle.low;
+
+      // Validar: SL debe estar por debajo del entry
+      if (stopLoss >= entry) {
+        // Usar el mínimo de la vela del patrón como fallback
         stopLoss = patternCandle.low;
+        // Si aún es >= entry, buscar el mínimo en velas recientes
+        if (stopLoss >= entry) {
+          const lookback = Math.min(patternIndex, 20);
+          for (let i = patternIndex; i >= patternIndex - lookback; i--) {
+            if (candles[i] && candles[i].low < stopLoss) {
+              stopLoss = candles[i].low;
+            }
+          }
+        }
       }
     } else {
-      // Para SHORT: buscar el swing high anterior
-      stopLoss = this.findPreviousSwingHigh(candles, patternIndex, leftBars, rightBars);
-      // Fallback: si no hay swing anterior, usar el máximo de la vela del patrón
-      if (stopLoss === null) {
+      // Para SHORT: SL debe estar POR ENCIMA del entry
+      // Buscar swing high anterior O el máximo de las últimas velas
+      const swingHigh = this.findPreviousSignificantHigh(candles, patternIndex, leftBars, rightBars);
+      stopLoss = swingHigh !== null ? swingHigh : patternCandle.high;
+
+      // Validar: SL debe estar por encima del entry
+      if (stopLoss <= entry) {
+        // Usar el máximo de la vela del patrón como fallback
         stopLoss = patternCandle.high;
+        // Si aún es <= entry, buscar el máximo en velas recientes
+        if (stopLoss <= entry) {
+          const lookback = Math.min(patternIndex, 20);
+          for (let i = patternIndex; i >= patternIndex - lookback; i--) {
+            if (candles[i] && candles[i].high > stopLoss) {
+              stopLoss = candles[i].high;
+            }
+          }
+        }
       }
     }
 
@@ -1962,6 +1988,48 @@ class RejectionPatternIndicator extends IndicatorBase {
       riskRewardRatio: rrRatio,
       direction: isLong ? 'LONG' : 'SHORT'
     };
+  }
+
+  /**
+   * Busca el low significativo anterior (swing low o mínimo local)
+   */
+  findPreviousSignificantLow(candles, beforeIndex, leftBars, rightBars) {
+    // Primero intentar encontrar un swing low confirmado
+    const swingLow = this.findPreviousSwingLow(candles, beforeIndex, leftBars, rightBars);
+    if (swingLow !== null) return swingLow;
+
+    // Si no hay swing confirmado, buscar el mínimo en las últimas N velas
+    const lookback = Math.min(beforeIndex, 30);
+    let lowestLow = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (lowestLow === null || candles[i].low < lowestLow) {
+          lowestLow = candles[i].low;
+        }
+      }
+    }
+    return lowestLow;
+  }
+
+  /**
+   * Busca el high significativo anterior (swing high o máximo local)
+   */
+  findPreviousSignificantHigh(candles, beforeIndex, leftBars, rightBars) {
+    // Primero intentar encontrar un swing high confirmado
+    const swingHigh = this.findPreviousSwingHigh(candles, beforeIndex, leftBars, rightBars);
+    if (swingHigh !== null) return swingHigh;
+
+    // Si no hay swing confirmado, buscar el máximo en las últimas N velas
+    const lookback = Math.min(beforeIndex, 30);
+    let highestHigh = null;
+    for (let i = beforeIndex - 1; i >= beforeIndex - lookback && i >= 0; i--) {
+      if (candles[i]) {
+        if (highestHigh === null || candles[i].high > highestHigh) {
+          highestHigh = candles[i].high;
+        }
+      }
+    }
+    return highestHigh;
   }
 
   /**
@@ -2111,17 +2179,17 @@ class RejectionPatternIndicator extends IndicatorBase {
       const labelX = endX + 4;
 
       // Entry label con dirección (LONG/SHORT)
-      ctx.fillStyle = config.entryColor || '#03A9F4';
       const dirLabel = strategy.direction || 'ENTRY';
+      ctx.fillStyle = config.entryColor || '#03A9F4';
       ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
 
-      // SL label con %
+      // SL label con dirección y %
       ctx.fillStyle = config.stopLossColor || '#FF1744';
-      ctx.fillText(`SL: $${strategy.stopLoss.toFixed(2)} (-${strategy.slPercent}%)`, labelX, slY + 3);
+      ctx.fillText(`SL ${dirLabel}: $${strategy.stopLoss.toFixed(2)} (${strategy.slPercent}%)`, labelX, slY + 3);
 
-      // TP label con %
+      // TP label con dirección y %
       ctx.fillStyle = config.takeProfitColor || '#00E676';
-      ctx.fillText(`TP: $${strategy.takeProfit.toFixed(2)} (+${strategy.tpPercent}%)`, labelX, tpY + 3);
+      ctx.fillText(`TP ${dirLabel}: $${strategy.takeProfit.toFixed(2)} (${strategy.tpPercent}%)`, labelX, tpY + 3);
     }
 
     ctx.restore();
