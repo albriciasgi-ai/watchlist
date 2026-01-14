@@ -329,6 +329,9 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
   // Estado para usar configuración del chart vs S/R automático
   const [useChartConfig, setUseChartConfig] = useState(true);
 
+  // Estado para habilitar/deshabilitar validación con S/R
+  const [useSRContext, setUseSRContext] = useState(true);
+
   // Estado para info del último backtest (S/R status, zonas, etc.)
   const [backtestInfo, setBacktestInfo] = useState(null);
 
@@ -676,8 +679,8 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         const configuredContexts = indicatorConfig.referenceContexts || [];
         configuredContexts.forEach(ctx => {
           if (ctx.enabled) {
-            // Para S/R, convertir a zonas manuales basadas en los niveles
-            if (ctx.type === 'SUPPORT_RESISTANCE' && ctx.metadata) {
+            // Para S/R, convertir a zonas manuales basadas en los niveles (solo si useSRContext está activo)
+            if (ctx.type === 'SUPPORT_RESISTANCE' && ctx.metadata && useSRContext) {
               const tolerance = 0.003; // 0.3% de tolerancia para crear zonas
               // Crear zonas para resistencias
               (ctx.metadata.resistances || []).forEach((r, idx) => {
@@ -715,8 +718,8 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           }
         });
 
-        // Configuración de S/R para cálculo dinámico
-        const useDynamicSR = srIndicator && srIndicator.enabled && useChartConfig;
+        // Configuración de S/R para cálculo dinámico (solo si checkbox está activo)
+        const useDynamicSR = useSRContext && srIndicator && srIndicator.enabled && useChartConfig;
         const srConfig = useDynamicSR ? {
           leftBars: srIndicator.leftBars || 15,
           rightBars: srIndicator.rightBars || 15,
@@ -883,6 +886,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           manualZones: enabledManualZones,
           srInfo: {
             active: useDynamicSR,
+            enabled: useSRContext,
             dynamic: true,
             cacheHits: cacheHits,
             cacheMisses: cacheMisses
@@ -891,7 +895,10 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         });
 
         if (patterns.length === 0) {
-          alert('No se encontraron patrones válidos cerca de niveles S/R o zonas manuales');
+          const reason = useDynamicSR
+            ? 'No se encontraron patrones válidos cerca de niveles S/R o zonas manuales. Prueba desactivando "Validar con S/R".'
+            : 'No se encontraron patrones cerca de las zonas manuales configuradas.';
+          alert(reason);
           return;
         }
 
@@ -1041,6 +1048,18 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               <span>Usar config del chart</span>
             </label>
           </div>
+          {selectedIndicator === 'REJECTION' && (
+            <div className="config-source-selector">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={useSRContext}
+                  onChange={(e) => setUseSRContext(e.target.checked)}
+                />
+                <span>Validar con S/R</span>
+              </label>
+            </div>
+          )}
         </div>
         <div className="toolbar-right">
           <div className="test-config">
@@ -1163,11 +1182,13 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           <span className="info-item">
             <span className="info-label">S/R:</span>
             <span className={`info-value ${backtestInfo.srInfo.active ? 'active' : 'inactive'}`}>
-              {backtestInfo.srInfo.active
-                ? backtestInfo.srInfo.dynamic
-                  ? '✅ Dinámico'
-                  : `✅ ${backtestInfo.srInfo.resistances}R / ${backtestInfo.srInfo.supports}S`
-                : '❌ No activo'}
+              {!backtestInfo.srInfo.enabled
+                ? '⏸️ Deshabilitado'
+                : backtestInfo.srInfo.active
+                  ? backtestInfo.srInfo.dynamic
+                    ? '✅ Dinámico'
+                    : `✅ ${backtestInfo.srInfo.resistances}R / ${backtestInfo.srInfo.supports}S`
+                  : '❌ No activo'}
             </span>
           </span>
           {backtestInfo.srInfo.dynamic && (
