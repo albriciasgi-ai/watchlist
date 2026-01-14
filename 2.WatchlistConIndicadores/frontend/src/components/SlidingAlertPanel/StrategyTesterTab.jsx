@@ -125,8 +125,14 @@ const calculateRejectionStrategyLevels = (pattern, candles, rrRatio = 2.0) => {
  * Replica la lógica del DoubleTopBottomIndicator.calculateStrategyLevels
  */
 const calculateStrategyLevels = (pattern, candles, config) => {
-  const strategyConfig = config.strategy || {};
-  const filtersConfig = config.filters || {};
+  // Validar que el patrón tiene la estructura esperada
+  if (!pattern || !pattern.firstExtreme || !pattern.secondExtreme) {
+    console.warn('[calculateStrategyLevels] Pattern missing extremes:', pattern);
+    return null;
+  }
+
+  const strategyConfig = config?.strategy || {};
+  const filtersConfig = config?.filters || {};
 
   const isLong = pattern.type === 'DOUBLE_BOTTOM';
   const rrRatio = strategyConfig.riskRewardRatio || 2.0;
@@ -136,8 +142,20 @@ const calculateStrategyLevels = (pattern, candles, config) => {
 
   // Encontrar el índice de la vela del patrón (segundo extremo)
   const patternTimestamp = pattern.secondExtreme?.timestamp;
-  const patternIndex = candles.findIndex(c => c.timestamp === patternTimestamp);
-  if (patternIndex < 0) return null;
+  if (!patternTimestamp) {
+    console.warn('[calculateStrategyLevels] No secondExtreme timestamp:', pattern);
+    return null;
+  }
+
+  const patternIndex = candles.findIndex(c => {
+    const candleTime = c.timestamp || c.time || c.openTime;
+    return candleTime === patternTimestamp;
+  });
+
+  if (patternIndex < 0) {
+    console.warn('[calculateStrategyLevels] Pattern timestamp not found in candles:', patternTimestamp);
+    return null;
+  }
 
   // Calcular el índice de la vela de confirmación
   const confirmationIndex = Math.min(patternIndex + confirmationCandlesCount, candles.length - 1);
