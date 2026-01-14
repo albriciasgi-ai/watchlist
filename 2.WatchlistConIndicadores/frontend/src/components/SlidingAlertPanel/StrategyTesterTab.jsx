@@ -1,15 +1,53 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { API_BASE_URL } from '../../config';
 import IndicatorManagerRegistry from '../../utils/IndicatorManagerRegistry';
 
 const PROFILES_KEY = 'watchlist_strategy_profiles';
 const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
+const SR_CACHE_KEY = 'watchlist_sr_backtest_cache';
 
 // Indicadores disponibles para backtesting
 const AVAILABLE_INDICATORS = [
   { value: 'DTB', label: 'Double Top/Bottom' },
   { value: 'REJECTION', label: 'Rejection Patterns' }
 ];
+
+/**
+ * Genera una clave de caché única para la configuración de S/R
+ */
+const generateSRCacheKey = (symbol, interval, srConfig) => {
+  const configHash = JSON.stringify({
+    leftBars: srConfig?.leftBars || 15,
+    rightBars: srConfig?.rightBars || 15,
+    minTouches: srConfig?.minTouches || 1,
+    zScoreThreshold: srConfig?.zScoreThreshold || 1.5,
+    clusterDistance: srConfig?.clusterDistance || 0.5
+  });
+  return `${symbol}_${interval}_${configHash}`;
+};
+
+/**
+ * Carga el caché de S/R desde localStorage
+ */
+const loadSRCache = () => {
+  try {
+    const cached = localStorage.getItem(SR_CACHE_KEY);
+    return cached ? JSON.parse(cached) : {};
+  } catch {
+    return {};
+  }
+};
+
+/**
+ * Guarda el caché de S/R en localStorage
+ */
+const saveSRCache = (cache) => {
+  try {
+    localStorage.setItem(SR_CACHE_KEY, JSON.stringify(cache));
+  } catch (e) {
+    console.warn('Error saving S/R cache:', e);
+  }
+};
 
 /**
  * Calcula niveles de estrategia para Rejection Patterns
@@ -218,6 +256,12 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
   // Estado para info del último backtest (S/R status, zonas, etc.)
   const [backtestInfo, setBacktestInfo] = useState(null);
+
+  // Estado para progreso del backtest
+  const [backtestProgress, setBacktestProgress] = useState(null);
+
+  // Ref para el caché de S/R (evita re-renders innecesarios)
+  const srCacheRef = useRef(loadSRCache());
 
   // Actualizar intervalo seleccionado cuando cambia el fullscreen
   useEffect(() => {
@@ -458,200 +502,71 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
       } else if (selectedIndicator === 'REJECTION') {
         // ===== REJECTION PATTERNS =====
-        console.log(`[StrategyTester] Detecting Rejection Patterns...`);
+        console.log(`[StrategyTester] Detecting Rejection Patterns with dynamic S/R...`);
 
-        let referenceContexts = [];
-
-        if (useChartConfig) {
-          // ===== USAR CONFIGURACIÓN DEL CHART =====
-          console.log(`[StrategyTester] Using chart configuration...`);
-
-          const manager = IndicatorManagerRegistry.get(fullscreenSymbol);
-          if (!manager) {
-            alert('No se encontró el IndicatorManager para este símbolo. Asegúrate de tener el chart abierto.');
-            return;
-          }
-
-          // Buscar el indicador Rejection Patterns
-          const rejectionIndicator = manager.indicators?.find(
-            ind => ind.name === 'Rejection Patterns' || ind.constructor?.name === 'RejectionPatternIndicator'
-          );
-
-          if (!rejectionIndicator) {
-            alert('El indicador Rejection Patterns no está activo en el chart. Actívalo primero.');
-            return;
-          }
-
-          // Usar la configuración del indicador
-          indicatorConfig = { ...rejectionIndicator.config };
-          console.log(`[StrategyTester] Using Rejection config from chart:`, indicatorConfig);
-
-          // Obtener zonas manuales del indicador
-          const manualZones = indicatorConfig.manualPriceZones || [];
-          const configContexts = indicatorConfig.referenceContexts || [];
-
-          // Construir contextos de referencia (igual que buildAllReferenceContexts en el indicador)
-          referenceContexts = [...configContexts];
-
-          // Agregar zonas manuales como contextos
-          manualZones.forEach(zone => {
-            if (zone.enabled) {
-              referenceContexts.push({
-                id: zone.id,
-                type: 'manual_zone',
-                name: zone.name,
-                minPrice: zone.minPrice,
-                maxPrice: zone.maxPrice,
-                signalDirection: zone.signalDirection,
-                color: zone.color,
-                enabled: true,
-                weight: 0.8
-              });
-            }
-          });
-
-          console.log(`[StrategyTester] Found ${manualZones.length} manual zones, ${configContexts.length} reference contexts`);
-
-          // Si el indicador S/R está activo, agregar sus niveles también
-          const srIndicator = manager.indicators?.find(
-            ind => ind.name === 'Support/Resistance' || ind.constructor?.name === 'SupportResistanceIndicator'
-          );
-
-          // Tracking S/R info
-          let srInfo = { active: false, resistances: 0, supports: 0 };
-
-          if (srIndicator && srIndicator.enabled) {
-            const srResistances = srIndicator.resistances || [];
-            const srSupports = srIndicator.supports || [];
-
-            srInfo = { active: true, resistances: srResistances.length, supports: srSupports.length };
-            console.log(`[StrategyTester] S/R indicator active: ${srResistances.length} resistances, ${srSupports.length} supports`);
-
-            // Agregar niveles S/R como zonas de referencia
-            srResistances.forEach((level, idx) => {
-              const price = parseFloat(level.price);
-              const tolerance = price * 0.005;
-              referenceContexts.push({
-                id: `sr_resistance_${idx}`,
-                type: 'manual_zone',
-                name: `Resistance @ ${price.toFixed(2)}`,
-                minPrice: price - tolerance,
-                maxPrice: price + tolerance,
-                signalDirection: 'SHORT',
-                enabled: true,
-                weight: 0.7
-              });
-            });
-
-            srSupports.forEach((level, idx) => {
-              const price = parseFloat(level.price);
-              const tolerance = price * 0.005;
-              referenceContexts.push({
-                id: `sr_support_${idx}`,
-                type: 'manual_zone',
-                name: `Support @ ${price.toFixed(2)}`,
-                minPrice: price - tolerance,
-                maxPrice: price + tolerance,
-                signalDirection: 'LONG',
-                enabled: true,
-                weight: 0.7
-              });
-            });
-          }
-
-          // Guardar info del backtest
-          const enabledManualZones = manualZones.filter(z => z.enabled).length;
-          setBacktestInfo({
-            configSource: 'chart',
-            manualZones: enabledManualZones,
-            srInfo: srInfo,
-            totalContexts: referenceContexts.length
-          });
-
-          console.log(`[StrategyTester] Total reference contexts: ${referenceContexts.length}`);
-
-        } else {
-          // ===== USAR S/R AUTOMÁTICO =====
-          console.log(`[StrategyTester] Using automatic S/R levels...`);
-
-          const srResponse = await fetch(
-            `${API_BASE_URL}/api/support-resistance/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}&min_touches=1&max_levels=20`
-          );
-
-          let autoSrResistances = 0;
-          let autoSrSupports = 0;
-
-          if (srResponse.ok) {
-            const srData = await srResponse.json();
-            const resistances = srData.data?.resistances || [];
-            const supports = srData.data?.supports || [];
-
-            autoSrResistances = resistances.length;
-            autoSrSupports = supports.length;
-
-            const allLevels = [
-              ...resistances.map(r => ({ ...r, levelType: 'RESISTANCE' })),
-              ...supports.map(s => ({ ...s, levelType: 'SUPPORT' }))
-            ];
-
-            console.log(`[StrategyTester] Found ${allLevels.length} S/R levels`);
-
-            referenceContexts = allLevels.map((level, idx) => {
-              const price = parseFloat(level.price);
-              const tolerance = price * 0.005;
-              const signalDirection = level.levelType === 'SUPPORT' ? 'LONG' : 'SHORT';
-
-              return {
-                id: `sr_level_${idx}`,
-                type: 'manual_zone',
-                name: `${level.levelType} @ ${price.toFixed(2)}`,
-                enabled: true,
-                weight: 0.8,
-                minPrice: price - tolerance,
-                maxPrice: price + tolerance,
-                signalDirection: signalDirection
-              };
-            });
-          }
-
-          // Guardar info del backtest (S/R automático)
-          setBacktestInfo({
-            configSource: 'auto',
-            manualZones: 0,
-            srInfo: { active: true, resistances: autoSrResistances, supports: autoSrSupports },
-            totalContexts: referenceContexts.length
-          });
-
-          // Configuración por defecto si no se usa la del chart
-          indicatorConfig = {
-            enabled: true,
-            patterns: {
-              hammer: { enabled: true, minWickRatio: 1.5 },
-              shootingStar: { enabled: true, minWickRatio: 1.5 },
-              engulfing: { enabled: true },
-              doji: { enabled: true }
-            },
-            swingDetection: {
-              enabled: true,
-              leftBars: 3,
-              rightBars: 3,
-              required: false
-            },
-            filters: {
-              minConfidence: 20,
-              requireNearLevel: false,
-              proximityPercent: 1.0
-            }
-          };
-        }
-
-        // Validar que hay contextos de referencia
-        if (referenceContexts.length === 0) {
-          alert('No hay zonas de referencia configuradas. Agrega zonas manuales en el indicador Rejection Patterns o activa el indicador S/R.');
+        const manager = IndicatorManagerRegistry.get(fullscreenSymbol);
+        if (!manager) {
+          alert('No se encontró el IndicatorManager para este símbolo. Asegúrate de tener el chart abierto.');
           return;
         }
 
-        console.log(`[StrategyTester] Calling Rejection Patterns API with ${referenceContexts.length} reference contexts...`);
+        // Buscar indicadores
+        const rejectionIndicator = manager.indicators?.find(
+          ind => ind.name === 'Rejection Patterns' || ind.constructor?.name === 'RejectionPatternIndicator'
+        );
+        const srIndicator = manager.indicators?.find(
+          ind => ind.name === 'Support/Resistance' || ind.constructor?.name === 'SupportResistanceIndicator'
+        );
+
+        if (!rejectionIndicator) {
+          alert('El indicador Rejection Patterns no está activo en el chart. Actívalo primero.');
+          return;
+        }
+
+        // Configuración del indicador Rejection
+        indicatorConfig = { ...rejectionIndicator.config };
+        console.log(`[StrategyTester] Using Rejection config from chart:`, indicatorConfig);
+
+        // Zonas manuales (estáticas - aplican a todo el período)
+        const manualZones = indicatorConfig.manualPriceZones || [];
+        const staticContexts = [];
+        manualZones.forEach(zone => {
+          if (zone.enabled) {
+            staticContexts.push({
+              id: zone.id,
+              type: 'manual_zone',
+              name: zone.name,
+              minPrice: zone.minPrice,
+              maxPrice: zone.maxPrice,
+              signalDirection: zone.signalDirection,
+              color: zone.color,
+              enabled: true,
+              weight: 0.8
+            });
+          }
+        });
+
+        // Configuración de S/R para cálculo dinámico
+        const useDynamicSR = srIndicator && srIndicator.enabled && useChartConfig;
+        const srConfig = useDynamicSR ? {
+          leftBars: srIndicator.leftBars || 15,
+          rightBars: srIndicator.rightBars || 15,
+          minTouches: srIndicator.minTouches || 1,
+          zScoreThreshold: srIndicator.zScoreThreshold || 1.5,
+          clusterDistance: srIndicator.clusterDistance || 0.5,
+          volumeMethod: srIndicator.volumeMethod || 'zscore'
+        } : null;
+
+        // Generar clave de caché
+        const cacheKey = useDynamicSR ? generateSRCacheKey(fullscreenSymbol, selectedInterval, srConfig) : null;
+        let srCache = cacheKey ? (srCacheRef.current[cacheKey] || {}) : {};
+        let cacheHits = 0;
+        let cacheMisses = 0;
+
+        console.log(`[StrategyTester] Dynamic S/R: ${useDynamicSR ? 'enabled' : 'disabled'}, Manual zones: ${staticContexts.length}`);
+
+        // PASO 1: Detectar todos los patrones primero (solo con zonas manuales)
+        setBacktestProgress({ phase: 'detecting', current: 0, total: 0, message: 'Detectando patrones...' });
 
         const rejResponse = await fetch(`${API_BASE_URL}/api/rejection-patterns/detect`, {
           method: 'POST',
@@ -661,14 +576,157 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             interval: selectedInterval,
             days: testDays,
             config: indicatorConfig,
-            referenceContexts: referenceContexts
+            referenceContexts: staticContexts.length > 0 ? staticContexts : [
+              // Si no hay zonas manuales, usar una zona amplia para detectar todos los patrones
+              { id: 'full_range', type: 'manual_zone', enabled: true, weight: 0.1,
+                minPrice: 0, maxPrice: 999999999, signalDirection: 'BOTH' }
+            ]
           })
         });
 
         const rejResult = await rejResponse.json();
-        if (rejResult.success && rejResult.patterns) {
-          patterns = rejResult.patterns;
+        if (!rejResult.success || !rejResult.patterns || rejResult.patterns.length === 0) {
+          setBacktestProgress(null);
+          alert('No se detectaron patrones en el período seleccionado');
+          return;
         }
+
+        patterns = rejResult.patterns;
+        console.log(`[StrategyTester] Detected ${patterns.length} patterns, now calculating dynamic S/R...`);
+
+        // PASO 2: Si hay S/R dinámico, calcular para cada patrón
+        if (useDynamicSR) {
+          const validatedPatterns = [];
+          const totalPatterns = patterns.length;
+
+          for (let i = 0; i < patterns.length; i++) {
+            const pattern = patterns[i];
+            const patternTimestamp = pattern.timestamp;
+
+            setBacktestProgress({
+              phase: 'validating',
+              current: i + 1,
+              total: totalPatterns,
+              message: `Validando patrón ${i + 1}/${totalPatterns}...`
+            });
+
+            // Calcular cuántos días de datos hay hasta este patrón
+            const patternDate = new Date(patternTimestamp);
+            const startDate = new Date(candles[0]?.timestamp || candles[0]?.time);
+            const daysUntilPattern = Math.ceil((patternDate - startDate) / (1000 * 60 * 60 * 24));
+
+            // Buscar en caché o calcular S/R
+            const cacheTimestampKey = `t_${Math.floor(patternTimestamp / (1000 * 60 * 60))}`;  // Agrupar por hora
+
+            let srLevels;
+            if (srCache[cacheTimestampKey]) {
+              srLevels = srCache[cacheTimestampKey];
+              cacheHits++;
+            } else {
+              // Calcular S/R usando solo datos hasta este patrón
+              const candlesUntilPattern = candles.filter(c => {
+                const t = c.timestamp || c.time;
+                return t <= patternTimestamp;
+              });
+
+              if (candlesUntilPattern.length < 50) {
+                // No hay suficientes datos, usar niveles vacíos
+                srLevels = { resistances: [], supports: [] };
+              } else {
+                try {
+                  // Llamar API de S/R con los días hasta el patrón
+                  const srResponse = await fetch(
+                    `${API_BASE_URL}/api/support-resistance/${fullscreenSymbol}?` +
+                    `interval=${selectedInterval}&days=${Math.max(1, daysUntilPattern)}` +
+                    `&min_touches=${srConfig.minTouches}&left_bars=${srConfig.leftBars}` +
+                    `&right_bars=${srConfig.rightBars}&z_score_threshold=${srConfig.zScoreThreshold}`
+                  );
+
+                  if (srResponse.ok) {
+                    const srData = await srResponse.json();
+                    srLevels = {
+                      resistances: srData.data?.resistances || [],
+                      supports: srData.data?.supports || []
+                    };
+                  } else {
+                    srLevels = { resistances: [], supports: [] };
+                  }
+                } catch (e) {
+                  console.warn(`Error calculating S/R for pattern ${i}:`, e);
+                  srLevels = { resistances: [], supports: [] };
+                }
+              }
+
+              // Guardar en caché
+              srCache[cacheTimestampKey] = srLevels;
+              cacheMisses++;
+            }
+
+            // Validar patrón contra niveles S/R de ese momento
+            const patternPrice = pattern.price || pattern.close;
+            const tolerance = patternPrice * 0.005;
+            let isNearSR = false;
+
+            // Verificar si el patrón está cerca de algún S/R
+            for (const r of srLevels.resistances) {
+              if (Math.abs(patternPrice - r.price) <= tolerance) {
+                isNearSR = true;
+                pattern._srLevel = { type: 'resistance', price: r.price };
+                break;
+              }
+            }
+            if (!isNearSR) {
+              for (const s of srLevels.supports) {
+                if (Math.abs(patternPrice - s.price) <= tolerance) {
+                  isNearSR = true;
+                  pattern._srLevel = { type: 'support', price: s.price };
+                  break;
+                }
+              }
+            }
+
+            // Si está cerca de zona manual o S/R dinámico, es válido
+            const isNearManualZone = staticContexts.some(zone => {
+              return patternPrice >= zone.minPrice && patternPrice <= zone.maxPrice;
+            });
+
+            if (isNearSR || isNearManualZone || staticContexts.length === 0) {
+              validatedPatterns.push(pattern);
+            }
+          }
+
+          patterns = validatedPatterns;
+          console.log(`[StrategyTester] After S/R validation: ${patterns.length} valid patterns (cache: ${cacheHits} hits, ${cacheMisses} misses)`);
+
+          // Guardar caché actualizado
+          if (cacheKey) {
+            srCacheRef.current[cacheKey] = srCache;
+            saveSRCache(srCacheRef.current);
+          }
+        }
+
+        setBacktestProgress(null);
+
+        // Guardar info del backtest
+        const enabledManualZones = manualZones.filter(z => z.enabled).length;
+        setBacktestInfo({
+          configSource: useChartConfig ? 'chart' : 'auto',
+          manualZones: enabledManualZones,
+          srInfo: {
+            active: useDynamicSR,
+            dynamic: true,
+            cacheHits: cacheHits,
+            cacheMisses: cacheMisses
+          },
+          totalContexts: staticContexts.length + (useDynamicSR ? '+ S/R dinámico' : 0)
+        });
+
+        if (patterns.length === 0) {
+          alert('No se encontraron patrones válidos cerca de niveles S/R o zonas manuales');
+          return;
+        }
+
+        console.log(`[StrategyTester] ${patterns.length} patterns ready for evaluation`);
       }
 
       console.log(`[StrategyTester] Detected ${patterns.length} ${selectedIndicator} patterns`);
@@ -898,8 +956,28 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         </div>
       </div>
 
+      {/* Progress bar during backtest */}
+      {backtestProgress && (
+        <div className="backtest-progress-bar">
+          <div className="progress-info">
+            <span className="progress-phase">
+              {backtestProgress.phase === 'detecting' ? '🔍' : '✓'}
+            </span>
+            <span className="progress-message">{backtestProgress.message}</span>
+          </div>
+          {backtestProgress.total > 0 && (
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{ width: `${(backtestProgress.current / backtestProgress.total) * 100}%` }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Backtest info bar - shows S/R status and config source */}
-      {backtestInfo && selectedIndicator === 'REJECTION' && (
+      {backtestInfo && selectedIndicator === 'REJECTION' && !backtestProgress && (
         <div className="backtest-info-bar">
           <span className="info-item">
             <span className="info-label">Config:</span>
@@ -907,9 +985,9 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               {backtestInfo.configSource === 'chart' ? '📊 Chart' : '🔄 Auto'}
             </span>
           </span>
-          {backtestInfo.configSource === 'chart' && (
+          {backtestInfo.manualZones > 0 && (
             <span className="info-item">
-              <span className="info-label">Zonas manuales:</span>
+              <span className="info-label">Zonas:</span>
               <span className="info-value">{backtestInfo.manualZones}</span>
             </span>
           )}
@@ -917,14 +995,22 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             <span className="info-label">S/R:</span>
             <span className={`info-value ${backtestInfo.srInfo.active ? 'active' : 'inactive'}`}>
               {backtestInfo.srInfo.active
-                ? `✅ ${backtestInfo.srInfo.resistances}R / ${backtestInfo.srInfo.supports}S`
+                ? backtestInfo.srInfo.dynamic
+                  ? '✅ Dinámico'
+                  : `✅ ${backtestInfo.srInfo.resistances}R / ${backtestInfo.srInfo.supports}S`
                 : '❌ No activo'}
             </span>
           </span>
-          <span className="info-item">
-            <span className="info-label">Total contextos:</span>
-            <span className="info-value">{backtestInfo.totalContexts}</span>
-          </span>
+          {backtestInfo.srInfo.dynamic && (
+            <span className="info-item">
+              <span className="info-label">Caché:</span>
+              <span className="info-value cache-stats">
+                {backtestInfo.srInfo.cacheHits > 0
+                  ? `💾 ${backtestInfo.srInfo.cacheHits} hits`
+                  : `🔄 ${backtestInfo.srInfo.cacheMisses} cálculos`}
+              </span>
+            </span>
+          )}
         </div>
       )}
 
