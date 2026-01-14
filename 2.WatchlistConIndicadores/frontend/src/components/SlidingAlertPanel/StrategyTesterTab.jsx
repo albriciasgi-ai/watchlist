@@ -439,19 +439,24 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
           console.log(`[StrategyTester] Found ${srLevels.length} S/R levels`);
 
-          // Convertir niveles S/R a contextos de referencia
-          referenceContexts = srLevels.map((level, idx) => ({
-            id: `sr_level_${idx}`,
-            type: 'SUPPORT_RESISTANCE',
-            enabled: true,
-            weight: 0.8,
-            metadata: {
-              price: level.price,
-              type: level.type // 'SUPPORT' or 'RESISTANCE'
-            },
-            minPrice: level.price * 0.995, // 0.5% tolerance
-            maxPrice: level.price * 1.005
-          }));
+          // Convertir niveles S/R a contextos de tipo 'manual_zone' (el único tipo que el backend reconoce)
+          referenceContexts = srLevels.map((level, idx) => {
+            const price = parseFloat(level.price);
+            const tolerance = price * 0.005; // 0.5% tolerance
+            // SUPPORT -> buscar LONG, RESISTANCE -> buscar SHORT
+            const signalDirection = level.type === 'SUPPORT' ? 'LONG' : 'SHORT';
+
+            return {
+              id: `sr_level_${idx}`,
+              type: 'manual_zone',  // IMPORTANTE: usar 'manual_zone' que es reconocido por el backend
+              name: `${level.type} @ ${price.toFixed(2)}`,
+              enabled: true,
+              weight: 0.8,
+              minPrice: price - tolerance,
+              maxPrice: price + tolerance,
+              signalDirection: signalDirection
+            };
+          });
         }
 
         // Si no hay niveles S/R, crear zonas basadas en extremos recientes
@@ -503,7 +508,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             hammer: { enabled: true, minWickRatio: 1.5 },
             shootingStar: { enabled: true, minWickRatio: 1.5 },
             engulfing: { enabled: true },
-            doji: { enabled: false }
+            doji: { enabled: true }  // Habilitar doji para más detecciones
           },
           swingDetection: {
             enabled: true,
@@ -512,8 +517,9 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             required: false
           },
           filters: {
-            minConfidence: 30,
-            requireNearLevel: false
+            minConfidence: 20,  // Bajar umbral para más detecciones en backtest
+            requireNearLevel: false,
+            proximityPercent: 1.0  // 1% de proximidad a niveles
           }
         };
 
