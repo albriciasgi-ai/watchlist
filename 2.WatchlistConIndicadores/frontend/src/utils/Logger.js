@@ -118,6 +118,13 @@ class Logger {
     this.info(message, ...args);
   }
 
+  // Método para alertas importantes (siempre visible)
+  alert(message, ...args) {
+    // Las alertas siempre se muestran, independientemente del nivel de log
+    const timestamp = new Date().toLocaleTimeString('es-CO');
+    console.log(`%c🚨 [${timestamp}] [${this.context}] ${message}`, 'color: #FF5722; font-weight: bold', ...args);
+  }
+
   // Método para medir tiempo
   time(label) {
     if (this.enabled) {

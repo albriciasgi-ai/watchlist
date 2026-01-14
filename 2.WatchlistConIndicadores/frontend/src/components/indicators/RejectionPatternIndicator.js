@@ -3,7 +3,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import LocalPatternDetector from './LocalPatternDetector.js';
-import { createLogger } from '../../utils/logger.js';
+import { createLogger } from '../../utils/Logger.js';
 
 /**
  * Rejection Pattern Indicator
