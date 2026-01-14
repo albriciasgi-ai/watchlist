@@ -629,6 +629,137 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Guarda alerta en historial global (para panel deslizante)
+   * Este historial es compartido entre todos los símbolos e indicadores
+   */
+  saveToGlobalAlertHistory(alertRecord) {
+    try {
+      const GLOBAL_KEY = 'watchlist_global_alert_history';
+      const MAX_GLOBAL_ALERTS = 100;
+
+      // Cargar historial existente
+      const existing = localStorage.getItem(GLOBAL_KEY);
+      let globalHistory = existing ? JSON.parse(existing) : [];
+
+      // Agregar nueva alerta al inicio
+      globalHistory.unshift(alertRecord);
+
+      // Limitar a máximo de alertas
+      if (globalHistory.length > MAX_GLOBAL_ALERTS) {
+        globalHistory = globalHistory.slice(0, MAX_GLOBAL_ALERTS);
+      }
+
+      // Guardar
+      localStorage.setItem(GLOBAL_KEY, JSON.stringify(globalHistory));
+      log.debug(`[${this.symbol}] Alert saved to global history (${globalHistory.length} total)`);
+    } catch (error) {
+      console.error('Error saving to global alert history:', error);
+    }
+  }
+
+  /**
+   * Evalúa el resultado (WIN/LOSS) de alertas pendientes basándose en datos de velas.
+   * Para cada alerta PENDING, verifica si el precio alcanzó TP (WIN) o SL (LOSS) primero.
+   * @param {Array} candles - Array de velas con open, high, low, close, time
+   */
+  evaluatePendingTradeOutcomes(candles) {
+    if (!candles || candles.length === 0) return;
+
+    try {
+      const GLOBAL_KEY = 'watchlist_global_alert_history';
+      const existing = localStorage.getItem(GLOBAL_KEY);
+      if (!existing) return;
+
+      let globalHistory = JSON.parse(existing);
+      let updated = false;
+
+      // Helper para obtener timestamp de vela (normalizar a ms)
+      const getCandleTime = (candle) => {
+        const t = candle.timestamp || candle.time || candle.openTime || candle.start;
+        // Si el timestamp es muy pequeño (< año 2000 en ms), probablemente está en segundos
+        return t < 1000000000000 ? t * 1000 : t;
+      };
+
+      globalHistory = globalHistory.map(alert => {
+        // Solo evaluar alertas con outcome PENDING
+        if (alert.outcome !== 'PENDING') return alert;
+        // Solo evaluar alertas de este símbolo/intervalo
+        if (alert.symbol !== this.symbol || alert.interval !== this.interval) return alert;
+        // Necesitamos entry, SL y TP para evaluar
+        if (!alert.entry || !alert.stopLoss || !alert.takeProfit) return alert;
+
+        const alertTime = alert.timestamp;
+        const sl = alert.stopLoss;
+        const tp = alert.takeProfit;
+        const direction = alert.direction;
+
+        // Filtrar velas posteriores a la alerta
+        const candlesAfterAlert = candles.filter(c => {
+          const candleTime = getCandleTime(c);
+          return candleTime > alertTime;
+        });
+
+        if (candlesAfterAlert.length === 0) {
+          return alert;
+        }
+
+        // Ordenar velas por timestamp para evaluar en orden cronológico
+        candlesAfterAlert.sort((a, b) => getCandleTime(a) - getCandleTime(b));
+
+        // Evaluar cada vela para ver si tocó SL o TP primero
+        for (const candle of candlesAfterAlert) {
+          const high = parseFloat(candle.high);
+          const low = parseFloat(candle.low);
+
+          if (direction === 'LONG') {
+            // LONG: SL está debajo del entry, TP está arriba
+            // Primero verificar LOSS (SL), ya que en la misma vela podría tocar ambos
+            if (low <= sl) {
+              alert.outcome = 'LOSS';
+              alert.outcomeTimestamp = getCandleTime(candle);
+              updated = true;
+              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - low ${low.toFixed(2)} tocó SL ${sl.toFixed(2)}`);
+              break;
+            }
+            if (high >= tp) {
+              alert.outcome = 'WIN';
+              alert.outcomeTimestamp = getCandleTime(candle);
+              updated = true;
+              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - high ${high.toFixed(2)} alcanzó TP ${tp.toFixed(2)}`);
+              break;
+            }
+          } else if (direction === 'SHORT') {
+            // SHORT: SL está arriba del entry, TP está abajo
+            if (high >= sl) {
+              alert.outcome = 'LOSS';
+              alert.outcomeTimestamp = getCandleTime(candle);
+              updated = true;
+              log.info(`[${this.symbol}] 📉 Trade LOSS: ${alert.patternType} - high ${high.toFixed(2)} tocó SL ${sl.toFixed(2)}`);
+              break;
+            }
+            if (low <= tp) {
+              alert.outcome = 'WIN';
+              alert.outcomeTimestamp = getCandleTime(candle);
+              updated = true;
+              log.info(`[${this.symbol}] 📈 Trade WIN: ${alert.patternType} - low ${low.toFixed(2)} alcanzó TP ${tp.toFixed(2)}`);
+              break;
+            }
+          }
+        }
+
+        return alert;
+      });
+
+      if (updated) {
+        localStorage.setItem(GLOBAL_KEY, JSON.stringify(globalHistory));
+        log.debug(`[${this.symbol}] Trade outcomes updated in global history`);
+      }
+    } catch (error) {
+      console.error('Error evaluating trade outcomes:', error);
+    }
+  }
+
+  /**
    * Determina el nivel de confianza del patrón (critical/high/medium/null)
    */
   getConfidenceLevel(pattern) {
@@ -978,11 +1109,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         this.markCooldown(pattern);
 
         // Agregar al historial
+        const strategy = pattern._strategy || {};
         const alertRecord = {
           id: `dbt_alert_${Date.now()}_${this.symbol}`,
           timestamp: Date.now(),
           symbol: this.symbol,
           interval: this.interval,
+          indicator: 'DTB',  // ✅ Identificador del indicador
           patternType: pattern.type,
           direction: direction,
           price: pattern.levelPrice,
@@ -991,10 +1124,20 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           status: 'sent',
           vwapAligned: vwapAligned,
           momentumConfirmed: pattern.entrySignal?.has_momentum || false,
-          detectionTimestamp: pattern.secondExtreme.timestamp
+          detectionTimestamp: pattern.secondExtreme.timestamp,
+          // ✅ NUEVO: Datos de Strategy
+          entry: strategy.entry || null,
+          stopLoss: strategy.stopLoss || null,
+          takeProfit: strategy.takeProfit || null,
+          slPercent: strategy.slPercent || null,
+          tpPercent: strategy.tpPercent || null,
+          outcome: 'PENDING'  // WIN/LOSS se evalúa con velas posteriores
         };
 
         this.addToAlertHistory(alertRecord);
+
+        // ✅ NUEVO: También guardar en historial global
+        this.saveToGlobalAlertHistory(alertRecord);
 
         log.debug(`     ✅ ALERT SENT SUCCESSFULLY`);
         alertCount++;
@@ -1002,11 +1145,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         log.debug(`     ❌ ALERT FAILED TO SEND`);
 
         // Agregar al historial como fallida
+        const strategyFailed = pattern._strategy || {};
         const alertRecord = {
           id: `dbt_alert_${Date.now()}_${this.symbol}`,
           timestamp: Date.now(),
           symbol: this.symbol,
           interval: this.interval,
+          indicator: 'DTB',
           patternType: pattern.type,
           direction: direction,
           price: pattern.levelPrice,
@@ -1015,7 +1160,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           status: 'failed',
           vwapAligned: vwapAligned,
           momentumConfirmed: pattern.entrySignal?.has_momentum || false,
-          detectionTimestamp: pattern.secondExtreme.timestamp
+          detectionTimestamp: pattern.secondExtreme.timestamp,
+          // Datos de Strategy
+          entry: strategyFailed.entry || null,
+          stopLoss: strategyFailed.stopLoss || null,
+          takeProfit: strategyFailed.takeProfit || null,
+          slPercent: strategyFailed.slPercent || null,
+          tpPercent: strategyFailed.tpPercent || null,
+          outcome: 'PENDING'
         };
 
         this.addToAlertHistory(alertRecord);
@@ -1537,6 +1689,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           log.info(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
         }
       }
+
+      // ✅ Evaluar resultados de trades pendientes (WIN/LOSS)
+      this.evaluatePendingTradeOutcomes(allCandles);
     } catch (error) {
       log.error(`[${this.symbol}] ❌ Error en detección en tiempo real:`, error);
     }

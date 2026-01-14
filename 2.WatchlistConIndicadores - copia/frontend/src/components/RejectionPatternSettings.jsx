@@ -141,6 +141,31 @@ const RejectionPatternSettings = ({
       }
 
       console.log(`[${symbol}] Found ${contexts.length} available contexts:`, contexts);
+
+      // 4. Agregar niveles S/R si están activos
+      const srIndicator = indicatorManager.getSupportResistanceIndicator();
+      if (srIndicator && srIndicator.enabled) {
+        const resistances = (srIndicator.resistances || []).filter(l => l.status === 'active');
+        const supports = (srIndicator.supports || []).filter(l => l.status === 'active');
+
+        if (resistances.length > 0 || supports.length > 0) {
+          // Agregar un contexto global de S/R
+          contexts.push({
+            id: 'support_resistance_all',
+            type: 'SUPPORT_RESISTANCE',
+            label: `📏 S/R Levels (${resistances.length}R / ${supports.length}S)`,
+            description: `${resistances.length} resistencias, ${supports.length} soportes activos`,
+            metadata: {
+              resistances: resistances.map(r => ({ price: r.price, touches: r.touches })),
+              supports: supports.map(s => ({ price: s.price, touches: s.touches })),
+              totalLevels: resistances.length + supports.length
+            },
+            levels: ['resistances', 'supports']
+          });
+
+          console.log(`[${symbol}] Added S/R context: ${resistances.length} resistances, ${supports.length} supports`);
+        }
+      }
       setAvailableContexts(contexts);
 
     } catch (error) {
@@ -2306,6 +2331,8 @@ const ContextItem = ({ context, enabled, weight, onToggle, onWeightChange, onRem
   const getContextIcon = (type) => {
     if (type.includes('VOLUME_PROFILE')) return '📊';
     if (type === 'RANGE_DETECTOR') return '📏';
+    if (type === 'SUPPORT_RESISTANCE') return '📏';
+    if (type === 'manual_zone') return '🎯';
     return '🎯';
   };
 

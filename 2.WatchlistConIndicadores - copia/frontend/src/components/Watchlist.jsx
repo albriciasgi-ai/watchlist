@@ -1,5 +1,5 @@
 // src/components/Watchlist.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
@@ -11,6 +11,8 @@ import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
 import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
+import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
+import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
 import IndicatorPreloader from "../utils/IndicatorPreloader";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
@@ -77,6 +79,10 @@ const Watchlist = () => {
   const [isPreloading, setIsPreloading] = useState(false);
   const [preloadProgress, setPreloadProgress] = useState({ current: 0, total: 0 });
 
+  // 📊 Panel deslizante de historial de alertas
+  const [isAlertPanelOpen, setIsAlertPanelOpen] = useState(false);
+  const { alertCount } = useGlobalAlerts();
+
   const [vpConfig, setVpConfig] = useState({
     mode: "dynamic",
     rows: 100,
@@ -131,6 +137,24 @@ const Watchlist = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
   const [isDTBReloading, setIsDTBReloading] = useState(false); // Estado de carga
+
+  // 🖥️ NUEVO: Estado para tracking del símbolo en fullscreen
+  const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
+  const [fullscreenInterval, setFullscreenInterval] = useState(null);
+
+  // Handler para cambios de fullscreen desde MiniChart (memoizado para estabilidad)
+  const handleFullscreenChange = useCallback((sym, chartInterval, isFullscreen) => {
+    console.log(`[Watchlist] 🖥️ Fullscreen change: ${sym} (${chartInterval}) - isFullscreen: ${isFullscreen}`);
+    if (isFullscreen) {
+      setFullscreenSymbol(sym);
+      setFullscreenInterval(chartInterval);
+      log.debug(`[Watchlist] 🖥️ Fullscreen opened: ${sym} (${chartInterval})`);
+    } else {
+      setFullscreenSymbol(null);
+      setFullscreenInterval(null);
+      log.debug(`[Watchlist] 🖥️ Fullscreen closed`);
+    }
+  }, []);
 
   // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
   useEffect(() => {
@@ -939,6 +963,7 @@ const Watchlist = () => {
             onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
             onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
+            onFullscreenChange={handleFullscreenChange}
           />
         ))}
       </div>
@@ -1220,6 +1245,20 @@ const Watchlist = () => {
           </div>
         </div>
       )}
+
+      {/* 📊 Panel deslizante de historial de alertas */}
+      <SlidingAlertPanel
+        isOpen={isAlertPanelOpen}
+        onClose={() => setIsAlertPanelOpen(false)}
+        fullscreenSymbol={fullscreenSymbol}
+        fullscreenInterval={fullscreenInterval}
+      />
+
+      {/* 📊 Botón flotante para abrir panel de alertas */}
+      <AlertPanelToggle
+        onClick={() => setIsAlertPanelOpen(true)}
+        alertCount={alertCount}
+      />
     </div>
   );
 };

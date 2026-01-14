@@ -123,6 +123,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
 
+  // Estados para modo dibujo inline
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [selectedDrawingTool, setSelectedDrawingTool] = useState('select');
+
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
     if (oiMode) {
@@ -1144,6 +1148,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const handleDoubleClick = (e) => {
     const canvas = canvasRef.current;
+
+    // Shift+DblClick: comportamiento legacy (abre ChartModal)
+    if (e.shiftKey) {
+      setShowChartModal(true);
+      return;
+    }
+
     if (!canvas || !candlesRef.current || candlesRef.current.length === 0) {
       // Si no hay canvas o datos, solo abrir ChartModal
       setShowChartModal(true);
@@ -1175,8 +1186,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     } else {
-      // 🎯 Doble click en cualquier otra área: abrir ChartModal
-      setShowChartModal(true);
+      // 🎯 Doble click en área de gráfico: toggle modo dibujo inline
+      setDrawingMode(prev => !prev);
     }
   };
 

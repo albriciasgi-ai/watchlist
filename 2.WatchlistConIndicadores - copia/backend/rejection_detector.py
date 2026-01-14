@@ -66,16 +66,22 @@ class RejectionDetector:
         """
         detected_patterns = []
 
+        # Check if near level validation is required
+        require_near_level = config.get('filters', {}).get('requireNearLevel', True)
+
         # 1. Extract levels from all active contexts
         reference_levels = self._extract_reference_levels(
             symbol,
             reference_contexts
         )
 
-        if not reference_levels:
+        if not reference_levels and require_near_level:
             print(f"⚠️ No reference levels for {symbol}. "
                   f"Detection disabled to avoid false positives.")
             return []
+        elif not reference_levels:
+            print(f"ℹ️ No reference levels for {symbol}, but requireNearLevel=False. "
+                  f"Detecting all patterns without level validation.")
 
         # 2. Detect patterns in each candle
         for i in range(1, len(candles)):  # Start at 1 to have at least 1 previous candle

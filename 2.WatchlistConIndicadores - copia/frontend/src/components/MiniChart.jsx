@@ -102,7 +102,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig, onFullscreenChange }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -152,6 +152,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       }, 100);
     }
   }, [isFullscreen]);
+
+  // 📡 Notificar al padre cuando cambia el estado fullscreen
+  useEffect(() => {
+    console.log(`[MiniChart ${symbol}] 🖥️ Fullscreen effect: isFullscreen=${isFullscreen}, hasCallback=${!!onFullscreenChange}`);
+    if (onFullscreenChange) {
+      onFullscreenChange(symbol, interval, isFullscreen);
+    }
+  }, [isFullscreen, symbol, interval, onFullscreenChange]);
+
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
