@@ -735,22 +735,22 @@
   color: #aaa;
 }
 
-/* Selectores de intervalo y filtro */
-.interval-selector,
-.filter-selector {
+/* Selectores de indicador e intervalo */
+.indicator-selector,
+.interval-selector {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.interval-selector label,
-.filter-selector label {
+.indicator-selector label,
+.interval-selector label {
   color: #aaa;
   font-size: 12px;
 }
 
-.interval-select,
-.filter-select {
+.indicator-select,
+.interval-select {
   background: #2a2a3a;
   color: #fff;
   border: 1px solid #444;
@@ -761,14 +761,18 @@
   outline: none;
 }
 
-.interval-select:hover,
-.filter-select:hover {
+.indicator-select:hover,
+.interval-select:hover {
   border-color: #666;
 }
 
-.interval-select:focus,
-.filter-select:focus {
+.indicator-select:focus,
+.interval-select:focus {
   border-color: #7B1FA2;
+}
+
+.indicator-select {
+  min-width: 140px;
 }
 
 .test-config {
