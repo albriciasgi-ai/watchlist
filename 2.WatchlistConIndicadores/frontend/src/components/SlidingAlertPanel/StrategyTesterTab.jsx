@@ -737,8 +737,21 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
         console.log(`[StrategyTester] Dynamic S/R: ${useDynamicSR ? 'enabled' : 'disabled'}, Manual zones: ${staticContexts.length}`);
 
-        // PASO 1: Detectar todos los patrones primero (solo con zonas manuales)
+        // PASO 1: Detectar todos los patrones primero
         setBacktestProgress({ phase: 'detecting', current: 0, total: 0, message: 'Detectando patrones...' });
+
+        // Si no hay zonas manuales y no usamos S/R, deshabilitar requireNearLevel
+        const hasRealContexts = staticContexts.length > 0;
+        const backtestConfig = {
+          ...indicatorConfig,
+          filters: {
+            ...(indicatorConfig.filters || {}),
+            // Solo requerir proximidad a nivel si hay contextos configurados
+            requireNearLevel: hasRealContexts
+          }
+        };
+
+        console.log(`[StrategyTester] Backtest config: requireNearLevel=${hasRealContexts}, contexts=${staticContexts.length}`);
 
         const rejResponse = await fetch(`${API_BASE_URL}/api/rejection-patterns/detect`, {
           method: 'POST',
@@ -747,10 +760,10 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             symbol: fullscreenSymbol,
             interval: selectedInterval,
             days: testDays,
-            config: indicatorConfig,
-            referenceContexts: staticContexts.length > 0 ? staticContexts : [
-              // Si no hay zonas manuales, usar una zona amplia para detectar todos los patrones
-              { id: 'full_range', type: 'manual_zone', enabled: true, weight: 0.1,
+            config: backtestConfig,
+            referenceContexts: hasRealContexts ? staticContexts : [
+              // Zona amplia para detección inicial (se filtrará después si hay S/R dinámico)
+              { id: 'full_range', type: 'manual_zone', enabled: true, weight: 1.0,
                 minPrice: 0, maxPrice: 999999999, signalDirection: 'BOTH' }
             ]
           })
