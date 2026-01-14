@@ -435,21 +435,30 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
         if (srResponse.ok) {
           const srData = await srResponse.json();
-          const srLevels = srData.data?.levels || [];
 
-          console.log(`[StrategyTester] Found ${srLevels.length} S/R levels`);
+          // El API devuelve resistances y supports como arrays separados
+          const resistances = srData.data?.resistances || [];
+          const supports = srData.data?.supports || [];
 
-          // Convertir niveles S/R a contextos de tipo 'manual_zone' (el único tipo que el backend reconoce)
-          referenceContexts = srLevels.map((level, idx) => {
+          // Combinar ambos arrays
+          const allLevels = [
+            ...resistances.map(r => ({ ...r, levelType: 'RESISTANCE' })),
+            ...supports.map(s => ({ ...s, levelType: 'SUPPORT' }))
+          ];
+
+          console.log(`[StrategyTester] Found ${resistances.length} resistances + ${supports.length} supports = ${allLevels.length} S/R levels`);
+
+          // Convertir niveles S/R a contextos de tipo 'manual_zone'
+          referenceContexts = allLevels.map((level, idx) => {
             const price = parseFloat(level.price);
             const tolerance = price * 0.005; // 0.5% tolerance
-            // SUPPORT -> buscar LONG, RESISTANCE -> buscar SHORT
-            const signalDirection = level.type === 'SUPPORT' ? 'LONG' : 'SHORT';
+            // SUPPORT -> buscar LONG (rebote al alza), RESISTANCE -> buscar SHORT (rebote a la baja)
+            const signalDirection = level.levelType === 'SUPPORT' ? 'LONG' : 'SHORT';
 
             return {
               id: `sr_level_${idx}`,
               type: 'manual_zone',  // IMPORTANTE: usar 'manual_zone' que es reconocido por el backend
-              name: `${level.type} @ ${price.toFixed(2)}`,
+              name: `${level.levelType} @ ${price.toFixed(2)}`,
               enabled: true,
               weight: 0.8,
               minPrice: price - tolerance,
@@ -457,6 +466,8 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               signalDirection: signalDirection
             };
           });
+
+          console.log(`[StrategyTester] Created ${referenceContexts.length} reference contexts from S/R levels`);
         }
 
         // Si no hay niveles S/R, crear zonas basadas en extremos recientes
