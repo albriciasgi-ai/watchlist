@@ -5,6 +5,63 @@ import IndicatorManagerRegistry from '../../utils/IndicatorManagerRegistry';
 const PROFILES_KEY = 'watchlist_strategy_profiles';
 const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
 const SR_CACHE_KEY = 'watchlist_sr_backtest_cache';
+const ALERT_HISTORY_KEY = 'rejection_pattern_global_history';
+
+/**
+ * Calcula el uso aproximado de localStorage en bytes
+ */
+const getLocalStorageUsage = () => {
+  let total = 0;
+  try {
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        total += localStorage[key].length * 2; // UTF-16 = 2 bytes per char
+      }
+    }
+  } catch (e) {
+    console.warn('Error calculating localStorage usage:', e);
+  }
+  return total;
+};
+
+/**
+ * Limpia datos antiguos de localStorage para liberar espacio
+ */
+const clearOldLocalStorageData = () => {
+  try {
+    // 1. Limpiar caché de S/R
+    localStorage.removeItem(SR_CACHE_KEY);
+
+    // 2. Limpiar historial de alertas antiguas (mantener solo últimas 50)
+    const alertHistory = localStorage.getItem(ALERT_HISTORY_KEY);
+    if (alertHistory) {
+      try {
+        const parsed = JSON.parse(alertHistory);
+        if (Array.isArray(parsed) && parsed.length > 50) {
+          const trimmed = parsed.slice(-50);
+          localStorage.setItem(ALERT_HISTORY_KEY, JSON.stringify(trimmed));
+        }
+      } catch (e) {
+        localStorage.removeItem(ALERT_HISTORY_KEY);
+      }
+    }
+
+    // 3. Limpiar datos de patrones alertados por símbolo
+    const keysToClean = [];
+    for (let key in localStorage) {
+      if (key.startsWith('rejection_alerted_') || key.startsWith('rejection_start_')) {
+        keysToClean.push(key);
+      }
+    }
+    keysToClean.forEach(key => localStorage.removeItem(key));
+
+    console.log(`[Storage] Cleaned ${keysToClean.length + 2} items from localStorage`);
+    return true;
+  } catch (e) {
+    console.error('Error clearing localStorage:', e);
+    return false;
+  }
+};
 
 // Indicadores disponibles para backtesting
 const AVAILABLE_INDICATORS = [
@@ -281,6 +338,12 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
   // Ref para el caché de S/R (evita re-renders innecesarios)
   const srCacheRef = useRef(loadSRCache());
 
+  // Estado para el uso de localStorage
+  const [storageUsage, setStorageUsage] = useState(() => {
+    const usage = getLocalStorageUsage();
+    return { bytes: usage, percent: Math.round((usage / (5 * 1024 * 1024)) * 100) };
+  });
+
   // Actualizar intervalo seleccionado cuando cambia el fullscreen
   useEffect(() => {
     if (fullscreenInterval) {
@@ -288,14 +351,49 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
     }
   }, [fullscreenInterval]);
 
-  // Guardar perfiles en localStorage
+  // Guardar perfiles en localStorage (con manejo de errores y límite de datos)
   useEffect(() => {
-    localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+    const updateStorageUsage = () => {
+      const usage = getLocalStorageUsage();
+      setStorageUsage({ bytes: usage, percent: Math.round((usage / (5 * 1024 * 1024)) * 100) });
+    };
+
+    try {
+      // Limitar resultados por perfil para evitar exceder quota
+      const profilesLimited = profiles.map(p => ({
+        ...p,
+        results: (p.results || []).slice(-100) // Máximo 100 resultados por perfil
+      }));
+      localStorage.setItem(PROFILES_KEY, JSON.stringify(profilesLimited));
+      updateStorageUsage();
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded, clearing old data...');
+        // Limpiar caché de S/R para liberar espacio
+        clearOldLocalStorageData();
+        srCacheRef.current = {};
+        // Intentar guardar con menos resultados
+        try {
+          const profilesMinimal = profiles.map(p => ({
+            ...p,
+            results: (p.results || []).slice(-20) // Solo 20 resultados
+          }));
+          localStorage.setItem(PROFILES_KEY, JSON.stringify(profilesMinimal));
+        } catch {
+          console.error('Could not save profiles to localStorage');
+        }
+        updateStorageUsage();
+      }
+    }
   }, [profiles]);
 
   useEffect(() => {
-    if (activeProfileId) {
-      localStorage.setItem(ACTIVE_PROFILE_KEY, activeProfileId);
+    try {
+      if (activeProfileId) {
+        localStorage.setItem(ACTIVE_PROFILE_KEY, activeProfileId);
+      }
+    } catch (e) {
+      console.warn('Could not save active profile:', e);
     }
   }, [activeProfileId]);
 
@@ -345,6 +443,16 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
       setTestResults(profile.results || []);
       setRiskAmount(profile.settings?.riskAmount || 100);
       setTestDays(profile.settings?.testDays || 30);
+    }
+  };
+
+  // Limpiar almacenamiento
+  const handleClearStorage = () => {
+    if (window.confirm('Esto limpiará el caché de S/R y datos antiguos. Los perfiles se mantendrán.')) {
+      clearOldLocalStorageData();
+      srCacheRef.current = {};
+      const usage = getLocalStorageUsage();
+      setStorageUsage({ bytes: usage, percent: Math.round((usage / (5 * 1024 * 1024)) * 100) });
     }
   };
 
@@ -1137,6 +1245,20 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             ? `Perfil: ${activeProfile.name} • ${fullscreenSymbol || 'Sin símbolo'}`
             : 'Selecciona o crea un perfil para guardar resultados'}
         </span>
+        <div className="storage-info">
+          <span className={`storage-usage ${storageUsage.percent > 80 ? 'warning' : ''}`}>
+            {(storageUsage.bytes / 1024).toFixed(0)} KB ({storageUsage.percent}%)
+          </span>
+          {storageUsage.percent > 50 && (
+            <button
+              className="clear-storage-btn"
+              onClick={handleClearStorage}
+              title="Limpiar caché y datos antiguos"
+            >
+              🗑️
+            </button>
+          )}
+        </div>
       </div>
     </>
   );
