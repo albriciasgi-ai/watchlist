@@ -779,6 +779,48 @@
   color: #fff;
 }
 
+/* Backtest info bar */
+.backtest-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #1a1a2e;
+  border-bottom: 1px solid #333;
+  font-size: 12px;
+}
+
+.backtest-info-bar .info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.backtest-info-bar .info-label {
+  color: #888;
+}
+
+.backtest-info-bar .info-value {
+  color: #ccc;
+  font-weight: 500;
+}
+
+.backtest-info-bar .info-value.chart {
+  color: #4CAF50;
+}
+
+.backtest-info-bar .info-value.auto {
+  color: #2196F3;
+}
+
+.backtest-info-bar .info-value.active {
+  color: #4CAF50;
+}
+
+.backtest-info-bar .info-value.inactive {
+  color: #f44336;
+}
+
 .indicator-select,
 .interval-select {
   background: #2a2a3a;

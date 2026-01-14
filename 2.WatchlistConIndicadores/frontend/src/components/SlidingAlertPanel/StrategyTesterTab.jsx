@@ -216,6 +216,9 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
   // Estado para usar configuración del chart vs S/R automático
   const [useChartConfig, setUseChartConfig] = useState(true);
 
+  // Estado para info del último backtest (S/R status, zonas, etc.)
+  const [backtestInfo, setBacktestInfo] = useState(null);
+
   // Actualizar intervalo seleccionado cuando cambia el fullscreen
   useEffect(() => {
     if (fullscreenInterval) {
@@ -514,10 +517,14 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             ind => ind.name === 'Support/Resistance' || ind.constructor?.name === 'SupportResistanceIndicator'
           );
 
+          // Tracking S/R info
+          let srInfo = { active: false, resistances: 0, supports: 0 };
+
           if (srIndicator && srIndicator.enabled) {
             const srResistances = srIndicator.resistances || [];
             const srSupports = srIndicator.supports || [];
 
+            srInfo = { active: true, resistances: srResistances.length, supports: srSupports.length };
             console.log(`[StrategyTester] S/R indicator active: ${srResistances.length} resistances, ${srSupports.length} supports`);
 
             // Agregar niveles S/R como zonas de referencia
@@ -552,6 +559,15 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             });
           }
 
+          // Guardar info del backtest
+          const enabledManualZones = manualZones.filter(z => z.enabled).length;
+          setBacktestInfo({
+            configSource: 'chart',
+            manualZones: enabledManualZones,
+            srInfo: srInfo,
+            totalContexts: referenceContexts.length
+          });
+
           console.log(`[StrategyTester] Total reference contexts: ${referenceContexts.length}`);
 
         } else {
@@ -562,10 +578,16 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
             `${API_BASE_URL}/api/support-resistance/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}&min_touches=1&max_levels=20`
           );
 
+          let autoSrResistances = 0;
+          let autoSrSupports = 0;
+
           if (srResponse.ok) {
             const srData = await srResponse.json();
             const resistances = srData.data?.resistances || [];
             const supports = srData.data?.supports || [];
+
+            autoSrResistances = resistances.length;
+            autoSrSupports = supports.length;
 
             const allLevels = [
               ...resistances.map(r => ({ ...r, levelType: 'RESISTANCE' })),
@@ -591,6 +613,14 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               };
             });
           }
+
+          // Guardar info del backtest (S/R automático)
+          setBacktestInfo({
+            configSource: 'auto',
+            manualZones: 0,
+            srInfo: { active: true, resistances: autoSrResistances, supports: autoSrSupports },
+            totalContexts: referenceContexts.length
+          });
 
           // Configuración por defecto si no se usa la del chart
           indicatorConfig = {
@@ -867,6 +897,36 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           )}
         </div>
       </div>
+
+      {/* Backtest info bar - shows S/R status and config source */}
+      {backtestInfo && selectedIndicator === 'REJECTION' && (
+        <div className="backtest-info-bar">
+          <span className="info-item">
+            <span className="info-label">Config:</span>
+            <span className={`info-value ${backtestInfo.configSource}`}>
+              {backtestInfo.configSource === 'chart' ? '📊 Chart' : '🔄 Auto'}
+            </span>
+          </span>
+          {backtestInfo.configSource === 'chart' && (
+            <span className="info-item">
+              <span className="info-label">Zonas manuales:</span>
+              <span className="info-value">{backtestInfo.manualZones}</span>
+            </span>
+          )}
+          <span className="info-item">
+            <span className="info-label">S/R:</span>
+            <span className={`info-value ${backtestInfo.srInfo.active ? 'active' : 'inactive'}`}>
+              {backtestInfo.srInfo.active
+                ? `✅ ${backtestInfo.srInfo.resistances}R / ${backtestInfo.srInfo.supports}S`
+                : '❌ No activo'}
+            </span>
+          </span>
+          <span className="info-item">
+            <span className="info-label">Total contextos:</span>
+            <span className="info-value">{backtestInfo.totalContexts}</span>
+          </span>
+        </div>
+      )}
 
       {/* Stats summary */}
       {testResults.length > 0 && (
