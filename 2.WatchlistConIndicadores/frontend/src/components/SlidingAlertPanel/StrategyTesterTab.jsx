@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { API_BASE_URL } from '../../config';
+import IndicatorManagerRegistry from '../../utils/IndicatorManagerRegistry';
 
 const PROFILES_KEY = 'watchlist_strategy_profiles';
 const ACTIVE_PROFILE_KEY = 'watchlist_active_profile';
@@ -211,6 +212,9 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
 
   // Estado para el indicador seleccionado
   const [selectedIndicator, setSelectedIndicator] = useState('DTB');
+
+  // Estado para usar configuración del chart vs S/R automático
+  const [useChartConfig, setUseChartConfig] = useState(true);
 
   // Actualizar intervalo seleccionado cuando cambia el fullscreen
   useEffect(() => {
@@ -424,115 +428,169 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         // ===== REJECTION PATTERNS =====
         console.log(`[StrategyTester] Detecting Rejection Patterns...`);
 
-        // Primero, obtener niveles de S/R para usar como contextos de referencia
-        console.log(`[StrategyTester] Fetching S/R levels for reference contexts...`);
-
-        const srResponse = await fetch(
-          `${API_BASE_URL}/api/support-resistance/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}&min_touches=1&max_levels=20`
-        );
-
         let referenceContexts = [];
 
-        if (srResponse.ok) {
-          const srData = await srResponse.json();
+        if (useChartConfig) {
+          // ===== USAR CONFIGURACIÓN DEL CHART =====
+          console.log(`[StrategyTester] Using chart configuration...`);
 
-          // El API devuelve resistances y supports como arrays separados
-          const resistances = srData.data?.resistances || [];
-          const supports = srData.data?.supports || [];
+          const manager = IndicatorManagerRegistry.get(fullscreenSymbol);
+          if (!manager) {
+            alert('No se encontró el IndicatorManager para este símbolo. Asegúrate de tener el chart abierto.');
+            return;
+          }
 
-          // Combinar ambos arrays
-          const allLevels = [
-            ...resistances.map(r => ({ ...r, levelType: 'RESISTANCE' })),
-            ...supports.map(s => ({ ...s, levelType: 'SUPPORT' }))
-          ];
+          // Buscar el indicador Rejection Patterns
+          const rejectionIndicator = manager.indicators?.find(
+            ind => ind.name === 'Rejection Patterns' || ind.constructor?.name === 'RejectionPatternIndicator'
+          );
 
-          console.log(`[StrategyTester] Found ${resistances.length} resistances + ${supports.length} supports = ${allLevels.length} S/R levels`);
+          if (!rejectionIndicator) {
+            alert('El indicador Rejection Patterns no está activo en el chart. Actívalo primero.');
+            return;
+          }
 
-          // Convertir niveles S/R a contextos de tipo 'manual_zone'
-          referenceContexts = allLevels.map((level, idx) => {
-            const price = parseFloat(level.price);
-            const tolerance = price * 0.005; // 0.5% tolerance
-            // SUPPORT -> buscar LONG (rebote al alza), RESISTANCE -> buscar SHORT (rebote a la baja)
-            const signalDirection = level.levelType === 'SUPPORT' ? 'LONG' : 'SHORT';
+          // Usar la configuración del indicador
+          indicatorConfig = { ...rejectionIndicator.config };
+          console.log(`[StrategyTester] Using Rejection config from chart:`, indicatorConfig);
 
-            return {
-              id: `sr_level_${idx}`,
-              type: 'manual_zone',  // IMPORTANTE: usar 'manual_zone' que es reconocido por el backend
-              name: `${level.levelType} @ ${price.toFixed(2)}`,
-              enabled: true,
-              weight: 0.8,
-              minPrice: price - tolerance,
-              maxPrice: price + tolerance,
-              signalDirection: signalDirection
-            };
+          // Obtener zonas manuales del indicador
+          const manualZones = indicatorConfig.manualPriceZones || [];
+          const configContexts = indicatorConfig.referenceContexts || [];
+
+          // Construir contextos de referencia (igual que buildAllReferenceContexts en el indicador)
+          referenceContexts = [...configContexts];
+
+          // Agregar zonas manuales como contextos
+          manualZones.forEach(zone => {
+            if (zone.enabled) {
+              referenceContexts.push({
+                id: zone.id,
+                type: 'manual_zone',
+                name: zone.name,
+                minPrice: zone.minPrice,
+                maxPrice: zone.maxPrice,
+                signalDirection: zone.signalDirection,
+                color: zone.color,
+                enabled: true,
+                weight: 0.8
+              });
+            }
           });
 
-          console.log(`[StrategyTester] Created ${referenceContexts.length} reference contexts from S/R levels`);
-        }
+          console.log(`[StrategyTester] Found ${manualZones.length} manual zones, ${configContexts.length} reference contexts`);
 
-        // Si no hay niveles S/R, crear zonas basadas en extremos recientes
-        if (referenceContexts.length === 0) {
-          console.log(`[StrategyTester] No S/R levels, using price extremes...`);
+          // Si el indicador S/R está activo, agregar sus niveles también
+          const srIndicator = manager.indicators?.find(
+            ind => ind.name === 'Support/Resistance' || ind.constructor?.name === 'SupportResistanceIndicator'
+          );
 
-          // Encontrar máximos y mínimos de las últimas 100 velas
-          const recentCandles = candles.slice(-100);
-          const highs = recentCandles.map(c => parseFloat(c.high));
-          const lows = recentCandles.map(c => parseFloat(c.low));
-          const maxPrice = Math.max(...highs);
-          const minPrice = Math.min(...lows);
-          const midPrice = (maxPrice + minPrice) / 2;
+          if (srIndicator && srIndicator.enabled) {
+            const srResistances = srIndicator.resistances || [];
+            const srSupports = srIndicator.supports || [];
 
-          referenceContexts = [
-            {
-              id: 'zone_high',
-              type: 'manual_zone',
-              enabled: true,
-              weight: 0.7,
-              minPrice: maxPrice * 0.99,
-              maxPrice: maxPrice * 1.01,
-              signalDirection: 'SHORT'
-            },
-            {
-              id: 'zone_low',
-              type: 'manual_zone',
-              enabled: true,
-              weight: 0.7,
-              minPrice: minPrice * 0.99,
-              maxPrice: minPrice * 1.01,
-              signalDirection: 'LONG'
-            },
-            {
-              id: 'zone_mid',
-              type: 'manual_zone',
-              enabled: true,
-              weight: 0.5,
-              minPrice: midPrice * 0.995,
-              maxPrice: midPrice * 1.005,
-              signalDirection: 'BOTH'
-            }
-          ];
-        }
+            console.log(`[StrategyTester] S/R indicator active: ${srResistances.length} resistances, ${srSupports.length} supports`);
 
-        indicatorConfig = {
-          enabled: true,
-          patterns: {
-            hammer: { enabled: true, minWickRatio: 1.5 },
-            shootingStar: { enabled: true, minWickRatio: 1.5 },
-            engulfing: { enabled: true },
-            doji: { enabled: true }  // Habilitar doji para más detecciones
-          },
-          swingDetection: {
-            enabled: true,
-            leftBars: 3,
-            rightBars: 3,
-            required: false
-          },
-          filters: {
-            minConfidence: 20,  // Bajar umbral para más detecciones en backtest
-            requireNearLevel: false,
-            proximityPercent: 1.0  // 1% de proximidad a niveles
+            // Agregar niveles S/R como zonas de referencia
+            srResistances.forEach((level, idx) => {
+              const price = parseFloat(level.price);
+              const tolerance = price * 0.005;
+              referenceContexts.push({
+                id: `sr_resistance_${idx}`,
+                type: 'manual_zone',
+                name: `Resistance @ ${price.toFixed(2)}`,
+                minPrice: price - tolerance,
+                maxPrice: price + tolerance,
+                signalDirection: 'SHORT',
+                enabled: true,
+                weight: 0.7
+              });
+            });
+
+            srSupports.forEach((level, idx) => {
+              const price = parseFloat(level.price);
+              const tolerance = price * 0.005;
+              referenceContexts.push({
+                id: `sr_support_${idx}`,
+                type: 'manual_zone',
+                name: `Support @ ${price.toFixed(2)}`,
+                minPrice: price - tolerance,
+                maxPrice: price + tolerance,
+                signalDirection: 'LONG',
+                enabled: true,
+                weight: 0.7
+              });
+            });
           }
-        };
+
+          console.log(`[StrategyTester] Total reference contexts: ${referenceContexts.length}`);
+
+        } else {
+          // ===== USAR S/R AUTOMÁTICO =====
+          console.log(`[StrategyTester] Using automatic S/R levels...`);
+
+          const srResponse = await fetch(
+            `${API_BASE_URL}/api/support-resistance/${fullscreenSymbol}?interval=${selectedInterval}&days=${testDays}&min_touches=1&max_levels=20`
+          );
+
+          if (srResponse.ok) {
+            const srData = await srResponse.json();
+            const resistances = srData.data?.resistances || [];
+            const supports = srData.data?.supports || [];
+
+            const allLevels = [
+              ...resistances.map(r => ({ ...r, levelType: 'RESISTANCE' })),
+              ...supports.map(s => ({ ...s, levelType: 'SUPPORT' }))
+            ];
+
+            console.log(`[StrategyTester] Found ${allLevels.length} S/R levels`);
+
+            referenceContexts = allLevels.map((level, idx) => {
+              const price = parseFloat(level.price);
+              const tolerance = price * 0.005;
+              const signalDirection = level.levelType === 'SUPPORT' ? 'LONG' : 'SHORT';
+
+              return {
+                id: `sr_level_${idx}`,
+                type: 'manual_zone',
+                name: `${level.levelType} @ ${price.toFixed(2)}`,
+                enabled: true,
+                weight: 0.8,
+                minPrice: price - tolerance,
+                maxPrice: price + tolerance,
+                signalDirection: signalDirection
+              };
+            });
+          }
+
+          // Configuración por defecto si no se usa la del chart
+          indicatorConfig = {
+            enabled: true,
+            patterns: {
+              hammer: { enabled: true, minWickRatio: 1.5 },
+              shootingStar: { enabled: true, minWickRatio: 1.5 },
+              engulfing: { enabled: true },
+              doji: { enabled: true }
+            },
+            swingDetection: {
+              enabled: true,
+              leftBars: 3,
+              rightBars: 3,
+              required: false
+            },
+            filters: {
+              minConfidence: 20,
+              requireNearLevel: false,
+              proximityPercent: 1.0
+            }
+          };
+        }
+
+        // Validar que hay contextos de referencia
+        if (referenceContexts.length === 0) {
+          alert('No hay zonas de referencia configuradas. Agrega zonas manuales en el indicador Rejection Patterns o activa el indicador S/R.');
+          return;
+        }
 
         console.log(`[StrategyTester] Calling Rejection Patterns API with ${referenceContexts.length} reference contexts...`);
 
@@ -602,7 +660,7 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
     } finally {
       setIsEvaluating(false);
     }
-  }, [fullscreenSymbol, selectedIndicator, selectedInterval, testDays, activeProfileId, profiles, riskAmount]);
+  }, [fullscreenSymbol, selectedIndicator, selectedInterval, testDays, activeProfileId, profiles, riskAmount, useChartConfig]);
 
   // Calcular estadísticas
   const stats = useMemo(() => {
@@ -687,6 +745,18 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               ))}
             </select>
           </div>
+          {selectedIndicator === 'REJECTION' && (
+            <div className="config-source-selector">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={useChartConfig}
+                  onChange={(e) => setUseChartConfig(e.target.checked)}
+                />
+                <span>Usar config del chart</span>
+              </label>
+            </div>
+          )}
         </div>
         <div className="toolbar-right">
           <div className="test-config">
