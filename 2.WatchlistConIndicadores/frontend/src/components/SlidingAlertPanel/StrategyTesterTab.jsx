@@ -672,6 +672,49 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
           }
         });
 
+        // Incluir referenceContexts configurados (Volume Profile, S/R, etc.)
+        const configuredContexts = indicatorConfig.referenceContexts || [];
+        configuredContexts.forEach(ctx => {
+          if (ctx.enabled) {
+            // Para S/R, convertir a zonas manuales basadas en los niveles
+            if (ctx.type === 'SUPPORT_RESISTANCE' && ctx.metadata) {
+              const tolerance = 0.003; // 0.3% de tolerancia para crear zonas
+              // Crear zonas para resistencias
+              (ctx.metadata.resistances || []).forEach((r, idx) => {
+                staticContexts.push({
+                  id: `sr_resistance_${idx}`,
+                  type: 'manual_zone',
+                  name: `Resistance ${r.price.toFixed(2)}`,
+                  minPrice: r.price * (1 - tolerance),
+                  maxPrice: r.price * (1 + tolerance),
+                  signalDirection: 'SHORT',
+                  enabled: true,
+                  weight: ctx.weight || 0.7
+                });
+              });
+              // Crear zonas para soportes
+              (ctx.metadata.supports || []).forEach((s, idx) => {
+                staticContexts.push({
+                  id: `sr_support_${idx}`,
+                  type: 'manual_zone',
+                  name: `Support ${s.price.toFixed(2)}`,
+                  minPrice: s.price * (1 - tolerance),
+                  maxPrice: s.price * (1 + tolerance),
+                  signalDirection: 'LONG',
+                  enabled: true,
+                  weight: ctx.weight || 0.7
+                });
+              });
+            } else {
+              // Otros tipos de contexto (Volume Profile, etc.)
+              staticContexts.push({
+                ...ctx,
+                enabled: true
+              });
+            }
+          }
+        });
+
         // Configuración de S/R para cálculo dinámico
         const useDynamicSR = srIndicator && srIndicator.enabled && useChartConfig;
         const srConfig = useDynamicSR ? {
