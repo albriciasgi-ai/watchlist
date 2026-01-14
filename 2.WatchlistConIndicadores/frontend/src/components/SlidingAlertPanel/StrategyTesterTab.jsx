@@ -385,27 +385,56 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
         // ===== DOUBLE TOP/BOTTOM =====
         console.log(`[StrategyTester] Detecting DTB patterns...`);
 
-        indicatorConfig = {
-          enabled: true,
-          doubleTopBottom: {
-            minDistanceBars: 5,
-            maxDistanceBars: 100,
-            priceTolerancePercent: 1.5,
-            maxBreakoutPercent: 3.0,
-            volumeFilter: { enabled: false }
-          },
-          filters: {
-            minConfidence: 20,
-            requireBothRejections: false,
-            postPatternValidationCandles: 5
-          },
-          strategy: {
-            enabled: true,
-            riskRewardRatio: 2.0,
-            slMinPercent: 0.5,
-            slBufferPercent: 20
+        if (useChartConfig) {
+          // ===== USAR CONFIGURACIÓN DEL CHART =====
+          console.log(`[StrategyTester] Using DTB chart configuration...`);
+
+          const manager = IndicatorManagerRegistry.get(fullscreenSymbol);
+          if (!manager) {
+            alert('No se encontró el IndicatorManager para este símbolo. Asegúrate de tener el chart abierto.');
+            return;
           }
-        };
+
+          // Buscar el indicador Double Top/Bottom
+          const dtbIndicator = manager.indicators?.find(
+            ind => ind.name === 'Double Top/Bottom' || ind.constructor?.name === 'DoubleTopBottomIndicator'
+          );
+
+          if (!dtbIndicator) {
+            alert('El indicador Double Top/Bottom no está activo en el chart. Actívalo primero.');
+            return;
+          }
+
+          // Usar la configuración del indicador
+          indicatorConfig = { ...dtbIndicator.config };
+          console.log(`[StrategyTester] Using DTB config from chart:`, indicatorConfig);
+
+        } else {
+          // ===== USAR CONFIGURACIÓN POR DEFECTO =====
+          console.log(`[StrategyTester] Using default DTB configuration...`);
+
+          indicatorConfig = {
+            enabled: true,
+            doubleTopBottom: {
+              minDistanceBars: 5,
+              maxDistanceBars: 100,
+              priceTolerancePercent: 1.5,
+              maxBreakoutPercent: 3.0,
+              volumeFilter: { enabled: false }
+            },
+            filters: {
+              minConfidence: 20,
+              requireBothRejections: false,
+              postPatternValidationCandles: 5
+            },
+            strategy: {
+              enabled: true,
+              riskRewardRatio: 2.0,
+              slMinPercent: 0.5,
+              slBufferPercent: 20
+            }
+          };
+        }
 
         const dtbResponse = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
           method: 'POST',
@@ -745,18 +774,16 @@ const StrategyTesterTab = ({ isOpen, fullscreenSymbol, fullscreenInterval }) => 
               ))}
             </select>
           </div>
-          {selectedIndicator === 'REJECTION' && (
-            <div className="config-source-selector">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={useChartConfig}
-                  onChange={(e) => setUseChartConfig(e.target.checked)}
-                />
-                <span>Usar config del chart</span>
-              </label>
-            </div>
-          )}
+          <div className="config-source-selector">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={useChartConfig}
+                onChange={(e) => setUseChartConfig(e.target.checked)}
+              />
+              <span>Usar config del chart</span>
+            </label>
+          </div>
         </div>
         <div className="toolbar-right">
           <div className="test-config">
