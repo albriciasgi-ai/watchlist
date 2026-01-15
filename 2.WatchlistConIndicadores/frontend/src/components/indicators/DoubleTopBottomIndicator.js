@@ -709,21 +709,31 @@ class DoubleTopBottomIndicator extends IndicatorBase {
    */
   isInGlobalCooldown() {
     // Si el cooldown no está habilitado, no hay restricción
-    if (!this.config.alertSettings?.globalCooldown?.enabled) {
+    const cooldownEnabled = this.config.alertSettings?.globalCooldown?.enabled;
+    if (!cooldownEnabled) {
+      log.debug(`[${this.symbol}] ⏳ Cooldown DISABLED in config`);
       return false;
     }
 
+    // ✅ FIX: Siempre leer de localStorage para obtener el valor más reciente
+    // (puede haber sido actualizado por otra instancia del indicador)
+    const lastAlertTimestamp = this.loadLastGlobalAlertTimestamp();
+
     const cooldownMinutes = this.config.alertSettings?.globalCooldown?.minutes ?? 30;
     const cooldownMs = cooldownMinutes * 60 * 1000;
-    const timeSinceLastAlert = Date.now() - this.lastGlobalAlertTimestamp;
+    const now = Date.now();
+    const timeSinceLastAlert = now - lastAlertTimestamp;
+
+    log.info(`[${this.symbol}] ⏳ Cooldown check: lastAlert=${lastAlertTimestamp}, now=${now}, elapsed=${Math.round(timeSinceLastAlert/1000)}s, required=${cooldownMinutes}min`);
 
     if (timeSinceLastAlert < cooldownMs) {
       const remainingMs = cooldownMs - timeSinceLastAlert;
       const remainingMin = Math.ceil(remainingMs / 60000);
-      log.debug(`[${this.symbol}] ⏳ Global cooldown active: ${remainingMin} min remaining`);
+      log.info(`[${this.symbol}] ⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
       return true;
     }
 
+    log.info(`[${this.symbol}] ⏳ Cooldown expired, can send alert`);
     return false;
   }
 
@@ -1316,6 +1326,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         // ✅ NUEVO: Actualizar timestamp de cooldown global
         this.lastGlobalAlertTimestamp = Date.now();
         this.saveLastGlobalAlertTimestamp();
+        log.info(`[${this.symbol}] ⏰ Cooldown timestamp updated to ${this.lastGlobalAlertTimestamp}`);
 
         log.debug(`     ✅ ALERT SENT SUCCESSFULLY`);
         alertCount++;
@@ -1751,11 +1762,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     // ✅ NUEVO: Si pauseDetection está activo y estamos en cooldown, no detectar nuevos patrones
+    // IMPORTANTE: Solo pausar si YA tenemos patrones, para no bloquear la detección inicial
     if (!isFullAnalysis &&
+        this.patterns.length > 0 &&
         this.config.alertSettings?.globalCooldown?.enabled &&
         this.config.alertSettings?.globalCooldown?.pauseDetection &&
         this.isInGlobalCooldown()) {
-      log.debug(`[${this.symbol}] ⏸️ Detection paused during cooldown`);
+      log.debug(`[${this.symbol}] ⏸️ Detection paused during cooldown (keeping ${this.patterns.length} existing patterns)`);
       return [];
     }
 

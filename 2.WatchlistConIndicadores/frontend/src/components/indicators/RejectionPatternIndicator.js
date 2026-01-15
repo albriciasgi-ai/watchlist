@@ -423,21 +423,31 @@ class RejectionPatternIndicator extends IndicatorBase {
    */
   isInGlobalCooldown() {
     // Si el cooldown no está habilitado, no hay restricción
-    if (!this.config.alertCooldown?.enabled) {
+    const cooldownEnabled = this.config.alertCooldown?.enabled;
+    if (!cooldownEnabled) {
+      this.logger.debug(`⏳ Cooldown DISABLED in config`);
       return false;
     }
 
+    // ✅ FIX: Siempre leer de localStorage para obtener el valor más reciente
+    // (puede haber sido actualizado por otra instancia del indicador)
+    const lastAlertTimestamp = this.loadLastGlobalAlertTimestamp();
+
     const cooldownMinutes = this.config.alertCooldown?.minutes ?? 30;
     const cooldownMs = cooldownMinutes * 60 * 1000;
-    const timeSinceLastAlert = Date.now() - this.lastGlobalAlertTimestamp;
+    const now = Date.now();
+    const timeSinceLastAlert = now - lastAlertTimestamp;
+
+    this.logger.info(`⏳ Cooldown check: lastAlert=${lastAlertTimestamp}, now=${now}, elapsed=${Math.round(timeSinceLastAlert/1000)}s, required=${cooldownMinutes}min`);
 
     if (timeSinceLastAlert < cooldownMs) {
       const remainingMs = cooldownMs - timeSinceLastAlert;
       const remainingMin = Math.ceil(remainingMs / 60000);
-      this.logger.debug(`⏳ Global cooldown active: ${remainingMin} min remaining`);
+      this.logger.info(`⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
       return true;
     }
 
+    this.logger.info(`⏳ Cooldown expired, can send alert`);
     return false;
   }
 
@@ -1405,6 +1415,7 @@ class RejectionPatternIndicator extends IndicatorBase {
         // ✅ NUEVO: Actualizar timestamp de cooldown global
         this.lastGlobalAlertTimestamp = Date.now();
         this.saveLastGlobalAlertTimestamp();
+        this.logger.info(`⏰ Cooldown timestamp updated to ${this.lastGlobalAlertTimestamp}`);
 
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
         alertCount++;
@@ -1674,7 +1685,10 @@ class RejectionPatternIndicator extends IndicatorBase {
    * @param {Array} manualLevels - Array de drawings/horizontal lines (opcional)
    */
   detectLocalPatterns(candles, indicatorManager = null, manualLevels = []) {
+    this.logger.debug(`🔍 detectLocalPatterns called with ${candles?.length || 0} candles, existing patterns: ${this.localPatterns.length}`);
+
     if (!candles || candles.length === 0) {
+      this.logger.debug(`❌ No candles provided, clearing patterns`);
       this.localPatterns = [];
       return;
     }
@@ -1690,18 +1704,22 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     if (timeSinceLastDetection < this.detectionThrottleMs && this.localPatterns.length > 0) {
       // Ya tenemos patrones y no ha pasado suficiente tiempo, usar cached
+      this.logger.debug(`⏭️ Throttled (${timeSinceLastDetection}ms < ${this.detectionThrottleMs}ms), using ${this.localPatterns.length} cached patterns`);
       return;
     }
 
     // ✅ NUEVO: Si pauseDetection está activo y estamos en cooldown, no detectar nuevos patrones
-    if (this.config.alertCooldown?.enabled &&
+    // IMPORTANTE: Solo pausar si YA tenemos patrones, para no bloquear la detección inicial
+    if (this.localPatterns.length > 0 &&
+        this.config.alertCooldown?.enabled &&
         this.config.alertCooldown?.pauseDetection &&
         this.isInGlobalCooldown()) {
-      this.logger.debug(`⏸️ Detection paused during cooldown`);
+      this.logger.debug(`⏸️ Detection paused during cooldown (keeping ${this.localPatterns.length} existing patterns)`);
       return;
     }
 
     this.lastDetectionTime = now;
+    this.logger.debug(`✅ Proceeding with detection...`);
 
     // Obtener precio actual (última vela)
     const currentPrice = candles[candles.length - 1]?.close || null;
