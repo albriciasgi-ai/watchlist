@@ -49,10 +49,13 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // ✅ NUEVO: Sistema de alertas automáticas
     this.alertedPatterns = this.loadAlertedPatterns(); // ✅ FIX #4: Cargar desde localStorage
-    this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown
+    this.alertCooldownMs = 5 * 60 * 1000; // 5 minutos de cooldown (legacy)
     this.notificationPermissionRequested = false; // Flag para pedir permiso una sola vez
     this.alertSystemStartTime = this.loadAlertSystemStartTime(); // ✅ PERSISTIDO: Cargar desde localStorage
     this.logger = createLogger(this.symbol); // Logger con contexto del símbolo
+
+    // ✅ NUEVO: Cooldown global entre alertas (configurable)
+    this.lastGlobalAlertTimestamp = this.loadLastGlobalAlertTimestamp();
 
     // ✅ NUEVO: Sistema de merge de patrones (evita re-detección en cada render)
     this.knownPatterns = new Map(); // Map de patternId -> pattern para tracking
@@ -378,6 +381,64 @@ class RejectionPatternIndicator extends IndicatorBase {
     } catch (e) {
       console.error('Failed to save alertSystemStartTime:', e);
     }
+  }
+
+  /**
+   * ✅ NUEVO: Carga el timestamp de la última alerta global desde localStorage
+   */
+  loadLastGlobalAlertTimestamp() {
+    const storageKey = `rejection_last_alert_${this.symbol}_${this.interval}`;
+    const stored = localStorage.getItem(storageKey);
+
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        return data.timestamp || 0;
+      } catch (e) {
+        console.error('Failed to load lastGlobalAlertTimestamp:', e);
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * ✅ NUEVO: Guarda el timestamp de la última alerta global
+   */
+  saveLastGlobalAlertTimestamp() {
+    const storageKey = `rejection_last_alert_${this.symbol}_${this.interval}`;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        timestamp: this.lastGlobalAlertTimestamp
+      }));
+    } catch (e) {
+      console.error('Failed to save lastGlobalAlertTimestamp:', e);
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Verifica si el cooldown global está activo
+   * @returns {boolean} true si está en cooldown (no se debe enviar alerta)
+   */
+  isInGlobalCooldown() {
+    // Si el cooldown no está habilitado, no hay restricción
+    if (!this.config.alertCooldown?.enabled) {
+      return false;
+    }
+
+    const cooldownMinutes = this.config.alertCooldown?.minutes ?? 30;
+    const cooldownMs = cooldownMinutes * 60 * 1000;
+    const timeSinceLastAlert = Date.now() - this.lastGlobalAlertTimestamp;
+
+    if (timeSinceLastAlert < cooldownMs) {
+      const remainingMs = cooldownMs - timeSinceLastAlert;
+      const remainingMin = Math.ceil(remainingMs / 60000);
+      this.logger.debug(`⏳ Global cooldown active: ${remainingMin} min remaining`);
+      return true;
+    }
+
+    return false;
   }
 
   getDefaultConfig() {
@@ -1272,6 +1333,12 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.logger.warn(`⚠️ Too many patterns to alert (${recentPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN} to prevent spam.`);
     }
 
+    // ✅ NUEVO: Verificar cooldown global antes de procesar
+    if (this.isInGlobalCooldown()) {
+      this.logger.debug(`⏳ Skipping alerts due to global cooldown`);
+      return;
+    }
+
     // Procesar solo patrones NUEVOS (después del start time)
     let alertCount = 0;
     for (const pattern of recentPatterns) {
@@ -1335,8 +1402,18 @@ class RejectionPatternIndicator extends IndicatorBase {
         };
         this.saveToGlobalAlertHistory(alertRecord);
 
+        // ✅ NUEVO: Actualizar timestamp de cooldown global
+        this.lastGlobalAlertTimestamp = Date.now();
+        this.saveLastGlobalAlertTimestamp();
+
         this.logger.alert(`🚨 ALERT SENT: ${this.formatPatternName(pattern.type)} at $${pattern.price.toFixed(2)}`);
         alertCount++;
+
+        // ✅ NUEVO: Si el cooldown está activo, solo enviar una alerta y luego parar
+        if (this.config.alertCooldown?.enabled) {
+          this.logger.debug(`⏳ Alert sent, entering cooldown for ${this.config.alertCooldown?.minutes ?? 30} minutes`);
+          break;
+        }
       } else {
         // ✅ FIX #1: Si falla, remover del Set para permitir reintento
         this.alertedPatterns.delete(patternId);
@@ -1613,6 +1690,14 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     if (timeSinceLastDetection < this.detectionThrottleMs && this.localPatterns.length > 0) {
       // Ya tenemos patrones y no ha pasado suficiente tiempo, usar cached
+      return;
+    }
+
+    // ✅ NUEVO: Si pauseDetection está activo y estamos en cooldown, no detectar nuevos patrones
+    if (this.config.alertCooldown?.enabled &&
+        this.config.alertCooldown?.pauseDetection &&
+        this.isInGlobalCooldown()) {
+      this.logger.debug(`⏸️ Detection paused during cooldown`);
       return;
     }
 

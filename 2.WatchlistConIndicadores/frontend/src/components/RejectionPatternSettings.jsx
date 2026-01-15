@@ -2029,6 +2029,55 @@ const RejectionPatternSettings = ({
             </span>
           </div>
 
+          {/* ✅ NUEVO: Cooldown entre alertas */}
+          {config.alertsEnabled && (
+            <div className="filter-item" style={{ marginTop: '10px' }}>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={config.alertCooldown?.enabled ?? true}
+                  onChange={(e) => setConfig(prev => ({
+                    ...prev,
+                    alertCooldown: { ...prev.alertCooldown, enabled: e.target.checked }
+                  }))}
+                />
+                <span>Alert Cooldown</span>
+              </label>
+              {config.alertCooldown?.enabled && (
+                <div style={{ marginLeft: '25px', marginTop: '8px' }}>
+                  <ParameterSlider
+                    label="Cooldown Time"
+                    value={config.alertCooldown?.minutes ?? 30}
+                    min={5}
+                    max={120}
+                    step={5}
+                    unit="min"
+                    onChange={(val) => setConfig(prev => ({
+                      ...prev,
+                      alertCooldown: { ...prev.alertCooldown, minutes: val }
+                    }))}
+                    defaultValue={30}
+                    tooltip="Tiempo mínimo entre alertas consecutivas"
+                  />
+                  <label className="checkbox-label" style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={config.alertCooldown?.pauseDetection ?? false}
+                      onChange={(e) => setConfig(prev => ({
+                        ...prev,
+                        alertCooldown: { ...prev.alertCooldown, pauseDetection: e.target.checked }
+                      }))}
+                    />
+                    <span style={{ fontSize: '12px' }}>Pausar detección durante cooldown</span>
+                  </label>
+                </div>
+              )}
+              <span className="filter-hint">
+                Evita spam: espera X minutos entre alertas consecutivas
+              </span>
+            </div>
+          )}
+
           {/* ✅ NUEVO: Simulación de Patrones */}
           {config.alertsEnabled && (
             <div className="alert-test-section">
@@ -3118,6 +3167,12 @@ function getDefaultConfig() {
       enabled: true,           // Habilitar validación de invalidación
       barsToCheck: 3,          // Velas después del swing confirmation a verificar
       invalidateOnBreak: true  // Invalidar si rompe high/low del patrón
+    },
+    // ✅ NUEVO: Cooldown entre alertas
+    alertCooldown: {
+      enabled: true,
+      minutes: 30,              // Minutos entre alertas consecutivas
+      pauseDetection: false     // Si true, pausa la detección de patrones durante el cooldown
     }
   };
 }

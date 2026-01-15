@@ -87,6 +87,13 @@ function getDefaultConfig() {
       duplicateTimeToleranceHours: 24
     },
 
+    // ✅ NUEVO: Price Action Validation (invalidación si precio va en contra)
+    priceActionValidation: {
+      enabled: true,
+      barsToCheck: 3,  // Velas adicionales DESPUÉS de postPatternValidationCandles
+      invalidateOnBreak: true
+    },
+
     visualization: {
       showLines: true,
       showRejectionIcons: true,
@@ -171,6 +178,13 @@ function getDefaultConfig() {
         showDetectionCircle: true,
         detectionCircleColor: '#2196F3',
         detectionCircleSize: 8
+      },
+
+      // ✅ NUEVO: Cooldown global entre alertas
+      globalCooldown: {
+        enabled: true,
+        minutes: 30,  // Minutos entre alertas consecutivas
+        pauseDetection: false  // Si true, pausa la detección de patrones durante el cooldown
       }
     }
   };
@@ -1104,6 +1118,45 @@ const DoubleTopBottomSettings = ({
           Confidence bonus added when directional movement is confirmed (0-50 points)
         </p>
       </div>
+
+      <h4 style={{marginTop: '20px', marginBottom: '10px'}}>🔍 Price Action Validation</h4>
+
+      <div className="checkbox-group">
+        <label>
+          <input
+            type="checkbox"
+            checked={config.priceActionValidation?.enabled !== false}
+            onChange={(e) => updateConfig('priceActionValidation.enabled', e.target.checked)}
+          />
+          <span>Enable Invalidation Check</span>
+        </label>
+        <p style={{...styles.description, marginTop: '5px', marginLeft: '0px'}}>
+          Check if price action invalidates the pattern after confirmation.
+          Double Bottom is invalidated if price breaks below the second valley.
+          Double Top is invalidated if price breaks above the second peak.
+        </p>
+      </div>
+
+      {config.priceActionValidation?.enabled !== false && (
+        <div style={styles.settingGroup}>
+          <label style={styles.label}>
+            <span>Validation Bars</span>
+            <span style={styles.settingValue}>{config.priceActionValidation?.barsToCheck || 3}</span>
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="10"
+            value={config.priceActionValidation?.barsToCheck || 3}
+            onChange={(e) => updateConfig('priceActionValidation.barsToCheck', parseInt(e.target.value))}
+            style={styles.rangeInput}
+          />
+          <p style={styles.description}>
+            Number of bars AFTER confirmation candles to check for invalidation.
+            Total wait: {(config.filters?.postPatternValidationCandles || 5) + (config.priceActionValidation?.barsToCheck || 3)} bars before alert.
+          </p>
+        </div>
+      )}
 
       <h4 style={{marginTop: '20px', marginBottom: '10px'}}>Duplicate Filtering</h4>
 
@@ -2335,6 +2388,81 @@ const DoubleTopBottomSettings = ({
               color: '#F44336'
             }}>
               ✗ Verifica que el backend esté corriendo (puerto 8000) y revisa la consola
+            </div>
+          )}
+
+          {/* ✅ NUEVO: Cooldown global entre alertas */}
+          {config.alertsEnabled && (
+            <div style={{
+              marginTop: '15px',
+              marginLeft: '26px',
+              padding: '10px',
+              background: '#f5f5f5',
+              borderRadius: '6px',
+              border: '1px solid #e0e0e0'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                color: '#333'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={config.alertSettings?.globalCooldown?.enabled ?? true}
+                  onChange={(e) => updateConfig('alertSettings', {
+                    ...config.alertSettings,
+                    globalCooldown: {
+                      ...config.alertSettings?.globalCooldown,
+                      enabled: e.target.checked
+                    }
+                  })}
+                  style={{ marginRight: '8px', cursor: 'pointer', width: '16px', height: '16px' }}
+                />
+                ⏳ Cooldown Global entre Alertas
+              </label>
+              {config.alertSettings?.globalCooldown?.enabled && (
+                <div style={{ marginTop: '10px' }}>
+                  <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px' }}>
+                    Tiempo de espera: {config.alertSettings?.globalCooldown?.minutes ?? 30} minutos
+                  </label>
+                  <input
+                    type="range"
+                    min={5}
+                    max={120}
+                    step={5}
+                    value={config.alertSettings?.globalCooldown?.minutes ?? 30}
+                    onChange={(e) => updateConfig('alertSettings', {
+                      ...config.alertSettings,
+                      globalCooldown: {
+                        ...config.alertSettings?.globalCooldown,
+                        minutes: parseInt(e.target.value)
+                      }
+                    })}
+                    style={{ width: '100%' }}
+                  />
+                  <label style={{ display: 'flex', alignItems: 'center', marginTop: '8px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={config.alertSettings?.globalCooldown?.pauseDetection ?? false}
+                      onChange={(e) => updateConfig('alertSettings', {
+                        ...config.alertSettings,
+                        globalCooldown: {
+                          ...config.alertSettings?.globalCooldown,
+                          pauseDetection: e.target.checked
+                        }
+                      })}
+                      style={{ marginRight: '6px', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '12px', color: '#666' }}>Pausar detección durante cooldown</span>
+                  </label>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    Evita spam: espera {config.alertSettings?.globalCooldown?.minutes ?? 30} minutos entre alertas consecutivas
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -39,6 +39,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.notificationPermissionRequested = false;
     this.alertSystemStartTime = null; // Solo alertar patrones detectados después de este timestamp
 
+    // ✅ NUEVO: Cooldown global entre alertas (configurable)
+    this.lastGlobalAlertTimestamp = this.loadLastGlobalAlertTimestamp();
+
     // Real-time detection
     this.lastRealtimeCheck = null; // Timestamp de última detección en tiempo real
     this.hasRunFullAnalysis = false; // Flag para saber si ya se hizo el análisis completo inicial
@@ -289,6 +292,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         // Duplicate pattern filtering
         duplicatePriceTolerancePercent: 2.0,
         duplicateTimeToleranceHours: 24
+      },
+
+      // ✅ NUEVO: Price Action Validation (invalidación si precio va en contra)
+      priceActionValidation: {
+        enabled: true,
+        // Velas adicionales DESPUÉS de postPatternValidationCandles para verificar invalidación
+        barsToCheck: 3,
+        // Invalidar si precio rompe el nivel del patrón
+        invalidateOnBreak: true
       },
 
       // Visualization
@@ -658,6 +670,64 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Carga el timestamp de la última alerta global desde localStorage
+   */
+  loadLastGlobalAlertTimestamp() {
+    const storageKey = `dbt_last_alert_${this.symbol}_${this.interval}`;
+    const stored = localStorage.getItem(storageKey);
+
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        return data.timestamp || 0;
+      } catch (e) {
+        log.error(`[${this.symbol}] Failed to load lastGlobalAlertTimestamp:`, e);
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * ✅ NUEVO: Guarda el timestamp de la última alerta global
+   */
+  saveLastGlobalAlertTimestamp() {
+    const storageKey = `dbt_last_alert_${this.symbol}_${this.interval}`;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        timestamp: this.lastGlobalAlertTimestamp
+      }));
+    } catch (e) {
+      log.error(`[${this.symbol}] Failed to save lastGlobalAlertTimestamp:`, e);
+    }
+  }
+
+  /**
+   * ✅ NUEVO: Verifica si el cooldown global está activo
+   * @returns {boolean} true si está en cooldown (no se debe enviar alerta)
+   */
+  isInGlobalCooldown() {
+    // Si el cooldown no está habilitado, no hay restricción
+    if (!this.config.alertSettings?.globalCooldown?.enabled) {
+      return false;
+    }
+
+    const cooldownMinutes = this.config.alertSettings?.globalCooldown?.minutes ?? 30;
+    const cooldownMs = cooldownMinutes * 60 * 1000;
+    const timeSinceLastAlert = Date.now() - this.lastGlobalAlertTimestamp;
+
+    if (timeSinceLastAlert < cooldownMs) {
+      const remainingMs = cooldownMs - timeSinceLastAlert;
+      const remainingMin = Math.ceil(remainingMs / 60000);
+      log.debug(`[${this.symbol}] ⏳ Global cooldown active: ${remainingMin} min remaining`);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Evalúa el resultado (WIN/LOSS) de alertas pendientes basándose en datos de velas.
    * Para cada alerta PENDING, verifica si el precio alcanzó TP (WIN) o SL (LOSS) primero.
    * @param {Array} candles - Array de velas con open, high, low, close, time
@@ -898,16 +968,101 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   /**
+   * ✅ NUEVO: Verifica si el price action posterior invalida el patrón
+   *
+   * Reglas de invalidación:
+   * - DOUBLE_BOTTOM (LONG): Invalidado si precio cae por debajo del segundo valle
+   * - DOUBLE_TOP (SHORT): Invalidado si precio sube por encima del segundo pico
+   *
+   * @param {Object} pattern - El patrón a verificar
+   * @param {Array} candles - Array de velas
+   * @returns {Object} { invalidated: boolean, reason: string }
+   */
+  checkPatternInvalidation(pattern, candles) {
+    const paConfig = this.config.priceActionValidation || {
+      enabled: true,
+      barsToCheck: 3,
+      invalidateOnBreak: true
+    };
+
+    // Si la validación está deshabilitada, no invalidar
+    if (!paConfig.enabled) {
+      return { invalidated: false, reason: null };
+    }
+
+    // Necesitamos el timestamp del segundo extremo para encontrar el índice
+    const patternTimestamp = pattern.secondExtreme?.timestamp;
+    if (!patternTimestamp || !candles || candles.length === 0) {
+      return { invalidated: false, reason: null };
+    }
+
+    const patternIndex = candles.findIndex(c => c.timestamp === patternTimestamp);
+    if (patternIndex === -1) {
+      return { invalidated: false, reason: null };
+    }
+
+    const barsToCheck = paConfig.barsToCheck || 3;
+    const confirmationCandles = this.config.filters?.postPatternValidationCandles || 5;
+    const isLong = pattern.type === 'DOUBLE_BOTTOM';
+
+    // Nivel de invalidación: el precio del segundo extremo
+    const invalidationLevel = pattern.secondExtreme.price;
+
+    // La validación empieza DESPUÉS de las velas de confirmación del patrón
+    const startIndex = confirmationCandles + 1;
+
+    // Verificar las velas de validación
+    for (let i = startIndex; i < startIndex + barsToCheck; i++) {
+      const nextIndex = patternIndex + i;
+      if (nextIndex >= candles.length) break;
+
+      const nextCandle = candles[nextIndex];
+      if (!nextCandle || nextCandle.in_progress) continue; // Solo velas cerradas
+
+      if (isLong) {
+        // Para DOUBLE_BOTTOM (LONG): el precio NO debe caer por debajo del segundo valle
+        if (nextCandle.low < invalidationLevel) {
+          return {
+            invalidated: true,
+            reason: `Price broke below pattern low ($${invalidationLevel.toFixed(2)}) at bar +${i}`
+          };
+        }
+      } else {
+        // Para DOUBLE_TOP (SHORT): el precio NO debe subir por encima del segundo pico
+        if (nextCandle.high > invalidationLevel) {
+          return {
+            invalidated: true,
+            reason: `Price broke above pattern high ($${invalidationLevel.toFixed(2)}) at bar +${i}`
+          };
+        }
+      }
+    }
+
+    return { invalidated: false, reason: null };
+  }
+
+  /**
    * Determina si debe enviar alerta para un patrón
    */
-  shouldSendAlert(pattern) {
+  shouldSendAlert(pattern, candles = null) {
     const mode = this.config.alertSettings.mode;
+
+    // Si ya fue invalidado, no enviar alerta
+    if (pattern._invalidated) {
+      log.debug(`[${this.symbol}] Pattern rejected: Already invalidated`);
+      return false;
+    }
 
     // ✅ NUEVO: Verificar que han pasado suficientes velas de confirmación
     // Esto evita alertas en el pico/valle antes de confirmar el patrón
     const confirmationCandles = this.config.filters?.postPatternValidationCandles || 5;
+    const barsToCheck = this.config.priceActionValidation?.enabled !== false
+      ? (this.config.priceActionValidation?.barsToCheck || 3)
+      : 0;
+    const totalBarsNeeded = confirmationCandles + barsToCheck;
+
     const intervalMs = this.getIntervalMs();
-    const requiredTimeMs = confirmationCandles * intervalMs;
+    const requiredTimeMs = totalBarsNeeded * intervalMs;
     const patternTimestamp = pattern.secondExtreme?.timestamp || 0;
     const currentTime = Date.now();
     const elapsedMs = currentTime - patternTimestamp;
@@ -962,14 +1117,26 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       return false;
     }
 
-    log.info(`[${this.symbol}] ✅ Pattern CONFIRMED after ${confirmationCandles} candles - ready for alert`);
+    // ✅ NUEVO: Verificar price action validation (si está habilitado y hay velas)
+    if (candles && this.config.priceActionValidation?.enabled !== false) {
+      const invalidation = this.checkPatternInvalidation(pattern, candles);
+      if (invalidation.invalidated) {
+        pattern._invalidated = true;
+        pattern._invalidationReason = invalidation.reason;
+        log.debug(`[${this.symbol}] ❌ Pattern INVALIDATED: ${invalidation.reason}`);
+        return false;
+      }
+    }
+
+    log.info(`[${this.symbol}] ✅ Pattern CONFIRMED after ${totalBarsNeeded} bars (${confirmationCandles} confirmation + ${barsToCheck} validation) - ready for alert`);
     return true;
   }
 
   /**
    * Verifica patrones confirmados y envía alertas (Sistema Mejorado Multi-Nivel)
+   * @param {Array} candles - Array de velas para verificar price action validation
    */
-  async checkAndSendAlerts() {
+  async checkAndSendAlerts(candles = null) {
     if (!this.config.alertsEnabled) {
       log.debug(`[${this.symbol}] DBT Alerts: DISABLED`);
       return;
@@ -1032,8 +1199,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         continue;
       }
 
-      // Validar con nuevo sistema
-      if (!this.shouldSendAlert(pattern)) {
+      // Validar con nuevo sistema (pasando velas para price action validation)
+      if (!this.shouldSendAlert(pattern, candles)) {
         skipReasons.failedValidation++;
         continue;
       }
@@ -1063,6 +1230,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const MAX_ALERTS_PER_RUN = 5;
     if (newPatterns.length > MAX_ALERTS_PER_RUN) {
       log.debug(`\n⚠️  Too many patterns (${newPatterns.length}). Limiting to ${MAX_ALERTS_PER_RUN} alerts.`);
+    }
+
+    // ✅ NUEVO: Verificar cooldown global antes de enviar
+    if (this.isInGlobalCooldown()) {
+      log.info(`\n⏳ Skipping alerts due to global cooldown`);
+      log.info(`${'='.repeat(80)}\n`);
+      return;
     }
 
     // Enviar alertas
@@ -1139,8 +1313,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         // ✅ NUEVO: También guardar en historial global
         this.saveToGlobalAlertHistory(alertRecord);
 
+        // ✅ NUEVO: Actualizar timestamp de cooldown global
+        this.lastGlobalAlertTimestamp = Date.now();
+        this.saveLastGlobalAlertTimestamp();
+
         log.debug(`     ✅ ALERT SENT SUCCESSFULLY`);
         alertCount++;
+
+        // ✅ NUEVO: Si el cooldown global está activo, solo enviar una alerta y luego parar
+        if (this.config.alertSettings?.globalCooldown?.enabled) {
+          log.info(`     ⏳ Entering global cooldown for ${this.config.alertSettings?.globalCooldown?.minutes ?? 30} minutes`);
+          break;
+        }
       } else {
         log.debug(`     ❌ ALERT FAILED TO SEND`);
 
@@ -1483,7 +1667,17 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         default:    return 10;
       }
     };
-    const MAX_NEW_PATTERN_AGE_MS = intervalMs * getAgeMultiplier();
+
+    // ✅ FIX: Incluir delay de confirmación en el cálculo de edad máxima
+    // El patrón debe esperar postPatternValidationCandles + barsToCheck antes de alertar
+    const confirmationCandles = this.config.filters?.postPatternValidationCandles || 5;
+    const barsToCheck = this.config.priceActionValidation?.enabled !== false
+      ? (this.config.priceActionValidation?.barsToCheck || 3)
+      : 0;
+    const confirmationDelayMs = (confirmationCandles + barsToCheck) * intervalMs;
+
+    // maxAgeMs incluye tiempo base + delay de confirmación
+    const MAX_NEW_PATTERN_AGE_MS = (intervalMs * getAgeMultiplier()) + confirmationDelayMs;
 
     newPatterns.forEach(newPattern => {
       const newId = this.getPatternId(newPattern);
@@ -1553,6 +1747,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // ✅ Solo verificar realTimeDetection para detección incremental, NO para análisis completo inicial
     if (!isFullAnalysis && !this.config.realTimeDetection?.enabled) {
       log.debug(`[${this.symbol}] Real-time detection deshabilitado (solo afecta detección incremental)`);
+      return;
+    }
+
+    // ✅ NUEVO: Si pauseDetection está activo y estamos en cooldown, no detectar nuevos patrones
+    if (!isFullAnalysis &&
+        this.config.alertSettings?.globalCooldown?.enabled &&
+        this.config.alertSettings?.globalCooldown?.pauseDetection &&
+        this.isInGlobalCooldown()) {
+      log.debug(`[${this.symbol}] ⏸️ Detection paused during cooldown`);
       return [];
     }
 
@@ -1673,7 +1876,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         // Enviar alertas solo si NO es la primera detección (evitar alertas de patrones históricos)
         if (!isFirstDetection && this.config.alertsEnabled) {
           log.info(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
-          await this.checkAndSendAlerts();
+          await this.checkAndSendAlerts(allCandles);
         }
 
         // Forzar redibujado del chart
@@ -1744,7 +1947,48 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           this._drawEntryArrow(ctx, pattern, allCandles, priceToY, timeToX);
         }
       }
+
+      // ✅ NUEVO: Dibujar marca de invalidación (X) si el patrón fue invalidado
+      if (pattern._invalidated) {
+        this._drawInvalidationMark(ctx, pattern, allCandles, priceToY, timeToX);
+      }
     });
+  }
+
+  /**
+   * ✅ NUEVO: Dibuja marca X para patrones invalidados
+   */
+  _drawInvalidationMark(ctx, pattern, allCandles, priceToY, timeToX) {
+    // Calcular posición de la X (en el segundo extremo del patrón)
+    const patternTimestamp = pattern.secondExtreme?.timestamp;
+    if (!patternTimestamp) return;
+
+    const x = timeToX(patternTimestamp);
+    const y = priceToY(pattern.secondExtreme.price);
+
+    // Dibujar una X roja semi-transparente
+    ctx.save();
+
+    const size = 12;
+    ctx.strokeStyle = '#FF1744';
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.8;
+
+    // Dibujar X
+    ctx.beginPath();
+    ctx.moveTo(x - size, y - size);
+    ctx.lineTo(x + size, y + size);
+    ctx.moveTo(x + size, y - size);
+    ctx.lineTo(x - size, y + size);
+    ctx.stroke();
+
+    // Opcional: círculo alrededor de la X
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.arc(x, y, size + 4, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   /**
