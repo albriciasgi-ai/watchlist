@@ -19,7 +19,12 @@ import TPSLBox from "./drawing/shapes/TPSLBox";
 import TPSLBoxShort from "./drawing/shapes/TPSLBoxShort";
 import MeasurementShape from "./drawing/shapes/MeasurementShape";
 import TextBox from "./drawing/shapes/TextBox";
+import DrawingToolManager from "./drawing/DrawingToolManager";
 import AlertHistoryPanel from "./AlertHistoryPanel";
+import FloatingToolbar from "./drawing/FloatingToolbar";
+import ColorPickerModal from "./drawing/ColorPickerModal";
+import MeasurementTool from "./drawing/MeasurementTool";
+import TextEditModal from "./drawing/TextEditModal";
 import Logger from '../utils/Logger.js';
 import RenderManager from '../utils/RenderManager.js';
 
@@ -102,7 +107,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig, onFullscreenChange }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -124,8 +129,27 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
 
   // Estados para modo dibujo inline
-  const [drawingMode, setDrawingMode] = useState(false);
+  const [internalDrawingMode, setInternalDrawingMode] = useState(false);
   const [selectedDrawingTool, setSelectedDrawingTool] = useState('select');
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [shapeBeingColored, setShapeBeingColored] = useState(null);
+  const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
+  const [textBoxBeingEdited, setTextBoxBeingEdited] = useState(null);
+  const lastDoubleClickRef = useRef(0); // Para debounce de doble-click
+  const internalDrawingManagerRef = useRef(null); // DrawingToolManager para dibujo inline
+  const scaleConverterRef = useRef(null); // Scale converter para conversión de coordenadas
+  const measurementToolRef = useRef(null); // MeasurementTool para mediciones temporales
+  const lastTextBoxClickTimeRef = useRef(0); // Para detectar doble-click en TextBox
+  const lastTextBoxClickedIdRef = useRef(null); // ID del TextBox clickeado
+
+  // Usar drawing manager externo si está disponible (para compartir entre grid y fullscreen)
+  const drawingManagerRef = externalDrawingManager ? { current: externalDrawingManager } : internalDrawingManagerRef;
+  const drawingMode = externalDrawingMode !== undefined && onDrawingModeChange ? externalDrawingMode : internalDrawingMode;
+  const setDrawingMode = onDrawingModeChange || setInternalDrawingMode;
+
+  // Ref para drawingMode (para uso en drawChart sin depender del closure)
+  const drawingModeRef = useRef(drawingMode);
+  drawingModeRef.current = drawingMode;
 
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
@@ -164,6 +188,153 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       onFullscreenChange(symbol, interval, isFullscreen);
     }
   }, [isFullscreen, symbol, interval, onFullscreenChange]);
+
+  // 🎨 Handler de teclado para modo dibujo (ESC, Delete, Ctrl+Z, Ctrl+Y)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!drawingMode) return;
+
+      // 🛡️ Si el padre tiene fullscreen abierto, no procesar eventos (el hijo los maneja)
+      if (isFullscreen && !isFullscreenChild) {
+        return;
+      }
+
+      // 🛡️ Ignorar shortcuts cuando hay un modal de edición de texto abierto
+      // o cuando el foco está en un elemento de entrada
+      if (isTextEditModalOpen) {
+        // Solo permitir ESC para cerrar el modal
+        if (e.key !== 'Escape') {
+          return;
+        }
+      }
+
+      // 🛡️ También detectar si hay un TextEditModal abierto en el DOM (para fullscreen)
+      const textEditModalOpen = document.querySelector('.text-edit-modal-overlay');
+      if (textEditModalOpen && e.key !== 'Escape') {
+        return; // No interceptar teclas cuando hay modal de texto abierto
+      }
+
+      const activeElement = document.activeElement;
+      const isInputFocused = activeElement && (
+        activeElement.tagName === 'INPUT' ||
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.isContentEditable ||
+        activeElement.closest('.text-edit-modal-content') ||
+        activeElement.closest('.color-picker-modal-content')
+      );
+
+      // Solo permitir ESC cuando hay input focuseado (para cerrar modales)
+      if (isInputFocused && e.key !== 'Escape') {
+        return; // No interceptar otras teclas cuando se está escribiendo
+      }
+
+      // ESC - Cerrar modo dibujo o cancelar medición
+      if (e.key === 'Escape') {
+        // Primero: limpiar medición si existe
+        if (measurementToolRef.current && (measurementToolRef.current.isMeasuring || measurementToolRef.current.startPoint)) {
+          measurementToolRef.current.clear();
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          return;
+        }
+        // Segundo: cancelar dibujo en progreso si existe
+        if (drawingManagerRef.current && drawingManagerRef.current.isDrawing()) {
+          drawingManagerRef.current.cancelDrawing();
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          return;
+        }
+        // Si no hay nada que cancelar, cerrar modo dibujo
+        setDrawingMode(false);
+        return;
+      }
+
+      // Delete - Eliminar shape seleccionado
+      if (e.key === 'Delete' && drawingManagerRef.current) {
+        if (drawingManagerRef.current.selectedShape) {
+          drawingManagerRef.current.deleteSelected();
+          saveDrawingsInline();
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+        return;
+      }
+
+      // Ctrl+Z - Deshacer
+      if (e.ctrlKey && e.key === 'z' && drawingManagerRef.current) {
+        drawingManagerRef.current.undo();
+        saveDrawingsInline();
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        return;
+      }
+
+      // Ctrl+Y - Rehacer
+      if (e.ctrlKey && e.key === 'y' && drawingManagerRef.current) {
+        drawingManagerRef.current.redo();
+        saveDrawingsInline();
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        return;
+      }
+
+      // Shortcuts de herramientas (sin modificadores)
+      if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+        const key = e.key.toLowerCase();
+        switch (key) {
+          case 'v': setSelectedDrawingTool('select'); break;
+          case 't': setSelectedDrawingTool('trendline'); break;
+          case 'h': setSelectedDrawingTool('horizontal'); break;
+          case 'l': setSelectedDrawingTool('vertical'); break;
+          case 'r': setSelectedDrawingTool('rectangle'); break;
+          case 'f': setSelectedDrawingTool('fibonacci'); break;
+          case 'p': setSelectedDrawingTool('tpsl'); break;
+          case 's': setSelectedDrawingTool('tpsl-short'); break;
+          case 'n': setSelectedDrawingTool('textbox'); break;
+          case 'c':
+            // C - Cambiar color de línea seleccionada
+            if (drawingManagerRef.current && drawingManagerRef.current.selectedShape) {
+              const shape = drawingManagerRef.current.selectedShape;
+              if (['trendline', 'horizontal', 'vertical'].includes(shape.type)) {
+                e.preventDefault();
+                setShapeBeingColored(shape);
+                setIsColorPickerOpen(true);
+              }
+            }
+            break;
+        }
+      }
+    };
+
+    if (drawingMode) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [drawingMode, mousePos]);
+
+  // 🎨 Inicializar DrawingToolManager y MeasurementTool cuando se activa el modo dibujo
+  useEffect(() => {
+    if (drawingMode && !externalDrawingManager && !internalDrawingManagerRef.current) {
+      internalDrawingManagerRef.current = new DrawingToolManager(
+        symbol,
+        interval,
+        setSelectedDrawingTool,
+        () => {
+          // Callback cuando se agrega un shape - guardar y forzar re-render
+          saveDrawingsInline();
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        }
+      );
+      // Cargar dibujos existentes al inicializar
+      loadDrawingsIntoManager();
+    }
+    // Inicializar MeasurementTool cuando se activa el modo dibujo
+    if (drawingMode && !measurementToolRef.current) {
+      measurementToolRef.current = new MeasurementTool();
+    }
+  }, [drawingMode, symbol, interval, externalDrawingManager]);
+
+  // 🎨 Sincronizar herramienta seleccionada con DrawingToolManager
+  useEffect(() => {
+    if (drawingManagerRef.current && drawingMode) {
+      drawingManagerRef.current.setTool(selectedDrawingTool);
+    }
+  }, [selectedDrawingTool, drawingMode]);
 
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
@@ -230,6 +401,54 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       log.error(`Error loading drawings for ${symbol}:`, error);
       drawingsRef.current = [];
       setDrawingsVersion(v => v + 1); // Forzar re-render incluso en error
+    }
+  };
+
+  // 🎨 Guardar dibujos inline al servidor
+  const saveDrawingsInline = async () => {
+    if (!drawingManagerRef.current) return;
+
+    try {
+      const shapes = drawingManagerRef.current.getShapes();
+      await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shapes })
+      });
+      log.info(`[MiniChart] 💾 Saved ${shapes.length} inline drawings for ${symbol}`);
+
+      // 🔄 Sincronizar drawingsRef con el estado actual del manager
+      // para evitar desincronización cuando se sale del modo dibujo
+      drawingsRef.current = shapes
+        .map(shapeData => deserializeShape(shapeData))
+        .filter(shape => shape !== null);
+      setDrawingsVersion(v => v + 1);
+
+      // 🔔 Notificar al padre que hubo cambios en los dibujos
+      if (onDrawingsChanged) {
+        onDrawingsChanged();
+      }
+    } catch (error) {
+      log.error(`Error saving inline drawings for ${symbol}:`, error);
+    }
+  };
+
+  // 🎨 Cargar dibujos al DrawingToolManager
+  const loadDrawingsIntoManager = async () => {
+    if (!drawingManagerRef.current) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      const data = await response.json();
+
+      if (data.shapes && Array.isArray(data.shapes)) {
+        drawingManagerRef.current.loadShapes(data.shapes);
+        log.info(`[MiniChart] 🎨 Loaded ${data.shapes.length} drawings into DrawingToolManager`);
+        // Forzar redibujado
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      }
+    } catch (error) {
+      log.error(`Error loading drawings into manager for ${symbol}:`, error);
     }
   };
 
@@ -436,8 +655,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext, drawingsRef.current);
     }
 
-    // Render saved drawings (readonly, below candles)
-    if (drawingsRef.current.length > 0) {
+    // Render saved drawings (readonly, below candles) o crear scaleConverter para modo dibujo
+    // Siempre crear scaleConverter si hay drawingManager con shapes o si drawingMode está activo
+    // Usar drawingModeRef.current para obtener el valor actual sin depender del closure
+    const currentDrawingMode = drawingModeRef.current;
+    const hasInlineDrawings = drawingManagerRef.current && drawingManagerRef.current.shapes && drawingManagerRef.current.shapes.length > 0;
+    if (drawingsRef.current.length > 0 || currentDrawingMode || hasInlineDrawings) {
       const scaleConverter = {
         candles: displayCandles,
         visibleCandles,
@@ -490,16 +713,36 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
       };
 
-      // Render each drawing with configurable opacity for readonly
-      ctx.globalAlpha = DRAWING_OPACITY;
-      drawingsRef.current.forEach(shape => {
-        try {
-          shape.render(ctx, scaleConverter, false, false, false);
-        } catch (error) {
-          log.error('Error rendering shape:', error);
+      // 🎨 Guardar scaleConverter para uso en event handlers de dibujo
+      scaleConverterRef.current = scaleConverter;
+
+      // 🎨 Renderizar dibujos:
+      // - Si hay DrawingToolManager con shapes, usar eso (modo editable)
+      // - Si no, usar drawingsRef (modo readonly desde servidor)
+      const hasManagerShapes = drawingManagerRef.current && drawingManagerRef.current.shapes.length > 0;
+
+      if (hasManagerShapes || currentDrawingMode) {
+        // Modo editable: renderizar desde DrawingToolManager
+        if (drawingManagerRef.current) {
+          drawingManagerRef.current.render(ctx, scaleConverter);
         }
-      });
-      ctx.globalAlpha = 1.0;
+      } else if (drawingsRef.current.length > 0) {
+        // Modo readonly: renderizar desde drawingsRef (dibujos guardados del servidor)
+        ctx.globalAlpha = DRAWING_OPACITY;
+        drawingsRef.current.forEach(shape => {
+          try {
+            shape.render(ctx, scaleConverter, false, false, false);
+          } catch (error) {
+            log.error('Error rendering shape:', error);
+          }
+        });
+        ctx.globalAlpha = 1.0;
+      }
+
+      // 📏 Renderizar MeasurementTool (encima de todo)
+      if (measurementToolRef.current && (measurementToolRef.current.isMeasuring || measurementToolRef.current.startPoint)) {
+        measurementToolRef.current.render(ctx, scaleConverter);
+      }
     }
 
     ctx.lineWidth = 1;
@@ -856,6 +1099,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               log.debug(`[${symbol}] 🔄 Analizando rangos tras cierre de vela`);
               indicatorManagerRef.current.analyzeRanges(candlesRef.current);
             }
+
+            // ✅ FIX: Notificar cierre de vela para alertas en tiempo real (DTB, etc.)
+            if (indicatorManagerRef.current.onCandleClose) {
+              indicatorManagerRef.current.onCandleClose(candlesRef.current);
+            }
           }
 
           // Redibujar con indicadores actualizados
@@ -951,15 +1199,48 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   };
 
   // ==================== MOUSE HANDLERS ====================
-  
+
   const handleMouseMove = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
+    // 📏 Actualizar MeasurementTool si está midiendo
+    if (drawingMode && measurementToolRef.current && measurementToolRef.current.isMeasuring) {
+      measurementToolRef.current.handleMouseMove(e, canvas);
+      setMousePos({ x, y });
+      drawChart(candlesRef.current, lastPriceRef.current, x, y);
+      return;
+    }
+
+    // 🎨 Modo dibujo: delegar al DrawingToolManager
+    if (drawingMode && drawingManagerRef.current && scaleConverterRef.current) {
+      const consumed = drawingManagerRef.current.handleMouseMove(x, y, scaleConverterRef.current);
+
+      // Cambiar cursor según el estado
+      if (selectedDrawingTool === 'select') {
+        const selectedShape = drawingManagerRef.current.selectedShape;
+        if (selectedShape && (selectedShape.isDragging || selectedShape.isResizing)) {
+          canvas.style.cursor = 'grabbing';
+        } else if (drawingManagerRef.current.hoveredShape) {
+          canvas.style.cursor = 'grab';
+        } else {
+          canvas.style.cursor = 'crosshair';
+        }
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
+
+      if (consumed) {
+        setMousePos({ x, y });
+        drawChart(candlesRef.current, lastPriceRef.current, x, y);
+        return;
+      }
+    }
+
     if (dragStateRef.current.isDragging) {
       // 🎯 Paneo horizontal
       const deltaX = x - dragStateRef.current.startX;
@@ -992,27 +1273,113 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    dragStateRef.current = {
-      isDragging: true,
-      startX: x,
-      startY: y,
-      startOffset: viewStateRef.current.offset,
-      startVerticalOffset: viewStateRef.current.verticalOffset || 0
-    };
-    canvas.style.cursor = 'grabbing';
+    // 📏 Middle-click (button === 1) - Herramienta de medición
+    if (e.button === 1 && drawingMode && measurementToolRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      measurementToolRef.current.handleMouseDown(e, canvas);
+      drawChart(candlesRef.current, lastPriceRef.current, x, y);
+      return;
+    }
+
+    // 🎨 Modo dibujo: delegar al DrawingToolManager (solo left-click)
+    if (e.button === 0 && drawingMode && drawingManagerRef.current && scaleConverterRef.current) {
+      // 📝 Detectar doble-click en TextBox para editar
+      const clickedShape = drawingManagerRef.current.findShapeAt(x, y, scaleConverterRef.current);
+      if (clickedShape && clickedShape.type === 'textbox') {
+        const now = Date.now();
+        const timeSinceLastClick = now - lastTextBoxClickTimeRef.current;
+        const isSameTextBox = lastTextBoxClickedIdRef.current === clickedShape.id;
+
+        if (timeSinceLastClick < 300 && isSameTextBox) {
+          // Doble-click detectado - abrir modal de edición
+          e.preventDefault();
+          e.stopPropagation();
+          setTextBoxBeingEdited(clickedShape);
+          setIsTextEditModalOpen(true);
+          lastTextBoxClickTimeRef.current = 0;
+          lastTextBoxClickedIdRef.current = null;
+          return;
+        }
+
+        lastTextBoxClickTimeRef.current = now;
+        lastTextBoxClickedIdRef.current = clickedShape.id;
+      }
+
+      const consumed = drawingManagerRef.current.handleMouseDown(
+        x, y, scaleConverterRef.current, selectedDrawingTool
+      );
+
+      if (consumed) {
+        // 📝 Si se creó un TextBox nuevo, abrir modal inmediatamente
+        if (selectedDrawingTool === 'textbox') {
+          const shapes = drawingManagerRef.current.shapes;
+          const newTextBox = shapes[shapes.length - 1];
+          if (newTextBox && newTextBox.type === 'textbox') {
+            setTextBoxBeingEdited(newTextBox);
+            setIsTextEditModalOpen(true);
+          }
+        }
+        drawChart(candlesRef.current, lastPriceRef.current, x, y);
+        return;
+      }
+
+      // Si estamos en modo select y no se consumió el click, permitir panning
+      if (selectedDrawingTool === 'select') {
+        dragStateRef.current = {
+          isDragging: true,
+          startX: x,
+          startY: y,
+          startOffset: viewStateRef.current.offset,
+          startVerticalOffset: viewStateRef.current.verticalOffset || 0
+        };
+        canvas.style.cursor = 'grabbing';
+      }
+      return;
+    }
+
+    // Panning normal (fuera de modo dibujo)
+    if (e.button === 0) {
+      dragStateRef.current = {
+        isDragging: true,
+        startX: x,
+        startY: y,
+        startOffset: viewStateRef.current.offset,
+        startVerticalOffset: viewStateRef.current.verticalOffset || 0
+      };
+      canvas.style.cursor = 'grabbing';
+    }
   };
 
   const handleMouseUp = () => {
+    // 🎨 Modo dibujo: delegar al DrawingToolManager
+    if (drawingMode && drawingManagerRef.current && scaleConverterRef.current) {
+      // Verificar si hay un shape siendo arrastrado/redimensionado
+      const wasModifying = drawingManagerRef.current.selectedShape &&
+        (drawingManagerRef.current.selectedShape.isDragging ||
+         drawingManagerRef.current.selectedShape.isResizing);
+
+      drawingManagerRef.current.handleMouseUp(scaleConverterRef.current);
+
+      // Si se estaba modificando un shape, guardar al servidor
+      if (wasModifying) {
+        saveDrawingsInline();
+      }
+    }
+
     dragStateRef.current.isDragging = false;
     if (canvasRef.current) {
-      canvasRef.current.style.cursor = 'crosshair';
+      canvasRef.current.style.cursor = drawingMode ? 'crosshair' : 'crosshair';
     }
   };
 
   const handleMouseLeave = () => {
     dragStateRef.current.isDragging = false;
     setMousePos(null);
-    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+    // Solo redibujar si NO estamos en modo dibujo (evita parpadeo al ir al toolbar)
+    if (!drawingMode) {
+      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+    }
     if (canvasRef.current) {
       canvasRef.current.style.cursor = 'crosshair';
     }
@@ -1149,14 +1516,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const handleDoubleClick = (e) => {
     const canvas = canvasRef.current;
 
+    // 🛡️ Debounce: ignorar doble-clicks que ocurran en menos de 300ms
+    const now = Date.now();
+    if (now - lastDoubleClickRef.current < 300) {
+      console.log(`[${symbol}] 🖱️ handleDoubleClick IGNORADO por debounce (${now - lastDoubleClickRef.current}ms)`);
+      return;
+    }
+    lastDoubleClickRef.current = now;
+
+    console.log(`[${symbol}] 🖱️ handleDoubleClick llamado, shiftKey=${e.shiftKey}, drawingMode=${drawingMode}`);
+
     // Shift+DblClick: comportamiento legacy (abre ChartModal)
     if (e.shiftKey) {
+      console.log(`[${symbol}] 🖱️ Shift+DblClick -> abriendo ChartModal`);
       setShowChartModal(true);
       return;
     }
 
     if (!canvas || !candlesRef.current || candlesRef.current.length === 0) {
       // Si no hay canvas o datos, solo abrir ChartModal
+      console.log(`[${symbol}] 🖱️ Sin canvas/datos -> abriendo ChartModal`);
       setShowChartModal(true);
       return;
     }
@@ -1167,7 +1546,6 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     const width = rect.width;
     const height = rect.height;
-    const marginLeft = 50;
     const marginRight = 65;
     const marginTop = 30;
     const timeAxisHeight = 25;
@@ -1179,14 +1557,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const isInPriceAxis = x >= (width - marginRight) && x <= width;
     const isInPriceChartArea = y >= marginTop && y <= (marginTop + priceChartHeight);
 
+    console.log(`[${symbol}] 🖱️ x=${x.toFixed(0)}, width=${width.toFixed(0)}, isInPriceAxis=${isInPriceAxis}, isInPriceChartArea=${isInPriceChartArea}`);
+
     if (isInPriceAxis && isInPriceChartArea) {
       // 🎯 Auto-scale vertical: resetear zoom y offset para llenar la ventana
+      console.log(`[${symbol}] 🖱️ Auto-scale activado`);
       viewStateRef.current.verticalZoom = 1;
       viewStateRef.current.verticalOffset = 0;
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     } else {
       // 🎯 Doble click en área de gráfico: toggle modo dibujo inline
+      console.log(`[${symbol}] 🖱️ Toggle drawingMode: ${drawingMode} -> ${!drawingMode}`);
       setDrawingMode(prev => !prev);
     }
   };
@@ -1864,6 +2246,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             📊
           </button>
         </div>
+
         <canvas
           ref={canvasRef}
           onMouseMove={handleMouseMove}
@@ -1871,9 +2254,145 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
           onDoubleClick={handleDoubleClick}
-          style={{ cursor: 'crosshair', display: 'block', touchAction: 'none' }}
+          onAuxClick={(e) => {
+            // Prevenir comportamiento por defecto del middle-click (auto-scroll)
+            if (e.button === 1) {
+              e.preventDefault();
+            }
+          }}
+          onContextMenu={(e) => {
+            // Prevenir menú contextual en modo dibujo
+            if (drawingMode) {
+              e.preventDefault();
+            }
+          }}
+          style={{
+            cursor: drawingMode ? 'crosshair' : 'crosshair',
+            display: 'block',
+            touchAction: 'none',
+            outline: drawingMode ? '2px solid #3b82f6' : 'none'
+          }}
         />
       </div>
+
+      {/* FloatingToolbar para modo dibujo inline - mostrar en minichart normal o en hijo fullscreen */}
+      {drawingMode && (!isFullscreen || isFullscreenChild) && (
+        <FloatingToolbar
+          selectedTool={selectedDrawingTool}
+          onSelectTool={setSelectedDrawingTool}
+          onClose={() => setDrawingMode(false)}
+          onUndo={() => {
+            if (drawingManagerRef.current) {
+              drawingManagerRef.current.undo();
+              saveDrawingsInline();
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+            }
+          }}
+          onRedo={() => {
+            if (drawingManagerRef.current) {
+              drawingManagerRef.current.redo();
+              saveDrawingsInline();
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+            }
+          }}
+          onClearAll={() => {
+            if (drawingManagerRef.current) {
+              const shapesCount = drawingManagerRef.current.shapes?.length || 0;
+              if (window.confirm(`¿Eliminar todos los dibujos? (${shapesCount} dibujos)`)) {
+                drawingManagerRef.current.clearAll();
+                // También limpiar drawingsRef para eliminar dibujos fantasma
+                drawingsRef.current = [];
+                saveDrawingsInline();
+                drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+              }
+            }
+          }}
+          compact={!isFullscreen}
+          isFullscreen={isFullscreen}
+          canvasRef={canvasRef}
+        />
+      )}
+
+      {/* ColorPickerModal para cambiar color de líneas */}
+      {isColorPickerOpen && shapeBeingColored && (
+        <ColorPickerModal
+          currentColor={shapeBeingColored.style?.color || '#3B82F6'}
+          shapeName={
+            shapeBeingColored.type === 'trendline' ? 'Línea de Tendencia' :
+            shapeBeingColored.type === 'horizontal' ? 'Línea Horizontal' :
+            shapeBeingColored.type === 'vertical' ? 'Línea Vertical' : 'Línea'
+          }
+          onSave={(newColor) => {
+            if (shapeBeingColored && shapeBeingColored.style) {
+              shapeBeingColored.style.color = newColor;
+              if (drawingManagerRef.current) {
+                drawingManagerRef.current.saveToHistory();
+              }
+              saveDrawingsInline();
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+            }
+            setIsColorPickerOpen(false);
+            setShapeBeingColored(null);
+          }}
+          onCancel={() => {
+            setIsColorPickerOpen(false);
+            setShapeBeingColored(null);
+          }}
+        />
+      )}
+
+      {/* TextEditModal para editar TextBox */}
+      {isTextEditModalOpen && textBoxBeingEdited && (
+        <TextEditModal
+          initialText={textBoxBeingEdited.text}
+          initialStyle={textBoxBeingEdited.style}
+          onSave={(newText, newStyles) => {
+            if (textBoxBeingEdited && newText.trim()) {
+              textBoxBeingEdited.setText(newText);
+              if (newStyles) {
+                textBoxBeingEdited.style = { ...textBoxBeingEdited.style, ...newStyles };
+              }
+              if (drawingManagerRef.current) {
+                drawingManagerRef.current.saveToHistory();
+              }
+              saveDrawingsInline();
+              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+              // Cambiar a modo select después de guardar
+              setSelectedDrawingTool('select');
+            } else if (textBoxBeingEdited && !newText.trim()) {
+              // Si el texto está vacío, eliminar el TextBox
+              if (drawingManagerRef.current) {
+                const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
+                if (index !== -1) {
+                  drawingManagerRef.current.shapes.splice(index, 1);
+                  drawingManagerRef.current.saveToHistory();
+                  saveDrawingsInline();
+                  drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+                }
+              }
+              setSelectedDrawingTool('select');
+            }
+            setIsTextEditModalOpen(false);
+            setTextBoxBeingEdited(null);
+          }}
+          onCancel={() => {
+            // Si era un TextBox nuevo con texto por defecto, eliminarlo
+            if (textBoxBeingEdited &&
+                (textBoxBeingEdited.text === 'Escribe aquí...' || textBoxBeingEdited.text === 'Texto...')) {
+              if (drawingManagerRef.current) {
+                const index = drawingManagerRef.current.shapes.indexOf(textBoxBeingEdited);
+                if (index !== -1) {
+                  drawingManagerRef.current.shapes.splice(index, 1);
+                  drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+                }
+              }
+            }
+            setSelectedDrawingTool('select');
+            setIsTextEditModalOpen(false);
+            setTextBoxBeingEdited(null);
+          }}
+        />
+      )}
 
       {showFixedRangeManager && (
         <div className="modal-overlay" onClick={() => setShowFixedRangeManager(false)}>
@@ -1973,6 +2492,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               vpFixedRange={vpFixedRange}
               oiMode={fullscreenOiMode}
               externalIndicatorManager={indicatorManagerRef.current}
+              externalDrawingManager={drawingManagerRef.current}
+              externalDrawingMode={drawingMode}
+              onDrawingModeChange={setDrawingMode}
               onOpenVpSettings={onOpenVpSettings}
               onOpenRangeDetectionSettings={onOpenRangeDetectionSettings}
               onOpenRejectionPatternSettings={onOpenRejectionPatternSettings}
@@ -1982,6 +2504,19 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
               onOpenDoubleTopBottomSettings={onOpenDoubleTopBottomSettings}
               rejectionPatternConfig={rejectionPatternConfig}
+              isFullscreenChild={true}
+              onDrawingsChanged={() => {
+                // Sincronizar drawingsRef del padre con los shapes del manager
+                if (drawingManagerRef.current) {
+                  const shapes = drawingManagerRef.current.getShapes();
+                  drawingsRef.current = shapes
+                    .map(shapeData => deserializeShape(shapeData))
+                    .filter(shape => shape !== null);
+                  setDrawingsVersion(v => v + 1);
+                  // Forzar redibujado
+                  drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+                }
+              }}
             />
           </div>
         </div>

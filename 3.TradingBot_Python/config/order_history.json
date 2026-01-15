@@ -2520,5 +2520,70 @@
     "pattern": "Double Top (ABRIR SHORT)",
     "confidence": 100.0,
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-14T16:32:58.831554",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 50000.0,
+    "quantity_coin": 0.01,
+    "quantity_usdt": 500.0,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 85.5,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-14T18:32:18.017321",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 3351.6499999999996,
+    "quantity_coin": 0.02,
+    "quantity_usdt": 67.03299999999999,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 60.0,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-14T18:37:16.573804",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "entry_price": 96771.25,
+    "quantity_coin": 0.001,
+    "quantity_usdt": 96.77125,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Double Bottom (ABRIR LONG)",
+    "confidence": 65.0,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-14T19:43:13.512801",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 3327.38,
+    "quantity_coin": 0.02,
+    "quantity_usdt": 66.5476,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Bullish Engulfing (ABRIR LONG)",
+    "confidence": 100.0,
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-14T19:53:10.152657",
+    "symbol": "BTCUSDT",
+    "side": "Sell",
+    "entry_price": 96628.8,
+    "quantity_coin": 0.001,
+    "quantity_usdt": 96.6288,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "Bearish Engulfing (ABRIR SHORT)",
+    "confidence": 92.0,
+    "status": "success"
   }
 ]

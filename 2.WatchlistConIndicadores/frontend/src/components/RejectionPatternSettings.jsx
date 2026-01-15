@@ -226,6 +226,11 @@ const RejectionPatternSettings = ({
       strategy: {
         ...defaultConfig.strategy,
         ...oldConfig.strategy
+      },
+      // ✅ NUEVO: Migrar priceActionValidation
+      priceActionValidation: {
+        ...defaultConfig.priceActionValidation,
+        ...oldConfig.priceActionValidation
       }
     };
   };
@@ -1152,6 +1157,76 @@ const RejectionPatternSettings = ({
                   </div>
                 </div>
               )}
+            </>
+          )}
+        </section>
+
+        {/* ✅ NUEVO: Section Price Action Validation */}
+        <section className="settings-section">
+          <h4 className="section-header">🔍 Price Action Validation</h4>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.priceActionValidation?.enabled !== false}
+                onChange={(e) => {
+                  setConfig(prev => ({
+                    ...prev,
+                    priceActionValidation: {
+                      ...prev.priceActionValidation,
+                      enabled: e.target.checked
+                    }
+                  }));
+                  setActivePreset('custom');
+                }}
+              />
+              <span>Enable invalidation check</span>
+            </label>
+            <span className="filter-hint">
+              Invalidates patterns if price breaks the pattern's high/low after confirmation
+            </span>
+          </div>
+
+          {config.priceActionValidation?.enabled !== false && (
+            <>
+              <div className="filter-item" style={{ marginTop: '12px' }}>
+                <label>
+                  Confirmation bars: {config.priceActionValidation?.barsToCheck || 3}
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    step="1"
+                    value={config.priceActionValidation?.barsToCheck || 3}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        priceActionValidation: {
+                          ...prev.priceActionValidation,
+                          barsToCheck: parseInt(e.target.value)
+                        }
+                      }));
+                      setActivePreset('custom');
+                    }}
+                    className="proximity-slider"
+                  />
+                </label>
+                <span className="filter-hint">
+                  Number of candles to check AFTER swing confirmation ({config.swingDetection?.rightBars || 5} bars).
+                  <br />
+                  Total wait: {(config.swingDetection?.rightBars || 5) + (config.priceActionValidation?.barsToCheck || 3)} bars before alert
+                </span>
+              </div>
+
+              <div style={{ marginTop: '12px', padding: '10px', background: 'rgba(255,152,0,0.1)', borderRadius: '6px', border: '1px solid rgba(255,152,0,0.3)' }}>
+                <span style={{ fontSize: '12px', color: '#ff9800' }}>
+                  <strong>How it works:</strong>
+                  <br />• LONG patterns: Invalidated if price breaks below pattern's low
+                  <br />• SHORT patterns: Invalidated if price breaks above pattern's high
+                  <br />• Invalidated patterns show a ❌ and won't send alerts
+                </span>
+              </div>
             </>
           )}
         </section>
@@ -3037,6 +3112,12 @@ function getDefaultConfig() {
       slSwingLookback: 50,
       slBufferPercent: 20,
       slMinPercent: 0.5
+    },
+    // ✅ NUEVO: Validación de price action post-patrón
+    priceActionValidation: {
+      enabled: true,           // Habilitar validación de invalidación
+      barsToCheck: 3,          // Velas después del swing confirmation a verificar
+      invalidateOnBreak: true  // Invalidar si rompe high/low del patrón
     }
   };
 }

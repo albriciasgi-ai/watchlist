@@ -366,7 +366,6 @@ class LocalPatternDetector {
       }
     }
 
-    // console.log(`[LocalPatternDetector] Detected ${patterns.length} patterns in ${candles.length} candles (swing detection: ${swingConfig.enabled})`);
     return patterns;
   }
 

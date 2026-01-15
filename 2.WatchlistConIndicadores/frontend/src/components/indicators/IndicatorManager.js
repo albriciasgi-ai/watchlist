@@ -1132,7 +1132,7 @@ class IndicatorManager {
 
       // Llamar fetchData con las velas disponibles
       dbtIndicator.fetchData(allCandles).then(() => {
-        log.debug(`[${this.symbol}] ✅ Análisis DBT inicial completado`);
+        log.debug(`[${this.symbol}] ✅ Análisis DBT inicial completado - patterns: ${dbtIndicator.patterns?.length || 0}`);
         if (this.requestRedraw) {
           this.requestRedraw();
         }
@@ -1152,7 +1152,6 @@ class IndicatorManager {
 
     const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
     if (dbtIndicator && dbtIndicator.enabled) {
-      log.info(`[${this.symbol}] 🕐 Vela cerrada - notificando a DBT indicator`);
       dbtIndicator.onCandleClose(allCandles);
     }
   }

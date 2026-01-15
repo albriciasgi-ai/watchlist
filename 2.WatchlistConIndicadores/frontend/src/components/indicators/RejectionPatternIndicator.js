@@ -327,7 +327,9 @@ class RejectionPatternIndicator extends IndicatorBase {
 
   /**
    * ✅ NUEVO: Carga alertSystemStartTime desde localStorage
-   * Evita re-alertar patrones históricos después de recargar la página
+   * - Si la sesión anterior terminó hace más de 1 hora, resetear (nueva sesión)
+   * - Si la sesión anterior terminó hace menos de 1 hora, mantener (continuación)
+   * - Máximo de vida: 24 horas
    */
   loadAlertSystemStartTime() {
     const storageKey = `rejection_alert_start_time_${this.symbol}_${this.interval}`;
@@ -337,15 +339,24 @@ class RejectionPatternIndicator extends IndicatorBase {
       try {
         const data = JSON.parse(stored);
         const age = Date.now() - data.timestamp;
-        const maxAge = 24 * 60 * 60 * 1000; // 24 horas
+        const sessionTimeout = 60 * 60 * 1000; // 1 hora: después de esto, es "nueva sesión"
+        const maxAge = 24 * 60 * 60 * 1000; // 24 horas máximo absoluto
 
-        // Solo usar si tiene menos de 24 horas
-        if (age < maxAge) {
-          this.logger.debug(`📂 Loaded alertSystemStartTime from storage: ${new Date(data.timestamp).toLocaleString()}`);
-          return data.timestamp;
-        } else {
-          this.logger.debug(`⏰ alertSystemStartTime expired (${Math.round(age / 3600000)}h old), will reset`);
+        // Si pasó más de 24 horas, definitivamente resetear
+        if (age > maxAge) {
+          this.logger.debug(`⏰ alertSystemStartTime expired (${Math.round(age / 3600000)}h old)`);
+          return null;
         }
+
+        // Si pasó más de 1 hora, tratarlo como nueva sesión (permite alertar patrones nuevos)
+        if (age > sessionTimeout) {
+          this.logger.debug(`🔄 New session detected (${Math.round(age / 60000)}min since last) - will reset alert start time`);
+          return null;
+        }
+
+        // Menos de 1 hora: mantener el timestamp para evitar re-alertar
+        this.logger.debug(`📂 Resuming session (${Math.round(age / 60000)}min since last)`);
+        return data.timestamp;
       } catch (e) {
         console.error('Failed to load alertSystemStartTime:', e);
       }
@@ -362,9 +373,8 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     try {
       localStorage.setItem(storageKey, JSON.stringify({
-        timestamp: this.alertSystemStartTime
+        timestamp: Date.now()  // Siempre guardar tiempo actual para tracking de sesión
       }));
-      this.logger.debug(`💾 Saved alertSystemStartTime: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
     } catch (e) {
       console.error('Failed to save alertSystemStartTime:', e);
     }
@@ -476,6 +486,12 @@ class RejectionPatternIndicator extends IndicatorBase {
         slSwingLookback: 50,     // Velas hacia atrás para buscar swing
         slBufferPercent: 20,     // Buffer fallback si no hay swing
         slMinPercent: 0.5        // SL mínimo para viabilidad
+      },
+      // ✅ NUEVO: Validación de price action post-patrón
+      priceActionValidation: {
+        enabled: true,           // Habilitar validación de invalidación
+        barsToCheck: 3,          // Velas después del patrón a verificar
+        invalidateOnBreak: true  // Invalidar si rompe high/low del patrón
       }
     };
   }
@@ -489,7 +505,7 @@ class RejectionPatternIndicator extends IndicatorBase {
     this.localPatterns = [];
     this.knownPatterns.clear(); // ✅ FIX #2: Limpiar cache de patrones conocidos
     this.lastDetectionTime = 0; // ✅ FIX #5: Forzar re-detección inmediata
-    console.log(`[${this.symbol}] 🔄 Config updated - patterns will be re-detected on next render`);
+    this.logger.debug(`Config updated - patterns will be re-detected`);
   }
 
   /**
@@ -497,9 +513,8 @@ class RejectionPatternIndicator extends IndicatorBase {
    * @param {string} mode - 'all' o 'validated'
    */
   setShowMode(mode) {
-    const previousMode = this.showMode;
     this.showMode = mode;
-    console.log(`[${this.symbol}] Pattern show mode: ${mode}`);
+    this.logger.debug(`Pattern show mode: ${mode}`);
 
     // ✅ FIX: Ya no necesitamos fetch al backend - la detección local maneja ambos modos
     // Los patrones se re-detectan automáticamente en el siguiente renderOverlay()
@@ -919,12 +934,18 @@ class RejectionPatternIndicator extends IndicatorBase {
    * 1. Vela CERRADA (no in_progress)
    * 2. Si swingDetection.required = true: swing debe estar CONFIRMADO (rightBars velas después)
    * 3. Si swingDetection.required = false: solo requiere vela cerrada
+   * 4. Price action validation: debe pasar N velas sin invalidar el patrón
+   *
+   * La alerta y el entry se dan DESPUÉS de que pasa el filtro de invalidación.
    */
   isPatternConfirmed(pattern, candles) {
     if (!pattern || !candles || candles.length === 0) return false;
 
     // Verificar que el patrón tiene timestamp
     if (!pattern.timestamp) return false;
+
+    // Si ya fue invalidado, no confirmar
+    if (pattern._invalidated) return false;
 
     // Encontrar índice de la vela del patrón en el array
     const patternIndex = candles.findIndex(c => c.timestamp === pattern.timestamp);
@@ -942,9 +963,11 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
 
     // 2. Si swing detection está requerido, verificar confirmación de swing
-    if (this.config.swingDetection?.required) {
-      const rightBars = this.config.swingDetection.rightBars || 5;
+    const rightBars = this.config.swingDetection?.required
+      ? (this.config.swingDetection.rightBars || 5)
+      : 0;
 
+    if (rightBars > 0) {
       // Necesitamos rightBars velas CERRADAS después del patrón para confirmar el swing
       const requiredIndex = patternIndex + rightBars;
 
@@ -961,11 +984,109 @@ class RejectionPatternIndicator extends IndicatorBase {
           return false;
         }
       }
-
-      this.logger.debug(`✅ Swing confirmed with ${rightBars} bars`);
     }
 
+    // 3. Verificar price action validation (si está habilitado)
+    const paConfig = this.config.priceActionValidation || {};
+    const barsToCheck = paConfig.enabled !== false ? (paConfig.barsToCheck || 3) : 0;
+
+    if (barsToCheck > 0) {
+      // Calcular el índice final de validación
+      const validationEndIndex = patternIndex + rightBars + barsToCheck;
+
+      // Verificar que existan suficientes velas para validación
+      if (validationEndIndex >= candles.length) {
+        this.logger.debug(`Validation not complete: need ${rightBars + barsToCheck} bars after pattern (current: ${candles.length - patternIndex - 1})`);
+        return false;
+      }
+
+      // Verificar que la última vela de validación esté cerrada
+      if (candles[validationEndIndex]?.in_progress) {
+        this.logger.debug(`Validation bar ${barsToCheck} still in progress`);
+        return false;
+      }
+
+      // Verificar que el price action NO invalide el patrón
+      const invalidation = this.checkPatternInvalidation(pattern, patternIndex, candles);
+      if (invalidation.invalidated) {
+        pattern._invalidated = true;
+        pattern._invalidationReason = invalidation.reason;
+        this.logger.debug(`❌ Pattern INVALIDATED: ${invalidation.reason}`);
+        return false;
+      }
+    }
+
+    this.logger.debug(`✅ Pattern confirmed after ${rightBars + barsToCheck} bars`);
     return true;
+  }
+
+  /**
+   * ✅ NUEVO: Verifica si el price action posterior invalida el patrón
+   *
+   * Reglas de invalidación:
+   * - LONG patterns (Hammer, Engulfing Bullish, etc.): Invalidado si precio cae por debajo del low del patrón
+   * - SHORT patterns (Shooting Star, Engulfing Bearish, etc.): Invalidado si precio sube por encima del high del patrón
+   *
+   * IMPORTANTE: La validación empieza DESPUÉS de las velas de confirmación del swing (rightBars)
+   * Ejemplo: Si patrón en vela 0, rightBars=5, barsToCheck=3 → verifica velas 6, 7, 8
+   *
+   * @param {Object} pattern - El patrón a verificar
+   * @param {number} patternIndex - Índice del patrón en el array de velas
+   * @param {Array} candles - Array de velas
+   * @returns {Object} { invalidated: boolean, reason: string }
+   */
+  checkPatternInvalidation(pattern, patternIndex, candles) {
+    // Obtener configuración de invalidación (con defaults)
+    const invalidationConfig = this.config.priceActionValidation || {
+      enabled: true,
+      barsToCheck: 3,  // Velas a verificar DESPUÉS de la confirmación del swing
+      invalidateOnBreak: true  // Invalidar si rompe el high/low del patrón
+    };
+
+    // Si la validación está deshabilitada, no invalidar
+    if (!invalidationConfig.enabled) {
+      return { invalidated: false, reason: null };
+    }
+
+    const patternCandle = candles[patternIndex];
+    const barsToCheck = invalidationConfig.barsToCheck || 3;
+    const direction = pattern.direction; // 'LONG' o 'SHORT'
+
+    // ✅ CORRECCIÓN: La validación empieza DESPUÉS de las velas de confirmación del swing
+    // Si rightBars=5, empezamos desde la vela 6 (patternIndex + rightBars + 1)
+    const rightBars = this.config.swingDetection?.required
+      ? (this.config.swingDetection.rightBars || 5)
+      : 0;
+    const startIndex = rightBars + 1; // Empezar después de la confirmación
+
+    // Verificar las velas siguientes a la confirmación
+    for (let i = startIndex; i < startIndex + barsToCheck; i++) {
+      const nextIndex = patternIndex + i;
+      if (nextIndex >= candles.length) break;
+
+      const nextCandle = candles[nextIndex];
+      if (!nextCandle || nextCandle.in_progress) continue; // Solo velas cerradas
+
+      if (direction === 'LONG') {
+        // Para LONG: el precio NO debe caer por debajo del low del patrón
+        if (nextCandle.low < patternCandle.low) {
+          return {
+            invalidated: true,
+            reason: `Price broke below pattern low ($${patternCandle.low.toFixed(2)}) at bar +${i}`
+          };
+        }
+      } else if (direction === 'SHORT') {
+        // Para SHORT: el precio NO debe subir por encima del high del patrón
+        if (nextCandle.high > patternCandle.high) {
+          return {
+            invalidated: true,
+            reason: `Price broke above pattern high ($${patternCandle.high.toFixed(2)}) at bar +${i}`
+          };
+        }
+      }
+    }
+
+    return { invalidated: false, reason: null };
   }
 
   /**
@@ -1022,9 +1143,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       newConfirmed.push(pattern);
     }
 
-    // ✅ Log detallado solo si hay patrones o skipped significativo
-    if (newConfirmed.length > 0 || (skippedNotNew + skippedAlreadyAlerted + skippedNotConfirmed) > 0) {
-      this.logger.debug(`📊 Pattern check: ${this.localPatterns.length} total → ${newConfirmed.length} to alert (skip: ${skippedNotNew} notNew, ${skippedAlreadyAlerted} alerted, ${skippedAlreadySent} sent, ${skippedNotConfirmed} unconfirmed)`);
+    // Log solo cuando hay patrones listos para alertar
+    if (newConfirmed.length > 0) {
+      this.logger.debug(`📊 Alert check: ${newConfirmed.length} ready to alert`);
     }
 
     return newConfirmed;
@@ -1068,6 +1189,13 @@ class RejectionPatternIndicator extends IndicatorBase {
       this.pendingAlertCheck = null;
     }
 
+    // ✅ Actualizar timestamp de sesión periódicamente (cada 5 min) para mantener sesión activa
+    if (!this._lastSessionSave) this._lastSessionSave = 0;
+    if (this.alertSystemStartTime && (now - this._lastSessionSave) > 5 * 60 * 1000) {
+      this.saveAlertSystemStartTime();
+      this._lastSessionSave = now;
+    }
+
     // ✅ PRIMERA VEZ: Guardar timestamp de inicio del sistema de alertas
     if (this.alertSystemStartTime === null) {
       this.alertSystemStartTime = Date.now();
@@ -1081,28 +1209,7 @@ class RejectionPatternIndicator extends IndicatorBase {
         if (this.alertedPatterns.has(this.getPatternId(p))) alertedCount++;
       });
 
-      console.log(`\n${'='.repeat(80)}`);
-      console.log(`📊 [${this.symbol}] ALERT SYSTEM ACTIVATED`);
-      console.log(`${'='.repeat(80)}`);
-      console.log(`Start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-      console.log(`Interval: ${this.interval} | Max age: ${Math.round(this.getIntervalMs() * this.getAgeMultiplier() / 60000)} minutes`);
-      console.log(`Pattern state: ${newCount} NEW (may alert), ${oldCount} OLD (won't alert), ${alertedCount} already alerted`);
-
-      // ✅ Mostrar estado del filtro VWAP
-      const vwapFilter = this.config.vwapFilter;
-      if (vwapFilter?.enabled) {
-        const devs = [];
-        if (vwapFilter.requiredDeviations?.second) devs.push('±2σ');
-        if (vwapFilter.requiredDeviations?.third) devs.push('±3σ');
-        console.log(`VWAP Filter: ENABLED (${devs.join(', ')}) - tolerance: ${vwapFilter.deviationTolerance}%`);
-      } else {
-        console.log(`VWAP Filter: DISABLED`);
-      }
-
-      console.log(`Only patterns with timestamp >= start time AND marked as NEW will trigger alerts`);
-      console.log(`${'='.repeat(80)}\n`);
-
-      this.logger.alert(`✅ Alert system activated - ${newCount} patterns ready to alert`);
+      this.logger.alert(`✅ Alert system activated - ${newCount} NEW, ${oldCount} OLD patterns`);
       return; // Salir en la primera ejecución para dar tiempo a la detección
     }
 
@@ -1112,18 +1219,34 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // ✅ VALIDACIÓN DE EDAD: Solo alertar patrones recientes (dentro de N intervalos)
     const intervalMs = this.getIntervalMs();
-    const maxAgeMs = intervalMs * this.getAgeMultiplier();
+    const baseAgeMultiplier = this.getAgeMultiplier();
     const currentTime = Date.now();
     const minConfidence = this.config.filters?.minConfidence || 50;
 
+    // ✅ FIX: Calcular delay de confirmación (rightBars + barsToCheck)
+    // El patrón tiene timestamp de cuando se formó, pero la alerta es DESPUÉS de confirmación
+    const rightBars = this.config.swingDetection?.required
+      ? (this.config.swingDetection.rightBars || 5)
+      : 0;
+    const barsToCheck = this.config.priceActionValidation?.enabled !== false
+      ? (this.config.priceActionValidation?.barsToCheck || 3)
+      : 0;
+    const confirmationDelayMs = (rightBars + barsToCheck) * intervalMs;
+
+    // maxAgeMs debe incluir el tiempo base + el delay de confirmación
+    const maxAgeMs = (intervalMs * baseAgeMultiplier) + confirmationDelayMs;
+
     // ✅ Filtrar patrones que:
     // 1. timestamp >= alertSystemStartTime (después de iniciar alertas)
-    // 2. No sean demasiado viejos (dentro de maxAgeMs)
+    // 2. No sean demasiado viejos (dentro de maxAgeMs ajustado por confirmación)
     const recentPatterns = newConfirmedPatterns.filter(p => {
       // Condición 1: Después del inicio del sistema de alertas
-      if (p.timestamp < this.alertSystemStartTime) return false;
+      if (p.timestamp < this.alertSystemStartTime) {
+        return false;
+      }
 
       // Condición 2: No muy viejo (evita alertar patrones históricos re-detectados)
+      // El patrón se forma en T, pero alerta en T + confirmationDelayMs, así que ajustamos
       const patternAge = currentTime - p.timestamp;
       if (patternAge > maxAgeMs) {
         this.logger.debug(`⏭️ Pattern too old: ${p.type} age=${Math.round(patternAge/60000)}min > max=${Math.round(maxAgeMs/60000)}min`);
@@ -1133,21 +1256,9 @@ class RejectionPatternIndicator extends IndicatorBase {
       return true;
     });
 
-    // Solo mostrar logging detallado si hay patrones que PASAN el filtro
+    // Log solo si hay patrones nuevos
     if (recentPatterns.length > 0) {
-      console.log(`\n[${this.symbol}] 🔍 NEW PATTERNS DETECTED:`);
-      console.log(`  Alert system start time: ${new Date(this.alertSystemStartTime).toLocaleString()}`);
-      console.log(`  Max pattern age: ${Math.round(maxAgeMs/60000)} minutes`);
-      console.log(`  Total confirmed patterns: ${newConfirmedPatterns.length}`);
-      console.log(`  Historical/Old (filtered): ${newConfirmedPatterns.length - recentPatterns.length}`);
-      console.log(`  ✅ NEW patterns to alert: ${recentPatterns.length}`);
-
-      // Detalles de patrones nuevos
-      recentPatterns.forEach((p, i) => {
-        const ageMin = Math.round((currentTime - p.timestamp) / 60000);
-        console.log(`    ${i + 1}. ${p.type} at $${p.price.toFixed(2)} - age: ${ageMin}min - ${new Date(p.timestamp).toLocaleString()}`);
-      });
-      console.log('');
+      this.logger.info(`🔍 ${recentPatterns.length} NEW patterns to alert (${newConfirmedPatterns.length - recentPatterns.length} old filtered)`);
     }
 
     if (recentPatterns.length === 0) {
@@ -1166,22 +1277,18 @@ class RejectionPatternIndicator extends IndicatorBase {
     for (const pattern of recentPatterns) {
       // Límite de alertas por ejecución
       if (alertCount >= MAX_ALERTS_PER_RUN) {
-        this.logger.warn(`⚠️ Alert limit reached (${MAX_ALERTS_PER_RUN}). Remaining ${recentPatterns.length - alertCount} patterns will be processed next time.`);
+        this.logger.warn(`⚠️ Alert limit reached (${MAX_ALERTS_PER_RUN})`);
         break;
       }
 
       // Filtro de confidence
       if (pattern.confidence < minConfidence) {
-        this.logger.debug(`⏭️ Pattern skipped: confidence ${pattern.confidence.toFixed(1)} < ${minConfidence}`);
         continue;
       }
 
-      // ✅ FILTRO VWAP: Pasa/No pasa - si está habilitado, el patrón DEBE estar cerca de la desviación
-      if (this.config.vwapFilter?.enabled) {
-        if (!this.checkVWAPAlignment(pattern)) {
-          this.logger.debug(`⏭️ Pattern skipped: VWAP filter not met`);
-          continue; // NO envía alerta - no cumple con el filtro VWAP
-        }
+      // ✅ FILTRO VWAP: Pasa/No pasa
+      if (this.config.vwapFilter?.enabled && !this.checkVWAPAlignment(pattern)) {
+        continue;
       }
 
       // Generar ID del patrón
@@ -1189,14 +1296,13 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       // ✅ FIX #1: Verificar PRIMERO si ya fue alertado
       if (this.alertedPatterns.has(patternId)) {
-        this.logger.debug(`⏭️ Pattern already alerted: ${patternId}`);
         continue;
       }
 
       // ✅ FIX #1: Marcar como "en proceso" ANTES de enviar (previene duplicados)
       this.alertedPatterns.add(patternId);
       this.saveAlertedPatterns(); // ✅ FIX #4: Persistir inmediatamente
-      this.logger.debug(`🔒 Pattern locked for alerting: ${patternId}`);
+      this.logger.debug(`🔔 SENDING ALERT: ${pattern.type} @ ${pattern.price.toFixed(2)}`);
 
       // Enviar alerta
       const success = await this.sendPatternAlert(pattern);
@@ -1349,12 +1455,6 @@ class RejectionPatternIndicator extends IndicatorBase {
       RejectionPatternIndicator.activePopups = Math.max(0, RejectionPatternIndicator.activePopups - 1);
     }
 
-    // Log detallado en consola
-    console.log(`%c[${this.symbol}] 🚨 ALERT SENT`, 'background: #ff4444; color: white; font-weight: bold; padding: 4px;');
-    console.log(`Pattern: ${patternName}`);
-    console.log(`Price: $${priceFormatted}`);
-    console.log(`Confidence: ${confidenceFormatted}%`);
-    console.log(`Endpoint: http://localhost:5000/api/watchlist-alert`);
   }
 
   /**
@@ -1363,14 +1463,10 @@ class RejectionPatternIndicator extends IndicatorBase {
    */
   requestNotificationPermission() {
     if (this.notificationPermissionRequested) return;
-    if (!("Notification" in window)) {
-      console.log(`[${this.symbol}] ⚠️ Browser doesn't support notifications`);
-      return;
-    }
+    if (!("Notification" in window)) return;
 
     if (Notification.permission === "default") {
-      Notification.requestPermission().then(permission => {
-        console.log(`[${this.symbol}] 🔔 Notification permission:`, permission);
+      Notification.requestPermission().then(() => {
         this.notificationPermissionRequested = true;
       });
     } else {
@@ -1393,7 +1489,20 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     const currentTime = Date.now();
     const intervalMs = this.getIntervalMs();
-    const maxAgeMs = intervalMs * this.getAgeMultiplier();
+    const baseAgeMultiplier = this.getAgeMultiplier();
+
+    // ✅ FIX: Calcular delay de confirmación (rightBars + barsToCheck)
+    // El patrón debe ser considerado "nuevo" si aún está dentro del periodo de confirmación
+    const rightBars = this.config.swingDetection?.required
+      ? (this.config.swingDetection.rightBars || 5)
+      : 0;
+    const barsToCheck = this.config.priceActionValidation?.enabled !== false
+      ? (this.config.priceActionValidation?.barsToCheck || 3)
+      : 0;
+    const confirmationDelayMs = (rightBars + barsToCheck) * intervalMs;
+
+    // maxAgeMs debe incluir el tiempo base + el delay de confirmación
+    const maxAgeMs = (intervalMs * baseAgeMultiplier) + confirmationDelayMs;
 
     let addedCount = 0;
     let updatedCount = 0;
@@ -1422,8 +1531,17 @@ class RejectionPatternIndicator extends IndicatorBase {
         newPattern._firstSeenTime = currentTime;
         const patternAge = currentTime - newPattern.timestamp;
 
-        if (patternAge <= maxAgeMs) {
+        // ✅ FIX ALERTAS EN TIEMPO REAL:
+        // - isInitialLoad=true: TODOS los patrones son históricos, NO deben alertar
+        // - isInitialLoad=false: Solo patrones recientes (dentro de maxAgeMs) son alertables
+        if (isInitialLoad) {
+          // Primera carga: todos los patrones son históricos
+          newPattern._isNewPattern = false;
+          skippedAsOld++;
+        } else if (patternAge <= maxAgeMs) {
+          // Detección incremental: patrón reciente = genuinamente nuevo
           newPattern._isNewPattern = true;
+          this.logger.debug(`🆕 NEW pattern: ${newPattern.type} @ ${new Date(newPattern.timestamp).toLocaleTimeString()}`);
         } else {
           newPattern._isNewPattern = false;
           skippedAsOld++;
@@ -1723,7 +1841,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       return;
     }
 
-    console.log(`[${this.symbol}] 📊 Fetching patterns with ${allReferenceContexts.length} reference contexts:`, allReferenceContexts.map(c => c.type));
+    this.logger.debug(`📊 Fetching patterns with ${allReferenceContexts.length} reference contexts`);
 
     this.loading = true;
 
@@ -1746,7 +1864,7 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (data.success) {
         this.patterns = data.patterns || [];
-        console.log(`[${this.symbol}] ✅ Loaded ${this.patterns.length} validated rejection patterns`);
+        this.logger.debug(`✅ Loaded ${this.patterns.length} validated rejection patterns`);
       } else {
         console.error(`[${this.symbol}] ❌ Failed to fetch patterns:`, data.error);
         this.patterns = [];
@@ -1781,17 +1899,11 @@ class RejectionPatternIndicator extends IndicatorBase {
             enabled: true,
             weight: 0.8  // Peso alto para zonas manuales
           };
-          console.log(`[${this.symbol}] 🎯 Adding manual zone context:`, {
-            name: zone.name,
-            range: `${zone.minPrice}-${zone.maxPrice}`,
-            signalDirection: zone.signalDirection
-          });
+          this.logger.debug(`🎯 Adding manual zone: ${zone.name}`);
           contexts.push(zoneContext);
         }
       });
     }
-
-    console.log(`[${this.symbol}] 🔧 Built ${contexts.length} total contexts (${this.config.referenceContexts?.length || 0} regular + ${contexts.length - (this.config.referenceContexts?.length || 0)} manual zones)`);
 
     return contexts;
   }
@@ -1817,6 +1929,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       // ✅ Evaluar resultados de trades pendientes (WIN/LOSS)
       this.evaluatePendingTradeOutcomes(allCandles);
     }
+
+    // Removed debug log for performance
 
     // ✅ FIX: Siempre usar patrones locales (ya tienen validación incorporada según el modo)
     let patternsToShow = this.localPatterns;
@@ -1853,12 +1967,27 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       if (!pattern) continue;
 
+      // ✅ NUEVO: Verificar invalidación en tiempo real (si no se ha chequeado antes)
+      if (pattern._invalidated === undefined && this.config.priceActionValidation?.enabled !== false) {
+        const patternIndex = allCandles.findIndex(c => c.timestamp === pattern.timestamp);
+        if (patternIndex !== -1) {
+          const invalidation = this.checkPatternInvalidation(pattern, patternIndex, allCandles);
+          if (invalidation.invalidated) {
+            pattern._invalidated = true;
+            pattern._invalidationReason = invalidation.reason;
+          } else {
+            pattern._invalidated = false;
+          }
+        }
+      }
+
       const x = bounds.x + i * candleWidth + candleWidth / 2;
       const highY = priceToY(candle.high);
       const lowY = priceToY(candle.low);
 
       // ✅ Dibujar líneas de estrategia si existen (ya calculadas en detectLocalPatterns)
-      if (this.config.strategy?.enabled && pattern._strategy) {
+      // NO dibujar estrategia si el patrón está invalidado
+      if (this.config.strategy?.enabled && pattern._strategy && !pattern._invalidated) {
         this.drawStrategyLines(ctx, bounds, pattern, x, priceToY, candleWidth);
       }
 
@@ -1875,11 +2004,14 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Usar confidence si existe, o quality si es detección local
     const score = pattern.confidence || pattern.quality || 50;
 
+    // ✅ NUEVO: Verificar si el patrón fue invalidado
+    const isInvalidated = pattern._invalidated === true;
+
     const color = this.colors[patternType] || '#888';
 
     // ✅ ESPECIAL: Dibujar flechas para SWING_LOW y SWING_HIGH
     if (patternType === 'SWING_LOW' || patternType === 'SWING_HIGH') {
-      this.drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, pattern._alertSent);
+      this.drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, pattern._alertSent, isInvalidated);
       return;
     }
 
@@ -1895,27 +2027,46 @@ class RejectionPatternIndicator extends IndicatorBase {
     const baseRadius = isValidated ? 5 : 4;
     const radius = baseRadius + (score / 100) * 2; // Max radius: 7 or 6
 
+    // ✅ INVALIDATED: Color más tenue y estilo diferente
+    const effectiveColor = isInvalidated ? '#888' : color;
+    const effectiveAlpha = isInvalidated ? 0.3 : (isValidated ? 0.9 : 0.7);
+
     // Dibujar punto principal
     ctx.save();
     ctx.beginPath();
     ctx.arc(x, dotY, radius, 0, Math.PI * 2);
 
-    // Color más intenso para validados
-    const baseAlpha = isValidated ? 0.9 : 0.7;
-    const alpha = Math.max(baseAlpha * 0.6, (score / 100) * baseAlpha);
-    ctx.fillStyle = this.hexToRgba(color, alpha);
+    // Color más intenso para validados, tenue para invalidados
+    const alpha = Math.max(effectiveAlpha * 0.6, (score / 100) * effectiveAlpha);
+    ctx.fillStyle = this.hexToRgba(effectiveColor, alpha);
     ctx.fill();
 
     // Borde del punto
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = effectiveColor;
     ctx.lineWidth = isValidated ? 2 : 1;
-    if (!isValidated) {
-      // Patrón local: borde punteado
+    if (!isValidated || isInvalidated) {
+      // Patrón local o invalidado: borde punteado
       ctx.setLineDash([2, 2]);
     }
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
+
+    // ✅ INVALIDATED: Dibujar X sobre el patrón
+    if (isInvalidated) {
+      ctx.save();
+      ctx.strokeStyle = '#FF0000';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      // X diagonal
+      ctx.moveTo(x - radius, dotY - radius);
+      ctx.lineTo(x + radius, dotY + radius);
+      ctx.moveTo(x + radius, dotY - radius);
+      ctx.lineTo(x - radius, dotY + radius);
+      ctx.stroke();
+      ctx.restore();
+      return; // No mostrar más badges para patrones invalidados
+    }
 
     // Anillo exterior para patrones validados de alta confianza
     if (isValidated && score >= 70) {
@@ -1960,7 +2111,7 @@ class RejectionPatternIndicator extends IndicatorBase {
    * - Verde hacia arriba para SWING_LOW (señal LONG) - debajo del mínimo de la vela
    * - Rojo hacia abajo para SWING_HIGH (señal SHORT) - encima del máximo de la vela
    */
-  drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, alertSent) {
+  drawSwingArrow(ctx, x, highY, lowY, patternType, score, isValidated, alertSent, isInvalidated = false) {
     const isLong = patternType === 'SWING_LOW';
 
     // Obtener configuración de estilo desde config (con valores por defecto)
@@ -1968,10 +2119,10 @@ class RejectionPatternIndicator extends IndicatorBase {
     const baseSize = arrowStyle.size || 10;
     const offset = arrowStyle.offset || 8;
 
-    // Colores configurables
+    // Colores configurables - gris si está invalidado
     const longColor = arrowStyle.longColor || this.colors.SWING_LOW || '#00E676';
     const shortColor = arrowStyle.shortColor || this.colors.SWING_HIGH || '#FF1744';
-    const color = isLong ? longColor : shortColor;
+    const color = isInvalidated ? '#888' : (isLong ? longColor : shortColor);
 
     // Tamaño de la flecha (el baseSize del config, sin escalar por score para mantener consistencia)
     const size = baseSize;
@@ -1982,8 +2133,8 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     ctx.save();
 
-    // Alpha basado en score
-    const baseAlpha = isValidated ? 0.95 : 0.85;
+    // Alpha basado en score - más tenue si está invalidado
+    const baseAlpha = isInvalidated ? 0.35 : (isValidated ? 0.95 : 0.85);
     const alpha = Math.max(baseAlpha * 0.8, (score / 100) * baseAlpha);
 
     // Dibujar flecha
@@ -2009,6 +2160,20 @@ class RejectionPatternIndicator extends IndicatorBase {
     ctx.strokeStyle = color;
     ctx.lineWidth = isValidated ? 2 : 1.5;
     ctx.stroke();
+
+    // ✅ INVALIDATED: Dibujar X sobre la flecha
+    if (isInvalidated) {
+      ctx.strokeStyle = '#FF0000';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x - size * 0.5, arrowY - size * 0.5);
+      ctx.lineTo(x + size * 0.5, arrowY + size * 0.5);
+      ctx.moveTo(x + size * 0.5, arrowY - size * 0.5);
+      ctx.lineTo(x - size * 0.5, arrowY + size * 0.5);
+      ctx.stroke();
+      ctx.restore();
+      return; // No mostrar más badges
+    }
 
     // Efecto glow para alta confianza
     if (isValidated && score >= 70) {
@@ -2079,11 +2244,18 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // Obtener parámetros de swing de la configuración
     const swingConfig = this.config.swingDetection || {};
-    const rightBars = swingConfig.rightBars || 5;
+    const rightBars = swingConfig.required ? (swingConfig.rightBars || 5) : 0;
 
-    // ✅ FIX: Entry = close de la vela de CONFIRMACIÓN (patternIndex + rightBars)
-    const confirmationIndex = patternIndex + rightBars;
-    const confirmationCandle = candles[confirmationIndex] || patternCandle;
+    // Obtener parámetros de price action validation
+    const paConfig = this.config.priceActionValidation || {};
+    const barsToCheck = paConfig.enabled !== false ? (paConfig.barsToCheck || 3) : 0;
+
+    // ✅ FIX: Entry = close de la última vela de VALIDACIÓN
+    // La alerta y entry se dan DESPUÉS de que el patrón pasa el filtro de invalidación
+    // Total = rightBars (swing confirmation) + barsToCheck (price action validation)
+    const totalConfirmationBars = rightBars + barsToCheck;
+    const confirmationIndex = patternIndex + totalConfirmationBars;
+    const confirmationCandle = candles[confirmationIndex] || candles[candles.length - 1] || patternCandle;
     const entry = confirmationCandle.close;
 
     // Parámetros para buscar swing del SL (pueden ser diferentes a los de detección)

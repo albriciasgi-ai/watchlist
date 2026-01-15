@@ -38,10 +38,7 @@ class DrawingToolManager {
   }
 
   handleMouseDown(x, y, scaleConverter, tool) {
-    console.log('[DrawingToolManager] 🖱️ handleMouseDown - tool:', this.currentTool, 'scaleConverter:', scaleConverter ? 'valid' : 'NULL');
-
     if (!scaleConverter) {
-      console.warn('[DrawingToolManager] ⚠️ handleMouseDown called with NULL scaleConverter');
       return false;
     }
 
@@ -94,7 +91,6 @@ class DrawingToolManager {
     if (this.currentTool === 'horizontal') {
       const line = new HorizontalLine(price, time);
       this.addShape(line);
-      console.log('[DrawingToolManager] ✅ Created horizontal line, total shapes:', this.shapes.length);
       this.saveToHistory();
       // ✅ NUEVO: Notificar que se agregó un shape
       if (this.onShapeAdded) this.onShapeAdded();
@@ -159,7 +155,6 @@ class DrawingToolManager {
     if (this.currentTool === 'tpsl-short') {
       const box = new TPSLBoxShort(price, time);
       this.addShape(box);
-      console.log('[DrawingToolManager] ✅ Created TP/SL SHORT box, total shapes:', this.shapes.length);
       this.saveToHistory();
       // ✅ NUEVO: Notificar que se agregó un shape
       if (this.onShapeAdded) this.onShapeAdded();
@@ -329,13 +324,9 @@ class DrawingToolManager {
   }
 
   loadShapes(shapesData) {
-    console.log('[DrawingToolManager] 📥 loadShapes() called with', shapesData.length, 'shapes');
-
     this.shapes = shapesData
       .map(data => this.deserializeShape(data))
       .filter(shape => shape !== null);
-
-    console.log('[DrawingToolManager] 📥 After deserialization, loaded', this.shapes.length, 'valid shapes');
 
     // Inicializar history con estado cargado
     this.history = [this.shapes.map(s => s.serialize())];
@@ -345,27 +336,20 @@ class DrawingToolManager {
   // Renderizado
   render(ctx, scaleConverter) {
     if (!scaleConverter) {
-      console.warn('[DrawingToolManager] ⚠️ render() called with NULL scaleConverter');
       return;
     }
 
-    console.log('[DrawingToolManager] 🎨 render() - shapes:', this.shapes.length, 'inProgress:', !!this.drawingInProgress);
-
     // Renderizar todos los shapes (excepto el que se está dibujando)
-    this.shapes.forEach((shape, index) => {
+    this.shapes.forEach((shape) => {
       const isSelected = shape === this.selectedShape;
       const isHovered = shape === this.hoveredShape;
-      console.log(`[DrawingToolManager] 🎨 Rendering shape ${index}:`, shape.type, 'selected:', isSelected, 'hovered:', isHovered);
       shape.render(ctx, scaleConverter, isSelected, isHovered);
     });
 
     // Renderizar shape en progreso
     if (this.drawingInProgress) {
-      console.log('[DrawingToolManager] 🎨 Rendering in-progress shape:', this.drawingInProgress.type);
       this.drawingInProgress.render(ctx, scaleConverter, false, false, true);
     }
-
-    console.log('[DrawingToolManager] ✅ render() completed');
   }
 }
 

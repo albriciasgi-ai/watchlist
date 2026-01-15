@@ -1,7 +1,7 @@
 // src/components/drawing/TextEditModal.jsx
 // Modal para editar texto de TextBox sin bloquear el thread
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './TextEditModal.css';
 
 const TextEditModal = ({ initialText = '', initialStyle = {}, onSave, onCancel }) => {
@@ -15,7 +15,13 @@ const TextEditModal = ({ initialText = '', initialStyle = {}, onSave, onCancel }
   const [fontSize, setFontSize] = useState(initialStyle.fontSize || 13);
   const [bgOpacity, setBgOpacity] = useState(1.0);
 
+  // 🖱️ Estados para drag
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
   const inputRef = useRef(null);
+  const modalRef = useRef(null);
 
   // Auto-focus cuando se monta el componente
   useEffect(() => {
@@ -38,6 +44,42 @@ const TextEditModal = ({ initialText = '', initialStyle = {}, onSave, onCancel }
     }
   };
 
+  // 🖱️ Drag handlers
+  const handleDragStart = (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    e.preventDefault();
+    setIsDragging(true);
+    const rect = modalRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  };
+
+  const handleDragMove = useCallback((e) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragOffset.x - window.innerWidth / 2 + modalRef.current.offsetWidth / 2,
+      y: e.clientY - dragOffset.y - window.innerHeight / 2 + modalRef.current.offsetHeight / 2
+    });
+  }, [isDragging, dragOffset]);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Listeners globales para drag
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+      return () => {
+        window.removeEventListener('mousemove', handleDragMove);
+        window.removeEventListener('mouseup', handleDragEnd);
+      };
+    }
+  }, [isDragging, handleDragMove, handleDragEnd]);
+
   const handleSave = () => {
     // Convertir opacidad hexadecimal (00-FF)
     const opacityHex = Math.round(bgOpacity * 255).toString(16).padStart(2, '0');
@@ -54,9 +96,20 @@ const TextEditModal = ({ initialText = '', initialStyle = {}, onSave, onCancel }
 
   return (
     <div className="text-edit-modal-overlay" onClick={onCancel}>
-      <div className="text-edit-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="text-edit-modal-header">
-          <h3>Editar Texto</h3>
+      <div
+        className="text-edit-modal-content"
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`
+        }}
+      >
+        <div
+          className="text-edit-modal-header"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          onMouseDown={handleDragStart}
+        >
+          <h3 style={{ userSelect: 'none' }}>⋮⋮ Editar Texto</h3>
           <button className="text-edit-modal-close-btn" onClick={onCancel}>
             ✕
           </button>
