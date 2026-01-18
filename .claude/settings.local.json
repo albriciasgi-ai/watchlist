@@ -12,7 +12,8 @@
       "Bash(pip install:*)",
       "Bash(=3.9.0)",
       "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\backend\\config\\vwap_config.json\" 2)",
-      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\backend\\config\\vwap_config.json\")"
+      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\backend\\config\\vwap_config.json\")",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

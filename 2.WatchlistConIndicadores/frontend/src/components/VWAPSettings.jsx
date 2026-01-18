@@ -1,10 +1,10 @@
 // src/components/VWAPSettings.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import PresetManager from "../utils/PresetManager";
 import { API_BASE_URL } from "../config.js";
 import "./VWAPSettings.css";
 
-const DEBUG = true;
+const DEBUG = false; // Set to true for verbose logging
 
 // Helper functions for color conversion
 const rgbaToHex = (rgba) => {
@@ -79,7 +79,20 @@ const VWAPSettings = ({
   const renderCount = useRef(0);
   const isUpdatingRef = useRef(false); // Evita loops en useEffect
 
+  // 🚀 PERF: Debounce refs for config propagation
+  const debounceTimerRef = useRef(null);
+  const pendingConfigRef = useRef(null);
+
   renderCount.current++;
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   // Fetch backend status on mount
   useEffect(() => {
@@ -296,30 +309,49 @@ const VWAPSettings = ({
     return 20;
   };
 
-  const handleConfigChange = (key, value) => {
-    if (DEBUG) console.log(`[VWAPSettings] handleConfigChange:`, { key, value, applyGlobally, currentLocalConfig: localConfig });
+  // 🚀 PERF: Debounced config change handler
+  // Updates local state immediately (optimistic) but debounces propagation to parent
+  const handleConfigChange = useCallback((key, value) => {
+    if (DEBUG) console.log(`[VWAPSettings] handleConfigChange:`, { key, value, applyGlobally });
 
     // Marcar que estamos actualizando para evitar que useEffect sobrescriba
     isUpdatingRef.current = true;
 
+    // 1. Update local state immediately (optimistic update)
     const newConfig = { ...localConfig, [key]: value };
     setLocalConfig(newConfig);
 
-    if (applyGlobally) {
-      PresetManager.updateGlobalPreset("VWAP", newConfig);
-      if (DEBUG) console.log(`[VWAPSettings] ✅ Preset global actualizado:`, newConfig);
-      onConfigChange(newConfig, false);
-    } else {
-      if (DEBUG) console.log(`[VWAPSettings] ✅ Override guardado para ${currentSymbol}:`, newConfig);
-      onConfigChange(newConfig, true);
+    // 2. Store pending config
+    pendingConfigRef.current = newConfig;
+
+    // 3. Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
+
+    // 4. Debounce propagation to parent (300ms)
+    debounceTimerRef.current = setTimeout(() => {
+      const configToSend = pendingConfigRef.current;
+      if (!configToSend) return;
+
+      if (applyGlobally) {
+        PresetManager.updateGlobalPreset("VWAP", configToSend);
+        if (DEBUG) console.log(`[VWAPSettings] ✅ Preset global actualizado`);
+        onConfigChange(configToSend, false);
+      } else {
+        if (DEBUG) console.log(`[VWAPSettings] ✅ Override guardado para ${currentSymbol}`);
+        onConfigChange(configToSend, true);
+      }
+
+      pendingConfigRef.current = null;
+    }, 300);
 
     // Resetear después de un breve delay para permitir que se complete la actualización
     setTimeout(() => {
       isUpdatingRef.current = false;
       if (DEBUG) console.log('[VWAPSettings] Actualización completa, isUpdatingRef reset');
     }, 100);
-  };
+  }, [localConfig, applyGlobally, currentSymbol, onConfigChange]);
 
   const handleResetToGlobal = () => {
     if (DEBUG) console.log(`[VWAPSettings] handleResetToGlobal`);

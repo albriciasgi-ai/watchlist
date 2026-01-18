@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './RejectionPatternSettings.css';
 
 /**
@@ -27,6 +27,9 @@ const RejectionPatternSettings = ({
   const [activePreset, setActivePreset] = useState('custom');
   const [showAddZoneModal, setShowAddZoneModal] = useState(false);
   const [expandedSections, setExpandedSections] = useState({ strategy: false });
+
+  // 🚀 PERF: Debounce ref for config propagation
+  const debounceTimerRef = useRef(null);
 
   // ✅ NUEVO: Leer el modo actual del indicador al montar
   useEffect(() => {
@@ -235,14 +238,30 @@ const RejectionPatternSettings = ({
     };
   };
 
+  // 🚀 PERF: Debounced config propagation
+  // Saves to localStorage immediately but debounces parent notification
   useEffect(() => {
-    // Notify parent of config changes
-    if (onConfigChange) {
-      onConfigChange(config);
+    // Save to localStorage immediately (cheap operation)
+    localStorage.setItem(`rejection_pattern_config_${symbol}`, JSON.stringify(config));
+
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
 
-    // Save to localStorage
-    localStorage.setItem(`rejection_pattern_config_${symbol}`, JSON.stringify(config));
+    // Debounce parent notification (300ms)
+    debounceTimerRef.current = setTimeout(() => {
+      if (onConfigChange) {
+        onConfigChange(config);
+      }
+    }, 300);
+
+    // Cleanup on unmount
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, [config, symbol]);  // ✅ FIX: Removed onConfigChange from deps to prevent infinite loop
 
   const togglePattern = (patternKey) => {

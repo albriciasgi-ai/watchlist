@@ -2704,5 +2704,19 @@
     "confidence": 100,
     "source": "SWING_DETECTOR",
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-18T15:14:16.471134",
+    "symbol": "ETHUSDT",
+    "side": "Buy",
+    "entry_price": 3340.72,
+    "quantity_coin": 0.02,
+    "quantity_usdt": 66.8144,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "SWING_LOW (LONG)",
+    "confidence": 89.0,
+    "source": "SWING_DETECTOR",
+    "status": "success"
   }
 ]

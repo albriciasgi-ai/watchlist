@@ -14,8 +14,22 @@
         "stroke": "#3B82F6",
         "labelBg": "#3B82F6"
       }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1768761034446_0.2253185569010362",
+      "price": 3360.541196596273,
+      "time": 1768759620000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     }
   ],
-  "updated_at": "2026-01-18T16:53:14.903438+00:00",
-  "total_shapes": 1
+  "updated_at": "2026-01-18T18:30:34.453896+00:00",
+  "total_shapes": 2
 }

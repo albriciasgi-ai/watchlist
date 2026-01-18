@@ -5,59 +5,44 @@
     "ETHUSDT"
   ],
   "interval": "1",
-  "days": 1,
+  "days": 5,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
         "enabled": true,
-        "minZScore": 2.1,
+        "minZScore": 2,
         "lookbackBars": 20
-      }
+      },
+      "days": 10
+    },
+    "BTCUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 3,
+        "lookbackBars": 45
+      },
+      "swingBars": 5,
+      "days": 5,
+      "cooldownMinutes": 20
     }
   },
   "swingBars": 3,
   "direction": "BOTH",
   "priceZones": [
     {
-      "id": "zone_1768754754338",
+      "id": "zone_1768764021306",
       "symbol": "BTCUSDT",
       "min": 90000,
-      "max": 100000,
-      "direction": "LONG",
+      "max": 97000,
+      "direction": "BOTH",
       "enabled": true
     },
     {
-      "id": "zone_rect_rectangle_1768754729041_0.749703410985987",
-      "symbol": "BTCUSDT",
-      "min": 95020.47072828504,
-      "max": 95159.08183939615,
-      "direction": "SHORT",
-      "enabled": true,
-      "sourceRectId": "rectangle_1768754729041_0.749703410985987",
-      "label": "Zone",
-      "timeStart": 1768736280000,
-      "timeEnd": 1768748040000,
-      "timeBound": true
-    },
-    {
-      "id": "zone_rect_rectangle_1768755009952_0.4619963306266729",
+      "id": "zone_1768766129109",
       "symbol": "ETHUSDT",
-      "min": 3312.6695280737626,
-      "max": 3333.2750731865444,
-      "direction": "BOTH",
-      "enabled": true,
-      "sourceRectId": "rectangle_1768755009952_0.4619963306266729",
-      "label": "Zone",
-      "timeStart": 1768743360000,
-      "timeEnd": 1768752960000,
-      "timeBound": true
-    },
-    {
-      "id": "zone_1768755264784",
-      "symbol": "ETHUSDT",
-      "min": 3300,
+      "min": 2000,
       "max": 3700,
-      "direction": "LONG",
+      "direction": "BOTH",
       "enabled": true
     }
   ],
@@ -67,6 +52,6 @@
     "minZScore": 1,
     "lookbackBars": 10
   },
-  "cooldownMinutes": 1,
+  "cooldownMinutes": 16,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
 }

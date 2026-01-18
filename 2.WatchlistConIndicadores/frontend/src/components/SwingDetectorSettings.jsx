@@ -1,5 +1,5 @@
 // src/components/SwingDetectorSettings.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { API_BASE_URL } from '../config.js';
 
 /**
@@ -29,11 +29,23 @@ const SwingDetectorSettings = ({
   const [showRectangleSelector, setShowRectangleSelector] = useState(false);
   const [rectTimeBound, setRectTimeBound] = useState({}); // Track time-bound option per rectangle
 
+  // 🚀 PERF: Batch mode - accumulate changes locally, send on button click
+  const [pendingChanges, setPendingChanges] = useState({});
+  const [localSymbolConfig, setLocalSymbolConfig] = useState(null); // Local copy for immediate UI updates
+
   // Fetch backend status and chart drawings on mount
   useEffect(() => {
     fetchBackendStatus();
     fetchChartDrawings();
   }, [currentSymbol]);
+
+  // Initialize local config from backend status
+  useEffect(() => {
+    if (backendStatus) {
+      setLocalSymbolConfig(backendStatus.symbolConfig || {});
+      setPendingChanges({}); // Clear pending when we get fresh data
+    }
+  }, [backendStatus]);
 
   // 🎯 NEW: Fetch chart drawings for current symbol
   const fetchChartDrawings = async () => {
@@ -78,29 +90,132 @@ const SwingDetectorSettings = ({
     onConfigChange(newConfig);
   };
 
-  // Update config for the current symbol specifically
-  const handleBackendConfigUpdate = async (updates) => {
+  // 🚀 PERF: Batch mode - accumulate changes locally, NO automatic sending
+  // Changes are only sent when user clicks "Save Changes" button
+  const handleBackendConfigUpdate = useCallback((updates) => {
+    // 1. Update local state immediately for responsive UI
+    setLocalSymbolConfig(prev => {
+      const current = prev || {};
+      const newConfig = { ...current };
+
+      for (const [key, value] of Object.entries(updates)) {
+        if (key === 'volumeFilter') {
+          newConfig.volumeFilter = {
+            ...(current.volumeFilter || backendStatus?.volumeFilter || {}),
+            ...value
+          };
+        } else {
+          newConfig[key] = value;
+        }
+      }
+
+      return newConfig;
+    });
+
+    // 2. Accumulate pending changes (merge with existing)
+    setPendingChanges(prev => {
+      const merged = { ...prev, ...updates };
+
+      // Handle nested volumeFilter merging
+      if (updates.volumeFilter && prev.volumeFilter) {
+        merged.volumeFilter = {
+          ...prev.volumeFilter,
+          ...updates.volumeFilter
+        };
+      }
+
+      return merged;
+    });
+  }, [backendStatus]);
+
+  // 🚀 Send all pending changes to backend
+  const handleSaveChanges = async () => {
+    if (Object.keys(pendingChanges).length === 0) {
+      return; // Nothing to save
+    }
+
     setLoading(true);
     try {
-      // Use symbol-specific endpoint
-      const response = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
+      // Separate global config (days, cooldownMinutes) from symbol-specific config
+      const globalFields = ['days', 'cooldownMinutes'];
+      const globalChanges = {};
+      const symbolChanges = {};
 
-      if (response.ok) {
-        console.log(`[SwingDetector] Config updated for ${currentSymbol}`);
-        fetchBackendStatus();
+      for (const [key, value] of Object.entries(pendingChanges)) {
+        if (globalFields.includes(key)) {
+          globalChanges[key] = value;
+        } else {
+          symbolChanges[key] = value;
+        }
+      }
+
+      let success = true;
+
+      // 1. Send global changes if any
+      if (Object.keys(globalChanges).length > 0) {
+        const globalResponse = await fetch(`${API_BASE_URL}/api/swing/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(globalChanges)
+        });
+
+        if (globalResponse.ok) {
+          console.log(`[SwingDetector] Global config saved:`, Object.keys(globalChanges));
+        } else {
+          console.error('[SwingDetector] Global config update failed');
+          success = false;
+        }
+      }
+
+      // 2. Send symbol-specific changes if any
+      if (Object.keys(symbolChanges).length > 0) {
+        const symbolResponse = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(symbolChanges)
+        });
+
+        if (symbolResponse.ok) {
+          const result = await symbolResponse.json();
+          console.log(`[SwingDetector] Symbol config saved for ${currentSymbol}:`, Object.keys(symbolChanges));
+
+          // Update backend status with response
+          if (result.symbolConfig) {
+            setBackendStatus(prev => ({
+              ...prev,
+              symbolConfig: result.symbolConfig
+            }));
+          }
+        } else {
+          console.error('[SwingDetector] Symbol config update failed');
+          success = false;
+        }
+      }
+
+      if (success) {
+        // Refresh full status to get updated values
+        await fetchBackendStatus();
+        // Clear pending changes
+        setPendingChanges({});
       } else {
-        console.error('[SwingDetector] Backend config update failed');
+        alert('Error al guardar algunos cambios');
       }
     } catch (error) {
       console.error('[SwingDetector] Backend config error:', error);
+      alert('Error de conexión al guardar');
     } finally {
       setLoading(false);
     }
   };
+
+  // Discard pending changes and reload from backend
+  const handleDiscardChanges = () => {
+    setPendingChanges({});
+    setLocalSymbolConfig(backendStatus?.symbolConfig || {});
+  };
+
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = Object.keys(pendingChanges).length > 0;
 
   const handleAddZone = async () => {
     if (!newZone.min || !newZone.max) {
@@ -206,11 +321,13 @@ const SwingDetectorSettings = ({
     }
   };
 
-  // Get symbol-specific config (merged with defaults) from backend status
-  const symbolConfig = backendStatus?.symbolConfig || {};
+  // Get symbol-specific config - use LOCAL state for immediate UI response
+  const symbolConfig = localSymbolConfig || backendStatus?.symbolConfig || {};
   const volumeFilter = symbolConfig.volumeFilter || backendStatus?.volumeFilter || { enabled: true, minZScore: 1.5, lookbackBars: 20 };
   const currentDirection = symbolConfig.direction || backendStatus?.direction || 'BOTH';
   const currentSwingBars = symbolConfig.swingBars || backendStatus?.swingBars || 5;
+  const currentDays = symbolConfig.days || backendStatus?.days || 1;
+  const currentCooldown = symbolConfig.cooldownMinutes || backendStatus?.cooldownMinutes || 30;
   // Filter zones by current symbol (zones without symbol field are shown for backwards compatibility)
   const allPriceZones = backendStatus?.priceZones || [];
   const priceZones = allPriceZones.filter(zone => !zone.symbol || zone.symbol === currentSymbol);
@@ -221,6 +338,58 @@ const SwingDetectorSettings = ({
         <h4 style={{ margin: '0 0 8px 0', color: '#00BCD4' }}>
           Swing Detector - {currentSymbol}
         </h4>
+
+        {/* 🚀 Unsaved Changes Banner */}
+        {hasUnsavedChanges && (
+          <div style={{
+            background: '#FFF3E0',
+            border: '2px solid #FF9800',
+            padding: '10px 12px',
+            borderRadius: '6px',
+            marginBottom: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px'
+          }}>
+            <span style={{ fontSize: '13px', color: '#E65100', fontWeight: 'bold' }}>
+              ⚠️ Cambios sin guardar
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleDiscardChanges}
+                disabled={loading}
+                style={{
+                  padding: '6px 12px',
+                  background: '#f5f5f5',
+                  color: '#666',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                Descartar
+              </button>
+              <button
+                onClick={handleSaveChanges}
+                disabled={loading}
+                style={{
+                  padding: '6px 12px',
+                  background: loading ? '#FFB74D' : '#FF9800',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: loading ? 'default' : 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {loading ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Backend Status */}
         {backendStatus && (
@@ -276,15 +445,14 @@ const SwingDetectorSettings = ({
         {/* Days of Historical Data */}
         <div style={{ marginBottom: '12px' }}>
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Historical Days: {backendStatus?.days || 1}
+            Historical Days: {currentDays}
           </label>
           <input
             type="range"
             min="1"
             max="30"
-            value={backendStatus?.days || 1}
+            value={currentDays}
             onChange={(e) => handleBackendConfigUpdate({ days: parseInt(e.target.value) })}
-            disabled={loading}
             style={{ width: '100%' }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
@@ -295,7 +463,7 @@ const SwingDetectorSettings = ({
           <div style={{ fontSize: '10px', color: '#00838F', marginTop: '4px' }}>
             {(() => {
               const interval = backendStatus?.interval || '1';
-              const days = backendStatus?.days || 1;
+              const days = currentDays;
               const intervalMinutes = {
                 '1': 1, '3': 3, '5': 5, '15': 15, '30': 30,
                 '60': 60, '120': 120, '240': 240, '360': 360, '720': 720,
@@ -354,13 +522,13 @@ const SwingDetectorSettings = ({
         {/* Cooldown */}
         <div style={{ marginBottom: '8px' }}>
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Alert Cooldown: {backendStatus?.cooldownMinutes || 30} min
+            Alert Cooldown: {currentCooldown} min
           </label>
           <input
             type="range"
             min="1"
             max="120"
-            value={backendStatus?.cooldownMinutes || 30}
+            value={currentCooldown}
             onChange={(e) => handleBackendConfigUpdate({ cooldownMinutes: parseInt(e.target.value) })}
             disabled={loading}
             style={{ width: '100%' }}
