@@ -14,8 +14,16 @@ import json
 from typing import Dict, List, Optional
 from datetime import datetime
 import logging
+from pathlib import Path
 
-logging.basicConfig(level=logging.INFO)
+# Alert log file
+ALERT_LOG_FILE = Path(__file__).parent / "alerts_sent.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +40,7 @@ class AlertSender:
         """Start the alert sender service"""
         self.client = httpx.AsyncClient(timeout=15.0)  # Increased from 5s to 15s for slow bot responses
         self.is_running = True
-        logger.info(f"🚀 Alert sender started. Target: {self.alert_service_url}")
+        logger.info(f"[STARTUP] Alert sender started. Target: {self.alert_service_url}")
 
         # Start background task to process alert queue
         asyncio.create_task(self._process_alert_queue())
@@ -79,19 +87,19 @@ class AlertSender:
             user_config
         )
 
-        logger.debug(f"\n📦 Built alert payload:")
+        logger.debug(f"\n[PAYLOAD] Built alert payload:")
         logger.debug(f"   Pattern String: {alert_payload.get('pattern', 'N/A')}")
         logger.debug(f"   Symbol: {alert_payload.get('symbol', 'N/A')}")
         logger.debug(f"   Price: ${alert_payload.get('price', 0):.2f}")
         logger.debug(f"   Confidence: {alert_payload.get('confidence', 0)}%")
 
         # Add to queue for asynchronous processing
-        logger.debug(f"\n📬 Adding alert to queue for async processing")
+        logger.debug(f"\n[QUEUE] Adding alert to queue for async processing")
         logger.debug(f"   Current queue size: {self.alert_queue.qsize()}")
 
         await self.alert_queue.put(alert_payload)
 
-        logger.debug(f"   ✅ Alert added to queue successfully")
+        logger.debug(f"   [OK] Alert added to queue successfully")
         logger.debug(f"   New queue size: {self.alert_queue.qsize()}")
         logger.debug("="*80 + "\n")
 
@@ -210,6 +218,22 @@ class AlertSender:
         }
         return name_map.get(pattern_type, pattern_type)
 
+    def _log_alert_to_file(self, alert: Dict, status: str, http_code: int = 0):
+        """Write alert to log file for debugging"""
+        try:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            symbol = alert.get('symbol', 'UNKNOWN')
+            pattern = alert.get('pattern', 'UNKNOWN')
+            price = alert.get('price', 0)
+            confidence = alert.get('confidence', 0)
+
+            log_line = f"{timestamp} | {status} | HTTP {http_code} | {symbol} | {pattern} | ${price:.2f} | {confidence}%\n"
+
+            with open(ALERT_LOG_FILE, "a", encoding="utf-8") as f:
+                f.write(log_line)
+        except Exception as e:
+            logger.error(f"Failed to write alert log: {e}")
+
     def _build_description(
         self,
         symbol: str,
@@ -246,7 +270,7 @@ class AlertSender:
 
     async def _process_alert_queue(self):
         """Background task to process queued alerts"""
-        logger.info("📬 Alert queue processor started")
+        logger.info("[QUEUE] Alert queue processor started")
 
         while self.is_running:
             try:
@@ -264,22 +288,22 @@ class AlertSender:
                 success = await self._send_to_service(alert)
 
                 if success:
-                    logger.info(f"✅ Alert sent successfully: {alert_summary}")
+                    logger.info(f"[OK] Alert sent successfully: {alert_summary}")
                 else:
-                    logger.warning(f"⚠️ Failed to send alert: {alert_summary}")
+                    logger.warning(f"[WARN] Failed to send alert: {alert_summary}")
 
-                # 📝 DEBUG LOG: Add delay between alerts to prevent overwhelming the bot
+                # DEBUG LOG: Add delay between alerts to prevent overwhelming the bot
                 await asyncio.sleep(0.5)
 
             except asyncio.TimeoutError:
                 # No alerts in queue, continue
                 continue
             except Exception as e:
-                logger.error(f"❌ Error processing alert: {str(e)}")
+                logger.error(f"[ERROR] Error processing alert: {str(e)}")
                 import traceback
                 logger.error(f"[TRACEBACK] {traceback.format_exc()}")
 
-        logger.info("📬 Alert queue processor stopped")
+        logger.info("[QUEUE] Alert queue processor stopped")
 
     async def _send_to_service(self, alert: Dict) -> bool:
         """
@@ -295,34 +319,34 @@ class AlertSender:
         start_time = datetime.now()
 
         logger.debug("\n" + "="*80)
-        logger.debug(f"🌐 [HTTP] Sending alert to external service (port 5000)")
+        logger.debug(f"[HTTP] Sending alert to external service (port 5000)")
         logger.debug("="*80)
 
         if not self.client:
-            logger.error("❌ HTTP client not initialized - cannot send alert")
+            logger.error("[ERROR] HTTP client not initialized - cannot send alert")
             logger.error("="*80 + "\n")
             return False
 
         endpoint = f"{self.alert_service_url}/api/watchlist-alert"
 
-        logger.debug(f"📡 HTTP Request Details:")
+        logger.debug(f"[HTTP] Request Details:")
         logger.debug(f"   Method: POST")
         logger.debug(f"   Endpoint: {endpoint}")
         logger.debug(f"   Headers: Content-Type: application/json")
-        logger.debug(f"\n📦 Request Payload:")
+        logger.debug(f"\n[PAYLOAD] Request Payload:")
         logger.debug(f"{json.dumps(alert, indent=2)}")
 
         try:
-            logger.debug(f"\n⏳ Sending HTTP POST request...")
+            logger.debug(f"\n[WAIT] Sending HTTP POST request...")
             response = await self.client.post(endpoint, json=alert)
             duration = (datetime.now() - start_time).total_seconds()
 
-            logger.debug(f"\n📥 HTTP Response received ({duration:.3f}s)")
+            logger.debug(f"\n[RESPONSE] HTTP Response received ({duration:.3f}s)")
             logger.debug(f"   Status Code: {response.status_code}")
             logger.debug(f"   Status Text: {response.reason_phrase}")
 
             if response.status_code == 200:
-                logger.debug(f"\n✅ SUCCESS: Alert service accepted the alert")
+                logger.debug(f"\n[OK] SUCCESS: Alert service accepted the alert")
 
                 try:
                     response_data = response.json()
@@ -331,11 +355,15 @@ class AlertSender:
                 except:
                     logger.debug(f"   Response Body (Text): {response.text}")
 
-                logger.info(f"✅ Alert delivered to trading bot at {endpoint}")
+                logger.info(f"[OK] Alert delivered to trading bot at {endpoint}")
                 logger.debug("="*80 + "\n")
+
+                # Write to log file
+                self._log_alert_to_file(alert, "SENT", response.status_code)
+
                 return True
             else:
-                logger.warning(f"\n⚠️ REJECTED: Alert service returned non-200 status")
+                logger.warning(f"\n[WARN] REJECTED: Alert service returned non-200 status")
                 logger.warning(f"   Status Code: {response.status_code}")
                 logger.warning(f"   Response Body: {response.text}")
                 logger.debug("="*80 + "\n")
@@ -343,12 +371,12 @@ class AlertSender:
 
         except httpx.ConnectError as e:
             duration = (datetime.now() - start_time).total_seconds()
-            logger.error(f"\n❌ CONNECTION ERROR ({duration:.3f}s)")
+            logger.error(f"\n[ERROR] CONNECTION ERROR ({duration:.3f}s)")
             logger.error(f"   Cannot connect to alert service at {self.alert_service_url}")
             logger.error(f"   Error: {str(e)}")
-            logger.error(f"\n💡 Troubleshooting:")
+            logger.error(f"\n[TIP] Troubleshooting:")
             logger.error(f"   1. Check if alert listener is running:")
-            logger.error(f"      → python alert_listener.py")
+            logger.error(f"      -> python alert_listener.py")
             logger.error(f"   2. Verify port 5000 is not blocked by firewall")
             logger.error(f"   3. Confirm alert service is accessible at {self.alert_service_url}")
             logger.debug("="*80 + "\n")
@@ -356,7 +384,7 @@ class AlertSender:
 
         except httpx.TimeoutException as e:
             duration = (datetime.now() - start_time).total_seconds()
-            logger.error(f"\n❌ TIMEOUT ERROR ({duration:.3f}s)")
+            logger.error(f"\n[ERROR] TIMEOUT ERROR ({duration:.3f}s)")
             logger.error(f"   Alert service took too long to respond (>5s)")
             logger.error(f"   Endpoint: {endpoint}")
             logger.error(f"   Error: {str(e)}")
@@ -365,10 +393,10 @@ class AlertSender:
 
         except Exception as e:
             duration = (datetime.now() - start_time).total_seconds()
-            logger.error(f"\n❌ UNEXPECTED ERROR ({duration:.3f}s)")
+            logger.error(f"\n[ERROR] UNEXPECTED ERROR ({duration:.3f}s)")
             logger.error(f"   Exception Type: {type(e).__name__}")
             logger.error(f"   Exception Message: {str(e)}")
-            logger.error(f"\n🔍 Stack Trace:")
+            logger.error(f"\n[DEBUG] Stack Trace:")
             import traceback
             logger.error(traceback.format_exc())
             logger.debug("="*80 + "\n")
@@ -390,19 +418,19 @@ class AlertSender:
             )
 
             if response.status_code == 200:
-                logger.info(f"✅ Alert service is reachable at {self.alert_service_url}")
+                logger.info(f"[OK] Alert service is reachable at {self.alert_service_url}")
                 return True
             else:
-                logger.warning(f"⚠️ Alert service returned status {response.status_code}")
+                logger.warning(f"[WARN] Alert service returned status {response.status_code}")
                 return False
 
         except httpx.ConnectError:
-            logger.warning(f"⚠️ Alert service not reachable at {self.alert_service_url}")
-            logger.info("💡 Alert service is optional. Alerts will be logged locally.")
+            logger.warning(f"[WARN] Alert service not reachable at {self.alert_service_url}")
+            logger.info("[TIP] Alert service is optional. Alerts will be logged locally.")
             return False
 
         except Exception as e:
-            logger.error(f"❌ Error testing connection: {str(e)}")
+            logger.error(f"[ERROR] Error testing connection: {str(e)}")
             return False
 
 

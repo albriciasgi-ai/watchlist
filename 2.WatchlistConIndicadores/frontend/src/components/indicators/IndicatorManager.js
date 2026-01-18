@@ -17,6 +17,7 @@ import FibonacciLevelCalculator from "./FibonacciLevelCalculator";
 import LevelSourceManager from "./LevelSourceManager";
 import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: minConfidence 20%
+import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import Logger from '../../utils/Logger.js';
 
@@ -72,11 +73,14 @@ class IndicatorManager {
       this.indicators.push(this.openInterestIndicator);
     }
 
-    // Rejection Patterns (suele estar habilitado)
-    this.indicators.push(new RejectionPatternIndicator(this.symbol, this.interval, this.days));
+    // Rejection Patterns - solo si está explícitamente habilitado (desactivado por defecto)
+    if (indicatorStates['Rejection Patterns'] === true) {
+      console.log(`[${this.symbol}] Creando Rejection Patterns porque está habilitado`);
+      this.indicators.push(new RejectionPatternIndicator(this.symbol, this.interval, this.days));
+    }
 
-    // Double Top/Bottom (suele estar habilitado)
-    if (indicatorStates['Double Top/Bottom'] !== false) {
+    // Double Top/Bottom - solo si está explícitamente habilitado (desactivado por defecto)
+    if (indicatorStates['Double Top/Bottom'] === true) {
       console.log(`[${this.symbol}] Creando Double Top/Bottom porque está habilitado`);
       this.indicators.push(new DoubleTopBottomIndicator(this.symbol, this.interval, this.days));
     }
@@ -107,6 +111,12 @@ class IndicatorManager {
     if (indicatorStates['Continuation Patterns'] === true) {
       console.log(`[${this.symbol}] Creando Continuation Patterns porque está habilitado`);
       this.indicators.push(new ContinuationPatternIndicator(this.symbol, this.interval, this.days));
+    }
+
+    // Swing Detector - solo si está habilitado
+    if (indicatorStates['Swing Detector'] === true) {
+      console.log(`[${this.symbol}] Creando Swing Detector porque está habilitado`);
+      this.indicators.push(new SwingDetectorIndicator(this.symbol, this.interval, this.days));
     }
 
     // Asignar referencia al manager a todos los indicadores
@@ -196,7 +206,7 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh para Volume Profile, Open Interest y Support & Resistance
+  // ✅ SIMPLIFICADO: refresh para Volume Profile, Open Interest, Support & Resistance y VWAP
   async refresh() {
     const startTime = Date.now();
     log.debug(`[${this.symbol}] 🔄 Refrescando indicadores...`);
@@ -212,6 +222,41 @@ class IndicatorManager {
             }
             await indicator.fetchData();
           }
+          // ✅ VWAP: Actualizar days e interval cuando cambien
+          if (indicator.name === "VWAP" && indicator.enabled) {
+            let needsRefetch = false;
+
+            // Actualizar interval si cambió
+            if (indicator.interval !== this.interval) {
+              log.debug(`[${this.symbol}] 🔄 Actualizando interval de VWAP: ${indicator.interval} → ${this.interval}`);
+              if (indicator.setInterval) {
+                indicator.setInterval(this.interval);
+                needsRefetch = true;
+              } else {
+                indicator.interval = this.interval;
+                indicator.lastFetchTime = 0;
+                needsRefetch = true;
+              }
+            }
+
+            // Actualizar days si cambió
+            if (indicator.days !== this.days) {
+              log.debug(`[${this.symbol}] 🔄 Actualizando days de VWAP: ${indicator.days} → ${this.days}`);
+              if (indicator.setDays) {
+                indicator.setDays(this.days);
+                needsRefetch = true;
+              } else {
+                indicator.days = this.days;
+                indicator.lastFetchTime = 0;
+                needsRefetch = true;
+              }
+            }
+
+            // Refetch si hubo cambios
+            if (needsRefetch && indicator.fetchData) {
+              await indicator.fetchData();
+            }
+          }
         })
       );
 
@@ -219,6 +264,22 @@ class IndicatorManager {
       log.debug(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
     } catch (error) {
       log.error(`[${this.symbol}] ❌ Error en refresh:`, error);
+    }
+  }
+
+  // ✅ NUEVO: Actualizar intervalo de todos los indicadores
+  updateInterval(newInterval) {
+    if (this.interval !== newInterval) {
+      log.debug(`[${this.symbol}] 🔄 Actualizando interval del manager: ${this.interval} → ${newInterval}`);
+      this.interval = newInterval;
+    }
+  }
+
+  // ✅ NUEVO: Actualizar días de todos los indicadores
+  updateDays(newDays) {
+    if (this.days !== newDays) {
+      log.debug(`[${this.symbol}] 🔄 Actualizando days del manager: ${this.days} → ${newDays}`);
+      this.days = newDays;
     }
   }
 
@@ -975,7 +1036,16 @@ class IndicatorManager {
 
   destroy() {
     log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
+
+    // Destroy all indicators (stops pending fetches)
+    this.indicators.forEach(indicator => {
+      if (indicator.destroy) {
+        indicator.destroy();
+      }
+    });
+
     // Limpiar instancias
+    this.indicators = [];
     this.fixedRangeIndicators = [];
     this.rangeDetector = null;
   }
@@ -1027,6 +1097,13 @@ class IndicatorManager {
    */
   getRejectionPatternIndicator() {
     return this.indicators.find(ind => ind.name === "Rejection Patterns");
+  }
+
+  /**
+   * Obtiene el indicador de Swing Detector
+   */
+  getSwingDetectorIndicator() {
+    return this.indicators.find(ind => ind.name === "Swing Detector");
   }
 
   /**

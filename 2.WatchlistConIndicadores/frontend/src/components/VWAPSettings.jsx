@@ -1,6 +1,7 @@
 // src/components/VWAPSettings.jsx
 import React, { useState, useEffect, useRef } from "react";
 import PresetManager from "../utils/PresetManager";
+import { API_BASE_URL } from "../config.js";
 import "./VWAPSettings.css";
 
 const DEBUG = true;
@@ -73,10 +74,71 @@ const VWAPSettings = ({
   const [showPresets, setShowPresets] = useState(false);
   const [presetName, setPresetName] = useState('');
   const [savedPresets, setSavedPresets] = useState([]);
+  const [backendStatus, setBackendStatus] = useState(null);
+  const [backendLoading, setBackendLoading] = useState(false);
   const renderCount = useRef(0);
   const isUpdatingRef = useRef(false); // Evita loops en useEffect
 
   renderCount.current++;
+
+  // Fetch backend status on mount
+  useEffect(() => {
+    fetchBackendStatus();
+  }, []);
+
+  const fetchBackendStatus = async () => {
+    try {
+      setBackendLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/vwap-service/status`);
+      const data = await response.json();
+      if (data.success) {
+        setBackendStatus(data);
+        if (DEBUG) console.log('[VWAPSettings] Backend status:', data);
+      }
+    } catch (error) {
+      console.error('[VWAPSettings] Error fetching backend status:', error);
+    } finally {
+      setBackendLoading(false);
+    }
+  };
+
+  const updateBackendConfig = async (newConfig) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/vwap-service/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newConfig)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setBackendStatus(data.config);
+        if (DEBUG) console.log('[VWAPSettings] Backend config updated:', data);
+        return true;
+      }
+    } catch (error) {
+      console.error('[VWAPSettings] Error updating backend config:', error);
+    }
+    return false;
+  };
+
+  const handleRecalculate = async () => {
+    try {
+      setBackendLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/vwap-service/recalculate`, {
+        method: 'POST'
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert('✅ VWAP recalculado exitosamente');
+        await fetchBackendStatus();
+      }
+    } catch (error) {
+      console.error('[VWAPSettings] Error recalculating:', error);
+      alert('❌ Error al recalcular VWAP');
+    } finally {
+      setBackendLoading(false);
+    }
+  };
 
   if (DEBUG) {
     console.log(`[VWAPSettings] Render #${renderCount.current}`, {
@@ -377,6 +439,63 @@ const VWAPSettings = ({
             >
               🔄 Reset to Global
             </button>
+          )}
+        </div>
+
+        {/* Backend Service Status */}
+        <div className="setting-row" style={{
+          background: backendStatus?.running ? '#e8f5e9' : '#ffebee',
+          padding: '12px',
+          borderRadius: '8px',
+          border: `2px solid ${backendStatus?.running ? '#4CAF50' : '#f44336'}`,
+          marginBottom: '16px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontWeight: 'bold', color: backendStatus?.running ? '#2e7d32' : '#c62828' }}>
+              {backendStatus?.running ? '🟢 Backend VWAP Service: RUNNING' : '🔴 Backend VWAP Service: STOPPED'}
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={fetchBackendStatus}
+                disabled={backendLoading}
+                style={{
+                  padding: '4px 10px',
+                  background: '#2196F3',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: backendLoading ? 'wait' : 'pointer',
+                  fontSize: '11px'
+                }}
+              >
+                {backendLoading ? '...' : '🔄 Refresh'}
+              </button>
+              <button
+                onClick={handleRecalculate}
+                disabled={backendLoading || !backendStatus?.running}
+                style={{
+                  padding: '4px 10px',
+                  background: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: backendLoading ? 'wait' : 'pointer',
+                  fontSize: '11px'
+                }}
+              >
+                🔄 Recalcular
+              </button>
+            </div>
+          </div>
+          {backendStatus && (
+            <div style={{ fontSize: '11px', color: '#555', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+              <span>Tipo: <b>{backendStatus.vwapType}</b></span>
+              <span>Intervalo: <b>{backendStatus.interval}m</b></span>
+              <span>Símbolos: <b>{backendStatus.symbols?.join(', ')}</b></span>
+              <span>Cálculos: <b>{backendStatus.stats?.calculations || 0}</b></span>
+              <span>Bandas: <b>{backendStatus.showBands ? 'Sí' : 'No'}</b></span>
+              <span>BandWidth: <b>{backendStatus.showBandWidth ? 'Sí' : 'No'}</b></span>
+            </div>
           )}
         </div>
 

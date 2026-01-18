@@ -1,0 +1,72 @@
+{
+  "enabled": true,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT"
+  ],
+  "interval": "1",
+  "days": 1,
+  "symbolConfigs": {
+    "ETHUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2.1,
+        "lookbackBars": 20
+      }
+    }
+  },
+  "swingBars": 3,
+  "direction": "BOTH",
+  "priceZones": [
+    {
+      "id": "zone_1768754754338",
+      "symbol": "BTCUSDT",
+      "min": 90000,
+      "max": 100000,
+      "direction": "LONG",
+      "enabled": true
+    },
+    {
+      "id": "zone_rect_rectangle_1768754729041_0.749703410985987",
+      "symbol": "BTCUSDT",
+      "min": 95020.47072828504,
+      "max": 95159.08183939615,
+      "direction": "SHORT",
+      "enabled": true,
+      "sourceRectId": "rectangle_1768754729041_0.749703410985987",
+      "label": "Zone",
+      "timeStart": 1768736280000,
+      "timeEnd": 1768748040000,
+      "timeBound": true
+    },
+    {
+      "id": "zone_rect_rectangle_1768755009952_0.4619963306266729",
+      "symbol": "ETHUSDT",
+      "min": 3312.6695280737626,
+      "max": 3333.2750731865444,
+      "direction": "BOTH",
+      "enabled": true,
+      "sourceRectId": "rectangle_1768755009952_0.4619963306266729",
+      "label": "Zone",
+      "timeStart": 1768743360000,
+      "timeEnd": 1768752960000,
+      "timeBound": true
+    },
+    {
+      "id": "zone_1768755264784",
+      "symbol": "ETHUSDT",
+      "min": 3300,
+      "max": 3700,
+      "direction": "LONG",
+      "enabled": true
+    }
+  ],
+  "useDrawingZones": true,
+  "volumeFilter": {
+    "enabled": false,
+    "minZScore": 1,
+    "lookbackBars": 10
+  },
+  "cooldownMinutes": 1,
+  "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
+}

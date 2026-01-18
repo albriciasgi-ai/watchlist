@@ -608,8 +608,8 @@ class DoubleTopBottomDetector:
                 print(f"      Avg volume: {volume_avg:.2f}")
                 print(f"      Confidence: {confidence:.1f}/100")
 
-        # ✅ DIAGNÓSTICO: Imprimir resumen de rechazos
-        print(f"  [PRUEBA_DBT] 📊 DOUBLE TOP Stats:")
+        # DIAGNOSTICO: Imprimir resumen de rechazos
+        print(f"  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:")
         print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
         print(f"    - Rejected (too close): {stats['rejected_too_close']}")
         print(f"    - Rejected (too far): {stats['rejected_too_far']}")
@@ -617,7 +617,7 @@ class DoubleTopBottomDetector:
         print(f"    - Rejected (breakout): {stats['rejected_breakout']}")
         print(f"    - Rejected (no rejection pattern): {stats['rejected_no_rejection_pattern']}")
         print(f"    - Rejected (volume): {stats['rejected_volume']}")
-        print(f"    - ✅ ACCEPTED: {stats['accepted']}")
+        print(f"    - [OK] ACCEPTED: {stats['accepted']}")
 
         return patterns
 
@@ -825,8 +825,8 @@ class DoubleTopBottomDetector:
                 print(f"      Avg volume: {volume_avg:.2f}")
                 print(f"      Confidence: {confidence:.1f}/100")
 
-        # ✅ DIAGNÓSTICO: Imprimir resumen de rechazos
-        print(f"  [PRUEBA_DBT] 📊 DOUBLE BOTTOM Stats:")
+        # DIAGNOSTICO: Imprimir resumen de rechazos
+        print(f"  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:")
         print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
         print(f"    - Rejected (too close): {stats['rejected_too_close']}")
         print(f"    - Rejected (too far): {stats['rejected_too_far']}")
@@ -834,7 +834,7 @@ class DoubleTopBottomDetector:
         print(f"    - Rejected (breakout): {stats['rejected_breakout']}")
         print(f"    - Rejected (no rejection pattern): {stats['rejected_no_rejection_pattern']}")
         print(f"    - Rejected (volume): {stats['rejected_volume']}")
-        print(f"    - ✅ ACCEPTED: {stats['accepted']}")
+        print(f"    - [OK] ACCEPTED: {stats['accepted']}")
 
         return patterns
 

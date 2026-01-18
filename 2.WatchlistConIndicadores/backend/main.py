@@ -1,5 +1,34 @@
-# -*- coding: utf-8 -*-
-from fastapi import FastAPI
+# -*- coding: utf-8 -*- # v7 - logging with timestamps for all loggers
+import logging
+import sys
+
+# Configure logging FIRST before any other imports
+LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+# Create a formatter
+formatter = logging.Formatter(LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
+
+# Configure root logger
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+
+# Remove existing handlers and add our own
+for handler in root_logger.handlers[:]:
+    root_logger.removeHandler(handler)
+
+# Add stdout handler with our format
+stdout_handler = logging.StreamHandler(sys.stdout)
+stdout_handler.setFormatter(formatter)
+root_logger.addHandler(stdout_handler)
+
+# Also configure uvicorn loggers specifically
+for logger_name in ['uvicorn', 'uvicorn.error', 'uvicorn.access']:
+    uvicorn_logger = logging.getLogger(logger_name)
+    uvicorn_logger.handlers = []
+    uvicorn_logger.addHandler(stdout_handler)
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import asyncio
@@ -7,8 +36,19 @@ import time
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
-from typing import Optional
+from typing import Optional, List
 from dataclasses import asdict
+
+# Real-time pattern detection imports
+from config_store import get_config_store
+from pattern_state_manager import get_pattern_state_manager, AlertRecord
+from realtime_pattern_service import get_realtime_pattern_service
+
+# Swing detector imports
+from swing_service import get_swing_service
+
+# VWAP service imports
+from vwap_service import get_vwap_service
 
 app = FastAPI(
     title="Crypto Watchlist Backend",
@@ -685,6 +725,38 @@ async def send_pattern_alert_endpoint(request: Request):
             print(f"   Symbol: {symbol}")
             print(f"   Price: ${pattern_price:.2f}" if isinstance(pattern_price, (int, float)) else f"   Price: {pattern_price}")
             print(f"   Confidence: {pattern_confidence}%")
+
+            # STEP 8: Save alert to history
+            print(f"\nSTEP 8: Saving alert to history")
+            try:
+                import uuid
+                state_manager = get_pattern_state_manager()
+
+                # Extract strategy data if present
+                strategy = pattern.get('strategy', {})
+
+                alert_record = AlertRecord(
+                    id=str(uuid.uuid4()),
+                    timestamp=int(time.time() * 1000),
+                    symbol=symbol,
+                    interval=interval or "unknown",
+                    indicator='REJ',  # Rejection pattern
+                    pattern_type=pattern_type,
+                    direction=pattern_direction if pattern_direction != 'N/A' else ('LONG' if pattern_type in ['HAMMER', 'ENGULFING_BULLISH', 'DOJI_DRAGONFLY', 'DOUBLE_BOTTOM', 'SWING_LOW'] else 'SHORT'),
+                    price=float(pattern_price) if isinstance(pattern_price, (int, float)) else 0,
+                    confidence=float(pattern_confidence) if isinstance(pattern_confidence, (int, float)) else 0,
+                    status='sent',
+                    entry=strategy.get('entry'),
+                    stop_loss=strategy.get('stopLoss'),
+                    take_profit=strategy.get('takeProfit'),
+                    outcome='PENDING'
+                )
+
+                state_manager.add_alert_record(alert_record)
+                print(f"   Alert saved to history with ID: {alert_record.id}")
+            except Exception as save_error:
+                print(f"   [WARN] Failed to save alert to history: {save_error}")
+
             print("="*80 + "\n")
 
             return {
@@ -695,7 +767,7 @@ async def send_pattern_alert_endpoint(request: Request):
                 "confidence": pattern_confidence
             }
         else:
-            print(f"\n⚠️ STEP 7: Alert service returned failure")
+            print(f"\n[WARN] STEP 7: Alert service returned failure")
             print(f"   Possible causes:")
             print(f"     - Alert listener not running on port 5000")
             print(f"     - Network connectivity issues")
@@ -710,10 +782,10 @@ async def send_pattern_alert_endpoint(request: Request):
             }
 
     except Exception as e:
-        print(f"\n❌ STEP X: EXCEPTION OCCURRED")
+        print(f"\n[ERROR] STEP X: EXCEPTION OCCURRED")
         print(f"   Exception Type: {type(e).__name__}")
         print(f"   Exception Message: {str(e)}")
-        print(f"\n🔍 Stack Trace:")
+        print(f"\n[DEBUG] Stack Trace:")
         import traceback
         traceback.print_exc()
         print("="*80 + "\n")
@@ -2076,7 +2148,7 @@ async def send_test_alert():
 
         if success:
             print(f"[TEST ALERT] [OK] Test alert queued successfully")
-            print(f"[TEST ALERT] 💡 Check the alert_sender logs above for delivery status")
+            print(f"[TEST ALERT] [TIP] Check the alert_sender logs above for delivery status")
             print("="*80 + "\n")
 
             return {
@@ -2241,12 +2313,79 @@ async def startup_event():
     print("[STARTUP] Alert sender initialized")
     print("[STARTUP] Proximity alerts system ready")
 
+    # Start real-time pattern detection service
+    try:
+        realtime_service = get_realtime_pattern_service()
+        # Default symbols - can be configured via API
+        symbols = ["BTCUSDT", "ETHUSDT"]
+        # Start with only 1h interval - frontend will notify the active timeframe
+        # This avoids monitoring ALL timeframes and reduces load significantly
+        intervals = ["60"]  # Only 1h by default, frontend will update via POST /api/realtime/set-interval
+        await realtime_service.start(symbols, intervals)
+        print("[STARTUP] Real-time pattern detection service started")
+        print(f"[STARTUP] Monitoring symbols: {symbols}")
+        print(f"[STARTUP] Initial interval: {intervals} (frontend will sync active timeframe)")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start real-time service: {e}")
+        print("[STARTUP] Real-time detection disabled - install websockets: pip install websockets>=12.0")
+
+    # Start swing detector service
+    try:
+        swing_service = get_swing_service()
+        await swing_service.start()
+        print("[STARTUP] Swing detector service started")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start swing service: {e}")
+
+    # Start VWAP service
+    try:
+        from websocket_manager import get_websocket_manager
+        ws_manager = get_websocket_manager()
+        vwap_service = get_vwap_service()
+        await vwap_service.start(ws_manager)
+        print("[STARTUP] VWAP service started")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start VWAP service: {e}")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
     from alert_sender import shutdown_alert_sender
     await shutdown_alert_sender()
+
+    # Stop real-time pattern detection service
+    try:
+        realtime_service = get_realtime_pattern_service()
+        await realtime_service.stop()
+        print("[SHUTDOWN] Real-time pattern detection service stopped")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error stopping real-time service: {e}")
+
+    # Stop swing detector service
+    try:
+        swing_service = get_swing_service()
+        await swing_service.stop()
+        print("[SHUTDOWN] Swing detector service stopped")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error stopping swing service: {e}")
+
+    # Stop VWAP service
+    try:
+        vwap_service = get_vwap_service()
+        await vwap_service.stop()
+        print("[SHUTDOWN] VWAP service stopped")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error stopping VWAP service: {e}")
+
+    # Save config store
+    try:
+        config_store = get_config_store()
+        config_store.save()
+        print("[SHUTDOWN] Config store saved")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error saving config store: {e}")
+
     print("[SHUTDOWN] Backend shutdown complete")
 
 
@@ -2931,6 +3070,801 @@ async def delete_drawings(symbol: str):
 
     except Exception as e:
         print(f"[ERROR] Deleting drawings for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ==================== REAL-TIME PATTERN DETECTION ENDPOINTS ====================
+
+@app.post("/api/realtime/config/{symbol}")
+async def update_realtime_config(symbol: str, request: Request):
+    """
+    Receive configuration and calculated levels from frontend.
+    This allows the backend to detect patterns with the same logic
+    the frontend would use.
+
+    Body:
+    {
+        "interval": "240",
+        "indicatorType": "doubleTopBottom" | "rejection",
+        "config": { ... full indicator config ... },
+        "calculatedLevels": {
+            "vwap": { "vwap": 95000, "upper2": ..., "lower2": ... },
+            "supportResistance": { "supports": [...], "resistances": [...] },
+            "manualZones": [...],
+            "fixedRanges": [...]
+        }
+    }
+    """
+    try:
+        body = await request.json()
+        interval = body.get('interval')
+        indicator_type = body.get('indicatorType')
+        config = body.get('config')
+        calculated_levels = body.get('calculatedLevels', {})
+
+        if not interval or not indicator_type:
+            return {
+                "success": False,
+                "error": "Missing required fields: interval, indicatorType"
+            }
+
+        config_store = get_config_store()
+        config_store.update(
+            symbol=symbol,
+            interval=interval,
+            indicator_type=indicator_type,
+            config=config,
+            calculated_levels=calculated_levels
+        )
+
+        alerts_enabled = config.get('alertsEnabled', 'NOT_SET') if config else 'NO_CONFIG'
+        print(f"[REALTIME] Config updated: {symbol}/{interval}/{indicator_type} (alertsEnabled={alerts_enabled})")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "indicatorType": indicator_type,
+            "message": "Configuration synchronized"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Updating realtime config for {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/realtime/status")
+async def get_realtime_status():
+    """
+    Get status of the real-time pattern detection service.
+
+    Returns connection state, statistics, and buffer info.
+    """
+    try:
+        realtime_service = get_realtime_pattern_service()
+        status = realtime_service.get_status()
+
+        return {
+            "success": True,
+            **status
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting realtime status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "running": False
+        }
+
+
+@app.get("/api/realtime/patterns/{symbol}")
+async def get_realtime_patterns(symbol: str, interval: str = "1", indicator: str = None, since: int = None):
+    """
+    Get patterns detected by the realtime service for a symbol/interval.
+    Frontend should poll this endpoint to display patterns on chart.
+
+    Query params:
+        interval: Timeframe (e.g., "1", "60")
+        indicator: Optional filter by indicator type ("doubleTopBottom" or "rejection")
+        since: Optional timestamp (ms) to get only patterns newer than this
+
+    Returns:
+        patterns: Dict with 'doubleTopBottom' and 'rejection' pattern arrays
+    """
+    try:
+        realtime_service = get_realtime_pattern_service()
+        result = realtime_service.get_detected_patterns(
+            symbol=symbol,
+            interval=interval,
+            indicator=indicator,
+            since_timestamp=since
+        )
+
+        return {
+            "success": True,
+            **result
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting realtime patterns for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "patterns": {"doubleTopBottom": [], "rejection": []}
+        }
+
+
+@app.post("/api/realtime/set-interval")
+async def set_active_interval(request: Request):
+    """
+    Set the active interval(s) to monitor.
+    Called by frontend when user changes timeframe.
+
+    Body:
+        interval: string - Single interval to monitor (e.g., "60" for 1h)
+        OR
+        intervals: string[] - Multiple intervals to monitor
+
+    Example:
+        {"interval": "60"}  -> Monitor only 1h candles
+        {"intervals": ["60", "240"]}  -> Monitor 1h and 4h candles
+    """
+    try:
+        body = await request.json()
+        interval = body.get('interval')
+        intervals = body.get('intervals')
+
+        # Normalize to list
+        if interval:
+            intervals_list = [interval]
+        elif intervals:
+            intervals_list = intervals
+        else:
+            return {
+                "success": False,
+                "error": "Missing required field: interval or intervals"
+            }
+
+        # Validate intervals
+        valid_intervals = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W", "M"]
+        for i in intervals_list:
+            if i not in valid_intervals:
+                return {
+                    "success": False,
+                    "error": f"Invalid interval: {i}. Valid: {valid_intervals}"
+                }
+
+        realtime_service = get_realtime_pattern_service()
+        old_intervals = realtime_service.intervals.copy()
+
+        success = await realtime_service.update_intervals(intervals_list)
+
+        if success:
+            print(f"[REALTIME] Active interval changed: {old_intervals} -> {intervals_list}")
+            return {
+                "success": True,
+                "message": f"Now monitoring interval(s): {intervals_list}",
+                "previous_intervals": old_intervals,
+                "current_intervals": intervals_list,
+                "subscriptions": realtime_service.ws_manager.get_current_subscriptions()
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Failed to update intervals",
+                "current_intervals": realtime_service.intervals
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Setting active interval: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/realtime/alerts/history")
+async def get_realtime_alerts_history(symbol: str = None, limit: int = 50):
+    """
+    Get history of alerts sent by the real-time service.
+
+    Args:
+        symbol: Optional filter by symbol
+        limit: Maximum number of records (default 50)
+    """
+    try:
+        state_manager = get_pattern_state_manager()
+        history = state_manager.get_alert_history(symbol=symbol, limit=limit)
+
+        return {
+            "success": True,
+            "count": len(history),
+            "alerts": history
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting alerts history: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "alerts": []
+        }
+
+
+@app.post("/api/realtime/sync/{symbol}")
+async def force_sync_symbol(symbol: str, request: Request):
+    """
+    Force re-sync of configuration for a symbol.
+    Useful for debugging or manual intervention.
+    """
+    try:
+        body = await request.json()
+        interval = body.get('interval')
+
+        if not interval:
+            return {
+                "success": False,
+                "error": "Missing required field: interval"
+            }
+
+        config_store = get_config_store()
+        existing = config_store.get(symbol, interval, body.get('indicatorType', 'doubleTopBottom'))
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "hasConfig": existing is not None,
+            "config": existing.to_dict() if existing else None
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Force sync for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/realtime/config/stats")
+async def get_config_stats():
+    """Get statistics about synchronized configurations"""
+    try:
+        config_store = get_config_store()
+        stats = config_store.get_stats()
+
+        return {
+            "success": True,
+            **stats
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting config stats: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/realtime/cleanup")
+async def cleanup_old_patterns():
+    """Manually trigger cleanup of old pattern data"""
+    try:
+        state_manager = get_pattern_state_manager()
+        removed = state_manager.cleanup_old_data()
+
+        return {
+            "success": True,
+            "patterns_removed": removed,
+            "message": f"Cleaned up {removed} old patterns"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Cleanup: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ============================================================
+# SWING DETECTOR ENDPOINTS
+# ============================================================
+
+@app.get("/api/swing/status")
+async def get_swing_status(symbol: str = None):
+    """
+    Get swing detector service status.
+    If symbol is provided, includes merged config for that symbol.
+    """
+    try:
+        swing_service = get_swing_service()
+        return {
+            "success": True,
+            **swing_service.get_status(symbol)
+        }
+    except Exception as e:
+        print(f"[ERROR] Swing status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/swing/config")
+async def update_swing_config(request: Request):
+    """
+    Update swing detector configuration.
+
+    Body example:
+    {
+        "enabled": true,
+        "symbols": ["BTCUSDT", "ETHUSDT"],
+        "interval": "1",
+        "direction": "SHORT",
+        "swingBars": 5,
+        "priceZones": [
+            {"min": 95000, "max": 96000, "direction": "SHORT", "enabled": true}
+        ],
+        "volumeFilter": {
+            "enabled": true,
+            "minZScore": 1.5,
+            "lookbackBars": 20
+        },
+        "cooldownMinutes": 30
+    }
+    """
+    try:
+        data = await request.json()
+        swing_service = get_swing_service()
+        success = swing_service.update_config(data)
+
+        if success:
+            return {
+                "success": True,
+                "message": "Swing config updated",
+                "config": swing_service.get_status()
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Failed to update config"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Swing config update: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/swing/config/{symbol}")
+async def update_swing_symbol_config(symbol: str, request: Request):
+    """
+    Update swing detector configuration for a specific symbol.
+
+    Body example:
+    {
+        "direction": "LONG",
+        "swingBars": 3,
+        "volumeFilter": {
+            "enabled": true,
+            "minZScore": 2.0
+        }
+    }
+    """
+    try:
+        data = await request.json()
+        swing_service = get_swing_service()
+
+        # Ensure symbolConfigs exists
+        if not hasattr(swing_service.config, 'symbolConfigs') or swing_service.config.symbolConfigs is None:
+            swing_service.config.symbolConfigs = {}
+
+        # Update or create symbol config
+        if symbol not in swing_service.config.symbolConfigs:
+            swing_service.config.symbolConfigs[symbol] = {}
+
+        # Merge new settings into symbol config
+        for key, value in data.items():
+            swing_service.config.symbolConfigs[symbol][key] = value
+
+        # Save config
+        swing_service._save_config()
+
+        # Re-analyze to apply new settings
+        print(f"[SWING] Symbol config updated for {symbol} - Re-analyzing...")
+        await swing_service.reanalyze_historical()
+
+        return {
+            "success": True,
+            "message": f"Config updated for {symbol}",
+            "symbolConfig": swing_service.config.get_symbol_config(symbol)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Swing symbol config update: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/swing/signals/{symbol}")
+async def get_swing_signals(symbol: str, since: int = None):
+    """
+    Get recent swing signals for a symbol.
+    Frontend polls this to display signals on chart.
+
+    Query params:
+        since: Optional timestamp (ms) - only return signals newer than this
+    """
+    try:
+        swing_service = get_swing_service()
+        signals = swing_service.get_signals(symbol, since_timestamp=since)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "signals": signals,
+            "count": len(signals)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting swing signals for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "signals": []
+        }
+
+
+@app.post("/api/swing/clear-cooldowns")
+async def clear_swing_cooldowns():
+    """Clear all swing detector cooldowns (for testing)"""
+    try:
+        swing_service = get_swing_service()
+        swing_service.clear_cooldowns()
+
+        return {
+            "success": True,
+            "message": "Cooldowns cleared"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Clearing swing cooldowns: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/swing/reanalyze")
+async def reanalyze_swing_signals():
+    """
+    Re-analyze historical data with current config.
+    Useful after changing detection parameters to refresh all signals.
+    """
+    try:
+        swing_service = get_swing_service()
+        await swing_service.reanalyze_historical()
+
+        return {
+            "success": True,
+            "message": "Historical data re-analyzed",
+            "stats": swing_service.stats
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Re-analyzing swing signals: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/swing/add-zone")
+async def add_swing_zone(request: Request):
+    """
+    Add a price zone to swing detector.
+
+    Body:
+    {
+        "min": 95000,
+        "max": 96000,
+        "direction": "SHORT",  // or "LONG" or "BOTH"
+        "enabled": true,
+        "id": "zone_1",  // optional
+        "timeBound": false,  // optional - if true, zone only valid within timeStart-timeEnd
+        "timeStart": 1234567890000,  // optional - start timestamp (ms)
+        "timeEnd": 1234567890000  // optional - end timestamp (ms)
+    }
+    """
+    try:
+        data = await request.json()
+        swing_service = get_swing_service()
+
+        # Add ID if not provided
+        if 'id' not in data:
+            data['id'] = f"zone_{int(time.time() * 1000)}"
+
+        # Add to config
+        swing_service.config.priceZones.append(data)
+        swing_service._save_config()
+
+        # Re-analyze signals with new zone configuration
+        print(f"[SWING] Zone added: {data.get('id')} - Re-analyzing signals...")
+        await swing_service.reanalyze_historical()
+
+        return {
+            "success": True,
+            "message": "Zone added and signals re-analyzed",
+            "zone": data,
+            "totalZones": len(swing_service.config.priceZones)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Adding swing zone: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.delete("/api/swing/zone/{zone_id}")
+async def delete_swing_zone(zone_id: str):
+    """Delete a price zone from swing detector"""
+    try:
+        swing_service = get_swing_service()
+
+        # Find and remove zone
+        original_count = len(swing_service.config.priceZones)
+        swing_service.config.priceZones = [
+            z for z in swing_service.config.priceZones
+            if z.get('id') != zone_id
+        ]
+
+        if len(swing_service.config.priceZones) < original_count:
+            swing_service._save_config()
+
+            # Re-analyze signals with updated zone configuration
+            print(f"[SWING] Zone deleted: {zone_id} - Re-analyzing signals...")
+            await swing_service.reanalyze_historical()
+
+            return {
+                "success": True,
+                "message": f"Zone {zone_id} deleted and signals re-analyzed",
+                "totalZones": len(swing_service.config.priceZones)
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Zone {zone_id} not found"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Deleting swing zone: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# ============================================================
+# VWAP SERVICE ENDPOINTS
+# ============================================================
+
+@app.get("/api/vwap-service/status")
+async def get_vwap_service_status():
+    """Get VWAP service status and configuration"""
+    try:
+        vwap_service = get_vwap_service()
+        return {
+            "success": True,
+            **vwap_service.get_status()
+        }
+    except Exception as e:
+        print(f"[ERROR] VWAP service status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/vwap-service/config")
+async def update_vwap_service_config(request: Request):
+    """
+    Update VWAP service configuration.
+
+    Body example:
+    {
+        "enabled": true,
+        "symbols": ["BTCUSDT", "ETHUSDT"],
+        "interval": "1",
+        "vwapType": "session",
+        "resetHour": 0,
+        "rollingPeriod": 20,
+        "showBands": true,
+        "bandMultipliers": [1.0, 2.0, 3.0],
+        "applyCryptoAdjustment": true,
+        "showBandWidth": true,
+        "showBBWP": false,
+        "showTTMSqueeze": false,
+        "bandWidthThresholds": {
+            "squeeze": 2.0,
+            "consolidation": 5.0,
+            "normal": 10.0
+        }
+    }
+    """
+    try:
+        data = await request.json()
+        vwap_service = get_vwap_service()
+        success = vwap_service.update_config(data)
+
+        if success:
+            return {
+                "success": True,
+                "message": "VWAP config updated",
+                "config": vwap_service.get_status()
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Failed to update config"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] VWAP config update: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/vwap-service/data/{symbol}")
+async def get_vwap_service_data(
+    symbol: str,
+    days: int = 1,
+    interval: str = "60",
+    vwapType: str = None,
+    rollingPeriod: int = None
+):
+    """
+    Get VWAP data for a symbol.
+    Returns all VWAP points with bands and volatility indicators.
+    Reloads if days/interval/vwapType differs from cached config.
+    """
+    try:
+        vwap_service = get_vwap_service()
+
+        # Max days per interval (matches frontend DAYS_OPTIONS_BY_INTERVAL)
+        MAX_DAYS_BY_INTERVAL = {
+            "1": 5,
+            "3": 10,
+            "5": 30,
+            "15": 90,
+            "30": 150,
+            "60": 360,
+            "120": 540,
+            "240": 720,
+            "D": 1440,
+            "W": 730
+        }
+
+        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 360)
+        days_to_load = min(days, max_days)
+
+        # Check current state
+        current_interval = vwap_service.config.interval
+        current_vwap_type = vwap_service.config.vwapType
+        current_rolling = vwap_service.config.rollingPeriod
+        current_data = vwap_service.get_vwap_data(symbol)
+
+        interval_minutes = vwap_service._interval_to_minutes(interval)
+        candles_needed = (days_to_load * 24 * 60) // interval_minutes
+
+        # Determine if config changed
+        config_changed = (
+            current_interval != interval or
+            (vwapType and current_vwap_type != vwapType) or
+            (rollingPeriod and current_rolling != rollingPeriod)
+        )
+
+        needs_more_data = len(current_data) < candles_needed * 0.9
+
+        if config_changed or needs_more_data:
+            # Update config if params provided
+            if vwapType:
+                vwap_service.config.vwapType = vwapType
+            if rollingPeriod:
+                vwap_service.config.rollingPeriod = rollingPeriod
+
+            print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
+            await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
+            current_data = vwap_service.get_vwap_data(symbol)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "data": current_data,
+            "count": len(current_data),
+            "interval": interval,
+            "days_loaded": days_to_load,
+            "vwapType": vwap_service.config.vwapType
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting VWAP data for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "data": []
+        }
+
+
+@app.get("/api/vwap-service/latest/{symbol}")
+async def get_vwap_service_latest(symbol: str):
+    """
+    Get latest VWAP point for a symbol.
+    Useful for real-time display without fetching all data.
+    """
+    try:
+        vwap_service = get_vwap_service()
+        latest = vwap_service.get_latest_vwap(symbol)
+
+        if latest:
+            return {
+                "success": True,
+                "symbol": symbol,
+                "data": latest
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"No VWAP data for {symbol}",
+                "data": None
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Getting latest VWAP for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "data": None
+        }
+
+
+@app.post("/api/vwap-service/recalculate")
+async def recalculate_vwap_service():
+    """
+    Force recalculation of VWAP for all symbols.
+    Useful after changing config parameters.
+    """
+    try:
+        vwap_service = get_vwap_service()
+        await vwap_service.recalculate()
+
+        return {
+            "success": True,
+            "message": "VWAP data recalculated",
+            "stats": vwap_service.stats
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Recalculating VWAP: {str(e)}")
         return {
             "success": False,
             "error": str(e)

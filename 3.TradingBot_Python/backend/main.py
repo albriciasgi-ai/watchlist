@@ -20,6 +20,24 @@ from trading.risk_calculator import RiskCalculator
 from trading.direction_manager import DirectionManager
 from trading.alert_parser import AlertParser
 
+# Alert log file for received alerts
+ALERT_LOG_DIR = Path(__file__).parent / "logs"
+ALERT_RECEIVED_LOG = ALERT_LOG_DIR / "alerts_received.log"
+
+def log_received_alert(symbol: str, side: str, pattern: str, price: float, confidence: float, result: str, source: str = "WATCHLIST"):
+    """Write received alert to log file"""
+    try:
+        # Ensure logs directory exists
+        ALERT_LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        conf_str = f"{confidence:.1f}%" if confidence else "N/A"
+        log_line = f"{timestamp} | {result} | {source} | {symbol} | {side} | {pattern} | ${price:.2f} | {conf_str}\n"
+        with open(ALERT_RECEIVED_LOG, "a", encoding="utf-8") as f:
+            f.write(log_line)
+    except Exception as e:
+        print(f"[ERROR] Failed to write alert log: {e}")
+
 
 # ==========================
 # Pydantic Models
@@ -69,10 +87,13 @@ class CredentialsRequest(BaseModel):
 
 class WatchlistAlertRequest(BaseModel):
     """Alert from Watchlist in JSON format"""
-    pattern: str = Field(..., description="Pattern name (e.g., HAMMER (ABRIR LONG))")
-    symbol: str = Field(..., description="Trading symbol (e.g., BTCUSDT)")
-    price: float = Field(..., description="Current price")
+    pattern: Optional[str] = Field(None, description="Pattern name (e.g., HAMMER (ABRIR LONG))")
+    symbol: Optional[str] = Field(None, description="Trading symbol (e.g., BTCUSDT)")
+    price: Optional[float] = Field(None, description="Current price")
     confidence: Optional[float] = Field(None, description="Pattern confidence (optional)")
+    # SwingDetector format fields
+    source: Optional[str] = Field(None, description="Alert source (e.g., SWING_DETECTOR)")
+    interval: Optional[str] = Field(None, description="Timeframe interval")
 
 
 # ==========================
@@ -718,35 +739,66 @@ async def process_alert(req: AlertRequest):
 
 
 @app.post("/api/watchlist-alert")
-async def process_watchlist_alert(req: WatchlistAlertRequest):
+async def process_watchlist_alert(request: Dict[str, Any]):
     """
-    Process alert from Watchlist in JSON format
-    Accepts structured JSON with pattern, symbol, price, and confidence
+    Process alert from Watchlist or SwingDetector in JSON format
+    Supports both formats:
+    - Watchlist: {pattern, symbol, price, confidence}
+    - SwingDetector: {source, symbol, interval, pattern: {patternType, price, direction, ...}}
     """
     try:
         if not state.bybit_client:
             raise HTTPException(status_code=400, detail="Credentials not configured")
 
-        # Parse direction from pattern
-        pattern = req.pattern.upper()
+        # Detect source and parse accordingly
+        source = request.get("source", "WATCHLIST")
+        is_swing_detector = source == "SWING_DETECTOR"
 
-        # Determine side from pattern
-        if any(word in pattern for word in ["LONG", "BUY", "COMPRA", "ABRIR LONG", "OPEN LONG"]):
-            side = "Buy"
-        elif any(word in pattern for word in ["SHORT", "SELL", "VENTA", "ABRIR SHORT", "OPEN SHORT"]):
-            side = "Sell"
+        if is_swing_detector:
+            # SwingDetector format: {source, symbol, interval, pattern: {patternType, price, direction, ...}}
+            symbol = request.get("symbol", "").upper()
+            pattern_data = request.get("pattern", {})
+            pattern_type = pattern_data.get("patternType", "UNKNOWN")
+            price = pattern_data.get("price", 0)
+            confidence = pattern_data.get("confidence", 0)
+            direction = pattern_data.get("direction", "").upper()
+
+            # Determine side from direction
+            if direction == "LONG":
+                side = "Buy"
+            elif direction == "SHORT":
+                side = "Sell"
+            else:
+                state.log("error", f"SwingDetector: Invalid direction {direction}")
+                raise HTTPException(status_code=400, detail=f"Invalid direction: {direction}")
+
+            pattern = f"{pattern_type} ({direction})"
         else:
-            state.log("error", f"Could not determine direction from pattern: {req.pattern}")
-            raise HTTPException(status_code=400, detail=f"Could not determine direction from pattern: {req.pattern}")
+            # Original Watchlist format: {pattern, symbol, price, confidence}
+            pattern = request.get("pattern", "").upper()
+            symbol = request.get("symbol", "").upper()
+            price = request.get("price", 0)
+            confidence = request.get("confidence", 0)
 
-        symbol = req.symbol.upper()
-        price = Decimal(str(req.price))
+            # Determine side from pattern
+            if any(word in pattern for word in ["LONG", "BUY", "COMPRA", "ABRIR LONG", "OPEN LONG"]):
+                side = "Buy"
+            elif any(word in pattern for word in ["SHORT", "SELL", "VENTA", "ABRIR SHORT", "OPEN SHORT"]):
+                side = "Sell"
+            else:
+                state.log("error", f"Could not determine direction from pattern: {pattern}")
+                raise HTTPException(status_code=400, detail=f"Could not determine direction from pattern: {pattern}")
 
-        state.log("info", f"Watchlist alert received: {symbol} {side} @ {price} | Pattern: {req.pattern} | Confidence: {req.confidence}%")
+        price = Decimal(str(price))
+
+        # Log with explicit timestamp for debugging alert timing
+        received_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        state.log("info", f"[{received_at}] {source} alert: {symbol} {side} @ {price} | {pattern} | Conf: {confidence}%")
 
         # Check direction filter
         if not state.direction_manager.is_alert_allowed(symbol, side):
             state.log("warning", f"Alert rejected by direction filter: {symbol} {side}")
+            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_DIRECTION", source)
             return {
                 "success": False,
                 "message": f"Direction filter rejected: {symbol} is set to {state.direction_manager.get_direction(symbol)}",
@@ -758,12 +810,13 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
         config = state.get_coin_config(symbol)
         if not config:
             state.log("error", f"No configuration found for {symbol}")
+            log_received_alert(symbol, side, pattern, float(price), confidence, "NO_CONFIG", source)
             raise HTTPException(status_code=404, detail=f"No configuration for {symbol}")
 
         # Acquire lock for this symbol
         lock = state.get_symbol_lock(symbol)
         async with lock:
-            state.log("info", f"Acquired lock for {symbol}, processing watchlist alert...")
+            state.log("info", f"Acquired lock for {symbol}, processing {source} alert...")
 
             # Check for existing position
             position = await state.bybit_client.get_position(symbol)
@@ -774,6 +827,7 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
 
             if position.get("hasPosition"):
                 state.log("warning", f"Position already exists for {symbol}, skipping")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "SKIPPED_POSITION_EXISTS", source)
                 return {
                     "success": False,
                     "message": f"Position already exists for {symbol}",
@@ -818,10 +872,13 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
             # Enhanced logging
             if success_status and partial:
                 state.log("warning", f"[PARTIAL] {symbol}: Market Order executed but SL/TP failed")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "PARTIAL", source)
             elif success_status:
-                state.log("success", f"[SUCCESS] {symbol}: Trade completed successfully! Pattern: {req.pattern}")
+                state.log("success", f"[SUCCESS] {symbol}: Trade completed successfully! Pattern: {pattern}")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "SUCCESS", source)
             else:
                 state.log("error", f"[FAILED] {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "FAILED", source)
 
             # Save to order history
             if success_status:
@@ -833,8 +890,9 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
                     "quantity_usdt": float(quantity * price),
                     "stop_loss": float(risk_calc.get("stop_loss_price", 0)),
                     "take_profit": float(risk_calc.get("take_profit_price", 0)),
-                    "pattern": req.pattern,
-                    "confidence": req.confidence,
+                    "pattern": pattern,
+                    "confidence": confidence,
+                    "source": source,
                     "status": "partial" if partial else "success"
                 }
                 state.add_order_to_history(order_history_entry)
@@ -847,8 +905,9 @@ async def process_watchlist_alert(req: WatchlistAlertRequest):
                 "side": side,
                 "price": float(price),
                 "quantity": float(quantity),
-                "pattern": req.pattern,
-                "confidence": req.confidence,
+                "pattern": pattern,
+                "confidence": confidence,
+                "source": source,
                 "result": result,
                 "partial": partial
             }

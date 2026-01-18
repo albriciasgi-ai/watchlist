@@ -1,0 +1,1056 @@
+PS C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\2.WatchlistConIndicadores\backend> python -m uvicorn main:app --port 8000
+2026-01-17 11:06:02 - uvicorn.error - INFO - Started server process [14292]
+2026-01-17 11:06:02 - uvicorn.error - INFO - Started server process [14292]
+2026-01-17 11:06:02 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 11:06:02 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 11:06:02 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-01-17 11:06:02 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-01-17 11:06:02 - httpx - INFO - HTTP Request: GET http://localhost:5000/api/health "HTTP/1.1 404 Not Found"
+2026-01-17 11:06:02 - alert_sender - WARNING - [WARN] Alert service returned status 404
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+2026-01-17 11:06:02 - websocket_manager - INFO - WebSocketManager initialized
+2026-01-17 11:06:02 - config_store - INFO - No existing config file found
+2026-01-17 11:06:02 - config_store - INFO - ConfigStore initialized with 0 symbols
+2026-01-17 11:06:02 - pattern_state_manager - INFO - Loaded 7 alerted patterns
+2026-01-17 11:06:02 - pattern_state_manager - INFO - Loaded 1 cooldown states
+2026-01-17 11:06:02 - pattern_state_manager - INFO - Loaded 7 alert records
+2026-01-17 11:06:02 - pattern_state_manager - INFO - PatternStateManager initialized with 7 alerted patterns
+2026-01-17 11:06:02 - realtime_pattern_service - INFO - RealtimePatternService initialized
+2026-01-17 11:06:02 - realtime_pattern_service - INFO - Starting RealtimePatternService
+2026-01-17 11:06:02 - realtime_pattern_service - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 11:06:02 - realtime_pattern_service - INFO - Intervals: ['60']
+2026-01-17 11:06:02 - websocket_manager - INFO - Starting WebSocketManager with 2 subscriptions
+2026-01-17 11:06:02 - websocket_manager - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 11:06:02 - websocket_manager - INFO - Intervals: ['60']
+2026-01-17 11:06:02 - realtime_pattern_service - INFO - RealtimePatternService started successfully
+[STARTUP] Real-time pattern detection service started
+[STARTUP] Monitoring symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] Initial interval: ['60'] (frontend will sync active timeframe)
+2026-01-17 11:06:02 - websocket_manager - INFO - Connecting to wss://stream.bybit.com/v5/public/linear...
+2026-01-17 11:06:02 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 11:06:02 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 11:06:02 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 11:06:02 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 11:06:04 - websocket_manager - INFO - Connected to Bybit WebSocket
+2026-01-17 11:06:04 - realtime_pattern_service - INFO - WebSocket connected
+2026-01-17 11:06:04 - websocket_manager - INFO - Subscribed to 2 channels
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:52231 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768665987000 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:62869 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768665987006 HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:55226 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:52231 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768665987010 HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:62869 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768665987011 HTTP/1.1" 200
+2026-01-17 11:06:27 - uvicorn.access - INFO - 127.0.0.1:55226 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE EXPIRED] BTCUSDT 60 vwap_rolling_90_0_None_200_1,2,3 - 39370s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE EXPIRED] ETHUSDT 60 vwap_rolling_90_0_None_200_1,2,3 - 39370s old
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:06:28 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:06:28 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 11:06:28 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 11:06:28 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 11:06:28 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 11:06:28 - uvicorn.access - INFO - 127.0.0.1:61712 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:06:28 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:06:28 - uvicorn.access - INFO - 127.0.0.1:61712 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 11:06:29 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 11:06:29 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 11:06:29 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 11:06:29 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 11:06:29 - uvicorn.access - INFO - 127.0.0.1:61712 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760889987714&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760889987356&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760889988371&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760889988034&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760889988704&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760889989038&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764493200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/historical/ETHUSDT?interval=60&days=90&t=1768665987006 HTTP/1.1" 200
+2026-01-17 11:06:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:61712 - "GET /api/historical/ETHUSDT?interval=60&days=90&t=1768665987011 HTTP/1.1" 200
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "OPTIONS /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "OPTIONS /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:61712 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=90&t=1768665989397 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:61712 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=90&t=1768665989398 HTTP/1.1" 200
+2026-01-17 11:06:30 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['1']
+2026-01-17 11:06:30 - websocket_manager - INFO - [WS] Updating subscriptions: -2 +2
+2026-01-17 11:06:30 - websocket_manager - INFO - [WS] Unsubscribed from 2 channels: {'kline.60.BTCUSDT', 'kline.60.ETHUSDT'}
+2026-01-17 11:06:30 - websocket_manager - INFO - [WS] Subscribed to 2 channels: {'kline.1.BTCUSDT', 'kline.1.ETHUSDT'}
+2026-01-17 11:06:30 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 11:06:30 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['1']
+[REALTIME] Active interval changed: ['60'] -> ['1']
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:61712 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:06:30 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE EXPIRED] BTCUSDT 1 vwap_rolling_5_0_None_200_1,2,3 - 39289s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE EXPIRED] ETHUSDT 1 vwap_rolling_5_0_None_200_1,2,3 - 39293s old
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+2026-01-17 11:06:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 11:06:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 11:06:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+[ETHUSDT] Calculating VWAP for 2160 candles
+[CACHE SAVED] ETHUSDT 60 VWAP guardado (2160 puntos)
+[SUCCESS] ETHUSDT 60 VWAP: 2160 puntos
+2026-01-17 11:06:31 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+[BTCUSDT] Calculating VWAP for 2160 candles
+[CACHE SAVED] BTCUSDT 60 VWAP guardado (2160 puntos)
+[SUCCESS] BTCUSDT 60 VWAP: 2160 puntos
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/historical/BTCUSDT?interval=60&days=90&t=1768665987000 HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:50324 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768665989419 HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:52231 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768665989420 HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 368s)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 367s)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:52231 - "OPTIONS /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:50324 - "OPTIONS /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:52231 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/60/rejection (alertsEnabled=True)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:50324 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/60/rejection (alertsEnabled=True)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+2026-01-17 11:06:32 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768093200000&limit=160 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/historical/BTCUSDT?interval=60&days=90&t=1768665987010 HTTP/1.1" 200
+2026-01-17 11:06:32 - uvicorn.access - INFO - 127.0.0.1:56006 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] ETHUSDT 60 VWAP desde cache (age: 1s)
+2026-01-17 11:06:33 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] BTCUSDT 60 VWAP desde cache (age: 1s)
+2026-01-17 11:06:33 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768233990715&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768233991102&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768233992220&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768233992547&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579593192&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579593536&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768294020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768294020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768294020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768294020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768665989419 HTTP/1.1" 200
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:59809 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 371s)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:06:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768354020000&limit=1000 "HTTP/1.1 200 OK"
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 370s)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768665989420 HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:56006 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:06:34 - uvicorn.access - INFO - 127.0.0.1:59809 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 61%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768354020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768354020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768354020000&limit=1000 "HTTP/1.1 200 OK"
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 61%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768414020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579594908&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768414020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768414020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768474020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579595235&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768414020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 377 highs, 330 lows
+  [DT] Pairs: 70876 | Rejected: close=2560, far=46891, price=1010, dom=15174, vol=1783, volExt=2030, vwap=0 | Accepted: 1428
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=583, dom=13074, vol=899, volExt=1432, vwap=0 | Accepted: 978
+  Before filtering: 2406 patterns
+  [FILTER] 2406 candidates -> 66 kept (2340 duplicates removed)
+  After filtering: 66 patterns
+[DTB_FIXED] Complete: 66 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 66 patterns for ETHUSDT
+2026-01-17 11:06:36 - uvicorn.access - INFO - 127.0.0.1:56006 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768474020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768474020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768534020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768474020000&limit=1000 "HTTP/1.1 200 OK"
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768534020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768534020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768594020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 377 highs, 330 lows
+  [DT] Pairs: 70876 | Rejected: close=2560, far=46891, price=1010, dom=15174, vol=1783, volExt=2030, vwap=0 | Accepted: 1428
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=583, dom=13074, vol=899, volExt=1432, vwap=0 | Accepted: 978
+  Before filtering: 2406 patterns
+  [FILTER] 2406 candidates -> 66 kept (2340 duplicates removed)
+  After filtering: 66 patterns
+[DTB_FIXED] Complete: 66 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 66 patterns for ETHUSDT
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:06:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579596884&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768534020000&limit=1000 "HTTP/1.1 200 OK"
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] ETHUSDT 60 VWAP desde cache (age: 6s)
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] BTCUSDT 60 VWAP desde cache (age: 6s)
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768665994030 HTTP/1.1" 200
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768665994035 HTTP/1.1" 200
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768665994039 HTTP/1.1" 200
+2026-01-17 11:06:38 - uvicorn.access - INFO - 127.0.0.1:59809 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768665994040 HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768594020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768654020000&limit=200 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+[BTCUSDT] Calculating VWAP for 7200 candles
+[CACHE SAVED] BTCUSDT 1 VWAP guardado (7200 puntos)
+[SUCCESS] BTCUSDT 1 VWAP: 7200 puntos
+2026-01-17 11:06:39 - uvicorn.access - INFO - 127.0.0.1:61712 - "GET /api/vwap/BTCUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:06:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768594020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768594020000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768654020000&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 11:06:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+2026-01-17 11:06:40 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/historical/ETHUSDT?interval=1&days=90&t=1768665989398 HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 430 highs, 439 lows
+  [DT] Pairs: 92235 | Rejected: close=3267, far=58339, price=387, dom=20400, vol=0, volExt=0, vwap=0 | Accepted: 9842
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59150, price=566, dom=25985, vol=0, volExt=0, vwap=0 | Accepted: 6866
+  Before filtering: 16708 patterns
+  [FILTER] 16708 candidates -> 69 kept (16639 duplicates removed)
+  After filtering: 69 patterns
+[DTB_FIXED] Complete: 69 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 69 patterns for BTCUSDT
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:56006 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 377s)
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:56006 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 376s)
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 61%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] ETHUSDT 60 VWAP desde cache (age: 10s)
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768654020000&limit=200 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] BTCUSDT 60 VWAP desde cache (age: 10s)
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+2026-01-17 11:06:41 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/historical/BTCUSDT?interval=1&days=90&t=1768665989397 HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 3s)
+2026-01-17 11:06:42 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/BTCUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] ETHUSDT 60 VWAP desde cache (age: 10s)
+2026-01-17 11:06:42 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768654020000&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 11:06:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579598174&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579599533&limit=1000 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] BTCUSDT 60 VWAP desde cache (age: 10s)
+2026-01-17 11:06:42 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+[ETHUSDT] Calculating VWAP for 7200 candles
+[CACHE SAVED] ETHUSDT 1 VWAP guardado (7200 puntos)
+[SUCCESS] ETHUSDT 1 VWAP: 7200 puntos
+2026-01-17 11:06:43 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/vwap/ETHUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 4s)
+2026-01-17 11:06:43 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/vwap/BTCUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] ETHUSDT 60 VWAP desde cache (age: 12s)
+2026-01-17 11:06:43 - uvicorn.access - INFO - 127.0.0.1:52231 - "GET /api/vwap/ETHUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=60, days=90
+[CACHE HIT] [OK] BTCUSDT 60 VWAP desde cache (age: 12s)
+2026-01-17 11:06:43 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/vwap/BTCUSDT?interval=60&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 1s)
+2026-01-17 11:06:43 - uvicorn.access - INFO - 127.0.0.1:50324 - "GET /api/vwap/ETHUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=5
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 1s)
+2026-01-17 11:06:44 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/vwap/ETHUSDT?interval=1&days=90&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:06:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579601162&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:06:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 430 highs, 439 lows
+  [DT] Pairs: 92235 | Rejected: close=3267, far=58339, price=387, dom=20400, vol=0, volExt=0, vwap=0 | Accepted: 9842
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59150, price=566, dom=25985, vol=0, volExt=0, vwap=0 | Accepted: 6866
+  Before filtering: 16708 patterns
+  [FILTER] 16708 candidates -> 69 kept (16639 duplicates removed)
+  After filtering: 69 patterns
+[DTB_FIXED] Complete: 69 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 69 patterns for BTCUSDT
+2026-01-17 11:06:45 - uvicorn.access - INFO - 127.0.0.1:61712 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:06:45 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 430 highs, 439 lows
+  [DT] Pairs: 92235 | Rejected: close=3267, far=58339, price=387, dom=20400, vol=0, volExt=0, vwap=0 | Accepted: 9842
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59150, price=566, dom=25985, vol=0, volExt=0, vwap=0 | Accepted: 6866
+  Before filtering: 16708 patterns
+  [FILTER] 16708 candidates -> 69 kept (16639 duplicates removed)
+  After filtering: 69 patterns
+[DTB_FIXED] Complete: 69 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 69 patterns for BTCUSDT
+2026-01-17 11:06:46 - uvicorn.access - INFO - 127.0.0.1:59809 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:06:46 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639620000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:07 to 2026-01-17 11:06
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 377 highs, 330 lows
+  [DT] Pairs: 70876 | Rejected: close=2560, far=46891, price=1010, dom=15174, vol=1783, volExt=2030, vwap=0 | Accepted: 1428
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=583, dom=13074, vol=899, volExt=1432, vwap=0 | Accepted: 978
+  Before filtering: 2406 patterns
+  [FILTER] 2406 candidates -> 66 kept (2340 duplicates removed)
+  After filtering: 66 patterns
+[DTB_FIXED] Complete: 66 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 66 patterns for ETHUSDT
+2026-01-17 11:06:46 - uvicorn.access - INFO - 127.0.0.1:56006 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:06:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95501.9
+2026-01-17 11:06:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95501.90
+2026-01-17 11:06:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.01
+2026-01-17 11:06:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.01
+2026-01-17 11:06:58 - uvicorn.access - INFO - 127.0.0.1:49314 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:06:58 - uvicorn.access - INFO - 127.0.0.1:49314 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:07:27 - uvicorn.access - INFO - 127.0.0.1:64863 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:07:27 - uvicorn.access - INFO - 127.0.0.1:58483 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:49670 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768666053366 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:62289 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:64954 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768666053369 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:59446 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 430s)
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 429s)
+2026-01-17 11:07:33 - uvicorn.access - INFO - 127.0.0.1:65450 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:59446 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768666053703 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:65450 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:58040 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768666053704 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:65330 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 431s)
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 430s)
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:65450 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:65330 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:07:34 - uvicorn.access - INFO - 127.0.0.1:58040 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 431s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 432s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58646 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 431s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 432s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58646 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 431s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 432s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58646 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[ETHUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] ETHUSDT 1 VWAP desde cache (age: 431s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58040 - "GET /api/vwap/ETHUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+[BTCUSDT] [DATA] VWAP: type=rolling, interval=1, days=1
+[CACHE HIT] [OK] BTCUSDT 1 VWAP desde cache (age: 432s)
+2026-01-17 11:07:35 - uvicorn.access - INFO - 127.0.0.1:58646 - "GET /api/vwap/BTCUSDT?interval=1&days=1&vwap_type=rolling&reset_hour=0&rolling_period=200&band_multipliers=1%2C2%2C3&apply_crypto_adjustment=true HTTP/1.1" 200
+2026-01-17 11:07:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579653781&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579654155&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579654681&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579655101&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:07:36 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768666053366 HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:07:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:07:36 - uvicorn.access - INFO - 127.0.0.1:62289 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768666053369 HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:07:36 - uvicorn.access - INFO - 127.0.0.1:65330 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768666053704 HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:07:36 - uvicorn.access - INFO - 127.0.0.1:65450 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768666053703 HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 61%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 61%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:07:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579656345&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579656880&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:08 to 2026-01-17 11:07
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 430 highs, 439 lows
+  [DT] Pairs: 92235 | Rejected: close=3267, far=58291, price=387, dom=20456, vol=0, volExt=0, vwap=0 | Accepted: 9834
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59107, price=566, dom=26002, vol=0, volExt=0, vwap=0 | Accepted: 6892
+  Before filtering: 16726 patterns
+  [FILTER] 16726 candidates -> 70 kept (16656 duplicates removed)
+  After filtering: 70 patterns
+[DTB_FIXED] Complete: 70 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 70 patterns for BTCUSDT
+2026-01-17 11:07:39 - uvicorn.access - INFO - 127.0.0.1:49670 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:07:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579657635&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579657266&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:07:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:07:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:08 to 2026-01-17 11:07
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 430 highs, 439 lows
+  [DT] Pairs: 92235 | Rejected: close=3267, far=58291, price=387, dom=20456, vol=0, volExt=0, vwap=0 | Accepted: 9834
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59107, price=566, dom=26002, vol=0, volExt=0, vwap=0 | Accepted: 6892
+  Before filtering: 16726 patterns
+  [FILTER] 16726 candidates -> 70 kept (16656 duplicates removed)
+  After filtering: 70 patterns
+[DTB_FIXED] Complete: 70 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 70 patterns for BTCUSDT
+2026-01-17 11:07:40 - uvicorn.access - INFO - 127.0.0.1:62289 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:08 to 2026-01-17 11:07
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 376 highs, 330 lows
+  [DT] Pairs: 70500 | Rejected: close=2553, far=46563, price=1010, dom=15135, vol=1781, volExt=2026, vwap=0 | Accepted: 1432
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=581, dom=13075, vol=899, volExt=1431, vwap=0 | Accepted: 980
+  Before filtering: 2412 patterns
+  [FILTER] 2412 candidates -> 66 kept (2346 duplicates removed)
+  After filtering: 66 patterns
+[DTB_FIXED] Complete: 66 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 66 patterns for ETHUSDT
+2026-01-17 11:07:41 - uvicorn.access - INFO - 127.0.0.1:65450 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:07:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639680000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:08 to 2026-01-17 11:07
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 376 highs, 330 lows
+  [DT] Pairs: 70500 | Rejected: close=2553, far=46563, price=1010, dom=15135, vol=1781, volExt=2026, vwap=0 | Accepted: 1432
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=579, dom=13077, vol=899, volExt=1431, vwap=0 | Accepted: 980
+  Before filtering: 2412 patterns
+  [FILTER] 2412 candidates -> 66 kept (2346 duplicates removed)
+  After filtering: 66 patterns
+[DTB_FIXED] Complete: 66 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 66 patterns for ETHUSDT
+2026-01-17 11:07:41 - uvicorn.access - INFO - 127.0.0.1:65330 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:07:47 - uvicorn.access - INFO - 127.0.0.1:57137 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:07:52 - uvicorn.access - INFO - 127.0.0.1:57137 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:07:57 - uvicorn.access - INFO - 127.0.0.1:57137 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:07:57 - uvicorn.access - INFO - 127.0.0.1:62138 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:07:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95447.9
+2026-01-17 11:07:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95447.90
+2026-01-17 11:07:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3322.23
+2026-01-17 11:07:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3322.23
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:08:24 - uvicorn.access - INFO - 127.0.0.1:61163 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:08:27 - uvicorn.access - INFO - 127.0.0.1:61163 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:08:27 - uvicorn.access - INFO - 127.0.0.1:51637 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[REALTIME] Config updated: BTCUSDT/1/doubleTopBottom (alertsEnabled=True)
+2026-01-17 11:08:55 - uvicorn.access - INFO - 127.0.0.1:52977 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 11:08:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579735262&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:08:57 - uvicorn.access - INFO - 127.0.0.1:52977 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:08:57 - uvicorn.access - INFO - 127.0.0.1:54627 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:08:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95451.6
+2026-01-17 11:08:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95451.60
+2026-01-17 11:08:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639740000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:09 to 2026-01-17 11:08
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 429 highs, 439 lows
+  [DT] Pairs: 91806 | Rejected: close=3261, far=57907, price=387, dom=20428, vol=7118, volExt=0, vwap=0 | Accepted: 2705
+  [DB] Pairs: 96141 | Rejected: close=3574, far=59107, price=566, dom=26002, vol=4971, volExt=0, vwap=0 | Accepted: 1921
+  Before filtering: 4626 patterns
+  [FILTER] 4626 candidates -> 61 kept (4565 duplicates removed)
+  After filtering: 61 patterns
+[DTB_FIXED] Complete: 61 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 61 patterns for BTCUSDT
+2026-01-17 11:08:58 - uvicorn.access - INFO - 127.0.0.1:56215 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:08:58 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.7
+2026-01-17 11:08:58 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.70
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:09:04 - uvicorn.access - INFO - 127.0.0.1:49916 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:09:14 - uvicorn.access - INFO - 127.0.0.1:56888 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:09:21 - uvicorn.access - INFO - 127.0.0.1:64585 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:09:28 - uvicorn.access - INFO - 127.0.0.1:49235 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:09:28 - uvicorn.access - INFO - 127.0.0.1:49235 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:09:29 - uvicorn.access - INFO - 127.0.0.1:49235 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 11:09:41 - uvicorn.access - INFO - 127.0.0.1:54487 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:09:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95437.5
+2026-01-17 11:09:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95437.50
+2026-01-17 11:09:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.14
+2026-01-17 11:09:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.14
+2026-01-17 11:09:57 - uvicorn.access - INFO - 127.0.0.1:50578 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:09:57 - uvicorn.access - INFO - 127.0.0.1:50578 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:10:27 - uvicorn.access - INFO - 127.0.0.1:56865 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:10:27 - uvicorn.access - INFO - 127.0.0.1:57065 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:10:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95435.1
+2026-01-17 11:10:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95435.10
+2026-01-17 11:10:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.38
+2026-01-17 11:10:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.38
+2026-01-17 11:10:57 - uvicorn.access - INFO - 127.0.0.1:58746 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:10:57 - uvicorn.access - INFO - 127.0.0.1:58746 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 24%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[REALTIME] Config updated: ETHUSDT/1/doubleTopBottom (alertsEnabled=True)
+2026-01-17 11:11:16 - uvicorn.access - INFO - 127.0.0.1:58086 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 11:11:16 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579876038&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:11:17 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639920000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 11:12 to 2026-01-17 11:11
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: True
+  VWAP Zone Filter: ENABLED (mode=bothExtremes, min_dev=±2σ, margin=50%)
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 375 highs, 330 lows
+    [VWAP_FILTER] DOUBLE_TOP: band_key=upper_2
+    [VWAP_FILTER] first_band=3270.1865381898738, second_band=3286.892066947808
+    [VWAP_FILTER] first_price=3272.0, second_price=3287.39
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands', 'std_dev']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3268.39, second=3278.43
+    [VWAP_FILTER] Deviations: first=1.80, second=8.46
+    [VWAP_FILTER] Margin amounts: first=0.90, second=4.23
+    [VWAP_FILTER] thresholds: first=3269.29, second=3282.66
+    [VWAP_FILTER] passes: first=True, second=True, mode=bothExtremes
+    [VWAP_FILTER] RESULT: True
+  [DT] Pairs: 70125 | Rejected: close=2549, far=46217, price=1051, dom=15068, vol=0, volExt=3808, vwap=724 | Accepted: 708
+    [VWAP_FILTER] DOUBLE_BOTTOM: band_key=lower_2
+    [VWAP_FILTER] first_band=3261.3934679784866, second_band=3276.1133452383274
+    [VWAP_FILTER] first_price=3258.77, second_price=3274.18
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands', 'std_dev']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3266.86, second=3281.19
+    [VWAP_FILTER] Deviations: first=5.47, second=5.08
+    [VWAP_FILTER] Margin amounts: first=2.73, second=2.54
+    [VWAP_FILTER] thresholds: first=3264.13, second=3278.65
+    [VWAP_FILTER] passes: first=True, second=True, mode=bothExtremes
+    [VWAP_FILTER] RESULT: True
+  [DB] Pairs: 54285 | Rejected: close=1997, far=35322, price=575, dom=13078, vol=0, volExt=2333, vwap=509 | Accepted: 471
+  Before filtering: 1179 patterns
+  [FILTER] 1179 candidates -> 57 kept (1122 duplicates removed)
+  After filtering: 57 patterns
+[DTB_FIXED] Complete: 57 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 57 patterns for ETHUSDT
+2026-01-17 11:11:18 - uvicorn.access - INFO - 127.0.0.1:54751 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 11:11:27 - uvicorn.access - INFO - 127.0.0.1:65147 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:11:27 - uvicorn.access - INFO - 127.0.0.1:65147 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:11:57 - uvicorn.access - INFO - 127.0.0.1:50428 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:11:57 - uvicorn.access - INFO - 127.0.0.1:53403 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:11:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95435.5
+2026-01-17 11:11:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95435.50
+2026-01-17 11:11:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.27
+2026-01-17 11:11:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.27
+2026-01-17 11:12:27 - uvicorn.access - INFO - 127.0.0.1:50894 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:12:27 - uvicorn.access - INFO - 127.0.0.1:50894 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:12:33 - uvicorn.access - INFO - 127.0.0.1:63825 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768666353715 HTTP/1.1" 200
+2026-01-17 11:12:33 - uvicorn.access - INFO - 127.0.0.1:56018 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768666353716 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:12:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768579953721&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:12:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768579954047&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:12:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768639980000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:12:35 - uvicorn.access - INFO - 127.0.0.1:63825 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768666353716 HTTP/1.1" 200
+2026-01-17 11:12:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768639980000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:12:36 - uvicorn.access - INFO - 127.0.0.1:56018 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768666353715 HTTP/1.1" 200
+2026-01-17 11:12:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95454.0
+2026-01-17 11:12:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95454.00
+2026-01-17 11:12:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3325.34
+2026-01-17 11:12:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3325.34
+2026-01-17 11:12:57 - uvicorn.access - INFO - 127.0.0.1:63005 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:12:57 - uvicorn.access - INFO - 127.0.0.1:63005 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:13:27 - uvicorn.access - INFO - 127.0.0.1:51145 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:13:27 - uvicorn.access - INFO - 127.0.0.1:62826 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:13:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95454.5
+2026-01-17 11:13:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95454.50
+2026-01-17 11:13:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3325.61
+2026-01-17 11:13:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3325.61
+2026-01-17 11:13:57 - uvicorn.access - INFO - 127.0.0.1:65253 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:13:57 - uvicorn.access - INFO - 127.0.0.1:65253 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:14:27 - uvicorn.access - INFO - 127.0.0.1:64269 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:14:27 - uvicorn.access - INFO - 127.0.0.1:64698 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:14:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95459.5
+2026-01-17 11:14:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95459.50
+2026-01-17 11:14:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3326.89
+2026-01-17 11:14:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3326.89
+2026-01-17 11:14:57 - uvicorn.access - INFO - 127.0.0.1:58611 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:14:57 - uvicorn.access - INFO - 127.0.0.1:58611 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:15:27 - uvicorn.access - INFO - 127.0.0.1:63485 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:15:27 - uvicorn.access - INFO - 127.0.0.1:49706 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:15:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95463.1
+2026-01-17 11:15:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95463.10
+2026-01-17 11:15:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3326.28
+2026-01-17 11:15:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3326.28
+2026-01-17 11:15:57 - uvicorn.access - INFO - 127.0.0.1:60030 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:15:57 - uvicorn.access - INFO - 127.0.0.1:60030 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:16:27 - uvicorn.access - INFO - 127.0.0.1:60950 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:16:27 - uvicorn.access - INFO - 127.0.0.1:65273 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:16:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95400.1
+2026-01-17 11:16:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95400.10
+2026-01-17 11:16:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.2
+2026-01-17 11:16:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.20
+2026-01-17 11:16:57 - uvicorn.access - INFO - 127.0.0.1:50122 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:16:57 - uvicorn.access - INFO - 127.0.0.1:50122 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:17:27 - uvicorn.access - INFO - 127.0.0.1:62024 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:17:27 - uvicorn.access - INFO - 127.0.0.1:49200 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:17:34 - uvicorn.access - INFO - 127.0.0.1:53718 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768666653924 HTTP/1.1" 200
+2026-01-17 11:17:34 - uvicorn.access - INFO - 127.0.0.1:64562 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768666653924 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:17:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768580254243&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:17:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768580254567&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:17:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768640280000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:17:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768640280000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:17:35 - uvicorn.access - INFO - 127.0.0.1:64562 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768666653924 HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:17:35 - uvicorn.access - INFO - 127.0.0.1:53718 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768666653924 HTTP/1.1" 200
+2026-01-17 11:17:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95429.7
+2026-01-17 11:17:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95429.70
+2026-01-17 11:17:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3324.29
+2026-01-17 11:17:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3324.29
+2026-01-17 11:17:57 - uvicorn.access - INFO - 127.0.0.1:53587 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:17:57 - uvicorn.access - INFO - 127.0.0.1:53587 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:18:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95414.5
+2026-01-17 11:18:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95414.50
+2026-01-17 11:18:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3323.15
+2026-01-17 11:18:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3323.15
+2026-01-17 11:18:59 - uvicorn.access - INFO - 127.0.0.1:60296 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:18:59 - uvicorn.access - INFO - 127.0.0.1:60296 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:19:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95400.0
+2026-01-17 11:19:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95400.00
+2026-01-17 11:19:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3321.64
+2026-01-17 11:19:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3321.64
+2026-01-17 11:20:00 - uvicorn.access - INFO - 127.0.0.1:59260 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:20:00 - uvicorn.access - INFO - 127.0.0.1:59260 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:20:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95387.5
+2026-01-17 11:20:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95387.50
+2026-01-17 11:20:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3321.09
+2026-01-17 11:20:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3321.09
+2026-01-17 11:21:01 - uvicorn.access - INFO - 127.0.0.1:53317 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:21:01 - uvicorn.access - INFO - 127.0.0.1:53317 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:21:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95392.2
+2026-01-17 11:21:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95392.20
+2026-01-17 11:21:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3320.16
+2026-01-17 11:21:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3320.16
+2026-01-17 11:22:02 - uvicorn.access - INFO - 127.0.0.1:54003 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:22:02 - uvicorn.access - INFO - 127.0.0.1:54003 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:22:33 - uvicorn.access - INFO - 127.0.0.1:53620 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768666953920 HTTP/1.1" 200
+2026-01-17 11:22:33 - uvicorn.access - INFO - 127.0.0.1:59437 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768666953921 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:22:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768580553926&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:22:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768580554247&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:22:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768640580000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:22:35 - uvicorn.access - INFO - 127.0.0.1:53620 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768666953921 HTTP/1.1" 200
+2026-01-17 11:22:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768640580000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:22:35 - uvicorn.access - INFO - 127.0.0.1:59437 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768666953920 HTTP/1.1" 200
+2026-01-17 11:22:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3313.23
+2026-01-17 11:22:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3313.23
+2026-01-17 11:22:58 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95260.7
+2026-01-17 11:22:58 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95260.70
+2026-01-17 11:23:03 - uvicorn.access - INFO - 127.0.0.1:55655 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:23:03 - uvicorn.access - INFO - 127.0.0.1:55655 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:23:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95298.8
+2026-01-17 11:23:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95298.80
+2026-01-17 11:23:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3315.68
+2026-01-17 11:23:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3315.68
+2026-01-17 11:24:04 - uvicorn.access - INFO - 127.0.0.1:55088 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:24:04 - uvicorn.access - INFO - 127.0.0.1:55088 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:24:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95281.1
+2026-01-17 11:24:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95281.10
+2026-01-17 11:24:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3315.49
+2026-01-17 11:24:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3315.49
+2026-01-17 11:25:05 - uvicorn.access - INFO - 127.0.0.1:57712 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:25:05 - uvicorn.access - INFO - 127.0.0.1:57712 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:25:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95244.6
+2026-01-17 11:25:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95244.60
+2026-01-17 11:25:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3314.34
+2026-01-17 11:25:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3314.34
+2026-01-17 11:26:06 - uvicorn.access - INFO - 127.0.0.1:52255 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:26:06 - uvicorn.access - INFO - 127.0.0.1:52255 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:26:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95253.7
+2026-01-17 11:26:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95253.70
+2026-01-17 11:26:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3313.38
+2026-01-17 11:26:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3313.38
+2026-01-17 11:27:07 - uvicorn.access - INFO - 127.0.0.1:59149 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:07 - uvicorn.access - INFO - 127.0.0.1:59149 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:33 - uvicorn.access - INFO - 127.0.0.1:60572 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768667253922 HTTP/1.1" 200
+2026-01-17 11:27:33 - uvicorn.access - INFO - 127.0.0.1:58748 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768667253924 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:27:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768580854249&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:27:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768580853928&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:27:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768640880000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:27:35 - uvicorn.access - INFO - 127.0.0.1:58748 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768667253922 HTTP/1.1" 200
+2026-01-17 11:27:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768640880000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:27:35 - uvicorn.access - INFO - 127.0.0.1:60572 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768667253924 HTTP/1.1" 200
+2026-01-17 11:27:39 - uvicorn.access - INFO - 127.0.0.1:60572 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:39 - uvicorn.access - INFO - 127.0.0.1:58748 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3316.15
+2026-01-17 11:27:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3316.15
+2026-01-17 11:27:57 - uvicorn.access - INFO - 127.0.0.1:63425 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:57 - uvicorn.access - INFO - 127.0.0.1:63425 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:27:58 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95278.4
+2026-01-17 11:27:58 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95278.40
+2026-01-17 11:28:27 - uvicorn.access - INFO - 127.0.0.1:51997 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:28:27 - uvicorn.access - INFO - 127.0.0.1:60873 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:28:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95338.3
+2026-01-17 11:28:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95338.30
+2026-01-17 11:28:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3315.6
+2026-01-17 11:28:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3315.60
+2026-01-17 11:28:57 - uvicorn.access - INFO - 127.0.0.1:64007 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:28:57 - uvicorn.access - INFO - 127.0.0.1:64007 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:29:27 - uvicorn.access - INFO - 127.0.0.1:54347 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:29:27 - uvicorn.access - INFO - 127.0.0.1:54959 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:29:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95430.6
+2026-01-17 11:29:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95430.60
+2026-01-17 11:29:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3318.87
+2026-01-17 11:29:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3318.87
+2026-01-17 11:29:57 - uvicorn.access - INFO - 127.0.0.1:53637 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:29:57 - uvicorn.access - INFO - 127.0.0.1:53637 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:30:27 - uvicorn.access - INFO - 127.0.0.1:55573 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:30:27 - uvicorn.access - INFO - 127.0.0.1:56322 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:30:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95380.0
+2026-01-17 11:30:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95380.00
+2026-01-17 11:30:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3315.33
+2026-01-17 11:30:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3315.33
+2026-01-17 11:30:57 - uvicorn.access - INFO - 127.0.0.1:52873 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:30:57 - uvicorn.access - INFO - 127.0.0.1:52873 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:31:27 - uvicorn.access - INFO - 127.0.0.1:51657 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:31:27 - uvicorn.access - INFO - 127.0.0.1:52671 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:31:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95391.0
+2026-01-17 11:31:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95391.00
+2026-01-17 11:31:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3315.57
+2026-01-17 11:31:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3315.57
+2026-01-17 11:31:57 - uvicorn.access - INFO - 127.0.0.1:58047 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:31:57 - uvicorn.access - INFO - 127.0.0.1:58047 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:32:27 - uvicorn.access - INFO - 127.0.0.1:55237 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:32:27 - uvicorn.access - INFO - 127.0.0.1:57852 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:32:34 - uvicorn.access - INFO - 127.0.0.1:65413 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768667553709 HTTP/1.1" 200
+2026-01-17 11:32:34 - uvicorn.access - INFO - 127.0.0.1:60338 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768667553709 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 11:32:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768581154032&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:32:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768581154358&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 11:32:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768641180000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 11:32:35 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768641180000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:32:35 - uvicorn.access - INFO - 127.0.0.1:65413 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768667553709 HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 11:32:35 - uvicorn.access - INFO - 127.0.0.1:60338 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768667553709 HTTP/1.1" 200
+2026-01-17 11:32:57 - uvicorn.access - INFO - 127.0.0.1:64554 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:32:57 - uvicorn.access - INFO - 127.0.0.1:64554 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 11:32:57 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 95361.1
+2026-01-17 11:32:57 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 95361.10
+2026-01-17 11:32:57 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3314.14
+2026-01-17 11:32:57 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3314.14
+2026-01-17 11:33:27 - uvicorn.access - INFO - 127.0.0.1:56618 - "GET /api/realtime/a

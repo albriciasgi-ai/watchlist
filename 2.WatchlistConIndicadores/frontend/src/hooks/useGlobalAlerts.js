@@ -2,8 +2,21 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { API_BASE_URL } from '../config';
 
 const GLOBAL_KEY = 'watchlist_global_alert_history';
-const REFRESH_INTERVAL = 3000; // 3 segundos
-const EVALUATION_INTERVAL = 10000; // 10 segundos para evaluar outcomes
+const REFRESH_INTERVAL = 30000; // 30 segundos - reducido para mejorar rendimiento (antes: 3s)
+const EVALUATION_INTERVAL = 60000; // 60 segundos para evaluar outcomes (antes: 10s - muy frecuente)
+
+// ✅ Días óptimos por timeframe para evaluar trades (no necesitamos mucho histórico)
+const DAYS_BY_INTERVAL = {
+  "1": 1,     // 1 minuto → 1 día (1,440 velas) - suficiente para evaluar trades
+  "3": 2,
+  "5": 2,     // 5 minutos → 2 días
+  "15": 3,    // 15 minutos → 3 días
+  "30": 5,
+  "60": 7,    // 1 hora → 7 días
+  "240": 14,  // 4 horas → 14 días
+  "D": 30,    // 1 día → 30 días
+  "W": 60     // 1 semana → 60 días
+};
 
 /**
  * Hook para manejar el historial global de alertas
@@ -15,16 +28,57 @@ export function useGlobalAlerts() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const evaluationInProgress = useRef(false);
 
-  // Cargar alertas desde localStorage
-  const loadAlerts = useCallback(() => {
+  // ✅ Cargar alertas desde el backend API (antes: localStorage)
+  // El backend ahora maneja toda la detección y evaluación de trades
+  const loadAlerts = useCallback(async () => {
     try {
-      const stored = localStorage.getItem(GLOBAL_KEY);
-      const parsed = stored ? JSON.parse(stored) : [];
-      setAlerts(parsed);
+      const response = await fetch(`${API_BASE_URL}/api/realtime/alerts/history?limit=100`);
+      const data = await response.json();
+
+      if (data.success && data.alerts) {
+        // Mapear campos del backend al formato esperado por el frontend
+        const mappedAlerts = data.alerts.map(alert => ({
+          id: alert.id,
+          timestamp: alert.timestamp,
+          symbol: alert.symbol,
+          interval: alert.interval,
+          indicator: alert.indicator,
+          patternType: alert.patternType,
+          direction: alert.direction,
+          price: alert.price,
+          confidence: alert.confidence,
+          entry: alert.entry,
+          stopLoss: alert.stopLoss,
+          takeProfit: alert.takeProfit,
+          outcome: alert.outcome || 'PENDING',
+          outcomeTimestamp: alert.outcomeTimestamp,
+          // Calcular % de SL/TP si existen
+          slPercent: alert.entry && alert.stopLoss
+            ? Math.abs((alert.stopLoss - alert.entry) / alert.entry * 100)
+            : null,
+          tpPercent: alert.entry && alert.takeProfit
+            ? Math.abs((alert.takeProfit - alert.entry) / alert.entry * 100)
+            : null
+        }));
+
+        setAlerts(mappedAlerts);
+      } else {
+        // Fallback a localStorage si el backend no responde
+        const stored = localStorage.getItem(GLOBAL_KEY);
+        const parsed = stored ? JSON.parse(stored) : [];
+        setAlerts(parsed);
+      }
       setIsLoading(false);
     } catch (error) {
-      console.error('Error loading global alerts:', error);
-      setAlerts([]);
+      console.error('Error loading alerts from backend, falling back to localStorage:', error);
+      // Fallback a localStorage
+      try {
+        const stored = localStorage.getItem(GLOBAL_KEY);
+        const parsed = stored ? JSON.parse(stored) : [];
+        setAlerts(parsed);
+      } catch (e) {
+        setAlerts([]);
+      }
       setIsLoading(false);
     }
   }, []);
@@ -144,9 +198,10 @@ export function useGlobalAlerts() {
         const group = groups[key];
 
         try {
-          // Fetch datos históricos (últimos 7 días debería ser suficiente)
+          // Fetch datos históricos con días optimizados por timeframe
+          const daysToFetch = DAYS_BY_INTERVAL[group.interval] || 7;
           const response = await fetch(
-            `${API_BASE_URL}/api/historical/${group.symbol}?interval=${group.interval}&days=7`
+            `${API_BASE_URL}/api/historical/${group.symbol}?interval=${group.interval}&days=${daysToFetch}`
           );
 
           if (!response.ok) {
@@ -330,16 +385,13 @@ export function useGlobalAlerts() {
     return () => clearInterval(interval);
   }, [loadAlerts]);
 
-  // Evaluar outcomes periódicamente
-  useEffect(() => {
-    // Evaluar inmediatamente al cargar
-    evaluatePendingOutcomes();
-
-    // Evaluar periódicamente
-    const interval = setInterval(evaluatePendingOutcomes, EVALUATION_INTERVAL);
-
-    return () => clearInterval(interval);
-  }, [evaluatePendingOutcomes]);
+  // ✅ DESHABILITADO: La evaluación de outcomes ahora la hace el backend en tiempo real
+  // El backend recibe velas via WebSocket y evalúa SL/TP automáticamente
+  // useEffect(() => {
+  //   evaluatePendingOutcomes();
+  //   const interval = setInterval(evaluatePendingOutcomes, EVALUATION_INTERVAL);
+  //   return () => clearInterval(interval);
+  // }, [evaluatePendingOutcomes]);
 
   // Escuchar cambios en localStorage desde otras pestañas/ventanas
   useEffect(() => {

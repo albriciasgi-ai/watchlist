@@ -3,6 +3,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import Logger from '../../utils/Logger.js';
+import { syncConfig } from '../../utils/ConfigSynchronizer.js';
 
 // Crear instancia del logger
 const log = new Logger('DoubleTopBottom', { level: 'info' });
@@ -176,6 +177,26 @@ class DoubleTopBottomIndicator extends IndicatorBase {
                 third: true
               }
             };
+          }
+
+          // ✅ FIX: Migración - Asegurar que exista globalCooldown
+          if (!config.alertSettings.globalCooldown) {
+            config.alertSettings.globalCooldown = {
+              enabled: true,
+              minutes: 30,
+              pauseDetection: false,
+              discardedBoxColor: '#9E9E9E',
+              discardedBoxOpacity: 0.10
+            };
+            log.info(`[${this.symbol}] ⚠️ Migrated: Added alertSettings.globalCooldown config`);
+          } else {
+            // Migración de campos nuevos para cooldown existente
+            if (!config.alertSettings.globalCooldown.discardedBoxColor) {
+              config.alertSettings.globalCooldown.discardedBoxColor = '#9E9E9E';
+            }
+            if (config.alertSettings.globalCooldown.discardedBoxOpacity === undefined) {
+              config.alertSettings.globalCooldown.discardedBoxOpacity = 0.10;
+            }
           }
         }
 
@@ -374,6 +395,16 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           showDetectionCircle: true,
           detectionCircleColor: '#2196F3',
           detectionCircleSize: 8
+        },
+
+        // ✅ FIX: Cooldown global entre alertas (antes faltaba en getDefaultConfig)
+        globalCooldown: {
+          enabled: true,
+          minutes: 30,              // Minutos entre alertas consecutivas
+          pauseDetection: false,    // Si true, pausa la detección de patrones durante el cooldown
+          // Colores para patrones descartados por cooldown (visualización diferenciada)
+          discardedBoxColor: '#9E9E9E',    // Gris para zonas de patrones descartados
+          discardedBoxOpacity: 0.10        // Opacidad reducida para patrones descartados
         }
       },
 
@@ -411,6 +442,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     localStorage.setItem(`double_topbottom_config_${this.symbol}`, JSON.stringify(config));
+
+    // ✅ NUEVO: Sincronizar config con backend para detección real-time
+    syncConfig(this.symbol, this.interval, 'doubleTopBottom', config);
+
     // Don't clear patterns immediately - let fetchData() replace them naturally
     log.debug(`[${this.symbol}] 🔄 Double Top/Bottom config updated, patterns will refresh`);
   }
@@ -481,13 +516,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       } finally {
         this.loading = false;
 
-        // NO enviar alertas en carga inicial (todos los patrones son históricos)
-        // Las alertas solo deben enviarse en detección en tiempo real
-
-        // Pedir permisos de notificación si alertas están habilitadas
-        if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
-          this.requestNotificationPermission();
-        }
+        // ⚠️ DESHABILITADO: Las alertas ahora se envían SOLO desde el backend (RealtimePatternService)
+        // El frontend solo visualiza patrones, el backend detecta y envía alertas al TradingBot
+        // if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
+        //   this.requestNotificationPermission();
+        // }
       }
 
     } else {
@@ -711,7 +744,6 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // Si el cooldown no está habilitado, no hay restricción
     const cooldownEnabled = this.config.alertSettings?.globalCooldown?.enabled;
     if (!cooldownEnabled) {
-      log.debug(`[${this.symbol}] ⏳ Cooldown DISABLED in config`);
       return false;
     }
 
@@ -724,17 +756,18 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     const now = Date.now();
     const timeSinceLastAlert = now - lastAlertTimestamp;
 
-    log.info(`[${this.symbol}] ⏳ Cooldown check: lastAlert=${lastAlertTimestamp}, now=${now}, elapsed=${Math.round(timeSinceLastAlert/1000)}s, required=${cooldownMinutes}min`);
-
-    if (timeSinceLastAlert < cooldownMs) {
-      const remainingMs = cooldownMs - timeSinceLastAlert;
-      const remainingMin = Math.ceil(remainingMs / 60000);
-      log.info(`[${this.symbol}] ⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
-      return true;
+    // ✅ FIX: Throttle logging to avoid spam (max 1 log per 10 seconds)
+    if (!this._lastCooldownLogTime || (now - this._lastCooldownLogTime) > 10000) {
+      this._lastCooldownLogTime = now;
+      if (timeSinceLastAlert < cooldownMs) {
+        const remainingMin = Math.ceil((cooldownMs - timeSinceLastAlert) / 60000);
+        log.debug(`[${this.symbol}] ⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
+      } else {
+        log.debug(`[${this.symbol}] ⏳ Cooldown expired, can send alert`);
+      }
     }
 
-    log.info(`[${this.symbol}] ⏳ Cooldown expired, can send alert`);
-    return false;
+    return timeSinceLastAlert < cooldownMs;
   }
 
   /**
@@ -1379,122 +1412,40 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   /**
-   * Envía patrón al backend usando formato de alertas
+   * Registra patrón detectado y muestra notificación en navegador.
+   * NOTA: El envío de alertas al Trading Bot lo hace el backend (realtime_pattern_service.py).
+   * El frontend solo grafica patrones y muestra notificaciones locales.
    */
   async sendPatternAlert(pattern, level = null) {
-    const startTime = Date.now();
+    // Determinar dirección (con o sin momentum)
+    const direction = pattern.entrySignal?.direction
+      || (pattern.type === 'DOUBLE_BOTTOM' ? 'LONG' : 'SHORT');
 
-    console.log(`\n${'='.repeat(80)}`);
-    console.log(`🚨 [${this.symbol}] SENDING PATTERN ALERT`);
-    console.log(`${'='.repeat(80)}`);
+    log.debug(`\n${'='.repeat(60)}`);
+    log.debug(`🔔 [${this.symbol}] PATTERN DETECTED (display only)`);
+    log.debug(`${'='.repeat(60)}`);
+    log.debug(`   Pattern: ${pattern.type}`);
+    log.debug(`   Price: $${pattern.levelPrice.toFixed(2)}`);
+    log.debug(`   Confidence: ${pattern.confidence.toFixed(1)}%`);
+    log.debug(`   Direction: ${direction}`);
+    log.debug(`   Level: ${level || 'N/A'}`);
+    log.debug(`   Note: Backend handles alert sending to Trading Bot`);
+    log.debug(`${'='.repeat(60)}\n`);
 
-    try {
-      // Determinar dirección (con o sin momentum)
-      const direction = pattern.entrySignal?.direction
-        || (pattern.type === 'DOUBLE_BOTTOM' ? 'LONG' : 'SHORT');
+    // Mostrar popup/notificación en navegador
+    this.showAlertPopup(pattern, level);
 
-      const payload = {
-        symbol: this.symbol,
-        interval: this.interval,
-        pattern: {
-          patternType: pattern.type,
-          price: pattern.levelPrice,
-          confidence: Math.round(pattern.confidence * 10) / 10,
-          timestamp: pattern.secondExtreme.timestamp,
-          direction: direction,
-          level: level, // critical/high/medium
-          metadata: {
-            firstExtreme: pattern.firstExtreme,
-            secondExtreme: pattern.secondExtreme,
-            entrySignal: pattern.entrySignal || null,
-            priceTolerance: pattern.priceTolerance,
-            hasMomentum: pattern.entrySignal?.has_momentum || false,
-            alertMode: this.config.alertSettings.mode
-          }
-        },
-        config: {
-          filters: this.config.filters,
-          alertsEnabled: this.config.alertsEnabled,
-          alertSettings: this.config.alertSettings
-        }
-      };
-
-      console.log(`📤 STEP 1: Building payload`);
-      console.log(`   Symbol: ${this.symbol}`);
-      console.log(`   Interval: ${this.interval}`);
-      console.log(`   Pattern Type: ${pattern.type}`);
-      console.log(`   Price: $${pattern.levelPrice.toFixed(2)}`);
-      console.log(`   Confidence: ${pattern.confidence.toFixed(1)}%`);
-      console.log(`   Direction: ${direction}`);
-      console.log(`   Level: ${level || 'N/A'}`);
-      console.log(`   Alert Mode: ${this.config.alertSettings.mode}`);
-      console.log(`\n📤 STEP 2: Sending HTTP POST request`);
-      console.log(`   Endpoint: ${API_BASE_URL}/api/pattern-alert`);
-      console.log(`   Full Payload:`, JSON.stringify(payload, null, 2));
-
-      const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const duration = Date.now() - startTime;
-
-      console.log(`\n📥 STEP 3: Received response (${duration}ms)`);
-      console.log(`   HTTP Status: ${response.status} ${response.statusText}`);
-
-      const result = await response.json();
-      console.log(`   Response Body:`, JSON.stringify(result, null, 2));
-
-      if (result.success) {
-        console.log(`\n✅ STEP 4: Alert sent successfully!`);
-        console.log(`   Pattern: ${result.pattern || pattern.type}`);
-        console.log(`   Symbol: ${result.symbol || this.symbol}`);
-        console.log(`   Price: $${result.price?.toFixed(2) || pattern.levelPrice.toFixed(2)}`);
-        console.log(`   Confidence: ${result.confidence || pattern.confidence}%`);
-        console.log(`   Total Duration: ${duration}ms`);
-        console.log(`${'='.repeat(80)}\n`);
-
-        // Mostrar popup en navegador
-        this.showAlertPopup(pattern, level);
-        return true;
-      } else {
-        console.error(`\n❌ STEP 4: Alert REJECTED by backend`);
-        console.error(`   Reason: ${result.reason || result.error || 'Unknown'}`);
-        if (result.confidence !== undefined && result.required !== undefined) {
-          console.error(`   Confidence: ${result.confidence}% (required: ${result.required}%)`);
-        }
-        console.error(`   Duration: ${duration}ms`);
-        console.error(`${'='.repeat(80)}\n`);
-        return false;
-      }
-
-    } catch (error) {
-      const duration = Date.now() - startTime;
-
-      console.error(`\n❌ STEP 4: EXCEPTION during alert send`);
-      console.error(`   Error Type: ${error.name}`);
-      console.error(`   Error Message: ${error.message}`);
-      console.error(`   Duration: ${duration}ms`);
-
-      if (error.message.includes('fetch')) {
-        console.error(`   Possible Cause: Backend not running or network error`);
-        console.error(`   Check: Is backend running on ${API_BASE_URL}?`);
-      }
-
-      console.error(`   Stack Trace:`, error.stack);
-      console.error(`${'='.repeat(80)}\n`);
-      return false;
-    }
+    return true;
   }
 
   /**
-   * Envía una alerta de prueba para debugging
+   * Muestra una alerta de prueba para debugging (solo popup, no envía al backend)
+   * NOTA: El backend maneja el envío de alertas reales al Trading Bot.
    */
   async sendTestAlert() {
-    console.log(`\n${'='.repeat(80)}`);
-    console.log(`🧪 [${this.symbol}] SENDING TEST ALERT`);
-    console.log(`${'='.repeat(80)}`);
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`🧪 [${this.symbol}] TEST ALERT (display only)`);
+    console.log(`${'='.repeat(60)}`);
 
     // Crear un patrón de prueba
     const testPattern = {
@@ -1502,7 +1453,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       levelPrice: 50000.00,
       confidence: 85.5,
       firstExtreme: {
-        timestamp: Date.now() - 3600000, // 1 hora atrás
+        timestamp: Date.now() - 3600000,
         price: 49980.00,
         index: 100
       },
@@ -1523,31 +1474,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     };
 
     console.log(`Test Pattern:`, testPattern);
-    console.log(`\nSending to backend...`);
 
-    try {
-      const success = await this.sendPatternAlert(testPattern);
+    const success = await this.sendPatternAlert(testPattern);
 
-      console.log(`\n📊 Test Alert Result:`);
-      if (success) {
-        console.log(`  ✅ Test alert sent successfully!`);
-        console.log(`  - Backend accepted the alert`);
-        console.log(`  - Should appear in alert listener (port 5000) if running`);
-        console.log(`  - Check browser notifications`);
-      } else {
-        console.log(`  ❌ Test alert failed to send`);
-        console.log(`  - Check console for error details`);
-        console.log(`  - Verify backend is running on port 8000`);
-        console.log(`  - Check if alert service is running on port 5000`);
-      }
-      console.log(`${'='.repeat(80)}\n`);
+    console.log(`\n📊 Test Result: ${success ? '✅ Popup shown' : '❌ Failed'}`);
+    console.log(`   Note: Backend handles actual alert sending to Trading Bot`);
+    console.log(`${'='.repeat(60)}\n`);
 
-      return success;
-    } catch (error) {
-      console.error(`  ❌ Test alert error:`, error);
-      console.log(`${'='.repeat(80)}\n`);
-      return false;
-    }
+    return success;
   }
 
   /**
@@ -1658,7 +1592,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     let addedCount = 0;
     let skippedAsHistorical = 0;
+    let skippedByCooldown = 0;
     const currentTime = Date.now();
+
+    // ✅ FIX COOLDOWN: Verificar si estamos en cooldown ANTES de marcar patrones como nuevos
+    // Si estamos en cooldown, los patrones detectados NO deben marcarse como alertables
+    const inCooldown = this.isInGlobalCooldown();
+    if (inCooldown && !isInitialLoad) {
+      log.debug(`[${this.symbol}] ⏳ In cooldown - new patterns will be discarded (not marked as alertable)`);
+    }
 
     // ✅ VALIDACIÓN TEMPORAL: Solo patrones completados en las últimas N velas
     // pueden ser considerados "nuevos" para alertas
@@ -1718,7 +1660,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
           hour12: false
         });
 
-        if (isRecentPattern) {
+        // ✅ FIX COOLDOWN: Si estamos en cooldown, DESCARTAR el patrón (no marcar como nuevo)
+        if (inCooldown && !isInitialLoad) {
+          newPattern._isNewPattern = false;
+          newPattern._discardedByCooldown = true;
+          skippedByCooldown++;
+          log.debug(`[${this.symbol}] ⏳ DISCARDED by cooldown: ${newPattern.type} @ $${newPattern.levelPrice.toFixed(2)} | Completado: ${formattedDate}`);
+        } else if (isRecentPattern) {
           // ✅ Patrón reciente - marcar como nuevo para posible alerta
           newPattern._isNewPattern = true;
           newPattern._detectionTime = currentTime;
@@ -1744,8 +1692,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     if (isInitialLoad) {
       log.info(`[${this.symbol}] 📊 Carga inicial completa: ${addedCount} patrones históricos cargados, ${this.patterns.length} patrones totales`);
     } else {
-      const genuinelyNew = addedCount - skippedAsHistorical;
-      log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones agregados (${genuinelyNew} NUEVOS, ${skippedAsHistorical} históricos re-detectados), ${this.patterns.length} patrones totales`);
+      const genuinelyNew = addedCount - skippedAsHistorical - skippedByCooldown;
+      log.info(`[${this.symbol}] 📊 Fusión completa: ${addedCount} patrones agregados (${genuinelyNew} NUEVOS, ${skippedAsHistorical} históricos, ⏳${skippedByCooldown} cooldown), ${this.patterns.length} patrones totales`);
     }
   }
 
@@ -1829,11 +1777,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
   /**
    * Handler llamado cuando se cierra una vela (WebSocket confirm=true)
-   * Incluye throttling para evitar detecciones excesivas
    *
-   * ESTRATEGIA:
-   * - Primera ejecución: Análisis COMPLETO de todas las velas (carga inicial de patrones históricos)
-   * - Ejecuciones posteriores: Análisis INCREMENTAL de últimas 300 velas (detección en tiempo real)
+   * ARQUITECTURA HÍBRIDA:
+   * - La detección en tiempo real la hace el BACKEND via WebSocket
+   * - El frontend solo renderiza patrones y evalúa outcomes de trades pendientes
+   * - Esto evita llamadas costosas al backend en cada cierre de vela
    */
   async onCandleClose(allCandles) {
     if (!this.config.enabled) {
@@ -1841,75 +1789,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       return;
     }
 
-    if (!this.config.realTimeDetection?.enabled) {
-      log.debug(`[${this.symbol}] Real-time detection deshabilitado`);
-      return;
-    }
-
-    const now = Date.now();
-    const throttleMs = this.getIntervalMs() * 0.9;
-
-    // Throttling: solo ejecutar si ha pasado suficiente tiempo
-    if (this.lastRealtimeCheck && (now - this.lastRealtimeCheck) < throttleMs) {
-      const elapsed = now - this.lastRealtimeCheck;
-      log.debug(`[${this.symbol}] ⏱️ Throttled: ${elapsed}ms < ${throttleMs}ms (esperando ${throttleMs - elapsed}ms más)`);
-      return;
-    }
-
-    this.lastRealtimeCheck = now;
+    // ✅ ARQUITECTURA HÍBRIDA: El backend detecta patrones en tiempo real
+    // El frontend NO debe llamar al backend en cada cierre de vela
+    // Solo evaluamos outcomes de trades pendientes localmente
 
     try {
-      // ✅ DETECCIÓN INTELIGENTE: Primera vez = análisis completo, posteriores = incremental
-      // Usar FLAG explícito en lugar de this.patterns.length para evitar conflictos con fetchData()
-      const isFirstDetection = !this.hasRunFullAnalysis;
-
-      if (isFirstDetection) {
-        log.info(`[${this.symbol}] 🔄 Primera detección - analizando TODAS las velas para carga inicial (${allCandles.length} velas)`);
-      } else {
-        log.info(`[${this.symbol}] 🕐 Vela cerrada - detección incremental de patrones DBT...`);
-      }
-
-      const newPatterns = await this.detectIncrementalPattern(allCandles, isFirstDetection);
-
-      if (newPatterns.length > 0) {
-        if (isFirstDetection) {
-          log.info(`[${this.symbol}] 📊 Carga inicial: ${newPatterns.length} patrones históricos detectados`);
-        } else {
-          log.info(`[${this.symbol}] 📊 ${newPatterns.length} patrones detectados en tiempo real`);
-        }
-
-        this.mergeNewPatterns(newPatterns, isFirstDetection);
-
-        // ✅ Marcar que ya se ejecutó el análisis completo
-        if (isFirstDetection) {
-          this.hasRunFullAnalysis = true;
-          log.info(`[${this.symbol}] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales`);
-        }
-
-        // Enviar alertas solo si NO es la primera detección (evitar alertas de patrones históricos)
-        if (!isFirstDetection && this.config.alertsEnabled) {
-          log.info(`[${this.symbol}] 🔔 Alertas habilitadas - verificando patrones nuevos...`);
-          await this.checkAndSendAlerts(allCandles);
-        }
-
-        // Forzar redibujado del chart
-        if (this.indicatorManager?.requestRedraw) {
-          this.indicatorManager.requestRedraw();
-        }
-      } else {
-        if (isFirstDetection) {
-          log.info(`[${this.symbol}] ℹ️ No se detectaron patrones históricos`);
-          // Aunque no haya patrones, marcar como ejecutado para evitar repetir análisis completo
-          this.hasRunFullAnalysis = true;
-        } else {
-          log.info(`[${this.symbol}] ℹ️ No se detectaron patrones nuevos`);
-        }
-      }
-
-      // ✅ Evaluar resultados de trades pendientes (WIN/LOSS)
+      // ✅ Evaluar resultados de trades pendientes (WIN/LOSS) - esto es local, no llama al backend
       this.evaluatePendingTradeOutcomes(allCandles);
     } catch (error) {
-      log.error(`[${this.symbol}] ❌ Error en detección en tiempo real:`, error);
+      log.error(`[${this.symbol}] ❌ Error evaluando outcomes:`, error);
     }
   }
 
@@ -2463,12 +2351,28 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     ctx.save();
 
-    // Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
-    if (config.showBox !== false) {
-      const boxOpacity = config.boxOpacity || 0.15;
+    // ✅ FIX: Determinar si el patrón fue descartado por cooldown
+    const isDiscarded = pattern._discardedByCooldown === true;
+    const cooldownConfig = this.config.alertSettings?.globalCooldown || {};
 
-      // Box 1: Entre SL y Entry (rojo/pérdida)
-      const slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+    // Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
+    // ✅ FIX: Si el patrón fue descartado por cooldown, usar colores grises diferenciados
+    if (config.showBox !== false) {
+      let slBoxColor, tpBoxColor, boxOpacity;
+
+      if (isDiscarded) {
+        // Patrón descartado por cooldown: usar color gris uniforme
+        slBoxColor = cooldownConfig.discardedBoxColor || '#9E9E9E';
+        tpBoxColor = cooldownConfig.discardedBoxColor || '#9E9E9E';
+        boxOpacity = cooldownConfig.discardedBoxOpacity ?? 0.10;
+      } else {
+        // Patrón activo: usar colores normales
+        slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+        tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+        boxOpacity = config.boxOpacity || 0.15;
+      }
+
+      // Box 1: Entre SL y Entry
       const slBoxTopY = Math.min(slY, entryY);
       const slBoxBottomY = Math.max(slY, entryY);
       const slBoxHeight = slBoxBottomY - slBoxTopY;
@@ -2476,8 +2380,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       ctx.fillStyle = this.hexToRgba(slBoxColor, boxOpacity);
       ctx.fillRect(startX, slBoxTopY, endX - startX, slBoxHeight);
 
-      // Box 2: Entre Entry y TP (verde/ganancia)
-      const tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+      // Box 2: Entre Entry y TP
       const tpBoxTopY = Math.min(entryY, tpY);
       const tpBoxBottomY = Math.max(entryY, tpY);
       const tpBoxHeight = tpBoxBottomY - tpBoxTopY;
@@ -2488,9 +2391,15 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     ctx.setLineDash([4, 2]);
 
+    // ✅ FIX: Determinar colores de líneas según estado del patrón
+    const discardedLineColor = cooldownConfig.discardedBoxColor || '#9E9E9E';
+    const entryLineColor = isDiscarded ? discardedLineColor : (config.entryColor || '#03A9F4');
+    const slLineColor = isDiscarded ? discardedLineColor : (config.stopLossColor || '#FF1744');
+    const tpLineColor = isDiscarded ? discardedLineColor : (config.takeProfitColor || '#00E676');
+
     // Línea de Entry
     ctx.beginPath();
-    ctx.strokeStyle = config.entryColor || '#03A9F4';
+    ctx.strokeStyle = entryLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, entryY);
     ctx.lineTo(endX, entryY);
@@ -2498,7 +2407,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     // Línea de Stop Loss
     ctx.beginPath();
-    ctx.strokeStyle = config.stopLossColor || '#FF1744';
+    ctx.strokeStyle = slLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, slY);
     ctx.lineTo(endX, slY);
@@ -2506,7 +2415,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     // Línea de Take Profit
     ctx.beginPath();
-    ctx.strokeStyle = config.takeProfitColor || '#00E676';
+    ctx.strokeStyle = tpLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, tpY);
     ctx.lineTo(endX, tpY);
@@ -2522,13 +2431,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
       const dirLabel = strategy.direction || 'ENTRY';
 
-      ctx.fillStyle = config.entryColor || '#03A9F4';
+      ctx.fillStyle = entryLineColor;
       ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
 
-      ctx.fillStyle = config.stopLossColor || '#FF1744';
+      ctx.fillStyle = slLineColor;
       ctx.fillText(`SL ${dirLabel}: $${strategy.stopLoss.toFixed(2)} (${strategy.slPercent}%)`, labelX, slY + 3);
 
-      ctx.fillStyle = config.takeProfitColor || '#00E676';
+      ctx.fillStyle = tpLineColor;
       ctx.fillText(`TP ${dirLabel}: $${strategy.takeProfit.toFixed(2)} (${strategy.tpPercent}%)`, labelX, tpY + 3);
     }
 

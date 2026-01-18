@@ -76,12 +76,17 @@ class RejectionDetector:
         )
 
         if not reference_levels and require_near_level:
-            print(f"⚠️ No reference levels for {symbol}. "
+            print(f"[WARN] No reference levels for {symbol}. "
                   f"Detection disabled to avoid false positives.")
             return []
         elif not reference_levels:
-            print(f"ℹ️ No reference levels for {symbol}, but requireNearLevel=False. "
+            print(f"[INFO] No reference levels for {symbol}, but requireNearLevel=False. "
                   f"Detecting all patterns without level validation.")
+
+        # Log enabled patterns for debugging
+        patterns_config = config.get('patterns', {})
+        enabled_patterns = [p for p, cfg in patterns_config.items() if cfg.get('enabled', False)]
+        print(f"[REJECTION] {symbol}: Enabled patterns: {enabled_patterns}, swing detection: {config.get('swingDetection', {}).get('enabled', False)}")
 
         # 2. Detect patterns in each candle
         for i in range(1, len(candles)):  # Start at 1 to have at least 1 previous candle
@@ -139,6 +144,37 @@ class RejectionDetector:
                     if pattern:
                         detected_patterns.append(pattern)
 
+            # Swing Detection (SWING_LOW / SWING_HIGH)
+            swing_config = config.get('swingDetection', {})
+            if swing_config.get('enabled', False):
+                left_bars = swing_config.get('leftBars', 5)
+                right_bars = swing_config.get('rightBars', 5)
+
+                # Check for Swing Low
+                if self._is_swing_low(candles, i, left_bars, right_bars):
+                    pattern = self._create_pattern(
+                        candle,
+                        "SWING_LOW",
+                        reference_levels,
+                        config,
+                        prev_candles
+                    )
+                    if pattern:
+                        detected_patterns.append(pattern)
+
+                # Check for Swing High
+                if self._is_swing_high(candles, i, left_bars, right_bars):
+                    pattern = self._create_pattern(
+                        candle,
+                        "SWING_HIGH",
+                        reference_levels,
+                        config,
+                        prev_candles
+                    )
+                    if pattern:
+                        detected_patterns.append(pattern)
+
+        print(f"[REJECTION] {symbol}: Found {len(detected_patterns)} patterns before filtering")
         return detected_patterns
 
     def _extract_reference_levels(
@@ -246,10 +282,10 @@ class RejectionDetector:
                         max_price=float(max_price)
                     ))
 
-                    print(f"  ✅ Manual Zone '{context.get('name', context_id)}': {min_price:.2f} - {max_price:.2f} (signalDirection={signal_direction})")
-                    print(f"      🎯 Zone will filter patterns to: {signal_direction}")
+                    print(f"  [OK] Manual Zone '{context.get('name', context_id)}': {min_price:.2f} - {max_price:.2f} (signalDirection={signal_direction})")
+                    print(f"      [TARGET] Zone will filter patterns to: {signal_direction}")
 
-        print(f"📊 [{symbol}] Extracted {len(levels)} reference levels from {len([c for c in reference_contexts if c.get('enabled', False)])} active contexts")
+        print(f"[LEVELS] [{symbol}] Extracted {len(levels)} reference levels from {len([c for c in reference_contexts if c.get('enabled', False)])} active contexts")
 
         return levels
 
@@ -268,8 +304,8 @@ class RejectionDetector:
         proximity_pct = config.get('filters', {}).get('proximityPercent', 1.0) / 100
 
         # ✅ NUEVO: Determinar dirección del patrón
-        bullish_patterns = ["HAMMER", "ENGULFING_BULLISH", "DOJI_DRAGONFLY"]
-        bearish_patterns = ["SHOOTING_STAR", "ENGULFING_BEARISH", "DOJI_GRAVESTONE"]
+        bullish_patterns = ["HAMMER", "ENGULFING_BULLISH", "DOJI_DRAGONFLY", "SWING_LOW"]
+        bearish_patterns = ["SHOOTING_STAR", "ENGULFING_BEARISH", "DOJI_GRAVESTONE", "SWING_HIGH"]
 
         pattern_direction = None
         if pattern_type in bullish_patterns:
@@ -287,23 +323,23 @@ class RejectionDetector:
                 if level.min_price is not None and level.max_price is not None:
                     if close_price < level.min_price or close_price > level.max_price:
                         # Fuera de esta zona, probar la siguiente
-                        print(f"    ⏭️ Pattern at {close_price:.2f} outside zone range {level.min_price:.2f}-{level.max_price:.2f}")
+                        print(f"    [SKIP] Pattern at {close_price:.2f} outside zone range {level.min_price:.2f}-{level.max_price:.2f}")
                         continue
 
                     # 2. Precio DENTRO de la zona, verificar dirección
-                    print(f"    ✅ Pattern at {close_price:.2f} IS INSIDE zone range {level.min_price:.2f}-{level.max_price:.2f}")
+                    print(f"    [OK] Pattern at {close_price:.2f} IS INSIDE zone range {level.min_price:.2f}-{level.max_price:.2f}")
 
                     # 3. Verificar signal_direction de la zona
                     if level.signal_direction and level.signal_direction != 'BOTH':
                         if pattern_direction and pattern_direction != level.signal_direction:
                             # Dirección no coincide con ESTA zona, probar la siguiente
-                            print(f"    ❌ Pattern {pattern_type} ({pattern_direction}) rejected by zone '{level.context_id}' (requires {level.signal_direction})")
+                            print(f"    [REJECT] Pattern {pattern_type} ({pattern_direction}) rejected by zone '{level.context_id}' (requires {level.signal_direction})")
                             continue
 
                     # 4. Pasó ambas validaciones (rango + dirección), agregar nivel
-                    print(f"    ✅ Pattern {pattern_type} ({pattern_direction}) accepted by zone '{level.context_id}' (allows {level.signal_direction or 'BOTH'})")
+                    print(f"    [OK] Pattern {pattern_type} ({pattern_direction}) accepted by zone '{level.context_id}' (allows {level.signal_direction or 'BOTH'})")
                     near_levels.append(level)
-                    print(f"    ✅ Added manual zone level to near_levels (no proximity check needed)")
+                    print(f"    [OK] Added manual zone level to near_levels (no proximity check needed)")
             else:
                 # Para otros tipos de niveles (VP, S&R), usar proximidad normal
                 distance_pct = abs(close_price - level.price) / close_price
@@ -438,6 +474,11 @@ class RejectionDetector:
             body_ratio = body / total_range
             quality = 1.0 - min(1.0, body_ratio * 10)  # Smaller body = higher quality
             return quality
+
+        elif pattern_type in ["SWING_LOW", "SWING_HIGH"]:
+            # Swings have fixed quality - they're structural points
+            # Quality is determined by the prominence of the swing
+            return 0.75  # Fixed quality for swings
 
         return 0.5  # Default
 
@@ -598,6 +639,66 @@ class RejectionDetector:
             return "DOJI_GRAVESTONE"
 
         return None
+
+    # ==================== SWING DETECTION FUNCTIONS ====================
+
+    def _is_swing_low(self, candles: List[Dict], index: int, left_bars: int = 5, right_bars: int = 5) -> bool:
+        """
+        Detects Swing Low - the candle's low is the minimum of the surrounding window
+
+        A swing low occurs when a candle's low is lower than all candles
+        to its left (left_bars) and right (right_bars).
+
+        Args:
+            candles: List of candle data
+            index: Current candle index to check
+            left_bars: Number of bars to check on the left
+            right_bars: Number of bars to check on the right
+
+        Returns:
+            True if this is a swing low
+        """
+        # Need enough bars on both sides
+        if index < left_bars or index >= len(candles) - right_bars:
+            return False
+
+        current_low = candles[index]['low']
+
+        # Check all bars in the window
+        for i in range(index - left_bars, index + right_bars + 1):
+            if i != index and candles[i]['low'] <= current_low:
+                return False
+
+        return True
+
+    def _is_swing_high(self, candles: List[Dict], index: int, left_bars: int = 5, right_bars: int = 5) -> bool:
+        """
+        Detects Swing High - the candle's high is the maximum of the surrounding window
+
+        A swing high occurs when a candle's high is higher than all candles
+        to its left (left_bars) and right (right_bars).
+
+        Args:
+            candles: List of candle data
+            index: Current candle index to check
+            left_bars: Number of bars to check on the left
+            right_bars: Number of bars to check on the right
+
+        Returns:
+            True if this is a swing high
+        """
+        # Need enough bars on both sides
+        if index < left_bars or index >= len(candles) - right_bars:
+            return False
+
+        current_high = candles[index]['high']
+
+        # Check all bars in the window
+        for i in range(index - left_bars, index + right_bars + 1):
+            if i != index and candles[i]['high'] >= current_high:
+                return False
+
+        return True
 
 
 def serialize_pattern(pattern: RejectionPattern) -> Dict:

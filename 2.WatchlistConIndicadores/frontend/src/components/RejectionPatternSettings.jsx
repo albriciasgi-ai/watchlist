@@ -2070,11 +2070,113 @@ const RejectionPatternSettings = ({
                     />
                     <span style={{ fontSize: '12px' }}>Pausar detección durante cooldown</span>
                   </label>
+
+                  {/* Color para patrones descartados por cooldown */}
+                  <div style={{ marginTop: '12px', padding: '8px', background: '#f8f8f8', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '6px' }}>
+                      Visualización de patrones descartados:
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <label style={{ fontSize: '11px', color: '#555' }}>Color:</label>
+                      <input
+                        type="color"
+                        value={config.alertCooldown?.discardedBoxColor || '#9E9E9E'}
+                        onChange={(e) => setConfig(prev => ({
+                          ...prev,
+                          alertCooldown: { ...prev.alertCooldown, discardedBoxColor: e.target.value }
+                        }))}
+                        style={{ width: '30px', height: '22px', border: 'none', cursor: 'pointer' }}
+                        title="Color para patrones descartados por cooldown"
+                      />
+                      <label style={{ fontSize: '11px', color: '#555', marginLeft: '10px' }}>Opacidad:</label>
+                      <input
+                        type="range"
+                        min="0.05"
+                        max="0.30"
+                        step="0.01"
+                        value={config.alertCooldown?.discardedBoxOpacity ?? 0.10}
+                        onChange={(e) => setConfig(prev => ({
+                          ...prev,
+                          alertCooldown: { ...prev.alertCooldown, discardedBoxOpacity: parseFloat(e.target.value) }
+                        }))}
+                        style={{ width: '60px' }}
+                      />
+                      <span style={{ fontSize: '10px', color: '#888' }}>
+                        {Math.round((config.alertCooldown?.discardedBoxOpacity ?? 0.10) * 100)}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
               <span className="filter-hint">
-                Evita spam: espera X minutos entre alertas consecutivas
+                Evita spam: espera X minutos entre alertas consecutivas. Los patrones detectados durante cooldown se muestran en gris.
               </span>
+            </div>
+          )}
+
+          {/* ✅ NUEVO: Rate Limiting (Anti-ráfaga) */}
+          {config.alertsEnabled && (
+            <div className="filter-item" style={{ marginTop: '10px', padding: '10px', background: '#fff3e0', borderRadius: '6px', border: '1px solid #ffcc80' }}>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={config.rateLimiting?.enabled ?? true}
+                  onChange={(e) => setConfig(prev => ({
+                    ...prev,
+                    rateLimiting: { ...prev.rateLimiting, enabled: e.target.checked }
+                  }))}
+                />
+                <span>🚦 Rate Limiting (Anti-ráfaga)</span>
+              </label>
+              <span className="filter-hint" style={{ marginTop: '4px', display: 'block' }}>
+                Evita enviar múltiples alertas de golpe al recargar la página
+              </span>
+              {config.rateLimiting?.enabled && (
+                <div style={{ marginLeft: '25px', marginTop: '10px' }}>
+                  <ParameterSlider
+                    label="Intervalo mínimo entre alertas"
+                    value={config.rateLimiting?.minIntervalSeconds ?? 5}
+                    min={1}
+                    max={30}
+                    step={1}
+                    unit="seg"
+                    onChange={(val) => setConfig(prev => ({
+                      ...prev,
+                      rateLimiting: { ...prev.rateLimiting, minIntervalSeconds: val }
+                    }))}
+                    defaultValue={5}
+                    tooltip="Tiempo mínimo de espera entre alertas consecutivas"
+                  />
+                  <ParameterSlider
+                    label="Edad máxima del patrón"
+                    value={config.rateLimiting?.maxPatternAgeMinutes ?? 2}
+                    min={1}
+                    max={10}
+                    step={1}
+                    unit="min"
+                    onChange={(val) => setConfig(prev => ({
+                      ...prev,
+                      rateLimiting: { ...prev.rateLimiting, maxPatternAgeMinutes: val }
+                    }))}
+                    defaultValue={2}
+                    tooltip="Solo alerta patrones detectados en los últimos X minutos"
+                  />
+                  <label className="checkbox-label" style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={config.rateLimiting?.skipHistoricalOnLoad ?? true}
+                      onChange={(e) => setConfig(prev => ({
+                        ...prev,
+                        rateLimiting: { ...prev.rateLimiting, skipHistoricalOnLoad: e.target.checked }
+                      }))}
+                    />
+                    <span style={{ fontSize: '12px' }}>Descartar patrones históricos al iniciar</span>
+                  </label>
+                  <span className="filter-hint" style={{ marginLeft: '22px', fontSize: '10px' }}>
+                    Al recargar la página, ignora patrones antiguos y solo alerta nuevos
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
@@ -3118,7 +3220,7 @@ function getDefaultConfig() {
       minZScore: 1.0,
       swingCandleRange: 1  // Velas alrededor del swing a considerar para el Z-score
     },
-    alertsEnabled: false,
+    alertsEnabled: true,  // Habilitado por defecto para enviar al trading bot
     debugMode: false,
     signalDirection: {
       global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'
@@ -3173,6 +3275,13 @@ function getDefaultConfig() {
       enabled: true,
       minutes: 30,              // Minutos entre alertas consecutivas
       pauseDetection: false     // Si true, pausa la detección de patrones durante el cooldown
+    },
+    // ✅ NUEVO: Rate Limiting para evitar alertas en ráfaga
+    rateLimiting: {
+      enabled: true,
+      minIntervalSeconds: 5,        // Mínimo 5 segundos entre alertas
+      maxPatternAgeMinutes: 2,      // Solo alertar patrones de los últimos 2 minutos
+      skipHistoricalOnLoad: true    // Descartar patrones históricos al cargar
     }
   };
 }

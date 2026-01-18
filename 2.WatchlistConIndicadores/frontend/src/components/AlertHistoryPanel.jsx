@@ -1,12 +1,32 @@
 // src/components/AlertHistoryPanel.jsx
 // Panel para mostrar historial de alertas del indicador Double Top/Bottom
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AlertHistoryPanel.css';
 
-const AlertHistoryPanel = ({ symbol, onClose }) => {
+// Convertir intervalo a milisegundos para el refresh
+const getRefreshInterval = (interval) => {
+  const intervalMap = {
+    '1': 60000,      // 1 minuto
+    '3': 180000,     // 3 minutos
+    '5': 300000,     // 5 minutos
+    '15': 900000,    // 15 minutos
+    '30': 1800000,   // 30 minutos
+    '60': 3600000,   // 1 hora
+    '120': 7200000,  // 2 horas
+    '240': 14400000, // 4 horas
+    'D': 86400000,   // 1 día
+    'W': 604800000,  // 1 semana
+  };
+  // Default a 1 minuto si no se reconoce el intervalo
+  return intervalMap[interval] || 60000;
+};
+
+const AlertHistoryPanel = ({ symbol, interval = '60', onClose }) => {
   const [alerts, setAlerts] = useState([]);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const panelRef = useRef(null);
 
   // Cargar alertas desde localStorage
   const loadAlerts = () => {
@@ -30,16 +50,29 @@ const AlertHistoryPanel = ({ symbol, onClose }) => {
     loadAlerts();
   }, [symbol]);
 
-  // Auto-refresh cada 5 segundos si está habilitado
+  // Detectar visibilidad del panel (si está en viewport o tab activo)
   useEffect(() => {
-    if (!autoRefresh) return;
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
 
-    const interval = setInterval(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Auto-refresh basado en el timeframe, solo cuando está visible
+  useEffect(() => {
+    if (!autoRefresh || !isVisible) return;
+
+    const refreshMs = getRefreshInterval(interval);
+    console.log(`[AlertHistoryPanel] Auto-refresh configurado cada ${refreshMs / 1000}s (timeframe: ${interval})`);
+
+    const intervalId = setInterval(() => {
       loadAlerts();
-    }, 5000);
+    }, refreshMs);
 
-    return () => clearInterval(interval);
-  }, [autoRefresh, symbol]);
+    return () => clearInterval(intervalId);
+  }, [autoRefresh, isVisible, interval, symbol]);
 
   // Limpiar historial
   const handleClearHistory = () => {
@@ -88,20 +121,28 @@ const AlertHistoryPanel = ({ symbol, onClose }) => {
     return type === 'DOUBLE_TOP' ? '📉' : '📈';
   };
 
+  // Formatear intervalo de refresh para mostrar
+  const formatRefreshInterval = () => {
+    const ms = getRefreshInterval(interval);
+    if (ms >= 3600000) return `${ms / 3600000}h`;
+    if (ms >= 60000) return `${ms / 60000}m`;
+    return `${ms / 1000}s`;
+  };
+
   return (
-    <div className="alert-history-panel">
+    <div className="alert-history-panel" ref={panelRef}>
       <div className="alert-history-header">
         <h3>
           🔔 Historial de Alertas - {symbol}
         </h3>
         <div className="alert-history-controls">
-          <label className="auto-refresh-toggle">
+          <label className="auto-refresh-toggle" title={`Refresh cada ${formatRefreshInterval()} (cierre de vela)`}>
             <input
               type="checkbox"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
             />
-            <span>Auto-refresh</span>
+            <span>Auto ({formatRefreshInterval()})</span>
           </label>
           <button
             className="btn-refresh"
@@ -196,6 +237,11 @@ const AlertHistoryPanel = ({ symbol, onClose }) => {
         <span className="alerts-count">
           {alerts.length} alerta{alerts.length !== 1 ? 's' : ''} (máx. 20)
         </span>
+        {!isVisible && (
+          <span className="paused-indicator" title="Refresh pausado (pestaña inactiva)">
+            ⏸️
+          </span>
+        )}
       </div>
     </div>
   );

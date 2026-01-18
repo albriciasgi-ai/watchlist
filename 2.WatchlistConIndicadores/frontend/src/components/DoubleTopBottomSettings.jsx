@@ -185,6 +185,14 @@ function getDefaultConfig() {
         enabled: true,
         minutes: 30,  // Minutos entre alertas consecutivas
         pauseDetection: false  // Si true, pausa la detección de patrones durante el cooldown
+      },
+
+      // ✅ NUEVO: Rate Limiting para evitar alertas en ráfaga
+      rateLimiting: {
+        enabled: true,
+        minIntervalSeconds: 5,        // Mínimo 5 segundos entre alertas
+        maxPatternAgeMinutes: 2,      // Solo alertar patrones de los últimos 2 minutos
+        skipHistoricalOnLoad: true    // Descartar patrones históricos al cargar
       }
     }
   };
@@ -2393,6 +2401,7 @@ const DoubleTopBottomSettings = ({
 
           {/* ✅ NUEVO: Cooldown global entre alertas */}
           {config.alertsEnabled && (
+            <>
             <div style={{
               marginTop: '15px',
               marginLeft: '26px',
@@ -2461,9 +2470,155 @@ const DoubleTopBottomSettings = ({
                   <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
                     Evita spam: espera {config.alertSettings?.globalCooldown?.minutes ?? 30} minutos entre alertas consecutivas
                   </div>
+
+                  {/* Color para patrones descartados por cooldown */}
+                  <div style={{ marginTop: '12px', padding: '8px', background: '#f8f8f8', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '6px' }}>
+                      Visualización de patrones descartados:
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      <label style={{ fontSize: '11px', color: '#555' }}>Color:</label>
+                      <input
+                        type="color"
+                        value={config.alertSettings?.globalCooldown?.discardedBoxColor || '#9E9E9E'}
+                        onChange={(e) => updateConfig('alertSettings', {
+                          ...config.alertSettings,
+                          globalCooldown: {
+                            ...config.alertSettings?.globalCooldown,
+                            discardedBoxColor: e.target.value
+                          }
+                        })}
+                        style={{ width: '30px', height: '24px', border: '1px solid #ccc', borderRadius: '3px', cursor: 'pointer' }}
+                      />
+                      <label style={{ fontSize: '11px', color: '#555', marginLeft: '10px' }}>Opacidad:</label>
+                      <input
+                        type="range"
+                        min="0.05"
+                        max="0.30"
+                        step="0.01"
+                        value={config.alertSettings?.globalCooldown?.discardedBoxOpacity || 0.10}
+                        onChange={(e) => updateConfig('alertSettings', {
+                          ...config.alertSettings,
+                          globalCooldown: {
+                            ...config.alertSettings?.globalCooldown,
+                            discardedBoxOpacity: parseFloat(e.target.value)
+                          }
+                        })}
+                        style={{ width: '80px', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: '10px', color: '#888' }}>
+                        {((config.alertSettings?.globalCooldown?.discardedBoxOpacity || 0.10) * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#999', marginTop: '4px' }}>
+                      Los patrones descartados por cooldown se mostrarán con este color en lugar del color de la estrategia
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
+
+            {/* Rate Limiting - Protección contra ráfagas */}
+            <div style={{
+              padding: '12px',
+              marginTop: '12px',
+              background: '#fff3e0',
+              borderRadius: '6px',
+              border: '1px solid #ffcc80'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                color: '#333'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={config.alertSettings?.rateLimiting?.enabled ?? true}
+                  onChange={(e) => updateConfig('alertSettings', {
+                    ...config.alertSettings,
+                    rateLimiting: {
+                      ...config.alertSettings?.rateLimiting,
+                      enabled: e.target.checked
+                    }
+                  })}
+                  style={{ marginRight: '8px', cursor: 'pointer', width: '16px', height: '16px' }}
+                />
+                🚦 Rate Limiting (Anti-ráfaga)
+              </label>
+              <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', marginLeft: '24px' }}>
+                Evita enviar múltiples alertas de golpe al recargar la página
+              </div>
+              {config.alertSettings?.rateLimiting?.enabled && (
+                <div style={{ marginTop: '10px' }}>
+                  {/* Intervalo mínimo entre alertas */}
+                  <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px' }}>
+                    Intervalo mínimo entre alertas: {config.alertSettings?.rateLimiting?.minIntervalSeconds ?? 5} segundos
+                  </label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={30}
+                    step={1}
+                    value={config.alertSettings?.rateLimiting?.minIntervalSeconds ?? 5}
+                    onChange={(e) => updateConfig('alertSettings', {
+                      ...config.alertSettings,
+                      rateLimiting: {
+                        ...config.alertSettings?.rateLimiting,
+                        minIntervalSeconds: parseInt(e.target.value)
+                      }
+                    })}
+                    style={{ width: '100%' }}
+                  />
+
+                  {/* Edad máxima del patrón */}
+                  <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px', marginTop: '10px' }}>
+                    Edad máxima del patrón: {config.alertSettings?.rateLimiting?.maxPatternAgeMinutes ?? 2} minutos
+                  </label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={10}
+                    step={1}
+                    value={config.alertSettings?.rateLimiting?.maxPatternAgeMinutes ?? 2}
+                    onChange={(e) => updateConfig('alertSettings', {
+                      ...config.alertSettings,
+                      rateLimiting: {
+                        ...config.alertSettings?.rateLimiting,
+                        maxPatternAgeMinutes: parseInt(e.target.value)
+                      }
+                    })}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
+                    Solo alerta patrones detectados en los últimos {config.alertSettings?.rateLimiting?.maxPatternAgeMinutes ?? 2} minutos
+                  </div>
+
+                  {/* Descartar históricos al cargar */}
+                  <label style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={config.alertSettings?.rateLimiting?.skipHistoricalOnLoad ?? true}
+                      onChange={(e) => updateConfig('alertSettings', {
+                        ...config.alertSettings,
+                        rateLimiting: {
+                          ...config.alertSettings?.rateLimiting,
+                          skipHistoricalOnLoad: e.target.checked
+                        }
+                      })}
+                      style={{ marginRight: '6px', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '12px', color: '#666' }}>Descartar patrones históricos al iniciar</span>
+                  </label>
+                  <div style={{ fontSize: '10px', color: '#888', marginTop: '2px', marginLeft: '22px' }}>
+                    Al recargar la página, ignora patrones antiguos y solo alerta nuevos
+                  </div>
+                </div>
+              )}
+            </div>
+            </>
           )}
         </div>
 

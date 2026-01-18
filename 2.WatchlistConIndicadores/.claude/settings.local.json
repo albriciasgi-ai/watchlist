@@ -62,7 +62,11 @@
       "Bash(else echo \"ERROR: venv directory not found\")",
       "Bash(fi)",
       "Bash(\"venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8001)",
-      "Bash(cmd /c start_backend.bat)"
+      "Bash(cmd /c start_backend.bat)",
+      "Bash(cmd //c \"tasklist /FI \"\"IMAGENAME eq python.exe\"\"\")",
+      "Bash(cmd //c \"tasklist /FI \"\"IMAGENAME eq node.exe\"\"\")",
+      "Bash(\"C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/2.WatchlistConIndicadores/backend/.venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8000)",
+      "Bash(\"C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/3.TradingBot_Python/backend/venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 5000)"
     ],
     "deny": [],
     "ask": []

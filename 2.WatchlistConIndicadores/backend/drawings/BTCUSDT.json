@@ -1,6 +1,21 @@
 {
   "symbol": "BTCUSDT",
-  "shapes": [],
-  "updated_at": "2026-01-14T14:55:45.877240+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "rectangle",
+      "id": "rectangle_1768754729041_0.749703410985987",
+      "price1": 95020.47072828504,
+      "time1": 1768736280000,
+      "price2": 95159.08183939615,
+      "time2": 1768748040000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    }
+  ],
+  "updated_at": "2026-01-18T16:45:32.587429+00:00",
+  "total_shapes": 1
 }

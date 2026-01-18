@@ -1,6 +1,21 @@
 {
   "symbol": "ETHUSDT",
-  "shapes": [],
-  "updated_at": "2026-01-14T21:44:58.688701+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "rectangle",
+      "id": "rectangle_1768755009952_0.4619963306266729",
+      "price1": 3333.2750731865444,
+      "time1": 1768743360000,
+      "price2": 3312.6695280737626,
+      "time2": 1768752960000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    }
+  ],
+  "updated_at": "2026-01-18T16:53:14.903438+00:00",
+  "total_shapes": 1
 }

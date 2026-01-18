@@ -107,7 +107,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null }) => {
   const canvasRef = useRef(null);
   
   const candlesRef = useRef([]);
@@ -997,12 +997,45 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             timestamp: lastCandle.timestamp,
             datetime: lastCandle.datetime_colombia
           });
-          
+
           historicalCandles = historicalCandles.slice(0, -1);
         }
-        
-        candlesRef.current = historicalCandles;
-        console.log(`[${symbol}] ✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
+
+        // ✅ FIX v2: Al recargar histórico, NUNCA perder velas que ya teníamos
+        const existingCandles = candlesRef.current;
+        let shouldResetZoom = false;
+
+        const lastHistorical = historicalCandles[historicalCandles.length - 1];
+
+        if (existingCandles && existingCandles.length > 0) {
+          const lastExisting = existingCandles[existingCandles.length - 1];
+
+          // Si ya tenemos más velas que el histórico, NO reemplazar
+          if (existingCandles.length >= historicalCandles.length) {
+            const lastExistingTs = lastExisting.timestamp;
+            const newerFromHistorical = historicalCandles.filter(c => c.timestamp > lastExistingTs);
+
+            if (newerFromHistorical.length > 0) {
+              candlesRef.current = [...existingCandles, ...newerFromHistorical];
+            }
+          } else {
+            // El histórico tiene más velas - usarlo pero preservar las más recientes del WebSocket
+            const lastHistoricalTs = lastHistorical.timestamp;
+            const newerCandles = existingCandles.filter(c => c.timestamp > lastHistoricalTs);
+
+            if (newerCandles.length > 0) {
+              historicalCandles = [...historicalCandles, ...newerCandles];
+            }
+
+            candlesRef.current = historicalCandles;
+            shouldResetZoom = true;
+          }
+        } else {
+          candlesRef.current = historicalCandles;
+          shouldResetZoom = true;
+        }
+
+        console.log(`[${symbol}] ✅ Histórico: ${candlesRef.current.length} velas`);
 
         // ✅ NUEVO: Notificar a IndicatorManager que las velas están disponibles
         // Esto permite que DBT pueda hacer análisis completo inicial
@@ -1010,28 +1043,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           indicatorManagerRef.current.onHistoricalCandlesLoaded(historicalCandles);
         }
 
-        // 🎯 Resetear escala de precios para recalcular con nuevos datos
-        priceScaleRef.current.minPrice = null;
-        priceScaleRef.current.maxPrice = null;
+        // 🎯 Solo resetear escala y zoom cuando hay cambios significativos (carga inicial o más velas)
+        if (shouldResetZoom) {
+          // Resetear escala de precios para recalcular con nuevos datos
+          priceScaleRef.current.minPrice = null;
+          priceScaleRef.current.maxPrice = null;
 
-        // 🎯 Ajustar zoom inicial para mostrar el número deseado de velas
-        // Minichart: ~573 velas, Fullscreen: ~1222 velas
-        if (canvasRef.current) {
-          const rect = canvasRef.current.getBoundingClientRect();
-          const chartWidth = rect.width - 75; // Restar márgenes
+          // Ajustar zoom inicial para mostrar el número deseado de velas
+          // Minichart: ~573 velas, Fullscreen: ~1222 velas
+          if (canvasRef.current) {
+            const rect = canvasRef.current.getBoundingClientRect();
+            const chartWidth = rect.width - 75; // Restar márgenes
 
-          // Determinar número de velas deseado según tamaño del canvas
-          // Si width > 1000px, es fullscreen, de lo contrario es minichart
-          const targetCandles = chartWidth > 1000 ? 1222 : 573;
+            // Determinar número de velas deseado según tamaño del canvas
+            // Si width > 1000px, es fullscreen, de lo contrario es minichart
+            const targetCandles = chartWidth > 1000 ? 1222 : 573;
 
-          // Calcular zoom necesario para mostrar ese número de velas
-          // barWidth = 8 * zoom, candlesPerScreen = chartWidth / barWidth
-          // targetCandles = chartWidth / (8 * zoom)
-          // zoom = chartWidth / (targetCandles * 8)
-          const calculatedZoom = chartWidth / (targetCandles * 8);
-          viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
+            // Calcular zoom necesario para mostrar ese número de velas
+            // barWidth = 8 * zoom, candlesPerScreen = chartWidth / barWidth
+            // targetCandles = chartWidth / (8 * zoom)
+            // zoom = chartWidth / (targetCandles * 8)
+            const calculatedZoom = chartWidth / (targetCandles * 8);
+            viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
 
-          log.debug(`[${symbol}] 🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas`);
+            log.debug(`[${symbol}] 🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas`);
+          }
         }
 
         // ✅ NUEVO: Verificar si hay gap después de cargar
@@ -1161,17 +1197,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           // log.debug(`[${symbol}] 🆕 Primera vela en progreso`, { timestamp: candleTimestamp, datetime: datetime_colombia });
 
         } else if (candleTimestamp > currentInProgress.timestamp) {
-          // Performance: Disabled frequent logging
-          // log.debug(`[${symbol}] 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior`, { anterior: currentInProgress.timestamp, nuevo: candleTimestamp });
-
           candlesRef.current.push(currentInProgress);
 
           if (candlesRef.current.length > 2000) {
             candlesRef.current.shift();
           }
-
-          // Performance: Disabled frequent logging
-          // log.debug(`[${symbol}] ✅ Vela confirmada y agregada`, { total_confirmadas: candlesRef.current.length });
 
           inProgressCandleRef.current = newCandle;
           // Performance: Disabled frequent logging
@@ -1866,28 +1896,30 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       loadHistoricalData();
     }, 300000);
 
-    // ✅ NUEVO: Chequeo de gaps cada 30 segundos
-    gapCheckIntervalRef.current = setInterval(() => {
-      if (indicatorManagerRef.current && candlesRef.current.length > 0) {
-        indicatorManagerRef.current.checkAndRefreshIfNeeded(candlesRef.current);
-      }
-    }, 30000);
+    // ✅ DESHABILITADO: gapCheckIntervalRef - checkAndRefreshIfNeeded ya no hace nada
+    // El backend maneja los datos en tiempo real via WebSocket
+    // gapCheckIntervalRef.current = setInterval(() => {
+    //   if (indicatorManagerRef.current && candlesRef.current.length > 0) {
+    //     indicatorManagerRef.current.checkAndRefreshIfNeeded(candlesRef.current);
+    //   }
+    // }, 30000);
 
-    // 🎯 NUEVO: Detección de patrones de rechazo cada 2 minutos
-    const patternDetectionInterval = setInterval(async () => {
-      if (indicatorManagerRef.current && rejectionPatternConfig) {
-        log.debug(`[${symbol}] 📊 🔍 Ejecutando detección de patrones de rechazo...`);
-        try {
-          const patterns = await indicatorManagerRef.current.detectRejectionPatterns();
-          if (patterns && patterns.length > 0) {
-            log.debug(`[${symbol}] 📊 ✅ Detectados ${patterns.length} patrones`);
-            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-          }
-        } catch (error) {
-          log.error(`[${symbol}] Error en detección de patrones`, error);
-        }
-      }
-    }, 120000); // Cada 2 minutos
+    // ✅ DESHABILITADO: patternDetectionInterval - El backend detecta patrones en tiempo real
+    // via WebSocket (realtime_pattern_service.py). No necesitamos polling desde el frontend.
+    // const patternDetectionInterval = setInterval(async () => {
+    //   if (indicatorManagerRef.current && rejectionPatternConfig) {
+    //     log.debug(`[${symbol}] 📊 🔍 Ejecutando detección de patrones de rechazo...`);
+    //     try {
+    //       const patterns = await indicatorManagerRef.current.detectRejectionPatterns();
+    //       if (patterns && patterns.length > 0) {
+    //         log.debug(`[${symbol}] 📊 ✅ Detectados ${patterns.length} patrones`);
+    //         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    //       }
+    //     } catch (error) {
+    //       log.error(`[${symbol}] Error en detección de patrones`, error);
+    //     }
+    //   }
+    // }, 120000);
 
     const canvas = canvasRef.current;
     const preventScroll = (e) => {
@@ -1918,15 +1950,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
         clearInterval(reloadInterval);
 
-        // ✅ NUEVO: Limpiar intervalos de gap check
-        if (gapCheckIntervalRef.current) {
-          clearInterval(gapCheckIntervalRef.current);
-        }
-
-        // 🎯 NUEVO: Limpiar intervalo de detección de patrones
-        if (patternDetectionInterval) {
-          clearInterval(patternDetectionInterval);
-        }
+        // ✅ DESHABILITADO: Ya no usamos estos intervalos
+        // if (gapCheckIntervalRef.current) {
+        //   clearInterval(gapCheckIntervalRef.current);
+        // }
+        // if (patternDetectionInterval) {
+        //   clearInterval(patternDetectionInterval);
+        // }
 
         // ✅ NUEVO: Destruir IndicatorManager correctamente (solo si no es externo)
         if (indicatorManagerRef.current) {
@@ -2228,6 +2258,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               </button>
             </>
           )}
+          {indicatorStates && indicatorStates["Swing Detector"] && (
+            <button
+              className="swing-detector-settings-btn"
+              onClick={() => onOpenSwingDetectorSettings(indicatorManagerRef.current)}
+              title="Configurar Swing Detector"
+              style={{
+                background: '#00BCD4',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              SW
+            </button>
+          )}
           <button
             className="fixed-range-manager-btn"
             onClick={() => setShowFixedRangeManager(!showFixedRangeManager)}
@@ -2421,6 +2471,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       {showAlertHistory && (
         <AlertHistoryPanel
           symbol={symbol}
+          interval={interval}
           onClose={() => setShowAlertHistory(false)}
         />
       )}
@@ -2503,6 +2554,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenFibonacciSettings={onOpenFibonacciSettings}
               onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
               onOpenDoubleTopBottomSettings={onOpenDoubleTopBottomSettings}
+              onOpenSwingDetectorSettings={onOpenSwingDetectorSettings}
               rejectionPatternConfig={rejectionPatternConfig}
               isFullscreenChild={true}
               onDrawingsChanged={() => {

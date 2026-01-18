@@ -1,0 +1,1044 @@
+ ✅ [12:35:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498518027, elapsed=695s, required=30min
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498518194, elapsed=695s, required=30min
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498518394, elapsed=195s, required=30min
+ ✅ [12:35:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498518494, elapsed=695s, required=30min
+ ✅ [12:35:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498518860, elapsed=196s, required=30min
+ ✅ [12:35:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498519009, elapsed=696s, required=30min
+ ✅ [12:35:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498519726, elapsed=697s, required=30min
+ ✅ [12:35:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:19 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498519875, elapsed=197s, required=30min
+ ✅ [12:35:19 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:20 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498520026, elapsed=697s, required=30min
+ ✅ [12:35:20 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:20 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498520875, elapsed=198s, required=30min
+ ✅ [12:35:20 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:20 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498520908, elapsed=698s, required=30min
+ ✅ [12:35:20 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:21 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498521025, elapsed=698s, required=30min
+ ✅ [12:35:21 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:22 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498522024, elapsed=699s, required=30min
+ ✅ [12:35:22 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498522873, elapsed=200s, required=30min
+ ✅ [12:35:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:22 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498522989, elapsed=700s, required=30min
+ ✅ [12:35:22 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:23 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498523023, elapsed=700s, required=30min
+ ✅ [12:35:23 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498523489, elapsed=200s, required=30min
+ ✅ [12:35:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498523872, elapsed=201s, required=30min
+ ✅ [12:35:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498524022, elapsed=701s, required=30min
+ ✅ [12:35:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498524871, elapsed=202s, required=30min
+ ✅ [12:35:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498525021, elapsed=702s, required=30min
+ ✅ [12:35:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498525852, elapsed=203s, required=30min
+ ✅ [12:35:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:26 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498526013, elapsed=703s, required=30min
+ ✅ [12:35:26 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:26 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498526855, elapsed=204s, required=30min
+ ✅ [12:35:26 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:27 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498527013, elapsed=704s, required=30min
+ ✅ [12:35:27 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:27 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498527183, elapsed=704s, required=30min
+ ✅ [12:35:27 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:27 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498527857, elapsed=205s, required=30min
+ ✅ [12:35:27 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498528010, elapsed=705s, required=30min
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498528389, elapsed=705s, required=30min
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498528685, elapsed=706s, required=30min
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498528982, elapsed=706s, required=30min
+ ✅ [12:35:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:29 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498529017, elapsed=706s, required=30min
+ ✅ [12:35:29 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:29 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498529689, elapsed=707s, required=30min
+ ✅ [12:35:29 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498529854, elapsed=207s, required=30min
+ ✅ [12:35:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:30 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498530009, elapsed=707s, required=30min
+ ✅ [12:35:30 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:31 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498531007, elapsed=708s, required=30min
+ ✅ [12:35:31 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:31 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498531854, elapsed=209s, required=30min
+ ✅ [12:35:31 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:32 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498532868, elapsed=210s, required=30min
+ ✅ [12:35:32 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498533014, elapsed=710s, required=30min
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498533288, elapsed=710s, required=30min
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498533589, elapsed=710s, required=30min
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:33 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498533852, elapsed=211s, required=30min
+ ✅ [12:35:33 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498533885, elapsed=711s, required=30min
+ ✅ [12:35:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:33 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498533982, elapsed=211s, required=30min
+ ✅ [12:35:33 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:34 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498534013, elapsed=711s, required=30min
+ ✅ [12:35:34 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:34 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498534186, elapsed=711s, required=30min
+ ✅ [12:35:34 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:34 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498534857, elapsed=212s, required=30min
+ ✅ [12:35:34 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:35 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498535013, elapsed=712s, required=30min
+ ✅ [12:35:35 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:35 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498535877, elapsed=213s, required=30min
+ ✅ [12:35:35 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498536010, elapsed=713s, required=30min
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:36 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498536293, elapsed=213s, required=30min
+ ✅ [12:35:36 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498536493, elapsed=713s, required=30min
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498536793, elapsed=714s, required=30min
+ ✅ [12:35:36 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:36 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498536859, elapsed=214s, required=30min
+ ✅ [12:35:36 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:37 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498537026, elapsed=714s, required=30min
+ ✅ [12:35:37 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:37 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498537392, elapsed=714s, required=30min
+ ✅ [12:35:37 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498537492, elapsed=214s, required=30min
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498537792, elapsed=215s, required=30min
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498537858, elapsed=215s, required=30min
+ ✅ [12:35:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:38 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498538025, elapsed=715s, required=30min
+ ✅ [12:35:38 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:38 p. m.] [ETHUSDT] 📈 Trade WIN: DOUBLE_BOTTOM - high 3331.84 alcanzó TP 3331.66
+ ✅ [12:35:38 p. m.] [ETHUSDT] 📉 Trade LOSS: SWING_HIGH - high 3331.84 tocó SL 3330.80
+ ✅ [12:35:38 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498538691, elapsed=216s, required=30min
+ ✅ [12:35:38 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:38 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498538874, elapsed=216s, required=30min
+ ✅ [12:35:38 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:38 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498538891, elapsed=716s, required=30min
+ ✅ [12:35:38 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:39 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498539024, elapsed=716s, required=30min
+ ✅ [12:35:39 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:39 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498539290, elapsed=216s, required=30min
+ ✅ [12:35:39 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:39 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498539873, elapsed=217s, required=30min
+ ✅ [12:35:39 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498540023, elapsed=717s, required=30min
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498540090, elapsed=717s, required=30min
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498540406, elapsed=717s, required=30min
+ ✅ [12:35:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498540789, elapsed=218s, required=30min
+ ✅ [12:35:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498540872, elapsed=218s, required=30min
+ ✅ [12:35:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498541006, elapsed=718s, required=30min
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498541023, elapsed=718s, required=30min
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498541089, elapsed=218s, required=30min
+ ✅ [12:35:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498541305, elapsed=718s, required=30min
+ ✅ [12:35:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498541871, elapsed=219s, required=30min
+ ✅ [12:35:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:42 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498542021, elapsed=719s, required=30min
+ ✅ [12:35:42 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:42 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498542870, elapsed=220s, required=30min
+ ✅ [12:35:42 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:43 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498543021, elapsed=720s, required=30min
+ ✅ [12:35:43 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 19 min remaining
+ ✅ [12:35:43 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498543869, elapsed=221s, required=30min
+ ✅ [12:35:43 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:44 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498544019, elapsed=721s, required=30min
+ ✅ [12:35:44 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:44 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498544602, elapsed=222s, required=30min
+ ✅ [12:35:44 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:44 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498544617, elapsed=722s, required=30min
+ ✅ [12:35:44 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:44 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498544869, elapsed=222s, required=30min
+ ✅ [12:35:44 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:45 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498545018, elapsed=722s, required=30min
+ ✅ [12:35:45 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:45 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498545485, elapsed=222s, required=30min
+ ✅ [12:35:45 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:45 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498545868, elapsed=223s, required=30min
+ ✅ [12:35:45 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ 📊 Trade WIN: ETHUSDT DOUBLE_BOTTOM
+ 📊 Trade LOSS: ETHUSDT SWING_HIGH
+ ✅ Trade outcomes updated
+ ✅ [12:35:46 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498546867, elapsed=224s, required=30min
+ ✅ [12:35:46 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:47 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498547012, elapsed=724s, required=30min
+ ✅ [12:35:47 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:47 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498547194, elapsed=724s, required=30min
+ ✅ [12:35:47 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:47 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498547854, elapsed=225s, required=30min
+ ✅ [12:35:47 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:48 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498548017, elapsed=725s, required=30min
+ ✅ [12:35:48 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:48 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498548860, elapsed=226s, required=30min
+ ✅ [12:35:48 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:49 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498549009, elapsed=726s, required=30min
+ ✅ [12:35:49 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:49 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498549677, elapsed=227s, required=30min
+ ✅ [12:35:49 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:49 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498549691, elapsed=727s, required=30min
+ ✅ [12:35:49 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:49 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498549858, elapsed=227s, required=30min
+ ✅ [12:35:49 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:50 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498550012, elapsed=727s, required=30min
+ ✅ [12:35:50 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:50 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498550287, elapsed=727s, required=30min
+ ✅ [12:35:50 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:50 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498550860, elapsed=228s, required=30min
+ ✅ [12:35:50 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:51 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498551016, elapsed=728s, required=30min
+ ✅ [12:35:51 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:51 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498551859, elapsed=229s, required=30min
+ ✅ [12:35:51 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:51 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498551988, elapsed=729s, required=30min
+ ✅ [12:35:51 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498552076, elapsed=229s, required=30min
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ 📊 Trade WIN: ETHUSDT DOUBLE_BOTTOM
+ 📊 Trade LOSS: ETHUSDT SWING_HIGH
+ ✅ Trade outcomes updated
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498552677, elapsed=230s, required=30min
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498552874, elapsed=230s, required=30min
+ ✅ [12:35:52 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:52 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498552893, elapsed=730s, required=30min
+ ✅ [12:35:52 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:53 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498553015, elapsed=730s, required=30min
+ ✅ [12:35:53 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:53 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498553860, elapsed=231s, required=30min
+ ✅ [12:35:53 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:54 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498554011, elapsed=731s, required=30min
+ ✅ [12:35:54 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:54 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498554084, elapsed=731s, required=30min
+ ✅ [12:35:54 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:54 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498554854, elapsed=232s, required=30min
+ ✅ [12:35:54 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:55 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498555009, elapsed=732s, required=30min
+ ✅ [12:35:55 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:55 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498555858, elapsed=233s, required=30min
+ ✅ [12:35:55 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498556024, elapsed=733s, required=30min
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498556091, elapsed=733s, required=30min
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:56 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498556390, elapsed=233s, required=30min
+ ✅ [12:35:56 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:35:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:35:56 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498556873, elapsed=234s, required=30min
+ ✅ [12:35:56 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498556990, elapsed=734s, required=30min
+ ✅ [12:35:56 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:35:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:35:57 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498557024, elapsed=734s, required=30min
+ ✅ [12:35:57 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:57 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498557290, elapsed=734s, required=30min
+ ✅ [12:35:57 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:57 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498557590, elapsed=235s, required=30min
+ ✅ [12:35:57 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:57 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498557856, elapsed=235s, required=30min
+ ✅ [12:35:57 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:58 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498558022, elapsed=735s, required=30min
+ ✅ [12:35:58 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:58 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498558189, elapsed=235s, required=30min
+ ✅ [12:35:58 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:58 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498558788, elapsed=736s, required=30min
+ ✅ [12:35:58 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:58 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498558872, elapsed=236s, required=30min
+ ✅ [12:35:58 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:59 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498559022, elapsed=736s, required=30min
+ ✅ [12:35:59 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 23 patrones en 2187ms
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 23 patrones detectados en tiempo real
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 32 patrones totales
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   📊 Total patterns: 32
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 3
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] ================================================================================
+
+ ✅ [12:35:59 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498559045, elapsed=236s, required=30min
+ ✅ [12:35:59 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 2131ms
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ NUEVO patrón detectado en tiempo real: DOUBLE_TOP @ $3333.92 | Completado: 15/01/2026, 12:35:00
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 1 patrones agregados (1 NUEVOS, 0 históricos re-detectados), 49 patrones totales
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   📊 Total patterns: 49
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 5
+ ✅ [12:35:59 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 42
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [12:35:59 p. m.] [DoubleTopBottom] ================================================================================
+
+ ✅ [12:35:59 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498559148, elapsed=736s, required=30min
+ ✅ [12:35:59 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:35:59 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498559871, elapsed=237s, required=30min
+ ✅ [12:35:59 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:36:00 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498560803, elapsed=738s, required=30min
+ ✅ [12:36:00 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:00 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498560870, elapsed=238s, required=30min
+ ✅ [12:36:00 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:36:01 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498561020, elapsed=738s, required=30min
+ ✅ [12:36:01 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:01 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498561702, elapsed=739s, required=30min
+ ✅ [12:36:01 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:01 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498561869, elapsed=239s, required=30min
+ ✅ [12:36:01 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:36:02 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498562019, elapsed=739s, required=30min
+ ✅ [12:36:02 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:02 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498562685, elapsed=240s, required=30min
+ ✅ [12:36:02 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:36:02 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498562868, elapsed=240s, required=30min
+ ✅ [12:36:02 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 27 min remaining
+ ✅ [12:36:03 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498563018, elapsed=740s, required=30min
+ ✅ [12:36:03 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:03 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498563867, elapsed=241s, required=30min
+ ✅ [12:36:03 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:04 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498564017, elapsed=741s, required=30min
+ ✅ [12:36:04 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498564184, elapsed=241s, required=30min
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:04 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498564400, elapsed=741s, required=30min
+ ✅ [12:36:04 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498564483, elapsed=241s, required=30min
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498564866, elapsed=242s, required=30min
+ ✅ [12:36:04 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:05 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498565016, elapsed=742s, required=30min
+ ✅ [12:36:05 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:05 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498565865, elapsed=243s, required=30min
+ ✅ [12:36:05 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:06 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498566498, elapsed=743s, required=30min
+ ✅ [12:36:06 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:06 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498566798, elapsed=744s, required=30min
+ ✅ [12:36:06 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:06 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498566864, elapsed=244s, required=30min
+ ✅ [12:36:06 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:07 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498567014, elapsed=744s, required=30min
+ ✅ [12:36:07 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:07 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498567181, elapsed=244s, required=30min
+ ✅ [12:36:07 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:07 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498567855, elapsed=245s, required=30min
+ ✅ [12:36:07 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:08 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498568012, elapsed=745s, required=30min
+ ✅ [12:36:08 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:08 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498568864, elapsed=246s, required=30min
+ ✅ [12:36:08 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:08 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498568884, elapsed=746s, required=30min
+ ✅ [12:36:08 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:09 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498569011, elapsed=746s, required=30min
+ ✅ [12:36:09 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:09 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498569576, elapsed=247s, required=30min
+ ✅ [12:36:09 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:09 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498569858, elapsed=247s, required=30min
+ ✅ [12:36:09 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:10 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498570855, elapsed=248s, required=30min
+ ✅ [12:36:10 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:10 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498570988, elapsed=748s, required=30min
+ ✅ [12:36:10 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:11 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498571013, elapsed=748s, required=30min
+ ✅ [12:36:11 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:11 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498571857, elapsed=249s, required=30min
+ ✅ [12:36:11 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:12 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498572013, elapsed=749s, required=30min
+ ✅ [12:36:12 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:12 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498572493, elapsed=749s, required=30min
+ ✅ [12:36:12 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498572577, elapsed=250s, required=30min
+ ✅ [12:36:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498572855, elapsed=250s, required=30min
+ ✅ [12:36:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:13 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498573013, elapsed=750s, required=30min
+ ✅ [12:36:13 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:13 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498573689, elapsed=751s, required=30min
+ ✅ [12:36:13 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:13 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498573860, elapsed=251s, required=30min
+ ✅ [12:36:13 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:14 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498574016, elapsed=751s, required=30min
+ ✅ [12:36:14 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:14 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498574857, elapsed=252s, required=30min
+ ✅ [12:36:14 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:15 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498575789, elapsed=753s, required=30min
+ ✅ [12:36:15 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:15 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498575872, elapsed=253s, required=30min
+ ✅ [12:36:15 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:16 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498576022, elapsed=753s, required=30min
+ ✅ [12:36:16 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:16 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498576871, elapsed=254s, required=30min
+ ✅ [12:36:16 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:17 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498577021, elapsed=754s, required=30min
+ ✅ [12:36:17 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498577487, elapsed=254s, required=30min
+ ✅ [12:36:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498577871, elapsed=255s, required=30min
+ ✅ [12:36:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498578021, elapsed=755s, required=30min
+ ✅ [12:36:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498578087, elapsed=255s, required=30min
+ ✅ [12:36:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498578869, elapsed=256s, required=30min
+ ✅ [12:36:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498579019, elapsed=756s, required=30min
+ ✅ [12:36:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:21 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498581867, elapsed=259s, required=30min
+ ✅ [12:36:21 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:22 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498582016, elapsed=759s, required=30min
+ ✅ [12:36:22 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498582283, elapsed=259s, required=30min
+ ✅ [12:36:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498582866, elapsed=260s, required=30min
+ ✅ [12:36:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:23 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498583016, elapsed=760s, required=30min
+ ✅ [12:36:23 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498583865, elapsed=261s, required=30min
+ ✅ [12:36:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498584031, elapsed=761s, required=30min
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498584298, elapsed=761s, required=30min
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498584864, elapsed=262s, required=30min
+ ✅ [12:36:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498584997, elapsed=762s, required=30min
+ ✅ [12:36:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498585016, elapsed=762s, required=30min
+ ✅ [12:36:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498585859, elapsed=263s, required=30min
+ ✅ [12:36:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:26 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498586018, elapsed=763s, required=30min
+ ✅ [12:36:26 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:26 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498586180, elapsed=263s, required=30min
+ ✅ [12:36:26 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:26 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498586858, elapsed=264s, required=30min
+ ✅ [12:36:26 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:27 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498587018, elapsed=764s, required=30min
+ ✅ [12:36:27 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:27 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498587178, elapsed=264s, required=30min
+ ✅ [12:36:27 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:27 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498587856, elapsed=265s, required=30min
+ ✅ [12:36:27 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498588014, elapsed=765s, required=30min
+ ✅ [12:36:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498589377, elapsed=266s, required=30min
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:29 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498589499, elapsed=766s, required=30min
+ ✅ [12:36:29 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498589684, elapsed=267s, required=30min
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498589858, elapsed=267s, required=30min
+ ✅ [12:36:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:30 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498590012, elapsed=767s, required=30min
+ ✅ [12:36:30 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:30 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498590866, elapsed=268s, required=30min
+ ✅ [12:36:30 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:31 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498591686, elapsed=769s, required=30min
+ ✅ [12:36:31 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:31 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498591780, elapsed=269s, required=30min
+ ✅ [12:36:31 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:31 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498591861, elapsed=269s, required=30min
+ ✅ [12:36:31 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:32 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498592014, elapsed=769s, required=30min
+ ✅ [12:36:32 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:32 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498592682, elapsed=270s, required=30min
+ ✅ [12:36:32 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:32 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498592865, elapsed=270s, required=30min
+ ✅ [12:36:32 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498593011, elapsed=770s, required=30min
+ ✅ [12:36:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:33 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498593860, elapsed=271s, required=30min
+ ✅ [12:36:33 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:34 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498594013, elapsed=771s, required=30min
+ ✅ [12:36:34 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:34 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498594177, elapsed=271s, required=30min
+ ✅ [12:36:34 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:34 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498594855, elapsed=272s, required=30min
+ ✅ [12:36:34 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:35 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498595104, elapsed=272s, required=30min
+ ✅ [12:36:35 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:35 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498595304, elapsed=772s, required=30min
+ ✅ [12:36:35 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:35 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498595604, elapsed=773s, required=30min
+ ✅ [12:36:35 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:35 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498595870, elapsed=273s, required=30min
+ ✅ [12:36:35 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:36 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498596020, elapsed=773s, required=30min
+ ✅ [12:36:36 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:36 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498596802, elapsed=774s, required=30min
+ ✅ [12:36:36 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:37 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498597019, elapsed=774s, required=30min
+ ✅ [12:36:37 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:37 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498597402, elapsed=774s, required=30min
+ ✅ [12:36:37 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498597485, elapsed=274s, required=30min
+ ✅ [12:36:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498597868, elapsed=275s, required=30min
+ ✅ [12:36:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:38 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498598018, elapsed=775s, required=30min
+ ✅ [12:36:38 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:38 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498598085, elapsed=275s, required=30min
+ ✅ [12:36:38 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:38 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498598301, elapsed=775s, required=30min
+ ✅ [12:36:38 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:38 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498598867, elapsed=276s, required=30min
+ ✅ [12:36:38 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:39 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498599017, elapsed=776s, required=30min
+ ✅ [12:36:39 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:39 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498599866, elapsed=277s, required=30min
+ ✅ [12:36:39 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498600033, elapsed=777s, required=30min
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498600099, elapsed=777s, required=30min
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498600399, elapsed=777s, required=30min
+ ✅ [12:36:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498600865, elapsed=278s, required=30min
+ ✅ [12:36:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498601015, elapsed=778s, required=30min
+ ✅ [12:36:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498601864, elapsed=279s, required=30min
+ ✅ [12:36:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498601998, elapsed=279s, required=30min
+ ✅ [12:36:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:42 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498602014, elapsed=779s, required=30min
+ ✅ [12:36:42 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 18 min remaining
+ ✅ [12:36:42 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498602597, elapsed=280s, required=30min
+ ✅ [12:36:42 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:42 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498602864, elapsed=280s, required=30min
+ ✅ [12:36:42 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498603097, elapsed=780s, required=30min
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498603397, elapsed=780s, required=30min
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:43 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498603796, elapsed=281s, required=30min
+ ✅ [12:36:43 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:43 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498603863, elapsed=281s, required=30min
+ ✅ [12:36:43 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498603996, elapsed=781s, required=30min
+ ✅ [12:36:43 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:44 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498604013, elapsed=781s, required=30min
+ ✅ [12:36:44 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:44 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498604079, elapsed=281s, required=30min
+ ✅ [12:36:44 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:44 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498604861, elapsed=282s, required=30min
+ ✅ [12:36:44 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:45 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498605011, elapsed=782s, required=30min
+ ✅ [12:36:45 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:45 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498605861, elapsed=283s, required=30min
+ ✅ [12:36:45 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:46 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498606027, elapsed=783s, required=30min
+ ✅ [12:36:46 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:47 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498607677, elapsed=285s, required=30min
+ ✅ [12:36:47 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:47 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498607858, elapsed=285s, required=30min
+ ✅ [12:36:47 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:48 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498608011, elapsed=785s, required=30min
+ ✅ [12:36:48 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:49 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498609182, elapsed=286s, required=30min
+ ✅ [12:36:49 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:49 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498609865, elapsed=287s, required=30min
+ ✅ [12:36:49 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:51 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498611780, elapsed=289s, required=30min
+ ✅ [12:36:51 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:51 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498611856, elapsed=289s, required=30min
+ ✅ [12:36:51 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:52 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498612856, elapsed=290s, required=30min
+ ✅ [12:36:52 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:52 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498612889, elapsed=790s, required=30min
+ ✅ [12:36:52 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:53 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498613014, elapsed=790s, required=30min
+ ✅ [12:36:53 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:54 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498614856, elapsed=292s, required=30min
+ ✅ [12:36:54 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:55 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498615019, elapsed=792s, required=30min
+ ✅ [12:36:55 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:55 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498615485, elapsed=292s, required=30min
+ ✅ [12:36:55 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:55 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498615868, elapsed=293s, required=30min
+ ✅ [12:36:55 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:56 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498616017, elapsed=793s, required=30min
+ ✅ [12:36:56 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:56 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498616601, elapsed=794s, required=30min
+ ✅ [12:36:56 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:36:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:36:56 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498616867, elapsed=294s, required=30min
+ ✅ [12:36:56 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:36:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:36:57 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498617033, elapsed=794s, required=30min
+ ✅ [12:36:57 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:57 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498617866, elapsed=295s, required=30min
+ ✅ [12:36:57 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:58 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498618099, elapsed=795s, required=30min
+ ✅ [12:36:58 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 23 patrones en 1742ms
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 23 patrones detectados en tiempo real
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 32 patrones totales
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   📊 Total patterns: 32
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 3
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] ================================================================================
+
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498618605, elapsed=296s, required=30min
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 1707ms
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 49 patrones totales
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   📊 Total patterns: 49
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 5
+ ✅ [12:36:58 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 42
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [12:36:58 p. m.] [DoubleTopBottom] ================================================================================
+
+ ✅ [12:36:58 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498618723, elapsed=796s, required=30min
+ ✅ [12:36:58 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498618781, elapsed=296s, required=30min
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498618864, elapsed=296s, required=30min
+ ✅ [12:36:58 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:36:59 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498619015, elapsed=796s, required=30min
+ ✅ [12:36:59 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:00 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498620030, elapsed=797s, required=30min
+ ✅ [12:37:00 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:00 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498620914, elapsed=798s, required=30min
+ ✅ [12:37:00 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:01 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498621013, elapsed=798s, required=30min
+ ✅ [12:37:01 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:01 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498621296, elapsed=298s, required=30min
+ ✅ [12:37:01 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:37:01 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498621862, elapsed=299s, required=30min
+ ✅ [12:37:01 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:37:02 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498622012, elapsed=799s, required=30min
+ ✅ [12:37:02 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498622095, elapsed=299s, required=30min
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:37:02 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498622109, elapsed=799s, required=30min
+ ✅ [12:37:02 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498622861, elapsed=300s, required=30min
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498622977, elapsed=300s, required=30min
+ ✅ [12:37:02 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 26 min remaining
+ ✅ [12:37:03 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498623027, elapsed=800s, required=30min
+ ✅ [12:37:03 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:03 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498623294, elapsed=300s, required=30min
+ ✅ [12:37:03 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:03 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498623860, elapsed=301s, required=30min
+ ✅ [12:37:03 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:03 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498623993, elapsed=801s, required=30min
+ ✅ [12:37:03 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:04 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498624859, elapsed=302s, required=30min
+ ✅ [12:37:04 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:05 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498625026, elapsed=802s, required=30min
+ ✅ [12:37:05 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498625692, elapsed=303s, required=30min
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498625875, elapsed=303s, required=30min
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498625991, elapsed=303s, required=30min
+ ✅ [12:37:05 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:06 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498626024, elapsed=803s, required=30min
+ ✅ [12:37:06 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:06 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498626860, elapsed=304s, required=30min
+ ✅ [12:37:06 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:07 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498627779, elapsed=305s, required=30min
+ ✅ [12:37:07 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:07 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498627857, elapsed=305s, required=30min
+ ✅ [12:37:07 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:08 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498628011, elapsed=805s, required=30min
+ ✅ [12:37:08 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:08 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498628196, elapsed=805s, required=30min
+ ✅ [12:37:08 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:08 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498628860, elapsed=306s, required=30min
+ ✅ [12:37:08 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498629015, elapsed=806s, required=30min
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498629284, elapsed=306s, required=30min
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498629488, elapsed=806s, required=30min
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498629581, elapsed=307s, required=30min
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498629787, elapsed=807s, required=30min
+ ✅ [12:37:09 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498629857, elapsed=307s, required=30min
+ ✅ [12:37:09 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498630017, elapsed=807s, required=30min
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498630092, elapsed=807s, required=30min
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498630178, elapsed=307s, required=30min
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498630562, elapsed=308s, required=30min
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498630687, elapsed=808s, required=30min
+ ✅ [12:37:10 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498630861, elapsed=308s, required=30min
+ ✅ [12:37:10 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:11 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498631013, elapsed=808s, required=30min
+ ✅ [12:37:11 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:11 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498631858, elapsed=309s, required=30min
+ ✅ [12:37:11 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:12 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498632488, elapsed=809s, required=30min
+ ✅ [12:37:12 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498632777, elapsed=310s, required=30min
+ ✅ [12:37:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498632857, elapsed=310s, required=30min
+ ✅ [12:37:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:13 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498633013, elapsed=810s, required=30min
+ ✅ [12:37:13 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:13 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498633857, elapsed=311s, required=30min
+ ✅ [12:37:13 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:14 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498634013, elapsed=811s, required=30min
+ ✅ [12:37:14 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:14 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498634858, elapsed=312s, required=30min
+ ✅ [12:37:14 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:15 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498635012, elapsed=812s, required=30min
+ ✅ [12:37:15 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:15 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498635865, elapsed=313s, required=30min
+ ✅ [12:37:15 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:16 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498636015, elapsed=813s, required=30min
+ ✅ [12:37:16 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:16 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498636181, elapsed=313s, required=30min
+ ✅ [12:37:16 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:16 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498636864, elapsed=314s, required=30min
+ ✅ [12:37:16 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:17 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498637014, elapsed=814s, required=30min
+ ✅ [12:37:17 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:17 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498637297, elapsed=814s, required=30min
+ ✅ [12:37:17 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498637697, elapsed=315s, required=30min
+ ✅ [12:37:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498637863, elapsed=315s, required=30min
+ ✅ [12:37:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498638013, elapsed=815s, required=30min
+ ✅ [12:37:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498638812, elapsed=816s, required=30min
+ ✅ [12:37:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498638862, elapsed=316s, required=30min
+ ✅ [12:37:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498639012, elapsed=816s, required=30min
+ ✅ [12:37:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:19 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498639495, elapsed=316s, required=30min
+ ✅ [12:37:19 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:19 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498639878, elapsed=317s, required=30min
+ ✅ [12:37:19 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:20 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498640028, elapsed=817s, required=30min
+ ✅ [12:37:20 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:20 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498640860, elapsed=318s, required=30min
+ ✅ [12:37:20 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:20 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498640894, elapsed=818s, required=30min
+ ✅ [12:37:20 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:20 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498640993, elapsed=318s, required=30min
+ ✅ [12:37:20 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:21 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498641027, elapsed=818s, required=30min
+ ✅ [12:37:21 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:21 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498641593, elapsed=319s, required=30min
+ ✅ [12:37:21 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:21 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498641876, elapsed=319s, required=30min
+ ✅ [12:37:21 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:22 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498642026, elapsed=819s, required=30min
+ ✅ [12:37:22 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498642192, elapsed=319s, required=30min
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:22 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498642393, elapsed=819s, required=30min
+ ✅ [12:37:22 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498642792, elapsed=320s, required=30min
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498642875, elapsed=320s, required=30min
+ ✅ [12:37:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:23 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498643025, elapsed=820s, required=30min
+ ✅ [12:37:23 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498643092, elapsed=320s, required=30min
+ ✅ [12:37:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498643874, elapsed=321s, required=30min
+ ✅ [12:37:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498644091, elapsed=821s, required=30min
+ ✅ [12:37:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498644859, elapsed=322s, required=30min
+ ✅ [12:37:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498645012, elapsed=822s, required=30min
+ ✅ [12:37:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498645290, elapsed=322s, required=30min
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498645389, elapsed=822s, required=30min
+ ✅ [12:37:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498645589, elapsed=323s, required=30min
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498645872, elapsed=323s, required=30min
+ ✅ [12:37:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:26 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498646022, elapsed=823s, required=30min
+ ✅ [12:37:26 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:26 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498646488, elapsed=323s, required=30min
+ ✅ [12:37:26 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:26 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498646871, elapsed=324s, required=30min
+ ✅ [12:37:26 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:27 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498647704, elapsed=325s, required=30min
+ ✅ [12:37:27 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:27 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498647870, elapsed=325s, required=30min
+ ✅ [12:37:27 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:28 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498648020, elapsed=825s, required=30min
+ ✅ [12:37:28 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:28 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498648486, elapsed=325s, required=30min
+ ✅ [12:37:28 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:28 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498648869, elapsed=326s, required=30min
+ ✅ [12:37:28 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:29 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498649002, elapsed=826s, required=30min
+ ✅ [12:37:29 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:29 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498649020, elapsed=826s, required=30min
+ ✅ [12:37:29 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498649086, elapsed=326s, required=30min
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498649403, elapsed=326s, required=30min
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498649685, elapsed=327s, required=30min
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498649885, elapsed=327s, required=30min
+ ✅ [12:37:29 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:30 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498650019, elapsed=827s, required=30min
+ ✅ [12:37:30 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:30 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498650301, elapsed=327s, required=30min
+ ✅ [12:37:30 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:30 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498650867, elapsed=328s, required=30min
+ ✅ [12:37:30 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:31 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498651018, elapsed=828s, required=30min
+ ✅ [12:37:31 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:31 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498651484, elapsed=328s, required=30min
+ ✅ [12:37:31 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:31 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498651867, elapsed=329s, required=30min
+ ✅ [12:37:31 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:32 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498652017, elapsed=829s, required=30min
+ ✅ [12:37:32 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:32 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498652200, elapsed=829s, required=30min
+ ✅ [12:37:32 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:32 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498652866, elapsed=330s, required=30min
+ ✅ [12:37:32 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498653016, elapsed=830s, required=30min
+ ✅ [12:37:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:33 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498653599, elapsed=331s, required=30min
+ ✅ [12:37:33 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:33 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498653612, elapsed=831s, required=30min
+ ✅ [12:37:33 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:33 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498653865, elapsed=331s, required=30min
+ ✅ [12:37:33 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:34 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498654015, elapsed=831s, required=30min
+ ✅ [12:37:34 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:34 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498654597, elapsed=832s, required=30min
+ ✅ [12:37:34 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:34 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498654864, elapsed=332s, required=30min
+ ✅ [12:37:34 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:35 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498655014, elapsed=832s, required=30min
+ ✅ [12:37:35 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:35 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498655863, elapsed=333s, required=30min
+ ✅ [12:37:35 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498656279, elapsed=333s, required=30min
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498656580, elapsed=334s, required=30min
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498656867, elapsed=334s, required=30min
+ ✅ [12:37:36 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498657485, elapsed=334s, required=30min
+ ✅ [12:37:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:37 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498657859, elapsed=335s, required=30min
+ ✅ [12:37:37 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:38 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498658011, elapsed=835s, required=30min
+ ✅ [12:37:38 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:38 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498658883, elapsed=336s, required=30min
+ ✅ [12:37:38 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:39 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498659862, elapsed=337s, required=30min
+ ✅ [12:37:39 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498660191, elapsed=337s, required=30min
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498660482, elapsed=337s, required=30min
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498660597, elapsed=838s, required=30min
+ ✅ [12:37:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498660862, elapsed=338s, required=30min
+ ✅ [12:37:40 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:40 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498660897, elapsed=838s, required=30min
+ ✅ [12:37:40 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498661017, elapsed=838s, required=30min
+ ✅ [12:37:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498661089, elapsed=338s, required=30min
+ ✅ [12:37:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:41 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498661189, elapsed=838s, required=30min
+ ✅ [12:37:41 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:41 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498661859, elapsed=339s, required=30min
+ ✅ [12:37:41 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ ✅ [12:37:42 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498662016, elapsed=839s, required=30min
+ ✅ [12:37:42 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 17 min remaining
+ ✅ [12:37:42 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498662860, elapsed=340s, required=30min
+ ✅ [12:37:42 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ [BTCUSDT] Solicitando histórico: 1 días @ 1
+ [ETHUSDT] Solicitando histórico: 1 días @ 1
+ [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+ ✅ [12:37:50 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498670424, elapsed=347s, required=30min
+ ✅ [12:37:50 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+ [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+ ✅ [12:37:50 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498670455, elapsed=847s, required=30min
+ ✅ [12:37:50 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+ ✅ [12:37:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:37:56 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:37:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [12:37:57 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 1642ms
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 49 patrones totales
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [12:37:58 p. m.] [DoubleTopBottom]   📊 Total patterns: 49
+ ✅ [12:37:58 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [12:37:58 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [12:37:58 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 5
+ ✅ [12:37:58 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 42
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [12:37:58 p. m.] [DoubleTopBottom] ================================================================================
+
+ ✅ [12:37:58 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498678656, elapsed=856s, required=30min
+ ✅ [12:37:58 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+ ✅ [12:37:59 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 23 patrones en 2533ms
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 23 patrones detectados en tiempo real
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 32 patrones totales
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom]   📊 Total patterns: 32
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 3
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [12:37:59 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [12:37:59 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498679393, elapsed=356s, required=30min
+Logger.js:100 ✅ [12:37:59 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 25 min remaining
+Logger.js:100 ✅ [12:38:12 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498692283, elapsed=869s, required=30min
+Logger.js:100 ✅ [12:38:12 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498692365, elapsed=369s, required=30min
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498692695, elapsed=370s, required=30min
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498692878, elapsed=370s, required=30min
+Logger.js:100 ✅ [12:38:12 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:13 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498693028, elapsed=870s, required=30min
+Logger.js:100 ✅ [12:38:13 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:13 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498693878, elapsed=371s, required=30min
+Logger.js:100 ✅ [12:38:13 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:14 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498694211, elapsed=871s, required=30min
+Logger.js:100 ✅ [12:38:14 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:14 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498694860, elapsed=372s, required=30min
+Logger.js:100 ✅ [12:38:14 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:14 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498694993, elapsed=872s, required=30min
+Logger.js:100 ✅ [12:38:14 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:15 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498695026, elapsed=872s, required=30min
+Logger.js:100 ✅ [12:38:15 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498695094, elapsed=372s, required=30min
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498695692, elapsed=373s, required=30min
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498695876, elapsed=373s, required=30min
+Logger.js:100 ✅ [12:38:15 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:16 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498696042, elapsed=873s, required=30min
+Logger.js:100 ✅ [12:38:16 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:16 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498696874, elapsed=374s, required=30min
+Logger.js:100 ✅ [12:38:16 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:17 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498697091, elapsed=874s, required=30min
+Logger.js:100 ✅ [12:38:17 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498697291, elapsed=374s, required=30min
+Logger.js:100 ✅ [12:38:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:17 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498697873, elapsed=375s, required=30min
+Logger.js:100 ✅ [12:38:17 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:17 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498697988, elapsed=875s, required=30min
+Logger.js:100 ✅ [12:38:17 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498698023, elapsed=875s, required=30min
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498698292, elapsed=875s, required=30min
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498698479, elapsed=375s, required=30min
+Logger.js:100 ✅ [12:38:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498698592, elapsed=875s, required=30min
+Logger.js:100 ✅ [12:38:18 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:18 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498698859, elapsed=376s, required=30min
+Logger.js:100 ✅ [12:38:18 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498699013, elapsed=876s, required=30min
+Logger.js:100 ✅ [12:38:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:19 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498699506, elapsed=876s, required=30min
+Logger.js:100 ✅ [12:38:19 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:19 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498699871, elapsed=377s, required=30min
+Logger.js:100 ✅ [12:38:19 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:20 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498700018, elapsed=877s, required=30min
+Logger.js:100 ✅ [12:38:20 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:20 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498700858, elapsed=378s, required=30min
+Logger.js:100 ✅ [12:38:20 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:21 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498701013, elapsed=878s, required=30min
+Logger.js:100 ✅ [12:38:21 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498702036, elapsed=379s, required=30min
+Logger.js:100 ✅ [12:38:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:22 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498702857, elapsed=380s, required=30min
+Logger.js:100 ✅ [12:38:22 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:23 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498703018, elapsed=880s, required=30min
+Logger.js:100 ✅ [12:38:23 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:23 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498703858, elapsed=381s, required=30min
+Logger.js:100 ✅ [12:38:23 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498704185, elapsed=381s, required=30min
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498704485, elapsed=381s, required=30min
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:24 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498704794, elapsed=882s, required=30min
+Logger.js:100 ✅ [12:38:24 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498704866, elapsed=382s, required=30min
+Logger.js:100 ✅ [12:38:24 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498705013, elapsed=882s, required=30min
+Logger.js:100 ✅ [12:38:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498705083, elapsed=382s, required=30min
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498705699, elapsed=383s, required=30min
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ Cooldown check: lastAlert=1768498323001, now=1768498705865, elapsed=383s, required=30min
+Logger.js:100 ✅ [12:38:25 p. m.] [BTCUSDT] ⏳ COOLDOWN ACTIVE: 24 min remaining
+Logger.js:100 ✅ [12:38:25 p. m.] [ETHUSDT] ⏳ Cooldown check: lastAlert=1768497823096, now=1768498705998, elapsed=883s, required=30min
+Logger.js:100 ✅ [12:38:25 p. m.] [ETHUSDT] ⏳ COOLDOWN ACTIVE: 16 min remaining

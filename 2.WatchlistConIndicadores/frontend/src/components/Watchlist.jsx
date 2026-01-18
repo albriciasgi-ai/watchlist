@@ -1,10 +1,11 @@
 // src/components/Watchlist.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import MiniChart from "./MiniChart";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
 import DoubleTopBottomSettings from "./DoubleTopBottomSettings";
+import SwingDetectorSettings from "./SwingDetectorSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
 import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
@@ -17,6 +18,7 @@ import IndicatorPreloader from "../utils/IndicatorPreloader";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
+import { API_BASE_URL } from "../config";
 
 // Logger instance
 const log = new Logger('Watchlist', { level: 'info' });
@@ -62,7 +64,7 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 
 const Watchlist = () => {
   const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
-  const [days, setDays] = useState("90");          // Cambiado a 90 días (histórico cargado)
+  const [days, setDays] = useState("1");           // Inicia con 1 día para carga rápida
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
@@ -71,8 +73,10 @@ const Watchlist = () => {
     "VWAP": true,            // Activo (esencial para estrategia)
     "Fibonacci": false,
     "Continuation Patterns": false,
-    "Double Top/Bottom": true,  // Activo (esencial para estrategia)
-    "Support & Resistance": false  // S/R indicator (off by default)
+    "Rejection Patterns": false,  // Desactivado por defecto (pesado)
+    "Double Top/Bottom": false,   // Desactivado por defecto (pesado)
+    "Support & Resistance": false,  // S/R indicator (off by default)
+    "Swing Detector": false  // Swing high/low detector (backend-based)
   });
 
   // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
@@ -137,6 +141,10 @@ const Watchlist = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [selectedSymbolForDTB, setSelectedSymbolForDTB] = useState(null);
   const [isDTBReloading, setIsDTBReloading] = useState(false); // Estado de carga
+
+  // 🎯 NUEVO: Estado para Swing Detector Settings
+  const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
+  const [selectedSymbolForSD, setSelectedSymbolForSD] = useState(null);
 
   // 🖥️ NUEVO: Estado para tracking del símbolo en fullscreen
   const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
@@ -220,6 +228,32 @@ const Watchlist = () => {
     preload();
     */
   }, [interval, days]); // Re-precargar si cambian timeframe o días
+
+  // Notificar al backend cuando cambia el timeframe activo
+  // Esto hace que el backend solo monitoree el timeframe que el usuario tiene seleccionado
+  useEffect(() => {
+    const notifyBackendTimeframe = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/realtime/set-interval`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ interval: interval })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            log.info(`[REALTIME] Backend now monitoring interval: ${interval}`);
+          }
+        }
+      } catch (error) {
+        // Silenciar error - el backend puede no estar disponible
+        log.debug(`[REALTIME] Could not notify backend of timeframe change: ${error.message}`);
+      }
+    };
+
+    notifyBackendTimeframe();
+  }, [interval]); // Solo cuando cambia el timeframe
 
   const toggleIndicator = (indicatorName) => {
     setIndicatorStates(prev => ({
@@ -341,6 +375,24 @@ const Watchlist = () => {
   const handleCloseDoubleTopBottomSettings = () => {
     setShowDoubleTopBottomSettings(false);
     setSelectedSymbolForDTB(null);
+  };
+
+  // 🎯 NUEVO: Handler para abrir Swing Detector Settings
+  const handleOpenSwingDetectorSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForSD(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowSwingDetectorSettings(true);
+  };
+
+  // 🎯 Handler para cerrar Swing Detector Settings
+  const handleCloseSwingDetectorSettings = () => {
+    setShowSwingDetectorSettings(false);
+    setSelectedSymbolForSD(null);
   };
 
   // 📈 NUEVO: Handlers para cambio de config
@@ -893,6 +945,15 @@ const Watchlist = () => {
               Support & Resistance
             </label>
 
+            <label>
+              <input
+                type="checkbox"
+                checked={indicatorStates["Swing Detector"]}
+                onChange={() => toggleIndicator("Swing Detector")}
+              />
+              Swing Detector
+            </label>
+
             {/* 🧪 Test Alert Buttons */}
             <button
               onClick={handleTestAlert}
@@ -962,6 +1023,7 @@ const Watchlist = () => {
             onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
             onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
             onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
+            onOpenSwingDetectorSettings={(indicatorManagerRef) => handleOpenSwingDetectorSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
             onFullscreenChange={handleFullscreenChange}
           />
@@ -1240,6 +1302,40 @@ const Watchlist = () => {
                   const dtbIndicator = manager?.indicators.find(ind => ind.name === "Double Top/Bottom");
                   return dtbIndicator?.config;
                 })()}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🎯 Modal de Swing Detector Settings */}
+      {showSwingDetectorSettings && selectedSymbolForSD && (
+        <div className="modal-overlay" onClick={handleCloseSwingDetectorSettings}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Swing Detector Settings - {selectedSymbolForSD}</h3>
+              <button
+                className="modal-close-btn"
+                onClick={handleCloseSwingDetectorSettings}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <SwingDetectorSettings
+                currentSymbol={selectedSymbolForSD}
+                config={(() => {
+                  const manager = indicatorManagers[selectedSymbolForSD]?.manager;
+                  const sdIndicator = manager?.getSwingDetectorIndicator();
+                  return sdIndicator?.config || { enabled: true, arrowSize: 10, longColor: '#00E676', shortColor: '#FF1744' };
+                })()}
+                onConfigChange={(config) => {
+                  const manager = indicatorManagers[selectedSymbolForSD]?.manager;
+                  const sdIndicator = manager?.getSwingDetectorIndicator();
+                  if (sdIndicator) {
+                    sdIndicator.updateConfig(config);
+                  }
+                }}
               />
             </div>
           </div>

@@ -4,6 +4,7 @@ import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import LocalPatternDetector from './LocalPatternDetector.js';
 import { createLogger } from '../../utils/Logger.js';
+import { syncConfig } from '../../utils/ConfigSynchronizer.js';
 
 /**
  * Rejection Pattern Indicator
@@ -97,6 +98,26 @@ class RejectionPatternIndicator extends IndicatorBase {
           const oldValue = config.vwapFilter.deviationTolerance;
           config.vwapFilter.deviationTolerance = 10; // Reset to default
           console.log(`[${this.symbol}] ⚠️ Migrated VWAP tolerance from ${oldValue}% (price) to 10% (σ)`);
+        }
+
+        // ✅ FIX: Migración - Asegurar que exista alertCooldown
+        if (!config.alertCooldown) {
+          config.alertCooldown = {
+            enabled: true,
+            minutes: 30,
+            pauseDetection: false,
+            discardedBoxColor: '#9E9E9E',
+            discardedBoxOpacity: 0.10
+          };
+          console.log(`[${this.symbol}] ⚠️ Migrated: Added alertCooldown config`);
+        } else {
+          // Migración de campos nuevos para cooldown existente
+          if (!config.alertCooldown.discardedBoxColor) {
+            config.alertCooldown.discardedBoxColor = '#9E9E9E';
+          }
+          if (config.alertCooldown.discardedBoxOpacity === undefined) {
+            config.alertCooldown.discardedBoxOpacity = 0.10;
+          }
         }
 
         return config;
@@ -425,7 +446,6 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Si el cooldown no está habilitado, no hay restricción
     const cooldownEnabled = this.config.alertCooldown?.enabled;
     if (!cooldownEnabled) {
-      this.logger.debug(`⏳ Cooldown DISABLED in config`);
       return false;
     }
 
@@ -438,17 +458,18 @@ class RejectionPatternIndicator extends IndicatorBase {
     const now = Date.now();
     const timeSinceLastAlert = now - lastAlertTimestamp;
 
-    this.logger.info(`⏳ Cooldown check: lastAlert=${lastAlertTimestamp}, now=${now}, elapsed=${Math.round(timeSinceLastAlert/1000)}s, required=${cooldownMinutes}min`);
-
-    if (timeSinceLastAlert < cooldownMs) {
-      const remainingMs = cooldownMs - timeSinceLastAlert;
-      const remainingMin = Math.ceil(remainingMs / 60000);
-      this.logger.info(`⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
-      return true;
+    // ✅ FIX: Throttle logging to avoid spam (max 1 log per 10 seconds)
+    if (!this._lastCooldownLogTime || (now - this._lastCooldownLogTime) > 10000) {
+      this._lastCooldownLogTime = now;
+      if (timeSinceLastAlert < cooldownMs) {
+        const remainingMin = Math.ceil((cooldownMs - timeSinceLastAlert) / 60000);
+        this.logger.debug(`⏳ COOLDOWN ACTIVE: ${remainingMin} min remaining`);
+      } else {
+        this.logger.debug(`⏳ Cooldown expired, can send alert`);
+      }
     }
 
-    this.logger.info(`⏳ Cooldown expired, can send alert`);
-    return false;
+    return timeSinceLastAlert < cooldownMs;
   }
 
   getDefaultConfig() {
@@ -512,7 +533,7 @@ class RejectionPatternIndicator extends IndicatorBase {
         proximityPercent: 1.0,
         requireVolumeSpike: false
       },
-      alertsEnabled: false,
+      alertsEnabled: true,  // Habilitado por defecto para enviar al trading bot
       // Nuevo: Modo debug global
       debugMode: false,                  // Si true, muestra console.log de todos los patrones rechazados
       // NUEVO: Filtro de dirección de señales
@@ -563,6 +584,15 @@ class RejectionPatternIndicator extends IndicatorBase {
         enabled: true,           // Habilitar validación de invalidación
         barsToCheck: 3,          // Velas después del patrón a verificar
         invalidateOnBreak: true  // Invalidar si rompe high/low del patrón
+      },
+      // ✅ FIX: Cooldown entre alertas (antes faltaba en getDefaultConfig)
+      alertCooldown: {
+        enabled: true,
+        minutes: 30,              // Minutos entre alertas consecutivas
+        pauseDetection: false,    // Si true, pausa la detección de patrones durante el cooldown
+        // Colores para patrones descartados por cooldown (visualización diferenciada)
+        discardedBoxColor: '#9E9E9E',    // Gris para zonas de patrones descartados
+        discardedBoxOpacity: 0.10        // Opacidad reducida para patrones descartados
       }
     };
   }
@@ -570,6 +600,9 @@ class RejectionPatternIndicator extends IndicatorBase {
   updateConfig(config) {
     this.config = config;
     localStorage.setItem(`rejection_pattern_config_${this.symbol}`, JSON.stringify(config));
+
+    // ✅ NUEVO: Sincronizar config con backend para detección real-time
+    syncConfig(this.symbol, this.interval, 'rejection', config);
 
     // ✅ FIX BUG 1: Limpiar patrones para forzar re-detección en el próximo render
     // Esto asegura que al borrar zonas o cambiar configuración, los patrones se actualicen
@@ -1435,63 +1468,22 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   /**
-   * ✅ NUEVO: Envía patrón al backend usando formato EXACTO de alertas existentes
+   * Registra patrón detectado y muestra notificación en navegador.
+   * NOTA: El envío de alertas al Trading Bot lo hace el backend (realtime_pattern_service.py).
+   * El frontend solo grafica patrones y muestra notificaciones locales.
    */
   async sendPatternAlert(pattern) {
-    try {
-      const payload = {
-        symbol: this.symbol,
-        interval: this.interval,
-        pattern: {
-          patternType: pattern.type,
-          price: pattern.price,
-          confidence: Math.round(pattern.confidence * 10) / 10, // 1 decimal
-          timestamp: pattern.timestamp,
-          direction: pattern.direction,
-          nearSRLevel: pattern.nearSRLevel,
-          nearLevel: pattern.nearLevel,
-          vwapDeviation: pattern._vwapDeviation || null  // ✅ Info de desviación VWAP si aplica
-        },
-        config: {
-          filters: this.config.filters,
-          alertsEnabled: this.config.alertsEnabled,
-          vwapFilterEnabled: this.config.vwapFilter?.enabled || false
-        }
-      };
+    this.logger.debug(`🔔 [${this.symbol}] PATTERN DETECTED (display only)`);
+    this.logger.debug(`   Pattern: ${pattern.type}`);
+    this.logger.debug(`   Price: $${pattern.price.toFixed(2)}`);
+    this.logger.debug(`   Confidence: ${pattern.confidence.toFixed(1)}%`);
+    this.logger.debug(`   Direction: ${pattern.direction}`);
+    this.logger.debug(`   Note: Backend handles alert sending to Trading Bot`);
 
-      // ✅ NUEVO: Incluir datos de estrategia si está habilitado
-      if (this.config.strategy?.enabled && this.config.strategy?.includeInAlert && pattern._strategy) {
-        payload.strategy = {
-          entry: pattern._strategy.entry,
-          stopLoss: pattern._strategy.stopLoss,
-          takeProfit: pattern._strategy.takeProfit,
-          slPercent: pattern._strategy.slPercent,
-          tpPercent: pattern._strategy.tpPercent,
-          riskRewardRatio: pattern._strategy.riskRewardRatio
-        };
-      }
+    // Mostrar popup/notificación en navegador
+    this.showAlertPopup(pattern);
 
-      const response = await fetch(`${API_BASE_URL}/api/pattern-alert`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // ✅ Mostrar popup en navegador (con límite de 3 simultáneos)
-        this.showAlertPopup(pattern);
-        return true;
-      } else {
-        this.logger.error(`❌ Alert rejected: ${result.reason || result.error}`);
-        return false;
-      }
-
-    } catch (error) {
-      this.logger.error(`❌ Error sending alert: ${error.message}`);
-      return false;
-    }
+    return true;
   }
 
   /**
@@ -1592,9 +1584,17 @@ class RejectionPatternIndicator extends IndicatorBase {
     // maxAgeMs debe incluir el tiempo base + el delay de confirmación
     const maxAgeMs = (intervalMs * baseAgeMultiplier) + confirmationDelayMs;
 
+    // ✅ FIX COOLDOWN: Verificar si estamos en cooldown ANTES de marcar patrones como nuevos
+    // Si estamos en cooldown, los patrones detectados NO deben marcarse como alertables
+    const inCooldown = this.isInGlobalCooldown();
+    if (inCooldown && !isInitialLoad) {
+      this.logger.debug(`⏳ In cooldown - new patterns will be discarded (not marked as alertable)`);
+    }
+
     let addedCount = 0;
     let updatedCount = 0;
     let skippedAsOld = 0;
+    let skippedByCooldown = 0;
 
     newPatterns.forEach(newPattern => {
       const patternId = this.getPatternId(newPattern);
@@ -1622,10 +1622,17 @@ class RejectionPatternIndicator extends IndicatorBase {
         // ✅ FIX ALERTAS EN TIEMPO REAL:
         // - isInitialLoad=true: TODOS los patrones son históricos, NO deben alertar
         // - isInitialLoad=false: Solo patrones recientes (dentro de maxAgeMs) son alertables
+        // - ✅ FIX COOLDOWN: Si estamos en cooldown, DESCARTAR el patrón (no marcar como nuevo)
         if (isInitialLoad) {
           // Primera carga: todos los patrones son históricos
           newPattern._isNewPattern = false;
           skippedAsOld++;
+        } else if (inCooldown) {
+          // ✅ FIX: En cooldown - descartar patrón (no alertable)
+          newPattern._isNewPattern = false;
+          newPattern._discardedByCooldown = true;
+          skippedByCooldown++;
+          this.logger.debug(`⏳ DISCARDED by cooldown: ${newPattern.type} @ ${new Date(newPattern.timestamp).toLocaleTimeString()}`);
         } else if (patternAge <= maxAgeMs) {
           // Detección incremental: patrón reciente = genuinamente nuevo
           newPattern._isNewPattern = true;
@@ -1650,8 +1657,8 @@ class RejectionPatternIndicator extends IndicatorBase {
     // Actualizar localPatterns desde knownPatterns
     this.localPatterns = Array.from(this.knownPatterns.values());
 
-    if (!isInitialLoad && (addedCount > 0 || skippedAsOld > 0)) {
-      this.logger.debug(`📊 Merge: +${addedCount} added, ~${updatedCount} updated, ⏭️${skippedAsOld} old`);
+    if (!isInitialLoad && (addedCount > 0 || skippedAsOld > 0 || skippedByCooldown > 0)) {
+      this.logger.debug(`📊 Merge: +${addedCount} added, ~${updatedCount} updated, ⏭️${skippedAsOld} old, ⏳${skippedByCooldown} cooldown`);
     }
   }
 
@@ -1914,17 +1921,18 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     // console.log(`[${this.symbol}] Local detection: ${this.localPatterns.length} patterns found (${detectedPatterns.length} before filters)`);
 
-    // ✅ NUEVO: Verificar y enviar alertas automáticas (solo en modo validated)
-    if (this.showMode === 'validated' && this.config.alertsEnabled) {
-      this.checkAndSendAlerts(candles).catch(err => {
-        this.logger.error(`Error checking alerts: ${err.message}`);
-      });
-    }
+    // ⚠️ DESHABILITADO: Las alertas ahora se envían SOLO desde el backend (RealtimePatternService)
+    // El frontend solo visualiza patrones, el backend detecta y envía alertas al TradingBot
+    // if (this.showMode === 'validated' && this.config.alertsEnabled) {
+    //   this.checkAndSendAlerts(candles).catch(err => {
+    //     this.logger.error(`Error checking alerts: ${err.message}`);
+    //   });
+    // }
 
-    // ✅ NUEVO: Pedir permisos de notificación si alertas están habilitadas
-    if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
-      this.requestNotificationPermission();
-    }
+    // ⚠️ DESHABILITADO: Las notificaciones del navegador también se manejan desde backend
+    // if (this.config.alertsEnabled && !this.notificationPermissionRequested) {
+    //   this.requestNotificationPermission();
+    // }
   }
 
   async fetchData() {
@@ -2607,11 +2615,27 @@ class RejectionPatternIndicator extends IndicatorBase {
     ctx.save();
 
     // ✅ NUEVO: Dos rectángulos separados (SL-Entry rojo, Entry-TP verde)
+    // ✅ FIX: Si el patrón fue descartado por cooldown, usar colores grises diferenciados
     if (config.showBox !== false) {
-      const boxOpacity = config.boxOpacity || 0.15;
+      const isDiscarded = pattern._discardedByCooldown === true;
+      const cooldownConfig = this.config.alertCooldown || {};
 
-      // Box 1: Entre SL y Entry (rojo/pérdida)
-      const slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+      // Colores y opacidad según estado del patrón
+      let slBoxColor, tpBoxColor, boxOpacity;
+
+      if (isDiscarded) {
+        // Patrón descartado por cooldown: usar color gris uniforme
+        slBoxColor = cooldownConfig.discardedBoxColor || '#9E9E9E';
+        tpBoxColor = cooldownConfig.discardedBoxColor || '#9E9E9E';
+        boxOpacity = cooldownConfig.discardedBoxOpacity ?? 0.10;
+      } else {
+        // Patrón activo: usar colores normales
+        slBoxColor = config.slBoxColor || config.stopLossColor || '#FF1744';
+        tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+        boxOpacity = config.boxOpacity || 0.15;
+      }
+
+      // Box 1: Entre SL y Entry
       const slBoxTopY = Math.min(slY, entryY);
       const slBoxBottomY = Math.max(slY, entryY);
       const slBoxHeight = slBoxBottomY - slBoxTopY;
@@ -2619,8 +2643,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.fillStyle = this.hexToRgba(slBoxColor, boxOpacity);
       ctx.fillRect(startX, slBoxTopY, endX - startX, slBoxHeight);
 
-      // Box 2: Entre Entry y TP (verde/ganancia)
-      const tpBoxColor = config.tpBoxColor || config.takeProfitColor || '#00E676';
+      // Box 2: Entre Entry y TP
       const tpBoxTopY = Math.min(entryY, tpY);
       const tpBoxBottomY = Math.max(entryY, tpY);
       const tpBoxHeight = tpBoxBottomY - tpBoxTopY;
@@ -2631,25 +2654,34 @@ class RejectionPatternIndicator extends IndicatorBase {
 
     ctx.setLineDash([4, 2]); // Línea punteada
 
-    // === Línea de Entry (azul) ===
+    // ✅ FIX: Determinar colores de líneas según estado del patrón
+    const isDiscardedForLines = pattern._discardedByCooldown === true;
+    const cooldownCfg = this.config.alertCooldown || {};
+    const discardedLineColor = cooldownCfg.discardedBoxColor || '#9E9E9E';
+
+    const entryLineColor = isDiscardedForLines ? discardedLineColor : (config.entryColor || '#03A9F4');
+    const slLineColor = isDiscardedForLines ? discardedLineColor : (config.stopLossColor || '#FF1744');
+    const tpLineColor = isDiscardedForLines ? discardedLineColor : (config.takeProfitColor || '#00E676');
+
+    // === Línea de Entry ===
     ctx.beginPath();
-    ctx.strokeStyle = config.entryColor || '#03A9F4';
+    ctx.strokeStyle = entryLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, entryY);
     ctx.lineTo(endX, entryY);
     ctx.stroke();
 
-    // === Línea de Stop Loss (rojo) ===
+    // === Línea de Stop Loss ===
     ctx.beginPath();
-    ctx.strokeStyle = config.stopLossColor || '#FF1744';
+    ctx.strokeStyle = slLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, slY);
     ctx.lineTo(endX, slY);
     ctx.stroke();
 
-    // === Línea de Take Profit (verde) ===
+    // === Línea de Take Profit ===
     ctx.beginPath();
-    ctx.strokeStyle = config.takeProfitColor || '#00E676';
+    ctx.strokeStyle = tpLineColor;
     ctx.lineWidth = 1.5;
     ctx.moveTo(startX, tpY);
     ctx.lineTo(endX, tpY);
@@ -2665,15 +2697,15 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       // Entry label con dirección (LONG/SHORT)
       const dirLabel = strategy.direction || 'ENTRY';
-      ctx.fillStyle = config.entryColor || '#03A9F4';
+      ctx.fillStyle = entryLineColor;
       ctx.fillText(`${dirLabel}: $${strategy.entry.toFixed(2)}`, labelX, entryY + 3);
 
       // SL label con dirección y %
-      ctx.fillStyle = config.stopLossColor || '#FF1744';
+      ctx.fillStyle = slLineColor;
       ctx.fillText(`SL ${dirLabel}: $${strategy.stopLoss.toFixed(2)} (${strategy.slPercent}%)`, labelX, slY + 3);
 
       // TP label con dirección y %
-      ctx.fillStyle = config.takeProfitColor || '#00E676';
+      ctx.fillStyle = tpLineColor;
       ctx.fillText(`TP ${dirLabel}: $${strategy.takeProfit.toFixed(2)} (${strategy.tpPercent}%)`, labelX, tpY + 3);
     }
 

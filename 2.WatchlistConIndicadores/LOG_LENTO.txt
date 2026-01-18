@@ -1,0 +1,497 @@
+PS C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\2.WatchlistConIndicadores\backend> python -m uvicorn main:app --port 8000
+2026-01-17 21:11:52 - uvicorn.error - INFO - Started server process [8184]
+2026-01-17 21:11:52 - uvicorn.error - INFO - Started server process [8184]
+2026-01-17 21:11:52 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 21:11:52 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 21:11:52 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-01-17 21:11:52 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-01-17 21:11:53 - httpx - INFO - HTTP Request: GET http://localhost:5000/api/health "HTTP/1.1 404 Not Found"
+2026-01-17 21:11:53 - alert_sender - WARNING - [WARN] Alert service returned status 404
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+2026-01-17 21:11:53 - websocket_manager - INFO - WebSocketManager initialized
+2026-01-17 21:11:53 - config_store - INFO - Loaded configs for 2 symbols from file
+2026-01-17 21:11:53 - config_store - INFO - ConfigStore initialized with 2 symbols
+2026-01-17 21:11:53 - pattern_state_manager - INFO - Loaded 2 alerted patterns
+2026-01-17 21:11:53 - pattern_state_manager - INFO - Loaded 1 cooldown states
+2026-01-17 21:11:53 - pattern_state_manager - INFO - Loaded 7 alert records
+2026-01-17 21:11:53 - pattern_state_manager - INFO - PatternStateManager initialized with 2 alerted patterns
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - RealtimePatternService initialized
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - Starting RealtimePatternService
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - Intervals: ['60']
+2026-01-17 21:11:53 - websocket_manager - INFO - Candle close callback registered (total: 1)
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - [PRELOAD] Starting historical candle preload...
+2026-01-17 21:11:53 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for BTCUSDT/60...
+2026-01-17 21:11:54 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:11:54 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:11:54 - websocket_manager - INFO - [PRELOAD] BTCUSDT/60: Preloaded 200 historical candles
+2026-01-17 21:11:54 - realtime_pattern_service - INFO - [PRELOAD] ✅ BTCUSDT/60: Loaded 200 candles
+2026-01-17 21:11:54 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for ETHUSDT/60...
+2026-01-17 21:11:55 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:11:55 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:11:55 - websocket_manager - INFO - [PRELOAD] ETHUSDT/60: Preloaded 200 historical candles
+2026-01-17 21:11:55 - realtime_pattern_service - INFO - [PRELOAD] ✅ ETHUSDT/60: Loaded 200 candles
+2026-01-17 21:11:55 - realtime_pattern_service - INFO - [PRELOAD] Historical candle preload complete
+2026-01-17 21:11:55 - websocket_manager - INFO - Starting WebSocketManager with 2 subscriptions
+2026-01-17 21:11:55 - websocket_manager - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 21:11:55 - websocket_manager - INFO - Intervals: ['60']
+2026-01-17 21:11:55 - realtime_pattern_service - INFO - RealtimePatternService started successfully
+[STARTUP] Real-time pattern detection service started
+[STARTUP] Monitoring symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] Initial interval: ['60'] (frontend will sync active timeframe)
+2026-01-17 21:11:55 - swing_detector - INFO - [SWING_DETECTOR] Initialized
+2026-01-17 21:11:55 - swing_service - INFO - [SWING_SERVICE] Loaded config: 2 symbols
+2026-01-17 21:11:55 - swing_service - INFO - [SWING_SERVICE] Initialized
+2026-01-17 21:11:55 - websocket_manager - INFO - Candle close listener added (total: 2)
+2026-01-17 21:11:55 - websocket_manager - WARNING - WebSocketManager already running
+2026-01-17 21:11:55 - swing_service - INFO - [SWING_SERVICE] Started - monitoring ['BTCUSDT', 'ETHUSDT'] @ 1m
+2026-01-17 21:11:55 - swing_service - INFO - [SWING_SERVICE] Waiting 2.0s for WebSocket data...
+2026-01-17 21:11:55 - websocket_manager - INFO - Connecting to wss://stream.bybit.com/v5/public/linear...
+2026-01-17 21:11:57 - websocket_manager - INFO - Connected to Bybit WebSocket
+2026-01-17 21:11:57 - realtime_pattern_service - INFO - WebSocket connected
+2026-01-17 21:11:57 - websocket_manager - INFO - Subscribed to 2 channels
+2026-01-17 21:11:57 - swing_service - INFO - [SWING_SERVICE] Analyzing historical data...
+2026-01-17 21:11:57 - swing_service - INFO - [SWING_SERVICE] Days=1, Interval=1 -> 1440 candles
+2026-01-17 21:11:57 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: WebSocket buffer has 0 candles
+2026-01-17 21:11:57 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Loading extended history from API...
+2026-01-17 21:11:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:11:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768690319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:00 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768678319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:01 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768666319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:01 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768654319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:02 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768642319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:03 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768630319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:03 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=40&end=1768618319999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:03 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Fetched 1440 candles from API
+2026-01-17 21:12:03 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Analyzing 1440 candles...
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95216.20 (z-score: 6.16, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95264.80 (z-score: 2.55, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95260.60 (z-score: 4.22, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95288.40 (z-score: 11.73, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95296.20 (z-score: 4.57, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95286.20 (z-score: 1.45, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95269.20 (z-score: 61.05, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95251.70 (z-score: 7.48, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95253.60 (z-score: 1.53, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95274.70 (z-score: 23.08, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95252.60 (z-score: 5.88, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95267.40 (z-score: 3.33, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95182.30 (z-score: 3.25, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95272.30 (z-score: 6.64, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95074.20 (z-score: 43.42, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95107.10 (z-score: 1.51, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95012.00 (z-score: 2.86, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95040.00 (z-score: 13.46, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95229.70 (z-score: 1.64, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95181.30 (z-score: 19.93, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95141.50 (z-score: 2.15, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95046.40 (z-score: 9.86, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95077.50 (z-score: 1.66, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95039.20 (z-score: 1.32, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95215.40 (z-score: 7.71, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95267.90 (z-score: 2.94, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95149.30 (z-score: 1.58, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95214.20 (z-score: 7.27, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95372.50 (z-score: 2.33, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95421.30 (z-score: 1.46, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95593.30 (z-score: 20.95, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95518.80 (z-score: 7.03, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95391.90 (z-score: 1.09, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95187.00 (z-score: 2.87, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95237.90 (z-score: 1.62, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95342.70 (z-score: 1.07, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95359.20 (z-score: 1.21, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95353.30 (z-score: 1.97, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95403.60 (z-score: 9.09, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95338.90 (z-score: 9.15, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95401.00 (z-score: 1.26, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95380.00 (z-score: 11.74, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95316.60 (z-score: 2.09, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95287.00 (z-score: 1.01, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95233.60 (z-score: 9.14, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95248.40 (z-score: 1.28, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95237.10 (z-score: 5.57, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95284.10 (z-score: 6.77, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95345.60 (z-score: 1.93, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95365.40 (z-score: 3.31, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95281.10 (z-score: 3.78, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95246.90 (z-score: 1.07, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95243.00 (z-score: 2.94, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95239.10 (z-score: 2.87, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95247.60 (z-score: 1.03, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95149.90 (z-score: 64.42, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95038.90 (z-score: 60.85, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95124.80 (z-score: 3.33, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.70 (z-score: 3.01, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95121.00 (z-score: 2.08, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.80 (z-score: 4.46, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95070.20 (z-score: 15.52, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95184.90 (z-score: 3.49, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95160.10 (z-score: 1.57, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95055.00 (z-score: 5.69, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94947.40 (z-score: 25.34, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94993.00 (z-score: 1.31, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94965.90 (z-score: 10.87, direction: SHORT)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94866.40 (z-score: 1.89, direction: LONG)
+2026-01-17 21:12:03 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 69 swing signals
+2026-01-17 21:12:03 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Found 69 historical signals
+2026-01-17 21:12:03 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: WebSocket buffer has 0 candles
+2026-01-17 21:12:03 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Loading extended history from API...
+2026-01-17 21:12:05 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:12:06 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768690379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:06 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768678379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:07 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768666379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:07 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768654379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768642379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768630379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=40&end=1768618379999 "HTTP/1.1 200 OK"
+2026-01-17 21:12:12 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Fetched 1440 candles from API
+2026-01-17 21:12:12 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Analyzing 1440 candles...
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3284.70 (z-score: 2.69, direction: LONG)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.13 (z-score: 2.99, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.11 (z-score: 5.26, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3288.59 (z-score: 7.49, direction: LONG)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3287.81 (z-score: 11.51, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3285.94 (z-score: 1.39, direction: LONG)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.61 (z-score: 16.20, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.38 (z-score: 1.10, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.13 (z-score: 22.25, direction: LONG)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3292.08 (z-score: 6.45, direction: SHORT)
+2026-01-17 21:12:12 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.74 (z-score: 3.62, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3287.99 (z-score: 10.59, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.51 (z-score: 22.07, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3285.84 (z-score: 4.15, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3286.91 (z-score: 5.99, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3289.92 (z-score: 2.68, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3289.92 (z-score: 7.43, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.40 (z-score: 8.48, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.86 (z-score: 7.91, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.08 (z-score: 1.70, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3294.44 (z-score: 1.84, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3294.72 (z-score: 2.01, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.10 (z-score: 1.28, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3293.88 (z-score: 2.57, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3296.81 (z-score: 4.34, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.56 (z-score: 19.02, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3295.90 (z-score: 1.57, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.00 (z-score: 2.36, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3294.12 (z-score: 1.09, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3292.65 (z-score: 26.20, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.22 (z-score: 3.09, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3302.27 (z-score: 1.65, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.77 (z-score: 5.79, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.80 (z-score: 3.11, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3302.21 (z-score: 50.80, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3300.64 (z-score: 6.13, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.73 (z-score: 6.98, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.95 (z-score: 9.67, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.34 (z-score: 12.73, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.50 (z-score: 1.67, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.23 (z-score: 1.34, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.32 (z-score: 2.96, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3306.94 (z-score: 1.50, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3306.98 (z-score: 1.06, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3307.80 (z-score: 9.46, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.87 (z-score: 4.02, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3309.00 (z-score: 5.92, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3312.80 (z-score: 10.14, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3318.14 (z-score: 5.19, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3317.40 (z-score: 13.85, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.53 (z-score: 2.47, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.01 (z-score: 8.77, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.68 (z-score: 1.18, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3312.25 (z-score: 1.24, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.50 (z-score: 2.10, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3317.24 (z-score: 2.33, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.02 (z-score: 3.16, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3326.28 (z-score: 4.39, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3321.27 (z-score: 3.62, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.27 (z-score: 1.17, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3317.30 (z-score: 1.81, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3316.59 (z-score: 2.83, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.33 (z-score: 4.07, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3315.96 (z-score: 6.11, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.82 (z-score: 10.36, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3315.39 (z-score: 2.17, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3319.09 (z-score: 1.23, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.49 (z-score: 2.41, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3314.98 (z-score: 4.51, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3314.84 (z-score: 2.47, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3318.03 (z-score: 4.24, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3314.82 (z-score: 8.02, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3310.72 (z-score: 24.99, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3308.03 (z-score: 27.43, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3309.51 (z-score: 4.91, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.62 (z-score: 3.20, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3304.62 (z-score: 13.74, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.30 (z-score: 14.59, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3303.20 (z-score: 8.98, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3304.04 (z-score: 4.17, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3306.76 (z-score: 4.06, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3305.74 (z-score: 5.49, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.84 (z-score: 6.20, direction: SHORT)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.31 (z-score: 3.70, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3297.78 (z-score: 1.93, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3301.55 (z-score: 4.04, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.99 (z-score: 4.14, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.06 (z-score: 2.02, direction: LONG)
+2026-01-17 21:12:13 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 88 swing signals
+2026-01-17 21:12:13 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Found 88 historical signals
+2026-01-17 21:12:13 - swing_service - INFO - [SWING_SERVICE] Historical analysis complete. Total signals: 157
+[STARTUP] Swing detector service started
+2026-01-17 21:12:13 - vwap_service - INFO - [VWAP_SERVICE] Initialized
+2026-01-17 21:12:13 - vwap_service - INFO - [VWAP_SERVICE] Loading 7 days of historical data...
+2026-01-17 21:12:13 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 10080 candles (7 days @ 1m)
+2026-01-17 21:13:02 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 10080 candles loaded
+2026-01-17 21:13:02 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Loaded 10080 historical candles
+2026-01-17 21:13:02 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 10080 candles (7 days @ 1m)
+2026-01-17 21:13:35 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Total 10080 candles loaded
+2026-01-17 21:13:35 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Loaded 10080 historical candles
+2026-01-17 21:13:35 - websocket_manager - INFO - Candle close listener added (total: 3)
+2026-01-17 21:13:35 - vwap_service - INFO - [VWAP_SERVICE] Registered candle close listener
+2026-01-17 21:14:18 - vwap_service - INFO - [VWAP_SERVICE] Started for symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] VWAP service started
+2026-01-17 21:14:18 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 21:14:18 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 21:14:18 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 21:14:18 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:51085 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:19 - uvicorn.access - INFO - 127.0.0.1:56419 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:25 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:25 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:30 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:32 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:36 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:36 - uvicorn.access - INFO - 127.0.0.1:49347 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:39 - uvicorn.access - INFO - 127.0.0.1:49347 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:39 - uvicorn.access - INFO - 127.0.0.1:49347 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:14:39 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:14:40 - uvicorn.access - INFO - 127.0.0.1:57948 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:45 - uvicorn.access - INFO - 127.0.0.1:51812 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:45 - uvicorn.access - INFO - 127.0.0.1:51812 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:46 - uvicorn.access - INFO - 127.0.0.1:51812 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:14:52 - uvicorn.access - INFO - 127.0.0.1:56044 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:14:55 - uvicorn.access - INFO - 127.0.0.1:56044 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:14:55 - uvicorn.access - INFO - 127.0.0.1:56044 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:00 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:00 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:01 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:02 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/vwap-service/data/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:05 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:05 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:07 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/vwap-service/data/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:08 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:09 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:15:09 - uvicorn.access - INFO - 127.0.0.1:51940 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:15:11 - uvicorn.access - INFO - 127.0.0.1:51940 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:11 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:15 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:16 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:16 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:21 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:21 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:22 - uvicorn.access - INFO - 127.0.0.1:57721 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:28 - uvicorn.access - INFO - 127.0.0.1:55150 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:28 - uvicorn.access - INFO - 127.0.0.1:55150 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:28 - uvicorn.access - INFO - 127.0.0.1:55150 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:34 - uvicorn.access - INFO - 127.0.0.1:56392 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:34 - uvicorn.access - INFO - 127.0.0.1:60098 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:37 - uvicorn.access - INFO - 127.0.0.1:60098 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:39 - uvicorn.access - INFO - 127.0.0.1:60098 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:15:39 - uvicorn.access - INFO - 127.0.0.1:59948 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:15:40 - uvicorn.access - INFO - 127.0.0.1:59948 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:44 - uvicorn.access - INFO - 127.0.0.1:59948 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:44 - uvicorn.access - INFO - 127.0.0.1:60098 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:45 - uvicorn.access - INFO - 127.0.0.1:60098 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:45 - uvicorn.access - INFO - 127.0.0.1:59948 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:51 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:15:51 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:55 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:57 - uvicorn.access - INFO - 127.0.0.1:49670 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:15:57 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:15:58 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:03 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/vwap-service/data/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:07 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:07 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:08 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/vwap-service/data/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:08 - uvicorn.access - INFO - 127.0.0.1:57374 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:08 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:09 - uvicorn.access - INFO - 127.0.0.1:61127 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:16:09 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:16:13 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:16 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:19 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:19 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:23 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:23 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:23 - uvicorn.access - INFO - 127.0.0.1:59231 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:23 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:25 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:29 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:32 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:32 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:32 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:32 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:33 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:36 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:39 - uvicorn.access - INFO - 127.0.0.1:65471 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:16:39 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:16:41 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:42 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:45 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:46 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:46 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:48 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:51 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:16:55 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:16:56 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:56 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:56 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:16:57 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:01 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:04 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/vwap-service/data/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:04 - uvicorn.access - INFO - 127.0.0.1:60423 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:06 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:07 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:08 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:09 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/vwap-service/data/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:09 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:17:09 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:17:11 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:12 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:14 - uvicorn.access - INFO - 127.0.0.1:55647 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768702634787 HTTP/1.1" 200
+2026-01-17 21:17:14 - uvicorn.access - INFO - 127.0.0.1:49237 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768702634787 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:17:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768616234793&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:17:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768616235187&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:17:16 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768676280000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 21:17:16 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768702634787 HTTP/1.1" 200
+2026-01-17 21:17:16 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768676280000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 21:17:16 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768702634787 HTTP/1.1" 200
+2026-01-17 21:17:16 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:18 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:18 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:18 - uvicorn.access - INFO - 127.0.0.1:55647 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:18 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:22 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:24 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:28 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:17:30 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:17:30 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:32 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:17:34 - uvicorn.access - INFO - 127.0.0.1:49237 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
