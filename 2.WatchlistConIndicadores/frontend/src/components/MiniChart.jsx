@@ -309,18 +309,22 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // 🎨 Inicializar DrawingToolManager y MeasurementTool cuando se activa el modo dibujo
   useEffect(() => {
-    if (drawingMode && !externalDrawingManager && !internalDrawingManagerRef.current) {
-      internalDrawingManagerRef.current = new DrawingToolManager(
-        symbol,
-        interval,
-        setSelectedDrawingTool,
-        () => {
-          // Callback cuando se agrega un shape - guardar y forzar re-render
-          saveDrawingsInline();
-          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-        }
-      );
-      // Cargar dibujos existentes al inicializar
+    if (drawingMode && !externalDrawingManager) {
+      if (!internalDrawingManagerRef.current) {
+        // Primera vez: crear el manager
+        internalDrawingManagerRef.current = new DrawingToolManager(
+          symbol,
+          interval,
+          setSelectedDrawingTool,
+          () => {
+            // Callback cuando se agrega un shape - guardar y forzar re-render
+            saveDrawingsInline();
+            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          }
+        );
+      }
+      // 🔄 FIX: SIEMPRE cargar dibujos al entrar al modo dibujo (no solo la primera vez)
+      // Esto asegura que el manager tenga los shapes más recientes del servidor
       loadDrawingsIntoManager();
     }
     // Inicializar MeasurementTool cuando se activa el modo dibujo
@@ -335,6 +339,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       drawingManagerRef.current.setTool(selectedDrawingTool);
     }
   }, [selectedDrawingTool, drawingMode]);
+
+  // 🔄 FIX: Guardar dibujos al salir del modo dibujo para evitar que rectángulos borrados reaparezcan
+  const prevDrawingModeRef = useRef(drawingMode);
+  useEffect(() => {
+    // Detectar transición de drawingMode: true -> false
+    if (prevDrawingModeRef.current && !drawingMode) {
+      // Saliendo del modo dibujo - guardar cambios y sincronizar
+      if (drawingManagerRef.current) {
+        log.info(`[MiniChart] 🔄 Exiting drawing mode - saving shapes`);
+        // saveDrawingsInline() ya sincroniza drawingsRef, guarda al servidor y fuerza re-render
+        saveDrawingsInline();
+      }
+    }
+    prevDrawingModeRef.current = drawingMode;
+  }, [drawingMode]);
 
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);

@@ -1252,3 +1252,122 @@ if (indicatorStates['Rejection Patterns'] === true) {
 - Reiniciar backend para cargar nueva config
 - Verificar que `timeBound`, `timeStart`, `timeEnd` estan correctos
 - Las zonas nuevas disparan re-analisis automatico
+
+---
+
+# DRAWING SYSTEM (MiniChart.jsx)
+
+## Arquitectura de Dibujos
+
+El sistema de dibujos tiene dos estados paralelos que deben mantenerse sincronizados:
+
+1. **`drawingsRef`**: Array de shapes deserializados para renderizado readonly (fuera de modo dibujo)
+2. **`DrawingToolManager`**: Instancia que gestiona shapes durante modo dibujo (edicion)
+
+### Persistencia
+
+Los dibujos se guardan en `backend/drawings/{symbol}.json` via:
+```
+POST /api/drawings/{symbol}
+GET /api/drawings/{symbol}
+```
+
+### Flujo de Sincronizacion (Fix Enero 2026)
+
+```
+ENTRAR A MODO DIBUJO:
+  1. Se crea DrawingToolManager (si no existe)
+  2. loadDrawingsIntoManager() carga shapes desde servidor
+  3. DrawingToolManager renderiza durante edicion
+
+DURANTE MODO DIBUJO:
+  - Cada cambio (crear, mover, eliminar) llama saveDrawingsInline()
+  - saveDrawingsInline() sincroniza drawingsRef Y guarda al servidor
+
+SALIR DE MODO DIBUJO:  ← FIX CRITICO
+  1. useEffect detecta transicion drawingMode: true → false
+  2. Sincroniza drawingsRef con shapes actuales del manager
+  3. Guarda al servidor via saveDrawingsInline()
+  4. Fuerza re-render con setDrawingsVersion()
+```
+
+### Problema Resuelto: Rectangulos Borrados Reaparecen
+
+**Sintomas:**
+- Rectangulos eliminados reaparecian al mover el mouse
+- SwingDetectorSettings mostraba rectangulos que ya no existian
+- Rectangulos usados como zona desaparecian pero reaparecian en modo dibujo
+
+**Causa:**
+Al salir del modo dibujo, los cambios en DrawingToolManager NO se guardaban al servidor.
+El modal SwingDetectorSettings consultaba `/api/drawings/` que tenia datos desactualizados.
+
+**Fix 1 - Guardar al salir** (MiniChart.jsx:343-356):
+```javascript
+// Detectar transicion de drawingMode: true -> false
+const prevDrawingModeRef = useRef(drawingMode);
+useEffect(() => {
+  if (prevDrawingModeRef.current && !drawingMode) {
+    if (drawingManagerRef.current) {
+      // saveDrawingsInline() sincroniza drawingsRef, guarda al servidor y fuerza re-render
+      saveDrawingsInline();
+    }
+  }
+  prevDrawingModeRef.current = drawingMode;
+}, [drawingMode]);
+```
+
+### Problema Resuelto: Dibujos Desaparecen en Modo Dibujo
+
+**Sintomas:**
+- Al entrar al modo dibujo por segunda vez, los shapes desaparecian
+- TPSLBox y otros dibujos no se renderizaban al mover el mouse
+- Al salir del modo dibujo, los shapes seguian sin aparecer
+
+**Causa:**
+El DrawingToolManager solo cargaba shapes del servidor la PRIMERA vez que se creaba.
+En entradas subsecuentes al modo dibujo, el manager existia pero tenia shapes vacios/desactualizados.
+
+**Fix 2 - Cargar siempre al entrar** (MiniChart.jsx:310-334):
+```javascript
+useEffect(() => {
+  if (drawingMode && !externalDrawingManager) {
+    if (!internalDrawingManagerRef.current) {
+      // Primera vez: crear el manager
+      internalDrawingManagerRef.current = new DrawingToolManager(...);
+    }
+    // 🔄 FIX: SIEMPRE cargar dibujos al entrar (no solo la primera vez)
+    loadDrawingsIntoManager();
+  }
+}, [drawingMode, symbol, interval, externalDrawingManager]);
+```
+
+### Archivos Relacionados
+
+| Archivo | Responsabilidad |
+|---------|-----------------|
+| `MiniChart.jsx` | Orquesta renderizado y sincronizacion |
+| `DrawingToolManager.js` | Gestiona shapes durante edicion |
+| `drawing/shapes/*.js` | Clases de cada tipo de shape |
+| `backend/drawings/*.json` | Persistencia por simbolo |
+
+### Troubleshooting Dibujos
+
+**Rectangulos fantasma (despues del fix):**
+- Limpiar localStorage y recargar pagina
+- Verificar que `backend/drawings/{symbol}.json` tiene datos correctos
+- El problema original fue resuelto guardando al salir del modo dibujo
+
+**Dibujos no se guardan:**
+- Verificar consola por errores en `saveDrawingsInline()`
+- Verificar que backend esta corriendo y endpoint `/api/drawings/` responde
+
+**Shapes se duplican:**
+- Posible problema de doble renderizado
+- Verificar que solo se usa drawingManagerRef.render() EN modo dibujo
+- Fuera de modo dibujo, solo drawingsRef.current deberia renderizarse
+
+**Dibujos desaparecen al entrar/salir del modo dibujo:**
+- El fix actual (Enero 2026) resuelve esto cargando SIEMPRE al entrar y guardando al salir
+- Si persiste: verificar que `loadDrawingsIntoManager()` se llama en cada entrada
+- Revisar consola por errores de fetch en `/api/drawings/`

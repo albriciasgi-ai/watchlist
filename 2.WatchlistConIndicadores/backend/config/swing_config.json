@@ -17,11 +17,12 @@
       "vwapFilter": {
         "enabled": true,
         "deviations": [
+          1,
           2,
           3
         ],
         "marginPercent": 20,
-        "skipVolumeInRectangle": false
+        "skipVolumeInRectangle": true
       }
     },
     "BTCUSDT": {
@@ -47,17 +48,17 @@
       "enabled": true
     },
     {
-      "id": "zone_rect_rectangle_1768788597179_0.22698794473988704",
+      "id": "zone_rect_rectangle_1768790228998_0.842116114995454",
       "symbol": "ETHUSDT",
-      "min": 3283.4345845800417,
-      "max": 3366.527817662748,
-      "direction": "BOTH",
+      "min": 3200.998323577881,
+      "max": 3252.725823577881,
+      "direction": "LONG",
       "enabled": true,
-      "sourceRectId": "rectangle_1768788597179_0.22698794473988704",
+      "sourceRectId": "rectangle_1768790228998_0.842116114995454",
       "label": "Zone",
-      "timeStart": null,
-      "timeEnd": null,
-      "timeBound": false
+      "timeStart": 1768780020000,
+      "timeEnd": 1768784280000,
+      "timeBound": true
     }
   ],
   "useDrawingZones": true,

@@ -2,20 +2,39 @@
   "symbol": "ETHUSDT",
   "shapes": [
     {
-      "type": "rectangle",
-      "id": "rectangle_1768788597179_0.22698794473988704",
-      "price1": 3366.527817662748,
-      "time1": 1768733340000,
-      "price2": 3283.4345845800417,
-      "time2": 1768781880000,
-      "label": "Zone",
+      "type": "horizontal",
+      "id": "horizontal_1768791849724_0.28114151009301724",
+      "price": 2971.3723861522326,
+      "time": 1767733200000,
       "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "textbox",
+      "id": "textbox_1768791852767_0.5073103428686663",
+      "price": 2957.148419210084,
+      "time": 1767560400000,
+      "text": "puede estar apuntando a este fractal",
+      "customWidth": null,
+      "customHeight": null,
+      "style": {
+        "bgColor": "#fdcf6d80",
+        "textColor": "#0f0f0f",
+        "borderColor": "#F59E0B",
+        "fontSize": 13,
+        "fontFamily": "Arial",
+        "padding": 8,
+        "minWidth": 120,
+        "minHeight": 30
       }
     }
   ],
-  "updated_at": "2026-01-19T02:10:03.832084+00:00",
-  "total_shapes": 1
+  "updated_at": "2026-01-19T03:04:51.913307+00:00",
+  "total_shapes": 2
 }
