@@ -1324,6 +1324,8 @@ const Watchlist = () => {
             <div className="modal-body">
               <SwingDetectorSettings
                 currentSymbol={selectedSymbolForSD}
+                watchlistDays={parseInt(days)}
+                watchlistInterval={interval}
                 config={(() => {
                   const manager = indicatorManagers[selectedSymbolForSD]?.manager;
                   const sdIndicator = manager?.getSwingDetectorIndicator();

@@ -45,6 +45,7 @@ class VWAPIndicator extends IndicatorBase {
 
     // Lifecycle flag to prevent fetch after destroy
     this._destroyed = false;
+    this._pollingInterval = null;
 
     log.info(`[${symbol}] VWAPIndicator initialized (backend native, type=${this.vwapType})`);
   }
@@ -52,7 +53,25 @@ class VWAPIndicator extends IndicatorBase {
   // Cleanup method called when indicator is destroyed
   destroy() {
     this._destroyed = true;
+    if (this._pollingInterval) {
+      clearInterval(this._pollingInterval);
+      this._pollingInterval = null;
+    }
     log.debug(`[${this.symbol}] VWAPIndicator destroyed`);
+  }
+
+  _startPolling() {
+    // Clear any existing interval
+    if (this._pollingInterval) {
+      clearInterval(this._pollingInterval);
+    }
+
+    // Poll at configured interval
+    this._pollingInterval = setInterval(() => {
+      if (this.enabled && !this._destroyed) {
+        this.fetchData();
+      }
+    }, this.fetchIntervalMs);
   }
 
   _getFetchIntervalForTimeframe(interval) {
@@ -98,12 +117,20 @@ class VWAPIndicator extends IndicatorBase {
       const json = await response.json();
 
       if (json.success && json.data) {
-        this.vwapData = json.data;
+        // 🚀 OPTIMIZACIÓN: Solo usar dataMap, no duplicar en vwapData
+        // Antes guardaba en ambos (2x memoria)
+        this.vwapData = []; // Mantener vacío para compatibilidad
         this.dataMap.clear();
         json.data.forEach(point => {
           this.dataMap.set(point.timestamp, point);
         });
         this.lastFetchTime = Date.now();
+
+        // 🚀 Start polling only on first successful fetch
+        if (!this._pollingInterval) {
+          this._startPolling();
+        }
+
         log.debug(`[${this.symbol}] ✅ VWAP loaded: ${this.vwapData.length} points (${this.vwapType}, ${this.days} days, interval=${this.interval})`);
         return true;
       } else {
@@ -212,12 +239,8 @@ class VWAPIndicator extends IndicatorBase {
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) return;
 
-    // Periodic fetch from backend (only if not destroyed)
-    const now = Date.now();
-    if (!this._destroyed && now - this.lastFetchTime > this.fetchIntervalMs) {
-      this.lastFetchTime = now;
-      this.fetchData(); // Fire and forget
-    }
+    // 🚀 OPTIMIZADO: Polling se hace via setInterval en _startPolling()
+    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
 
     // Need data from backend
     if (this.dataMap.size === 0) return;

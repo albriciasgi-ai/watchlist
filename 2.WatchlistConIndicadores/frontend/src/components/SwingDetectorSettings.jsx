@@ -16,7 +16,9 @@ import { API_BASE_URL } from '../config.js';
 const SwingDetectorSettings = ({
   config,
   onConfigChange,
-  currentSymbol
+  currentSymbol,
+  watchlistDays,      // Days selected in Watchlist (synced automatically)
+  watchlistInterval   // Interval selected in Watchlist
 }) => {
   const [localConfig, setLocalConfig] = useState(config);
   const [backendStatus, setBackendStatus] = useState(null);
@@ -70,6 +72,34 @@ const SwingDetectorSettings = ({
   useEffect(() => {
     setLocalConfig(config);
   }, [config]);
+
+  // 🔄 AUTO-SYNC: When watchlistDays changes, update backend automatically
+  useEffect(() => {
+    const syncDaysToBackend = async () => {
+      if (watchlistDays && backendStatus) {
+        const currentBackendDays = backendStatus.symbolConfig?.days || backendStatus.days;
+        if (currentBackendDays !== watchlistDays) {
+          console.log(`[SwingDetector] Auto-syncing days: ${currentBackendDays} → ${watchlistDays}`);
+          try {
+            // Send directly to backend (bypass batch mode)
+            const response = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ days: watchlistDays })
+            });
+            if (response.ok) {
+              console.log(`[SwingDetector] Days synced to ${watchlistDays}`);
+              // Refresh status to reflect new value
+              fetchBackendStatus();
+            }
+          } catch (error) {
+            console.error('[SwingDetector] Failed to sync days:', error);
+          }
+        }
+      }
+    };
+    syncDaysToBackend();
+  }, [watchlistDays, currentSymbol]);
 
   const fetchBackendStatus = async () => {
     try {
@@ -457,28 +487,24 @@ const SwingDetectorSettings = ({
       }}>
         <h5 style={{ margin: '0 0 12px 0', color: '#00838F' }}>Detection Parameters (Backend)</h5>
 
-        {/* Days of Historical Data */}
+        {/* Days of Historical Data - READ ONLY, synced from Watchlist */}
         <div style={{ marginBottom: '12px' }}>
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Historical Days: {currentDays}
+            Historical Days: {watchlistDays || currentDays}
           </label>
-          <input
-            type="range"
-            min="1"
-            max="30"
-            value={currentDays}
-            onChange={(e) => handleBackendConfigUpdate({ days: parseInt(e.target.value) })}
-            style={{ width: '100%' }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
-            <span>1 day</span>
-            <span>7 days</span>
-            <span>30 days</span>
+          <div style={{
+            padding: '8px 12px',
+            background: '#b2ebf2',
+            borderRadius: '4px',
+            fontSize: '12px',
+            color: '#006064'
+          }}>
+            📊 Synced from Watchlist ({watchlistInterval || backendStatus?.interval}m timeframe)
           </div>
           <div style={{ fontSize: '10px', color: '#00838F', marginTop: '4px' }}>
             {(() => {
-              const interval = backendStatus?.interval || '1';
-              const days = currentDays;
+              const interval = watchlistInterval || backendStatus?.interval || '1';
+              const days = watchlistDays || currentDays;
               const intervalMinutes = {
                 '1': 1, '3': 3, '5': 5, '15': 15, '30': 30,
                 '60': 60, '120': 120, '240': 240, '360': 360, '720': 720,

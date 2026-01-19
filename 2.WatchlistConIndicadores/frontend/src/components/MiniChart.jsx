@@ -136,6 +136,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [isTextEditModalOpen, setIsTextEditModalOpen] = useState(false);
   const [textBoxBeingEdited, setTextBoxBeingEdited] = useState(null);
   const lastDoubleClickRef = useRef(0); // Para debounce de doble-click
+  const lastMouseMoveRef = useRef(0); // Para throttle de mousemove
+  const pendingMouseMoveRef = useRef(null); // RAF ID para mousemove pendiente
   const internalDrawingManagerRef = useRef(null); // DrawingToolManager para dibujo inline
   const scaleConverterRef = useRef(null); // Scale converter para conversión de coordenadas
   const measurementToolRef = useRef(null); // MeasurementTool para mediciones temporales
@@ -1258,7 +1260,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // 📏 Actualizar MeasurementTool si está midiendo
+    // 📏 Actualizar MeasurementTool si está midiendo (sin throttle para precisión)
     if (drawingMode && measurementToolRef.current && measurementToolRef.current.isMeasuring) {
       measurementToolRef.current.handleMouseMove(e, canvas);
       setMousePos({ x, y });
@@ -1266,7 +1268,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       return;
     }
 
-    // 🎨 Modo dibujo: delegar al DrawingToolManager
+    // 🎨 Modo dibujo: delegar al DrawingToolManager (sin throttle para precisión)
     if (drawingMode && drawingManagerRef.current && scaleConverterRef.current) {
       const consumed = drawingManagerRef.current.handleMouseMove(x, y, scaleConverterRef.current);
 
@@ -1291,6 +1293,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       }
     }
 
+    // Dragging requiere respuesta inmediata (sin throttle)
     if (dragStateRef.current.isDragging) {
       // 🎯 Paneo horizontal
       const deltaX = x - dragStateRef.current.startX;
@@ -1310,8 +1313,25 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
       drawChart(candlesRef.current, lastPriceRef.current, null, null);
     } else {
-      setMousePos({ x, y });
-      drawChart(candlesRef.current, lastPriceRef.current, x, y);
+      // 🚀 OPTIMIZACIÓN: Throttle para crosshair/hover - máximo ~30 FPS
+      // Esto reduce CPU significativamente cuando el mouse se mueve sobre el chart
+      const now = performance.now();
+      const THROTTLE_MS = 33; // ~30 FPS para crosshair (era ilimitado antes)
+
+      if (now - lastMouseMoveRef.current >= THROTTLE_MS) {
+        lastMouseMoveRef.current = now;
+        setMousePos({ x, y });
+
+        // Cancelar RAF pendiente si existe
+        if (pendingMouseMoveRef.current) {
+          cancelAnimationFrame(pendingMouseMoveRef.current);
+        }
+
+        pendingMouseMoveRef.current = requestAnimationFrame(() => {
+          drawChart(candlesRef.current, lastPriceRef.current, x, y);
+          pendingMouseMoveRef.current = null;
+        });
+      }
     }
   };
 
@@ -1966,6 +1986,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
+        }
+
+        // 🚀 Cancelar RAF de mousemove pendiente
+        if (pendingMouseMoveRef.current) {
+          cancelAnimationFrame(pendingMouseMoveRef.current);
         }
 
         clearInterval(reloadInterval);

@@ -330,8 +330,8 @@ class IndicatorManager {
             }
           }
         } else {
-          // Indicadores no precargables (VWAP, Fibonacci, etc.)
-          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns"];
+          // Indicadores no precargables (VWAP, Fibonacci, Swing Detector, etc.)
+          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns", "Swing Detector"];
 
           // ✅ NOTA: Double Top/Bottom NO está en needsFetch porque se carga cuando las velas están disponibles
           // Se hace en onHistoricalCandlesLoaded() para garantizar que tenga las velas

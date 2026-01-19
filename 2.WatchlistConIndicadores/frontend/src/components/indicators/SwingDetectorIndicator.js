@@ -22,10 +22,11 @@ class SwingDetectorIndicator extends IndicatorBase {
     // Polling interval (backend detects, we just display)
     this.lastFetchTime = 0;
     this.lastStatusFetchTime = 0;
-    this.fetchIntervalMs = 5000; // Poll signals every 5 seconds
-    this.statusFetchIntervalMs = 10000; // Poll status/zones every 10 seconds
+    this.fetchIntervalMs = 30000; // Poll signals every 30 seconds (was 5s - too aggressive)
+    this.statusFetchIntervalMs = 60000; // Poll status/zones every 60 seconds (was 10s)
     this.isFetchingSignals = false; // Prevent concurrent fetches
     this.isFetchingStatus = false;
+    this._pollingInterval = null; // For proper cleanup
 
     // Colors
     this.colors = {
@@ -77,6 +78,43 @@ class SwingDetectorIndicator extends IndicatorBase {
       this.fetchSignals(),
       this.fetchStatus()
     ]);
+
+    // 🚀 OPTIMIZACIÓN: Usar setInterval en lugar de verificar en cada render
+    // Esto evita llamar Date.now() y hacer comparaciones en cada frame
+    this._startPolling();
+  }
+
+  _startPolling() {
+    // Clear any existing interval
+    if (this._pollingInterval) {
+      clearInterval(this._pollingInterval);
+    }
+
+    // Poll signals at configured interval
+    this._pollingInterval = setInterval(() => {
+      if (this.enabled && this.config.enabled) {
+        this.fetchSignals();
+      }
+    }, this.fetchIntervalMs);
+
+    // Poll status less frequently
+    this._statusPollingInterval = setInterval(() => {
+      if (this.enabled && this.config.enabled) {
+        this.fetchStatus();
+      }
+    }, this.statusFetchIntervalMs);
+  }
+
+  destroy() {
+    // Clean up polling intervals
+    if (this._pollingInterval) {
+      clearInterval(this._pollingInterval);
+      this._pollingInterval = null;
+    }
+    if (this._statusPollingInterval) {
+      clearInterval(this._statusPollingInterval);
+      this._statusPollingInterval = null;
+    }
   }
 
   async fetchSignals() {
@@ -136,14 +174,8 @@ class SwingDetectorIndicator extends IndicatorBase {
       return;
     }
 
-    // Periodic fetch (don't block render)
-    const now = Date.now();
-    if (now - this.lastFetchTime > this.fetchIntervalMs) {
-      this.fetchSignals(); // Fire and forget
-    }
-    if (now - this.lastStatusFetchTime > this.statusFetchIntervalMs) {
-      this.fetchStatus(); // Fire and forget
-    }
+    // 🚀 OPTIMIZADO: No hacer fetch aquí - se hace via setInterval en _startPolling()
+    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
 
     // Helper function to convert price to Y coordinate
     // Use priceContext.priceToY if available (properly anchored to chart)

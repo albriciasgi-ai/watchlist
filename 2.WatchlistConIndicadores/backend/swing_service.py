@@ -197,7 +197,7 @@ class SwingService:
 
         # Recent signals for frontend: {symbol: [signals]}
         self._recent_signals: Dict[str, List[Dict]] = {}
-        self._max_signals_per_symbol = 1000  # Increased to support multi-day analysis
+        self._max_signals_per_symbol = 300  # Balanced: enough for multi-day, not too heavy on memory
 
         # Stats
         self.stats = {
@@ -293,7 +293,7 @@ class SwingService:
 
         logger.info("[SWING_SERVICE] Stopped")
 
-    async def _analyze_historical(self, delay_seconds: float = 2.0):
+    async def _analyze_historical(self, delay_seconds: float = 0.5):
         """
         Analyze historical candles for all symbols to populate signals for display.
         Does NOT send alerts - only stores signals for frontend visualization.
@@ -302,14 +302,15 @@ class SwingService:
         Args:
             delay_seconds: Wait time before analysis to ensure WebSocket has data
         """
-        # Wait for WebSocket to have data
+        # Wait for WebSocket to have data (reduced from 2s to 0.5s)
         if delay_seconds > 0:
             logger.info(f"[SWING_SERVICE] Waiting {delay_seconds}s for WebSocket data...")
             await asyncio.sleep(delay_seconds)
 
         logger.info("[SWING_SERVICE] Analyzing historical data...")
 
-        for symbol in self.config.symbols:
+        # 🚀 OPTIMIZACIÓN: Analizar símbolos en paralelo
+        async def analyze_symbol(symbol):
             try:
                 # Get symbol-specific config (includes days override)
                 symbol_config = self.config.get_symbol_config(symbol)
@@ -330,7 +331,7 @@ class SwingService:
 
                 if len(candles) < 20:
                     logger.warning(f"[SWING_SERVICE] {symbol}: Not enough historical candles ({len(candles)})")
-                    continue
+                    return  # Exit this symbol's analysis
 
                 logger.info(f"[SWING_SERVICE] {symbol}: Analyzing {len(candles)} candles...")
 
@@ -367,6 +368,9 @@ class SwingService:
 
             except Exception as e:
                 logger.error(f"[SWING_SERVICE] Error analyzing historical data for {symbol}: {e}")
+
+        # 🚀 Run all symbol analyses in parallel
+        await asyncio.gather(*[analyze_symbol(symbol) for symbol in self.config.symbols])
 
         logger.info(f"[SWING_SERVICE] Historical analysis complete. Total signals: {self.stats['signals_detected']}")
 

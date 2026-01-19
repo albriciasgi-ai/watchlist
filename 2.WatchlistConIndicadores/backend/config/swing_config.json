@@ -10,19 +10,18 @@
     "ETHUSDT": {
       "volumeFilter": {
         "enabled": true,
-        "minZScore": 2,
-        "lookbackBars": 25
+        "minZScore": 1.5,
+        "lookbackBars": 100
       },
-      "days": 5,
+      "days": 1,
       "vwapFilter": {
         "enabled": true,
         "deviations": [
-          1,
           2,
           3
         ],
         "marginPercent": 20,
-        "skipVolumeInRectangle": true
+        "skipVolumeInRectangle": false
       }
     },
     "BTCUSDT": {
