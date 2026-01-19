@@ -104,6 +104,11 @@ const SwingDetectorSettings = ({
             ...(current.volumeFilter || backendStatus?.volumeFilter || {}),
             ...value
           };
+        } else if (key === 'vwapFilter') {
+          newConfig.vwapFilter = {
+            ...(current.vwapFilter || backendStatus?.vwapFilter || {}),
+            ...value
+          };
         } else {
           newConfig[key] = value;
         }
@@ -121,6 +126,14 @@ const SwingDetectorSettings = ({
         merged.volumeFilter = {
           ...prev.volumeFilter,
           ...updates.volumeFilter
+        };
+      }
+
+      // Handle nested vwapFilter merging
+      if (updates.vwapFilter && prev.vwapFilter) {
+        merged.vwapFilter = {
+          ...prev.vwapFilter,
+          ...updates.vwapFilter
         };
       }
 
@@ -324,6 +337,7 @@ const SwingDetectorSettings = ({
   // Get symbol-specific config - use LOCAL state for immediate UI response
   const symbolConfig = localSymbolConfig || backendStatus?.symbolConfig || {};
   const volumeFilter = symbolConfig.volumeFilter || backendStatus?.volumeFilter || { enabled: true, minZScore: 1.5, lookbackBars: 20 };
+  const vwapFilter = symbolConfig.vwapFilter || backendStatus?.vwapFilter || { enabled: false, deviations: [1, 2, 3], marginPercent: 20, skipVolumeInRectangle: false };
   const currentDirection = symbolConfig.direction || backendStatus?.direction || 'BOTH';
   const currentSwingBars = symbolConfig.swingBars || backendStatus?.swingBars || 5;
   const currentDays = symbolConfig.days || backendStatus?.days || 1;
@@ -618,6 +632,127 @@ const SwingDetectorSettings = ({
         {!volumeFilter.enabled && (
           <div style={{ fontSize: '11px', color: '#9C27B0', fontStyle: 'italic' }}>
             Volume filter disabled - all swings will be detected regardless of volume
+          </div>
+        )}
+      </div>
+
+      {/* VWAP Filter */}
+      <div style={{
+        background: '#e3f2fd',
+        padding: '12px',
+        borderRadius: '8px',
+        marginBottom: '16px',
+        border: '2px solid #2196F3'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h5 style={{ margin: 0, color: '#1565C0' }}>VWAP Filter</h5>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '12px' }}>
+            <input
+              type="checkbox"
+              checked={vwapFilter.enabled}
+              onChange={(e) => handleBackendConfigUpdate({
+                vwapFilter: { ...vwapFilter, enabled: e.target.checked }
+              })}
+              style={{ marginRight: '6px' }}
+            />
+            Enabled
+          </label>
+        </div>
+
+        {vwapFilter.enabled && (
+          <>
+            <div style={{ fontSize: '11px', color: '#1565C0', marginBottom: '12px', padding: '8px', background: '#bbdefb', borderRadius: '4px' }}>
+              <strong>Dentro de rectángulos:</strong><br/>
+              • Precio cerca de bandas inferiores (-σ) → solo señales LONG<br/>
+              • Precio cerca de bandas superiores (+σ) → solo señales SHORT
+            </div>
+
+            {/* Deviations Selection */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', fontSize: '12px' }}>
+                Desviaciones a considerar:
+              </label>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                {[1, 2, 3].map(dev => (
+                  <label key={dev} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '12px' }}>
+                    <input
+                      type="checkbox"
+                      checked={(vwapFilter.deviations || []).includes(dev)}
+                      onChange={(e) => {
+                        const currentDevs = vwapFilter.deviations || [1, 2, 3];
+                        const newDevs = e.target.checked
+                          ? [...currentDevs, dev].sort()
+                          : currentDevs.filter(d => d !== dev);
+                        handleBackendConfigUpdate({
+                          vwapFilter: { ...vwapFilter, deviations: newDevs }
+                        });
+                      }}
+                      style={{ marginRight: '4px' }}
+                    />
+                    {dev}σ
+                  </label>
+                ))}
+              </div>
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+                Bandas que activan el filtro (±1σ, ±2σ, ±3σ)
+              </div>
+            </div>
+
+            {/* Margin Percent */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+                Margen: {vwapFilter.marginPercent || 20}%
+              </label>
+              <input
+                type="range"
+                min="5"
+                max="50"
+                step="5"
+                value={vwapFilter.marginPercent || 20}
+                onChange={(e) => handleBackendConfigUpdate({
+                  vwapFilter: { ...vwapFilter, marginPercent: parseInt(e.target.value) }
+                })}
+                style={{ width: '100%' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
+                <span>5% (estricto)</span>
+                <span>50% (amplio)</span>
+              </div>
+              <div style={{ fontSize: '10px', color: '#1565C0', marginTop: '4px' }}>
+                % del ancho de la banda como zona de tolerancia
+              </div>
+            </div>
+
+            {/* Skip Volume in Rectangle */}
+            <div style={{
+              padding: '8px',
+              background: '#e1f5fe',
+              borderRadius: '4px',
+              border: '1px solid #81d4fa'
+            }}>
+              <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '12px' }}>
+                <input
+                  type="checkbox"
+                  checked={vwapFilter.skipVolumeInRectangle || false}
+                  onChange={(e) => handleBackendConfigUpdate({
+                    vwapFilter: { ...vwapFilter, skipVolumeInRectangle: e.target.checked }
+                  })}
+                  style={{ marginRight: '8px' }}
+                />
+                <span>
+                  <strong>Ignorar filtro de volumen</strong> dentro de rectángulos
+                </span>
+              </label>
+              <div style={{ fontSize: '10px', color: '#0277bd', marginTop: '4px', marginLeft: '24px' }}>
+                Si está activo, las señales dentro de rectángulos no requieren validación de volumen
+              </div>
+            </div>
+          </>
+        )}
+
+        {!vwapFilter.enabled && (
+          <div style={{ fontSize: '11px', color: '#1565C0', fontStyle: 'italic' }}>
+            Filtro VWAP desactivado - señales se envían sin validar posición respecto al VWAP
           </div>
         )}
       </div>

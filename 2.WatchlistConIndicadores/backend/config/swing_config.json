@@ -5,15 +5,24 @@
     "ETHUSDT"
   ],
   "interval": "1",
-  "days": 5,
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
         "enabled": true,
         "minZScore": 2,
-        "lookbackBars": 20
+        "lookbackBars": 25
       },
-      "days": 10
+      "days": 10,
+      "vwapFilter": {
+        "enabled": true,
+        "deviations": [
+          2,
+          3
+        ],
+        "marginPercent": 20,
+        "skipVolumeInRectangle": false
+      }
     },
     "BTCUSDT": {
       "volumeFilter": {
@@ -38,12 +47,17 @@
       "enabled": true
     },
     {
-      "id": "zone_1768766129109",
+      "id": "zone_rect_rectangle_1768788597179_0.22698794473988704",
       "symbol": "ETHUSDT",
-      "min": 2000,
-      "max": 3700,
+      "min": 3283.4345845800417,
+      "max": 3366.527817662748,
       "direction": "BOTH",
-      "enabled": true
+      "enabled": true,
+      "sourceRectId": "rectangle_1768788597179_0.22698794473988704",
+      "label": "Zone",
+      "timeStart": null,
+      "timeEnd": null,
+      "timeBound": false
     }
   ],
   "useDrawingZones": true,
@@ -52,6 +66,16 @@
     "minZScore": 1,
     "lookbackBars": 10
   },
-  "cooldownMinutes": 16,
+  "vwapFilter": {
+    "enabled": false,
+    "deviations": [
+      1,
+      2,
+      3
+    ],
+    "marginPercent": 20,
+    "skipVolumeInRectangle": false
+  },
+  "cooldownMinutes": 5,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
 }

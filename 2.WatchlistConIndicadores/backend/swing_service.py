@@ -18,6 +18,7 @@ from pathlib import Path
 
 from swing_detector import SwingDetector, SwingSignal, get_swing_detector
 from websocket_manager import WebSocketManager, get_websocket_manager
+from vwap_service import get_vwap_service
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +88,14 @@ class SwingServiceConfig:
         "lookbackBars": 20
     })
 
+    # VWAP filter - validates signals against VWAP bands
+    vwapFilter: Dict = field(default_factory=lambda: {
+        "enabled": False,
+        "deviations": [1, 2, 3],  # Which deviations to check (1σ, 2σ, 3σ)
+        "marginPercent": 20,  # % margin relative to the deviation band width
+        "skipVolumeInRectangle": False  # If true, skip volume filter when inside a rectangle
+    })
+
     # Cooldown
     cooldownMinutes: int = 30
 
@@ -104,6 +113,7 @@ class SwingServiceConfig:
             'swingBars': self.swingBars,
             'direction': self.direction,
             'volumeFilter': self.volumeFilter.copy(),
+            'vwapFilter': self.vwapFilter.copy(),
             'priceZones': [z for z in self.priceZones if not z.get('symbol') or z.get('symbol') == symbol],
             'useDrawingZones': self.useDrawingZones,
             'cooldownMinutes': self.cooldownMinutes,
@@ -120,6 +130,8 @@ class SwingServiceConfig:
                 config['direction'] = symbol_cfg['direction']
             if 'volumeFilter' in symbol_cfg:
                 config['volumeFilter'] = {**config['volumeFilter'], **symbol_cfg['volumeFilter']}
+            if 'vwapFilter' in symbol_cfg:
+                config['vwapFilter'] = {**config['vwapFilter'], **symbol_cfg['vwapFilter']}
             if 'priceZones' in symbol_cfg:
                 # Symbol-specific zones override (but also include global zones for this symbol)
                 config['priceZones'] = symbol_cfg['priceZones']
@@ -317,11 +329,23 @@ class SwingService:
 
                 # Run detection on historical data with symbol-specific config
                 symbol_config = self.config.get_symbol_config(symbol)
+
+                # Get VWAP data if VWAP filter is enabled
+                vwap_data = None
+                if symbol_config.get('vwapFilter', {}).get('enabled', False):
+                    try:
+                        vwap_service = get_vwap_service()
+                        vwap_data = vwap_service.get_vwap_data(symbol)
+                        logger.info(f"[SWING_SERVICE] {symbol}: Got {len(vwap_data)} VWAP points for filtering")
+                    except Exception as e:
+                        logger.warning(f"[SWING_SERVICE] {symbol}: Could not get VWAP data: {e}")
+
                 signals = self.detector.detect(
                     symbol=symbol,
                     interval=self.config.interval,
                     candles=candles,
-                    config=symbol_config
+                    config=symbol_config,
+                    vwap_data=vwap_data
                 )
 
                 if signals:
@@ -343,69 +367,88 @@ class SwingService:
     async def _fetch_historical_candles(self, symbol: str, limit: int = 1000) -> List[Dict]:
         """
         Fetch historical candles from Bybit API.
-        Bybit max limit is 200 per request, so we make multiple requests if needed.
+        Bybit max limit is 200 per request, so we make multiple parallel requests.
         """
-        all_candles = []
+        # Cap at 2000 candles to avoid excessive load time
+        # 2000 candles @ 1min = ~33 hours, enough for recent analysis
+        MAX_CANDLES = 2000
+        limit = min(limit, MAX_CANDLES)
+
+        # Calculate time ranges for parallel fetches
+        interval_ms = int(self.config.interval) * 60 * 1000  # interval in ms
+        now = int(time.time() * 1000)
+
+        # Build list of time ranges to fetch (each batch of 200 candles)
+        batches = []
         remaining = limit
-        end_time = None  # Start from now
+        end_time = now
 
+        while remaining > 0:
+            batch_size = min(200, remaining)
+            batches.append({'end': end_time, 'limit': batch_size})
+            end_time = end_time - (batch_size * interval_ms)
+            remaining -= batch_size
+
+        all_candles = []
+
+        async def fetch_batch(client, batch):
+            """Fetch a single batch of candles"""
+            url = (
+                f"https://api.bybit.com/v5/market/kline?"
+                f"category=linear&symbol={symbol}&interval={self.config.interval}"
+                f"&limit={batch['limit']}&end={batch['end']}"
+            )
+            try:
+                response = await client.get(url)
+                data = response.json()
+
+                if data.get("retCode") != 0:
+                    return []
+
+                raw_candles = data.get("result", {}).get("list", [])
+                return [
+                    {
+                        'timestamp': int(c[0]),
+                        'open': float(c[1]),
+                        'high': float(c[2]),
+                        'low': float(c[3]),
+                        'close': float(c[4]),
+                        'volume': float(c[5]),
+                        'turnover': float(c[6]) if len(c) > 6 else 0
+                    }
+                    for c in raw_candles
+                ]
+            except Exception as e:
+                logger.error(f"[SWING_SERVICE] Error fetching batch: {e}")
+                return []
+
+        # Fetch all batches in parallel (max 5 concurrent to avoid rate limiting)
         async with httpx.AsyncClient(timeout=30) as client:
-            while remaining > 0:
-                batch_size = min(200, remaining)
+            # Process in groups of 5 to avoid rate limiting
+            for i in range(0, len(batches), 5):
+                batch_group = batches[i:i+5]
+                results = await asyncio.gather(*[
+                    fetch_batch(client, batch) for batch in batch_group
+                ])
+                for candles in results:
+                    all_candles.extend(candles)
 
-                url = (
-                    f"https://api.bybit.com/v5/market/kline?"
-                    f"category=linear&symbol={symbol}&interval={self.config.interval}"
-                    f"&limit={batch_size}"
-                )
+                # Small delay between groups
+                if i + 5 < len(batches):
+                    await asyncio.sleep(0.2)
 
-                if end_time:
-                    url += f"&end={end_time}"
+        # Remove duplicates and sort by timestamp ascending
+        seen = set()
+        unique_candles = []
+        for c in all_candles:
+            if c['timestamp'] not in seen:
+                seen.add(c['timestamp'])
+                unique_candles.append(c)
 
-                try:
-                    response = await client.get(url)
-                    data = response.json()
+        unique_candles.sort(key=lambda c: c['timestamp'])
 
-                    if data.get("retCode") != 0:
-                        logger.error(f"[SWING_SERVICE] API error for {symbol}: {data.get('retMsg')}")
-                        break
-
-                    raw_candles = data.get("result", {}).get("list", [])
-
-                    if not raw_candles:
-                        break
-
-                    # Convert Bybit format to our format
-                    # Bybit returns: [startTime, open, high, low, close, volume, turnover]
-                    for c in raw_candles:
-                        all_candles.append({
-                            'timestamp': int(c[0]),
-                            'open': float(c[1]),
-                            'high': float(c[2]),
-                            'low': float(c[3]),
-                            'close': float(c[4]),
-                            'volume': float(c[5]),
-                            'turnover': float(c[6]) if len(c) > 6 else 0
-                        })
-
-                    # Get the oldest timestamp for next request
-                    oldest_ts = min(int(c[0]) for c in raw_candles)
-                    end_time = oldest_ts - 1  # Go back before the oldest candle
-
-                    remaining -= len(raw_candles)
-
-                    # Small delay to avoid rate limiting
-                    await asyncio.sleep(0.1)
-
-                except Exception as e:
-                    logger.error(f"[SWING_SERVICE] Error fetching candles: {e}")
-                    break
-
-        # Sort by timestamp ascending (oldest first)
-        all_candles.sort(key=lambda c: c['timestamp'])
-
-        logger.info(f"[SWING_SERVICE] {symbol}: Fetched {len(all_candles)} candles from API")
-        return all_candles
+        logger.info(f"[SWING_SERVICE] {symbol}: Fetched {len(unique_candles)} candles from API (parallel)")
+        return unique_candles
 
     async def _on_candle_close(self, symbol: str, interval: str, candle):
         """Called when a candle closes. Candle can be a Candle object or dict."""
@@ -433,11 +476,22 @@ class SwingService:
         # Run detection with symbol-specific config
         try:
             symbol_config = self.config.get_symbol_config(symbol)
+
+            # Get VWAP data if VWAP filter is enabled
+            vwap_data = None
+            if symbol_config.get('vwapFilter', {}).get('enabled', False):
+                try:
+                    vwap_service = get_vwap_service()
+                    vwap_data = vwap_service.get_vwap_data(symbol)
+                except Exception as e:
+                    logger.warning(f"[SWING_SERVICE] {symbol}: Could not get VWAP data for realtime: {e}")
+
             signals = self.detector.detect(
                 symbol=symbol,
                 interval=interval,
                 candles=candles,
-                config=symbol_config
+                config=symbol_config,
+                vwap_data=vwap_data
             )
 
             if signals:

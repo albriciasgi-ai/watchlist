@@ -2000,3 +2000,9 @@
 2026-01-18 15:25:05 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=3349.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
 2026-01-18 15:28:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=3350.13 | direction=SHORT | volume_zscore=2.36 | interval=1
 2026-01-18 15:28:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=3350.13 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-18 15:44:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=3338.82 | direction=LONG | volume_zscore=4.38 | interval=1
+2026-01-18 15:44:07 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=3338.82 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-18 15:59:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=3338.91 | direction=LONG | volume_zscore=2.37 | interval=1
+2026-01-18 15:59:01 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_LOW | remaining=60s
+2026-01-18 21:00:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=3204.78 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-18 21:00:19 | ERROR | ALERT_TIMEOUT | ETHUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert

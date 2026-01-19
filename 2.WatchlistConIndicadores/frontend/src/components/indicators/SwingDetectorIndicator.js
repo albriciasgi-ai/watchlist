@@ -24,6 +24,8 @@ class SwingDetectorIndicator extends IndicatorBase {
     this.lastStatusFetchTime = 0;
     this.fetchIntervalMs = 5000; // Poll signals every 5 seconds
     this.statusFetchIntervalMs = 10000; // Poll status/zones every 10 seconds
+    this.isFetchingSignals = false; // Prevent concurrent fetches
+    this.isFetchingStatus = false;
 
     // Colors
     this.colors = {
@@ -78,6 +80,11 @@ class SwingDetectorIndicator extends IndicatorBase {
   }
 
   async fetchSignals() {
+    // Prevent concurrent fetches
+    if (this.isFetchingSignals) return;
+    this.isFetchingSignals = true;
+    this.lastFetchTime = Date.now(); // Update immediately to prevent re-entry
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}`);
 
@@ -88,17 +95,23 @@ class SwingDetectorIndicator extends IndicatorBase {
 
       const data = await response.json();
       this.signals = data.signals || [];
-      this.lastFetchTime = Date.now();
 
       if (this.signals.length > 0) {
         console.log(`[${this.symbol}] SwingDetector: ${this.signals.length} signals`);
       }
     } catch (error) {
       console.error(`[${this.symbol}] SwingDetector fetch error:`, error);
+    } finally {
+      this.isFetchingSignals = false;
     }
   }
 
   async fetchStatus() {
+    // Prevent concurrent fetches
+    if (this.isFetchingStatus) return;
+    this.isFetchingStatus = true;
+    this.lastStatusFetchTime = Date.now(); // Update immediately to prevent re-entry
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/swing/status`);
 
@@ -110,9 +123,10 @@ class SwingDetectorIndicator extends IndicatorBase {
       // Filter zones by this symbol (zones without symbol field apply to all for backwards compatibility)
       const allZones = data.priceZones || [];
       this.priceZones = allZones.filter(z => !z.symbol || z.symbol === this.symbol);
-      this.lastStatusFetchTime = Date.now();
     } catch (error) {
       console.error(`[${this.symbol}] SwingDetector status error:`, error);
+    } finally {
+      this.isFetchingStatus = false;
     }
   }
 

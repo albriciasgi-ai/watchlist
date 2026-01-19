@@ -410,6 +410,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     try {
       const shapes = drawingManagerRef.current.getShapes();
+
+      // 🔄 Sincronizar drawingsRef INMEDIATAMENTE (antes de la llamada al servidor)
+      // para evitar parpadeo mientras se guarda
+      drawingsRef.current = shapes
+        .map(shapeData => deserializeShape(shapeData))
+        .filter(shape => shape !== null);
+
+      // Guardar al servidor (async, no bloquea el render)
       await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -417,11 +425,6 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       });
       log.info(`[MiniChart] 💾 Saved ${shapes.length} inline drawings for ${symbol}`);
 
-      // 🔄 Sincronizar drawingsRef con el estado actual del manager
-      // para evitar desincronización cuando se sale del modo dibujo
-      drawingsRef.current = shapes
-        .map(shapeData => deserializeShape(shapeData))
-        .filter(shape => shape !== null);
       setDrawingsVersion(v => v + 1);
 
       // 🔔 Notificar al padre que hubo cambios en los dibujos
@@ -717,15 +720,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       scaleConverterRef.current = scaleConverter;
 
       // 🎨 Renderizar dibujos:
-      // - Si hay DrawingToolManager con shapes, usar eso (modo editable)
-      // - Si no, usar drawingsRef (modo readonly desde servidor)
-      const hasManagerShapes = drawingManagerRef.current && drawingManagerRef.current.shapes.length > 0;
+      // - En modo dibujo: usar DrawingToolManager (permite edición)
+      // - Fuera de modo dibujo: usar drawingsRef (readonly desde servidor)
+      // NOTA: No mezclar ambas fuentes para evitar parpadeo
 
-      if (hasManagerShapes || currentDrawingMode) {
+      if (currentDrawingMode && drawingManagerRef.current) {
         // Modo editable: renderizar desde DrawingToolManager
-        if (drawingManagerRef.current) {
-          drawingManagerRef.current.render(ctx, scaleConverter);
-        }
+        drawingManagerRef.current.render(ctx, scaleConverter);
       } else if (drawingsRef.current.length > 0) {
         // Modo readonly: renderizar desde drawingsRef (dibujos guardados del servidor)
         ctx.globalAlpha = DRAWING_OPACITY;
