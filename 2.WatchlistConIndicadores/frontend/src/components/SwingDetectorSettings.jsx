@@ -149,8 +149,9 @@ const SwingDetectorSettings = ({
 
     setLoading(true);
     try {
-      // Separate global config (days, cooldownMinutes) from symbol-specific config
-      const globalFields = ['days', 'cooldownMinutes'];
+      // Separate global config (cooldownMinutes) from symbol-specific config
+      // NOTE: 'days' is now per-symbol to allow different history lengths per symbol
+      const globalFields = ['cooldownMinutes'];
       const globalChanges = {};
       const symbolChanges = {};
 

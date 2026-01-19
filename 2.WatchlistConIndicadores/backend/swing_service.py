@@ -110,6 +110,7 @@ class SwingServiceConfig:
         # Start with defaults
         config = {
             'enabled': self.enabled,
+            'days': self.days,  # Include days in config
             'swingBars': self.swingBars,
             'direction': self.direction,
             'volumeFilter': self.volumeFilter.copy(),
@@ -124,6 +125,8 @@ class SwingServiceConfig:
             symbol_cfg = self.symbolConfigs[symbol]
             if 'enabled' in symbol_cfg:
                 config['enabled'] = symbol_cfg['enabled']
+            if 'days' in symbol_cfg:
+                config['days'] = symbol_cfg['days']
             if 'swingBars' in symbol_cfg:
                 config['swingBars'] = symbol_cfg['swingBars']
             if 'direction' in symbol_cfg:
@@ -194,7 +197,7 @@ class SwingService:
 
         # Recent signals for frontend: {symbol: [signals]}
         self._recent_signals: Dict[str, List[Dict]] = {}
-        self._max_signals_per_symbol = 50
+        self._max_signals_per_symbol = 1000  # Increased to support multi-day analysis
 
         # Stats
         self.stats = {
@@ -306,12 +309,16 @@ class SwingService:
 
         logger.info("[SWING_SERVICE] Analyzing historical data...")
 
-        # Calculate how many candles based on user's days setting
-        desired_candles = calculate_candles_for_days(self.config.interval, self.config.days)
-        logger.info(f"[SWING_SERVICE] Days={self.config.days}, Interval={self.config.interval} -> {desired_candles} candles")
-
         for symbol in self.config.symbols:
             try:
+                # Get symbol-specific config (includes days override)
+                symbol_config = self.config.get_symbol_config(symbol)
+                symbol_days = symbol_config.get('days', self.config.days)
+
+                # Calculate how many candles based on symbol's days setting
+                desired_candles = calculate_candles_for_days(self.config.interval, symbol_days)
+                logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={self.config.interval} -> {desired_candles} candles")
+
                 # Get candles from WebSocket buffer first
                 candles = self.ws_manager.get_candles(symbol, self.config.interval)
                 logger.info(f"[SWING_SERVICE] {symbol}: WebSocket buffer has {len(candles)} candles")
@@ -327,8 +334,7 @@ class SwingService:
 
                 logger.info(f"[SWING_SERVICE] {symbol}: Analyzing {len(candles)} candles...")
 
-                # Run detection on historical data with symbol-specific config
-                symbol_config = self.config.get_symbol_config(symbol)
+                # symbol_config already obtained above (includes days override)
 
                 # Get VWAP data if VWAP filter is enabled
                 vwap_data = None
@@ -368,14 +374,29 @@ class SwingService:
         """
         Fetch historical candles from Bybit API.
         Bybit max limit is 200 per request, so we make multiple parallel requests.
+
+        No artificial cap - respects user's days setting up to system limits.
+        Max candles by timeframe (based on MAX_DAYS_BY_INTERVAL):
+        - 1m/5 days = 7,200 candles
+        - 5m/30 days = 8,640 candles
+        - 15m/90 days = 8,640 candles
+        - 60m/360 days = 8,640 candles
+        - 4h/720 days = 4,320 candles
+        - D/1440 days = 1,440 candles
         """
-        # Cap at 2000 candles to avoid excessive load time
-        # 2000 candles @ 1min = ~33 hours, enough for recent analysis
-        MAX_CANDLES = 2000
-        limit = min(limit, MAX_CANDLES)
+        # No cap - let the system limits (MAX_DAYS_BY_INTERVAL) control this
+        # The limit is already calculated based on days setting
+        logger.info(f"[SWING_SERVICE] {symbol}: Fetching {limit} candles from API...")
 
         # Calculate time ranges for parallel fetches
-        interval_ms = int(self.config.interval) * 60 * 1000  # interval in ms
+        # Handle daily/weekly intervals differently
+        interval_str = self.config.interval
+        if interval_str == "D":
+            interval_ms = 24 * 60 * 60 * 1000  # 1 day in ms
+        elif interval_str == "W":
+            interval_ms = 7 * 24 * 60 * 60 * 1000  # 1 week in ms
+        else:
+            interval_ms = int(interval_str) * 60 * 1000  # interval in ms
         now = int(time.time() * 1000)
 
         # Build list of time ranges to fetch (each batch of 200 candles)
@@ -422,20 +443,21 @@ class SwingService:
                 logger.error(f"[SWING_SERVICE] Error fetching batch: {e}")
                 return []
 
-        # Fetch all batches in parallel (max 5 concurrent to avoid rate limiting)
-        async with httpx.AsyncClient(timeout=30) as client:
-            # Process in groups of 5 to avoid rate limiting
-            for i in range(0, len(batches), 5):
-                batch_group = batches[i:i+5]
+        # Fetch all batches in parallel (max 10 concurrent to balance speed vs rate limiting)
+        # 10 concurrent = 2000 candles per group, so 8640 candles = 5 groups = ~1 second
+        async with httpx.AsyncClient(timeout=60) as client:
+            # Process in groups of 10 to avoid rate limiting while being faster
+            for i in range(0, len(batches), 10):
+                batch_group = batches[i:i+10]
                 results = await asyncio.gather(*[
                     fetch_batch(client, batch) for batch in batch_group
                 ])
                 for candles in results:
                     all_candles.extend(candles)
 
-                # Small delay between groups
-                if i + 5 < len(batches):
-                    await asyncio.sleep(0.2)
+                # Small delay between groups to respect API rate limits
+                if i + 10 < len(batches):
+                    await asyncio.sleep(0.15)
 
         # Remove duplicates and sort by timestamp ascending
         seen = set()

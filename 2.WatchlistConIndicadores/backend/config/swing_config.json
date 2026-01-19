@@ -5,7 +5,7 @@
     "ETHUSDT"
   ],
   "interval": "1",
-  "days": 1,
+  "days": 30,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -13,7 +13,7 @@
         "minZScore": 2,
         "lookbackBars": 25
       },
-      "days": 10,
+      "days": 5,
       "vwapFilter": {
         "enabled": true,
         "deviations": [
@@ -46,19 +46,6 @@
       "max": 97000,
       "direction": "BOTH",
       "enabled": true
-    },
-    {
-      "id": "zone_rect_rectangle_1768790228998_0.842116114995454",
-      "symbol": "ETHUSDT",
-      "min": 3200.998323577881,
-      "max": 3252.725823577881,
-      "direction": "LONG",
-      "enabled": true,
-      "sourceRectId": "rectangle_1768790228998_0.842116114995454",
-      "label": "Zone",
-      "timeStart": 1768780020000,
-      "timeEnd": 1768784280000,
-      "timeBound": true
     }
   ],
   "useDrawingZones": true,
