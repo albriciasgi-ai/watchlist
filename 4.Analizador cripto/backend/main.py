@@ -144,9 +144,9 @@ def calculate_volume_delta(candles_data):
 def status():
     now_utc = datetime.now(timezone.utc)
     now_colombia = now_utc.astimezone(COLOMBIA_TZ)
-    
+
     cache_files = list(CACHE_DIR.glob("*_volumedelta.json"))
-    
+
     return {
         "status": "ok",
         "time_utc": int(now_utc.timestamp()),
@@ -158,6 +158,61 @@ def status():
         "cache_max_age_seconds": CACHE_MAX_AGE,
         "max_days_limits": MAX_DAYS_BY_INTERVAL
     }
+
+
+@app.get("/api/tickers")
+async def get_tickers(symbols: str = None):
+    """
+    Obtiene precio actual y cambio 24h de multiples simbolos en una sola llamada.
+    Mucho mas rapido que hacer multiples llamadas a historical.
+
+    Parametros:
+    - symbols: Lista de simbolos separados por coma (ej: BTCUSDT,ETHUSDT,SOLUSDT)
+               Si no se provee, retorna todos los tickers disponibles.
+
+    Retorna:
+    - Lista de tickers con lastPrice, price24hPcnt, highPrice24h, lowPrice24h
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # Bybit API: obtener todos los tickers de linear (futures perpetuos)
+            url = "https://api.bybit.com/v5/market/tickers?category=linear"
+            response = await client.get(url)
+            data = response.json()
+
+            if data.get("retCode") != 0:
+                return {"success": False, "error": data.get("retMsg", "Unknown error")}
+
+            tickers_list = data.get("result", {}).get("list", [])
+
+            # Si se especificaron simbolos, filtrar
+            if symbols:
+                symbol_set = set(s.strip().upper() for s in symbols.split(","))
+                tickers_list = [t for t in tickers_list if t.get("symbol") in symbol_set]
+
+            # Formatear respuesta
+            result = {}
+            for ticker in tickers_list:
+                symbol = ticker.get("symbol")
+                result[symbol] = {
+                    "lastPrice": float(ticker.get("lastPrice", 0)),
+                    "price24hPcnt": float(ticker.get("price24hPcnt", 0)) * 100,  # Convertir a porcentaje
+                    "highPrice24h": float(ticker.get("highPrice24h", 0)),
+                    "lowPrice24h": float(ticker.get("lowPrice24h", 0)),
+                    "volume24h": float(ticker.get("volume24h", 0)),
+                    "turnover24h": float(ticker.get("turnover24h", 0)),
+                }
+
+            return {
+                "success": True,
+                "data": result,
+                "count": len(result)
+            }
+
+    except Exception as e:
+        print(f"[TICKERS ERROR] {str(e)}")
+        return {"success": False, "error": str(e)}
+
 
 INTERVAL_MAP = {
     "1": "1",

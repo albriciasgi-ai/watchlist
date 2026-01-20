@@ -127,91 +127,36 @@ const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
     }
   }, [currentSymbol, symbols]);
 
-  // Calcular hora de las 7pm Colombia del dia anterior o actual
-  const get7pmColombiaTimestamp = useCallback(() => {
-    const now = new Date();
-
-    // Colombia es UTC-5
-    const colombiaOffset = -5 * 60; // minutos
-    const localOffset = now.getTimezoneOffset(); // minutos (positivo si esta al oeste de UTC)
-    const diffMinutes = colombiaOffset + localOffset;
-
-    // Hora actual en Colombia
-    const colombiaTime = new Date(now.getTime() + diffMinutes * 60 * 1000);
-
-    // Si son menos de las 7pm en Colombia, usar las 7pm del dia anterior
-    // Si son las 7pm o mas, usar las 7pm de hoy
-    const colombiaHour = colombiaTime.getHours();
-
-    let target7pm = new Date(colombiaTime);
-    target7pm.setHours(19, 0, 0, 0);
-
-    if (colombiaHour < 19) {
-      // Antes de las 7pm, usar ayer a las 7pm
-      target7pm.setDate(target7pm.getDate() - 1);
-    }
-
-    // Convertir de vuelta a timestamp UTC
-    const target7pmUTC = new Date(target7pm.getTime() - diffMinutes * 60 * 1000);
-
-    return target7pmUTC.getTime();
-  }, []);
-
-  // Fetch precio a las 7pm y precio actual para cada simbolo
+  // Fetch precios usando endpoint optimizado de tickers (una sola llamada)
   const fetchPriceChanges = useCallback(async () => {
     setIsLoading(true);
-    const changes = {};
-    const timestamp7pm = get7pmColombiaTimestamp();
 
     try {
-      // Fetch en paralelo para todos los simbolos
-      const promises = symbols.map(async (symbol) => {
-        try {
-          // Obtener precio actual
-          const currentResponse = await fetch(
-            `${API_BASE_URL}/api/historical/${symbol}?interval=1&days=1`
-          );
-          const currentData = await currentResponse.json();
+      // Una sola llamada para todos los simbolos
+      const symbolsParam = symbols.join(',');
+      const response = await fetch(
+        `${API_BASE_URL}/api/tickers?symbols=${symbolsParam}`
+      );
+      const data = await response.json();
 
-          if (!currentData.success || !currentData.data || currentData.data.length === 0) {
-            return { symbol, change: null };
-          }
+      if (!data.success) {
+        console.error('Error fetching tickers:', data.error);
+        setIsLoading(false);
+        return;
+      }
 
-          const candles = currentData.data;
-          const currentPrice = candles[candles.length - 1].close;
-
-          // Buscar la vela mas cercana a las 7pm
-          let price7pm = null;
-          for (let i = candles.length - 1; i >= 0; i--) {
-            const candleTime = new Date(candles[i].datetime).getTime();
-            if (candleTime <= timestamp7pm) {
-              price7pm = candles[i].close;
-              break;
-            }
-          }
-
-          // Si no encontramos vela de las 7pm, usar la primera vela disponible
-          if (price7pm === null && candles.length > 0) {
-            price7pm = candles[0].close;
-          }
-
-          if (price7pm && currentPrice) {
-            const change = ((currentPrice - price7pm) / price7pm) * 100;
-            return { symbol, change, currentPrice };
-          }
-
-          return { symbol, change: null };
-        } catch (error) {
-          console.error(`Error fetching ${symbol}:`, error);
-          return { symbol, change: null };
+      const changes = {};
+      for (const symbol of symbols) {
+        const ticker = data.data[symbol];
+        if (ticker) {
+          changes[symbol] = {
+            change: ticker.price24hPcnt,  // Ya viene en porcentaje
+            currentPrice: ticker.lastPrice
+          };
+        } else {
+          changes[symbol] = { change: null, currentPrice: null };
         }
-      });
-
-      const results = await Promise.all(promises);
-
-      results.forEach(({ symbol, change, currentPrice }) => {
-        changes[symbol] = { change, currentPrice };
-      });
+      }
 
       setPriceChanges(changes);
     } catch (error) {
@@ -219,7 +164,7 @@ const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [symbols, get7pmColombiaTimestamp]);
+  }, [symbols]);
 
   // Fetch inicial y cada 60 segundos
   useEffect(() => {
@@ -458,8 +403,8 @@ const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
         fontSize: '10px',
         color: '#888'
       }}>
-        <div>Variacion desde 7pm COL</div>
-        <div>Flechas ↑↓: navegar</div>
+        <div>Variacion 24h</div>
+        <div>Flechas: navegar</div>
       </div>
     </div>
   );
