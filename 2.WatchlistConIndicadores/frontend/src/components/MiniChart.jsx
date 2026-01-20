@@ -27,6 +27,8 @@ import MeasurementTool from "./drawing/MeasurementTool";
 import TextEditModal from "./drawing/TextEditModal";
 import Logger from '../utils/Logger.js';
 import RenderManager from '../utils/RenderManager.js';
+import CandleCache from '../utils/CandleCache.js';
+import IndicatorCache from '../utils/IndicatorCache.js';
 
 // Logger instance
 const log = new Logger('MiniChart', { level: 'info' });
@@ -1034,10 +1036,24 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const loadHistoricalData = async () => {
     try {
       const timestamp = Date.now();
-      const url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
 
-      console.log(`[${symbol}] Solicitando histórico: ${days} días @ ${interval}`);
-      
+      // 🔄 CARGA INCREMENTAL: Verificar si hay cache disponible
+      const cached = await CandleCache.get(symbol, interval);
+      let url;
+      let isIncremental = false;
+
+      if (cached && cached.candles.length > 0) {
+        // Tenemos cache - pedir solo velas nuevas desde el último timestamp
+        const sinceTs = cached.lastTimestamp;
+        url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&since_timestamp=${sinceTs}&t=${timestamp}`;
+        isIncremental = true;
+        console.log(`[${symbol}] 🔄 Carga INCREMENTAL: desde ${new Date(sinceTs).toLocaleString()} (${cached.candles.length} velas en cache)`);
+      } else {
+        // No hay cache - carga completa
+        url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
+        console.log(`[${symbol}] 📥 Carga COMPLETA: ${days} días @ ${interval}`);
+      }
+
       const res = await fetch(url, {
         cache: 'no-cache',
         headers: {
@@ -1046,64 +1062,62 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
       });
       const json = await res.json();
-      
-      if (json.success && json.data && json.data.length > 0) {
-        let historicalCandles = json.data;
-        
+
+      if (json.success && json.data) {
+        let newCandles = json.data;
+
+        // Filtrar vela en progreso
         const now = Date.now();
-        const lastCandle = historicalCandles[historicalCandles.length - 1];
         const intervalMs = getIntervalMilliseconds(interval);
         const currentTimeframeStart = Math.floor(now / intervalMs) * intervalMs;
-        
-        if (lastCandle.timestamp >= currentTimeframeStart) {
-          log.debug(`[${symbol}] ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo`, {
-            timestamp: lastCandle.timestamp,
-            datetime: lastCandle.datetime_colombia
-          });
 
-          historicalCandles = historicalCandles.slice(0, -1);
-        }
-
-        // ✅ FIX v2: Al recargar histórico, NUNCA perder velas que ya teníamos
-        const existingCandles = candlesRef.current;
-        let shouldResetZoom = false;
-
-        const lastHistorical = historicalCandles[historicalCandles.length - 1];
-
-        if (existingCandles && existingCandles.length > 0) {
-          const lastExisting = existingCandles[existingCandles.length - 1];
-
-          // Si ya tenemos más velas que el histórico, NO reemplazar
-          if (existingCandles.length >= historicalCandles.length) {
-            const lastExistingTs = lastExisting.timestamp;
-            const newerFromHistorical = historicalCandles.filter(c => c.timestamp > lastExistingTs);
-
-            if (newerFromHistorical.length > 0) {
-              candlesRef.current = [...existingCandles, ...newerFromHistorical];
-            }
-          } else {
-            // El histórico tiene más velas - usarlo pero preservar las más recientes del WebSocket
-            const lastHistoricalTs = lastHistorical.timestamp;
-            const newerCandles = existingCandles.filter(c => c.timestamp > lastHistoricalTs);
-
-            if (newerCandles.length > 0) {
-              historicalCandles = [...historicalCandles, ...newerCandles];
-            }
-
-            candlesRef.current = historicalCandles;
-            shouldResetZoom = true;
+        if (newCandles.length > 0) {
+          const lastCandle = newCandles[newCandles.length - 1];
+          if (lastCandle.timestamp >= currentTimeframeStart) {
+            log.debug(`[${symbol}] ⚠️ Removiendo vela en progreso`);
+            newCandles = newCandles.slice(0, -1);
           }
-        } else {
-          candlesRef.current = historicalCandles;
-          shouldResetZoom = true;
         }
 
-        console.log(`[${symbol}] ✅ Histórico: ${candlesRef.current.length} velas`);
+        // Merge con cache si es carga incremental
+        let finalCandles;
+        // Resetear zoom si: carga completa O primera carga con cache (zoom está en default)
+        const isFirstLoad = viewStateRef.current.zoom === 1 && candlesRef.current.length === 0;
+        let shouldResetZoom = isFirstLoad;
+
+        if (isIncremental && cached) {
+          // Merge: cache + nuevas velas
+          finalCandles = CandleCache.merge(cached.candles, newCandles);
+          console.log(`[${symbol}] ✅ Incremental: +${newCandles.length} velas nuevas = ${finalCandles.length} total`);
+        } else {
+          // Carga completa - usar todas las velas
+          finalCandles = newCandles;
+          shouldResetZoom = true;
+          console.log(`[${symbol}] ✅ Completa: ${finalCandles.length} velas`);
+        }
+
+        // Preservar velas del WebSocket que son más nuevas
+        const existingCandles = candlesRef.current;
+        if (existingCandles && existingCandles.length > 0 && finalCandles.length > 0) {
+          const lastFinalTs = finalCandles[finalCandles.length - 1].timestamp;
+          const newerFromWs = existingCandles.filter(c => c.timestamp > lastFinalTs);
+          if (newerFromWs.length > 0) {
+            finalCandles = [...finalCandles, ...newerFromWs];
+          }
+        }
+
+        // Actualizar ref y cache
+        candlesRef.current = finalCandles;
+
+        // Guardar en cache (async, no blocking)
+        CandleCache.set(symbol, interval, finalCandles);
+
+        console.log(`[${symbol}] ✅ Histórico final: ${candlesRef.current.length} velas`);
 
         // ✅ NUEVO: Notificar a IndicatorManager que las velas están disponibles
         // Esto permite que DBT pueda hacer análisis completo inicial
         if (indicatorManagerRef.current) {
-          indicatorManagerRef.current.onHistoricalCandlesLoaded(historicalCandles);
+          indicatorManagerRef.current.onHistoricalCandlesLoaded(finalCandles);
         }
 
         // 🎯 Solo resetear escala y zoom cuando hay cambios significativos (carga inicial o más velas)
@@ -1113,14 +1127,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           priceScaleRef.current.maxPrice = null;
 
           // Ajustar zoom inicial para mostrar el número deseado de velas
-          // Minichart: ~573 velas, Fullscreen: ~1222 velas
+          // Minichart: ~800 velas (máximo contexto)
+          // Fullscreen: ~1500 velas
           if (canvasRef.current) {
             const rect = canvasRef.current.getBoundingClientRect();
             const chartWidth = rect.width - 75; // Restar márgenes
 
             // Determinar número de velas deseado según tamaño del canvas
             // Si width > 1000px, es fullscreen, de lo contrario es minichart
-            const targetCandles = chartWidth > 1000 ? 1222 : 573;
+            // Más velas = menos zoom = más contexto histórico visible
+            const targetCandles = chartWidth > 1000 ? 1500 : 800;
 
             // Calcular zoom necesario para mostrar ese número de velas
             // barWidth = 8 * zoom, candlesPerScreen = chartWidth / barWidth
@@ -1289,6 +1305,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           inProgressCandleRef.current = newCandle;
           // Performance: Disabled frequent logging
           // log.trace(`[${symbol}] Estado: ${candlesRef.current.length} confirmadas, En progreso: ${true ? 'SÍ' : 'NO'}`);
+
+          // 🔄 FASE 5: Sincronizar caches cuando se cierra una vela
+          // 1. Actualizar cache de velas con la nueva vela cerrada
+          CandleCache.set(symbol, interval, candlesRef.current);
+          // 2. Invalidar cache de indicadores (necesitan recalcularse)
+          IndicatorCache.invalidate(symbol, interval);
 
           // ✅ REAL-TIME DETECTION: Notificar al IndicatorManager cuando se cierra una vela
           // Usa referencia directa (sin spread operator) para evitar copia de 2000+ objetos
@@ -1641,6 +1663,20 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const goToLatestCandle = () => {
     viewStateRef.current.offset = 0;
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+  };
+
+  const goToFirstCandle = () => {
+    // Calcular el offset máximo para mostrar la primera vela
+    const canvas = canvasRef.current;
+    if (!canvas || !candlesRef.current || candlesRef.current.length === 0) return;
+
+    const chartWidth = canvas.width - 75; // 75 = priceScaleWidth
+    const barWidth = Math.max(2, Math.min(20, 8 * viewStateRef.current.zoom));
+    const candlesPerScreen = Math.floor(chartWidth / barWidth);
+    const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+
+    viewStateRef.current.offset = maxOffset;
     drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
   };
 
@@ -2114,6 +2150,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
       // Refrescar indicadores (VWAP, etc.) para que tengan datos actualizados
       if (indicatorManagerRef.current) {
+        // 🚀 OPTIMIZACIÓN: Restaurar indicadores desde cache o refetch
         indicatorManagerRef.current.refresh();
       }
     } else if (!isVisible && wsSubscribedRef.current) {
@@ -2121,6 +2158,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       log.debug(`[${symbol}] 💤 Pausando WebSocket (no visible)`);
       wsManager.unsubscribe(symbol, wsHandlerRef.current);
       wsSubscribedRef.current = false;
+
+      // 🚀 OPTIMIZACIÓN: Descargar datos de indicadores para liberar RAM
+      // Los datos se guardan en IndicatorCache (IndexedDB) para restaurar después
+      if (indicatorManagerRef.current) {
+        indicatorManagerRef.current.unloadData();
+      }
     }
   }, [isVisible, isInitialized, symbol, interval, isFullscreen, isFullscreenChild, externalIndicatorManager]);
 
@@ -2224,6 +2267,23 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             ⛶
           </button>
           <button
+            className="goto-first-btn"
+            onClick={goToFirstCandle}
+            title="Ir a primera vela"
+            style={{
+              background: '#607D8B',
+              color: 'white',
+              border: 'none',
+              padding: '4px 8px',
+              borderRadius: '3px 0 0 3px',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}
+          >
+            |←
+          </button>
+          <button
             className="goto-latest-btn"
             onClick={goToLatestCandle}
             title="Ir a ultima vela"
@@ -2232,7 +2292,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               color: 'white',
               border: 'none',
               padding: '4px 8px',
-              borderRadius: '3px',
+              borderRadius: '0 3px 3px 0',
               cursor: 'pointer',
               fontSize: '11px',
               fontWeight: 'bold'

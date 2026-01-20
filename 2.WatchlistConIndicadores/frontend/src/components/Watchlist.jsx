@@ -18,6 +18,7 @@ import IndicatorPreloader from "../utils/IndicatorPreloader";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
+import backgroundPreloader from '../utils/BackgroundPreloader.js';
 import { API_BASE_URL } from "../config";
 
 // Logger instance
@@ -304,6 +305,24 @@ const Watchlist = () => {
     preload();
     */
   }, [interval, days]); // Re-precargar si cambian timeframe o días
+
+  // 🚀 FASE 3: Background Preloader - Precarga inteligente de datos
+  useEffect(() => {
+    // Configurar el preloader con parámetros actuales
+    backgroundPreloader.configure({
+      interval,
+      days: parseInt(days),
+      symbols
+    });
+
+    // Iniciar precarga en background después de 5 segundos
+    // (dar tiempo a que los charts visibles carguen primero)
+    const preloadTimeout = setTimeout(() => {
+      backgroundPreloader.startPreloading();
+    }, 5000);
+
+    return () => clearTimeout(preloadTimeout);
+  }, [interval, days]);
 
   // Notificar al backend cuando cambia el timeframe activo
   // Esto hace que el backend solo monitoree el timeframe que el usuario tiene seleccionado
@@ -1492,6 +1511,41 @@ const Watchlist = () => {
                   if (sdIndicator) {
                     sdIndicator.updateConfig(config);
                   }
+                }}
+                onBackendConfigSaved={async () => {
+                  // 🔄 Refresh SwingDetector indicators for ALL symbols using the global registry
+                  console.log('[Watchlist] Backend config saved - refreshing all SwingDetector indicators');
+
+                  // 1. First, invalidate ALL swing caches for all symbols IMMEDIATELY
+                  const allManagers = IndicatorManagerRegistry.getAll();
+                  console.log(`[Watchlist] Found ${allManagers.length} managers - invalidating caches...`);
+
+                  // Import IndicatorCache dynamically to invalidate
+                  const { default: IndicatorCache } = await import('../utils/IndicatorCache.js');
+                  for (const [symbol] of allManagers) {
+                    await IndicatorCache.invalidate(symbol, interval);
+                    console.log(`[Watchlist] 🗑️ Invalidated cache for ${symbol}`);
+                  }
+
+                  // 2. Wait for backend to complete reanalyze_historical()
+                  console.log('[Watchlist] Waiting 2s for backend reanalysis...');
+                  await new Promise(resolve => setTimeout(resolve, 2000));
+
+                  // 3. Now fetch fresh data for all indicators
+                  let refreshedCount = 0;
+                  for (const [symbol, manager] of allManagers) {
+                    const sdIndicator = manager?.getSwingDetectorIndicator();
+                    if (sdIndicator) {
+                      console.log(`[Watchlist] ✅ Refreshing SwingDetector for ${symbol}`);
+                      // Force re-fetch signals (bypass cache)
+                      sdIndicator.signals = [];
+                      sdIndicator.priceZones = [];
+                      await sdIndicator.fetchSignals(true); // forceRefresh = true
+                      await sdIndicator.fetchStatus(); // Also refresh zones
+                      refreshedCount++;
+                    }
+                  }
+                  console.log(`[Watchlist] ✅ Refreshed ${refreshedCount} SwingDetector indicators`);
                 }}
               />
             </div>

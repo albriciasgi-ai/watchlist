@@ -12,14 +12,14 @@
     "ADAUSDT",
     "DOGEUSDT"
   ],
-  "interval": "60",
-  "days": 90,
+  "interval": "5",
+  "days": 30,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
         "enabled": true,
-        "minZScore": 1.5,
-        "lookbackBars": 100
+        "minZScore": 2,
+        "lookbackBars": 50
       },
       "days": 1,
       "vwapFilter": {
@@ -35,12 +35,68 @@
     "BTCUSDT": {
       "volumeFilter": {
         "enabled": true,
-        "minZScore": 3,
-        "lookbackBars": 45
+        "minZScore": 2,
+        "lookbackBars": 50
       },
       "swingBars": 5,
       "days": 5,
       "cooldownMinutes": 20
+    },
+    "XRPUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "TRXUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "GALAUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "SUIUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "TRBUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "SOLUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "ADAUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
+    },
+    "DOGEUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 50
+      }
     }
   },
   "swingBars": 3,

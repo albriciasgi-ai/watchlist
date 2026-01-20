@@ -316,6 +316,9 @@ class SwingService:
                 symbol_config = self.config.get_symbol_config(symbol)
                 symbol_days = symbol_config.get('days', self.config.days)
 
+                # 🔍 DEBUG: Log symbol config for troubleshooting
+                logger.info(f"[SWING_SERVICE] {symbol}: Config = swingBars={symbol_config.get('swingBars')}, direction={symbol_config.get('direction')}, volumeFilter={symbol_config.get('volumeFilter')}")
+
                 # Calculate how many candles based on symbol's days setting
                 desired_candles = calculate_candles_for_days(self.config.interval, symbol_days)
                 logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={self.config.interval} -> {desired_candles} candles")

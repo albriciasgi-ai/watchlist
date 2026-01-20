@@ -2,6 +2,7 @@
 
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+import IndicatorCache from '../../utils/IndicatorCache.js';
 
 /**
  * SwingDetectorIndicator - Simple swing high/low visualization
@@ -117,13 +118,26 @@ class SwingDetectorIndicator extends IndicatorBase {
     }
   }
 
-  async fetchSignals() {
+  async fetchSignals(forceRefresh = false) {
     // Prevent concurrent fetches
     if (this.isFetchingSignals) return;
     this.isFetchingSignals = true;
     this.lastFetchTime = Date.now(); // Update immediately to prevent re-entry
 
     try {
+      // 🔄 FASE 4: Verificar cache primero (skip si forceRefresh)
+      if (!forceRefresh) {
+        const cached = await IndicatorCache.get('swing', this.symbol, this.interval);
+        if (cached) {
+          this.signals = cached;
+          return; // Usar datos cacheados
+        }
+      } else {
+        // 🔄 forceRefresh: Invalidar cache antes de fetch
+        console.log(`[${this.symbol}] SwingDetector: forceRefresh - invalidando cache`);
+        await IndicatorCache.invalidate(this.symbol, this.interval);
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}`);
 
       if (!response.ok) {
@@ -134,8 +148,12 @@ class SwingDetectorIndicator extends IndicatorBase {
       const data = await response.json();
       this.signals = data.signals || [];
 
+      // Log con diferenciación de fuente
+      console.log(`[${this.symbol}] SwingDetector: ${this.signals.length} signals from BACKEND${forceRefresh ? ' (forceRefresh)' : ''}`);
+
+      // Guardar en cache
       if (this.signals.length > 0) {
-        console.log(`[${this.symbol}] SwingDetector: ${this.signals.length} signals`);
+        IndicatorCache.set('swing', this.symbol, this.interval, this.signals);
       }
     } catch (error) {
       console.error(`[${this.symbol}] SwingDetector fetch error:`, error);

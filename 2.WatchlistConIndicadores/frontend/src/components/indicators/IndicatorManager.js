@@ -1051,6 +1051,44 @@ class IndicatorManager {
   }
 
   /**
+   * 🚀 OPTIMIZACIÓN: Descarga datos de indicadores para liberar RAM
+   * Los datos permanecen en IndicatorCache (IndexedDB) para restaurar después
+   * Llamado cuando el chart sale del viewport
+   */
+  unloadData() {
+    log.debug(`[${this.symbol}] 💤 Descargando datos de indicadores (RAM optimization)`);
+
+    this.indicators.forEach(indicator => {
+      // Limpiar arrays de datos grandes
+      if (indicator.vwapData) {
+        indicator.vwapData = [];
+      }
+      if (indicator.dataMap) {
+        indicator.dataMap.clear();
+      }
+      if (indicator.signals) {
+        indicator.signals = [];
+      }
+      if (indicator.resistances) {
+        indicator.resistances = [];
+      }
+      if (indicator.supports) {
+        indicator.supports = [];
+      }
+      if (indicator.consolidationZones) {
+        indicator.consolidationZones = [];
+      }
+      // Volume Delta / CVD
+      if (indicator.volumeDeltaData) {
+        indicator.volumeDeltaData = [];
+      }
+      if (indicator.cvdData) {
+        indicator.cvdData = [];
+      }
+    });
+  }
+
+  /**
    * 🎯 NUEVO: Convierte índice numérico a etiqueta alfabética
    * 0 -> A, 1 -> B, ..., 25 -> Z, 26 -> AA, 27 -> AB, etc.
    */

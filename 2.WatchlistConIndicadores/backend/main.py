@@ -181,7 +181,18 @@ def get_interval_minutes(interval: str) -> int:
         return int(interval)
 
 @app.get("/api/historical/{symbol}")
-async def get_historical(symbol: str, interval: str = "15", days: int = 30):
+async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None):
+    """
+    Obtiene datos históricos de velas.
+
+    Parámetros:
+    - symbol: Par de trading (ej: BTCUSDT)
+    - interval: Timeframe (1, 5, 15, 60, 240, D, W)
+    - days: Días de histórico a obtener (si no se usa since_timestamp)
+    - since_timestamp: (OPCIONAL) Timestamp en ms desde el cual obtener velas.
+                       Si se provee, ignora 'days' y obtiene velas desde ese timestamp hasta ahora.
+                       Útil para carga incremental (solo pedir datos nuevos).
+    """
     try:
         interval_clean = (
             interval.replace("m", "")
@@ -189,29 +200,37 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
             .replace("d", "D")
             .replace("w", "W")
         )
-        
+
         if "h" in interval.lower() and interval_clean.isdigit():
             interval_clean = str(int(interval_clean) * 60)
-        
+
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
-
-        # CRÍTICO: Aplicar límite máximo por timeframe
-        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
-        days_to_fetch = min(days, max_days_allowed)
-        
-        print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
-
         interval_minutes = get_interval_minutes(interval_final)
-        minutes_in_period = days_to_fetch * 24 * 60
-        total_candles_needed = int(minutes_in_period / interval_minutes)
-        
-        # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
-        limit_per_request = min(1000, total_candles_needed)
-        
+
         now_ms = int(time.time() * 1000)
         # Buffer de 10 minutos al futuro
         end_ms = now_ms + (10 * 60 * 1000)
-        start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+        # 🔄 CARGA INCREMENTAL: Si se provee since_timestamp, usar ese como inicio
+        if since_timestamp is not None:
+            start_ms = since_timestamp
+            # Calcular cuántas velas necesitamos desde since_timestamp hasta ahora
+            time_range_ms = now_ms - since_timestamp
+            total_candles_needed = max(1, int(time_range_ms / (interval_minutes * 60 * 1000)) + 10)  # +10 de buffer
+            days_to_fetch = None  # No aplica
+            max_days_allowed = None
+            print(f"[{symbol}] [DATA] HISTORICAL INCREMENTAL: desde {since_timestamp} (~{total_candles_needed} velas esperadas) @ {interval_final}")
+        else:
+            # Comportamiento original: usar days
+            max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+            days_to_fetch = min(days, max_days_allowed)
+            minutes_in_period = days_to_fetch * 24 * 60
+            total_candles_needed = int(minutes_in_period / interval_minutes)
+            start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+            print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+
+        # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
+        limit_per_request = min(1000, total_candles_needed)
 
         all_candles = []
         current_start = start_ms
@@ -292,9 +311,13 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
             candles = candles[-total_candles_needed:]
 
         now_colombia = datetime.now(COLOMBIA_TZ)
-        
+
+        # Información sobre el rango de datos retornado
+        first_candle_ts = candles[0]["timestamp"] if candles else None
+        last_candle_ts = candles[-1]["timestamp"] if candles else None
+
         print(f"[{symbol}] Historical: [OK] Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
-        
+
         return {
             "symbol": symbol,
             "interval": interval_final,
@@ -305,9 +328,14 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
             "success": True,
             "total_candles": len(candles),
             "requested_candles": total_candles_needed,
-            "days_requested": days,
+            "days_requested": days if since_timestamp is None else None,
             "days_fetched": days_to_fetch,
-            "max_days_allowed": max_days_allowed
+            "max_days_allowed": max_days_allowed,
+            # 🔄 Info para carga incremental
+            "incremental": since_timestamp is not None,
+            "since_timestamp": since_timestamp,
+            "first_candle_timestamp": first_candle_ts,
+            "last_candle_timestamp": last_candle_ts
         }
 
     except Exception as e:
@@ -3444,6 +3472,68 @@ async def update_swing_config(request: Request):
 
     except Exception as e:
         print(f"[ERROR] Swing config update: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# NOTE: This endpoint MUST be defined BEFORE /api/swing/config/{symbol}
+# because FastAPI matches routes in order, and "apply-to-all" would match as a symbol name
+@app.post("/api/swing/config/apply-to-all")
+async def apply_swing_config_to_all_symbols(request: Request):
+    """
+    Apply configuration changes to ALL symbols at once.
+
+    Useful when user wants to set the same volumeFilter, vwapFilter,
+    swingBars, etc. across all monitored symbols.
+
+    Body example:
+    {
+        "volumeFilter": {"enabled": true, "minZScore": 2.0},
+        "swingBars": 5,
+        "direction": "BOTH"
+    }
+    """
+    try:
+        data = await request.json()
+        swing_service = get_swing_service()
+
+        # Ensure symbolConfigs exists
+        if not hasattr(swing_service.config, 'symbolConfigs') or swing_service.config.symbolConfigs is None:
+            swing_service.config.symbolConfigs = {}
+
+        # Get list of all symbols
+        all_symbols = swing_service.config.symbols or []
+        updated_symbols = []
+
+        # Apply config to each symbol
+        for symbol in all_symbols:
+            if symbol not in swing_service.config.symbolConfigs:
+                swing_service.config.symbolConfigs[symbol] = {}
+
+            # Merge new settings into symbol config
+            for key, value in data.items():
+                swing_service.config.symbolConfigs[symbol][key] = value
+
+            updated_symbols.append(symbol)
+
+        # Save config
+        swing_service._save_config()
+
+        # Re-analyze to apply new settings
+        print(f"[SWING] Config applied to ALL symbols ({len(updated_symbols)}): {list(data.keys())}")
+        await swing_service.reanalyze_historical()
+
+        return {
+            "success": True,
+            "message": f"Config applied to {len(updated_symbols)} symbols",
+            "updated_symbols": updated_symbols,
+            "applied_fields": list(data.keys())
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Swing apply to all: {str(e)}")
         return {
             "success": False,
             "error": str(e)

@@ -6,6 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## REGLAS DEL PROYECTO
 
+### Idioma
+**IMPORTANTE**: Comunicarse SIEMPRE en español con el usuario. Todos los mensajes, explicaciones y comentarios deben ser en español.
+
 ### Perfil
 Agente programador Python con experiencia en desarrollo de aplicaciones.
 
@@ -872,6 +875,21 @@ Tasa de exito de envio: 100%
 4. **WebSocket callbacks sobrescritos**
    - Problema: SwingService y RealtimePatternService competian por el mismo callback
    - Solucion: WebSocketManager ahora soporta multiples listeners con `add_candle_close_listener()`
+
+5. **Ordenamiento de rutas en FastAPI (Enero 2026)**
+   - Problema: La ruta `/api/swing/config/{symbol}` se definia ANTES de `/api/swing/config/apply-to-all`
+   - FastAPI matchea rutas en orden de definicion
+   - El path "apply-to-all" se interpretaba como un `{symbol}`, creando entrada corrupta en config
+   - Solucion: Definir rutas especificas ANTES de rutas con parametros variables
+   ```python
+   # CORRECTO - ruta especifica primero
+   @app.post("/api/swing/config/apply-to-all")  # Esta primero
+   @app.post("/api/swing/config/{symbol}")       # Esta despues
+
+   # INCORRECTO - la ruta con {symbol} captura "apply-to-all"
+   @app.post("/api/swing/config/{symbol}")       # Captura todo
+   @app.post("/api/swing/config/apply-to-all")   # Nunca se alcanza
+   ```
 
 ## Troubleshooting
 

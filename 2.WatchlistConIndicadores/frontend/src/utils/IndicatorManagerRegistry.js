@@ -17,7 +17,9 @@ class IndicatorManagerRegistry {
   }
 
   static getAll() {
-    return Array.from(this.managers.entries());
+    const entries = Array.from(this.managers.entries());
+    console.log(`[Registry] getAll() called - returning ${entries.length} managers:`, entries.map(e => e[0]));
+    return entries;
   }
 
   static getAllSymbols() {

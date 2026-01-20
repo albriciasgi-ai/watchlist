@@ -1,0 +1,654 @@
+Activating virtual environment...
+Installing/Updating dependencies...
+Requirement already satisfied: fastapi==0.115.0 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from -r requirements.txt (line 1)) (0.115.0)
+Requirement already satisfied: uvicorn==0.32.0 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from uvicorn[standard]==0.32.0->-r requirements.txt (line 2)) (0.32.0)
+Requirement already satisfied: httpx==0.27.2 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from -r requirements.txt (line 3)) (0.27.2)
+Collecting pydantic==2.9.2 (from -r requirements.txt (line 4))
+  Using cached pydantic-2.9.2-py3-none-any.whl.metadata (149 kB)
+Requirement already satisfied: pydantic-settings==2.5.2 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from -r requirements.txt (line 5)) (2.5.2)
+Requirement already satisfied: python-multipart==0.0.12 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from -r requirements.txt (line 6)) (0.0.12)
+Requirement already satisfied: websockets==13.1 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from -r requirements.txt (line 7)) (13.1)
+Requirement already satisfied: starlette<0.39.0,>=0.37.2 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from fastapi==0.115.0->-r requirements.txt (line 1)) (0.38.6)
+Requirement already satisfied: typing-extensions>=4.8.0 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from fastapi==0.115.0->-r requirements.txt (line 1)) (4.15.0)
+Requirement already satisfied: annotated-types>=0.6.0 in c:\users\inven\onedrive\documentos\tradingbot_python\backend\venv\lib\site-packages (from pydantic==2.9.2->-r requirements.txt (line 4)) (0.7.0)
+Collecting pydantic-core==2.23.4 (from pydantic==2.9.2->-r requirements.txt (line 4))
+  Using cached pydantic_core-2.23.4.tar.gz (402 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Installing backend dependencies ... done
+  Preparing metadata (pyproject.toml) ... error
+  error: subprocess-exited-with-error
+
+  × Preparing metadata (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [23 lines of output]
+      Python reports SOABI: cp314-win_amd64
+      Computed rustc target triple: x86_64-pc-windows-msvc
+      Installation directory: C:\Users\inven\AppData\Local\puccinialin\puccinialin\Cache
+      Rustup already downloaded
+      Installing rust to C:\Users\inven\AppData\Local\puccinialin\puccinialin\Cache\rustup
+      warn: It looks like you have an existing rustup settings file at:
+      warn: C:\Users\inven\.rustup\settings.toml
+      warn: Rustup will install the default toolchain as specified in the settings file,
+      warn: instead of the one inferred from the default host triple.
+      info: profile set to 'minimal'
+      info: default host triple is x86_64-pc-windows-msvc
+      warn: Updating existing toolchain, profile choice will be ignored
+      info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+      info: default toolchain set to 'stable-x86_64-pc-windows-msvc'
+      Checking if cargo is installed
+      cargo 1.92.0 (344c4567c 2025-10-21)
+
+      Cargo, the Rust package manager, is not installed or is not on PATH.
+      This package requires Rust and Cargo to compile extensions. Install it through
+      the system's package manager or via https://rustup.rs/
+
+      Checking for Rust toolchain....
+      Rust not found, installing into a temporary directory
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> pydantic-core
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+
+=======================================
+  Starting Backend Server...
+=======================================
+  Backend URL: http://localhost:5000
+  API Docs: http://localhost:5000/docs
+=======================================
+
+[OK] Loaded trading directions: 16 symbols configured
+C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\3.TradingBot_Python\backend\main.py:290: DeprecationWarning:
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+  @app.on_event("startup")
+C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\3.TradingBot_Python\backend\main.py:299: DeprecationWarning:
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+  @app.on_event("shutdown")
+INFO:     Started server process [5444]
+INFO:     Waiting for application startup.
+[INFO] Trading Bot Backend starting...
+[INFO] Loaded configuration for 16 symbols
+[BYBIT] Client initialized: https://api-demo.bybit.com (mode: demo)
+[OK] Loaded credentials from file (Demo Trading)
+[INFO] Loaded 206 orders from history
+[OK] Backend ready
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56806 - "GET /api/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50196 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50197 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50198 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58906 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58907 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58909 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     ('127.0.0.1', 61893) - "WebSocket /ws" [accepted]
+[INFO] WebSocket client connected (total: 1)
+INFO:     connection open
+INFO:     ('127.0.0.1', 49676) - "WebSocket /ws" [accepted]
+[INFO] WebSocket client connected (total: 2)
+INFO:     connection open
+INFO:     127.0.0.1:49691 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61949 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57046 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57591 - "GET /api/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59317 - "GET /api/config HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3142ms
+[SYNC] Time synced: offset = 3147ms
+[SYNC] Time synced: offset = 3147ms
+[SYNC] Time synced: offset = 3148ms
+[SYNC] Time synced: offset = 3147ms
+[SYNC] Time synced: offset = 3148ms
+INFO:     127.0.0.1:57982 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57983 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57979 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57981 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57980 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52617 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51603 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49687 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54037 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54041 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54038 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54040 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65022 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52973 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52975 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65018 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65020 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55867 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54768 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54767 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50103 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54770 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54771 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54769 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65120 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55651 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64544 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57173 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61588 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55046 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55050 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55048 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61076 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50642 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58547 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58702 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58701 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58703 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58706 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58705 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51243 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60806 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60807 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60808 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55295 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60809 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62261 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50082 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50827 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58215 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50829 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49799 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49800 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49801 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49803 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49804 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49802 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61769 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54357 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55885 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51839 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51840 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53018 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51841 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49276 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58997 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56578 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58647 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58649 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49194 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59937 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59943 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59944 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59945 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59946 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57669 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57333 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53649 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57666 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57667 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60283 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57670 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52893 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62960 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60282 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60281 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62563 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62564 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62566 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62569 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62565 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62568 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55878 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60584 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60586 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62725 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63611 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55080 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63610 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58447 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52750 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56412 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49687 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49672 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59491 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64969 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64968 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64966 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64963 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64964 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64965 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59046 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50728 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61453 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50675 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61454 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50582 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49967 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57536 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55027 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53889 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53891 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59729 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59733 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59730 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59731 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59735 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61791 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61235 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51131 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61237 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62929 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62930 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62931 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60676 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60674 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63831 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63834 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56752 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59384 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56753 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55366 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55368 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55365 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55364 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56539 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57430 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52334 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52337 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52335 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52336 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59500 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49757 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54730 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54732 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65239 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56162 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56165 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56163 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56168 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56167 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56164 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50480 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58198 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50481 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50482 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50485 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50486 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50321 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50323 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57928 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51423 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62263 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62264 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62269 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62266 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62270 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60808 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62265 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63841 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51703 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51702 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51706 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51705 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59037 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50259 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50260 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50261 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50546 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63688 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56492 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56495 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56491 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56498 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56490 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56497 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49672 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60833 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60839 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65373 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60838 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60837 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50880 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50882 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64302 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55188 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59951 - "GET /api/status HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3132ms
+[SYNC] Time synced: offset = 3136ms
+[SYNC] Time synced: offset = 3141ms
+[SYNC] Time synced: offset = 3112ms
+[SYNC] Time synced: offset = 3122ms
+[SYNC] Time synced: offset = 3127ms
+INFO:     127.0.0.1:51501 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51500 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51495 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51497 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51496 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51498 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50500 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53451 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50503 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50504 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54195 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54193 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61782 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61781 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61780 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57843 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58695 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54422 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54421 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54425 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54419 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54420 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54424 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65268 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57883 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57885 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57884 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57882 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61540 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61538 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50403 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50402 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55784 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57976 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63228 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63233 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63231 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63229 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63230 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53942 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54810 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54808 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54809 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65237 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54807 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49365 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62098 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49367 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49369 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62249 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58318 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58322 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49691 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58320 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58323 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58319 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55681 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55440 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58453 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64484 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57038 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64485 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58298 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65206 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54583 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60335 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60344 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60349 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57211 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60347 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60346 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60345 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60348 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51446 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63001 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58470 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58471 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58469 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49904 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52625 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52627 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52629 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63778 - "GET /api/status HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3136ms
+INFO:     127.0.0.1:50090 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 2842ms
+[SYNC] Time synced: offset = 2945ms
+[SYNC] Time synced: offset = 2942ms
+INFO:     127.0.0.1:50091 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50092 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50095 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50093 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50096 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49719 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58222 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58218 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54382 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58221 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62200 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57805 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50594 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50595 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55885 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50596 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50598 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50599 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50597 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64287 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60626 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60628 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62350 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60627 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60629 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59099 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60161 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57292 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60159 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57103 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64438 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64440 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64436 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64233 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64437 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64441 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52764 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58028 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60856 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60852 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60853 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60857 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54997 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54999 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54504 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54502 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51561 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49900 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49902 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49903 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49905 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49901 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49906 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50725 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64648 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64647 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64649 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64643 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51199 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63220 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61141 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61138 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61142 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60324 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51864 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51863 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51866 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51860 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51862 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51861 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49672 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49678 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49674 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49677 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64575 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64576 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59261 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55082 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57922 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55084 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61057 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61058 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61062 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 2932ms
+INFO:     127.0.0.1:61060 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61061 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61059 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54091 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3127ms
+INFO:     127.0.0.1:57496 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58266 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 2878ms
+INFO:     127.0.0.1:65413 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58267 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49686 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50311 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64803 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51035 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49921 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51037 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62387 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64812 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64814 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64815 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64819 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64813 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64818 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57590 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63141 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52815 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52813 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52814 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52816 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55273 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54631 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61482 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61484 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62484 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62488 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62486 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62489 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62487 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62485 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50146 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56283 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52213 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51045 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53778 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53776 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53777 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61312 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61314 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55943 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55945 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56979 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63345 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63389 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63347 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63346 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63349 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63350 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51678 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61339 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61340 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63047 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63569 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59289 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59288 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59291 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58628 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58631 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58629 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55064 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58633 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58630 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50650 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49735 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61565 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60259 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60262 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60263 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61139 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51028 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53973 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56778 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53257 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64677 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64683 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64681 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64680 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64678 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64679 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3120ms
+INFO:     127.0.0.1:49384 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 2802ms
+[SYNC] Time synced: offset = 2802ms
+INFO:     127.0.0.1:60748 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+[SYNC] Time synced: offset = 3036ms
+[SYNC] Time synced: offset = 3038ms
+INFO:     127.0.0.1:62975 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62980 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62979 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62981 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54583 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62933 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62931 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53935 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52595 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53209 - "GET /api/position/ADAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52284 - "GET /api/position/ARBUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52285 - "GET /api/position/AVAXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52288 - "GET /api/position/CAKEUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52286 - "GET /api/position/BTCUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52289 - "GET /api/position/ETHUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52615 - "GET /api/position/HIFIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52613 - "GET /api/position/GALAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49214 - "GET /api/position/INJUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52702 - "GET /api/position/POLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52700 - "GET /api/position/IOTAUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52701 - "GET /api/position/MUBARAKUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64906 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58133 - "GET /api/position/SOLUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59557 - "GET /api/position/UNIUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63376 - "GET /api/position/XRPUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58135 - "GET /api/position/TRXUSDT HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56334 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56026 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56027 - "GET /api/credentials/check HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61309 - "GET /api/directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50925 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55625 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61137 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62072 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62632 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58480 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58036 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58860 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60396 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53936 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59550 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58823 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57139 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49849 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53756 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60694 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53293 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65273 - "GET /api/status HTTP/1.1" 200 OK

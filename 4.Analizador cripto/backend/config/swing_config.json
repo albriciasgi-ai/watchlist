@@ -1,0 +1,114 @@
+{
+  "enabled": true,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "XRPUSDT",
+    "TRXUSDT",
+    "GALAUSDT",
+    "SUIUSDT",
+    "TRBUSDT",
+    "SOLUSDT",
+    "ADAUSDT",
+    "DOGEUSDT"
+  ],
+  "interval": "60",
+  "days": 90,
+  "symbolConfigs": {
+    "ETHUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 100
+      },
+      "days": 1,
+      "vwapFilter": {
+        "enabled": true,
+        "deviations": [
+          2,
+          3
+        ],
+        "marginPercent": 20,
+        "skipVolumeInRectangle": false
+      }
+    },
+    "BTCUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 45
+      },
+      "swingBars": 5,
+      "days": 5,
+      "cooldownMinutes": 20
+    },
+    "XRPUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "TRXUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      }
+    },
+    "GALAUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      }
+    },
+    "SUIUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      }
+    },
+    "apply-to-all": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      }
+    },
+    "SOLUSDT": {
+      "days": 90
+    }
+  },
+  "swingBars": 3,
+  "direction": "BOTH",
+  "priceZones": [
+    {
+      "id": "zone_1768764021306",
+      "symbol": "BTCUSDT",
+      "min": 90000,
+      "max": 97000,
+      "direction": "BOTH",
+      "enabled": true
+    }
+  ],
+  "useDrawingZones": true,
+  "volumeFilter": {
+    "enabled": false,
+    "minZScore": 1,
+    "lookbackBars": 10
+  },
+  "vwapFilter": {
+    "enabled": false,
+    "deviations": [
+      1,
+      2,
+      3
+    ],
+    "marginPercent": 20,
+    "skipVolumeInRectangle": false
+  },
+  "cooldownMinutes": 5,
+  "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
+}
