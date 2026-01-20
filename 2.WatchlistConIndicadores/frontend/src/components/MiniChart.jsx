@@ -107,12 +107,13 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
-  
+  const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
+
   const candlesRef = useRef([]);
   const inProgressCandleRef = useRef(null);
-  
+
   const lastPriceRef = useRef(null);
   const animationFrameRef = useRef(null);
   const mountedRef = useRef(true);
@@ -122,9 +123,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // ✅ NUEVO: Referencia para chequeo de gaps
   const gapCheckIntervalRef = useRef(null);
-  
+
   const [mousePos, setMousePos] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // 🎯 VIRTUALIZACIÓN: Estado de visibilidad
+  const [isInitialized, setIsInitialized] = useState(false); // 🎯 VIRTUALIZACIÓN: Estado de inicialización
   const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
 
@@ -159,6 +162,44 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       setFullscreenOiMode(oiMode);
     }
   }, [oiMode]);
+
+  // 🎯 VIRTUALIZACIÓN: Detectar visibilidad con IntersectionObserver
+  useEffect(() => {
+    // No virtualizar charts fullscreen o hijos de fullscreen
+    if (isFullscreen || isFullscreenChild) {
+      setIsVisible(true);
+      return;
+    }
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const nowVisible = entry.isIntersecting;
+          // Usar functional update para evitar stale closure
+          setIsVisible(prev => {
+            if (prev !== nowVisible) {
+              log.debug(`[${symbol}] 👁️ Visibility: ${nowVisible ? 'VISIBLE' : 'HIDDEN'}`);
+            }
+            return nowVisible;
+          });
+        });
+      },
+      {
+        root: null, // viewport
+        rootMargin: '100px', // Pre-cargar 100px antes de entrar al viewport
+        threshold: 0.1 // 10% visible es suficiente
+      }
+    );
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [symbol, isFullscreen, isFullscreenChild]);
 
   // 🎯 Ajustar zoom al abrir fullscreen
   useEffect(() => {
@@ -1110,7 +1151,24 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           log.debug(`[${symbol}] ⏸️ Range Detection NO habilitado o indicatorManager no existe`);
         }
 
+        // 🎯 VIRTUALIZACIÓN: Marcar como inicializado después de la primera carga exitosa
+        setIsInitialized(true);
+
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+
+        // ⏱️ CRONÓMETRO: Notificar al padre después de que los indicadores hayan tenido tiempo de cargar
+        // Los indicadores (VWAP, Swing) hacen fetch asíncrono, esperamos a que terminen
+        if (onChartLoaded && indicatorManagerRef.current) {
+          // Esperar a que el IndicatorManager refresque los indicadores
+          indicatorManagerRef.current.refresh().then(() => {
+            onChartLoaded();
+          }).catch(() => {
+            // Si falla el refresh, notificar de todas formas
+            onChartLoaded();
+          });
+        } else if (onChartLoaded) {
+          onChartLoaded();
+        }
       } else {
         console.error(`[${symbol}] Error en respuesta histórica`, json);
       }
@@ -1120,7 +1178,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   };
 
   // ==================== WEBSOCKET HANDLER ====================
-  
+
+  // 🎯 VIRTUALIZACIÓN: Ref para el handler (usada para pause/resume)
+  const wsHandlerRef = useRef(null);
+
   const handleWebSocketMessage = (data) => {
     if (!mountedRef.current) return;
 
@@ -1926,8 +1987,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     const bybitInterval = getBybitInterval(interval);
     wsManager.connect(bybitInterval);
+
+    // 🎯 VIRTUALIZACIÓN: Guardar handler en ref y marcar como suscrito
+    wsHandlerRef.current = handleWebSocketMessage;
     wsManager.subscribe(symbol, handleWebSocketMessage);
-    
+    wsSubscribedRef.current = true;
+
     log.debug(`[${symbol}] 📡 Suscrito a WebSocket @ ${bybitInterval}`);
 
     // ✅ REDUCIDO: Recarga cada 5 minutos (el auto-refresh de indicadores se hace cada 1 min)
@@ -2027,6 +2092,38 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     };
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
 
+  // 🎯 VIRTUALIZACIÓN: Pausar/reanudar WebSocket según visibilidad
+  const wsSubscribedRef = useRef(true); // Inicia como true porque el useEffect principal ya suscribe
+
+  useEffect(() => {
+    // No aplicar virtualización a fullscreen o managers externos
+    if (isFullscreen || isFullscreenChild || externalIndicatorManager) return;
+    // Necesitamos que el handler exista
+    if (!wsHandlerRef.current) return;
+    // No pausar hasta que se haya completado la inicialización
+    if (!isInitialized) return;
+
+    if (isVisible && !wsSubscribedRef.current) {
+      // Chart visible - suscribir a WebSocket y recargar datos
+      log.debug(`[${symbol}] 📡 Reactivando chart (visible) - recargando datos...`);
+      wsManager.subscribe(symbol, wsHandlerRef.current);
+      wsSubscribedRef.current = true;
+
+      // Recargar datos históricos para rellenar gaps acumulados mientras estaba pausado
+      loadHistoricalData();
+
+      // Refrescar indicadores (VWAP, etc.) para que tengan datos actualizados
+      if (indicatorManagerRef.current) {
+        indicatorManagerRef.current.refresh();
+      }
+    } else if (!isVisible && wsSubscribedRef.current) {
+      // Chart no visible - desuscribir de WebSocket para ahorrar recursos
+      log.debug(`[${symbol}] 💤 Pausando WebSocket (no visible)`);
+      wsManager.unsubscribe(symbol, wsHandlerRef.current);
+      wsSubscribedRef.current = false;
+    }
+  }, [isVisible, isInitialized, symbol, interval, isFullscreen, isFullscreenChild, externalIndicatorManager]);
+
   // ✅ NUEVO: Escuchar evento global para aplicar rangos a todas las monedas
   useEffect(() => {
     const handleGlobalRangeCreated = (event) => {
@@ -2077,7 +2174,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   return (
     <>
-      <div className="mini-chart">
+      <div className="mini-chart" ref={containerRef}>
+        {/* 🎯 VIRTUALIZACIÓN: Placeholder cuando el chart no es visible */}
+        {!isVisible && !isFullscreen && !isFullscreenChild && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#1a1a2e',
+            color: '#666',
+            fontSize: '14px',
+            zIndex: 50
+          }}>
+            <span>Chart pausado (fuera de pantalla)</span>
+          </div>
+        )}
         {/* 🎯 Contenedor para botones - ubicado a la derecha al lado del timeframe */}
         <div style={{
           position: 'absolute',

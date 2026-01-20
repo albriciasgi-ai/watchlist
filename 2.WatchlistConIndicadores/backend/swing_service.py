@@ -676,6 +676,10 @@ class SwingService:
     def update_config(self, new_config: Dict) -> bool:
         """Update service configuration"""
         try:
+            # Detectar si cambiaron interval o days para re-analizar
+            old_interval = self.config.interval
+            old_days = self.config.days
+
             # Update config fields
             for key, value in new_config.items():
                 if hasattr(self.config, key):
@@ -683,6 +687,18 @@ class SwingService:
 
             self._save_config()
             logger.info(f"[SWING_SERVICE] Config updated: {new_config.keys()}")
+
+            # Si cambió interval o days, re-analizar datos históricos
+            needs_reanalyze = (
+                'interval' in new_config and new_config['interval'] != old_interval or
+                'days' in new_config and new_config['days'] != old_days
+            )
+
+            if needs_reanalyze:
+                logger.info(f"[SWING_SERVICE] Interval/days changed, triggering re-analysis...")
+                import asyncio
+                asyncio.create_task(self.reanalyze_historical())
+
             return True
 
         except Exception as e:

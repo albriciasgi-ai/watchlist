@@ -11,7 +11,7 @@ import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
-import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard";
+// import ProximityAlertDashboard from "./ProximityAlerts/ProximityAlertDashboard"; // REMOVIDO - No usado
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
 import IndicatorPreloader from "../utils/IndicatorPreloader";
@@ -24,7 +24,8 @@ import { API_BASE_URL } from "../config";
 const log = new Logger('Watchlist', { level: 'info' });
 
 const symbols = [
-  "BTCUSDT", "ETHUSDT"
+  "BTCUSDT", "ETHUSDT", "XRPUSDT", "TRXUSDT", "GALAUSDT",
+  "SUIUSDT", "TRBUSDT", "SOLUSDT", "ADAUSDT", "DOGEUSDT"
 ];
 
 // OPTIMIZADO: Días por defecto por timeframe (para reducir carga)
@@ -65,6 +66,11 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 const Watchlist = () => {
   const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
   const [days, setDays] = useState("1");           // Inicia con 1 día para carga rápida
+  const [gridColumns, setGridColumns] = useState(() => {
+    // Cargar preferencia guardada o usar 2 por defecto
+    const saved = localStorage.getItem('watchlist_grid_columns');
+    return saved ? parseInt(saved) : 2;
+  });
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "CVD": true,
@@ -150,6 +156,13 @@ const Watchlist = () => {
   const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
   const [fullscreenInterval, setFullscreenInterval] = useState(null);
 
+  // ⏱️ CRONÓMETRO: Estados para medir tiempo de carga
+  const [loadStartTime, setLoadStartTime] = useState(Date.now());
+  const [loadedCharts, setLoadedCharts] = useState(new Set());
+  const [showLoadTimePopup, setShowLoadTimePopup] = useState(false);
+  const [lastLoadTime, setLastLoadTime] = useState(null);
+  const [loadReason, setLoadReason] = useState('Carga inicial');
+
   // Handler para cambios de fullscreen desde MiniChart (memoizado para estabilidad)
   const handleFullscreenChange = useCallback((sym, chartInterval, isFullscreen) => {
     console.log(`[Watchlist] 🖥️ Fullscreen change: ${sym} (${chartInterval}) - isFullscreen: ${isFullscreen}`);
@@ -163,6 +176,38 @@ const Watchlist = () => {
       log.debug(`[Watchlist] 🖥️ Fullscreen closed`);
     }
   }, []);
+
+  // ⏱️ CRONÓMETRO: Handler cuando un chart termina de cargar
+  const handleChartLoaded = useCallback((sym) => {
+    setLoadedCharts(prev => {
+      const newSet = new Set(prev);
+      newSet.add(sym);
+      return newSet;
+    });
+  }, []);
+
+  // ⏱️ CRONÓMETRO: Ref para evitar múltiples popups
+  const loadCompleteRef = useRef(false);
+
+  // ⏱️ CRONÓMETRO: Detectar cuando todos los charts han cargado
+  useEffect(() => {
+    if (loadedCharts.size === symbols.length && loadStartTime && !loadCompleteRef.current) {
+      loadCompleteRef.current = true; // Marcar como completado para evitar duplicados
+      const endTime = Date.now();
+      const totalTime = ((endTime - loadStartTime) / 1000).toFixed(2);
+      setLastLoadTime(totalTime);
+      setShowLoadTimePopup(true);
+      log.debug(`[Watchlist] ⏱️ Carga completa en ${totalTime}s`);
+    }
+  }, [loadedCharts, symbols.length, loadStartTime]);
+
+  // ⏱️ CRONÓMETRO: Reiniciar al cambiar timeframe o días
+  useEffect(() => {
+    loadCompleteRef.current = false; // Resetear flag
+    setLoadStartTime(Date.now());
+    setLoadedCharts(new Set());
+    setLoadReason(`Cambio a ${interval} / ${days} días`);
+  }, [interval, days]);
 
   // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
   useEffect(() => {
@@ -184,6 +229,37 @@ const Watchlist = () => {
   useEffect(() => {
     wsManager.changeInterval(interval);
   }, [interval]);
+
+  // 🔄 SINCRONIZACIÓN: Actualizar Swing Detector cuando cambia timeframe o días
+  useEffect(() => {
+    const syncSwingDetector = async () => {
+      // Solo sincronizar si el indicador está habilitado
+      if (!indicatorStates["Swing Detector"]) return;
+
+      try {
+        log.debug(`[Watchlist] 🔄 Sincronizando Swing Detector: interval=${interval}, days=${days}`);
+
+        const response = await fetch(`${API_BASE_URL}/api/swing/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            interval: interval,
+            days: parseInt(days)
+          })
+        });
+
+        if (response.ok) {
+          log.debug(`[Watchlist] ✅ Swing Detector sincronizado`);
+        } else {
+          log.error(`[Watchlist] ❌ Error sincronizando Swing Detector`);
+        }
+      } catch (error) {
+        log.error(`[Watchlist] ❌ Error sincronizando Swing Detector:`, error);
+      }
+    };
+
+    syncSwingDetector();
+  }, [interval, days, indicatorStates["Swing Detector"]]);
 
   // 🚀 Precarga de indicadores DESHABILITADA para optimización
   useEffect(() => {
@@ -853,6 +929,24 @@ const Watchlist = () => {
             </select>
           </label>
 
+          <label>
+            Columnas:
+            <select
+              value={gridColumns}
+              onChange={(e) => {
+                const cols = parseInt(e.target.value);
+                setGridColumns(cols);
+                localStorage.setItem('watchlist_grid_columns', cols.toString());
+              }}
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+
           <div className="indicator-toggles">
             <label>
               <input 
@@ -1001,10 +1095,10 @@ const Watchlist = () => {
         </div>
       </div>
 
-      {/* 🎯 NUEVO: Proximity Alert Dashboard */}
-      <ProximityAlertDashboard symbols={symbols} indicatorManagers={indicatorManagers} />
-
-      <div className="grid-container">
+      <div
+        className="grid-container"
+        style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
+      >
         {symbols.map((sym) => (
           <MiniChart
             key={sym}
@@ -1026,9 +1120,70 @@ const Watchlist = () => {
             onOpenSwingDetectorSettings={(indicatorManagerRef) => handleOpenSwingDetectorSettings(sym, indicatorManagerRef)}
             rejectionPatternConfig={rejectionPatternConfigs[sym]}
             onFullscreenChange={handleFullscreenChange}
+            onChartLoaded={() => handleChartLoaded(sym)}
           />
         ))}
       </div>
+
+      {/* ⏱️ CRONÓMETRO: Popup de tiempo de carga */}
+      {showLoadTimePopup && (
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+          color: 'white',
+          padding: '30px 40px',
+          borderRadius: '16px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+          zIndex: 10001,
+          textAlign: 'center',
+          minWidth: '300px'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '10px' }}>⏱️</div>
+          <div style={{ fontSize: '14px', color: '#888', marginBottom: '8px' }}>
+            {loadReason}
+          </div>
+          <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#4CAF50', marginBottom: '8px' }}>
+            {lastLoadTime}s
+          </div>
+          <div style={{ fontSize: '14px', color: '#aaa', marginBottom: '20px' }}>
+            {symbols.length} símbolos cargados
+          </div>
+          <button
+            onClick={() => setShowLoadTimePopup(false)}
+            style={{
+              background: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              padding: '10px 30px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold'
+            }}
+          >
+            OK
+          </button>
+        </div>
+      )}
+
+      {/* Overlay para el popup */}
+      {showLoadTimePopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 10000
+          }}
+          onClick={() => setShowLoadTimePopup(false)}
+        />
+      )}
 
       {showVpSettings && (
         <div className="modal-overlay" onClick={() => setShowVpSettings(false)}>

@@ -2,10 +2,18 @@
   "enabled": true,
   "symbols": [
     "BTCUSDT",
-    "ETHUSDT"
+    "ETHUSDT",
+    "XRPUSDT",
+    "TRXUSDT",
+    "GALAUSDT",
+    "SUIUSDT",
+    "TRBUSDT",
+    "SOLUSDT",
+    "ADAUSDT",
+    "DOGEUSDT"
   ],
-  "interval": "1",
-  "days": 30,
+  "interval": "60",
+  "days": 90,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
