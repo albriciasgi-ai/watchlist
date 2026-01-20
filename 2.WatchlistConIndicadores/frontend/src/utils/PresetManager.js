@@ -39,7 +39,7 @@ class PresetManager {
     "VWAP": {
       vwapType: "session",
       resetHour: 0,
-      rollingPeriod: 20,
+      rollingPeriod: 200,
       showBands: true,
       bandMultipliers: [1.0, 2.0, 3.0],
       applyCryptoAdjustment: true,

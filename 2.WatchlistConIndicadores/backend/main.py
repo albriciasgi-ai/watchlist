@@ -2430,7 +2430,7 @@ async def get_vwap(
     vwap_type: str = "session",
     reset_hour: int = 0,
     anchor_timestamp: Optional[int] = None,
-    rolling_period: int = 20,
+    rolling_period: int = 200,
     band_multipliers: str = "1.0,2.0,3.0",
     apply_crypto_adjustment: bool = True
 ):
@@ -3785,7 +3785,7 @@ async def update_vwap_service_config(request: Request):
         "interval": "1",
         "vwapType": "session",
         "resetHour": 0,
-        "rollingPeriod": 20,
+        "rollingPeriod": 200,
         "showBands": true,
         "bandMultipliers": [1.0, 2.0, 3.0],
         "applyCryptoAdjustment": true,

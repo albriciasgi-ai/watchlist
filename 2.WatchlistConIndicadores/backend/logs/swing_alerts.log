@@ -2017,3 +2017,5 @@
 2026-01-19 17:16:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
 2026-01-19 18:09:55 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=3168.20 | direction=LONG | volume_zscore=6.49 | interval=1
 2026-01-19 18:10:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-19 23:30:00 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=3181.70 | direction=LONG | volume_zscore=5.76 | interval=1
+2026-01-19 23:30:02 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed

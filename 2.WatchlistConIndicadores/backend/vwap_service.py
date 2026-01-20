@@ -40,7 +40,7 @@ class VWAPServiceConfig:
     # VWAP Type: 'session', 'rolling', 'anchored'
     vwapType: str = "session"
     resetHour: int = 0  # UTC hour for session reset
-    rollingPeriod: int = 20  # Candles for rolling VWAP
+    rollingPeriod: int = 200  # Candles for rolling VWAP
     anchorTimestamp: Optional[int] = None  # For anchored VWAP
 
     # Bands configuration

@@ -21,7 +21,7 @@ class VWAPIndicator extends IndicatorBase {
 
     // VWAP calculation config (sent to backend)
     this.vwapType = config.vwapType || 'session';
-    this.rollingPeriod = config.rollingPeriod || 20;
+    this.rollingPeriod = config.rollingPeriod || 200;
 
     // Visual configuration (frontend only)
     this.vwapColor = config.vwapColor || 'rgba(255, 152, 0, 0.8)';

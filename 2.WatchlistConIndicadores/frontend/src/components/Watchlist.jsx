@@ -24,10 +24,27 @@ import { API_BASE_URL } from "../config";
 // Logger instance
 const log = new Logger('Watchlist', { level: 'info' });
 
-const symbols = [
+// Símbolos por defecto
+const DEFAULT_SYMBOLS = [
   "BTCUSDT", "ETHUSDT", "XRPUSDT", "TRXUSDT", "GALAUSDT",
   "SUIUSDT", "TRBUSDT", "SOLUSDT", "ADAUSDT", "DOGEUSDT"
 ];
+
+// Cargar símbolos guardados o usar los por defecto
+const loadSavedSymbols = () => {
+  try {
+    const saved = localStorage.getItem('watchlist_symbols');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('[Watchlist] Error loading saved symbols:', e);
+  }
+  return DEFAULT_SYMBOLS;
+};
 
 // OPTIMIZADO: Días por defecto por timeframe (para reducir carga)
 const DEFAULT_DAYS_BY_INTERVAL = {
@@ -65,6 +82,14 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 };
 
 const Watchlist = () => {
+  // 📋 Lista de símbolos (con persistencia)
+  const [symbols, setSymbols] = useState(loadSavedSymbols);
+  const [newSymbolInput, setNewSymbolInput] = useState('');
+
+  // 🔄 Drag & Drop state
+  const [draggedSymbol, setDraggedSymbol] = useState(null);
+  const [dragOverSymbol, setDragOverSymbol] = useState(null);
+
   const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
   const [days, setDays] = useState("1");           // Inicia con 1 día para carga rápida
   const [gridColumns, setGridColumns] = useState(() => {
@@ -185,6 +210,134 @@ const Watchlist = () => {
       newSet.add(sym);
       return newSet;
     });
+  }, []);
+
+  // 🔄 DRAG & DROP: Handlers para reorganizar símbolos (Alt + Click para activar)
+  const [isReorderMode, setIsReorderMode] = useState(false);
+
+  const handleMouseDown = useCallback((e, symbol) => {
+    // Solo activar modo reordenar con Alt + Click izquierdo
+    if (e.altKey && e.button === 0) {
+      e.preventDefault();
+      setIsReorderMode(true);
+      setDraggedSymbol(symbol);
+      e.currentTarget.style.opacity = '0.5';
+      e.currentTarget.style.cursor = 'grabbing';
+    }
+  }, []);
+
+  const handleMouseUp = useCallback((e) => {
+    if (isReorderMode) {
+      setIsReorderMode(false);
+      setDraggedSymbol(null);
+      setDragOverSymbol(null);
+    }
+  }, [isReorderMode]);
+
+  const handleMouseEnterWhileDragging = useCallback((symbol) => {
+    if (isReorderMode && draggedSymbol && symbol !== draggedSymbol) {
+      setDragOverSymbol(symbol);
+    }
+  }, [isReorderMode, draggedSymbol]);
+
+  const handleMouseLeaveWhileDragging = useCallback(() => {
+    if (isReorderMode) {
+      setDragOverSymbol(null);
+    }
+  }, [isReorderMode]);
+
+  const handleDropOnSymbol = useCallback((e, targetSymbol) => {
+    if (!isReorderMode || !draggedSymbol || draggedSymbol === targetSymbol) return;
+
+    setSymbols(prevSymbols => {
+      const newSymbols = [...prevSymbols];
+      const draggedIdx = newSymbols.indexOf(draggedSymbol);
+      const targetIdx = newSymbols.indexOf(targetSymbol);
+
+      // Remover el elemento arrastrado
+      newSymbols.splice(draggedIdx, 1);
+      // Insertarlo en la nueva posición
+      newSymbols.splice(targetIdx, 0, draggedSymbol);
+
+      // Persistir en localStorage
+      localStorage.setItem('watchlist_symbols', JSON.stringify(newSymbols));
+      log.info(`[Watchlist] 🔄 Símbolos reordenados: ${draggedSymbol} movido a posición ${targetIdx}`);
+
+      return newSymbols;
+    });
+
+    setIsReorderMode(false);
+    setDraggedSymbol(null);
+    setDragOverSymbol(null);
+  }, [isReorderMode, draggedSymbol]);
+
+  // Escuchar mouseup global para terminar el drag si se suelta fuera
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      if (isReorderMode) {
+        setIsReorderMode(false);
+        setDraggedSymbol(null);
+        setDragOverSymbol(null);
+      }
+    };
+
+    if (isReorderMode) {
+      window.addEventListener('mouseup', handleGlobalMouseUp);
+      return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+    }
+  }, [isReorderMode]);
+
+  // ➕ Añadir nuevo símbolo
+  const handleAddSymbol = useCallback(() => {
+    const symbol = newSymbolInput.trim().toUpperCase();
+    if (!symbol) return;
+
+    // Validar formato (debe terminar en USDT, USDC, etc.)
+    if (!symbol.match(/^[A-Z0-9]+USD[TC]?$/)) {
+      alert('Formato inválido. Usa formato como BTCUSDT, ETHUSDT, etc.');
+      return;
+    }
+
+    // Verificar que no exista ya
+    if (symbols.includes(symbol)) {
+      alert(`${symbol} ya está en la watchlist`);
+      return;
+    }
+
+    setSymbols(prevSymbols => {
+      const newSymbols = [...prevSymbols, symbol];
+      localStorage.setItem('watchlist_symbols', JSON.stringify(newSymbols));
+      log.info(`[Watchlist] ➕ Símbolo añadido: ${symbol}`);
+      return newSymbols;
+    });
+
+    setNewSymbolInput('');
+  }, [newSymbolInput, symbols]);
+
+  // 🗑️ Eliminar símbolo
+  const handleRemoveSymbol = useCallback((symbolToRemove) => {
+    if (symbols.length <= 1) {
+      alert('Debe haber al menos un símbolo en la watchlist');
+      return;
+    }
+
+    if (!window.confirm(`¿Eliminar ${symbolToRemove} de la watchlist?`)) return;
+
+    setSymbols(prevSymbols => {
+      const newSymbols = prevSymbols.filter(s => s !== symbolToRemove);
+      localStorage.setItem('watchlist_symbols', JSON.stringify(newSymbols));
+      log.info(`[Watchlist] 🗑️ Símbolo eliminado: ${symbolToRemove}`);
+      return newSymbols;
+    });
+  }, [symbols.length]);
+
+  // 🔄 Resetear a símbolos por defecto
+  const handleResetSymbols = useCallback(() => {
+    if (!window.confirm('¿Restaurar lista de símbolos por defecto?')) return;
+
+    setSymbols(DEFAULT_SYMBOLS);
+    localStorage.setItem('watchlist_symbols', JSON.stringify(DEFAULT_SYMBOLS));
+    log.info('[Watchlist] 🔄 Símbolos restaurados a valores por defecto');
   }, []);
 
   // ⏱️ CRONÓMETRO: Ref para evitar múltiples popups
@@ -1112,6 +1265,70 @@ const Watchlist = () => {
             </button>
           </div>
         </div>
+
+        {/* ➕ Sección para añadir/gestionar símbolos */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 12px',
+          background: '#f5f5f5',
+          borderRadius: '6px',
+          marginTop: '8px'
+        }}>
+          <span style={{ fontSize: '12px', color: '#666', fontWeight: 'bold' }}>
+            Símbolos ({symbols.length}):
+          </span>
+          <input
+            type="text"
+            value={newSymbolInput}
+            onChange={(e) => setNewSymbolInput(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddSymbol()}
+            placeholder="BTCUSDT"
+            style={{
+              padding: '6px 10px',
+              fontSize: '12px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              width: '100px',
+              textTransform: 'uppercase'
+            }}
+          />
+          <button
+            onClick={handleAddSymbol}
+            style={{
+              padding: '6px 12px',
+              fontSize: '12px',
+              background: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+            title="Añadir símbolo"
+          >
+            ➕ Añadir
+          </button>
+          <button
+            onClick={handleResetSymbols}
+            style={{
+              padding: '6px 12px',
+              fontSize: '12px',
+              background: '#607D8B',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+            title="Restaurar símbolos por defecto"
+          >
+            🔄 Reset
+          </button>
+          <span style={{ fontSize: '10px', color: '#999', marginLeft: '8px' }}>
+            Alt + Click para reorganizar
+          </span>
+        </div>
       </div>
 
       <div
@@ -1119,28 +1336,77 @@ const Watchlist = () => {
         style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}
       >
         {symbols.map((sym) => (
-          <MiniChart
+          <div
             key={sym}
-            symbol={sym}
-            interval={interval}
-            days={days}
-            indicatorStates={indicatorStates}
-            vpConfig={vpConfig}
-            vpFixedRange={vpFixedRange}
-            oiMode={oiMode}
-            onOpenVpSettings={() => handleOpenVpSettings(sym)}
-            onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
-            onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
-            onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
-            onOpenVWAPSettings={(indicatorManagerRef) => handleOpenVWAPSettings(sym, indicatorManagerRef)}
-            onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
-            onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
-            onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
-            onOpenSwingDetectorSettings={(indicatorManagerRef) => handleOpenSwingDetectorSettings(sym, indicatorManagerRef)}
-            rejectionPatternConfig={rejectionPatternConfigs[sym]}
-            onFullscreenChange={handleFullscreenChange}
-            onChartLoaded={() => handleChartLoaded(sym)}
-          />
+            onMouseDown={(e) => handleMouseDown(e, sym)}
+            onMouseUp={(e) => handleDropOnSymbol(e, sym)}
+            onMouseEnter={() => handleMouseEnterWhileDragging(sym)}
+            onMouseLeave={handleMouseLeaveWhileDragging}
+            style={{
+              position: 'relative',
+              border: dragOverSymbol === sym ? '2px dashed #2196F3' :
+                      draggedSymbol === sym ? '2px solid #FF9800' : '2px solid transparent',
+              borderRadius: '8px',
+              background: dragOverSymbol === sym ? 'rgba(33, 150, 243, 0.1)' :
+                          draggedSymbol === sym ? 'rgba(255, 152, 0, 0.1)' : 'transparent',
+              opacity: draggedSymbol === sym ? 0.7 : 1,
+              transition: 'all 0.2s ease',
+              cursor: isReorderMode ? 'grabbing' : 'default'
+            }}
+          >
+            {/* Botón para eliminar símbolo */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveSymbol(sym);
+              }}
+              style={{
+                position: 'absolute',
+                top: '4px',
+                right: '4px',
+                zIndex: 100,
+                width: '20px',
+                height: '20px',
+                padding: 0,
+                background: 'rgba(244, 67, 54, 0.8)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                fontSize: '12px',
+                lineHeight: '20px',
+                textAlign: 'center',
+                opacity: 0.6,
+                transition: 'opacity 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.opacity = 1}
+              onMouseLeave={(e) => e.target.style.opacity = 0.6}
+              title={`Eliminar ${sym}`}
+            >
+              ×
+            </button>
+            <MiniChart
+              symbol={sym}
+              interval={interval}
+              days={days}
+              indicatorStates={indicatorStates}
+              vpConfig={vpConfig}
+              vpFixedRange={vpFixedRange}
+              oiMode={oiMode}
+              onOpenVpSettings={() => handleOpenVpSettings(sym)}
+              onOpenRangeDetectionSettings={(indicatorManagerRef, candles) => handleOpenRangeDetectionSettings(sym, indicatorManagerRef, candles)}
+              onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
+              onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
+              onOpenVWAPSettings={(indicatorManagerRef) => handleOpenVWAPSettings(sym, indicatorManagerRef)}
+              onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
+              onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
+              onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
+              onOpenSwingDetectorSettings={(indicatorManagerRef) => handleOpenSwingDetectorSettings(sym, indicatorManagerRef)}
+              rejectionPatternConfig={rejectionPatternConfigs[sym]}
+              onFullscreenChange={handleFullscreenChange}
+              onChartLoaded={() => handleChartLoaded(sym)}
+            />
+          </div>
         ))}
       </div>
 
@@ -1304,7 +1570,7 @@ const Watchlist = () => {
                   } : {
                     vwapType: 'session',
                     resetHour: 0,
-                    rollingPeriod: 20,
+                    rollingPeriod: 200,
                     showBands: true,
                     applyCryptoAdjustment: true,
                     bandMultipliers: [1.0, 2.0, 3.0],

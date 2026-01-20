@@ -78,7 +78,12 @@
       }
     },
     "SOLUSDT": {
-      "days": 90
+      "days": 90,
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 3,
+        "lookbackBars": 50
+      }
     }
   },
   "swingBars": 3,

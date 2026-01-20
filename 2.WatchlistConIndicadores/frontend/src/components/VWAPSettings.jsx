@@ -261,7 +261,7 @@ const VWAPSettings = ({
     // Asegurar que rollingPeriod tenga un valor por defecto
     const configWithDefaults = {
       ...config,
-      rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 20
+      rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 200
     };
 
     if (DEBUG) console.log('[VWAPSettings] Config with defaults:', configWithDefaults);
@@ -285,14 +285,14 @@ const VWAPSettings = ({
       const globalPreset = PresetManager.getGlobalPreset("VWAP");
       const presetWithDefaults = {
         ...globalPreset,
-        rollingPeriod: globalPreset.rollingPeriod !== undefined ? globalPreset.rollingPeriod : 20
+        rollingPeriod: globalPreset.rollingPeriod !== undefined ? globalPreset.rollingPeriod : 200
       };
       if (DEBUG) console.log('[VWAPSettings] Cargando preset global:', presetWithDefaults);
       setLocalConfig(presetWithDefaults);
     } else {
       const configWithDefaults = {
         ...config,
-        rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 20
+        rollingPeriod: config.rollingPeriod !== undefined ? config.rollingPeriod : 200
       };
       if (DEBUG) console.log('[VWAPSettings] Cargando config del símbolo:', configWithDefaults);
       setLocalConfig(configWithDefaults);
@@ -305,8 +305,8 @@ const VWAPSettings = ({
     if (value !== undefined && value !== null && !isNaN(value)) {
       return Number(value);
     }
-    if (DEBUG) console.log('[VWAPSettings] ⚠️ rollingPeriod inválido, usando default 20:', value);
-    return 20;
+    if (DEBUG) console.log('[VWAPSettings] ⚠️ rollingPeriod inválido, usando default 200:', value);
+    return 200;
   };
 
   // 🚀 PERF: Debounced config change handler
