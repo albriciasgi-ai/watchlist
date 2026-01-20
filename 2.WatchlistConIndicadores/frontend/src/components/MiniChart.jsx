@@ -446,10 +446,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   };
 
-  const loadDrawings = async () => {
+  // 🔄 Ref para tracking de timestamp de dibujos (sincronización entre apps)
+  const drawingsTimestampRef = useRef(null);
+
+  const loadDrawings = async (checkTimestampOnly = false) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
       const data = await response.json();
+
+      // 🔄 Si solo verificamos timestamp y no cambió, no recargar
+      if (checkTimestampOnly && data.updated_at === drawingsTimestampRef.current) {
+        return; // Sin cambios, no hacer nada
+      }
+
+      // Actualizar timestamp
+      drawingsTimestampRef.current = data.updated_at;
 
       if (data.shapes && Array.isArray(data.shapes)) {
         drawingsRef.current = data.shapes
@@ -2018,7 +2029,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     };
     
     loadHistoricalData();
-    loadDrawings(); // Load saved drawings for this symbol
+    // ✅ FIX: loadDrawings() movido a useEffect separado para evitar parpadeo
+    // cuando cambian indicatorStates (no necesita recargar dibujos)
     initIndicators();
 
     const bybitInterval = getBybitInterval(interval);
@@ -2127,6 +2139,22 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       }
     };
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
+
+  // 🎨 FIX: Cargar dibujos SOLO cuando cambia el símbolo (evita parpadeo al toggle indicadores)
+  // 🔄 SYNC: Polling cada 3s para detectar cambios desde otras apps (Analizador Cripto)
+  useEffect(() => {
+    // Carga inicial
+    loadDrawings();
+
+    // Polling para sincronizar con otras apps (solo cuando NO estamos en modo dibujo)
+    const syncInterval = setInterval(() => {
+      if (!drawingMode) {
+        loadDrawings(true); // checkTimestampOnly = true
+      }
+    }, 3000);
+
+    return () => clearInterval(syncInterval);
+  }, [symbol, drawingMode]);
 
   // 🎯 VIRTUALIZACIÓN: Pausar/reanudar WebSocket según visibilidad
   const wsSubscribedRef = useRef(true); // Inicia como true porque el useEffect principal ya suscribe

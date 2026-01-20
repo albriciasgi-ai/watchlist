@@ -423,3 +423,177 @@ INFO:     127.0.0.1 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
 3. **Encoding tildes**: Eliminados caracteres especiales
 4. **Canvas mitad pantalla**: Agregados estilos para height 100%
 5. **Swing Detector dias**: Agregada sincronizacion con backend
+
+### Sesion 20 Enero 2026 - Lista de Simbolos y Dibujos Compartidos
+
+#### 1. Lista de Simbolos Lateral (SymbolList.jsx)
+Nuevo componente que muestra una lista de monedas en el lado derecho:
+
+- **Monedas por defecto**: BTCUSDT, ETHUSDT, XRPUSDT, TRXUSDT, GALAUSDT, SUIUSDT, TRBUSDT, SOLUSDT, ADAUSDT, DOGEUSDT
+- **Variacion de precio**: Muestra % de cambio desde las 7pm hora Colombia (UTC-5)
+- **Navegacion con teclado**: Flechas arriba/abajo para cambiar de moneda
+- **Click para seleccionar**: Cambia el grafico principal al simbolo seleccionado
+- **Agregar/eliminar monedas**: Boton + para agregar, boton x (hover) para eliminar
+- **Panel colapsable**: Boton para colapsar/expandir el panel
+- **Redimensionable**: Arrastrar borde izquierdo para cambiar ancho (180px - 400px)
+- **Persistencia**: Estado (colapsado, ancho, lista de monedas) guardado en localStorage
+
+**Archivos creados/modificados:**
+- `frontend/src/components/SymbolList.jsx` (nuevo)
+- `frontend/src/components/SingleSymbolAnalyzer.jsx` (integrado SymbolList)
+- `frontend/src/styles.css` (estilos para .main-content, .symbol-list-container, etc.)
+
+#### 2. Indicadores por Defecto Optimizados
+Cambiados los indicadores habilitados por defecto para acelerar carga:
+
+```javascript
+// Habilitados por defecto:
+"VWAP": true,
+"Support & Resistance": true,
+"Swing Detector": true,
+
+// Deshabilitados por defecto:
+"Volume Delta": false,
+"CVD": false,
+"Volume Profile": false,
+"Open Interest": false,
+// ... resto deshabilitados
+```
+
+#### 3. Dibujos Compartidos entre Watchlist y Analizador
+
+**Implementacion via Symlink:**
+La carpeta de dibujos del Analizador y la Watchlist ahora apuntan al mismo lugar fisico.
+
+```
+2.WatchlistConIndicadores/backend/drawings/  →  SYMLINK
+                                                   ↓
+4.Analizador cripto/backend/drawings/        →  CARPETA REAL
+```
+
+**Comando usado (CMD como Administrador):**
+```cmd
+cd "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\2.WatchlistConIndicadores\backend"
+mklink /D drawings "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\4.Analizador cripto\backend\drawings"
+```
+
+**Backups creados:**
+- `2.WatchlistConIndicadores/backend/drawings_backup_20260120/`
+- `4.Analizador cripto/backend/drawings_backup_20260120/`
+
+#### 4. Sincronizacion de Dibujos en Tiempo Real
+
+**Problema**: Al compartir dibujos, los cambios en una app no se reflejaban en la otra (loop de redibujado).
+
+**Solucion implementada** - Polling con verificacion de timestamp:
+
+```javascript
+// En MiniChart.jsx (ambas apps)
+
+// Ref para tracking de timestamp
+const drawingsTimestampRef = useRef(null);
+
+// loadDrawings modificado para verificar timestamp
+const loadDrawings = async (checkTimestampOnly = false) => {
+  const data = await response.json();
+
+  // Si solo verificamos timestamp y no cambio, no recargar
+  if (checkTimestampOnly && data.updated_at === drawingsTimestampRef.current) {
+    return;
+  }
+
+  drawingsTimestampRef.current = data.updated_at;
+  // ... cargar shapes
+};
+
+// useEffect con polling cada 3 segundos
+useEffect(() => {
+  loadDrawings();
+
+  const syncInterval = setInterval(() => {
+    if (!drawingMode) {
+      loadDrawings(true); // Solo verifica timestamp
+    }
+  }, 3000);
+
+  return () => clearInterval(syncInterval);
+}, [symbol, drawingMode]);
+```
+
+**Resultado:**
+- Los dibujos se sincronizan entre apps en ~3 segundos
+- Sin parpadeo (solo recarga si el archivo realmente cambio)
+- No hay conflictos al editar (el polling se pausa en modo dibujo)
+
+#### 5. Fix Parpadeo de Dibujos en Watchlist
+
+**Problema**: Los dibujos parpadeaban al hacer toggle de indicadores.
+
+**Causa**: `loadDrawings()` estaba dentro del useEffect principal que dependia de `indicatorStates`.
+
+**Solucion**: Movido `loadDrawings()` a un useEffect separado que solo depende de `symbol`:
+
+```javascript
+// ANTES (causaba parpadeo):
+useEffect(() => {
+  loadHistoricalData();
+  loadDrawings();  // Se ejecutaba al toggle indicadores
+  initIndicators();
+}, [symbol, interval, days, indicatorStates, ...]);
+
+// DESPUES (sin parpadeo):
+useEffect(() => {
+  loadHistoricalData();
+  // loadDrawings movido a useEffect separado
+  initIndicators();
+}, [symbol, interval, days, indicatorStates, ...]);
+
+useEffect(() => {
+  loadDrawings();
+  // ... polling
+}, [symbol, drawingMode]);  // Solo depende de symbol
+```
+
+---
+
+## SISTEMA DE DIBUJOS COMPARTIDOS
+
+### Arquitectura
+
+```
+┌─────────────────────┐     ┌─────────────────────┐
+│  Analizador Cripto  │     │      Watchlist      │
+│   (puerto 10000)    │     │    (puerto 8000)    │
+└─────────┬───────────┘     └─────────┬───────────┘
+          │                           │
+          │ GET/POST                  │ GET/POST
+          │ /api/drawings/{symbol}    │ /api/drawings/{symbol}
+          │                           │
+          ▼                           ▼
+┌─────────────────────────────────────────────────┐
+│     4.Analizador cripto/backend/drawings/       │
+│                                                 │
+│   BTCUSDT.json  ETHUSDT.json  SOLUSDT.json ... │
+│                                                 │
+│   (Watchlist accede via SYMLINK)                │
+└─────────────────────────────────────────────────┘
+```
+
+### Flujo de Sincronizacion
+
+1. Usuario dibuja en App A
+2. App A guarda en `/api/drawings/{symbol}` → archivo JSON actualizado
+3. App B hace polling cada 3s con `checkTimestampOnly=true`
+4. Backend retorna `updated_at` diferente
+5. App B recarga dibujos completos
+6. Canvas se actualiza con los nuevos dibujos
+
+### Rollback (si es necesario)
+
+```cmd
+# Eliminar symlink
+rmdir "2.WatchlistConIndicadores\backend\drawings"
+
+# Restaurar backup
+move "2.WatchlistConIndicadores\backend\drawings_backup_20260120" "2.WatchlistConIndicadores\backend\drawings"
+```

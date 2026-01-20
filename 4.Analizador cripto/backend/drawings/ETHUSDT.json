@@ -2,10 +2,24 @@
   "symbol": "ETHUSDT",
   "shapes": [
     {
+      "type": "rectangle",
+      "id": "rectangle_1768930574351_0.8660969128286008",
+      "price1": 3167.0108692893405,
+      "time1": 1766098800000,
+      "price2": 3288.0098540609138,
+      "time2": 1767193200000,
+      "label": "Zone",
+      "style": {
+        "fill": "rgba(59, 130, 246, 0.15)",
+        "stroke": "#3B82F6",
+        "labelBg": "#3B82F6"
+      }
+    },
+    {
       "type": "horizontal",
-      "id": "horizontal_1768791849724_0.28114151009301724",
-      "price": 2971.3723861522326,
-      "time": 1767733200000,
+      "id": "horizontal_1768930578387_0.7064790541358416",
+      "price": 3361.113407360406,
+      "time": 1766152800000,
       "style": {
         "color": "#8B5CF6",
         "lineWidth": 2,
@@ -16,16 +30,57 @@
       }
     },
     {
+      "type": "horizontal",
+      "id": "horizontal_1768930579833_0.8568287883791152",
+      "price": 3214.9063007614213,
+      "time": 1768122000000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "tpsl",
+      "id": "tpsl_1768930585357_0.34520458315228186",
+      "entryPrice": 3039.709854060914,
+      "tpPrice": 3161.2982482233506,
+      "slPrice": 2978.9156569796955,
+      "time": 1765515600000,
+      "widthTime": 90000000
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1768930588178_0.028488881629051055",
+      "entryPrice": 3038.449447969543,
+      "tpPrice": 2916.911470050761,
+      "slPrice": 3099.218436928934,
+      "time": 1766901600000,
+      "widthTime": 90000000
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1768930589986_0.5675507020333908",
+      "entryPrice": 3260.280920050762,
+      "tpPrice": 3129.8696832487312,
+      "slPrice": 3325.486538451777,
+      "time": 1768089600000,
+      "widthTime": 90000000
+    },
+    {
       "type": "textbox",
-      "id": "textbox_1768791852767_0.5073103428686663",
-      "price": 2957.148419210084,
-      "time": 1767560400000,
-      "text": "puede estar apuntando a este fractal",
+      "id": "textbox_1768930592918_0.8625139927429987",
+      "price": 3400.1859961928935,
+      "time": 1766530800000,
+      "text": "jkoij",
       "customWidth": null,
       "customHeight": null,
       "style": {
-        "bgColor": "#fdcf6d80",
-        "textColor": "#0f0f0f",
+        "bgColor": "#FBBF24ff",
+        "textColor": "#78350F",
         "borderColor": "#F59E0B",
         "fontSize": 13,
         "fontFamily": "Arial",
@@ -35,6 +90,6 @@
       }
     }
   ],
-  "updated_at": "2026-01-19T17:40:03.737469+00:00",
-  "total_shapes": 2
+  "updated_at": "2026-01-20T17:36:43.668445+00:00",
+  "total_shapes": 7
 }

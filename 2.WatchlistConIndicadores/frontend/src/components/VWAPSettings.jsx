@@ -899,7 +899,7 @@ const VWAPSettings = ({
           </button>
         </div>
 
-        {showAdvanced && localConfig.showBands && localConfig.bandMultipliers && (
+        {showAdvanced && (
           <div className="advanced-settings">
             {/* Volatility Indicators Advanced Config */}
             {(localConfig.showBandWidth || localConfig.showBBWP || localConfig.showTTMSqueeze) && (
@@ -1145,7 +1145,7 @@ const VWAPSettings = ({
                 step="0.1"
                 min="0.1"
                 max="5"
-                value={localConfig.bandMultipliers[0] || 1.0}
+                value={localConfig.bandMultipliers?.[0] || 1.0}
                 onChange={(e) => handleBandMultiplierChange(0, e.target.value)}
               />
             </div>
@@ -1157,7 +1157,7 @@ const VWAPSettings = ({
                 step="0.1"
                 min="0.1"
                 max="5"
-                value={localConfig.bandMultipliers[1] || 2.0}
+                value={localConfig.bandMultipliers?.[1] || 2.0}
                 onChange={(e) => handleBandMultiplierChange(1, e.target.value)}
               />
             </div>
@@ -1169,7 +1169,7 @@ const VWAPSettings = ({
                 step="0.1"
                 min="0.1"
                 max="5"
-                value={localConfig.bandMultipliers[2] || 3.0}
+                value={localConfig.bandMultipliers?.[2] || 3.0}
                 onChange={(e) => handleBandMultiplierChange(2, e.target.value)}
               />
             </div>

@@ -21,7 +21,7 @@
         "minZScore": 1.5,
         "lookbackBars": 100
       },
-      "days": 1,
+      "days": 90,
       "vwapFilter": {
         "enabled": true,
         "deviations": [
@@ -39,7 +39,7 @@
         "lookbackBars": 45
       },
       "swingBars": 5,
-      "days": 5,
+      "days": 90,
       "cooldownMinutes": 20
     },
     "XRPUSDT": {

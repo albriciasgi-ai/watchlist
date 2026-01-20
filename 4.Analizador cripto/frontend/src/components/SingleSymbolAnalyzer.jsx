@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import MiniChart from "./MiniChart";
 import SymbolSelector from "./SymbolSelector";
+import SymbolList from "./SymbolList";
 import VolumeProfileSettings from "./VolumeProfileSettings";
 import RangeDetectionSettings from "./RangeDetectionSettings";
 import RejectionPatternSettings from "./RejectionPatternSettings";
@@ -93,8 +94,8 @@ const SingleSymbolAnalyzer = () => {
       }
     }
     return {
-      "Volume Delta": true,
-      "CVD": true,
+      "Volume Delta": false,
+      "CVD": false,
       "Volume Profile": false,
       "Open Interest": false,
       "VWAP": true,
@@ -102,8 +103,8 @@ const SingleSymbolAnalyzer = () => {
       "Continuation Patterns": false,
       "Rejection Patterns": false,
       "Double Top/Bottom": false,
-      "Support & Resistance": false,
-      "Swing Detector": false
+      "Support & Resistance": true,
+      "Swing Detector": true
     };
   });
 
@@ -551,29 +552,38 @@ const SingleSymbolAnalyzer = () => {
         )}
       </div>
 
-      {/* Chart principal */}
-      <div className="grid-container" style={{ gridTemplateColumns: '1fr' }}>
-        <MiniChart
-          key={`${symbol}-${chartKeyRef.current}`}
-          symbol={symbol}
-          interval={interval}
-          days={days}
-          indicatorStates={indicatorStates}
-          vpConfig={vpConfig}
-          vpFixedRange={vpFixedRange}
-          oiMode={oiMode}
-          onOpenVpSettings={() => setShowVpSettings(true)}
-          onOpenRangeDetectionSettings={handleOpenRangeDetectionSettings}
-          onOpenRejectionPatternSettings={handleOpenRejectionPatternSettings}
-          onOpenSupportResistanceSettings={handleOpenSupportResistanceSettings}
-          onOpenVWAPSettings={handleOpenVWAPSettings}
-          onOpenFibonacciSettings={handleOpenFibonacciSettings}
-          onOpenContinuationPatternSettings={handleOpenContinuationPatternSettings}
-          onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
-          onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
-          rejectionPatternConfig={rejectionPatternConfig}
-          onFullscreenChange={handleFullscreenChange}
-          onChartLoaded={() => log.debug(`Chart loaded: ${symbol}`)}
+      {/* Contenedor principal: Chart + Lista de simbolos */}
+      <div className="main-content">
+        {/* Chart principal */}
+        <div className="chart-area">
+          <MiniChart
+            key={`${symbol}-${chartKeyRef.current}`}
+            symbol={symbol}
+            interval={interval}
+            days={days}
+            indicatorStates={indicatorStates}
+            vpConfig={vpConfig}
+            vpFixedRange={vpFixedRange}
+            oiMode={oiMode}
+            onOpenVpSettings={() => setShowVpSettings(true)}
+            onOpenRangeDetectionSettings={handleOpenRangeDetectionSettings}
+            onOpenRejectionPatternSettings={handleOpenRejectionPatternSettings}
+            onOpenSupportResistanceSettings={handleOpenSupportResistanceSettings}
+            onOpenVWAPSettings={handleOpenVWAPSettings}
+            onOpenFibonacciSettings={handleOpenFibonacciSettings}
+            onOpenContinuationPatternSettings={handleOpenContinuationPatternSettings}
+            onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
+            onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
+            rejectionPatternConfig={rejectionPatternConfig}
+            onFullscreenChange={handleFullscreenChange}
+            onChartLoaded={() => log.debug(`Chart loaded: ${symbol}`)}
+          />
+        </div>
+
+        {/* Lista de simbolos lateral */}
+        <SymbolList
+          currentSymbol={symbol}
+          onSymbolSelect={handleSymbolChange}
         />
       </div>
 

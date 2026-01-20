@@ -98,8 +98,8 @@ const Watchlist = () => {
     return saved ? parseInt(saved) : 2;
   });
   const [indicatorStates, setIndicatorStates] = useState({
-    "Volume Delta": true,
-    "CVD": true,
+    "Volume Delta": false,    // Desactivado por defecto
+    "CVD": false,             // Desactivado por defecto
     "Volume Profile": false,  // Desactivado por defecto (pesado)
     "Open Interest": false,
     "VWAP": true,            // Activo (esencial para estrategia)
@@ -108,7 +108,7 @@ const Watchlist = () => {
     "Rejection Patterns": false,  // Desactivado por defecto (pesado)
     "Double Top/Bottom": false,   // Desactivado por defecto (pesado)
     "Support & Resistance": false,  // S/R indicator (off by default)
-    "Swing Detector": false  // Swing high/low detector (backend-based)
+    "Swing Detector": true   // Swing high/low detector (backend-based) - Activo por defecto
   });
 
   // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
