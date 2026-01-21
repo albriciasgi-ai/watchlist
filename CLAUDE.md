@@ -27,13 +27,14 @@ Agente programador Python con experiencia en desarrollo de aplicaciones.
 
 ## VISION GENERAL DEL REPOSITORIO
 
-Este repositorio contiene **3 aplicaciones relacionadas** para trading de criptomonedas:
+Este repositorio contiene **4 aplicaciones relacionadas** para trading de criptomonedas:
 
 | Carpeta | Aplicacion | Puerto Backend | Puerto Frontend |
 |---------|------------|----------------|-----------------|
 | `1.Altagracia_Crypto_Backtester/` | Backtester de estrategias | 9000 | 5173 |
 | `2.WatchlistConIndicadores/` | Watchlist con indicadores en tiempo real | 8000 | 5173 |
 | `3.TradingBot_Python/` | Bot de trading automatizado | 5000 | 3000 |
+| `4.Analizador cripto/` | Analizador de un solo símbolo (optimizado) | 10000 | 10001 |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
@@ -1231,6 +1232,181 @@ if (indicatorStates['Rejection Patterns'] === true) {
   this.indicators.push(new RejectionPatternIndicator(...));
 }
 ```
+
+---
+
+# APP 4: ANALIZADOR CRIPTO (Single Symbol)
+
+**Ubicacion:** `4.Analizador cripto/`
+
+Aplicacion optimizada para analizar un solo simbolo a la vez con maxima fluidez y rendimiento.
+
+## Estructura
+
+```
+4.Analizador cripto/
+├── backend/
+│   ├── main.py                    # Servidor FastAPI (puerto 10000)
+│   ├── swing_service.py           # Detector de Swing H/L
+│   ├── vwap_service.py            # Servicio VWAP backend-native
+│   ├── config/                    # Configuraciones persistentes
+│   ├── cache/                     # Cache de datos
+│   └── logs/                      # Logs de alertas
+│
+├── frontend/
+│   ├── src/components/
+│   │   ├── SingleSymbolAnalyzer.jsx  # Componente raiz
+│   │   ├── MiniChart.jsx             # Grafico principal
+│   │   ├── SymbolList.jsx            # Lista lateral con prefetch
+│   │   └── indicators/
+│   │       ├── IndicatorManager.js   # Orquestador optimizado
+│   │       ├── VWAPIndicator.js      # VWAP backend-native
+│   │       └── SwingDetectorIndicator.js
+│   ├── src/utils/
+│   │   ├── CandleCache.js            # Cache IndexedDB con LRU
+│   │   └── IndicatorCache.js         # Cache para indicadores
+│   └── 1_START.bat                   # Inicio automatico
+```
+
+## Comandos
+
+```bash
+# Inicio rapido (Windows)
+cd 4.Analizador cripto
+1_START.bat
+
+# Manual - Backend
+cd backend
+start_backend.bat  # Puerto 10000
+
+# Manual - Frontend
+cd frontend
+npm run dev  # Puerto 10001
+```
+
+## Diferencias con App 2 (Watchlist)
+
+| Caracteristica | App 2 (Watchlist) | App 4 (Analizador) |
+|----------------|-------------------|---------------------|
+| Simbolos simultaneos | Multiples | Uno solo |
+| Puerto backend | 8000 | 10000 |
+| Puerto frontend | 5173 | 10001 |
+| Enfoque | Monitoreo multiple | Analisis profundo |
+| Optimizaciones | Standard | Agresivas |
+
+## Optimizaciones de Rendimiento (Enero 2026)
+
+### 1. Eliminacion de React StrictMode
+- **Archivo:** `frontend/src/main.jsx`
+- **Beneficio:** Evita doble montaje de componentes en desarrollo
+- **Impacto:** Reduce tiempo de carga inicial ~50%
+
+### 2. Carga de Indicadores en Paralelo
+- **Archivo:** `frontend/src/components/indicators/IndicatorManager.js`
+- **Implementacion:** `Promise.all()` para todos los fetches
+- **Beneficio:** Los indicadores cargan simultaneamente, no secuencialmente
+
+```javascript
+// En refresh()
+const fetchPromises = [];
+this.indicators.forEach(indicator => {
+  if (indicator.fetchData) {
+    fetchPromises.push(indicator.fetchData());
+  }
+});
+await Promise.all(fetchPromises);
+```
+
+### 3. Lazy Loading de Indicadores
+- **Archivo:** `frontend/src/components/indicators/IndicatorManager.js`
+- **Implementacion:** Solo crear indicadores cuando `indicatorStates[name] === true`
+- **Beneficio:** Ahorra memoria y CPU al no instanciar indicadores deshabilitados
+
+```javascript
+// En initialize()
+if (indicatorStates['VWAP'] === true) {
+  this.indicators.push(new VWAPIndicator(...));
+}
+```
+
+### 4. Polling Diferido
+- **Archivos:** `VWAPIndicator.js`, `SwingDetectorIndicator.js`, `MiniChart.jsx`
+- **Implementacion:** Polling NO inicia en `fetchData()`, sino despues de carga completa
+- **Metodo:** `startPollingIfReady()` llamado desde `IndicatorManager.startAllPolling()`
+
+```javascript
+// En MiniChart.jsx despues de refresh()
+indicatorManagerRef.current.refresh().then(() => {
+  indicatorManagerRef.current.startAllPolling();
+  onChartLoaded();
+});
+```
+
+### 5. Prefetch en Hover
+- **Archivos:** `SymbolList.jsx`, `SingleSymbolAnalyzer.jsx`
+- **Implementacion:** Precarga velas cuando el usuario hace hover sobre un simbolo
+- **Debounce:** 300ms para evitar requests innecesarios
+- **Cache:** Usa `CandleCache` (IndexedDB) para persistencia
+
+```javascript
+// Handler con debounce
+const handleSymbolHover = (sym) => {
+  prefetchTimeoutRef.current = setTimeout(() => {
+    prefetchSymbolData(sym);  // Fetch y guarda en CandleCache
+  }, 300);
+};
+```
+
+### 6. Endpoint Batch para Indicadores
+- **Archivo:** `backend/main.py`
+- **Endpoint:** `POST /api/indicators/batch`
+- **Beneficio:** Una sola llamada HTTP para multiples indicadores
+
+```python
+# Request
+{
+  "symbol": "BTCUSDT",
+  "interval": "60",
+  "days": 1,
+  "indicators": ["vwap", "swing", "support_resistance"]
+}
+
+# Response incluye timing por indicador
+{
+  "success": true,
+  "data": { "vwap": {...}, "swing": {...} },
+  "timing": { "vwap": 120, "swing": 85, "total": 150 }
+}
+```
+
+### Sistema de Cache (CandleCache.js)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     CANDLE CACHE SYSTEM                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐    │
+│  │   MEMORIA   │────▶│  IndexedDB  │────▶│   BACKEND   │    │
+│  │   (LRU 4)   │     │ (Persistente)│     │   (Bybit)   │    │
+│  └─────────────┘     └─────────────┘     └─────────────┘    │
+│                                                              │
+│  Prioridad: Memoria > IndexedDB > Backend                    │
+│  TTL: 24 horas para velas cerradas                           │
+│  LRU: Maximo 4 entradas en memoria                           │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Resultados de Optimizacion
+
+| Metrica | Antes | Despues |
+|---------|-------|---------|
+| Tiempo carga inicial | ~15s | ~4-6s |
+| Cambio de simbolo (sin cache) | ~15s | ~4-6s |
+| Cambio de simbolo (con cache) | ~15s | <1s |
+| Uso de memoria | Alto | Reducido (lazy loading) |
+| Requests HTTP iniciales | Secuenciales | Paralelos |
 
 ---
 
