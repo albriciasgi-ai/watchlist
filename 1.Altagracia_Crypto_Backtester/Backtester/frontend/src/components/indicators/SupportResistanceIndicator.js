@@ -11,7 +11,10 @@ class SupportResistanceIndicator extends IndicatorBase {
     this.height = 0; // No ocupa espacio propio, se dibuja sobre el chart
     this.days = days;
 
-    console.log(`%c[SupportResistanceIndicator] VERSION 1.0 LOADED`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px;');
+    // 🎯 FIX v2: Empezar habilitado por defecto, fetchData se llamará en initialize()
+    // this.enabled ya es true por defecto en IndicatorBase
+
+    console.log(`%c[SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px;');
 
     // Configuración
     this.volumeMethod = "zscore";
@@ -35,12 +38,23 @@ class SupportResistanceIndicator extends IndicatorBase {
     this.supports = [];
     this.consolidationZones = [];
     this.currentPrice = 0;
+
+    // 🎯 NUEVO: Control de cálculo local para backtesting
+    this._lastCalculatedLength = 0;
+    this._calculationValid = false;
+
+    // 🎯 Control de playback time para evitar sesgo de supervivencia
+    this._currentPlaybackTime = null;
+    this._lastPlaybackTime = null;
   }
 
   /**
    * Fetch Support & Resistance data from backend
    */
   async fetchData() {
+    console.log(`%c[${this.symbol}] 📊 S/R fetchData CALLED`, 'background: #2196F3; color: white; font-weight: bold; padding: 2px 4px;');
+    console.log(`[${this.symbol}] S/R config: interval=${this.interval}, days=${this.days}, enabled=${this.enabled}`);
+
     try {
       const params = new URLSearchParams({
         interval: this.interval,
@@ -59,7 +73,9 @@ class SupportResistanceIndicator extends IndicatorBase {
       console.log(`[${this.symbol}] 📊 S/R: Fetching from ${url}`);
 
       const response = await fetch(url);
+      console.log(`[${this.symbol}] S/R response status: ${response.status}`);
       const result = await response.json();
+      console.log(`[${this.symbol}] S/R response:`, result);
 
       if (result.success && result.data) {
         this.resistances = result.data.resistances || [];
@@ -67,14 +83,15 @@ class SupportResistanceIndicator extends IndicatorBase {
         this.consolidationZones = result.data.consolidationZones || [];
         this.currentPrice = result.data.currentPrice || 0;
 
-        console.log(`[${this.symbol}] ✅ S/R loaded: ${this.resistances.length} resistances, ${this.supports.length} supports, ${this.consolidationZones.length} zones`);
+        console.log(`%c[${this.symbol}] ✅ S/R loaded: ${this.resistances.length} resistances, ${this.supports.length} supports, ${this.consolidationZones.length} zones`, 'background: #4CAF50; color: white; font-weight: bold; padding: 2px 4px;');
 
         // Check for price alerts
         this.checkPriceAlerts(this.currentPrice);
 
         return true;
       } else {
-        console.warn(`[${this.symbol}] ⚠️ No S/R data available`);
+        console.warn(`[${this.symbol}] ⚠️ No S/R data available - success=${result.success}, hasData=${!!result.data}`);
+        if (result.error) console.error(`[${this.symbol}] S/R error: ${result.error}`);
         this.clearData();
         return false;
       }
@@ -90,6 +107,157 @@ class SupportResistanceIndicator extends IndicatorBase {
     this.supports = [];
     this.consolidationZones = [];
     this.currentPrice = 0;
+    this._calculationValid = false;
+  }
+
+  /**
+   * 🎯 Actualiza el tiempo de playback (llamado desde BacktestingApp)
+   * Invalida el cálculo si el tiempo cambió significativamente
+   */
+  updatePlaybackDate(timestamp) {
+    this._currentPlaybackTime = timestamp;
+
+    // Recalcular si el playback avanzó más de 1 vela (estimado)
+    if (this._lastPlaybackTime && timestamp !== this._lastPlaybackTime) {
+      this._calculationValid = false;
+      this._renderLoggedOnce = false;
+    }
+    this._lastPlaybackTime = timestamp;
+  }
+
+  /**
+   * 🎯 NUEVO: Calcula S&R localmente a partir de las velas (para backtesting)
+   * @param {Array} candles - Array de velas con formato {timestamp, open, high, low, close, volume}
+   */
+  calculateFromCandles(candles) {
+    if (!candles || candles.length < this.leftBars + this.rightBars + 1) {
+      console.warn(`[${this.symbol}] S&R calculateFromCandles: No hay suficientes velas (${candles?.length || 0})`);
+      return;
+    }
+
+    console.log(`[${this.symbol}] 📊 S&R: Calculando localmente con ${candles.length} velas...`);
+    console.log(`[${this.symbol}] 📊 S&R PARAMS: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches}, clusterDistance=${this.clusterDistance}, maxLevels=${this.maxLevels}`);
+
+    // 1. Encontrar pivots (máximos y mínimos locales)
+    const pivotHighs = [];
+    const pivotLows = [];
+
+    for (let i = this.leftBars; i < candles.length - this.rightBars; i++) {
+      const candle = candles[i];
+
+      // Verificar si es un pivot high (máximo local)
+      let isHighPivot = true;
+      for (let j = i - this.leftBars; j <= i + this.rightBars; j++) {
+        if (j !== i && candles[j].high >= candle.high) {
+          isHighPivot = false;
+          break;
+        }
+      }
+      if (isHighPivot) {
+        pivotHighs.push({
+          price: candle.high,
+          timestamp: candle.timestamp,
+          index: i,
+          volume: candle.volume
+        });
+      }
+
+      // Verificar si es un pivot low (mínimo local)
+      let isLowPivot = true;
+      for (let j = i - this.leftBars; j <= i + this.rightBars; j++) {
+        if (j !== i && candles[j].low <= candle.low) {
+          isLowPivot = false;
+          break;
+        }
+      }
+      if (isLowPivot) {
+        pivotLows.push({
+          price: candle.low,
+          timestamp: candle.timestamp,
+          index: i,
+          volume: candle.volume
+        });
+      }
+    }
+
+    console.log(`[${this.symbol}] S&R: Encontrados ${pivotHighs.length} pivot highs, ${pivotLows.length} pivot lows`);
+
+    // 2. Agrupar pivots cercanos (clustering)
+    const clusterPivots = (pivots, type) => {
+      if (pivots.length === 0) return [];
+
+      // Ordenar por precio
+      const sorted = [...pivots].sort((a, b) => a.price - b.price);
+      const clusters = [];
+      let currentCluster = [sorted[0]];
+
+      for (let i = 1; i < sorted.length; i++) {
+        const priceDiff = Math.abs(sorted[i].price - currentCluster[0].price) / currentCluster[0].price * 100;
+
+        if (priceDiff <= this.clusterDistance) {
+          currentCluster.push(sorted[i]);
+        } else {
+          clusters.push(currentCluster);
+          currentCluster = [sorted[i]];
+        }
+      }
+      clusters.push(currentCluster);
+
+      // Convertir clusters a niveles
+      return clusters.map(cluster => {
+        const avgPrice = cluster.reduce((sum, p) => sum + p.price, 0) / cluster.length;
+        const totalVolume = cluster.reduce((sum, p) => sum + p.volume, 0);
+        const touches = cluster.length;
+
+        return {
+          price: avgPrice,
+          touches: touches,
+          strength: Math.min(10, touches * 2 + (totalVolume > 0 ? 2 : 0)),
+          status: 'active',
+          type: type
+        };
+      });
+    };
+
+    // 3. Crear niveles de resistencia y soporte
+    let resistances = clusterPivots(pivotHighs, 'resistance');
+    let supports = clusterPivots(pivotLows, 'support');
+    console.log(`[${this.symbol}] S&R: Clusters creados: ${resistances.length} resistances, ${supports.length} supports`);
+
+    // 4. Filtrar por toques mínimos
+    const beforeFilterR = resistances.length;
+    const beforeFilterS = supports.length;
+    resistances = resistances.filter(r => r.touches >= this.minTouches);
+    supports = supports.filter(s => s.touches >= this.minTouches);
+    console.log(`[${this.symbol}] S&R: Después de filtro minTouches=${this.minTouches}: ${resistances.length}/${beforeFilterR} resistances, ${supports.length}/${beforeFilterS} supports`);
+
+    // 5. Limitar número de niveles
+    resistances = resistances.sort((a, b) => b.strength - a.strength).slice(0, this.maxLevels);
+    supports = supports.sort((a, b) => b.strength - a.strength).slice(0, this.maxLevels);
+
+    // 6. Actualizar precio actual
+    const lastCandle = candles[candles.length - 1];
+    this.currentPrice = lastCandle.close;
+
+    // 7. Marcar niveles como broken si el precio actual los ha superado
+    resistances = resistances.map(r => ({
+      ...r,
+      status: this.currentPrice > r.price ? 'broken' : 'active'
+    }));
+    supports = supports.map(s => ({
+      ...s,
+      status: this.currentPrice < s.price ? 'broken' : 'active'
+    }));
+
+    // 8. Guardar resultados
+    this.resistances = resistances;
+    this.supports = supports;
+    this.consolidationZones = []; // Simplificado - no calculamos zonas por ahora
+
+    this._lastCalculatedLength = candles.length;
+    this._calculationValid = true;
+
+    console.log(`[${this.symbol}] ✅ S&R Local: ${this.resistances.length} R, ${this.supports.length} S (${candles.length} velas analizadas)`);
   }
 
   /**
@@ -97,20 +265,48 @@ class SupportResistanceIndicator extends IndicatorBase {
    * IMPORTANTE: Este método se llama desde IndicatorManager.renderOverlays()
    */
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled) {
-      return;
+    if (!this.enabled) return;
+
+    // 🎯 NUEVO: Calcular S&R localmente si tenemos velas (modo backtesting)
+    if (allCandles && allCandles.length > 0) {
+      // Filtrar velas hasta el playback time para evitar sesgo de supervivencia
+      let candlesToUse = allCandles;
+      if (this._currentPlaybackTime) {
+        candlesToUse = allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
+      }
+
+      const needsRecalculation = !this._calculationValid ||
+                                 this.resistances.length === 0 && this.supports.length === 0 ||
+                                 candlesToUse.length !== this._lastCalculatedLength;
+
+      if (needsRecalculation && candlesToUse.length > 0) {
+        console.log(`[${this.symbol}] 🔄 S&R: Recalculando (valid=${this._calculationValid}, dataLen=${candlesToUse.length}/${allCandles.length}, playbackTime=${this._currentPlaybackTime ? new Date(this._currentPlaybackTime).toISOString() : 'null'})`);
+        this.calculateFromCandles(candlesToUse);
+      }
     }
+
+    // Verificar si hay datos para renderizar
     if (this.resistances.length === 0 && this.supports.length === 0) {
       return;
     }
 
     // DEBUG: Solo log una vez
     if (!this._renderLoggedOnce) {
-      console.log(`[${this.symbol}] 🎨 renderOverlay called with:`, {
+      // Obtener rango de precios del contexto
+      const chartMinPrice = priceContext?.minPrice;
+      const chartMaxPrice = priceContext?.maxPrice;
+
+      // Obtener rango de precios de S&R
+      const srPrices = [...this.resistances, ...this.supports].map(l => l.price);
+      const srMinPrice = Math.min(...srPrices);
+      const srMaxPrice = Math.max(...srPrices);
+
+      console.log(`[${this.symbol}] 🎨 S&R renderOverlay:`, {
         resistances: this.resistances.length,
         supports: this.supports.length,
-        hasPriceToY: !!priceContext?.priceToY,
-        bounds
+        chartPriceRange: { min: chartMinPrice?.toFixed(2), max: chartMaxPrice?.toFixed(2) },
+        srPriceRange: { min: srMinPrice?.toFixed(2), max: srMaxPrice?.toFixed(2) },
+        pricesOverlap: srMinPrice <= chartMaxPrice && srMaxPrice >= chartMinPrice
       });
       this._renderLoggedOnce = true;
     }
@@ -193,6 +389,11 @@ class SupportResistanceIndicator extends IndicatorBase {
     const { x, y, width, height } = bounds;
 
     const priceY = priceToY(level.price);
+
+    // Verificar si el nivel está dentro del área visible
+    if (priceY < y || priceY > y + height) {
+      return;
+    }
 
     // Color basado en tipo y estado
     let color, alpha, lineStyle;
@@ -341,6 +542,14 @@ class SupportResistanceIndicator extends IndicatorBase {
    * Actualiza configuración
    */
   updateConfig(config) {
+    console.log(`[${this.symbol}] S&R updateConfig called with:`, config);
+    console.log(`[${this.symbol}] S&R BEFORE: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches}, clusterDistance=${this.clusterDistance}`);
+
+    // Parámetros que afectan el cálculo de niveles
+    const recalculateParams = ['leftBars', 'rightBars', 'minTouches', 'clusterDistance', 'maxLevels',
+                               'volumeMethod', 'zScoreThreshold', 'zScorePeriod'];
+    let needsRecalculate = false;
+
     if (config.volumeMethod !== undefined) this.volumeMethod = config.volumeMethod;
     if (config.zScoreThreshold !== undefined) this.zScoreThreshold = config.zScoreThreshold;
     if (config.zScorePeriod !== undefined) this.zScorePeriod = config.zScorePeriod;
@@ -354,6 +563,25 @@ class SupportResistanceIndicator extends IndicatorBase {
     if (config.showConsolidationZones !== undefined) this.showConsolidationZones = config.showConsolidationZones;
     if (config.showLabels !== undefined) this.showLabels = config.showLabels;
     if (config.days !== undefined) this.days = config.days;
+
+    console.log(`[${this.symbol}] S&R AFTER: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches}, clusterDistance=${this.clusterDistance}`);
+
+    // Verificar si algún parámetro de cálculo cambió
+    for (const param of recalculateParams) {
+      if (config[param] !== undefined) {
+        needsRecalculate = true;
+        break;
+      }
+    }
+
+    // 🎯 FIX: Invalidar caché para forzar recálculo en el próximo renderOverlay
+    if (needsRecalculate) {
+      console.log(`[${this.symbol}] S&R: Config changed, invalidating cache for recalculation. _calculationValid = false`);
+      this._calculationValid = false;
+      this._renderLoggedOnce = false; // Reset log flag para mostrar nuevo cálculo
+      // NO limpiar los datos aquí - dejar que renderOverlay los recalcule
+      // Esto evita que desaparezcan mientras esperamos el siguiente render
+    }
   }
 
   /**

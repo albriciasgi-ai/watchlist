@@ -187,7 +187,10 @@ class SwingDetectorIndicator extends IndicatorBase {
     if (candles.length === this._lastCalculatedLength &&
         this._lastConfig === configHash &&
         this._allDetectedSignals.length > 0) {
-      return this._filterByPlaybackTime(this._allDetectedSignals);
+      // 🎯 FIX: Actualizar this.signals también cuando usamos caché
+      // Esto permite que nuevas señales aparezcan a medida que avanza el playback
+      this.signals = this._filterByPlaybackTime(this._allDetectedSignals);
+      return this.signals;
     }
 
     const signals = [];

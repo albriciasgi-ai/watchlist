@@ -1381,3 +1381,33 @@ body {
     display: none;
   }
 }
+
+/* ===== TRADING PANEL TOGGLE BUTTON ===== */
+.trading-panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #1a1d21 0%, #252830 100%);
+  border: 1px solid #3d4250;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+}
+
+.trading-panel-toggle:hover {
+  background: linear-gradient(135deg, #252830 0%, #3d4250 100%);
+  border-color: #4A90E2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.trading-panel-toggle.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}

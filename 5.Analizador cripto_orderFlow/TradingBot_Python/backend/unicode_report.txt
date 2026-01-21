@@ -1,0 +1,4 @@
+trading\bybit_client.py:212:         # For closing LONG (side="Sell"): trigger when price falls → direction=2
+  Non-ASCII chars: ['0x2192']
+trading\bybit_client.py:213:         # For closing SHORT (side="Buy"): trigger when price rises → direction=1
+  Non-ASCII chars: ['0x2192']

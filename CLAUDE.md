@@ -1410,6 +1410,146 @@ const handleSymbolHover = (sym) => {
 
 ---
 
+## Trading Panel (Enero 2026)
+
+Panel lateral integrado para enviar ordenes directamente a Bybit via el TradingBot backend.
+
+### Archivos
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `frontend/src/components/trading/TradingPanel.jsx` | Panel principal con conexion al TradingBot |
+| `frontend/src/components/trading/TradingPanel.css` | Estilos con sistema de temas dinamico |
+| `frontend/src/components/trading/OrderForm.jsx` | Formulario de orden con modos de cantidad |
+| `frontend/src/components/trading/PositionCard.jsx` | Muestra posicion activa con PnL |
+| `frontend/src/components/trading/index.js` | Exports del modulo |
+
+### Funcionalidades
+
+1. **Integracion con TPSLBox**: Lee Entry, SL, TP desde rectangulos dibujados en el chart
+2. **Dos modos de cantidad**:
+   - **Monto fijo**: Especifica USDT directamente
+   - **Por riesgo**: Calcula cantidad basado en riesgo y % de SL
+3. **Conexion al TradingBot**: Se conecta al backend en puerto 5000
+4. **Visualizacion de posicion**: Muestra posicion activa con PnL en tiempo real
+5. **Temas personalizables**: Selector de color (hue) + modo claro/oscuro
+
+### Shortcut
+
+- **Alt+T**: Abre/cierra el Trading Panel
+- El panel tambien tiene boton en el header del chart
+
+### Flujo de Orden
+
+```
+1. Usuario dibuja TPSLBox en el chart (Entry, SL, TP)
+2. Presiona Alt+T para abrir Trading Panel
+3. Panel carga datos de la caja automaticamente
+4. Usuario selecciona modo de cantidad y confirma
+5. Panel envia orden a TradingBot (puerto 5000)
+6. TradingBot ejecuta: Market Order → SL → TP
+7. Panel muestra posicion resultante
+```
+
+### Sistema de Temas
+
+El panel usa CSS variables generadas dinamicamente basadas en un valor HSL (hue):
+
+```javascript
+// TradingPanel.jsx
+const generateThemeColors = (hue, isDark = true) => {
+  if (isDark) {
+    return {
+      bgPrimary: `hsl(${hue}, 15%, 12%)`,
+      bgSecondary: `hsl(${hue}, 15%, 16%)`,
+      // ... mas colores derivados
+    };
+  } else {
+    // Modo claro con colores invertidos
+  }
+};
+```
+
+Controles en el header:
+- **Slider de color**: 0-360 grados de hue
+- **Boton sol/luna**: Alterna modo claro/oscuro
+
+Persistencia en localStorage:
+- `tradingPanelHue`: Valor del hue (0-360)
+- `tradingPanelDarkMode`: "true" o "false"
+
+### Conexion con TradingBot
+
+El panel se comunica con el TradingBot backend:
+
+```javascript
+const TRADING_BOT_URL = 'http://localhost:5000';
+
+// Verificar conexion
+GET /api/status
+
+// Cargar config del simbolo
+GET /api/config  // Retorna { coins: [...] }
+
+// Cargar posicion actual
+GET /api/position/{symbol}
+
+// Enviar orden
+POST /api/trade/manual
+{
+  "symbol": "BTCUSDT",
+  "side": "Buy",
+  "quantity": 0.001,
+  "stopLoss": 95000,
+  "takeProfit": 100000
+}
+```
+
+### Modificaciones al TradingBot
+
+Para soportar ordenes desde el Analizador, se modifico:
+
+**`3.TradingBot_Python/backend/main.py`:**
+```python
+class ManualTradeRequest(BaseModel):
+    symbol: str
+    side: str
+    quantity: Optional[Decimal] = None
+    current_price: Optional[Decimal] = None
+    stopLoss: Optional[Decimal] = None      # NUEVO
+    takeProfit: Optional[Decimal] = None    # NUEVO
+```
+
+**`3.TradingBot_Python/backend/trading/order_manager.py`:**
+```python
+# Usa SL/TP custom si se proporcionan
+if config.get("custom_stop_loss"):
+    sl_price = Decimal(str(config["custom_stop_loss"]))
+else:
+    sl_price = self._calculate_sl_price(real_price, side, sl_percent)
+```
+
+### Troubleshooting Trading Panel
+
+**"Simbolo no configurado":**
+- Verificar que el simbolo existe en `3.TradingBot_Python/config/trading_config.json`
+- El panel busca en `data.coins` del endpoint `/api/config`
+
+**"TradingBot no disponible":**
+- Verificar que el backend del TradingBot esta corriendo en puerto 5000
+- Comando: `cd 3.TradingBot_Python/backend && python main.py`
+
+**Posicion no se muestra:**
+- El endpoint `/api/position/{symbol}` devuelve datos directamente (no anidados)
+- Campos: `hasPosition`, `size`, `side`, `entryPrice`, `unrealizedPnl`, `markPrice`
+
+**Orden falla:**
+- Revisar logs del TradingBot
+- Verificar credenciales Bybit configuradas
+- Verificar modo (Demo vs Live)
+
+---
+
 # TROUBLESHOOTING
 
 **Backend no inicia:**

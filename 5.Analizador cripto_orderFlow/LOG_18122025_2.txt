@@ -1,0 +1,1067 @@
+:5173/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ [419] 🕯️  PEOPLEUSDT | ✅ Vela confirmada y agregada Object
+ [419] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [590] 🕯️  GALAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [590] 🕯️  GALAUSDT | ✅ Vela confirmada y agregada Object
+ [591] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [633] 🕯️  ETHUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [634] 🕯️  ETHUSDT | ✅ Vela confirmada y agregada Object
+ [634] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [730] 🕯️  BNBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [730] 🕯️  BNBUSDT | ✅ Vela confirmada y agregada Object
+ [730] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [769] 🕯️  ATOMUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [769] 🕯️  ATOMUSDT | ✅ Vela confirmada y agregada Object
+ [770] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [942] 🕯️  TONUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [943] 🕯️  TONUSDT | ✅ Vela confirmada y agregada Object
+ [943] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [943] 🕯️  UNIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [943] 🕯️  UNIUSDT | ✅ Vela confirmada y agregada Object
+ [943] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [178] 🕯️  ADAUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [179] 🕯️  ADAUSDT | ✅ Vela confirmada y agregada Object
+ [179] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [896] 🕯️  SUIUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [897] 🕯️  SUIUSDT | ✅ Vela confirmada y agregada Object
+ [897] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [948] 🕯️  AAVEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [949] 🕯️  AAVEUSDT | ✅ Vela confirmada y agregada Object
+ [949] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [949] 🕯️  AVAXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [949] 🕯️  AVAXUSDT | ✅ Vela confirmada y agregada Object
+ [949] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [348] 🕯️  MASKUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [349] 🕯️  MASKUSDT | ✅ Vela confirmada y agregada Object
+ [349] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [930] 🕯️  TRBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [930] 🕯️  TRBUSDT | ✅ Vela confirmada y agregada Object
+ [930] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [451] 🕯️  POLUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [451] 🕯️  POLUSDT | ✅ Vela confirmada y agregada Object
+ [451] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [662] 🕯️  ARBUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [663] 🕯️  ARBUSDT | ✅ Vela confirmada y agregada Object
+ [663] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [667] 🕯️  CAKEUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [667] 🕯️  CAKEUSDT | ✅ Vela confirmada y agregada Object
+ [667] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [885] 🕯️  INJUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [886] 🕯️  INJUSDT | ✅ Vela confirmada y agregada Object
+ [886] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [090] 🕯️  OPUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [091] 🕯️  OPUSDT | ✅ Vela confirmada y agregada Object
+ [091] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [097] 🕯️  HBARUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [097] 🕯️  HBARUSDT | ✅ Vela confirmada y agregada Object
+ [097] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [234] 🕯️  ASTRUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [234] 🕯️  ASTRUSDT | ✅ Vela confirmada y agregada Object
+ [234] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [236] 🕯️  GRTUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [237] 🕯️  GRTUSDT | ✅ Vela confirmada y agregada Object
+ [237] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [237] 🕯️  ALGOUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [237] 🕯️  ALGOUSDT | ✅ Vela confirmada y agregada Object
+ [237] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [308] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [308] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [309] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [309] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [310] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [310] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+ [310] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [310] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+ [311] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [311] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+ [311] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [311] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+ [312] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [312] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+ [312] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [312] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+ [313] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [313] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+ [313] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [314] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ [314] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [314] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+ [314] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [315] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+ [315] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [315] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+ [316] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [316] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+ [316] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [316] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+ [317] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [317] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+ [317] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [317] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+ [318] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [318] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+ [318] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [318] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+ [324] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [324] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+ [325] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [325] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+ [325] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [326] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+ [326] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [326] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+ [327] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [327] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+ [327] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [327] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+ [328] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [328] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+ [328] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [328] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+ [329] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [329] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+ [329] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [329] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+ [282] 🕯️  POLYXUSDT | 🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior Object
+ [282] 🕯️  POLYXUSDT | ✅ Vela confirmada y agregada Object
+ [283] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [543] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [543] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [543] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [543] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [022] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [022] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [022] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [023] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [402] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [403] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [403] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [403] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [449] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [449] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [449] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [449] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [495] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [495] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [495] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [496] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [537] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [537] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [537] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [537] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [543] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [543] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [544] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [544] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [367] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [368] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [368] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [368] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [742] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [742] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [742] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [742] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [787] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [787] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [788] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [788] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [173] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [173] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [173] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [173] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [232] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [232] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [232] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [232] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [385] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [386] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [386] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [386] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [218] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [219] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [219] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [219] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [600] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [600] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [600] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [601] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [647] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [647] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [647] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [647] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [624] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [624] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [624] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [624] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [022] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [022] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [023] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [023] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [073] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [074] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [074] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [074] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [704] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [705] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [705] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [705] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [097] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [098] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [098] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [098] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [498] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [498] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [498] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [498] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [889] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [889] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [889] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [889] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [353] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [353] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [353] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [353] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [853] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [853] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [853] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [853] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [307] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [308] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [308] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [308] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [760] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [760] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [760] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [760] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [525] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [525] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [525] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [525] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [674] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [674] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [674] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [674] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [052] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [053] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+ [053] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
+ [054] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
+ [BTCUSDT] ⏭️ Skipping cleanup (external manager)
+ [054] 🕯️  BTCUSDT | 🚀 Componente montado, iniciando... 
+ [054] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔗 Usando IndicatorManager externo (fullscreen)
+ [055] 📊 BTCUSDT | ✅ IndicatorManager externo conectado 
+ [055] 📡 BTCUSDT | Suscrito a WebSocket @ 60 
+ [389] 🕯️  BTCUSDT | 🆕 Primera vela en progreso Object
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [useProximityAlerts] Response received: Object
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: Object
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 0
+ [useProximityAlerts] Updating alert states: Object
+ [useProximityAlerts] New alertStates: Object
+ [765] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [765] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [765] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [765] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [642] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [642] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [642] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [643] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] Show mode loaded from indicator: validated
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+ [BTCUSDT] ⚠️ No reference contexts configured. Patterns disabled in 'validated' mode.
+fetchData @ RejectionPatternIndicator.js:370
+ [BTCUSDT] 💡 TIP: Either add Reference Contexts OR switch to 'Show All' mode to see locally detected patterns.
+fetchData @ RejectionPatternIndicator.js:371
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] Show mode loaded from indicator: validated
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+ [BTCUSDT] ⚠️ No reference contexts configured. Patterns disabled in 'validated' mode.
+fetchData @ RejectionPatternIndicator.js:370
+ [BTCUSDT] 💡 TIP: Either add Reference Contexts OR switch to 'Show All' mode to see locally detected patterns.
+fetchData @ RejectionPatternIndicator.js:371
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔧 Built 0 total contexts (0 regular + 0 manual zones)
+ [BTCUSDT] ⚠️ No reference contexts configured. Patterns disabled in 'validated' mode.
+fetchData @ RejectionPatternIndicator.js:370
+ [BTCUSDT] 💡 TIP: Either add Reference Contexts OR switch to 'Show All' mode to see locally detected patterns.
+fetchData @ RejectionPatternIndicator.js:371
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] Show mode loaded from indicator: validated
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] Show mode loaded from indicator: validated
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Show mode changed to: all
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85204.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85190
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85203.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85204.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85211
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85207.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [useProximityAlerts] Response received: Object
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: Object
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 0
+ [useProximityAlerts] Updating alert states: Object
+ [useProximityAlerts] New alertStates: Object
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85203.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85189.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85187.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] Show mode loaded from indicator: all
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] Show mode loaded from indicator: all
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85171.5
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] Show mode changed to: validated
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Show mode changed to: all
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85157.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85150.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85144.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85125.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85120.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85117.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85106.5
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85106.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85103.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85081.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85088.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85090.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85077.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85088.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85089.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85123.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85122.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85132.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85126.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85119
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85115.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85118.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85125.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85123.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85105.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85104
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85097.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85101
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85113.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85124.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [useProximityAlerts] Response received: Object
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: Object
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 0
+ [useProximityAlerts] Updating alert states: Object
+ [useProximityAlerts] New alertStates: Object
+ [useProximityAlerts] New alertStates: Object
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85139.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85145
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85139.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85127.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85127.2
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85105.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85103.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85111.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85117
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85123.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85140
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85140.5
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85130.2
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85125
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85122.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85127.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85125
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85118.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85122.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85145.1
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85166.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85174.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85176
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85183
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85176.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85178.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85168.2
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] Show mode loaded from indicator: all
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] Show mode loaded from indicator: all
+ [BTCUSDT] Profiles from IndicatorManager: 3 Array(3)
+ [BTCUSDT] Fixed range indicator instances: 3
+ [BTCUSDT] Found 3 available contexts: Array(3)
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔧 Built 1 total contexts (0 regular + 1 manual zones)
+ [BTCUSDT] 📊 Fetching patterns with 1 reference contexts: Array(1)
+ [BTCUSDT] 🎯 Rejection Pattern config updated
+ [Watchlist] Updated rejection pattern config for BTCUSDT
+ [PresetManager] 💾 Guardando presets migrados...
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] Presets guardados exitosamente
+ [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+ [Watchlist] 🔧 Rejection Patterns override guardado para BTCUSDT
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85181.2
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85190
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85190.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85192.5
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] ✅ Loaded 38 validated rejection patterns
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85190.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85210
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85214
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85227.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85241.8
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [299] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [300] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+ [300] 🕯️  ETHUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [300] 🕯️  ETHUSDT | Solicitando histórico: 90 días @ 60 
+ [305] 🕯️  TRXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [306] 🕯️  TRXUSDT | Solicitando histórico: 90 días @ 60 
+ [306] 🕯️  XRPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [306] 🕯️  XRPUSDT | Solicitando histórico: 90 días @ 60 
+ [307] 🕯️  SOLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [307] 🕯️  SOLUSDT | Solicitando histórico: 90 días @ 60 
+ [307] 🕯️  AAVEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [307] 🕯️  AAVEUSDT | Solicitando histórico: 90 días @ 60 
+ [308] 🕯️  GALAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [308] 🕯️  GALAUSDT | Solicitando histórico: 90 días @ 60 
+ [308] 🕯️  OPUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [308] 🕯️  OPUSDT | Solicitando histórico: 90 días @ 60 
+ [309] 🕯️  ADAUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [309] 🕯️  ADAUSDT | Solicitando histórico: 90 días @ 60 
+ [310] 🕯️  SUIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [310] 🕯️  SUIUSDT | Solicitando histórico: 90 días @ 60 
+ [310] 🕯️  POLUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [310] 🕯️  POLUSDT | Solicitando histórico: 90 días @ 60 
+ [314] 🕯️  POLYXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [315] 🕯️  POLYXUSDT | Solicitando histórico: 90 días @ 60 
+ [316] 🕯️  CAKEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [316] 🕯️  CAKEUSDT | Solicitando histórico: 90 días @ 60 
+ [316] 🕯️  PENDLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [316] 🕯️  PENDLEUSDT | Solicitando histórico: 90 días @ 60 
+ [316] 🕯️  TONUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [317] 🕯️  TONUSDT | Solicitando histórico: 90 días @ 60 
+ [317] 🕯️  UNIUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [317] 🕯️  UNIUSDT | Solicitando histórico: 90 días @ 60 
+ [318] 🕯️  ARBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [318] 🕯️  ARBUSDT | Solicitando histórico: 90 días @ 60 
+ [318] 🕯️  DOTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [318] 🕯️  DOTUSDT | Solicitando histórico: 90 días @ 60 
+ [319] 🕯️  AVAXUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [319] 🕯️  AVAXUSDT | Solicitando histórico: 90 días @ 60 
+ [319] 🕯️  BNBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [319] 🕯️  BNBUSDT | Solicitando histórico: 90 días @ 60 
+ [321] 🕯️  PEOPLEUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [322] 🕯️  PEOPLEUSDT | Solicitando histórico: 90 días @ 60 
+ [322] 🕯️  HBARUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [322] 🕯️  HBARUSDT | Solicitando histórico: 90 días @ 60 
+ [323] 🕯️  ASTRUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [323] 🕯️  ASTRUSDT | Solicitando histórico: 90 días @ 60 
+ [325] 🕯️  MASKUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [326] 🕯️  MASKUSDT | Solicitando histórico: 90 días @ 60 
+ [326] 🕯️  TRBUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [326] 🕯️  TRBUSDT | Solicitando histórico: 90 días @ 60 
+ [327] 🕯️  INJUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [327] 🕯️  INJUSDT | Solicitando histórico: 90 días @ 60 
+ [327] 🕯️  ATOMUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [327] 🕯️  ATOMUSDT | Solicitando histórico: 90 días @ 60 
+ [328] 🕯️  GRTUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [328] 🕯️  GRTUSDT | Solicitando histórico: 90 días @ 60 
+ [329] 🕯️  ALGOUSDT | 🔄 Recarga periódica histórico (5 min) 
+ [330] 🕯️  ALGOUSDT | Solicitando histórico: 90 días @ 60 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85220.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [242] 🕯️  AAVEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [242] 🕯️  AAVEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [242] 🔍 AAVEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [243] 🕯️  AAVEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [288] 🕯️  TRXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [288] 🕯️  TRXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [288] 🔍 TRXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [289] 🕯️  TRXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [360] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [360] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [360] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [360] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [742] 🕯️  SOLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [743] 🕯️  SOLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [743] 🔍 SOLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [743] 🕯️  SOLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [789] 🕯️  ETHUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [789] 🕯️  ETHUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [789] 🔍 ETHUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [789] 🕯️  ETHUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [836] 🕯️  XRPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [837] 🕯️  XRPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [837] 🔍 XRPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [837] 🕯️  XRPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [809] 🕯️  ADAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [810] 🕯️  ADAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [810] 🔍 ADAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [810] 🕯️  ADAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85202.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [555] 🕯️  SUIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [556] 🕯️  SUIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [556] 🔍 SUIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [556] 🕯️  SUIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [938] 🕯️  POLYXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [938] 🕯️  POLYXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [938] 🔍 POLYXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [938] 🕯️  POLYXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [984] 🕯️  GALAUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [984] 🕯️  GALAUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [984] 🔍 GALAUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [985] 🕯️  GALAUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85201.3
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [058] 🕯️  POLUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [059] 🕯️  POLUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [059] 🔍 POLUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [059] 🕯️  POLUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85190.6
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [491] 🕯️  CAKEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [491] 🕯️  CAKEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [491] 🔍 CAKEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [491] 🕯️  CAKEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [874] 🕯️  PENDLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [874] 🕯️  PENDLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [874] 🔍 PENDLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [874] 🕯️  PENDLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [803] 🕯️  OPUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [803] 🕯️  OPUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [804] 🔍 OPUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [804] 🕯️  OPUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [673] 🕯️  UNIUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [673] 🕯️  UNIUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [673] 🔍 UNIUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [673] 🕯️  UNIUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [096] 🕯️  ARBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [096] 🕯️  ARBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [097] 🔍 ARBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [097] 🕯️  ARBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [119] 🕯️  TONUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [119] 🕯️  TONUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [119] 🔍 TONUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [119] 🕯️  TONUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85193.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [240] 🕯️  DOTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [241] 🕯️  DOTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [241] 🔍 DOTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [241] 🕯️  DOTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85206.9
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [625] 🕯️  AVAXUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [626] 🕯️  AVAXUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [626] 🔍 AVAXUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [626] 🕯️  AVAXUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85198.7
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [630] 🕯️  BNBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+ [631] 🕯️  BNBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+ [631] 🔍 BNBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+ [631] 🕯️  BNBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+ [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+ [BTCUSDT] 📍 Current price: 85191.4
+ [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+ [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+ [566] 🕯️  HBARUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [566] 🕯️  HBARUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [566] 🔍 HBARUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [566] 🕯️  HBARUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [951] 🕯️  ASTRUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [951] 🕯️  ASTRUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [952] 🔍 ASTRUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [952] 🕯️  ASTRUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [001] 🕯️  PEOPLEUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [002] 🕯️  PEOPLEUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [002] 🔍 PEOPLEUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [002] 🕯️  PEOPLEUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85181.6
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+MiniChart.jsx:35 [197] 🕯️  TRBUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [197] 🕯️  TRBUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [197] 🔍 TRBUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [197] 🕯️  TRBUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [379] 🕯️  MASKUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [380] 🕯️  MASKUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [380] 🔍 MASKUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [380] 🕯️  MASKUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [629] 🕯️  GRTUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [629] 🕯️  GRTUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [630] 🔍 GRTUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [630] 🕯️  GRTUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [071] 🕯️  ATOMUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [072] 🕯️  ATOMUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [072] 🔍 ATOMUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [072] 🕯️  ATOMUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [265] 🕯️  ALGOUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [266] 🕯️  ALGOUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [266] 🔍 ALGOUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [266] 🕯️  ALGOUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+MiniChart.jsx:35 [863] 🕯️  INJUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo Object
+MiniChart.jsx:35 [863] 🕯️  INJUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [863] 🔍 INJUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [863] 🕯️  INJUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+useProximityAlerts.js:242 [useProximityAlerts] Interval tick - fetching alerts...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 1 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 0
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85194
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85181.5
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85192.1
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85193.5
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85187.5
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85187.4
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85208.8
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85207.5
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85206.9
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85210.4
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85233.1
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+MiniChart.jsx:35 [060] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [060] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+MiniChart.jsx:35 [061] 🕯️  BTCUSDT | 🔄 Recarga periódica histórico (5 min) 
+MiniChart.jsx:35 [062] 🕯️  BTCUSDT | Solicitando histórico: 90 días @ 60 
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85229.6
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85225.5
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85225.4
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+MiniChart.jsx:35 [150] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766109600000, datetime: '2025-12-18 21:00:00'}
+MiniChart.jsx:35 [151] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [151] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [151] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85215.6
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)
+MiniChart.jsx:35 [563] 🕯️  BTCUSDT | ⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo {timestamp: 1766109600000, datetime: '2025-12-18 21:00:00'}
+MiniChart.jsx:35 [564] 🕯️  BTCUSDT | ✅ Histórico cargado: 2159 velas confirmadas 
+MiniChart.jsx:58 [564] 🔍 BTCUSDT | Estado: 2159 confirmadas, En progreso: SÍ
+MiniChart.jsx:35 [564] 🕯️  BTCUSDT | ⏸️ Range Detection NO habilitado o indicatorManager no existe 
+IndicatorManager.js:1113 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1114 [BTCUSDT] 📍 Current price: 85214.6
+IndicatorManager.js:1340 [BTCUSDT]   ⏭️ Skipping 3 manual horizontal lines (1 manual zones active)
+IndicatorManager.js:1450 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 47 (39 highs, 5 lows, 3 pivots)

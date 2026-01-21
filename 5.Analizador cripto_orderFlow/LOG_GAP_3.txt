@@ -1,0 +1,1498 @@
+chunk-ZFBEYDM4.js?v=e7afa0b2:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:186 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: BTCUSDT (60) - isFullscreen: false
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:186 [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: ETHUSDT (60) - isFullscreen: false
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:186 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: BTCUSDT (60) - isFullscreen: false
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:186 [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: ETHUSDT (60) - isFullscreen: false
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+WebSocketManager.js:25 WebSocket Manager conectado [60]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:186 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: BTCUSDT (1) - isFullscreen: false
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:186 [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: ETHUSDT (1) - isFullscreen: false
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 90 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+WebSocketManager.js:68 WebSocket Manager cerrado
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768510800000, datetime=2026-01-15 16:00:00
+MiniChart.jsx:1032 [BTCUSDT] ⚠️ NO hay velas existentes para comparar
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [5:34:59 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:34:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:34:59 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:34:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 2159 velas
+Logger.js:125 🚨 [5:34:59 p. m.] [BTCUSDT] ✅ Alert system activated - 0 NEW, 81 OLD patterns
+WebSocketManager.js:25 WebSocket Manager conectado [1]
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768510800000, datetime=2026-01-15 16:00:00
+MiniChart.jsx:1032 [BTCUSDT] ⚠️ NO hay velas existentes para comparar
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [5:35:00 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:00 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:00 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:00 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 2159 velas
+Logger.js:125 🚨 [5:35:00 p. m.] [BTCUSDT] ✅ Alert system activated - 0 NEW, 81 OLD patterns
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768510800000, datetime=2026-01-15 16:00:00
+MiniChart.jsx:1032 [ETHUSDT] ⚠️ NO hay velas existentes para comparar
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [5:35:01 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 2159 velas
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 Primera detección - analizando TODAS las velas para carga inicial (1 velas)
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 1 velas
+Logger.js:125 🚨 [5:35:01 p. m.] [BTCUSDT] ✅ Alert system activated - 0 NEW, 0 OLD patterns
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 Primera detección - analizando TODAS las velas para carga inicial (1 velas)
+Logger.js:100 ✅ [5:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 1 velas
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768510800000, datetime=2026-01-15 16:00:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1
+MiniChart.jsx:1022 [ETHUSDT] 🔄 Preservando 1 velas más recientes del WebSocket:
+MiniChart.jsx:1024 [ETHUSDT]   - Vela 0: ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 2160 velas confirmadas
+Logger.js:100 ✅ [5:35:02 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (2160 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:02 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 2160 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 2160 velas
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+MiniChart.jsx:1775 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+MiniChart.jsx:1775 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1032 [BTCUSDT] ⚠️ NO hay velas existentes para comparar
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:03 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 1439 velas
+Logger.js:125 🚨 [5:35:03 p. m.] [BTCUSDT] ✅ Alert system activated - 0 NEW, 38 OLD patterns
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1032 [ETHUSDT] ⚠️ NO hay velas existentes para comparar
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:03 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 1439 velas
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 4721ms
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 4.72s - 25 patrones detectados
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 25 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 5858ms
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 5.86s - 25 patrones detectados
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 25 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:35:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:06 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 5563ms
+Logger.js:100 ✅ [5:35:06 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 5.56s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:06 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 41 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:06 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:06 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 5993ms
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial: 25 patrones históricos detectados
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 25 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 5988ms
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial: 41 patrones históricos detectados
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 41 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:07 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:07 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 1439 velas
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:08 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 1439 velas
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+Logger.js:100 ✅ [5:35:08 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (7200 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 7200 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:08 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 7200 velas
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+Logger.js:100 ✅ [5:35:10 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (7200 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:10 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:10 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 7200 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:10 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 7200 velas
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=7200
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:11 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [5:35:11 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:35:11 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:35:11 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 1439 velas
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 8247ms
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 8.25s - 25 patrones detectados
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 25 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=7200
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 9885ms
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 9.88s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:12 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 9520ms
+Logger.js:100 ✅ [5:35:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 9.52s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 41 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:14 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 6915ms
+Logger.js:100 ✅ [5:35:14 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 6.92s - 25 patrones detectados
+Logger.js:100 ✅ [5:35:14 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:14 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:35:14 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 6472ms
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 6.47s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 6986ms
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 6.99s - 25 patrones detectados
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:35:15 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516440000, datetime=2026-01-15 17:34:00, total=1439
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516440000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 4797ms
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 4.80s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 41 patrones en 6018ms
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 6.02s - 41 patrones detectados
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 41 patrones totales
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 41 patrones históricos cargados
+Logger.js:100 ✅ [5:35:16 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+RejectionPatternSettings.jsx:37 [BTCUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:75 [BTCUSDT] Profiles from IndicatorManager: 0 []
+RejectionPatternSettings.jsx:79 [BTCUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:143 [BTCUSDT] Found 0 available contexts: []
+PresetManager.js:227 [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+RejectionPatternSettings.jsx:37 [BTCUSDT] Show mode loaded from indicator: validated
+RejectionPatternSettings.jsx:75 [BTCUSDT] Profiles from IndicatorManager: 0 []
+RejectionPatternSettings.jsx:79 [BTCUSDT] Fixed range indicator instances: 0
+RejectionPatternSettings.jsx:143 [BTCUSDT] Found 0 available contexts: []
+PresetManager.js:227 [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+PresetManager.js:227 [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+PresetManager.js:227 [PresetManager] ✅ Override guardado: BTCUSDT - Rejection Patterns
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516500000, datetime=2026-01-15 17:35:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1440
+Logger.js:100 ✅ [5:36:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:36:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 1651ms
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 25 patrones totales
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516500000, datetime=2026-01-15 17:35:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516440000, datetime=2026-01-15 17:34:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1440
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:36:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:36:06 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 2337ms
+Logger.js:100 ✅ [5:36:06 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:36:06 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:36:06 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+MiniChart.jsx:1561 [BTCUSDT] 🖱️ handleDoubleClick llamado, shiftKey=false, drawingMode=false
+MiniChart.jsx:1594 [BTCUSDT] 🖱️ x=306, width=461, isInPriceAxis=false, isInPriceChartArea=true
+MiniChart.jsx:1605 [BTCUSDT] 🖱️ Toggle drawingMode: false -> true
+MiniChart.jsx:1556 [BTCUSDT] 🖱️ handleDoubleClick IGNORADO por debounce (11ms)
+Logger.js:100 ✅ [5:36:14 p. m.] [MiniChart] [MiniChart] 🎨 Loaded 1 drawings into DrawingToolManager
+Logger.js:100 ✅ [5:36:17 p. m.] [MiniChart] [MiniChart] 💾 Saved 2 inline drawings for BTCUSDT
+MiniChart.jsx:1561 [ETHUSDT] 🖱️ handleDoubleClick llamado, shiftKey=false, drawingMode=false
+MiniChart.jsx:1594 [ETHUSDT] 🖱️ x=328, width=461, isInPriceAxis=false, isInPriceChartArea=true
+MiniChart.jsx:1605 [ETHUSDT] 🖱️ Toggle drawingMode: false -> true
+MiniChart.jsx:1556 [ETHUSDT] 🖱️ handleDoubleClick IGNORADO por debounce (5ms)
+Logger.js:100 ✅ [5:36:29 p. m.] [MiniChart] [MiniChart] 🎨 Loaded 1 drawings into DrawingToolManager
+Logger.js:100 ✅ [5:36:32 p. m.] [MiniChart] [MiniChart] 💾 Saved 1 inline drawings for ETHUSDT
+Logger.js:100 ✅ [5:36:32 p. m.] [MiniChart] [MiniChart] 💾 Saved 0 inline drawings for ETHUSDT
+Logger.js:100 ✅ [5:36:38 p. m.] [MiniChart] [MiniChart] 💾 Saved 1 inline drawings for ETHUSDT
+DoubleTopBottomSettings.jsx:263 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
+DoubleTopBottomSettings.jsx:275 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
+Logger.js:100 ✅ [5:36:52 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [5:36:52 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 1440 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [5:36:52 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 1440 velas
+Logger.js:100 ✅ [5:36:53 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 25 patrones en 1608ms
+Logger.js:100 ✅ [5:36:53 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 1.61s - 25 patrones detectados
+Logger.js:100 ✅ [5:36:53 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 25 patrones históricos cargados, 25 patrones totales
+Logger.js:100 ✅ [5:36:53 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 25 patrones históricos cargados
+Logger.js:100 ✅ [5:36:53 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516560000, datetime=2026-01-15 17:36:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516500000, datetime=2026-01-15 17:35:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1441
+Logger.js:100 ✅ [5:37:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:37:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516560000, datetime=2026-01-15 17:36:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516500000, datetime=2026-01-15 17:35:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1441
+Logger.js:100 ✅ [5:37:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:37:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 1651ms
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom]   📊 Total patterns: 41
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 40
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:37:03 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 3087ms
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones agregados (0 NUEVOS, 1 históricos, ⏳0 cooldown), 26 patrones totales
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 26
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 25
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:37:04 p. m.] [DoubleTopBottom] ================================================================================
+
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516620000, datetime=2026-01-15 17:37:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516560000, datetime=2026-01-15 17:36:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1442
+Logger.js:100 ✅ [5:38:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:38:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516620000, datetime=2026-01-15 17:37:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516560000, datetime=2026-01-15 17:36:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1442
+Logger.js:100 ✅ [5:38:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:38:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 1532ms
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   📊 Total patterns: 41
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 40
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 2201ms
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones agregados (0 NUEVOS, 1 históricos, ⏳0 cooldown), 27 patrones totales
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   📊 Total patterns: 27
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 26
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:38:03 p. m.] [DoubleTopBottom] ================================================================================
+
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516680000, datetime=2026-01-15 17:38:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516620000, datetime=2026-01-15 17:37:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1443
+Logger.js:100 ✅ [5:39:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:39:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516680000, datetime=2026-01-15 17:38:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516620000, datetime=2026-01-15 17:37:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1443
+Logger.js:100 ✅ [5:39:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:39:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 2342ms
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 1 patrones agregados (0 NUEVOS, 1 históricos, ⏳0 cooldown), 28 patrones totales
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 28
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 2318ms
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 41
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 40
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:39:04 p. m.] [DoubleTopBottom] ================================================================================
+
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516680000, datetime=2026-01-15 17:38:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1444
+Logger.js:100 ✅ [5:40:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:40:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516680000, datetime=2026-01-15 17:38:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1444
+Logger.js:100 ✅ [5:40:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:40:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 2437ms
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 28 patrones totales
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 28
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 3059ms
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 41
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 40
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:40:04 p. m.] [DoubleTopBottom] ================================================================================
+
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516740000, datetime=2026-01-15 17:39:00, total=1444
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516740000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516740000, datetime=2026-01-15 17:39:00, total=1444
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768516740000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+MiniChart.jsx:1197 [ETHUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516800000, datetime=2026-01-15 17:40:00
+MiniChart.jsx:1199 [ETHUSDT]   - Última confirmada antes: ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1208 [ETHUSDT]   - Total confirmadas ahora: 1440
+Logger.js:100 ✅ [5:41:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:41:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+MiniChart.jsx:1197 [BTCUSDT] 🕯️ NUEVA VELA CONFIRMADA: ts=1768516800000, datetime=2026-01-15 17:40:00
+MiniChart.jsx:1199 [BTCUSDT]   - Última confirmada antes: ts=1768516740000, datetime=2026-01-15 17:39:00
+MiniChart.jsx:1208 [BTCUSDT]   - Total confirmadas ahora: 1440
+Logger.js:100 ✅ [5:41:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+Logger.js:100 ✅ [5:41:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 41 patrones en 1548ms
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 41 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 41 patrones totales
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom]   📊 Total patterns: 41
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 1
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 40
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+Logger.js:100 ✅ [5:41:03 p. m.] [DoubleTopBottom] ================================================================================
+
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 25 patrones en 2151ms
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 25 patrones detectados en tiempo real
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos, ⏳0 cooldown), 28 patrones totales
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Pattern CONFIRMED after 8 bars (5 confirmation + 3 validation) - ready for alert
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom] 
+Summary:
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom]   📊 Total patterns: 28
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 1
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+Logger.js:100 ✅ [5:41:04 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 27
+DoubleTopBottomIndicator.js:1417 
+================================================================================
+DoubleTopBottomIndicator.js:1418 🚨 [BTCUSDT] SENDING PATTERN ALERT
+DoubleTopBottomIndicator.js:1419 ================================================================================
+DoubleTopBottomIndicator.js:1452 📤 STEP 1: Building payload
+DoubleTopBottomIndicator.js:1453    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:1454    Interval: 1
+DoubleTopBottomIndicator.js:1455    Pattern Type: DOUBLE_TOP
+DoubleTopBottomIndicator.js:1456    Price: $95757.50
+DoubleTopBottomIndicator.js:1457    Confidence: 83.0%
+DoubleTopBottomIndicator.js:1458    Direction: SHORT
+DoubleTopBottomIndicator.js:1459    Level: critical
+DoubleTopBottomIndicator.js:1460    Alert Mode: pattern_complete
+DoubleTopBottomIndicator.js:1461 
+📤 STEP 2: Sending HTTP POST request
+DoubleTopBottomIndicator.js:1462    Endpoint: http://localhost:8000/api/pattern-alert
+DoubleTopBottomIndicator.js:1463    Full Payload: {
+  "symbol": "BTCUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_TOP",
+    "price": 95757.5,
+    "confidence": 83,
+    "timestamp": 1768516380000,
+    "direction": "SHORT",
+    "level": "critical",
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1768514880000,
+        "price": 95680,
+        "candle_index": 1411,
+        "volume_zscore": -0.5296047519283861
+      },
+      "secondExtreme": {
+        "timestamp": 1768516380000,
+        "price": 95835,
+        "candle_index": 1436,
+        "volume_zscore": 2.329773594993537
+      },
+      "entrySignal": null,
+      "hasMomentum": false,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 23,
+      "requireBothRejections": false,
+      "minPatternDuration": 3,
+      "maxPatternDuration": 72,
+      "applyPostValidationToRealtimeSignals": false,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 24
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "confidenceLevels": {
+        "critical": {
+          "minConfidence": 80,
+          "cooldownSeconds": 60,
+          "color": "#F44336"
+        },
+        "high": {
+          "minConfidence": 60,
+          "cooldownSeconds": 180,
+          "color": "#FF9800"
+        },
+        "medium": {
+          "minConfidence": 40,
+          "cooldownSeconds": 300,
+          "color": "#FFC107"
+        }
+      },
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      },
+      "visualization": {
+        "showDetectionCircle": true,
+        "detectionCircleColor": "#2196F3",
+        "detectionCircleSize": 8
+      },
+      "vwapZoneFilter": {
+        "enabled": true,
+        "vwapType": "rolling",
+        "rollingPeriod": 200,
+        "mode": "bothExtremes",
+        "minDeviation": 2,
+        "marginPercent": 50
+      },
+      "globalCooldown": {
+        "enabled": true,
+        "minutes": 30,
+        "pauseDetection": true,
+        "discardedBoxColor": "#9E9E9E",
+        "discardedBoxOpacity": 0.1
+      }
+    }
+  }
+}
+DoubleTopBottomIndicator.js:1473 
+📥 STEP 3: Received response (11ms)
+DoubleTopBottomIndicator.js:1474    HTTP Status: 200 OK
+DoubleTopBottomIndicator.js:1477    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_TOP",
+  "symbol": "BTCUSDT",
+  "price": 95757.5,
+  "confidence": 83
+}
+DoubleTopBottomIndicator.js:1480 
+✅ STEP 4: Alert sent successfully!
+DoubleTopBottomIndicator.js:1481    Pattern: DOUBLE_TOP
+DoubleTopBottomIndicator.js:1482    Symbol: BTCUSDT
+DoubleTopBottomIndicator.js:1483    Price: $95757.50
+DoubleTopBottomIndicator.js:1484    Confidence: 83%
+DoubleTopBottomIndicator.js:1485    Total Duration: 11ms
+DoubleTopBottomIndicator.js:1486 ================================================================================
+
+Logger.js:100 ✅ [6:29:49 p. m.] [DoubleTopBottom] [BTCUSDT] ⏰ Cooldown timestamp updated to 1768519789504
+Logger.js:100 ✅ [6:29:49 p. m.] [DoubleTopBottom]      ⏳ Entering global cooldown for 30 minutes
+MiniChart.jsx:976 [BTCUSDT] Solicitando histórico: 1 días @ 1
+MiniChart.jsx:976 [ETHUSDT] Solicitando histórico: 1 días @ 1
+WebSocketManager.js:68 WebSocket Manager cerrado
+MiniChart.jsx:1010 [ETHUSDT] 📊 HISTÓRICO: última vela ts=1768519740000, datetime=2026-01-15 18:29:00
+MiniChart.jsx:1014 [ETHUSDT] 📊 EXISTENTE: última vela ts=1768516800000, datetime=2026-01-15 17:40:00, total=1440
+MiniChart.jsx:1029 [ETHUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768519740000)
+MiniChart.jsx:1036 [ETHUSDT] ✅ Histórico cargado: 1440 velas confirmadas
+MiniChart.jsx:1010 [BTCUSDT] 📊 HISTÓRICO: última vela ts=1768519740000, datetime=2026-01-15 18:29:00
+MiniChart.jsx:1014 [BTCUSDT] 📊 EXISTENTE: última vela ts=1768516800000, datetime=2026-01-15 17:40:00, total=1440
+MiniChart.jsx:1029 [BTCUSDT] ⚠️ NO hay velas más recientes que preservar (lastHistoricalTs=1768519740000)
+MiniChart.jsx:1036 [BTCUSDT] ✅ Histórico cargado: 1440 velas confirmadas
+--------------------------------------
+--------------------------------------
+--------------------------------------
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at invokePassiveEffectMountInDEV (chunk-ZFBEYDM4.js?v=e7afa0b2:18324:19)
+    at invokeEffectsInDev (chunk-ZFBEYDM4.js?v=e7afa0b2:19701:19)
+    at commitDoubleInvokeEffectsInDEV (chunk-ZFBEYDM4.js?v=e7afa0b2:19686:15)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=e7afa0b2:19503:13)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+invokePassiveEffectMountInDEV @ chunk-ZFBEYDM4.js?v=e7afa0b2:18324
+invokeEffectsInDev @ chunk-ZFBEYDM4.js?v=e7afa0b2:19701
+commitDoubleInvokeEffectsInDEV @ chunk-ZFBEYDM4.js?v=e7afa0b2:19686
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19503
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at invokePassiveEffectMountInDEV (chunk-ZFBEYDM4.js?v=e7afa0b2:18324:19)
+    at invokeEffectsInDev (chunk-ZFBEYDM4.js?v=e7afa0b2:19701:19)
+    at commitDoubleInvokeEffectsInDEV (chunk-ZFBEYDM4.js?v=e7afa0b2:19686:15)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=e7afa0b2:19503:13)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+invokePassiveEffectMountInDEV @ chunk-ZFBEYDM4.js?v=e7afa0b2:18324
+invokeEffectsInDev @ chunk-ZFBEYDM4.js?v=e7afa0b2:19701
+commitDoubleInvokeEffectsInDEV @ chunk-ZFBEYDM4.js?v=e7afa0b2:19686
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19503
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+favicon.ico:1  GET http://localhost:5173/favicon.ico 404 (Not Found)
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+handleMouseUp_ @ unknown
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+handleMouseUp_ @ unknown
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+handleMouseUp_ @ unknown
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+handleMouseUp_ @ unknown
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:19328
+workLoop @ chunk-ZFBEYDM4.js?v=e7afa0b2:197
+flushWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=e7afa0b2:384
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:381:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:155 Failed to load alerted patterns: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertedPatterns (RejectionPatternIndicator.js:150:21)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:51:33)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertedPatterns @ RejectionPatternIndicator.js:155
+RejectionPatternIndicator @ RejectionPatternIndicator.js:51
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+RejectionPatternIndicator.js:384 Failed to load alertSystemStartTime: TypeError: Cannot read properties of undefined (reading 'debug')
+    at RejectionPatternIndicator.loadAlertSystemStartTime (RejectionPatternIndicator.js:376:23)
+    at new RejectionPatternIndicator (RejectionPatternIndicator.js:54:38)
+    at IndicatorManager.initialize (IndicatorManager.js:76:26)
+    at initIndicators (MiniChart.jsx:1808:41)
+    at MiniChart.jsx:1889:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=e7afa0b2:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=e7afa0b2:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=e7afa0b2:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=e7afa0b2:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=e7afa0b2:18109:11)
+loadAlertSystemStartTime @ RejectionPatternIndicator.js:384
+RejectionPatternIndicator @ RejectionPatternIndicator.js:54
+initialize @ IndicatorManager.js:76
+initIndicators @ MiniChart.jsx:1808
+(anonymous) @ MiniChart.jsx:1889
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=e7afa0b2:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=e7afa0b2:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=e7afa0b2:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=e7afa0b2:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=e7afa0b2:19447
+commitRootImpl @ chunk-ZFBEYDM4.js?v=e7afa0b2:19416
+commitRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+flushSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:18959
+finishEventHandler @ chunk-ZFBEYDM4.js?v=e7afa0b2:3569
+batchedUpdates @ chunk-ZFBEYDM4.js?v=e7afa0b2:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=e7afa0b2:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=e7afa0b2:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=e7afa0b2:5449
+chunk-ZFBEYDM4.js?v=e7afa0b2:521 Warning: Received `true` for a non-boolean attribute `jsx`.
+
+If you want to write it to the DOM, pass a string instead: jsx="true" or jsx={value.toString()}.
+    at style
+    at div
+    at DTBProfilesManager (http://localhost:5173/src/components/DTBProfilesManager.jsx:242:3)
+    at div
+    at DoubleTopBottomSettings (http://localhost:5173/src/components/DoubleTopBottomSettings.jsx:202:3)
+    at div
+    at div
+    at div
+    at div
+    at Watchlist (http://localhost:5173/src/components/Watchlist.jsx:79:35)
+printWarning @ chunk-ZFBEYDM4.js?v=e7afa0b2:521
+error @ chunk-ZFBEYDM4.js?v=e7afa0b2:505
+validateProperty$1 @ chunk-ZFBEYDM4.js?v=e7afa0b2:3433
+warnUnknownProperties @ chunk-ZFBEYDM4.js?v=e7afa0b2:3459
+validateProperties$2 @ chunk-ZFBEYDM4.js?v=e7afa0b2:3478
+validatePropertiesInDevelopment @ chunk-ZFBEYDM4.js?v=e7afa0b2:7346
+setInitialProperties @ chunk-ZFBEYDM4.js?v=e7afa0b2:7535
+finalizeInitialChildren @ chunk-ZFBEYDM4.js?v=e7afa0b2:8345
+completeWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:16293
+completeUnitOfWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:19224
+performUnitOfWork @ chunk-ZFBEYDM4.js?v=e7afa0b2:19206
+workLoopSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:19137
+renderRootSync @ chunk-ZFBEYDM4.js?v=e7afa0b2:19116
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js?v=e7afa0b2:18874
+flushSyncCallbacks @ chunk-ZFBEYDM4.js?v=e7afa0b2:9119
+(anonymous) @ chunk-ZFBEYDM4.js?v=e7afa0b2:18627

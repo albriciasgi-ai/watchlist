@@ -19,6 +19,7 @@ import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
 import { API_BASE_URL } from "../config";
+import { TradingPanel } from "./trading";
 
 const log = new Logger('SingleSymbolAnalyzer', { level: 'info' });
 
@@ -147,6 +148,11 @@ const SingleSymbolAnalyzer = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
 
+  // Trading Panel state
+  const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
+  const [tpslBoxData, setTpslBoxData] = useState(null);
+  const [currentPrice, setCurrentPrice] = useState(null);
+
   // Ref para el indicatorManager actual (recibido desde MiniChart)
   const indicatorManagerRef = useRef(null);
   const currentCandlesRef = useRef(null);
@@ -247,6 +253,109 @@ const SingleSymbolAnalyzer = () => {
 
     notifyBackendTimeframe();
   }, [interval]);
+
+  // Fetch TPSLBox data from drawings API
+  const fetchTPSLBoxData = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      if (!data.shapes || data.shapes.length === 0) return null;
+
+      // Buscar el primer TPSLBox (priorizar el mas reciente)
+      const tpslBoxes = data.shapes.filter(s => s.type === 'tpsl' || s.type === 'tpsl-short');
+
+      if (tpslBoxes.length === 0) return null;
+
+      // Tomar el mas reciente (ultimo en el array)
+      const tpslBox = tpslBoxes[tpslBoxes.length - 1];
+
+      // Determinar direccion basada en el tipo y la posicion de TP vs SL
+      let side = 'Buy'; // LONG por defecto
+      if (tpslBox.type === 'tpsl-short') {
+        side = 'Sell'; // SHORT
+      } else if (tpslBox.tpPrice < tpslBox.entryPrice) {
+        // Si TP esta abajo del entry, es SHORT
+        side = 'Sell';
+      }
+
+      return {
+        entryPrice: tpslBox.entryPrice,
+        slPrice: tpslBox.slPrice,
+        tpPrice: tpslBox.tpPrice,
+        side: side
+      };
+    } catch (error) {
+      log.error('Error fetching TPSLBox data:', error);
+      return null;
+    }
+  }, [symbol]);
+
+  // Fetch current price
+  const fetchCurrentPrice = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/tickers?symbols=${symbol}`);
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      if (data.success && data.data && data.data[symbol]) {
+        return parseFloat(data.data[symbol].lastPrice);
+      }
+      return null;
+    } catch (error) {
+      log.error('Error fetching current price:', error);
+      return null;
+    }
+  }, [symbol]);
+
+  // Handle Alt+T to open Trading Panel
+  useEffect(() => {
+    const handleKeyDown = async (e) => {
+      // Alt+T para abrir/cerrar Trading Panel
+      if (e.altKey && (e.key === 't' || e.key === 'T')) {
+        e.preventDefault();
+
+        if (isTradingPanelOpen) {
+          // Cerrar panel
+          setIsTradingPanelOpen(false);
+        } else {
+          // Abrir panel y cargar datos
+          log.info('Opening Trading Panel with Alt+T');
+
+          // Fetch TPSLBox data y precio actual en paralelo
+          const [tpslData, price] = await Promise.all([
+            fetchTPSLBoxData(),
+            fetchCurrentPrice()
+          ]);
+
+          setTpslBoxData(tpslData);
+          setCurrentPrice(price);
+          setIsTradingPanelOpen(true);
+
+          if (!tpslData) {
+            log.warn('No TPSLBox found - Trading Panel will show warning');
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTradingPanelOpen, fetchTPSLBoxData, fetchCurrentPrice]);
+
+  // Actualizar precio cada 5 segundos cuando el panel esta abierto
+  useEffect(() => {
+    if (!isTradingPanelOpen) return;
+
+    const updatePrice = async () => {
+      const price = await fetchCurrentPrice();
+      if (price) setCurrentPrice(price);
+    };
+
+    const interval = setInterval(updatePrice, 5000);
+    return () => clearInterval(interval);
+  }, [isTradingPanelOpen, fetchCurrentPrice]);
 
   // Handler para cambio de simbolo
   const handleSymbolChange = useCallback((newSymbol) => {
@@ -525,6 +634,24 @@ const SingleSymbolAnalyzer = () => {
             onClick={() => setIsAlertPanelOpen(!isAlertPanelOpen)}
             alertCount={alertCount}
           />
+
+          <button
+            className={`trading-panel-toggle ${isTradingPanelOpen ? 'active' : ''}`}
+            onClick={async () => {
+              if (!isTradingPanelOpen) {
+                const [tpslData, price] = await Promise.all([
+                  fetchTPSLBoxData(),
+                  fetchCurrentPrice()
+                ]);
+                setTpslBoxData(tpslData);
+                setCurrentPrice(price);
+              }
+              setIsTradingPanelOpen(!isTradingPanelOpen);
+            }}
+            title="Trading Panel (Alt+T)"
+          >
+            📊 Trading
+          </button>
         </div>
       </div>
 
@@ -595,6 +722,15 @@ const SingleSymbolAnalyzer = () => {
         onClose={() => setIsAlertPanelOpen(false)}
         symbol={symbol}
         interval={interval}
+      />
+
+      {/* Trading Panel (Alt+T) */}
+      <TradingPanel
+        isOpen={isTradingPanelOpen}
+        onClose={() => setIsTradingPanelOpen(false)}
+        symbol={symbol}
+        tpslBoxData={tpslBoxData}
+        currentPrice={currentPrice}
       />
 
       {/* Modals de configuracion */}

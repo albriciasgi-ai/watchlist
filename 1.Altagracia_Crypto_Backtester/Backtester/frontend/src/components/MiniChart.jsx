@@ -10,6 +10,7 @@ import VolumeProfileFixedSettings from "./VolumeProfileFixedSettings";
 import ZoomPresetsConfig from "./ZoomPresetsConfig";
 import DrawingToolManager from "./drawing/DrawingToolManager";
 import MeasurementTool from "./drawing/MeasurementTool";
+import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL programáticamente
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = false;
@@ -130,6 +131,7 @@ const MiniChart = forwardRef(({
   onOpenSupportResistanceSettings,
   onOpenVWAPSettings,
   onOpenDoubleTopBottomSettings,
+  onOpenSwingDetectorSettings,
   rejectionPatternConfig,
   // 🎯 NUEVO: Props para modo backtesting
   backtestingMode = false,
@@ -277,8 +279,57 @@ const MiniChart = forwardRef(({
         }
       }
       return false;
+    },
+    // 🎯 NUEVO: Agregar caja TP/SL programáticamente (para órdenes de trading)
+    addTPSLBox: (entryPrice, time, direction, stopLoss, takeProfit, candleWidthCount = 5) => {
+      if (!drawingManagerRef.current) {
+        console.warn(`[MiniChart ${symbol} ${interval}] DrawingManager no disponible`);
+        return null;
+      }
+
+      // Calcular ancho basado en número de velas
+      const intervalMs = {
+        '1': 60000, '3': 180000, '5': 300000, '15': 900000, '30': 1800000,
+        '60': 3600000, '120': 7200000, '240': 14400000, 'D': 86400000, 'W': 604800000
+      }[interval] || 900000;
+
+      const boxWidthMs = candleWidthCount * intervalMs;
+
+      // Crear TPSLBox con valores personalizados
+      const box = new TPSLBox(entryPrice, time, direction);
+      box.timeStart = time;
+      box.timeEnd = time + boxWidthMs;
+      box.time = time + boxWidthMs / 2; // Centro
+
+      // Usar TP/SL de la orden si se proporcionan
+      if (stopLoss !== null && stopLoss !== undefined) {
+        box.slPrice = stopLoss;
+      }
+      if (takeProfit !== null && takeProfit !== undefined) {
+        box.tpPrice = takeProfit;
+      }
+
+      // Agregar al manager
+      drawingManagerRef.current.addShape(box);
+      drawingManagerRef.current.saveToHistory();
+
+      // Guardar y redibujar
+      saveDrawings();
+      if (candlesRef.current && candlesRef.current.length > 0) {
+        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      }
+
+      console.log(`[MiniChart ${symbol} ${interval}] ✅ TPSLBox creado:`, {
+        entry: entryPrice,
+        sl: box.slPrice,
+        tp: box.tpPrice,
+        direction,
+        width: candleWidthCount
+      });
+
+      return box.id;
     }
-  }), [symbol]);
+  }), [symbol, interval]);
 
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
@@ -1569,29 +1620,8 @@ const MiniChart = forwardRef(({
     }
   }, [oiMode]);
 
-  // 🎯 NUEVO: Efecto para actualizar indicadores cuando cambien los estados
-  useEffect(() => {
-    if (!indicatorManagerRef.current || !indicatorStates) return;
-
-    console.log('[MiniChart] Actualizando indicadores:', indicatorStates);
-    console.log('[MiniChart] Velas disponibles:', candlesRef.current.length);
-    console.log('[MiniChart] Modo backtesting:', backtestingMode);
-
-    // Aplicar todos los estados de indicadores
-    Object.entries(indicatorStates).forEach(([name, enabled]) => {
-      indicatorManagerRef.current.toggleIndicator(name, enabled);
-    });
-
-    // Redibujar el chart después de actualizar los indicadores
-    // SOLO si hay velas para dibujar
-    if (candlesRef.current && candlesRef.current.length > 0) {
-      console.log(`[MiniChart ${symbol} ${interval}] Redibujando por cambio en indicatorStates - ${candlesRef.current.length} velas`);
-      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-    } else {
-      console.warn(`[MiniChart ${symbol} ${interval}] ⚠️ NO se puede redibujar por cambio en indicatorStates - candlesRef.current ${candlesRef.current ? 'tiene 0 velas' : 'es null/undefined'}`);
-      // NO llamar a drawChart si no hay velas - esto evitará que el gráfico desaparezca
-    }
-  }, [indicatorStates, symbol, interval]);
+  // 🎯 REMOVIDO: useEffect duplicado que usaba toggleIndicator
+  // Ahora se usa updateIndicatorStates en el MAIN EFFECT y en el otro useEffect
 
   // 🎯 Cargar todas las velas UNA VEZ al inicio (para binary search)
   useEffect(() => {
@@ -1733,10 +1763,9 @@ const MiniChart = forwardRef(({
         }
       };
 
+      // 🎯 FIX: Usar updateIndicatorStates para que haga fetchData de S/R y otros
       if (indicatorStates) {
-        Object.entries(indicatorStates).forEach(([name, enabled]) => {
-          indicatorManagerRef.current.toggleIndicator(name, enabled);
-        });
+        await indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode);
       }
 
       if (vpConfig) {

@@ -205,11 +205,23 @@ class OrderManager:
 
                 # Step 4: Calculate SL and TP prices
                 tick_size = Decimal(str(config.get("tick_size", "0.01")))
-                sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
-                tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
 
-                sl_price = self._calculate_sl_price(real_price, side, sl_percent)
-                tp_price = self._calculate_tp_price(real_price, side, tp_percent)
+                # Use custom SL/TP if provided, otherwise calculate from percentages
+                if config.get("custom_stop_loss"):
+                    sl_price = Decimal(str(config["custom_stop_loss"]))
+                    sl_source = "custom"
+                else:
+                    sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
+                    sl_price = self._calculate_sl_price(real_price, side, sl_percent)
+                    sl_source = f"{sl_percent*100:.1f}%"
+
+                if config.get("custom_take_profit"):
+                    tp_price = Decimal(str(config["custom_take_profit"]))
+                    tp_source = "custom"
+                else:
+                    tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
+                    tp_price = self._calculate_tp_price(real_price, side, tp_percent)
+                    tp_source = f"{tp_percent*100:.1f}%"
 
                 sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
                 tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
@@ -217,8 +229,8 @@ class OrderManager:
                 formatted_sl = self._format_price(sl_price, tick_size)
                 formatted_tp = self._format_price(tp_price, tick_size)
 
-                print(f"[SL] Stop Loss: ${formatted_sl} ({sl_percent*100:.1f}% from entry)")
-                print(f"[TP] Take Profit: ${formatted_tp} ({tp_percent*100:.1f}% from entry)")
+                print(f"[SL] Stop Loss: ${formatted_sl} ({sl_source} from entry)")
+                print(f"[TP] Take Profit: ${formatted_tp} ({tp_source} from entry)")
 
                 # Step 5: Place Stop Loss
                 opposite_side = self._get_opposite_side(side)

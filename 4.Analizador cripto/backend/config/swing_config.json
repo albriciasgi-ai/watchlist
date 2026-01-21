@@ -12,8 +12,8 @@
     "ADAUSDT",
     "DOGEUSDT"
   ],
-  "interval": "60",
-  "days": 90,
+  "interval": {},
+  "days": 30,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -21,7 +21,7 @@
         "minZScore": 1.5,
         "lookbackBars": 100
       },
-      "days": 90,
+      "days": 360,
       "vwapFilter": {
         "enabled": true,
         "deviations": [
@@ -39,7 +39,7 @@
         "lookbackBars": 45
       },
       "swingBars": 5,
-      "days": 90,
+      "days": 30,
       "cooldownMinutes": 20
     },
     "XRPUSDT": {
@@ -86,6 +86,9 @@
         "minZScore": 3,
         "lookbackBars": 50
       }
+    },
+    "PAXGUSDT": {
+      "days": 30
     }
   },
   "swingBars": 3,

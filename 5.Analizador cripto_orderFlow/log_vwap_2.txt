@@ -1,0 +1,1199 @@
+PS C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\2.WatchlistConIndicadores\backend> python -m uvicorn main:app --port 8000
+2026-01-17 21:47:03 - uvicorn.error - INFO - Started server process [15964]
+2026-01-17 21:47:03 - uvicorn.error - INFO - Started server process [15964]
+2026-01-17 21:47:03 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 21:47:03 - uvicorn.error - INFO - Waiting for application startup.
+2026-01-17 21:47:04 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-01-17 21:47:04 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-01-17 21:47:04 - httpx - INFO - HTTP Request: GET http://localhost:5000/api/health "HTTP/1.1 404 Not Found"
+2026-01-17 21:47:04 - alert_sender - WARNING - [WARN] Alert service returned status 404
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+2026-01-17 21:47:04 - websocket_manager - INFO - WebSocketManager initialized
+2026-01-17 21:47:04 - config_store - INFO - Loaded configs for 2 symbols from file
+2026-01-17 21:47:04 - config_store - INFO - ConfigStore initialized with 2 symbols
+2026-01-17 21:47:04 - pattern_state_manager - INFO - Loaded 2 alerted patterns
+2026-01-17 21:47:04 - pattern_state_manager - INFO - Loaded 1 cooldown states
+2026-01-17 21:47:04 - pattern_state_manager - INFO - Loaded 7 alert records
+2026-01-17 21:47:04 - pattern_state_manager - INFO - PatternStateManager initialized with 2 alerted patterns
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - RealtimePatternService initialized
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - Starting RealtimePatternService
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - Intervals: ['60']
+2026-01-17 21:47:04 - websocket_manager - INFO - Candle close callback registered (total: 1)
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - [PRELOAD] Starting historical candle preload...
+2026-01-17 21:47:04 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for BTCUSDT/60...
+2026-01-17 21:47:05 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:05 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:47:05 - websocket_manager - INFO - [PRELOAD] BTCUSDT/60: Preloaded 200 historical candles
+2026-01-17 21:47:05 - realtime_pattern_service - INFO - [PRELOAD] ✅ BTCUSDT/60: Loaded 200 candles
+2026-01-17 21:47:05 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for ETHUSDT/60...
+2026-01-17 21:47:06 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:06 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:47:06 - websocket_manager - INFO - [PRELOAD] ETHUSDT/60: Preloaded 200 historical candles
+2026-01-17 21:47:06 - realtime_pattern_service - INFO - [PRELOAD] ✅ ETHUSDT/60: Loaded 200 candles
+2026-01-17 21:47:06 - realtime_pattern_service - INFO - [PRELOAD] Historical candle preload complete
+2026-01-17 21:47:06 - websocket_manager - INFO - Starting WebSocketManager with 2 subscriptions
+2026-01-17 21:47:06 - websocket_manager - INFO - Symbols: ['BTCUSDT', 'ETHUSDT']
+2026-01-17 21:47:06 - websocket_manager - INFO - Intervals: ['60']
+2026-01-17 21:47:06 - realtime_pattern_service - INFO - RealtimePatternService started successfully
+[STARTUP] Real-time pattern detection service started
+[STARTUP] Monitoring symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] Initial interval: ['60'] (frontend will sync active timeframe)
+2026-01-17 21:47:06 - swing_detector - INFO - [SWING_DETECTOR] Initialized
+2026-01-17 21:47:06 - swing_service - INFO - [SWING_SERVICE] Loaded config: 2 symbols
+2026-01-17 21:47:06 - swing_service - INFO - [SWING_SERVICE] Initialized
+2026-01-17 21:47:06 - websocket_manager - INFO - Candle close listener added (total: 2)
+2026-01-17 21:47:06 - websocket_manager - WARNING - WebSocketManager already running
+2026-01-17 21:47:06 - swing_service - INFO - [SWING_SERVICE] Started - monitoring ['BTCUSDT', 'ETHUSDT'] @ 1m
+2026-01-17 21:47:06 - swing_service - INFO - [SWING_SERVICE] Waiting 2.0s for WebSocket data...
+2026-01-17 21:47:06 - websocket_manager - INFO - Connecting to wss://stream.bybit.com/v5/public/linear...
+2026-01-17 21:47:08 - websocket_manager - INFO - Connected to Bybit WebSocket
+2026-01-17 21:47:08 - realtime_pattern_service - INFO - WebSocket connected
+2026-01-17 21:47:08 - websocket_manager - INFO - Subscribed to 2 channels
+2026-01-17 21:47:08 - swing_service - INFO - [SWING_SERVICE] Analyzing historical data...
+2026-01-17 21:47:08 - swing_service - INFO - [SWING_SERVICE] Days=1, Interval=1 -> 1440 candles
+2026-01-17 21:47:08 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: WebSocket buffer has 0 candles
+2026-01-17 21:47:08 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Loading extended history from API...
+2026-01-17 21:47:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768692479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768680479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768668479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768656479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768644479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1768632479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=40&end=1768620479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:12 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Fetched 1440 candles from API
+2026-01-17 21:47:12 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Analyzing 1440 candles...
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95264.80 (z-score: 2.55, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95260.60 (z-score: 4.22, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95288.40 (z-score: 11.73, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95296.20 (z-score: 4.57, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95286.20 (z-score: 1.45, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95269.20 (z-score: 61.05, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95251.70 (z-score: 7.48, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95253.60 (z-score: 1.53, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95274.70 (z-score: 23.08, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95252.60 (z-score: 5.88, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95267.40 (z-score: 3.33, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95182.30 (z-score: 3.25, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95272.30 (z-score: 6.64, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95074.20 (z-score: 43.42, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95107.10 (z-score: 1.51, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95012.00 (z-score: 2.86, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95040.00 (z-score: 13.46, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95229.70 (z-score: 1.64, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95181.30 (z-score: 19.93, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95141.50 (z-score: 2.15, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95046.40 (z-score: 9.86, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95077.50 (z-score: 1.66, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95039.20 (z-score: 1.32, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95215.40 (z-score: 7.71, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95267.90 (z-score: 2.94, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95149.30 (z-score: 1.58, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95214.20 (z-score: 7.27, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95372.50 (z-score: 2.33, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95421.30 (z-score: 1.46, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95593.30 (z-score: 20.95, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95518.80 (z-score: 7.03, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95391.90 (z-score: 1.09, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95187.00 (z-score: 2.87, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95237.90 (z-score: 1.62, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95342.70 (z-score: 1.07, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95359.20 (z-score: 1.21, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95353.30 (z-score: 1.97, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95403.60 (z-score: 9.09, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95338.90 (z-score: 9.15, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95401.00 (z-score: 1.26, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95380.00 (z-score: 11.74, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95316.60 (z-score: 2.09, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95287.00 (z-score: 1.01, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95233.60 (z-score: 9.14, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95248.40 (z-score: 1.28, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95237.10 (z-score: 5.57, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95284.10 (z-score: 6.77, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95345.60 (z-score: 1.93, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95365.40 (z-score: 3.31, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95281.10 (z-score: 3.78, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95246.90 (z-score: 1.07, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95243.00 (z-score: 2.94, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95239.10 (z-score: 2.87, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95247.60 (z-score: 1.03, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95149.90 (z-score: 64.42, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95038.90 (z-score: 60.85, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95124.80 (z-score: 3.33, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.70 (z-score: 3.01, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95121.00 (z-score: 2.08, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.80 (z-score: 4.46, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95070.20 (z-score: 15.52, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95184.90 (z-score: 3.49, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95160.10 (z-score: 1.57, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95055.00 (z-score: 5.69, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94947.40 (z-score: 25.34, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94993.00 (z-score: 1.31, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94965.90 (z-score: 10.87, direction: SHORT)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94866.40 (z-score: 1.89, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94828.50 (z-score: 2.91, direction: LONG)
+2026-01-17 21:47:12 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 69 swing signals
+2026-01-17 21:47:12 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Found 69 historical signals
+2026-01-17 21:47:12 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: WebSocket buffer has 0 candles
+2026-01-17 21:47:12 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Loading extended history from API...
+2026-01-17 21:47:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768692479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:14 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768680479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:14 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768668479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768656479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768644479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1768632479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:16 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=40&end=1768620479999 "HTTP/1.1 200 OK"
+2026-01-17 21:47:16 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Fetched 1440 candles from API
+2026-01-17 21:47:16 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Analyzing 1440 candles...
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.13 (z-score: 2.99, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.11 (z-score: 5.26, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3288.59 (z-score: 7.49, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3287.81 (z-score: 11.51, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3285.94 (z-score: 1.39, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.61 (z-score: 16.20, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3290.38 (z-score: 1.10, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.13 (z-score: 22.25, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3292.08 (z-score: 6.45, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.74 (z-score: 3.62, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3287.99 (z-score: 10.59, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.51 (z-score: 22.07, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3285.84 (z-score: 4.15, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3286.91 (z-score: 5.99, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3289.92 (z-score: 2.68, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3289.92 (z-score: 7.43, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3291.40 (z-score: 8.48, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3290.86 (z-score: 7.91, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.08 (z-score: 1.70, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3294.44 (z-score: 1.84, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3294.72 (z-score: 2.01, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.10 (z-score: 1.28, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3293.88 (z-score: 2.57, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3296.81 (z-score: 4.34, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.56 (z-score: 19.02, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3295.90 (z-score: 1.57, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3295.00 (z-score: 2.36, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3294.12 (z-score: 1.09, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3292.65 (z-score: 26.20, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.22 (z-score: 3.09, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3302.27 (z-score: 1.65, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.77 (z-score: 5.79, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.80 (z-score: 3.11, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3302.21 (z-score: 50.80, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3300.64 (z-score: 6.13, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.73 (z-score: 6.98, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.95 (z-score: 9.67, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3299.34 (z-score: 12.73, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3301.50 (z-score: 1.67, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.23 (z-score: 1.34, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.32 (z-score: 2.96, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3306.94 (z-score: 1.50, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3306.98 (z-score: 1.06, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3307.80 (z-score: 9.46, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.87 (z-score: 4.02, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3309.00 (z-score: 5.92, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3312.80 (z-score: 10.14, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3318.14 (z-score: 5.19, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3317.40 (z-score: 13.85, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.53 (z-score: 2.47, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.01 (z-score: 8.77, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.68 (z-score: 1.18, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3312.25 (z-score: 1.24, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.50 (z-score: 2.10, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3317.24 (z-score: 2.33, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3324.02 (z-score: 3.16, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3326.28 (z-score: 4.39, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3321.27 (z-score: 3.62, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.27 (z-score: 1.17, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3317.30 (z-score: 1.81, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3316.59 (z-score: 2.83, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3315.33 (z-score: 4.07, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3315.96 (z-score: 6.11, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.82 (z-score: 10.36, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3315.39 (z-score: 2.17, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3319.09 (z-score: 1.23, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3313.49 (z-score: 2.41, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3314.98 (z-score: 4.51, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3314.84 (z-score: 2.47, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3318.03 (z-score: 4.24, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3314.82 (z-score: 8.02, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3310.72 (z-score: 24.99, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3308.03 (z-score: 27.43, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3309.51 (z-score: 4.91, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3308.62 (z-score: 3.20, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3304.62 (z-score: 13.74, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.30 (z-score: 14.59, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3303.20 (z-score: 8.98, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3304.04 (z-score: 4.17, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3306.76 (z-score: 4.06, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3305.74 (z-score: 5.49, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.84 (z-score: 6.20, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.31 (z-score: 3.70, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3297.78 (z-score: 1.93, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3301.55 (z-score: 4.04, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.99 (z-score: 4.14, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.06 (z-score: 2.02, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3298.83 (z-score: 5.65, direction: SHORT)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.35 (z-score: 1.40, direction: LONG)
+2026-01-17 21:47:16 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 89 swing signals
+2026-01-17 21:47:16 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Found 89 historical signals
+2026-01-17 21:47:16 - swing_service - INFO - [SWING_SERVICE] Historical analysis complete. Total signals: 158
+[STARTUP] Swing detector service started
+2026-01-17 21:47:16 - vwap_service - INFO - [VWAP_SERVICE] Initialized
+2026-01-17 21:47:16 - websocket_manager - INFO - Candle close listener added (total: 3)
+2026-01-17 21:47:16 - vwap_service - INFO - [VWAP_SERVICE] Registered candle close listener
+2026-01-17 21:47:16 - vwap_service - INFO - [VWAP_SERVICE] Starting background load of 1 day(s) historical data...
+2026-01-17 21:47:16 - vwap_service - INFO - [VWAP_SERVICE] Started for symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] VWAP service started
+2026-01-17 21:47:16 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 1440 candles (1 days @ 1m)
+2026-01-17 21:47:16 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 21:47:16 - uvicorn.error - INFO - Application startup complete.
+2026-01-17 21:47:16 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 21:47:16 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-01-17 21:47:17 - uvicorn.access - INFO - 127.0.0.1:62099 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768704437623 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:17 - uvicorn.access - INFO - 127.0.0.1:62099 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:62099 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768704437631 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:50756 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:61300 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:52204 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768704437638 HTTP/1.1" 200
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:64202 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:50756 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:61300 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768704437640 HTTP/1.1" 200
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:52204 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 129600 candles for 90 days, have 0. Reloading...
+2026-01-17 21:47:18 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 90 days of data...
+2026-01-17 21:47:18 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 129600 candles (90 days @ 1m)
+[VWAP] ETHUSDT: Need 129600 candles for 90 days, have 0. Reloading...
+2026-01-17 21:47:18 - vwap_service - INFO - [VWAP_SERVICE] Reloading ETHUSDT with 90 days of data...
+2026-01-17 21:47:18 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 129600 candles (90 days @ 1m)
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:52204 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:18 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 21:47:18 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 21:47:18 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 21:47:18 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:50180 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:50180 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:47:18 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 21:47:18 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 21:47:18 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 21:47:18 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 21:47:18 - uvicorn.access - INFO - 127.0.0.1:50180 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 21:47:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760928437652&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760928438122&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760928438502&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760928438871&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:20 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:20 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:60196 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768704440154 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:65429 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:60196 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768704440158 HTTP/1.1" 200
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:65429 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:20 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 21:47:20 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 21:47:20 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 21:47:20 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:65429 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:65429 - "OPTIONS /api/historical/BTCUSDT?interval=60&days=90&t=1768704440163 HTTP/1.1" 200
+2026-01-17 21:47:20 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:20 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 21:47:20 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['60']
+2026-01-17 21:47:20 - websocket_manager - INFO - [WS] Updating subscriptions: -0 +0
+2026-01-17 21:47:20 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 21:47:20 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['60']
+[REALTIME] Active interval changed: ['60'] -> ['60']
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:52548 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:61987 - "OPTIONS /api/historical/ETHUSDT?interval=60&days=90&t=1768704440165 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:20 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 129600 candles for 90 days, have 0. Reloading...
+2026-01-17 21:47:20 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 90 days of data...
+2026-01-17 21:47:20 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 129600 candles (90 days @ 1m)
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[VWAP] ETHUSDT: Need 129600 candles for 90 days, have 0. Reloading...
+2026-01-17 21:47:21 - vwap_service - INFO - [VWAP_SERVICE] Reloading ETHUSDT with 90 days of data...
+2026-01-17 21:47:21 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 129600 candles (90 days @ 1m)
+2026-01-17 21:47:21 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:47:21 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 21:47:21 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:21 - uvicorn.access - INFO - 127.0.0.1:62504 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+[REALTIME] Config updated: BTCUSDT/60/rejection (alertsEnabled=True)
+2026-01-17 21:47:21 - uvicorn.access - INFO - 127.0.0.1:62504 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:47:21 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+[REALTIME] Config updated: ETHUSDT/60/rejection (alertsEnabled=True)
+2026-01-17 21:47:21 - uvicorn.access - INFO - 127.0.0.1:62504 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=90 (máx: 360) @ 60
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760928440209&limit=1000 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:22 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 1440 candles loaded
+2026-01-17 21:47:22 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Loaded 1440 historical candles
+2026-01-17 21:47:22 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 129600 candles (90 days @ 1m)
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760928440754&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1760928441679&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1760928441272&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/historical/ETHUSDT?interval=60&days=90&t=1768704440158 HTTP/1.1" 200
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=90&t=1768704443222 HTTP/1.1" 200
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=90&t=1768704443224 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:23 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['1']
+2026-01-17 21:47:23 - realtime_pattern_service - INFO - [REALTIME] Pre-loading historical data for new intervals: {'1'}
+2026-01-17 21:47:23 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for BTCUSDT/1...
+2026-01-17 21:47:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+2026-01-17 21:47:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1764529200000&limit=1000 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:62504 - "GET /api/historical/ETHUSDT?interval=60&days=90&t=1768704440165 HTTP/1.1" 200
+2026-01-17 21:47:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/historical/BTCUSDT?interval=60&days=90&t=1768704440154 HTTP/1.1" 200
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:62504 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=1&t=1768704443249 HTTP/1.1" 200
+2026-01-17 21:47:23 - uvicorn.access - INFO - 127.0.0.1:62504 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=1&t=1768704443251 HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 1440 candles for 1 days, have 0. Reloading...
+2026-01-17 21:47:23 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 1 days of data...
+2026-01-17 21:47:23 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 1440 candles (1 days @ 1m)
+[VWAP] ETHUSDT: Need 1440 candles for 1 days, have 0. Reloading...
+2026-01-17 21:47:24 - vwap_service - INFO - [VWAP_SERVICE] Reloading ETHUSDT with 1 days of data...
+2026-01-17 21:47:24 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 1440 candles (1 days @ 1m)
+2026-01-17 21:47:24 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&start=1768129200000&limit=160 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2160 velas (esperadas: 2160)
+2026-01-17 21:47:24 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/BTCUSDT?interval=60&days=90&t=1768704440163 HTTP/1.1" 200
+2026-01-17 21:47:24 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:24 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-01-17 21:47:24 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:47:24 - websocket_manager - INFO - [PRELOAD] BTCUSDT/1: Preloaded 200 historical candles
+2026-01-17 21:47:24 - realtime_pattern_service - INFO - [PRELOAD] ✅ BTCUSDT/1: Loaded 200 candles
+2026-01-17 21:47:24 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for ETHUSDT/1...
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+2026-01-17 21:47:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:25 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-01-17 21:47:25 - websocket_manager - INFO - [PRELOAD] ETHUSDT/1: Preloaded 200 historical candles
+2026-01-17 21:47:25 - realtime_pattern_service - INFO - [PRELOAD] ✅ ETHUSDT/1: Loaded 200 candles
+2026-01-17 21:47:25 - websocket_manager - INFO - [WS] Updating subscriptions: -2 +2
+2026-01-17 21:47:25 - websocket_manager - INFO - [WS] Unsubscribed from 2 channels: {'kline.60.ETHUSDT', 'kline.60.BTCUSDT'}
+2026-01-17 21:47:25 - websocket_manager - INFO - [WS] Subscribed to 2 channels: {'kline.1.ETHUSDT', 'kline.1.BTCUSDT'}
+2026-01-17 21:47:25 - websocket_manager - INFO - [WS] Now monitoring 2 channels
+2026-01-17 21:47:25 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['1']
+[REALTIME] Active interval changed: ['60'] -> ['1']
+2026-01-17 21:47:25 - uvicorn.access - INFO - 127.0.0.1:52548 - "POST /api/realtime/set-interval HTTP/1.1" 200
+2026-01-17 21:47:25 - uvicorn.access - INFO - 127.0.0.1:52548 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=90, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+2026-01-17 21:47:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768272444306&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768272445019&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768332480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768332480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768392480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768452480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768392480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768512480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:28 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 1440 candles loaded
+2026-01-17 21:47:28 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Reloaded 1440 candles for 1 days
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/vwap-service/data/BTCUSDT?days=1 HTTP/1.1" 200
+2026-01-17 21:47:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768452480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768572480000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:29 - uvicorn.access - INFO - 127.0.0.1:60196 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:47:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768512480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768632480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768618049873&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768572480000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768692480000&limit=200 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+2026-01-17 21:47:31 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/BTCUSDT?interval=1&days=90&t=1768704443222 HTTP/1.1" 200
+2026-01-17 21:47:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 21:47:31 - uvicorn.access - INFO - 127.0.0.1:60196 - "GET /api/historical/BTCUSDT?interval=1&days=1&t=1768704443249 HTTP/1.1" 200
+2026-01-17 21:47:31 - uvicorn.access - INFO - 127.0.0.1:60196 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 21:47:31 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Total 1440 candles loaded
+2026-01-17 21:47:31 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Reloaded 1440 candles for 1 days
+2026-01-17 21:47:32 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/vwap-service/data/ETHUSDT?days=1 HTTP/1.1" 200
+2026-01-17 21:47:32 - uvicorn.access - INFO - 127.0.0.1:60196 - "OPTIONS /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 21:47:32 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768632480000&limit=1000 "HTTP/1.1 200 OK"
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 24%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:47:33 - uvicorn.access - INFO - 127.0.0.1:59834 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=2&t=1768704445471 HTTP/1.1" 200
+2026-01-17 21:47:33 - uvicorn.access - INFO - 127.0.0.1:54994 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=2&t=1768704445473 HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 2880 candles for 2 days, have 1440. Reloading...
+2026-01-17 21:47:33 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 2 days of data...
+2026-01-17 21:47:33 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 2880 candles (2 days @ 1m)
+2026-01-17 21:47:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768692480000&limit=200 "HTTP/1.1 200 OK"
+2026-01-17 21:47:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768618051182&limit=1000 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+2026-01-17 21:47:33 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/historical/ETHUSDT?interval=1&days=90&t=1768704443224 HTTP/1.1" 200
+2026-01-17 21:47:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768618052899&limit=1000 "HTTP/1.1 200 OK"
+[VWAP] ETHUSDT: Need 2880 candles for 2 days, have 1440. Reloading...
+2026-01-17 21:47:33 - vwap_service - INFO - [VWAP_SERVICE] Reloading ETHUSDT with 2 days of data...
+2026-01-17 21:47:33 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 2880 candles (2 days @ 1m)
+2026-01-17 21:47:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/ETHUSDT?interval=1&days=1&t=1768704443251 HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=2&t=1768704446668 HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=2&t=1768704446669 HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=2&t=1768704448868 HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=2&t=1768704448869 HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/BTCUSDT?interval=1&days=2&t=1768704449385 HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "OPTIONS /api/historical/ETHUSDT?interval=1&days=2&t=1768704449386 HTTP/1.1" 200
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/vwap-service/data/BTCUSDT?days=1 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:34 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: ETHUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 24%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: False
+  - lookbackCandles: 50
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:47:34 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 21:48 to 2026-01-17 21:47
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: True
+  VWAP Zone Filter: ENABLED (mode=bothExtremes, min_dev=±2σ, margin=50%)
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 401 highs, 373 lows
+    [VWAP_FILTER] DOUBLE_TOP: band_key=upper_2
+    [VWAP_FILTER] first_band=3292.8662588296816, second_band=3291.115404172632
+    [VWAP_FILTER] first_price=3291.4, second_price=3289.29
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands', 'std_dev']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3290.07, second=3288.40
+    [VWAP_FILTER] Deviations: first=2.79, second=2.71
+    [VWAP_FILTER] Margin amounts: first=1.40, second=1.36
+    [VWAP_FILTER] thresholds: first=3291.47, second=3289.76
+    [VWAP_FILTER] passes: first=False, second=False, mode=bothExtremes
+    [VWAP_FILTER] RESULT: False
+  [DT] Pairs: 80200 | Rejected: close=2865, far=53904, price=1086, dom=16049, vol=0, volExt=4587, vwap=1075 | Accepted: 634
+    [VWAP_FILTER] DOUBLE_BOTTOM: band_key=lower_2
+    [VWAP_FILTER] first_band=3288.0466666666666, second_band=3288.622123323112
+    [VWAP_FILTER] first_price=3287.9, second_price=3289.17
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3288.05, second=3289.99
+    [VWAP_FILTER] Deviations: first=0.00, second=1.37
+    [VWAP_FILTER] Margin amounts: first=0.00, second=0.68
+    [VWAP_FILTER] thresholds: first=3288.05, second=3289.31
+    [VWAP_FILTER] passes: first=True, second=True, mode=bothExtremes
+    [VWAP_FILTER] RESULT: True
+  [DB] Pairs: 69378 | Rejected: close=2395, far=47215, price=694, dom=14857, vol=0, volExt=2996, vwap=521 | Accepted: 700
+  Before filtering: 1334 patterns
+  [FILTER] 1334 candidates -> 57 kept (1277 duplicates removed)
+  After filtering: 57 patterns
+[DTB_FIXED] Complete: 57 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 57 patterns for ETHUSDT
+2026-01-17 21:47:35 - uvicorn.access - INFO - 127.0.0.1:52344 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+[REALTIME] Config updated: BTCUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:35 - uvicorn.access - INFO - 127.0.0.1:52344 - "POST /api/realtime/config/BTCUSDT HTTP/1.1" 200
+[REALTIME] Config updated: ETHUSDT/1/rejection (alertsEnabled=True)
+2026-01-17 21:47:35 - uvicorn.access - INFO - 127.0.0.1:52344 - "POST /api/realtime/config/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:35 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:47:35 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/swing/status HTTP/1.1" 200
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:47:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768618054337&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768618055388&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:36 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 21:48 to 2026-01-17 21:47
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': True, 'mode': 'bothExtremes', 'vwapType': 'rolling', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: True
+  VWAP Zone Filter: ENABLED (mode=bothExtremes, min_dev=±2σ, margin=50%)
+[DTB_FIXED] ETHUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 26 | Max candles: 253
+  Found 401 highs, 373 lows
+    [VWAP_FILTER] DOUBLE_TOP: band_key=upper_2
+    [VWAP_FILTER] first_band=3292.8662588296816, second_band=3291.115404172632
+    [VWAP_FILTER] first_price=3291.4, second_price=3289.29
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands', 'std_dev']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3290.07, second=3288.40
+    [VWAP_FILTER] Deviations: first=2.79, second=2.71
+    [VWAP_FILTER] Margin amounts: first=1.40, second=1.36
+    [VWAP_FILTER] thresholds: first=3291.47, second=3289.76
+    [VWAP_FILTER] passes: first=False, second=False, mode=bothExtremes
+    [VWAP_FILTER] RESULT: False
+  [DT] Pairs: 80200 | Rejected: close=2865, far=53904, price=1086, dom=16049, vol=0, volExt=4587, vwap=1075 | Accepted: 634
+    [VWAP_FILTER] DOUBLE_BOTTOM: band_key=lower_2
+    [VWAP_FILTER] first_band=3288.0466666666666, second_band=3288.622123323112
+    [VWAP_FILTER] first_price=3287.9, second_price=3289.17
+    [VWAP_FILTER] Sample VWAP data keys: ['timestamp', 'vwap', 'typical_price', 'volume', 'window_size', 'period', 'bands']
+    [VWAP_FILTER] Sample bands keys: ['upper_1', 'lower_1', 'upper_2', 'lower_2', 'upper_3', 'lower_3']
+    [VWAP_FILTER] VWAP values: first=3288.05, second=3289.99
+    [VWAP_FILTER] Deviations: first=0.00, second=1.37
+    [VWAP_FILTER] Margin amounts: first=0.00, second=0.68
+    [VWAP_FILTER] thresholds: first=3288.05, second=3289.31
+    [VWAP_FILTER] passes: first=True, second=True, mode=bothExtremes
+    [VWAP_FILTER] RESULT: True
+  [DB] Pairs: 69378 | Rejected: close=2395, far=47215, price=694, dom=14857, vol=0, volExt=2996, vwap=521 | Accepted: 700
+  Before filtering: 1334 patterns
+  [FILTER] 1334 candidates -> 57 kept (1277 duplicates removed)
+  After filtering: 57 patterns
+[DTB_FIXED] Complete: 57 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 57 patterns for ETHUSDT
+2026-01-17 21:47:37 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 21:47:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+2026-01-17 21:47:37 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/vwap-service/data/ETHUSDT?days=1 HTTP/1.1" 200
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 21:48 to 2026-01-17 21:47
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 526 highs, 535 lows
+  [DT] Pairs: 138075 | Rejected: close=4814, far=89764, price=18, dom=27837, vol=11982, volExt=0, vwap=0 | Accepted: 3660
+  [DB] Pairs: 142845 | Rejected: close=4957, far=94438, price=75, dom=34919, vol=5656, volExt=0, vwap=0 | Accepted: 2800
+  Before filtering: 6460 patterns
+  [FILTER] 6460 candidates -> 61 kept (6399 duplicates removed)
+  After filtering: 61 patterns
+[DTB_FIXED] Complete: 61 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 61 patterns for BTCUSDT
+2026-01-17 21:47:38 - uvicorn.access - INFO - 127.0.0.1:52344 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+[DOUBLE TOP/BOTTOM] ===== REQUEST RECEIVED =====
+[DOUBLE TOP/BOTTOM] Symbol: BTCUSDT, Interval: 1, Days: 1
+[DOUBLE TOP/BOTTOM] Config received:
+  - minConfidence: 23%
+  - requireBothRejections: False
+  - maxBreakoutPercent: 0.5%
+  - volumeFilter.enabled: True
+  - lookbackCandles: 50
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+2026-01-17 21:47:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768618059323&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768531658926&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768678080000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[DOUBLE TOP/BOTTOM] Candles received: 1440
+[DOUBLE TOP/BOTTOM] Date range: 2026-01-16 21:48 to 2026-01-17 21:47
+[DOUBLE TOP/BOTTOM] Using FIXED detector for short timeframe (1 min)
+  [DEBUG] alertSettings received: {'mode': 'pattern_complete', 'confidenceLevels': {'critical': {'minConfidence': 80, 'cooldownSeconds': 60, 'color': '#F44336'}, 'high': {'minConfidence': 60, 'cooldownSeconds': 180, 'color': '#FF9800'}, 'medium': {'minConfidence': 40, 'cooldownSeconds': 300, 'color': '#FFC107'}}, 'vwapFilter': {'enabled': False, 'deviationTolerance': 0.5, 'requiredDeviations': {'second': True, 'third': True}}, 'visualization': {'showDetectionCircle': True, 'detectionCircleColor': '#2196F3', 'detectionCircleSize': 8}, 'vwapZoneFilter': {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}, 'globalCooldown': {'enabled': True, 'minutes': 30, 'pauseDetection': True, 'discardedBoxColor': '#9E9E9E', 'discardedBoxOpacity': 0.1}}
+  [DEBUG] vwapZoneFilter config: {'enabled': False, 'vwapType': 'rolling', 'rollingPeriod': 200, 'mode': 'bothExtremes', 'minDeviation': 2, 'marginPercent': 50}
+  [DEBUG] VWAP_AVAILABLE: True, enabled in config: False
+  VWAP Zone Filter: disabled
+[DTB_FIXED] BTCUSDT - Detection Started
+  Interval: 1, Days: 1
+  Total candles: 1440
+  Window size: 3
+  Price margin: 0.50% | Min candles: 25 | Max candles: 270
+  Found 527 highs, 535 lows
+  [DT] Pairs: 138601 | Rejected: close=4818, far=90208, price=18, dom=27896, vol=11999, volExt=0, vwap=0 | Accepted: 3662
+  [DB] Pairs: 142845 | Rejected: close=4957, far=94438, price=75, dom=34919, vol=5656, volExt=0, vwap=0 | Accepted: 2800
+  Before filtering: 6462 patterns
+  [FILTER] 6462 candidates -> 62 kept (6400 duplicates removed)
+  After filtering: 62 patterns
+[DTB_FIXED] Complete: 62 patterns
+[DOUBLE TOP/BOTTOM] ===== DETECTION COMPLETE =====
+[DOUBLE TOP/BOTTOM] [OK] Detected 62 patterns for BTCUSDT
+2026-01-17 21:47:42 - uvicorn.access - INFO - 127.0.0.1:54298 - "POST /api/double-topbottom/detect HTTP/1.1" 200
+2026-01-17 21:47:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+2026-01-17 21:47:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768531662473&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:43 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/historical/BTCUSDT?interval=1&days=2&t=1768704445471 HTTP/1.1" 200
+2026-01-17 21:47:43 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/swing/signals/ETHUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+2026-01-17 21:47:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768531663345&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:44 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/ETHUSDT?interval=1&days=2&t=1768704445473 HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+2026-01-17 21:47:45 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:45 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Total 2880 candles loaded
+2026-01-17 21:47:45 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Reloaded 2880 candles for 2 days
+2026-01-17 21:47:50 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/vwap-service/data/ETHUSDT?days=2 HTTP/1.1" 200
+2026-01-17 21:47:50 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768531664420&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:50 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+[BTCUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:51 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/historical/BTCUSDT?interval=1&days=2&t=1768704446668 HTTP/1.1" 200
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+2026-01-17 21:47:51 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:51 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 2880 candles loaded
+2026-01-17 21:47:51 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Reloaded 2880 candles for 2 days
+2026-01-17 21:47:56 - uvicorn.access - INFO - 127.0.0.1:54994 - "GET /api/vwap-service/data/BTCUSDT?days=2 HTTP/1.1" 200
+2026-01-17 21:47:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768531670977&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768531671413&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:56 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/ETHUSDT?interval=1&days=2&t=1768704446669 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=2, aplicando límite -> days_to_fetch=2 (máx: 5) @ 1
+2026-01-17 21:47:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768531677224&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768531676851&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[ETHUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:58 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/historical/ETHUSDT?interval=1&days=2&t=1768704448869 HTTP/1.1" 200
+2026-01-17 21:47:58 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/vwap-service/data/BTCUSDT?days=1 HTTP/1.1" 200
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768591680000&limit=1000 "HTTP/1.1 200 OK"
+2026-01-17 21:47:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/historical/BTCUSDT?interval=1&days=2&t=1768704448868 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 7 shapes for BTCUSDT
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[ETHUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/historical/ETHUSDT?interval=1&days=2&t=1768704449386 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 2 shapes for ETHUSDT
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/drawings/ETHUSDT HTTP/1.1" 200
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:52548 - "GET /api/swing/signals/BTCUSDT HTTP/1.1" 200
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:52344 - "GET /api/swing/status HTTP/1.1" 200
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:54298 - "GET /api/vwap-service/data/ETHUSDT?days=1 HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 129600 candles for 90 days, have 2880. Reloading...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 90 days of data...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 129600 candles (90 days @ 1m)
+[VWAP] ETHUSDT: Need 129600 candles for 90 days, have 2880. Reloading...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] Reloading ETHUSDT with 90 days of data...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 129600 candles (90 days @ 1m)
+[VWAP] BTCUSDT: Need 129600 candles for 90 days, have 2880. Reloading...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 90 days of data...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 129600 candles (90 days @ 1m)
+2026-01-17 21:47:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1768651680000&limit=880 "HTTP/1.1 200 OK"
+[BTCUSDT] Historical: [OK] Devolviendo 2880 velas (esperadas: 2880)
+2026-01-17 21:47:59 - uvicorn.access - INFO - 127.0.0.1:54994 - "GET /api/historical/BTCUSDT?interval=1&days=2&t=1768704449385 HTTP/1.1" 200
+[VWAP] BTCUSDT: Need 129600 candles for 90 days, have 2880. Reloading...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 90 days of data...
+2026-01-17 21:47:59 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 129600 candles (90 days @ 1m)
+2026-01-17 21:48:00 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 94969.8 (notifying 3 listeners)
+2026-01-17 21:48:00 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 94969.80
+2026-01-17 21:48:00 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 201 candles
+[PRUEBA_DBT] BTCUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 201
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 201 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 14 local highs
+  [PRUEBA_DBT] Found 22 local lows
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 48
+    - Rejected (too close): 2
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 37
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 135
+    - Rejected (too close): 18
+    - Rejected (too far): 18
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 99
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 0 patterns
+    Post-validation: 0 patterns kept, 0 got bonus, 0 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 0 patterns
+  [PRUEBA_DBT] After deduplication: 0 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 0
+  [PRUEBA_DBT] After min_confidence filter: 0 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] BTCUSDT - Detection Complete: 0 patterns returned
+  [OK] Detected 0 patterns (after all filtering)
+[LEVELS] [BTCUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for BTCUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] BTCUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] BTCUSDT: Found 0 patterns before filtering
+2026-01-17 21:48:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 94969.8 (ts=1768704420000)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.80 (z-score: 4.46, direction: SHORT)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95070.20 (z-score: 15.52, direction: LONG)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95184.90 (z-score: 3.49, direction: SHORT)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95160.10 (z-score: 1.57, direction: SHORT)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95055.00 (z-score: 5.69, direction: LONG)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94947.40 (z-score: 25.34, direction: LONG)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94993.00 (z-score: 1.31, direction: SHORT)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94965.90 (z-score: 10.87, direction: SHORT)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94866.40 (z-score: 1.89, direction: LONG)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94828.50 (z-score: 2.91, direction: LONG)
+2026-01-17 21:48:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 10 swing signals
+2026-01-17 21:48:05 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3300.29 (notifying 3 listeners)
+2026-01-17 21:48:05 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3300.29
+2026-01-17 21:48:05 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 201 candles
+[PRUEBA_DBT] ETHUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 201
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 201 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 15 local highs
+  [PRUEBA_DBT] Found 12 local lows
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3305.39
+      First extreme:  $3305.39 @ 1768699920000 (candle 124) | Rejection: SHOOTING_STAR (quality: 0.94) | Vol Z-Score: 0.00
+      Second extreme: $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.02%
+      Candles between: 44
+      Duration: 0.73 hours
+      Avg volume: 343.47
+      Confidence: 82.3/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3304.63
+      First extreme:  $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $3301.57 @ 1768703700000 (candle 187) | Rejection: SHOOTING_STAR (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.09%
+      Candles between: 19
+      Duration: 0.32 hours
+      Avg volume: 240.20
+      Confidence: 72.4/100
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 58
+    - Rejected (too close): 2
+    - Rejected (too far): 12
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 42
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 2
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 34
+    - Rejected (too close): 1
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 24
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 2 patterns
+    Post-validation: 2 patterns kept, 0 got bonus, 1 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 2 patterns
+  [PRUEBA_DBT] After deduplication: 1 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 1
+  [PRUEBA_DBT] Confidence values: [82.32]
+  [PRUEBA_DBT] Min confidence in patterns: 82.3%
+  [PRUEBA_DBT] Max confidence in patterns: 82.3%
+  [PRUEBA_DBT] Avg confidence in patterns: 82.3%
+  [PRUEBA_DBT] After min_confidence filter: 1 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] ETHUSDT - Detection Complete: 1 patterns returned
+  [OK] Detected 1 patterns (after all filtering)
+2026-01-17 21:48:05 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Detected 1 DBT patterns
+2026-01-17 21:48:05 - realtime_pattern_service - INFO - [RATE LIMIT] ETHUSDT/1: Skipping historical pattern (pattern: 1768702560, service start: 1768704424)
+2026-01-17 21:48:05 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT: DBT pattern blocked by rate limit (historical_pattern_skipped)
+[LEVELS] [ETHUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for ETHUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] ETHUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] ETHUSDT: Found 0 patterns before filtering
+2026-01-17 21:48:05 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 3300.29 (ts=1768704420000)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3306.76 (z-score: 4.06, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3305.74 (z-score: 5.49, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.84 (z-score: 6.20, direction: SHORT)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.31 (z-score: 3.70, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3297.78 (z-score: 1.93, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3301.55 (z-score: 4.04, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.99 (z-score: 4.14, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.06 (z-score: 2.02, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3298.83 (z-score: 5.65, direction: SHORT)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.35 (z-score: 1.40, direction: LONG)
+2026-01-17 21:48:05 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 10 swing signals
+2026-01-17 21:49:00 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 94973.9 (notifying 3 listeners)
+2026-01-17 21:49:00 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 94973.90
+2026-01-17 21:49:00 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 202 candles
+[PRUEBA_DBT] BTCUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 202
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 202 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 14 local highs
+  [PRUEBA_DBT] Found 22 local lows
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 48
+    - Rejected (too close): 2
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 37
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 135
+    - Rejected (too close): 18
+    - Rejected (too far): 18
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 99
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 0 patterns
+    Post-validation: 0 patterns kept, 0 got bonus, 0 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 0 patterns
+  [PRUEBA_DBT] After deduplication: 0 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 0
+  [PRUEBA_DBT] After min_confidence filter: 0 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] BTCUSDT - Detection Complete: 0 patterns returned
+  [OK] Detected 0 patterns (after all filtering)
+[LEVELS] [BTCUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for BTCUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] BTCUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] BTCUSDT: Found 0 patterns before filtering
+2026-01-17 21:49:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 94973.9 (ts=1768704480000)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.80 (z-score: 4.46, direction: SHORT)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95070.20 (z-score: 15.52, direction: LONG)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95184.90 (z-score: 3.49, direction: SHORT)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95160.10 (z-score: 1.57, direction: SHORT)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95055.00 (z-score: 5.69, direction: LONG)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94947.40 (z-score: 25.34, direction: LONG)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94993.00 (z-score: 1.31, direction: SHORT)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94965.90 (z-score: 10.87, direction: SHORT)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94866.40 (z-score: 1.89, direction: LONG)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94828.50 (z-score: 2.91, direction: LONG)
+2026-01-17 21:49:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 10 swing signals
+2026-01-17 21:49:07 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3300.95 (notifying 3 listeners)
+2026-01-17 21:49:07 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3300.95
+2026-01-17 21:49:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 202 candles
+[PRUEBA_DBT] ETHUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 202
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 202 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 15 local highs
+  [PRUEBA_DBT] Found 12 local lows
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3305.39
+      First extreme:  $3305.39 @ 1768699920000 (candle 124) | Rejection: SHOOTING_STAR (quality: 0.94) | Vol Z-Score: 0.00
+      Second extreme: $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.02%
+      Candles between: 44
+      Duration: 0.73 hours
+      Avg volume: 343.47
+      Confidence: 82.3/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3304.63
+      First extreme:  $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $3301.57 @ 1768703700000 (candle 187) | Rejection: SHOOTING_STAR (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.09%
+      Candles between: 19
+      Duration: 0.32 hours
+      Avg volume: 240.20
+      Confidence: 72.4/100
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 58
+    - Rejected (too close): 2
+    - Rejected (too far): 12
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 42
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 2
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 34
+    - Rejected (too close): 1
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 24
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 2 patterns
+    Post-validation: 2 patterns kept, 0 got bonus, 1 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 2 patterns
+  [PRUEBA_DBT] After deduplication: 1 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 1
+  [PRUEBA_DBT] Confidence values: [82.32]
+  [PRUEBA_DBT] Min confidence in patterns: 82.3%
+  [PRUEBA_DBT] Max confidence in patterns: 82.3%
+  [PRUEBA_DBT] Avg confidence in patterns: 82.3%
+  [PRUEBA_DBT] After min_confidence filter: 1 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] ETHUSDT - Detection Complete: 1 patterns returned
+  [OK] Detected 1 patterns (after all filtering)
+2026-01-17 21:49:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Detected 1 DBT patterns
+2026-01-17 21:49:07 - realtime_pattern_service - INFO - [RATE LIMIT] ETHUSDT/1: Skipping historical pattern (pattern: 1768702560, service start: 1768704424)
+2026-01-17 21:49:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT: DBT pattern blocked by rate limit (historical_pattern_skipped)
+[LEVELS] [ETHUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for ETHUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] ETHUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] ETHUSDT: Found 0 patterns before filtering
+2026-01-17 21:49:07 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 3300.95 (ts=1768704480000)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3306.76 (z-score: 4.06, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3305.74 (z-score: 5.49, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.84 (z-score: 6.20, direction: SHORT)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.31 (z-score: 3.70, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3297.78 (z-score: 1.93, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3301.55 (z-score: 4.04, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.99 (z-score: 4.14, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.06 (z-score: 2.02, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3298.83 (z-score: 5.65, direction: SHORT)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.35 (z-score: 1.40, direction: LONG)
+2026-01-17 21:49:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 10 swing signals
+2026-01-17 21:50:01 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 94987.5 (notifying 3 listeners)
+2026-01-17 21:50:01 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 94987.50
+2026-01-17 21:50:01 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 3301.99 (notifying 3 listeners)
+2026-01-17 21:50:01 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 3301.99
+2026-01-17 21:50:01 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 203 candles
+[PRUEBA_DBT] BTCUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 203
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 203 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 14 local highs
+  [PRUEBA_DBT] Found 22 local lows
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 48
+    - Rejected (too close): 2
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 37
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 135
+    - Rejected (too close): 18
+    - Rejected (too far): 18
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 99
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 0 patterns
+    Post-validation: 0 patterns kept, 0 got bonus, 0 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 0 patterns
+  [PRUEBA_DBT] After deduplication: 0 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 0
+  [PRUEBA_DBT] After min_confidence filter: 0 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] BTCUSDT - Detection Complete: 0 patterns returned
+  [OK] Detected 0 patterns (after all filtering)
+[LEVELS] [BTCUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for BTCUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] BTCUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] BTCUSDT: Found 0 patterns before filtering
+2026-01-17 21:50:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 94987.5 (ts=1768704540000)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95115.80 (z-score: 4.46, direction: SHORT)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95070.20 (z-score: 15.52, direction: LONG)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95184.90 (z-score: 3.49, direction: SHORT)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $95160.10 (z-score: 1.57, direction: SHORT)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $95055.00 (z-score: 5.69, direction: LONG)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94947.40 (z-score: 25.34, direction: LONG)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94993.00 (z-score: 1.31, direction: SHORT)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_HIGH @ $94965.90 (z-score: 10.87, direction: SHORT)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94866.40 (z-score: 1.89, direction: LONG)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: SWING_LOW @ $94828.50 (z-score: 2.91, direction: LONG)
+2026-01-17 21:50:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 10 swing signals
+2026-01-17 21:50:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 203 candles
+[PRUEBA_DBT] ETHUSDT - Double Top/Bottom Detection Started
+  [PRUEBA_DBT] Interval: 1, Days: 30
+  [PRUEBA_DBT] Total candles available: 203
+  [PRUEBA_DBT] Config Parameters:
+    - Lookback candles: 50
+    - Searching ALL 203 candles (no lookback limit)
+    - Extremes window: 5 candles
+    - Price margin: 2.0%
+    - Min candles between: 5
+    - Max candles between: 50
+    - Volume filter: disabled
+    - High volume at extremes: disabled
+    - Max breakout %: 2.0%
+  [PRUEBA_DBT] Found 15 local highs
+  [PRUEBA_DBT] Found 12 local lows
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3305.39
+      First extreme:  $3305.39 @ 1768699920000 (candle 124) | Rejection: SHOOTING_STAR (quality: 0.94) | Vol Z-Score: 0.00
+      Second extreme: $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Price variance: 0.02%
+      Candles between: 44
+      Duration: 0.73 hours
+      Avg volume: 343.47
+      Confidence: 82.3/100
+    [PRUEBA_DBT] [OK] DOUBLE TOP detected:
+      Level Price: $3304.63
+      First extreme:  $3304.63 @ 1768702560000 (candle 168) | Rejection: SHOOTING_STAR (quality: 1.00) | Vol Z-Score: 0.00
+      Second extreme: $3301.57 @ 1768703700000 (candle 187) | Rejection: SHOOTING_STAR (quality: 0.71) | Vol Z-Score: 0.00
+      Price variance: 0.09%
+      Candles between: 19
+      Duration: 0.32 hours
+      Avg volume: 240.20
+      Confidence: 72.4/100
+  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:
+    - Pairs evaluated: 58
+    - Rejected (too close): 2
+    - Rejected (too far): 12
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 42
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 2
+  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:
+    - Pairs evaluated: 34
+    - Rejected (too close): 1
+    - Rejected (too far): 9
+    - Rejected (price diff): 0
+    - Rejected (breakout): 0
+    - Rejected (no rejection pattern): 24
+    - Rejected (volume): 0
+    - [OK] ACCEPTED: 0
+  [PRUEBA_DBT] Before post-validation: 2 patterns
+    Post-validation: 2 patterns kept, 0 got bonus, 1 skipped (real-time mode)
+  [PRUEBA_DBT] After post-validation: 2 patterns
+  [PRUEBA_DBT] After deduplication: 1 patterns
+  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====
+  [PRUEBA_DBT] Min confidence threshold: 60%
+  [PRUEBA_DBT] Patterns before filter: 1
+  [PRUEBA_DBT] Confidence values: [82.32]
+  [PRUEBA_DBT] Min confidence in patterns: 82.3%
+  [PRUEBA_DBT] Max confidence in patterns: 82.3%
+  [PRUEBA_DBT] Avg confidence in patterns: 82.3%
+  [PRUEBA_DBT] After min_confidence filter: 1 patterns
+  [PRUEBA_DBT] Filtered out: 0 patterns (confidence < 60%)
+[PRUEBA_DBT] ETHUSDT - Detection Complete: 1 patterns returned
+  [OK] Detected 1 patterns (after all filtering)
+2026-01-17 21:50:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Detected 1 DBT patterns
+2026-01-17 21:50:07 - realtime_pattern_service - INFO - [RATE LIMIT] ETHUSDT/1: Skipping historical pattern (pattern: 1768702560, service start: 1768704424)
+2026-01-17 21:50:07 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT: DBT pattern blocked by rate limit (historical_pattern_skipped)
+[LEVELS] [ETHUSDT] Extracted 0 reference levels from 0 active contexts
+[INFO] No reference levels for ETHUSDT, but requireNearLevel=False. Detecting all patterns without level validation.
+[REJECTION] ETHUSDT: Enabled patterns: ['hammer', 'shootingStar', 'engulfing'], swing detection: True
+[REJECTION] ETHUSDT: Found 0 patterns before filtering
+2026-01-17 21:50:07 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 3301.99 (ts=1768704540000)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3306.76 (z-score: 4.06, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3305.74 (z-score: 5.49, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3303.84 (z-score: 6.20, direction: SHORT)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3300.31 (z-score: 3.70, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3297.78 (z-score: 1.93, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3301.55 (z-score: 4.04, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3298.99 (z-score: 4.14, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.06 (z-score: 2.02, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_HIGH @ $3298.83 (z-score: 5.65, direction: SHORT)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: SWING_LOW @ $3296.35 (z-score: 1.40, direction: LONG)
+2026-01-17 21:50:07 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 10 swing signals

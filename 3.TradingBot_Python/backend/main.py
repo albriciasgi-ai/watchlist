@@ -51,7 +51,9 @@ class ManualTradeRequest(BaseModel):
     symbol: str
     side: str  # "Buy" or "Sell"
     quantity: Optional[Decimal] = None  # If None, will calculate from risk
-    current_price: Decimal
+    current_price: Optional[Decimal] = None  # Optional if stopLoss/takeProfit provided
+    stopLoss: Optional[Decimal] = None  # Custom SL price
+    takeProfit: Optional[Decimal] = None  # Custom TP price
 
 
 class ConfigUpdateRequest(BaseModel):
@@ -923,7 +925,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
 
 @app.post("/api/trade/manual")
 async def manual_trade(req: ManualTradeRequest):
-    """Execute manual trade"""
+    """Execute manual trade with optional custom SL/TP"""
     try:
         if not state.bybit_client:
             raise HTTPException(status_code=400, detail="Credentials not configured")
@@ -937,12 +939,28 @@ async def manual_trade(req: ManualTradeRequest):
         if not state.direction_manager.is_alert_allowed(req.symbol, req.side):
             raise HTTPException(status_code=403, detail="Direction not allowed")
 
+        # Determine current price - use provided or estimate from SL/TP
+        if req.current_price:
+            current_price = req.current_price
+        elif req.stopLoss and req.takeProfit:
+            # Estimate entry price as midpoint between SL and TP (rough approximation)
+            # This will be replaced by real execution price after market order
+            current_price = (req.stopLoss + req.takeProfit) / 2
+        else:
+            raise HTTPException(status_code=400, detail="Either current_price or stopLoss/takeProfit required")
+
         # Calculate or use provided quantity
         if req.quantity is None:
+            # If custom SL provided, calculate SL percent from it
+            if req.stopLoss:
+                sl_percent = abs(float(req.stopLoss) - float(current_price)) / float(current_price)
+            else:
+                sl_percent = float(config["stop_loss_percent"])
+
             risk_calc = state.risk_calculator.calculate_quantity(
                 risk_amount=Decimal(str(config["risk_amount"])),
-                stop_loss_percent=Decimal(str(config["stop_loss_percent"])),
-                current_price=req.current_price,
+                stop_loss_percent=Decimal(str(sl_percent)),
+                current_price=current_price,
                 min_qty=Decimal(str(config["min_qty"])),
                 max_qty=Decimal(str(config["max_qty"])),
                 step_size=Decimal(str(config["step_size"]))
@@ -955,14 +973,22 @@ async def manual_trade(req: ManualTradeRequest):
         else:
             quantity = req.quantity
 
-        config["current_price"] = float(req.current_price)
+        # Create modified config with custom SL/TP if provided
+        trade_config = config.copy()
+        trade_config["current_price"] = float(current_price)
+
+        # Override SL/TP with custom values if provided
+        if req.stopLoss:
+            trade_config["custom_stop_loss"] = float(req.stopLoss)
+        if req.takeProfit:
+            trade_config["custom_take_profit"] = float(req.takeProfit)
 
         # Execute
         result = await state.order_manager.execute_complete_sequence(
             symbol=req.symbol,
             side=req.side,
             quantity=quantity,
-            config=config
+            config=trade_config
         )
 
         await state.broadcast_event("trade_executed", result)

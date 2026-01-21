@@ -1,0 +1,1795 @@
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87842.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87825.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87825.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87825.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87825.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2939.44
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824.7
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87823.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87823.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+ [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+ [BTCUSDT] 🔄 Double Top/Bottom config updated
+ [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+ [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+DoubleTopBottomIndicator.js:121 [BTCUSDT] 🔄 Double Top/Bottom config updated
+Watchlist.jsx:414 [Watchlist] Updated Double Top/Bottom config for BTCUSDT
+Watchlist.jsx:418 [Watchlist] Reloading Double Top/Bottom patterns for BTCUSDT...
+DoubleTopBottomIndicator.js:133 [BTCUSDT] 🔍 Fetching Double Top/Bottom patterns...
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.9
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87823.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87823.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87823.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomSettings.jsx:138 [BTCUSDT] Saving Double Top/Bottom configuration {enabled: true, doubleTopBottom: {…}, momentumConfirmation: {…}, filters: {…}, visualization: {…}, …}
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87824
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87812.1
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87806
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87804
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87804
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87804
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87804
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 11 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 1 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.6
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.46
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 8 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 8 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.51
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.34
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.69
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.38
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [ETHUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [ETHUSDT] 📍 Current price: 2937.52
+IndicatorManager.js:1459 [ETHUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87803.4
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.3
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87815.2
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87810
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+DoubleTopBottomIndicator.js:152 [BTCUSDT] ✅ Double Top/Bottom: 2 patterns detected
+MiniChart.jsx:1273 [BTCUSDT] 🔄 Redraw requested by indicator
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 3 (1 highs, 2 lows, 0 pivots)
+IndicatorManager.js:1122 [BTCUSDT] 🔍 getAllReferenceLevels() RECALCULATING (cache miss)
+IndicatorManager.js:1123 [BTCUSDT] 📍 Current price: 87809.9
+IndicatorManager.js:1459 [BTCUSDT] 📊 getAllReferenceLevels() COMPLETE - Total levels: 0 (0 highs, 0 lows, 0 pivots)

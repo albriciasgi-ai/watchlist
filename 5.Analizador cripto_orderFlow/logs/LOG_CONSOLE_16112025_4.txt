@@ -1,0 +1,1760 @@
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 623 patterns in 2160 candles
+ [TRXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRXUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRXUSDT] 🎨 RENDER: maxDelta=4392952, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 605 patterns in 2160 candles
+ [TONUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TONUSDT] 🎨 RENDER Histogram: data.length=81
+ [TONUSDT] 🎨 RENDER: maxDelta=770774.8000000007, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 610 patterns in 2160 candles
+ [ARBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=81
+ [ARBUSDT] 🎨 RENDER: maxDelta=4254495.200000003, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+ [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 557 patterns in 2160 candles
+ [AAVEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AAVEUSDT] 🎨 RENDER Histogram: data.length=81
+ [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 182 OI matches, 182 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 185 OI matches, 185 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 185 OI matches, 185 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 192 OI matches, 192 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 203 OI matches, 203 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 605 patterns in 2160 candles
+ [AVAXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AVAXUSDT] 🎨 RENDER Histogram: data.length=81
+ [AVAXUSDT] 🎨 RENDER: maxDelta=200657.8999999999, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 211 OI matches, 211 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 217 OI matches, 217 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 601 patterns in 2160 candles
+ [DOTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [DOTUSDT] 🎨 RENDER Histogram: data.length=81
+ [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 221 OI matches, 221 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 224 OI matches, 224 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 227 OI matches, 227 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 231 OI matches, 231 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 235 OI matches, 235 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 239 OI matches, 239 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 245 OI matches, 245 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 249 OI matches, 249 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 249 OI matches, 249 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 254 OI matches, 254 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 257 OI matches, 257 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 260 OI matches, 260 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 262 OI matches, 262 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 265 OI matches, 265 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 267 OI matches, 267 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 270 OI matches, 270 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 272 OI matches, 272 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 276 OI matches, 276 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 653 patterns in 2160 candles
+ [PEOPLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=81
+ [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 279 OI matches, 279 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 282 OI matches, 282 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 285 OI matches, 285 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 285 OI matches, 285 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 287 OI matches, 287 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 289 OI matches, 289 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 290 OI matches, 290 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 557 patterns in 2160 candles
+ [AAVEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AAVEUSDT] 🎨 RENDER Histogram: data.length=81
+ [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+ [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 653 patterns in 2160 candles
+ [PEOPLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=81
+ [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 629 patterns in 2160 candles
+ [TRBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRBUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [HBARUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [HBARUSDT] 🎨 RENDER Histogram: data.length=81
+ [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 629 patterns in 2160 candles
+ [TRBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRBUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [HBARUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [HBARUSDT] 🎨 RENDER Histogram: data.length=81
+ [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 623 patterns in 2160 candles
+ [TRXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRXUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRXUSDT] 🎨 RENDER: maxDelta=4392952, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [GALAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GALAUSDT] 🎨 RENDER Histogram: data.length=81
+ [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 623 patterns in 2160 candles
+ [TRXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRXUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRXUSDT] 🎨 RENDER: maxDelta=4392952, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+ [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [GALAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GALAUSDT] 🎨 RENDER Histogram: data.length=81
+ [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 637 patterns in 2160 candles
+ [ADAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [ADAUSDT] 🎨 RENDER Histogram: data.length=81
+ [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 605 patterns in 2160 candles
+ [AVAXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AVAXUSDT] 🎨 RENDER Histogram: data.length=81
+ [AVAXUSDT] 🎨 RENDER: maxDelta=200657.8999999999, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 613 patterns in 2160 candles
+ [INJUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [INJUSDT] 🎨 RENDER Histogram: data.length=81
+ [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 606 patterns in 2160 candles
+ [OPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [OPUSDT] 🎨 RENDER Histogram: data.length=81
+ [OPUSDT] 🎨 RENDER: maxDelta=1129783, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 341 candles, 291 OI matches, 291 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=341
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [007] 🕯️  ETHUSDT | 🛑 Componente desmontado, limpiando... 
+ [ETHUSDT] 🧹 IndicatorManager destruido
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 621 patterns in 2160 candles
+ [POLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [POLUSDT] 🎨 RENDER Histogram: data.length=81
+ [POLUSDT] 🎨 RENDER: maxDelta=3700590, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 705 patterns in 2160 candles
+ [POLYXUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [POLYXUSDT] 🎨 RENDER Histogram: data.length=81
+ [POLYXUSDT] 🎨 RENDER: maxDelta=4518839, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 612 patterns in 2160 candles
+ [PENDLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [PENDLEUSDT] 🎨 RENDER Histogram: data.length=81
+ [PENDLEUSDT] 🎨 RENDER: maxDelta=110041, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+ [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 606 patterns in 2160 candles
+ [OPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [OPUSDT] 🎨 RENDER Histogram: data.length=81
+ [OPUSDT] 🎨 RENDER: maxDelta=1129783, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 557 patterns in 2160 candles
+ [AAVEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AAVEUSDT] 🎨 RENDER Histogram: data.length=81
+ [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 666 patterns in 2160 candles
+ [MASKUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [MASKUSDT] 🎨 RENDER Histogram: data.length=81
+ [MASKUSDT] 🎨 RENDER: maxDelta=74307, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 629 patterns in 2160 candles
+ [TRBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRBUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 612 patterns in 2160 candles
+ [PENDLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [PENDLEUSDT] 🎨 RENDER Histogram: data.length=81
+ [PENDLEUSDT] 🎨 RENDER: maxDelta=110041, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 601 patterns in 2160 candles
+ [DOTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [DOTUSDT] 🎨 RENDER Histogram: data.length=81
+ [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 637 patterns in 2160 candles
+ [ADAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [ADAUSDT] 🎨 RENDER Histogram: data.length=81
+ [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [HBARUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [HBARUSDT] 🎨 RENDER Histogram: data.length=81
+ [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [GALAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GALAUSDT] 🎨 RENDER Histogram: data.length=81
+ [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 601 patterns in 2160 candles
+ [DOTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [DOTUSDT] 🎨 RENDER Histogram: data.length=81
+ [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [HBARUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [HBARUSDT] 🎨 RENDER Histogram: data.length=81
+ [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 612 patterns in 2160 candles
+ [PENDLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [PENDLEUSDT] 🎨 RENDER Histogram: data.length=81
+ [PENDLEUSDT] 🎨 RENDER: maxDelta=110041, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 617 patterns in 2160 candles
+ [GALAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GALAUSDT] 🎨 RENDER Histogram: data.length=81
+ [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 637 patterns in 2160 candles
+ [ADAUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [ADAUSDT] 🎨 RENDER Histogram: data.length=81
+ [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 666 patterns in 2160 candles
+ [MASKUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [MASKUSDT] 🎨 RENDER Histogram: data.length=81
+ [MASKUSDT] 🎨 RENDER: maxDelta=74307, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 557 patterns in 2160 candles
+ [AAVEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AAVEUSDT] 🎨 RENDER Histogram: data.length=81
+ [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 629 patterns in 2160 candles
+ [TRBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [TRBUSDT] 🎨 RENDER Histogram: data.length=81
+ [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 606 patterns in 2160 candles
+ [OPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [OPUSDT] 🎨 RENDER Histogram: data.length=81
+ [OPUSDT] 🎨 RENDER: maxDelta=1129783, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+ [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+ [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 601 patterns in 2160 candles
+ [DOTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [DOTUSDT] 🎨 RENDER Histogram: data.length=81
+ [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 604 patterns in 2160 candles
+ [GRTUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [GRTUSDT] 🎨 RENDER Histogram: data.length=81
+ [GRTUSDT] 🎨 RENDER: maxDelta=2050796.6000000015, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 568 patterns in 2160 candles
+ [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+ [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 592 patterns in 2160 candles
+ [XRPUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [XRPUSDT] 🎨 RENDER Histogram: data.length=81
+ [XRPUSDT] 🎨 RENDER: maxDelta=8615227.5, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 557 patterns in 2160 candles
+ [AAVEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [AAVEUSDT] 🎨 RENDER Histogram: data.length=81
+ [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 573 patterns in 2160 candles
+ [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+ [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 581 patterns in 2160 candles
+ [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+ [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 543 patterns in 2160 candles
+ [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+ [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+ [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+ [LocalPatternDetector] Detected 620 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BNBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [BNBUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [BNBUSDT] 🎨 RENDER: maxDelta=2997.399999999994, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 653 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PEOPLEUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 573 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SUIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [SUIUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [SUIUSDT] 🎨 RENDER: maxDelta=2396350, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 162 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=162
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 629 patterns in 2160 candles
+OpenInterestIndicator.js:159 [TRBUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [TRBUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 81 candles, 81 OI matches, 80 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=81
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=358518.0999999996, sample deltas: Array(10)
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 610 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ARBUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ARBUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ARBUSDT] 🎨 RENDER: maxDelta=4254495.200000003, sample deltas: (10) [0, 351745.59999999404, 759888.200000003, -119942.40000000596, -812860, -620271, 1164658.200000003, 488543.700000003, 16336.29999999702, -1939117.399999991]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [XRPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [XRPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [XRPUSDT] 🎨 RENDER: maxDelta=2402968.800000012, sample deltas: (10) [0, -2402968.800000012, 579331.8000000119, 39344.40000000596, -424792.7000000179, 415317.8000000119, -37188.09999999404, -1348466.800000012, 1648636.5, 813625.6999999881]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 605 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AVAXUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AVAXUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AVAXUSDT] 🎨 RENDER: maxDelta=200657.8999999999, sample deltas: (10) [0, 18276.799999999814, 13595.80000000028, -3413.3000000002794, 273.70000000018626, 5920.5, 32540.299999999814, 12458.399999999907, 54092.5, 35095.40000000037]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 601 patterns in 2160 candles
+OpenInterestIndicator.js:159 [DOTUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [DOTUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: (10) [0, 81946, 59440.40000000037, -49645.199999999255, -167525.5, 85391, 147653.90000000037, 37609.89999999851, -7873.799999998882, -121481.59999999963]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 573 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SUIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SUIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SUIUSDT] 🎨 RENDER: maxDelta=2117650, sample deltas: (10) [0, -2117650, 54710, 928530, 483500, 200630, -75780, -667940, 396000, -252630]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [XRPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [XRPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [XRPUSDT] 🎨 RENDER: maxDelta=2402968.800000012, sample deltas: (10) [0, -2402968.800000012, 579331.8000000119, 39344.40000000596, -424792.7000000179, 415317.8000000119, -37188.09999999404, -1348466.800000012, 1648636.5, 813625.6999999881]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 610 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ARBUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ARBUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ARBUSDT] 🎨 RENDER: maxDelta=4254495.200000003, sample deltas: (10) [0, 351745.59999999404, 759888.200000003, -119942.40000000596, -812860, -620271, 1164658.200000003, 488543.700000003, 16336.29999999702, -1939117.399999991]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [XRPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [XRPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [XRPUSDT] 🎨 RENDER: maxDelta=2402968.800000012, sample deltas: (10) [0, -2402968.800000012, 579331.8000000119, 39344.40000000596, -424792.7000000179, 415317.8000000119, -37188.09999999404, -1348466.800000012, 1648636.5, 813625.6999999881]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 605 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AVAXUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AVAXUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AVAXUSDT] 🎨 RENDER: maxDelta=200657.8999999999, sample deltas: (10) [0, 18276.799999999814, 13595.80000000028, -3413.3000000002794, 273.70000000018626, 5920.5, 32540.299999999814, 12458.399999999907, 54092.5, 35095.40000000037]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 605 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AVAXUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AVAXUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AVAXUSDT] 🎨 RENDER: maxDelta=200657.8999999999, sample deltas: (10) [0, 18276.799999999814, 13595.80000000028, -3413.3000000002794, 273.70000000018626, 5920.5, 32540.299999999814, 12458.399999999907, 54092.5, 35095.40000000037]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [XRPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [XRPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [XRPUSDT] 🎨 RENDER: maxDelta=2402968.800000012, sample deltas: (10) [0, -2402968.800000012, 579331.8000000119, 39344.40000000596, -424792.7000000179, 415317.8000000119, -37188.09999999404, -1348466.800000012, 1648636.5, 813625.6999999881]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 653 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PEOPLEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: (10) [0, 5310, 251230, 1809082, 3644492, 370904, 498196, -2303040, -682900, 163662]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [XRPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [XRPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [XRPUSDT] 🎨 RENDER: maxDelta=2402968.800000012, sample deltas: (10) [0, -2402968.800000012, 579331.8000000119, 39344.40000000596, -424792.7000000179, 415317.8000000119, -37188.09999999404, -1348466.800000012, 1648636.5, 813625.6999999881]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 612 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PENDLEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [PENDLEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [PENDLEUSDT] 🎨 RENDER: maxDelta=73673, sample deltas: (10) [0, -1690, -4096, -5400, 3976, -28337, 60768, 7377, 73673, -45400]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 653 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PEOPLEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: (10) [0, 5310, 251230, 1809082, 3644492, 370904, 498196, -2303040, -682900, 163662]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 620 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BNBUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BNBUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BNBUSDT] 🎨 RENDER: maxDelta=2577.029999999999, sample deltas: (10) [0, -1120.199999999997, 936.7099999999919, 141.38000000000466, 799.320000000007, 407.8799999999901, -152.55999999999767, 936.4600000000064, -668.8800000000047, 294.16999999999825]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 617 patterns in 2160 candles
+OpenInterestIndicator.js:159 [HBARUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [HBARUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: (10) [0, 1915478, -1483896, 1474939, 1094353, 457141, 2285567, -364438, 4843510, -1646608]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 612 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PENDLEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [PENDLEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [PENDLEUSDT] 🎨 RENDER: maxDelta=73673, sample deltas: (10) [0, -1690, -4096, -5400, 3976, -28337, 60768, 7377, 73673, -45400]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 601 patterns in 2160 candles
+OpenInterestIndicator.js:159 [DOTUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [DOTUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: (10) [0, 81946, 59440.40000000037, -49645.199999999255, -167525.5, 85391, 147653.90000000037, 37609.89999999851, -7873.799999998882, -121481.59999999963]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 601 patterns in 2160 candles
+OpenInterestIndicator.js:159 [DOTUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [DOTUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [DOTUSDT] 🎨 RENDER: maxDelta=209814.80000000075, sample deltas: (10) [0, 81946, 59440.40000000037, -49645.199999999255, -167525.5, 85391, 147653.90000000037, 37609.89999999851, -7873.799999998882, -121481.59999999963]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 629 patterns in 2160 candles
+OpenInterestIndicator.js:159 [TRBUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [TRBUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: (10) [0, 380.4300000000512, 62998.58999999997, 1449.390000000014, -31063.53999999998, -41562.830000000016, 13401.899999999965, 93267.88, -108667, -3973.0299999999697]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 617 patterns in 2160 candles
+OpenInterestIndicator.js:159 [HBARUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [HBARUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: (10) [0, 1915478, -1483896, 1474939, 1094353, 457141, 2285567, -364438, 4843510, -1646608]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 617 patterns in 2160 candles
+OpenInterestIndicator.js:159 [GALAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [GALAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: (10) [0, 29613378, 4769394, -13803600, 8051956, 1606517, 35825355, -18195444, -4952831, -17883118]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 573 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SUIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SUIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SUIUSDT] 🎨 RENDER: maxDelta=2117650, sample deltas: (10) [0, -2117650, 54710, 928530, 483500, 200630, -75780, -667940, 396000, -252630]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 617 patterns in 2160 candles
+OpenInterestIndicator.js:159 [GALAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [GALAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [GALAUSDT] 🎨 RENDER: maxDelta=35825355, sample deltas: (10) [0, 29613378, 4769394, -13803600, 8051956, 1606517, 35825355, -18195444, -4952831, -17883118]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 637 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ADAUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [ADAUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [ADAUSDT] 🎨 RENDER: maxDelta=4107520, sample deltas: (10) [0, -529282, -1227965, -481474, 491384, -423286, -842882, -357950, -686465, 1551145]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 581 patterns in 2160 candles
+OpenInterestIndicator.js:159 [BTCUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [BTCUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [BTCUSDT] 🎨 RENDER: maxDelta=1524.3179999999993, sample deltas: (10) [0, 558.9159999999974, -197.87899999999354, -76.25400000000081, -256.55600000000413, 189.8660000000018, -75.91900000000169, 695.8320000000022, 830.0869999999995, 489.8139999999985]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 573 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SUIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SUIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SUIUSDT] 🎨 RENDER: maxDelta=2117650, sample deltas: (10) [0, -2117650, 54710, 928530, 483500, 200630, -75780, -667940, 396000, -252630]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 557 patterns in 2160 candles
+OpenInterestIndicator.js:159 [AAVEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [AAVEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [AAVEUSDT] 🎨 RENDER: maxDelta=8972.950000000012, sample deltas: (10) [0, 5031.080000000016, -1107.8800000000047, 779.9400000000023, -493.8999999999942, -567.4000000000233, 6330.820000000007, 5540.820000000007, -3620.2600000000093, -5172.380000000005]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 543 patterns in 2160 candles
+OpenInterestIndicator.js:159 [ETHUSDT] 📊 Histogram Mode: 98 candles, 72 OI matches, 72 non-zero deltas
+OpenInterestIndicator.js:372 [ETHUSDT] 🎨 RENDER Histogram: data.length=98
+OpenInterestIndicator.js:381 [ETHUSDT] 🎨 RENDER: maxDelta=139767.62, sample deltas: (10) [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 629 patterns in 2160 candles
+OpenInterestIndicator.js:159 [TRBUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [TRBUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [TRBUSDT] 🎨 RENDER: maxDelta=108667, sample deltas: (10) [0, 380.4300000000512, 62998.58999999997, 1449.390000000014, -31063.53999999998, -41562.830000000016, 13401.899999999965, 93267.88, -108667, -3973.0299999999697]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 606 patterns in 2160 candles
+OpenInterestIndicator.js:159 [OPUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [OPUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [OPUSDT] 🎨 RENDER: maxDelta=731558.799999997, sample deltas: (10) [0, 474022.4000000134, 380512.69999999553, -245672.10000000894, -187588.0999999866, 67996.09999998659, 295279.9000000134, -319109.1000000015, 191100.69999998808, -67277.79999998957]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 617 patterns in 2160 candles
+OpenInterestIndicator.js:159 [HBARUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [HBARUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [HBARUSDT] 🎨 RENDER: maxDelta=6996044, sample deltas: (10) [0, 1915478, -1483896, 1474939, 1094353, 457141, 2285567, -364438, 4843510, -1646608]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 568 patterns in 2160 candles
+OpenInterestIndicator.js:159 [SOLUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [SOLUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [SOLUSDT] 🎨 RENDER: maxDelta=241866.10000000987, sample deltas: (10) [0, 32150.60000000056, 4724.5, 49550.39999999944, 42758.5, -38476.2000000095, 58348.7000000095, 27679.900000000373, 20102.5, -26224.400000000373]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 653 patterns in 2160 candles
+OpenInterestIndicator.js:159 [PEOPLEUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [PEOPLEUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [PEOPLEUSDT] 🎨 RENDER: maxDelta=3644492, sample deltas: (10) [0, 5310, 251230, 1809082, 3644492, 370904, 498196, -2303040, -682900, 163662]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 613 patterns in 2160 candles
+OpenInterestIndicator.js:159 [INJUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [INJUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [INJUSDT] 🎨 RENDER: maxDelta=30946.40000000014, sample deltas: (10) [0, 30651.199999999953, 30946.40000000014, -4703, -82.70000000018626, -984.0999999998603, 15308.300000000047, -1238.3000000000466, 20141.800000000047, -10201.90000000014]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]
+LocalPatternDetector.js:118 [LocalPatternDetector] Detected 592 patterns in 2160 candles
+OpenInterestIndicator.js:159 [UNIUSDT] 📊 Histogram Mode: 49 candles, 49 OI matches, 48 non-zero deltas
+OpenInterestIndicator.js:372 [UNIUSDT] 🎨 RENDER Histogram: data.length=49
+OpenInterestIndicator.js:381 [UNIUSDT] 🎨 RENDER: maxDelta=171085.2000000002, sample deltas: (10) [0, 77641.79999999981, 54041.200000000186, -73184.59999999963, -45275.60000000056, 43180.40000000037, 115665.20000000019, 84364.29999999981, -49.700000000186265, 22635.60000000056]

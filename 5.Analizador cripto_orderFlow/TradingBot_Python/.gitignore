@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+env/
+
+# Logs
+*.log
+backend/logs/*.log
+backend/logs/*.txt
+
+# Environment variables
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+*.tsbuildinfo
+
+# Cache
+*.cache
+.cache/
+backend/cache/
+frontend/cache/
+
+# Sensitive data
+config/credentials.json
+*.pem
+*.key
+
+# Bybit specific
+trading_history.json
+positions_backup.json

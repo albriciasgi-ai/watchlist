@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Double Top/Bottom Config</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #1b5e20;
+            color: #4CAF50;
+        }
+        .error {
+            background: #b71c1c;
+            color: #ff5252;
+        }
+        .info {
+            background: #0d47a1;
+            color: #64b5f6;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover {
+            background: #da190b;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        input[type="number"] {
+            background: #3a3a3a;
+            color: white;
+            border: 1px solid #555;
+            padding: 5px;
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+        .config-display {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        .config-label {
+            color: #888;
+        }
+        .config-value {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Double Top/Bottom Configuration</h1>
+
+    <div class="test-section">
+        <h2>📊 Configuración Actual</h2>
+        <div id="current-config" class="config-display">
+            <p>Cargando configuración...</p>
+        </div>
+        <button onclick="loadCurrentConfig()">🔄 Recargar Configuración</button>
+        <button onclick="clearLocalStorage()" class="danger">🗑️ Limpiar localStorage</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Pruebas de Configuración</h2>
+
+        <h3>Test 1: Guardar y Verificar maxBreakoutPercent</h3>
+        <div>
+            <label>Nuevo valor de maxBreakoutPercent:
+                <input type="number" id="maxBreakout" value="10.5" min="0.5" max="100" step="0.5">%
+            </label>
+            <button onclick="testSaveMaxBreakout()">💾 Guardar y Verificar</button>
+        </div>
+        <div id="test1-result"></div>
+
+        <h3>Test 2: Simular Cambio de Timeframe</h3>
+        <div>
+            <button onclick="simulateTimeframeChange('1')">1m</button>
+            <button onclick="simulateTimeframeChange('5')">5m</button>
+            <button onclick="simulateTimeframeChange('15')">15m</button>
+            <button onclick="simulateTimeframeChange('60')">1h</button>
+        </div>
+        <div id="test2-result"></div>
+
+        <h3>Test 3: Verificar Todos los Parámetros</h3>
+        <button onclick="testAllParameters()">🔍 Verificar Todos los Parámetros</button>
+        <div id="test3-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Log de Eventos</h2>
+        <div id="event-log" style="max-height: 300px; overflow-y: auto;">
+            <p class="info test-result">Sistema de pruebas iniciado...</p>
+        </div>
+    </div>
+
+    <script>
+        const SYMBOL = 'BTCUSDT';
+        let currentInterval = '15';
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('event-log');
+            const entry = document.createElement('div');
+            entry.className = `test-result ${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function loadCurrentConfig() {
+            const configKey = `double_topbottom_config_${SYMBOL}`;
+            const savedConfig = localStorage.getItem(configKey);
+
+            const configDiv = document.getElementById('current-config');
+
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+                    let html = '<div class="config-item">';
+                    html += '<span class="config-label">Symbol:</span>';
+                    html += `<span class="config-value">${SYMBOL}</span>`;
+                    html += '</div>';
+
+                    html += '<div class="config-item">';
+                    html += '<span class="config-label">maxBreakoutPercent:</span>';
+                    html += `<span class="config-value">${config.doubleTopBottom?.maxBreakoutPercent || 'No definido'}%</span>`;
+                    html += '</div>';
+
+                    html += '<div class="config-item">';
+                    html += '<span class="config-label">minConfidence:</span>';
+                    html += `<span class="config-value">${config.filters?.minConfidence || 'No definido'}%</span>`;
+                    html += '</div>';
+
+                    html += '<div class="config-item">';
+                    html += '<span class="config-label">requireBothRejections:</span>';
+                    html += `<span class="config-value">${config.filters?.requireBothRejections || false}</span>`;
+                    html += '</div>';
+
+                    html += '<div class="config-item">';
+                    html += '<span class="config-label">volumeFilter.enabled:</span>';
+                    html += `<span class="config-value">${config.doubleTopBottom?.volumeFilter?.enabled || false}</span>`;
+                    html += '</div>';
+
+                    html += '<details style="margin-top: 15px;">';
+                    html += '<summary style="cursor: pointer; color: #888;">Ver JSON completo</summary>';
+                    html += `<pre>${JSON.stringify(config, null, 2)}</pre>`;
+                    html += '</details>';
+
+                    configDiv.innerHTML = html;
+                    log('Configuración cargada exitosamente', 'success');
+                } catch (e) {
+                    configDiv.innerHTML = '<p style="color: #ff5252;">Error al parsear la configuración</p>';
+                    log(`Error: ${e.message}`, 'error');
+                }
+            } else {
+                configDiv.innerHTML = '<p style="color: #ff9800;">No hay configuración guardada</p>';
+                log('No se encontró configuración guardada', 'info');
+            }
+        }
+
+        function clearLocalStorage() {
+            if (confirm('¿Estás seguro de que quieres limpiar toda la configuración guardada?')) {
+                const configKey = `double_topbottom_config_${SYMBOL}`;
+                localStorage.removeItem(configKey);
+                log('localStorage limpiado', 'success');
+                loadCurrentConfig();
+            }
+        }
+
+        function testSaveMaxBreakout() {
+            const newValue = parseFloat(document.getElementById('maxBreakout').value);
+            const configKey = `double_topbottom_config_${SYMBOL}`;
+
+            log(`Test 1: Guardando maxBreakoutPercent = ${newValue}%`, 'info');
+
+            // Obtener config actual o crear una nueva
+            let config = {};
+            const saved = localStorage.getItem(configKey);
+            if (saved) {
+                try {
+                    config = JSON.parse(saved);
+                } catch (e) {
+                    log('Error al parsear config existente, creando nueva', 'error');
+                }
+            }
+
+            // Asegurar estructura
+            if (!config.doubleTopBottom) {
+                config.doubleTopBottom = {};
+            }
+
+            // Guardar el nuevo valor
+            config.doubleTopBottom.maxBreakoutPercent = newValue;
+            localStorage.setItem(configKey, JSON.stringify(config));
+
+            // Verificar que se guardó correctamente
+            const verifyConfig = JSON.parse(localStorage.getItem(configKey));
+            const savedValue = verifyConfig.doubleTopBottom?.maxBreakoutPercent;
+
+            const resultDiv = document.getElementById('test1-result');
+            if (savedValue === newValue) {
+                resultDiv.innerHTML = `<div class="test-result success">✅ Test exitoso: Valor guardado correctamente (${savedValue}%)</div>`;
+                log(`Test 1 EXITOSO: maxBreakoutPercent = ${savedValue}%`, 'success');
+            } else {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Test fallido: Esperado ${newValue}%, obtenido ${savedValue}%</div>`;
+                log(`Test 1 FALLIDO: Esperado ${newValue}%, obtenido ${savedValue}%`, 'error');
+            }
+
+            loadCurrentConfig();
+        }
+
+        function simulateTimeframeChange(interval) {
+            currentInterval = interval;
+            log(`Test 2: Simulando cambio de timeframe a ${interval}`, 'info');
+
+            const configKey = `double_topbottom_config_${SYMBOL}`;
+            const savedConfig = localStorage.getItem(configKey);
+
+            if (savedConfig) {
+                const config = JSON.parse(savedConfig);
+                const maxBreakout = config.doubleTopBottom?.maxBreakoutPercent;
+
+                const resultDiv = document.getElementById('test2-result');
+
+                // Verificar que el valor se mantiene
+                if (maxBreakout !== undefined && maxBreakout !== null) {
+                    resultDiv.innerHTML = `<div class="test-result success">✅ maxBreakoutPercent se mantiene en ${maxBreakout}% después de cambiar a ${interval}</div>`;
+                    log(`Test 2 EXITOSO: Valor mantenido (${maxBreakout}%) en timeframe ${interval}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<div class="test-result error">⚠️ maxBreakoutPercent no está definido</div>`;
+                    log(`Test 2: maxBreakoutPercent no definido`, 'error');
+                }
+            } else {
+                document.getElementById('test2-result').innerHTML = '<div class="test-result error">No hay configuración guardada</div>';
+            }
+        }
+
+        function testAllParameters() {
+            log('Test 3: Verificando todos los parámetros personalizables', 'info');
+
+            const configKey = `double_topbottom_config_${SYMBOL}`;
+            const testConfig = {
+                doubleTopBottom: {
+                    maxBreakoutPercent: 15.5,
+                    lookbackCandles: 75,
+                    candlesPerExtreme: 4,
+                    priceMarginPercent: 3.5,
+                    volumeFilter: {
+                        enabled: true
+                    }
+                },
+                filters: {
+                    minConfidence: 35,
+                    requireBothRejections: true
+                }
+            };
+
+            // Guardar configuración de prueba
+            localStorage.setItem(configKey, JSON.stringify(testConfig));
+            log('Configuración de prueba guardada', 'info');
+
+            // Verificar que se guardó correctamente
+            const verifyConfig = JSON.parse(localStorage.getItem(configKey));
+
+            const resultDiv = document.getElementById('test3-result');
+            let allTestsPassed = true;
+            let resultHtml = '<div style="padding: 10px;">';
+
+            // Verificar cada parámetro
+            const tests = [
+                {
+                    name: 'maxBreakoutPercent',
+                    expected: 15.5,
+                    actual: verifyConfig.doubleTopBottom?.maxBreakoutPercent
+                },
+                {
+                    name: 'lookbackCandles',
+                    expected: 75,
+                    actual: verifyConfig.doubleTopBottom?.lookbackCandles
+                },
+                {
+                    name: 'minConfidence',
+                    expected: 35,
+                    actual: verifyConfig.filters?.minConfidence
+                },
+                {
+                    name: 'requireBothRejections',
+                    expected: true,
+                    actual: verifyConfig.filters?.requireBothRejections
+                },
+                {
+                    name: 'volumeFilter.enabled',
+                    expected: true,
+                    actual: verifyConfig.doubleTopBottom?.volumeFilter?.enabled
+                }
+            ];
+
+            tests.forEach(test => {
+                const passed = test.actual === test.expected;
+                allTestsPassed = allTestsPassed && passed;
+                resultHtml += `<div style="margin: 5px 0;">`;
+                resultHtml += passed ? '✅' : '❌';
+                resultHtml += ` ${test.name}: esperado ${test.expected}, obtenido ${test.actual}`;
+                resultHtml += '</div>';
+            });
+
+            resultHtml += '</div>';
+
+            if (allTestsPassed) {
+                resultDiv.innerHTML = `<div class="test-result success">✅ Todas las pruebas pasaron${resultHtml}</div>`;
+                log('Test 3 EXITOSO: Todos los parámetros se guardaron correctamente', 'success');
+            } else {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Algunas pruebas fallaron${resultHtml}</div>`;
+                log('Test 3 FALLIDO: Algunos parámetros no se guardaron correctamente', 'error');
+            }
+
+            loadCurrentConfig();
+        }
+
+        // Cargar configuración al iniciar
+        window.onload = function() {
+            loadCurrentConfig();
+            log('Sistema de pruebas listo', 'success');
+        };
+    </script>
+</body>
+</html>

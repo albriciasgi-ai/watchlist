@@ -1,0 +1,546 @@
+{
+  "BTCUSDT": {
+    "symbol": "BTCUSDT",
+    "intervals": {
+      "60": {
+        "rejection": {
+          "indicator_type": "rejection",
+          "config": {
+            "showMode": "validated",
+            "minConfidence": 70,
+            "alertEnabled": false,
+            "alertThreshold": 80,
+            "contexts": {
+              "volumeProfileDynamic": true,
+              "volumeProfileFixed": true,
+              "rangeDetector": true
+            },
+            "patterns": {
+              "hammer": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxUpperWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "shootingStar": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxLowerWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "engulfing": {
+                "enabled": true
+              },
+              "doji": {
+                "enabled": false,
+                "maxBodyRatio": 0.08,
+                "minLongWick": 0.5,
+                "maxShortWick": 0.15,
+                "debug": false
+              }
+            },
+            "enabled": true,
+            "swingDetection": {
+              "enabled": true,
+              "leftBars": 5,
+              "rightBars": 5,
+              "required": false,
+              "swingOnlyMode": false
+            },
+            "referenceContexts": [],
+            "levelSources": {
+              "volumeProfile": false,
+              "fixedRanges": true,
+              "clusters": true,
+              "manualLevels": true,
+              "supportResistance": true,
+              "rangeDetection": true,
+              "manualPriceZones": true
+            },
+            "filters": {
+              "minConfidence": 50,
+              "requireNearLevel": false,
+              "proximityPercent": 1
+            },
+            "volumeZScore": {
+              "enabled": false,
+              "lookbackPeriod": 20,
+              "minZScore": 1,
+              "swingCandleRange": 1
+            },
+            "alertsEnabled": true,
+            "debugMode": false,
+            "signalDirection": {
+              "global": "BOTH"
+            },
+            "manualPriceZones": [
+              {
+                "id": "zone_1768677859867",
+                "name": "mlk",
+                "minPrice": 49000,
+                "maxPrice": 51000,
+                "enabled": true,
+                "signalDirection": "BOTH",
+                "color": "#FF5722",
+                "strength": 8
+              }
+            ],
+            "vwapFilter": {
+              "enabled": false,
+              "deviationTolerance": 10,
+              "requiredDeviations": {
+                "second": true,
+                "third": false
+              }
+            },
+            "swingArrowStyle": {
+              "size": 10,
+              "longColor": "#00E676",
+              "shortColor": "#FF1744",
+              "offset": 8
+            },
+            "strategy": {
+              "enabled": false,
+              "riskRewardRatio": 2,
+              "lineLengthCandles": 5,
+              "entryColor": "#03A9F4",
+              "stopLossColor": "#FF1744",
+              "takeProfitColor": "#00E676",
+              "showLabels": true,
+              "includeInAlert": true,
+              "showBox": true,
+              "slBoxColor": "#FF1744",
+              "tpBoxColor": "#00E676",
+              "boxOpacity": 0.15,
+              "slSwingLeftBars": 3,
+              "slSwingRightBars": 3,
+              "slSwingLookback": 50,
+              "slBufferPercent": 20,
+              "slMinPercent": 0.5
+            },
+            "priceActionValidation": {
+              "enabled": true,
+              "barsToCheck": 3,
+              "invalidateOnBreak": true
+            },
+            "alertCooldown": {
+              "enabled": true,
+              "minutes": 30,
+              "pauseDetection": false
+            },
+            "rateLimiting": {
+              "enabled": true,
+              "minIntervalSeconds": 5,
+              "maxPatternAgeMinutes": 2,
+              "skipHistoricalOnLoad": true
+            }
+          },
+          "calculated_levels": {},
+          "updated_at": 1768700090.3674803
+        }
+      },
+      "1": {
+        "rejection": {
+          "indicator_type": "rejection",
+          "config": {
+            "showMode": "validated",
+            "minConfidence": 70,
+            "alertEnabled": false,
+            "alertThreshold": 80,
+            "contexts": {
+              "volumeProfileDynamic": true,
+              "volumeProfileFixed": true,
+              "rangeDetector": true
+            },
+            "patterns": {
+              "hammer": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxUpperWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "shootingStar": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxLowerWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "engulfing": {
+                "enabled": true
+              },
+              "doji": {
+                "enabled": false,
+                "maxBodyRatio": 0.08,
+                "minLongWick": 0.5,
+                "maxShortWick": 0.15,
+                "debug": false
+              }
+            },
+            "enabled": true,
+            "swingDetection": {
+              "enabled": true,
+              "leftBars": 5,
+              "rightBars": 5,
+              "required": false,
+              "swingOnlyMode": false
+            },
+            "referenceContexts": [],
+            "levelSources": {
+              "volumeProfile": false,
+              "fixedRanges": true,
+              "clusters": true,
+              "manualLevels": true,
+              "supportResistance": true,
+              "rangeDetection": true,
+              "manualPriceZones": true
+            },
+            "filters": {
+              "minConfidence": 50,
+              "requireNearLevel": false,
+              "proximityPercent": 1
+            },
+            "volumeZScore": {
+              "enabled": false,
+              "lookbackPeriod": 20,
+              "minZScore": 1,
+              "swingCandleRange": 1
+            },
+            "alertsEnabled": true,
+            "debugMode": false,
+            "signalDirection": {
+              "global": "BOTH"
+            },
+            "manualPriceZones": [
+              {
+                "id": "zone_1768677859867",
+                "name": "mlk",
+                "minPrice": 49000,
+                "maxPrice": 51000,
+                "enabled": true,
+                "signalDirection": "BOTH",
+                "color": "#FF5722",
+                "strength": 8
+              }
+            ],
+            "vwapFilter": {
+              "enabled": false,
+              "deviationTolerance": 10,
+              "requiredDeviations": {
+                "second": true,
+                "third": false
+              }
+            },
+            "swingArrowStyle": {
+              "size": 10,
+              "longColor": "#00E676",
+              "shortColor": "#FF1744",
+              "offset": 8
+            },
+            "strategy": {
+              "enabled": false,
+              "riskRewardRatio": 2,
+              "lineLengthCandles": 5,
+              "entryColor": "#03A9F4",
+              "stopLossColor": "#FF1744",
+              "takeProfitColor": "#00E676",
+              "showLabels": true,
+              "includeInAlert": true,
+              "showBox": true,
+              "slBoxColor": "#FF1744",
+              "tpBoxColor": "#00E676",
+              "boxOpacity": 0.15,
+              "slSwingLeftBars": 3,
+              "slSwingRightBars": 3,
+              "slSwingLookback": 50,
+              "slBufferPercent": 20,
+              "slMinPercent": 0.5
+            },
+            "priceActionValidation": {
+              "enabled": true,
+              "barsToCheck": 3,
+              "invalidateOnBreak": true
+            },
+            "alertCooldown": {
+              "enabled": true,
+              "minutes": 30,
+              "pauseDetection": false
+            },
+            "rateLimiting": {
+              "enabled": true,
+              "minIntervalSeconds": 5,
+              "maxPatternAgeMinutes": 2,
+              "skipHistoricalOnLoad": true
+            }
+          },
+          "calculated_levels": {},
+          "updated_at": 1768700102.4255803
+        }
+      }
+    }
+  },
+  "ETHUSDT": {
+    "symbol": "ETHUSDT",
+    "intervals": {
+      "60": {
+        "rejection": {
+          "indicator_type": "rejection",
+          "config": {
+            "showMode": "validated",
+            "minConfidence": 70,
+            "alertEnabled": false,
+            "alertThreshold": 80,
+            "contexts": {
+              "volumeProfileDynamic": true,
+              "volumeProfileFixed": true,
+              "rangeDetector": true
+            },
+            "patterns": {
+              "hammer": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxUpperWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "shootingStar": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxLowerWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "engulfing": {
+                "enabled": true
+              },
+              "doji": {
+                "enabled": false,
+                "maxBodyRatio": 0.08,
+                "minLongWick": 0.5,
+                "maxShortWick": 0.15,
+                "debug": false
+              }
+            },
+            "enabled": true,
+            "swingDetection": {
+              "enabled": true,
+              "leftBars": 5,
+              "rightBars": 5,
+              "required": false,
+              "swingOnlyMode": false
+            },
+            "referenceContexts": [],
+            "levelSources": {
+              "volumeProfile": false,
+              "fixedRanges": true,
+              "clusters": true,
+              "manualLevels": true,
+              "supportResistance": true,
+              "rangeDetection": true,
+              "manualPriceZones": true
+            },
+            "filters": {
+              "minConfidence": 50,
+              "requireNearLevel": false,
+              "proximityPercent": 1
+            },
+            "volumeZScore": {
+              "enabled": false,
+              "lookbackPeriod": 20,
+              "minZScore": 1,
+              "swingCandleRange": 1
+            },
+            "alertsEnabled": true,
+            "debugMode": false,
+            "signalDirection": {
+              "global": "BOTH"
+            },
+            "manualPriceZones": [],
+            "vwapFilter": {
+              "enabled": false,
+              "deviationTolerance": 10,
+              "requiredDeviations": {
+                "second": true,
+                "third": false
+              }
+            },
+            "swingArrowStyle": {
+              "size": 10,
+              "longColor": "#00E676",
+              "shortColor": "#FF1744",
+              "offset": 8
+            },
+            "strategy": {
+              "enabled": false,
+              "riskRewardRatio": 2,
+              "lineLengthCandles": 5,
+              "entryColor": "#03A9F4",
+              "stopLossColor": "#FF1744",
+              "takeProfitColor": "#00E676",
+              "showLabels": true,
+              "includeInAlert": true,
+              "showBox": true,
+              "slBoxColor": "#FF1744",
+              "tpBoxColor": "#00E676",
+              "boxOpacity": 0.15,
+              "slSwingLeftBars": 3,
+              "slSwingRightBars": 3,
+              "slSwingLookback": 50,
+              "slBufferPercent": 20,
+              "slMinPercent": 0.5
+            },
+            "priceActionValidation": {
+              "enabled": true,
+              "barsToCheck": 3,
+              "invalidateOnBreak": true
+            },
+            "alertCooldown": {
+              "enabled": true,
+              "minutes": 30,
+              "pauseDetection": false
+            },
+            "rateLimiting": {
+              "enabled": true,
+              "minIntervalSeconds": 5,
+              "maxPatternAgeMinutes": 2,
+              "skipHistoricalOnLoad": true
+            }
+          },
+          "calculated_levels": {},
+          "updated_at": 1768700090.3695786
+        }
+      },
+      "1": {
+        "rejection": {
+          "indicator_type": "rejection",
+          "config": {
+            "showMode": "validated",
+            "minConfidence": 70,
+            "alertEnabled": false,
+            "alertThreshold": 80,
+            "contexts": {
+              "volumeProfileDynamic": true,
+              "volumeProfileFixed": true,
+              "rangeDetector": true
+            },
+            "patterns": {
+              "hammer": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxUpperWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "shootingStar": {
+                "enabled": true,
+                "minWickRatio": 1.5,
+                "maxLowerWickRatio": 0.3,
+                "minBodyPosition": 0.5,
+                "debug": false
+              },
+              "engulfing": {
+                "enabled": true
+              },
+              "doji": {
+                "enabled": false,
+                "maxBodyRatio": 0.08,
+                "minLongWick": 0.5,
+                "maxShortWick": 0.15,
+                "debug": false
+              }
+            },
+            "enabled": true,
+            "swingDetection": {
+              "enabled": true,
+              "leftBars": 5,
+              "rightBars": 5,
+              "required": false,
+              "swingOnlyMode": false
+            },
+            "referenceContexts": [],
+            "levelSources": {
+              "volumeProfile": false,
+              "fixedRanges": true,
+              "clusters": true,
+              "manualLevels": true,
+              "supportResistance": true,
+              "rangeDetection": true,
+              "manualPriceZones": true
+            },
+            "filters": {
+              "minConfidence": 50,
+              "requireNearLevel": false,
+              "proximityPercent": 1
+            },
+            "volumeZScore": {
+              "enabled": false,
+              "lookbackPeriod": 20,
+              "minZScore": 1,
+              "swingCandleRange": 1
+            },
+            "alertsEnabled": true,
+            "debugMode": false,
+            "signalDirection": {
+              "global": "BOTH"
+            },
+            "manualPriceZones": [],
+            "vwapFilter": {
+              "enabled": false,
+              "deviationTolerance": 10,
+              "requiredDeviations": {
+                "second": true,
+                "third": false
+              }
+            },
+            "swingArrowStyle": {
+              "size": 10,
+              "longColor": "#00E676",
+              "shortColor": "#FF1744",
+              "offset": 8
+            },
+            "strategy": {
+              "enabled": false,
+              "riskRewardRatio": 2,
+              "lineLengthCandles": 5,
+              "entryColor": "#03A9F4",
+              "stopLossColor": "#FF1744",
+              "takeProfitColor": "#00E676",
+              "showLabels": true,
+              "includeInAlert": true,
+              "showBox": true,
+              "slBoxColor": "#FF1744",
+              "tpBoxColor": "#00E676",
+              "boxOpacity": 0.15,
+              "slSwingLeftBars": 3,
+              "slSwingRightBars": 3,
+              "slSwingLookback": 50,
+              "slBufferPercent": 20,
+              "slMinPercent": 0.5
+            },
+            "priceActionValidation": {
+              "enabled": true,
+              "barsToCheck": 3,
+              "invalidateOnBreak": true
+            },
+            "alertCooldown": {
+              "enabled": true,
+              "minutes": 30,
+              "pauseDetection": false
+            },
+            "rateLimiting": {
+              "enabled": true,
+              "minIntervalSeconds": 5,
+              "maxPatternAgeMinutes": 2,
+              "skipHistoricalOnLoad": true
+            }
+          },
+          "calculated_levels": {},
+          "updated_at": 1768700102.4268632
+        }
+      }
+    }
+  }
+}

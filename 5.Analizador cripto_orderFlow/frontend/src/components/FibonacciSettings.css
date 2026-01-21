@@ -1,0 +1,139 @@
+/* FibonacciSettings.css */
+.fibonacci-settings {
+  background: #ffffff;
+  color: #333333;
+  padding: 15px;
+  border-radius: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  min-width: 320px;
+}
+
+.fibonacci-settings .settings-section h4 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2196F3;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.fibonacci-settings .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.fibonacci-settings .setting-row label {
+  font-size: 12px;
+  color: #555555;
+  flex: 1;
+}
+
+.fibonacci-settings .setting-row input[type="number"],
+.fibonacci-settings .setting-row input[type="text"],
+.fibonacci-settings .setting-row select {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 140px;
+}
+
+.fibonacci-settings .setting-row input[type="number"]:focus,
+.fibonacci-settings .setting-row input[type="text"]:focus,
+.fibonacci-settings .setting-row select:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+.fibonacci-settings .setting-row input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.fibonacci-settings .setting-row input[type="color"] {
+  width: 60px;
+  height: 30px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.fibonacci-settings .level-percent {
+  font-size: 11px;
+  color: #888;
+  min-width: 50px;
+  text-align: right;
+}
+
+.fibonacci-settings .toggle-advanced-btn {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.fibonacci-settings .toggle-advanced-btn:hover {
+  background: #e8e8e8;
+}
+
+.fibonacci-settings .advanced-settings {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.fibonacci-settings .level-group {
+  margin-bottom: 15px;
+}
+
+.fibonacci-settings .level-group h5 {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2196F3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fibonacci-settings .settings-hint {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(33, 150, 243, 0.1);
+  border-left: 3px solid #2196F3;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Scrollbar styling */
+.fibonacci-settings::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fibonacci-settings::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.fibonacci-settings::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 3px;
+}
+
+.fibonacci-settings::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}

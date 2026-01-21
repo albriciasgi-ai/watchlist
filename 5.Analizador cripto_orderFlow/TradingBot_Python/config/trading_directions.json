@@ -1,0 +1,21 @@
+{
+  "directions": {
+    "BTCUSDT": "BOTH",
+    "ETHUSDT": "BOTH",
+    "SOLUSDT": "BOTH",
+    "ADAUSDT": "BOTH",
+    "AVAXUSDT": "BOTH",
+    "GALAUSDT": "BOTH",
+    "INJUSDT": "BOTH",
+    "IOTAUSDT": "BOTH",
+    "TRXUSDT": "BOTH",
+    "UNIUSDT": "BOTH",
+    "XRPUSDT": "BOTH",
+    "CAKEUSDT": "BOTH",
+    "POLUSDT": "BOTH",
+    "MUBARAKUSDT": "BOTH",
+    "HIFIUSDT": "BOTH",
+    "ARBUSDT": "BOTH"
+  },
+  "last_updated": "2025-11-21T20:07:22.211096"
+}

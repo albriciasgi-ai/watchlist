@@ -78,10 +78,9 @@ class IndicatorManager {
 
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
     // Solo cargar indicadores que requieren backend API
-    // 🎯 FIX: En modo backtesting, también cargar Support & Resistance
     await Promise.all(
       this.indicators.map(ind => {
-        // En modo backtesting: cargar Volume Profile, Open Interest (si tiene datos), y Support & Resistance
+        // En modo backtesting: cargar Volume Profile, Open Interest (si tiene datos), y S&R
         if (backtestingMode) {
           if (ind.name === "Volume Profile" ||
               ind.name === "Support & Resistance" ||
@@ -97,8 +96,8 @@ class IndicatorManager {
         if (ind.name === "Volume Profile" ||
             ind.name === "Open Interest" ||
             ind.name === "Double Top/Bottom" ||
-            ind.name === "Support & Resistance" ||
-            ind.name === "Rejection Patterns") {
+            ind.name === "Rejection Patterns" ||
+            ind.name === "Support & Resistance") {
           return ind.fetchData();
         }
         return Promise.resolve();
@@ -177,8 +176,13 @@ class IndicatorManager {
             tasks.push(indicator.precalculateWithCandles(candles, playbackStartTime));
           }
         }
-        // Otros indicadores que puedan necesitar precálculo en el futuro
-        // Se pueden agregar aquí
+        // S&R: inicializar playback time para evitar sesgo de supervivencia
+        if (indicator.name === "Support & Resistance" && playbackStartTime) {
+          if (indicator.updatePlaybackDate) {
+            console.log(`[${this.symbol}] 🎯 Inicializando S&R playbackTime: ${new Date(playbackStartTime).toISOString()}`);
+            indicator.updatePlaybackDate(playbackStartTime);
+          }
+        }
       }
 
       // Esperar a que todos los precálculos terminen
@@ -229,13 +233,21 @@ class IndicatorManager {
    * @param {boolean} backtestingMode - Si está en modo backtesting
    */
   async updateIndicatorStates(indicatorStates, backtestingMode = false) {
-    console.log(`[${this.symbol}] 🔄 Actualizando estados de indicadores:`, indicatorStates);
+    console.log(`[${this.symbol}] 🔄 Actualizando estados de indicadores:`, JSON.stringify(indicatorStates));
 
     const promises = [];
+
+    // 🎯 Indicadores que requieren datos del backend
+    const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns"];
 
     for (const indicator of this.indicators) {
       const shouldBeEnabled = indicatorStates[indicator.name] || false;
       const wasEnabled = indicator.enabled;
+
+      // 🔍 DEBUG: Log para S&R específicamente
+      if (indicator.name === "Support & Resistance") {
+        console.log(`[${this.symbol}] 📊 S&R State Check: shouldBeEnabled=${shouldBeEnabled}, wasEnabled=${wasEnabled}, hasData=${(indicator.resistances?.length || 0) + (indicator.supports?.length || 0)}`);
+      }
 
       if (shouldBeEnabled && !wasEnabled) {
         // 🎯 Indicador se está ACTIVANDO
@@ -252,11 +264,7 @@ class IndicatorManager {
           }
         }
         // 🎯 CRÍTICO: Si es VWAP u otro indicador que requiere datos del backend
-        else if (indicator.name === "VWAP" ||
-                 indicator.name === "Open Interest" ||
-                 indicator.name === "Double Top/Bottom" ||
-                 indicator.name === "Support & Resistance" ||
-                 indicator.name === "Rejection Patterns") {
+        else if (backendIndicators.includes(indicator.name)) {
           // En modo normal o para otros indicadores, llamar fetchData()
           console.log(`[${this.symbol}] 🌐 Cargando datos para ${indicator.name} (activación dinámica)`);
           promises.push(indicator.fetchData());
@@ -265,8 +273,21 @@ class IndicatorManager {
         // 🎯 Indicador se está DESACTIVANDO
         console.log(`[${this.symbol}] ❌ Desactivando ${indicator.name}`);
         indicator.setEnabled(false);
+      } else if (shouldBeEnabled && wasEnabled) {
+        // 🎯 FIX v2: Si ya estaba habilitado pero no tiene datos, intentar cargar
+        // Esto soluciona el caso donde el indicador tiene enabled=true por defecto
+        // pero el fetch inicial no se ejecutó correctamente
+        if (backendIndicators.includes(indicator.name)) {
+          // S&R: verificar si tiene datos
+          if (indicator.name === "Support & Resistance") {
+            if ((!indicator.resistances || indicator.resistances.length === 0) &&
+                (!indicator.supports || indicator.supports.length === 0)) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+              promises.push(indicator.fetchData());
+            }
+          }
+        }
       }
-      // Si shouldBeEnabled === wasEnabled, no hacer nada
     }
 
     // Esperar a que todos los fetchData() o precalculateWithCandles() terminen
@@ -322,6 +343,41 @@ class IndicatorManager {
     }
   }
 
+  /**
+   * 🎯 Actualizar fecha de playback para Support & Resistance
+   * @param {number} timestamp - Timestamp actual del playback
+   */
+  updateSRPlaybackTime(timestamp) {
+    const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
+    if (srIndicator && srIndicator.updatePlaybackDate) {
+      srIndicator.updatePlaybackDate(timestamp);
+    }
+  }
+
+  /**
+   * 🎯 Actualizar fecha de playback para TODOS los indicadores que lo soporten
+   * @param {number} timestamp - Timestamp actual del playback
+   */
+  async updateAllPlaybackTime(timestamp) {
+    // DTB (async)
+    const dtbIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
+    if (dtbIndicator && dtbIndicator.updatePlaybackDate) {
+      await dtbIndicator.updatePlaybackDate(timestamp);
+    }
+
+    // Swing Detector
+    const swingIndicator = this.indicators.find(ind => ind.name === "Swing Detector");
+    if (swingIndicator && swingIndicator.updatePlaybackTime) {
+      swingIndicator.updatePlaybackTime(timestamp);
+    }
+
+    // Support & Resistance
+    const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
+    if (srIndicator && srIndicator.updatePlaybackDate) {
+      srIndicator.updatePlaybackDate(timestamp);
+    }
+  }
+
   getIndicatorConfig(name) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.getConfig) {
@@ -353,6 +409,19 @@ class IndicatorManager {
   }
 
   renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
+    // 🔍 DEBUG: Log de indicadores con renderOverlay
+    const overlayIndicators = this.indicators.filter(i => i.renderOverlay);
+    if (!this._overlayLogged) {
+      console.log(`[${this.symbol}] 🎯 renderOverlays - Indicadores con overlay:`,
+        overlayIndicators.map(i => `${i.name}(enabled=${i.enabled})`).join(', ')
+      );
+      const srInd = this.indicators.find(i => i.name === "Support & Resistance");
+      if (srInd) {
+        console.log(`[${this.symbol}] 📊 S&R Status: enabled=${srInd.enabled}, resistances=${srInd.resistances?.length || 0}, supports=${srInd.supports?.length || 0}`);
+      }
+      this._overlayLogged = true;
+    }
+
     // ✅ SOLUCIÓN 1: Verificar si hay Fixed Range Profiles activos para este símbolo
     const activeFixedRanges = this.fixedRangeIndicators.filter(
       ind => ind.enabled && ind.symbol === this.symbol

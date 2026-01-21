@@ -14,6 +14,7 @@ import RejectionPatternSettings from '../RejectionPatternSettings';
 import SupportResistanceSettings from '../SupportResistanceSettings';
 import VWAPSettings from '../VWAPSettings';
 import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
+import SwingDetectorSettings from '../SwingDetectorSettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
@@ -43,7 +44,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true
+        "Support & Resistance": true,
+        "Swing Detector": false
       },
       vpConfig: {
         mode: 'dynamic',
@@ -67,7 +69,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true
+        "Support & Resistance": true,
+        "Swing Detector": false
       },
       vpConfig: {
         mode: 'dynamic',
@@ -91,7 +94,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true
+        "Support & Resistance": true,
+        "Swing Detector": false
       },
       vpConfig: {
         mode: 'dynamic',
@@ -139,6 +143,7 @@ const BacktestingApp = () => {
   const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
   const [showVWAPSettings, setShowVWAPSettings] = useState(false);
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
+  const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
 
   // 🎯 Configuraciones de indicadores
   const [vpConfig, setVpConfig] = useState({
@@ -848,6 +853,11 @@ const BacktestingApp = () => {
         if (indicatorManager && indicatorManager.updateSwingPlaybackTime) {
           indicatorManager.updateSwingPlaybackTime(newTime);
         }
+
+        // 🎯 Actualizar S&R para playback (evita sesgo de supervivencia)
+        if (indicatorManager && indicatorManager.updateSRPlaybackTime) {
+          indicatorManager.updateSRPlaybackTime(newTime);
+        }
       }
     }
   };
@@ -990,6 +1000,11 @@ const BacktestingApp = () => {
     setShowDoubleTopBottomSettings(true);
   };
 
+  const handleOpenSwingDetectorSettings = (indicatorManager) => {
+    indicatorManagerRef.current = indicatorManager;
+    setShowSwingDetectorSettings(true);
+  };
+
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfig(config);
   };
@@ -1061,6 +1076,7 @@ const BacktestingApp = () => {
     setShowSupportResistanceSettings(false);
     setShowVWAPSettings(false);
     setShowDoubleTopBottomSettings(false);
+    setShowSwingDetectorSettings(false);
   }, [activeTimeframe]);
 
   /**
@@ -1559,7 +1575,8 @@ const BacktestingApp = () => {
                     'Rejection Patterns': () => setShowRejectionPatternSettings(true),
                     'Support & Resistance': () => setShowSupportResistanceSettings(true),
                     'VWAP': () => setShowVWAPSettings(true),
-                    'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true)
+                    'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true),
+                    'Swing Detector': () => setShowSwingDetectorSettings(true)
                   };
 
                   const hasSettings = name in settingsMap;
@@ -1602,10 +1619,25 @@ const BacktestingApp = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
-                            if (!indicatorManagerRef.current) {
-                              console.warn(`[Settings] IndicatorManager not ready for ${name}`);
-                              return;
+                            // 🎯 FIX v3: Obtener el indicatorManager con logs de debug
+                            const miniChart = miniChartRefs.current[activeTimeframe];
+                            console.log(`[Settings] Abriendo config para ${name}:`, {
+                              activeTimeframe,
+                              hasMiniChart: !!miniChart,
+                              miniChartKeys: Object.keys(miniChartRefs.current),
+                              hasGetIndicatorManager: !!miniChart?.getIndicatorManager
+                            });
+                            const manager = miniChart?.getIndicatorManager?.();
+                            console.log(`[Settings] Manager obtenido:`, !!manager);
+                            if (manager) {
+                              indicatorManagerRef.current = manager;
+                            } else {
+                              // Si no hay manager, mostrar error y no abrir el modal
+                              console.warn(`[Settings] No se encontró IndicatorManager para ${activeTimeframe}`);
+                              alert(`Error: El gráfico no está completamente cargado. Por favor espere unos segundos e intente de nuevo.`);
+                              return; // No abrir el modal si no hay manager
                             }
+                            // Abrir el modal
                             settingsMap[name]();
                           }}
                           style={{
@@ -1794,6 +1826,7 @@ const BacktestingApp = () => {
                   onOpenSupportResistanceSettings={handleOpenSupportResistanceSettings}
                   onOpenVWAPSettings={handleOpenVWAPSettings}
                   onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
+                  onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
                   rejectionPatternConfig={tabStates[tf]?.rejectionPatternConfig}
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
@@ -1853,7 +1886,24 @@ const BacktestingApp = () => {
                   orderManager={orderManagerRef.current}
                   currentPrice={currentPrice}
                   currentTime={currentTime}
-                  onOrderCreated={() => console.log('[BacktestingApp] Orden creada')}
+                  onOrderCreated={(order) => {
+                    console.log('[BacktestingApp] Orden creada:', order);
+
+                    // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
+                    if (order && order.type === 'market' && (order.stopLoss || order.takeProfit)) {
+                      const miniChart = miniChartRefs.current[activeTimeframe];
+                      if (miniChart && miniChart.addTPSLBox) {
+                        miniChart.addTPSLBox(
+                          order.entryPrice,
+                          order.openTime || currentTime,
+                          order.side, // 'long' o 'short'
+                          order.stopLoss,
+                          order.takeProfit,
+                          5 // 5 velas de ancho
+                        );
+                      }
+                    }
+                  }}
                 />
               </>
             )}
@@ -2117,6 +2167,73 @@ const BacktestingApp = () => {
                 onClose={() => setShowDoubleTopBottomSettings(false)}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Swing Detector Settings */}
+      {showSwingDetectorSettings && indicatorManagerRef.current && (
+        <div className="modal-overlay" onClick={() => setShowSwingDetectorSettings(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            maxHeight: '85vh',
+            width: '90%',
+            overflow: 'auto',
+            position: 'relative',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <button
+              onClick={() => setShowSwingDetectorSettings(false)}
+              style={{
+                position: 'sticky',
+                top: '8px',
+                right: '8px',
+                float: 'right',
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                fontSize: '20px',
+                cursor: 'pointer',
+                zIndex: 1001,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold'
+              }}
+              title="Cerrar"
+            >
+              ×
+            </button>
+            <SwingDetectorSettings
+              symbol={symbol}
+              config={indicatorManagerRef.current.getIndicatorConfig('Swing Detector')}
+              onConfigChange={async (newConfig) => {
+                await indicatorManagerRef.current.applyConfig('Swing Detector', newConfig);
+
+                // Forzar redibujado del chart
+                const miniChart = miniChartRefs.current[activeTimeframe];
+                if (miniChart && miniChart.forceRedraw) {
+                  miniChart.forceRedraw();
+                }
+              }}
+              onClose={() => setShowSwingDetectorSettings(false)}
+            />
           </div>
         </div>
       )}

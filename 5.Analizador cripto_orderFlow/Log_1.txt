@@ -1,0 +1,1009 @@
+react-dom_client.js?v=2b7f99a5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:259 💡 Debug utilities available:
+Logger.js:260    window.toggleDebugMode() - Toggle all logs
+Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:158 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: BTCUSDT (60) - isFullscreen: false
+MiniChart.jsx:1348 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:729 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+RejectionPatternIndicator.js:502 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:158 [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: ETHUSDT (60) - isFullscreen: false
+MiniChart.jsx:1348 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:729 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+RejectionPatternIndicator.js:502 [ETHUSDT] Pattern show mode: validated
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
+useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
+MiniChart.jsx:158 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: BTCUSDT (60) - isFullscreen: false
+MiniChart.jsx:1348 [BTCUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:729 [BTCUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+RejectionPatternIndicator.js:502 [BTCUSDT] Pattern show mode: validated
+MiniChart.jsx:158 [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+Watchlist.jsx:147 [Watchlist] 🖥️ Fullscreen change: ETHUSDT (60) - isFullscreen: false
+MiniChart.jsx:1348 [ETHUSDT] 🚀 Componente montado, iniciando...
+MiniChart.jsx:729 [ETHUSDT] Solicitando histórico: 90 días @ 60
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+IndicatorManager.js:80 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+SupportResistanceIndicator.js:14 [SupportResistanceIndicator] VERSION 1.0 LOADED
+RejectionPatternIndicator.js:502 [ETHUSDT] Pattern show mode: validated
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+RejectionPatternIndicator.js:492 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+VolumeProfileFixedRangeIndicator.js:555 [BTCUSDT] ✅ Fixed Range range_1768345406894 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [BTCUSDT] ✅ Fixed Range range_1768345406894 cargado Object
+VolumeProfileFixedRangeIndicator.js:555 [BTCUSDT] ✅ Fixed Range range_1768345406894 cargado Object
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:492 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
+RejectionPatternIndicator.js:492 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+RejectionPatternIndicator.js:492 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 1 alerts total, timeframe: 15
+useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 1
+useProximityAlerts.js:278 [useProximityAlerts] Starting polling...
+useProximityAlerts.js:224 [useProximityAlerts] startPolling called
+useProximityAlerts.js:233 [useProximityAlerts] startPolling - enabled alerts: 1
+useProximityAlerts.js:235 [useProximityAlerts] Making immediate fetch...
+useProximityAlerts.js:133 [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+useProximityAlerts.js:134 [useProximityAlerts] Using timeframe: 15
+useProximityAlerts.js:141 [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+useProximityAlerts.js:240 [useProximityAlerts] Setting up interval...
+useProximityAlerts.js:248 [useProximityAlerts] Interval set with ID: 23
+WebSocketManager.js:25 WebSocket Manager conectado [60]
+WebSocketManager.js:40 ✓ Suscrito: 
+WebSocketManager.js:40 ✓ Suscrito: 
+useProximityAlerts.js:164 [useProximityAlerts] Response received: Object
+useProximityAlerts.js:167 [useProximityAlerts] Processing 1 results
+useProximityAlerts.js:171 [useProximityAlerts] Result 0: Object
+useProximityAlerts.js:173 [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 40
+useProximityAlerts.js:189 [useProximityAlerts] Updating alert states: Object
+useProximityAlerts.js:192 [useProximityAlerts] New alertStates: Object
+MiniChart.jsx:758 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+Logger.js:100 ✅ [6:03:31 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+Logger.js:100 ✅ [6:03:31 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+Logger.js:100 ✅ [6:03:31 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+Logger.js:100 ✅ [6:03:31 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 2159 velas
+RejectionPatternIndicator.js:1084 
+================================================================================
+RejectionPatternIndicator.js:1085 📊 [BTCUSDT] ALERT SYSTEM ACTIVATED
+RejectionPatternIndicator.js:1086 ================================================================================
+RejectionPatternIndicator.js:1087 Start time: 13/1/2026, 6:03:31 p.m.
+ Interval: 60 | Max age: 1200 minutes
+ Pattern state: 0 NEW (may alert), 0 OLD (won't alert), 0 already alerted
+ VWAP Filter: ENABLED (±2σ, ±3σ) - tolerance: 50%
+ Only patterns with timestamp >= start time AND marked as NEW will trigger alerts
+ ================================================================================
+
+ [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+ ✅ [6:03:31 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+ ✅ [6:03:31 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:31 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:31 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 2159 velas
+ 
+================================================================================
+ 📊 [ETHUSDT] ALERT SYSTEM ACTIVATED
+ ================================================================================
+ Start time: 13/1/2026, 6:03:31 p.m.
+ Interval: 60 | Max age: 1200 minutes
+ Pattern state: 0 NEW (may alert), 63 OLD (won't alert), 0 already alerted
+ VWAP Filter: ENABLED (±2σ, ±3σ) - tolerance: 50%
+ Only patterns with timestamp >= start time AND marked as NEW will trigger alerts
+ ================================================================================
+
+ [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+ ✅ [6:03:33 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 2159 velas
+ [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
+ ✅ [6:03:33 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (2159 velas) - iniciando análisis DBT completo
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 2159 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:33 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 2159 velas
+ ✅ [6:03:34 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 42 patrones en 3115ms
+ ✅ [6:03:34 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 3.12s - 42 patrones detectados
+ ✅ [6:03:34 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 42 patrones históricos cargados, 42 patrones totales
+ ✅ [6:03:34 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 42 patrones históricos cargados
+ ✅ [6:03:34 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 30 patrones en 3532ms
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 3.53s - 30 patrones detectados
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 30 patrones históricos cargados, 30 patrones totales
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 30 patrones históricos cargados
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 30 patrones en 5090ms
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 5.09s - 30 patrones detectados
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 30 patrones totales
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 30 patrones históricos cargados
+ ✅ [6:03:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:03:37 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 42 patrones en 4012ms
+ ✅ [6:03:37 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 4.01s - 42 patrones detectados
+ ✅ [6:03:37 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 42 patrones totales
+ ✅ [6:03:37 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 42 patrones históricos cargados
+ ✅ [6:03:37 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: BTCUSDT (1) - isFullscreen: false
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] Solicitando histórico: 90 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [BTCUSDT] Pattern show mode: validated
+ [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: ETHUSDT (1) - isFullscreen: false
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [ETHUSDT] Solicitando histórico: 90 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] Solicitando histórico: 1 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [ETHUSDT] Solicitando histórico: 1 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ WebSocket Manager cerrado
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ ✓ Suscrito: 
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] Solicitando histórico: 5 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [BTCUSDT] Pattern show mode: validated
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [BTCUSDT] ✅ Fixed Range range_1768345426679 cargado Object
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [ETHUSDT] Solicitando histórico: 5 días @ 1
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ETHUSDT] Creando Double Top/Bottom porque está habilitado
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ [ETHUSDT] Pattern show mode: validated
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [ETHUSDT] ✅ Fixed Range range_1768260045559 cargado Object
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
+ ✓ Suscrito: 
+ ✓ Suscrito: 
+ [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+ ✅ [6:03:51 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+ ✅ [6:03:51 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:51 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:51 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 1439 velas
+ 
+================================================================================
+ 📊 [BTCUSDT] ALERT SYSTEM ACTIVATED
+ ================================================================================
+ Start time: 13/1/2026, 6:03:51 p.m.
+ Interval: 1 | Max age: 10 minutes
+ Pattern state: 0 NEW (may alert), 0 OLD (won't alert), 0 already alerted
+ VWAP Filter: ENABLED (±2σ, ±3σ) - tolerance: 50%
+ Only patterns with timestamp >= start time AND marked as NEW will trigger alerts
+ ================================================================================
+
+ [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+ ✅ [6:03:52 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (1439 velas) - iniciando análisis DBT completo
+ ✅ [6:03:52 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:52 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 1439 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:52 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 1439 velas
+ 
+================================================================================
+ 📊 [ETHUSDT] ALERT SYSTEM ACTIVATED
+ ================================================================================
+ Start time: 13/1/2026, 6:03:52 p.m.
+ Interval: 1 | Max age: 10 minutes
+ Pattern state: 0 NEW (may alert), 95 OLD (won't alert), 0 already alerted
+ VWAP Filter: ENABLED (±2σ, ±3σ) - tolerance: 50%
+ Only patterns with timestamp >= start time AND marked as NEW will trigger alerts
+ ================================================================================
+
+ [ETHUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ ✅ [6:03:58 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (7199 velas) - iniciando análisis DBT completo
+ ✅ [6:03:58 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:58 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 7199 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:58 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 7199 velas
+ [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ ✅ [6:03:59 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (7199 velas) - iniciando análisis DBT completo
+ ✅ [6:03:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:03:59 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 7199 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:03:59 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 7199 velas
+ [ETHUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+ ✅ [6:04:01 p. m.] [Manager] [ETHUSDT] 📊 Velas históricas cargadas (7200 velas) - iniciando análisis DBT completo
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() tiene 7200 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 7200 velas
+ ✅ [6:04:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 Primera detección - analizando TODAS las velas para carga inicial (7199 velas)
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 7199 velas
+ ✅ [6:04:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔄 Primera detección - analizando TODAS las velas para carga inicial (7200 velas)
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Análisis COMPLETO: 7200 velas
+ [BTCUSDT] ✅ Histórico cargado: 7200 velas confirmadas
+ ✅ [6:04:01 p. m.] [Manager] [BTCUSDT] 📊 Velas históricas cargadas (7200 velas) - iniciando análisis DBT completo
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔄 fetchData() LLAMADO - Iniciando carga completa de patrones históricos
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() tiene 7200 velas - usando detectIncrementalPattern() con análisis COMPLETO
+ ✅ [6:04:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Análisis COMPLETO: 7200 velas
+ ✅ [6:04:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 125 patrones en 15687ms
+ ✅ [6:04:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 15.69s - 125 patrones detectados
+ ✅ [6:04:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 125 patrones históricos cargados, 125 patrones totales
+ ✅ [6:04:07 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 125 patrones históricos cargados
+ ✅ [6:04:07 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:10 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 247 patrones en 18352ms
+ ✅ [6:04:10 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 18.35s - 247 patrones detectados
+ ✅ [6:04:10 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 247 patrones históricos cargados, 247 patrones totales
+ ✅ [6:04:10 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 247 patrones históricos cargados
+ ✅ [6:04:10 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 247 patrones en 14490ms
+ ✅ [6:04:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 14.49s - 247 patrones detectados
+ ✅ [6:04:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 247 patrones totales
+ ✅ [6:04:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 247 patrones históricos cargados
+ ✅ [6:04:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:19 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 125 patrones en 19885ms
+ ✅ [6:04:19 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 19.89s - 125 patrones detectados
+ ✅ [6:04:19 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 125 patrones totales
+ ✅ [6:04:19 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 125 patrones históricos cargados
+ ✅ [6:04:19 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:21 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 247 patrones en 19706ms
+ ✅ [6:04:21 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo finalizado en 19.71s - 247 patrones detectados
+ ✅ [6:04:21 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 247 patrones totales
+ ✅ [6:04:21 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 fetchData() completado - 247 patrones históricos cargados
+ ✅ [6:04:21 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:29 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 125 patrones en 28285ms
+ ✅ [6:04:29 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial: 125 patrones históricos detectados
+ ✅ [6:04:29 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 125 patrones totales
+ ✅ [6:04:29 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales
+ ✅ [6:04:35 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis COMPLETO: 125 patrones en 33592ms
+ ✅ [6:04:35 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis completo finalizado en 33.59s - 125 patrones detectados
+ ✅ [6:04:35 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 125 patrones totales
+ ✅ [6:04:35 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 fetchData() completado - 125 patrones históricos cargados
+ ✅ [6:04:35 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ fetchData() completado - análisis completo realizado, futuras detecciones serán incrementales
+ ✅ [6:04:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis COMPLETO: 247 patrones en 35068ms
+ ✅ [6:04:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial: 247 patrones históricos detectados
+ ✅ [6:04:36 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Carga inicial completa: 0 patrones históricos cargados, 247 patrones totales
+ ✅ [6:04:36 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis completo inicial finalizado - futuras detecciones serán incrementales
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [useProximityAlerts] Response received: Object
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: Object
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 40
+ [useProximityAlerts] Updating alert states: Object
+ [useProximityAlerts] New alertStates: Object
+ [useProximityAlerts] New alertStates: Object
+ ✅ [6:05:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:05:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:05:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:05:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:05:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:05:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:05:13 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 125 patrones en 12047ms
+ ✅ [6:05:13 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 125 patrones detectados en tiempo real
+ ✅ [6:05:13 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 2 patrones agregados (0 NUEVOS, 2 históricos re-detectados), 127 patrones totales
+ ✅ [6:05:13 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:05:14 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 247 patrones en 12789ms
+ ✅ [6:05:14 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 247 patrones detectados en tiempo real
+ ✅ [6:05:14 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 247 patrones totales
+ ✅ [6:05:14 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:06:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:06:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:06:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:06:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:06:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:06:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 247 patrones en 7942ms
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 247 patrones detectados en tiempo real
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 247 patrones totales
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Pattern CONFIRMED after 5 candles - ready for alert
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Pattern CONFIRMED after 5 candles - ready for alert
+ ✅ [6:06:09 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:06:09 p. m.] [DoubleTopBottom]   📊 Total patterns: 247
+ ✅ [6:06:09 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 2
+ ✅ [6:06:09 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+ ✅ [6:06:09 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:06:09 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 245
+ 
+================================================================================
+ 🚨 [ETHUSDT] SENDING PATTERN ALERT
+ ================================================================================
+ 📤 STEP 1: Building payload
+    Symbol: ETHUSDT
+    Interval: 1
+    Pattern Type: DOUBLE_BOTTOM
+    Price: $3321.99
+    Confidence: 95.0%
+    Direction: LONG
+    Level: critical
+    Alert Mode: pattern_complete
+ 
+📤 STEP 2: Sending HTTP POST request
+    Endpoint: http://localhost:8000/api/pattern-alert
+    Full Payload: {
+  "symbol": "ETHUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_BOTTOM",
+    "price": 3321.99,
+    "confidence": 95,
+    "timestamp": 1768345140000,
+    "direction": "LONG",
+    "level": "critical",
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1768344660000,
+        "price": 3319.37,
+        "candle_index": 7187,
+        "volume_zscore": 3.227967703976929
+      },
+      "secondExtreme": {
+        "timestamp": 1768345140000,
+        "price": 3324.61,
+        "candle_index": 7195,
+        "volume_zscore": 3.0737676282535333
+      },
+      "entrySignal": null,
+      "hasMomentum": false,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 48,
+      "requireBothRejections": false,
+      "minPatternDuration": 3,
+      "maxPatternDuration": 72,
+      "applyPostValidationToRealtimeSignals": false,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 24
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "confidenceLevels": {
+        "critical": {
+          "minConfidence": 80,
+          "cooldownSeconds": 60,
+          "color": "#F44336"
+        },
+        "high": {
+          "minConfidence": 60,
+          "cooldownSeconds": 180,
+          "color": "#FF9800"
+        },
+        "medium": {
+          "minConfidence": 40,
+          "cooldownSeconds": 300,
+          "color": "#FFC107"
+        }
+      },
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      },
+      "visualization": {
+        "showDetectionCircle": true,
+        "detectionCircleColor": "#2196F3",
+        "detectionCircleSize": 8
+      },
+      "vwapZoneFilter": {
+        "enabled": true,
+        "mode": "bothExtremes",
+        "minDeviation": 2,
+        "marginPercent": 50,
+        "vwapType": "rolling"
+      }
+    }
+  }
+}
+ 
+📥 STEP 3: Received response (9ms)
+    HTTP Status: 200 OK
+    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_BOTTOM",
+  "symbol": "ETHUSDT",
+  "price": 3321.99,
+  "confidence": 95
+}
+ 
+✅ STEP 4: Alert sent successfully!
+    Pattern: DOUBLE_BOTTOM
+    Symbol: ETHUSDT
+    Price: $3321.99
+    Confidence: 95%
+    Total Duration: 9ms
+ ================================================================================
+
+ 
+================================================================================
+ 🚨 [ETHUSDT] SENDING PATTERN ALERT
+ ================================================================================
+ 📤 STEP 1: Building payload
+    Symbol: ETHUSDT
+    Interval: 1
+    Pattern Type: DOUBLE_TOP
+    Price: $3343.93
+    Confidence: 95.0%
+    Direction: SHORT
+    Level: critical
+    Alert Mode: pattern_complete
+ 
+📤 STEP 2: Sending HTTP POST request
+    Endpoint: http://localhost:8000/api/pattern-alert
+    Full Payload: {
+  "symbol": "ETHUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_TOP",
+    "price": 3343.9300000000003,
+    "confidence": 95,
+    "timestamp": 1768345200000,
+    "direction": "SHORT",
+    "level": "critical",
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1768344480000,
+        "price": 3341.54,
+        "candle_index": 7184,
+        "volume_zscore": 3.227967703976929
+      },
+      "secondExtreme": {
+        "timestamp": 1768345200000,
+        "price": 3346.32,
+        "candle_index": 7196,
+        "volume_zscore": 3.0737676282535333
+      },
+      "entrySignal": null,
+      "hasMomentum": false,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 48,
+      "requireBothRejections": false,
+      "minPatternDuration": 3,
+      "maxPatternDuration": 72,
+      "applyPostValidationToRealtimeSignals": false,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 24
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "confidenceLevels": {
+        "critical": {
+          "minConfidence": 80,
+          "cooldownSeconds": 60,
+          "color": "#F44336"
+        },
+        "high": {
+          "minConfidence": 60,
+          "cooldownSeconds": 180,
+          "color": "#FF9800"
+        },
+        "medium": {
+          "minConfidence": 40,
+          "cooldownSeconds": 300,
+          "color": "#FFC107"
+        }
+      },
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      },
+      "visualization": {
+        "showDetectionCircle": true,
+        "detectionCircleColor": "#2196F3",
+        "detectionCircleSize": 8
+      },
+      "vwapZoneFilter": {
+        "enabled": true,
+        "mode": "bothExtremes",
+        "minDeviation": 2,
+        "marginPercent": 50,
+        "vwapType": "rolling"
+      }
+    }
+  }
+}
+ 
+📥 STEP 3: Received response (6ms)
+    HTTP Status: 200 OK
+    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_TOP",
+  "symbol": "ETHUSDT",
+  "price": 3343.9300000000003,
+  "confidence": 95
+}
+ 
+✅ STEP 4: Alert sent successfully!
+    Pattern: DOUBLE_TOP
+    Symbol: ETHUSDT
+    Price: $3343.93
+    Confidence: 95%
+    Total Duration: 6ms
+ ================================================================================
+
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 125 patrones en 13364ms
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 125 patrones detectados en tiempo real
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 127 patrones totales
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Pattern CONFIRMED after 5 candles - ready for alert
+ ✅ [6:06:14 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:06:14 p. m.] [DoubleTopBottom]   📊 Total patterns: 127
+ ✅ [6:06:14 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 1
+ ✅ [6:06:14 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 0
+ ✅ [6:06:14 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:06:14 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 126
+ 
+================================================================================
+ 🚨 [BTCUSDT] SENDING PATTERN ALERT
+ ================================================================================
+ 📤 STEP 1: Building payload
+    Symbol: BTCUSDT
+    Interval: 1
+    Pattern Type: DOUBLE_TOP
+    Price: $96086.80
+    Confidence: 100.0%
+    Direction: SHORT
+    Level: critical
+    Alert Mode: pattern_complete
+ 
+📤 STEP 2: Sending HTTP POST request
+    Endpoint: http://localhost:8000/api/pattern-alert
+    Full Payload: {
+  "symbol": "BTCUSDT",
+  "interval": "1",
+  "pattern": {
+    "patternType": "DOUBLE_TOP",
+    "price": 96086.79999999999,
+    "confidence": 100,
+    "timestamp": 1768345260000,
+    "direction": "SHORT",
+    "level": "critical",
+    "metadata": {
+      "firstExtreme": {
+        "timestamp": 1768344480000,
+        "price": 96076.9,
+        "candle_index": 7184,
+        "volume_zscore": 3.6237180477259106
+      },
+      "secondExtreme": {
+        "timestamp": 1768345260000,
+        "price": 96096.7,
+        "candle_index": 7197,
+        "volume_zscore": 1.8718002362502633
+      },
+      "entrySignal": null,
+      "hasMomentum": false,
+      "alertMode": "pattern_complete"
+    }
+  },
+  "config": {
+    "filters": {
+      "minConfidence": 48,
+      "requireBothRejections": false,
+      "minPatternDuration": 3,
+      "maxPatternDuration": 72,
+      "applyPostValidationToRealtimeSignals": false,
+      "postPatternValidationCandles": 5,
+      "minPostPatternMovePercent": 0.5,
+      "postPatternConfidenceBonus": 20,
+      "duplicatePriceTolerancePercent": 2,
+      "duplicateTimeToleranceHours": 24
+    },
+    "alertsEnabled": true,
+    "alertSettings": {
+      "mode": "pattern_complete",
+      "confidenceLevels": {
+        "critical": {
+          "minConfidence": 80,
+          "cooldownSeconds": 60,
+          "color": "#F44336"
+        },
+        "high": {
+          "minConfidence": 60,
+          "cooldownSeconds": 180,
+          "color": "#FF9800"
+        },
+        "medium": {
+          "minConfidence": 40,
+          "cooldownSeconds": 300,
+          "color": "#FFC107"
+        }
+      },
+      "vwapFilter": {
+        "enabled": false,
+        "deviationTolerance": 0.5,
+        "requiredDeviations": {
+          "second": true,
+          "third": true
+        }
+      },
+      "visualization": {
+        "showDetectionCircle": true,
+        "detectionCircleColor": "#2196F3",
+        "detectionCircleSize": 8
+      },
+      "vwapZoneFilter": {
+        "enabled": true,
+        "minDeviation": 2,
+        "marginPercent": 50,
+        "vwapType": "rolling",
+        "rollingPeriod": 200,
+        "mode": "bothExtremes"
+      }
+    }
+  }
+}
+ 
+📥 STEP 3: Received response (7ms)
+    HTTP Status: 200 OK
+    Response Body: {
+  "success": true,
+  "pattern": "DOUBLE_TOP",
+  "symbol": "BTCUSDT",
+  "price": 96086.79999999999,
+  "confidence": 100
+}
+ 
+✅ STEP 4: Alert sent successfully!
+    Pattern: DOUBLE_TOP
+    Symbol: BTCUSDT
+    Price: $96086.80
+    Confidence: 100%
+    Total Duration: 7ms
+ ================================================================================
+
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [useProximityAlerts] Response received: Object
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: Object
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 40
+ [useProximityAlerts] Updating alert states: Object
+ [useProximityAlerts] New alertStates: Object
+ [useProximityAlerts] New alertStates: Object
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=false
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] Solicitando histórico: 5 días @ 1
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=true, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: BTCUSDT (1) - isFullscreen: true
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=false
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] Solicitando histórico: 5 días @ 1
+ [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:07:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:07:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:07:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:07:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:07:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:07:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:07:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 125 patrones en 11259ms
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 125 patrones detectados en tiempo real
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 127 patrones totales
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:07:12 p. m.] [DoubleTopBottom]   📊 Total patterns: 127
+ ✅ [6:07:12 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:07:12 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 1
+ ✅ [6:07:12 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:07:12 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 126
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:07:12 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 247 patrones en 14368ms
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 247 patrones detectados en tiempo real
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 247 patrones totales
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:07:15 p. m.] [DoubleTopBottom]   📊 Total patterns: 247
+ ✅ [6:07:15 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:07:15 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [6:07:15 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:07:15 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 245
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:07:15 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [useProximityAlerts] Interval tick - fetching alerts...
+ [useProximityAlerts] fetchAllAlertStates called with 1 alerts
+ [useProximityAlerts] Using timeframe: 15
+ [useProximityAlerts] Fetching from: http://localhost:8000/api/proximity-alerts/batch
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [useProximityAlerts] Response received: {success: true, results: Array(1), total: 1, timestamp: 1768345679809}
+ [useProximityAlerts] Processing 1 results
+ [useProximityAlerts] Result 0: {success: true, symbol: 'XRPUSDT', currentPrice: 2.18, targetPrice: 2.2, totalScore: 40, …}
+ [useProximityAlerts] Alert alert-1764121217024-g0okalefv score: 40
+ [useProximityAlerts] Updating alert states: {alert-1764121217024-g0okalefv: {…}}
+ [useProximityAlerts] New alertStates: {alert-1764121217024-g0okalefv: {…}}
+ ✅ [6:08:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:08:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:08:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:08:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:08:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:08:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:08:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 125 patrones en 15526ms
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 125 patrones detectados en tiempo real
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 127 patrones totales
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:08:17 p. m.] [DoubleTopBottom]   📊 Total patterns: 127
+ ✅ [6:08:17 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:08:17 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 1
+ ✅ [6:08:17 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:08:17 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 126
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:08:17 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 247 patrones en 21030ms
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 247 patrones detectados en tiempo real
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 247 patrones totales
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:08:22 p. m.] [DoubleTopBottom]   📊 Total patterns: 247
+ ✅ [6:08:22 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:08:22 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [6:08:22 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:08:22 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 245
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:08:22 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [BTCUSDT] Solicitando histórico: 5 días @ 1
+ [ETHUSDT] Solicitando histórico: 5 días @ 1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [ETHUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:09:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:09:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:09:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ ✅ [6:09:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:09:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
+ ✅ [6:09:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detección incremental de patrones DBT...
+ ✅ [6:09:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental: 300 velas recientes (últimas 300)
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Análisis incremental: 125 patrones en 10916ms
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 125 patrones detectados en tiempo real
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 Fusión completa: 0 patrones agregados (0 NUEVOS, 0 históricos re-detectados), 127 patrones totales
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:09:12 p. m.] [DoubleTopBottom]   📊 Total patterns: 127
+ ✅ [6:09:12 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:09:12 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 1
+ ✅ [6:09:12 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:09:12 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 126
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:09:12 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Análisis incremental: 248 patrones en 12237ms
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 248 patrones detectados en tiempo real
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 Fusión completa: 2 patrones agregados (0 NUEVOS, 2 históricos re-detectados), 249 patrones totales
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] 
+Summary:
+ ✅ [6:09:13 p. m.] [DoubleTopBottom]   📊 Total patterns: 249
+ ✅ [6:09:13 p. m.] [DoubleTopBottom]   ✅ NEW to alert: 0
+ ✅ [6:09:13 p. m.] [DoubleTopBottom]   ⏭️  Already alerted: 2
+ ✅ [6:09:13 p. m.] [DoubleTopBottom]   ⏭️  Failed validation: 0
+ ✅ [6:09:13 p. m.] [DoubleTopBottom]   ⏭️  Not new patterns: 247
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] 
+❌ No new patterns to alert
+ ✅ [6:09:13 p. m.] [DoubleTopBottom] ================================================================================
+
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1
+ [StrategyTesterTab] Props: fullscreenSymbol=BTCUSDT, fullscreenInterval=1

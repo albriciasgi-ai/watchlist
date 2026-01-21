@@ -1,0 +1,315 @@
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+ [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+ [BTCUSDT] 📍 Current price: 85363.8
+ [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+ [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+ [BTCUSDT]   🔹 Checking Range Detection...
+ [BTCUSDT]     ⚠️ Range Detection not available or disabled
+ [BTCUSDT]   🔹 Checking Support & Resistance...
+ [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.8
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+IndicatorManager.js:1436   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+IndicatorManager.js:1437   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+IndicatorManager.js:1438   📌 Lows: ['85000.00 (Manual_Zone)']
+IndicatorManager.js:1439   📌 Pivots: []
+RejectionPatternIndicator.js:399 [BTCUSDT] ✅ Loaded 6 validated rejection patterns
+IndicatorManager.js:1085 [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+IndicatorManager.js:1086 [BTCUSDT] 📍 Current price: 85363.9
+IndicatorManager.js:1139 [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+IndicatorManager.js:1245 [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+IndicatorManager.js:1250 [BTCUSDT]   🔹 Checking Range Detection...
+IndicatorManager.js:1255 [BTCUSDT]     ⚠️ Range Detection not available or disabled
+IndicatorManager.js:1288 [BTCUSDT]   🔹 Checking Support & Resistance...
+IndicatorManager.js:1291 [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+IndicatorManager.js:1328 [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+IndicatorManager.js:1376 [BTCUSDT]     ✅ Manual Lines: added 2 levels
+IndicatorManager.js:1383 [BTCUSDT]   🔹 Checking Manual Price Zones...
+IndicatorManager.js:1387 [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+IndicatorManager.js:1435 [BTCUSDT] 📊 getAllReferenceLevels() result:
+   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+   📌 Lows: ['85000.00 (Manual_Zone)']
+   📌 Pivots: []
+ [BTCUSDT] 🔍 getAllReferenceLevels() called with sources: {volumeProfile: false, fixedRanges: true, clusters: true, manualLevels: true, supportResistance: true, …}
+ [BTCUSDT] 📍 Current price: 85363.9
+ [BTCUSDT]   🔹 Checking Fixed Range Profiles (0 ranges)...
+ [BTCUSDT]     ✅ Fixed Ranges: added 0 levels
+ [BTCUSDT]   🔹 Checking Range Detection...
+ [BTCUSDT]     ⚠️ Range Detection not available or disabled
+ [BTCUSDT]   🔹 Checking Support & Resistance...
+ [BTCUSDT]     ✅ S&R Indicator found - Supports: 0, Resistances: 0
+ [BTCUSDT]   🔹 Checking Manual Horizontal Lines (3 lines)...
+ [BTCUSDT]     ✅ Manual Lines: added 2 levels
+ [BTCUSDT]   🔹 Checking Manual Price Zones...
+ [BTCUSDT]     ✅ Found 1 enabled zones (1 total)
+ [BTCUSDT] 📊 getAllReferenceLevels() result:
+   ✅ Total levels: 3 (2 highs, 1 lows, 0 pivots)
+   📌 Highs: (2) ['92894.44 (Manual)', '90273.31 (Manual)']
+   📌 Lows: ['85000.00 (Manual_Zone)']
+   📌 Pivots: []
