@@ -206,62 +206,82 @@ class IndicatorManager {
   }
 
 
-  // ✅ SIMPLIFICADO: refresh para Volume Profile, Open Interest, Support & Resistance y VWAP
+  // ✅ OPTIMIZADO: refresh en PARALELO para todos los indicadores
   async refresh() {
     const startTime = Date.now();
-    log.debug(`[${this.symbol}] 🔄 Refrescando indicadores...`);
+    log.debug(`[${this.symbol}] 🔄 Refrescando indicadores en PARALELO...`);
 
     try {
-      await Promise.all(
-        this.indicators.map(async (indicator) => {
-          if (indicator.enabled && (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance")) {
-            // ✅ FIX: Actualizar days del indicador antes de fetchData
-            if (indicator.days !== this.days) {
-              log.debug(`[${this.symbol}] 🔄 Actualizando days de ${indicator.name}: ${indicator.days} → ${this.days}`);
+      // 🚀 Recolectar todas las promesas de fetch
+      const fetchPromises = [];
+
+      this.indicators.forEach((indicator) => {
+        if (!indicator.enabled) return;
+
+        // Volume Profile, Open Interest, Support & Resistance
+        if (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance") {
+          if (indicator.days !== this.days) {
+            indicator.days = this.days;
+          }
+          if (indicator.fetchData) {
+            fetchPromises.push(
+              indicator.fetchData().catch(err => {
+                log.error(`[${this.symbol}] ❌ Error fetching ${indicator.name}:`, err);
+              })
+            );
+          }
+        }
+
+        // VWAP
+        if (indicator.name === "VWAP") {
+          let needsRefetch = false;
+
+          if (indicator.interval !== this.interval) {
+            if (indicator.setInterval) {
+              indicator.setInterval(this.interval);
+            } else {
+              indicator.interval = this.interval;
+              indicator.lastFetchTime = 0;
+            }
+            needsRefetch = true;
+          }
+
+          if (indicator.days !== this.days) {
+            if (indicator.setDays) {
+              indicator.setDays(this.days);
+            } else {
               indicator.days = this.days;
+              indicator.lastFetchTime = 0;
             }
-            await indicator.fetchData();
+            needsRefetch = true;
           }
-          // ✅ VWAP: Actualizar days e interval cuando cambien
-          if (indicator.name === "VWAP" && indicator.enabled) {
-            let needsRefetch = false;
 
-            // Actualizar interval si cambió
-            if (indicator.interval !== this.interval) {
-              log.debug(`[${this.symbol}] 🔄 Actualizando interval de VWAP: ${indicator.interval} → ${this.interval}`);
-              if (indicator.setInterval) {
-                indicator.setInterval(this.interval);
-                needsRefetch = true;
-              } else {
-                indicator.interval = this.interval;
-                indicator.lastFetchTime = 0;
-                needsRefetch = true;
-              }
-            }
-
-            // Actualizar days si cambió
-            if (indicator.days !== this.days) {
-              log.debug(`[${this.symbol}] 🔄 Actualizando days de VWAP: ${indicator.days} → ${this.days}`);
-              if (indicator.setDays) {
-                indicator.setDays(this.days);
-                needsRefetch = true;
-              } else {
-                indicator.days = this.days;
-                indicator.lastFetchTime = 0;
-                needsRefetch = true;
-              }
-            }
-
-            // Refetch si hubo cambios
-            if (needsRefetch && indicator.fetchData) {
-              await indicator.fetchData();
-            }
+          if (needsRefetch && indicator.fetchData) {
+            fetchPromises.push(
+              indicator.fetchData().catch(err => {
+                log.error(`[${this.symbol}] ❌ Error fetching VWAP:`, err);
+              })
+            );
           }
-        })
-      );
+        }
+
+        // Swing Detector
+        if (indicator.name === "Swing Detector" && indicator.fetchData) {
+          fetchPromises.push(
+            indicator.fetchData().catch(err => {
+              log.error(`[${this.symbol}] ❌ Error fetching Swing Detector:`, err);
+            })
+          );
+        }
+      });
+
+      // 🚀 Ejecutar TODOS en paralelo
+      if (fetchPromises.length > 0) {
+        await Promise.all(fetchPromises);
+      }
 
       const duration = Date.now() - startTime;
-      log.debug(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms`);
+      log.debug(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms (${fetchPromises.length} fetches en paralelo)`);
     } catch (error) {
       log.error(`[${this.symbol}] ❌ Error en refresh:`, error);
     }
