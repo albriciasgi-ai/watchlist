@@ -1286,6 +1286,43 @@ class VWAPIndicator extends IndicatorBase {
     if (config.ttmATRMultiplier !== undefined) this.ttmATRMultiplier = config.ttmATRMultiplier;
     if (config.volatilityBarHeight !== undefined) this.volatilityBarHeight = config.volatilityBarHeight;
   }
+
+  // 🎯 FIX: Sobrescribir getHeight para retornar espacio cuando las barras de volatilidad están habilitadas
+  getHeight() {
+    if (!this.enabled) return 0;
+
+    // Contar cuántas barras de volatilidad están activas
+    let activeBarCount = 0;
+    if (this.showBandWidth) activeBarCount++;
+    if (this.showBBWP) activeBarCount++;
+    if (this.showTTMSqueeze) activeBarCount++;
+
+    if (activeBarCount === 0) return 0; // Sin barras, no necesita espacio
+
+    // Calcular altura necesaria: altura por barra + gaps + márgenes
+    const barGap = 2;
+    const margin = 5;
+    return (this.volatilityBarHeight * activeBarCount) + (barGap * (activeBarCount - 1)) + margin * 2;
+  }
+
+  // 🎯 FIX: Método render para dibujar las barras de volatilidad en el panel de indicadores
+  render(ctx, bounds, visibleCandles) {
+    if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
+
+    // Solo renderizar si hay barras de volatilidad activas
+    let activeBarCount = 0;
+    if (this.showBandWidth) activeBarCount++;
+    if (this.showBBWP) activeBarCount++;
+    if (this.showTTMSqueeze) activeBarCount++;
+
+    if (activeBarCount === 0) return;
+
+    const { x, y, width, height } = bounds;
+    const candleWidth = width / visibleCandles.length;
+
+    // Usar renderVolatilityBars para dibujar
+    this.renderVolatilityBars(ctx, x, y + 3, width, candleWidth, visibleCandles);
+  }
 }
 
 export default VWAPIndicator;

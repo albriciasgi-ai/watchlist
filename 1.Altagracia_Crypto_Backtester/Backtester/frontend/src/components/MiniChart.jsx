@@ -436,26 +436,38 @@ const MiniChart = forwardRef(({
 
     const availableHeight = height - marginTop - timeAxisHeight;
 
-    // 🎯 NUEVO: Usar ratio definido por el usuario (redimensionable)
-    let priceChartHeight = Math.floor(availableHeight * priceChartRatio);
-    const remainingHeight = availableHeight - priceChartHeight;
+    // 🎯 FIX: Si no hay indicadores activos, el gráfico de precio ocupa todo el espacio disponible
+    // excepto el volumen. Esto evita el espacio vacío cuando se quitan indicadores.
+    let priceChartHeight, volumeHeight, indicatorsHeight, heightScale;
 
-    // Dividir el espacio restante entre volume e indicadores
-    const volumeHeight = Math.min(baseVolumeHeight, Math.floor(remainingHeight * 0.15)); // 15% del restante
-    const indicatorsHeight = remainingHeight - volumeHeight;
+    if (desiredIndicatorsHeight === 0) {
+      // Sin indicadores: el gráfico ocupa todo excepto volumen
+      volumeHeight = Math.min(baseVolumeHeight, Math.floor(availableHeight * 0.1));
+      indicatorsHeight = 0;
+      priceChartHeight = availableHeight - volumeHeight;
+      heightScale = 1.0;
+    } else {
+      // Con indicadores: usar ratio definido por el usuario
+      priceChartHeight = Math.floor(availableHeight * priceChartRatio);
+      const remainingHeight = availableHeight - priceChartHeight;
 
-    // Calcular heightScale para indicadores
-    const heightScale = desiredIndicatorsHeight > 0 ? indicatorsHeight / desiredIndicatorsHeight : 1.0;
+      // Dividir el espacio restante entre volume e indicadores
+      volumeHeight = Math.min(baseVolumeHeight, Math.floor(remainingHeight * 0.15)); // 15% del restante
+      indicatorsHeight = remainingHeight - volumeHeight;
 
-    // Asegurar que no se pase del espacio disponible
-    if (priceChartHeight + volumeHeight + indicatorsHeight > availableHeight) {
-      priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+      // Calcular heightScale para indicadores
+      heightScale = indicatorsHeight / desiredIndicatorsHeight;
+
+      // Asegurar que no se pase del espacio disponible
+      if (priceChartHeight + volumeHeight + indicatorsHeight > availableHeight) {
+        priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+      }
     }
-    
+
     if (indicatorManagerRef.current) {
       indicatorManagerRef.current.setHeightScale(heightScale);
     }
-    
+
     const marginBottom = volumeHeight + timeAxisHeight + indicatorsHeight;
 
     let displayCandles = [...candles];

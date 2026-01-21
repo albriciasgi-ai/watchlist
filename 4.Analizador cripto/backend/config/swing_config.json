@@ -47,14 +47,16 @@
         "enabled": true,
         "minZScore": 1,
         "lookbackBars": 10
-      }
+      },
+      "days": 90
     },
     "TRXUSDT": {
       "volumeFilter": {
         "enabled": true,
         "minZScore": 1.5,
         "lookbackBars": 50
-      }
+      },
+      "days": 90
     },
     "GALAUSDT": {
       "volumeFilter": {

@@ -240,31 +240,51 @@ class OrderManager {
    * Actualiza órdenes abiertas con el precio actual
    * Ejecuta stop loss y take profit automáticamente
    * 🎯 NUEVO: También ejecuta órdenes pendientes (limit/stop)
+   * 🎯 FIX: Ahora acepta candle completo para verificar SL/TP con high/low
+   * @param {number|Object} priceOrCandle - Precio actual o candle completo {high, low, close, open}
+   * @param {number} currentTime - Timestamp actual
    */
-  updateOrders(currentPrice, currentTime) {
+  updateOrders(priceOrCandle, currentTime) {
+    // 🎯 FIX: Extraer high, low, close del candle (o usar precio para backwards compatibility)
+    let currentPrice, candleHigh, candleLow;
+
+    if (typeof priceOrCandle === 'object' && priceOrCandle !== null) {
+      // Modo nuevo: se pasa el candle completo
+      candleHigh = priceOrCandle.high;
+      candleLow = priceOrCandle.low;
+      currentPrice = priceOrCandle.close;
+    } else {
+      // Modo legacy: solo precio (backwards compatible)
+      currentPrice = priceOrCandle;
+      candleHigh = priceOrCandle;
+      candleLow = priceOrCandle;
+    }
+
     let ordersToClose = [];
     let ordersToExecute = [];
 
-    // 🎯 NUEVO: Verificar órdenes pendientes que deben ejecutarse
+    // 🎯 FIX: Verificar órdenes pendientes usando high/low
     this.pendingOrders.forEach(order => {
       let shouldExecute = false;
 
       if (order.type === 'limit') {
         // Limit order se ejecuta cuando el precio TOCA el precio límite
-        if (order.side === 'long' && currentPrice <= order.entryPrice) {
-          // Long limit: comprar cuando el precio baje al límite
+        // 🎯 FIX: Usar candleLow para long, candleHigh para short
+        if (order.side === 'long' && candleLow <= order.entryPrice) {
+          // Long limit: comprar cuando el precio baje al límite (usar low)
           shouldExecute = true;
-        } else if (order.side === 'short' && currentPrice >= order.entryPrice) {
-          // Short limit: vender cuando el precio suba al límite
+        } else if (order.side === 'short' && candleHigh >= order.entryPrice) {
+          // Short limit: vender cuando el precio suba al límite (usar high)
           shouldExecute = true;
         }
       } else if (order.type === 'stop') {
         // Stop order se ejecuta cuando el precio SUPERA el precio stop
-        if (order.side === 'long' && currentPrice >= order.entryPrice) {
-          // Long stop: comprar cuando el precio sube al stop
+        // 🎯 FIX: Usar candleHigh para long, candleLow para short
+        if (order.side === 'long' && candleHigh >= order.entryPrice) {
+          // Long stop: comprar cuando el precio sube al stop (usar high)
           shouldExecute = true;
-        } else if (order.side === 'short' && currentPrice <= order.entryPrice) {
-          // Short stop: vender cuando el precio baja al stop
+        } else if (order.side === 'short' && candleLow <= order.entryPrice) {
+          // Short stop: vender cuando el precio baja al stop (usar low)
           shouldExecute = true;
         }
       }
@@ -274,9 +294,9 @@ class OrderManager {
       }
     });
 
-    // 🎯 NUEVO: Ejecutar órdenes pendientes
+    // Ejecutar órdenes pendientes al precio del límite/stop
     ordersToExecute.forEach(order => {
-      this.executePendingOrder(order, currentPrice, currentTime);
+      this.executePendingOrder(order, order.entryPrice, currentTime);
     });
 
     // Recorrer órdenes abiertas
@@ -287,20 +307,26 @@ class OrderManager {
       order.currentPnl = pnlInfo.pnl;
       order.currentPnlPercent = pnlInfo.pnlPercent;
 
-      // Verificar Stop Loss
+      // 🎯 FIX: Verificar Stop Loss usando candleLow (para long) y candleHigh (para short)
+      // El SL se activa cuando el precio TOCA ese nivel durante la vela, no solo en el cierre
       if (order.stopLoss !== null) {
-        if (order.side === 'long' && currentPrice <= order.stopLoss) {
+        if (order.side === 'long' && candleLow <= order.stopLoss) {
+          // Long SL: se activa cuando el low de la vela toca el SL
           ordersToClose.push({ id: order.id, price: order.stopLoss, reason: 'stop_loss' });
-        } else if (order.side === 'short' && currentPrice >= order.stopLoss) {
+        } else if (order.side === 'short' && candleHigh >= order.stopLoss) {
+          // Short SL: se activa cuando el high de la vela toca el SL
           ordersToClose.push({ id: order.id, price: order.stopLoss, reason: 'stop_loss' });
         }
       }
 
-      // Verificar Take Profit
+      // 🎯 FIX: Verificar Take Profit usando candleHigh (para long) y candleLow (para short)
+      // El TP se activa cuando el precio TOCA ese nivel durante la vela, no solo en el cierre
       if (order.takeProfit !== null) {
-        if (order.side === 'long' && currentPrice >= order.takeProfit) {
+        if (order.side === 'long' && candleHigh >= order.takeProfit) {
+          // Long TP: se activa cuando el high de la vela toca el TP
           ordersToClose.push({ id: order.id, price: order.takeProfit, reason: 'take_profit' });
-        } else if (order.side === 'short' && currentPrice <= order.takeProfit) {
+        } else if (order.side === 'short' && candleLow <= order.takeProfit) {
+          // Short TP: se activa cuando el low de la vela toca el TP
           ordersToClose.push({ id: order.id, price: order.takeProfit, reason: 'take_profit' });
         }
       }

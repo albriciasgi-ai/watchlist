@@ -14,6 +14,7 @@ import SupportResistanceIndicator from "./SupportResistanceIndicator";
 import OpenInterestIndicator from "./OpenInterestIndicator";
 import VWAPIndicator from "./VWAPIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
+import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing High/Low
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -57,7 +58,8 @@ class IndicatorManager {
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
       new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       this.supportResistanceIndicator,
-      new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode })
+      new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
+      new SwingDetectorIndicator(this.symbol, this.interval, this.days) // 🎯 Swing High/Low
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -67,14 +69,22 @@ class IndicatorManager {
       patternIndicator.setShowMode('all'); // Mostrar todos los patrones por defecto
     }
 
+    // 🎯 Conectar SwingDetector con VWAPIndicator para el filtro VWAP
+    const swingDetector = this.indicators.find(ind => ind.name === "Swing Detector");
+    const vwapIndicator = this.indicators.find(ind => ind.name === "VWAP");
+    if (swingDetector && vwapIndicator) {
+      swingDetector.setVWAPIndicator(vwapIndicator);
+    }
+
     // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
     // Solo cargar indicadores que requieren backend API
-    // 🎯 IMPORTANTE: En modo backtesting, solo cargar Open Interest si tiene datos precargados
+    // 🎯 FIX: En modo backtesting, también cargar Support & Resistance
     await Promise.all(
       this.indicators.map(ind => {
-        // En modo backtesting: solo Volume Profile y Open Interest (si tiene datos precargados)
+        // En modo backtesting: cargar Volume Profile, Open Interest (si tiene datos), y Support & Resistance
         if (backtestingMode) {
           if (ind.name === "Volume Profile" ||
+              ind.name === "Support & Resistance" ||
               (ind.name === "Open Interest" && ind._dataPreloaded)) {
             console.log(`[${this.symbol}] Fetching data for ${ind.name} (backtesting mode)`);
             return ind.fetchData();
@@ -301,6 +311,17 @@ class IndicatorManager {
     }
   }
 
+  /**
+   * 🎯 Actualizar fecha de playback para Swing Detector
+   * @param {number} timestamp - Timestamp actual del playback
+   */
+  updateSwingPlaybackTime(timestamp) {
+    const swingIndicator = this.indicators.find(ind => ind.name === "Swing Detector");
+    if (swingIndicator && swingIndicator.updatePlaybackTime) {
+      swingIndicator.updatePlaybackTime(timestamp);
+    }
+  }
+
   getIndicatorConfig(name) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.getConfig) {
@@ -407,17 +428,20 @@ class IndicatorManager {
 
   renderIndicators(ctx, bounds, visibleCandles) {
     let currentY = bounds.y;
-    
+
     this.indicators.forEach(indicator => {
-      if (indicator.enabled && indicator.render && !indicator.renderOverlay) {
-        const indicatorHeight = indicator.getHeight() * this.heightScale;
+      // 🎯 FIX: Verificar si el indicador necesita panel usando getHeight()
+      // Esto permite que indicadores como VWAP tengan overlay Y panel (barras de volatilidad)
+      const indicatorHeight = indicator.getHeight() * this.heightScale;
+
+      if (indicator.enabled && indicator.render && indicatorHeight > 0) {
         const indicatorBounds = {
           x: bounds.x,
           y: currentY,
           width: bounds.width,
           height: indicatorHeight
         };
-        
+
         indicator.render(ctx, indicatorBounds, visibleCandles);
         currentY += indicatorHeight;
       }

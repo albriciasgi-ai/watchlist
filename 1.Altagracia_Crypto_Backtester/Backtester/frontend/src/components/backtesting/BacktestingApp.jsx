@@ -825,9 +825,10 @@ const BacktestingApp = () => {
         const lastCandle = visibleCandles[visibleCandles.length - 1];
         setCurrentPrice(lastCandle.close);
 
-        // Actualizar órdenes con el precio actual
+        // 🎯 FIX: Actualizar órdenes con el candle completo (high/low/close)
+        // Esto permite detectar SL/TP que fueron tocados durante la vela
         if (orderManagerRef.current) {
-          orderManagerRef.current.updateOrders(lastCandle.close, newTime);
+          orderManagerRef.current.updateOrders(lastCandle, newTime);
         }
 
         // 🎯 NUEVO: Actualizar fecha de playback para Double Top/Bottom (chunks progresivos)
@@ -841,6 +842,11 @@ const BacktestingApp = () => {
           indicatorManager.updateDTBPlaybackDate(newTime);
         } else {
           console.warn(`[BacktestingApp] ⚠️ Cannot update DTB: manager=${!!indicatorManager}, method=${!!(indicatorManager?.updateDTBPlaybackDate)}`);
+        }
+
+        // 🎯 Actualizar también el Swing Detector para playback
+        if (indicatorManager && indicatorManager.updateSwingPlaybackTime) {
+          indicatorManager.updateSwingPlaybackTime(newTime);
         }
       }
     }
@@ -905,9 +911,9 @@ const BacktestingApp = () => {
       const lastCandle = visibleCandles[visibleCandles.length - 1];
       setCurrentPrice(lastCandle.close);
 
-      // También actualizar órdenes con el nuevo precio
+      // 🎯 FIX: Actualizar órdenes con el candle completo (high/low/close)
       if (orderManagerRef.current) {
-        orderManagerRef.current.updateOrders(lastCandle.close, currentTime);
+        orderManagerRef.current.updateOrders(lastCandle, currentTime);
       }
     }
   }, [currentTime, marketData, activeTimeframe]);

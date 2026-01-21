@@ -387,7 +387,7 @@ class VolumeProfileIndicator extends IndicatorBase {
     }
   }
 
-  render(ctx, bounds, visibleCandles, allCandles) {
+  render(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
     const candlesToUse = allCandles || visibleCandles;
@@ -480,15 +480,24 @@ class VolumeProfileIndicator extends IndicatorBase {
     // CRÃTICO: Usar la MISMA escala de precios que el grÃ¡fico principal
     // No usar this.profile.minPrice/maxPrice, sino el rango de las velas VISIBLES
     // Esto hace que el perfil se dibuje a las alturas correctas
-    const visibleMinPrice = Math.min(...visibleCandles.map(c => c.low));
-    const visibleMaxPrice = Math.max(...visibleCandles.map(c => c.high));
-    const visiblePriceRange = visibleMaxPrice - visibleMinPrice;
-    
-    const priceToY = (price) => {
-      if (visiblePriceRange === 0) return y + height / 2;
-      // Usar la misma fÃ³rmula que el grÃ¡fico principal: y + height - ((price - minPrice) / priceRange) * height
-      return y + height - ((price - visibleMinPrice) / visiblePriceRange) * height;
-    };
+    // 🎯 FIX: Usar priceContext.priceToY si está disponible para mantener sincronía
+    // Esto asegura que el Volume Profile se mueve correctamente con el gráfico al hacer zoom/paneo vertical
+    let priceToY;
+
+    if (priceContext && priceContext.priceToY) {
+      // Usar la función del contexto del gráfico principal (sincronizado con zoom/paneo)
+      priceToY = priceContext.priceToY;
+    } else {
+      // Fallback: calcular localmente (modo legacy sin priceContext)
+      const visibleMinPrice = Math.min(...visibleCandles.map(c => c.low));
+      const visibleMaxPrice = Math.max(...visibleCandles.map(c => c.high));
+      const visiblePriceRange = visibleMaxPrice - visibleMinPrice;
+
+      priceToY = (price) => {
+        if (visiblePriceRange === 0) return y + height / 2;
+        return y + height - ((price - visibleMinPrice) / visiblePriceRange) * height;
+      };
+    }
 
     // Dibujar barras del perfil
     for (const level of this.profile.levels) {
@@ -634,9 +643,9 @@ class VolumeProfileIndicator extends IndicatorBase {
 
   // ✅ NUEVO: Método renderOverlay para compatibilidad con IndicatorManager
   // El IndicatorManager busca este método para overlays en el gráfico principal
-  renderOverlay(ctx, bounds, visibleCandles, allCandles) {
-    // Simplemente delegar al método render existente
-    return this.render(ctx, bounds, visibleCandles, allCandles);
+  renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
+    // 🎯 FIX: Usar priceContext para mantener sincronía con el gráfico principal
+    return this.render(ctx, bounds, visibleCandles, allCandles, priceContext);
   }
 }
 
