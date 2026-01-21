@@ -4012,3 +4012,140 @@ async def recalculate_vwap_service():
             "success": False,
             "error": str(e)
         }
+
+
+# ==================== BATCH INDICATOR ENDPOINT ====================
+
+@app.post("/api/indicators/batch")
+async def get_indicators_batch(request: Request):
+    """
+    🚀 Batch endpoint: obtiene datos de múltiples indicadores en una sola llamada.
+
+    Body JSON:
+    {
+        "symbol": "BTCUSDT",
+        "interval": "60",
+        "days": 1,
+        "indicators": ["vwap", "swing", "support_resistance"]
+    }
+
+    Indicadores soportados:
+    - vwap: VWAP con bandas de desviación
+    - swing: Swing High/Low signals
+    - support_resistance: Niveles de soporte y resistencia
+
+    Returns:
+    {
+        "success": true,
+        "symbol": "BTCUSDT",
+        "interval": "60",
+        "data": {
+            "vwap": {...},
+            "swing": {...},
+            "support_resistance": {...}
+        },
+        "timing": {
+            "vwap": 120,
+            "swing": 85,
+            "total": 150
+        }
+    }
+    """
+    start_total = time.time()
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "60")
+        days = body.get("days", 1)
+        requested_indicators = body.get("indicators", ["vwap", "swing"])
+
+        print(f"[BATCH] {symbol}@{interval} - indicators: {requested_indicators}")
+
+        result = {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "data": {},
+            "timing": {}
+        }
+
+        # Crear tasks para ejecutar en paralelo
+        tasks = []
+        indicator_names = []
+
+        # VWAP
+        if "vwap" in requested_indicators:
+            async def fetch_vwap():
+                start = time.time()
+                vwap_service = get_vwap_service()
+                data = await vwap_service.get_vwap_data(symbol, days, interval)
+                return ("vwap", data, (time.time() - start) * 1000)
+            tasks.append(fetch_vwap())
+            indicator_names.append("vwap")
+
+        # Swing Detector
+        if "swing" in requested_indicators:
+            async def fetch_swing():
+                start = time.time()
+                swing_service = get_swing_service()
+                signals = swing_service.get_signals(symbol)
+                zones = [z for z in swing_service.config.priceZones if z.get("symbol") == symbol]
+                return ("swing", {"signals": signals, "zones": zones}, (time.time() - start) * 1000)
+            tasks.append(fetch_swing())
+            indicator_names.append("swing")
+
+        # Support & Resistance
+        if "support_resistance" in requested_indicators:
+            async def fetch_sr():
+                start = time.time()
+                # Reutilizar lógica existente
+                url = f"https://api.bybit.com/v5/market/kline?category=linear&symbol={symbol}&interval={interval}&limit=500"
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url)
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get("retCode") == 0 and data.get("result", {}).get("list"):
+                            candles = data["result"]["list"]
+                            # Calcular niveles básicos de S/R
+                            highs = [float(c[2]) for c in candles]
+                            lows = [float(c[3]) for c in candles]
+                            closes = [float(c[4]) for c in candles]
+
+                            max_high = max(highs)
+                            min_low = min(lows)
+                            avg_close = sum(closes) / len(closes)
+
+                            levels = [
+                                {"price": max_high, "type": "resistance", "strength": 1.0},
+                                {"price": min_low, "type": "support", "strength": 1.0},
+                                {"price": avg_close, "type": "pivot", "strength": 0.5}
+                            ]
+                            return ("support_resistance", {"levels": levels, "count": len(levels)}, (time.time() - start) * 1000)
+                return ("support_resistance", {"levels": [], "count": 0}, (time.time() - start) * 1000)
+            tasks.append(fetch_sr())
+            indicator_names.append("support_resistance")
+
+        # Ejecutar todas las tareas en paralelo
+        if tasks:
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for res in results:
+                if isinstance(res, Exception):
+                    print(f"[BATCH] Error en indicador: {str(res)}")
+                    continue
+                name, data, timing_ms = res
+                result["data"][name] = data
+                result["timing"][name] = round(timing_ms, 1)
+
+        result["timing"]["total"] = round((time.time() - start_total) * 1000, 1)
+        print(f"[BATCH] {symbol}@{interval} - completed in {result['timing']['total']}ms")
+
+        return result
+
+    except Exception as e:
+        print(f"[BATCH ERROR] {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
