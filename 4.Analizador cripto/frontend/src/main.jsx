@@ -4,7 +4,5 @@ import SingleSymbolAnalyzer from "./components/SingleSymbolAnalyzer";
 import "./styles.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <SingleSymbolAnalyzer />
-  </React.StrictMode>
+  <SingleSymbolAnalyzer />
 );
