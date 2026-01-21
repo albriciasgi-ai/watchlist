@@ -597,3 +597,113 @@ rmdir "2.WatchlistConIndicadores\backend\drawings"
 # Restaurar backup
 move "2.WatchlistConIndicadores\backend\drawings_backup_20260120" "2.WatchlistConIndicadores\backend\drawings"
 ```
+
+---
+
+## Sesion 21 Enero 2026 - Optimizacion de Rendimiento
+
+### Problema: Lentitud Extrema al Cargar
+
+**Sintomas:**
+- La aplicacion tardaba minutos en cargar
+- Backend generaba 4,285+ lineas de log en ~20 segundos
+- SOLUSDT solo tenia 1,683 senales detectadas
+
+**Causa raiz:**
+- `swing_config.json` tenia dias excesivos: ETHUSDT con 360 dias, otros con 90 dias
+- Para timeframe 1m, esto significaba 500,000+ velas a procesar
+- Entrada corrupta "apply-to-all" en symbolConfigs
+
+### Solucion Implementada
+
+#### 1. Limpieza de swing_config.json
+- Eliminada entrada corrupta "apply-to-all"
+- Reducidos todos los dias a 1 (de 360/90)
+- Archivo: `backend/config/swing_config.json`
+
+#### 2. Validacion de Dias en Backend (swing_service.py)
+```python
+MAX_DAYS_BY_INTERVAL = {
+    "1": 5,       # 1 min -> max 5 dias (7,200 velas)
+    "5": 30,      # 5 min -> max 30 dias
+    "15": 90,     # 15 min -> max 90 dias
+    "60": 360,    # 1 hora -> max 360 dias
+    "240": 720,   # 4 horas -> max 720 dias
+    "D": 1440,    # 1 dia -> max 1440 dias
+}
+MAX_CANDLES_ABSOLUTE = 10000
+
+def validate_days_for_interval(days: int, interval: str) -> int:
+    max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+    if days > max_days:
+        logger.warning(f"Days {days} > max {max_days}, truncating")
+        return max_days
+    return days
+```
+
+#### 3. Reduccion de Logging (swing_detector.py)
+- Cambiado logging individual de senales de INFO a DEBUG
+- Agregado resumen: `Detected 23 signals (15 HIGH, 8 LOW)`
+- Reduccion de 4,285 lineas a ~20-30 lineas
+
+#### 4. Limite Absoluto de Velas
+- `MAX_CANDLES_ABSOLUTE = 10000` como safety net
+- Aplicado en `_analyze_historical()` y `_fetch_historical_candles()`
+
+### Problema: Cache Corrupto (Pocas Velas)
+
+**Sintomas:**
+- Chart mostraba solo ~60 velas en vez de 1,440
+- Consola: `[CandleCache] desde IndexedDB (2 velas)`
+- Backend retornaba datos correctos
+
+**Causa:**
+- IndexedDB tenia cache antiguo con solo 2 velas
+- Carga incremental solo traia velas nuevas desde ese timestamp
+
+### Solucion: Validacion de Cache (CandleCache.js)
+
+```javascript
+// Constantes para validacion
+static CANDLES_PER_DAY = {
+  "1": 1440,   // 1 minuto
+  "5": 288,    // 5 minutos
+  "15": 96,    // 15 minutos
+  "60": 24,    // 1 hora
+  // ...
+};
+static MIN_CACHE_RATIO = 0.1;  // 10% minimo
+
+// Nuevo metodo que valida y limpia cache corrupto
+static async getValidated(symbol, interval, days) {
+  const cached = await this.get(symbol, interval);
+  if (!cached) return null;
+
+  const expectedCandles = this.getExpectedCandles(interval, days);
+  const ratio = cached.candles.length / expectedCandles;
+
+  // Si cache tiene menos del 10% de lo esperado, limpiarlo
+  if (ratio < this.MIN_CACHE_RATIO) {
+    console.warn(`Cache corrupto: ${cached.candles.length} velas (esperadas: ~${expectedCandles})`);
+    await this.clear(symbol, interval);
+    return null;  // Forzara carga completa
+  }
+
+  return cached;
+}
+```
+
+**Archivos modificados:**
+- `frontend/src/utils/CandleCache.js` - Nuevo metodo `getValidated()`
+- `frontend/src/components/MiniChart.jsx` - Usa `getValidated()` en vez de `get()`
+- `frontend/src/components/SymbolList.jsx` - Usa `getValidated()` en prefetch
+- `frontend/src/utils/BackgroundPreloader.js` - Usa `getValidated()`
+
+### Resultado
+
+| Metrica | Antes | Despues |
+|---------|-------|---------|
+| Tiempo de carga | ~5 minutos | ~5 segundos |
+| Lineas de log | 4,285 | ~30 |
+| Velas mostradas | ~60 | 1,440 |
+| Cache corrupto | No detectado | Auto-limpiado |

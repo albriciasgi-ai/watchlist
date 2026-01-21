@@ -231,13 +231,20 @@ class SwingDetector:
             )
             signals.append(signal)
 
-            logger.info(
+            # DEBUG level for individual signals (only visible with DEBUG logging)
+            logger.debug(
                 f"[{self.name}] {symbol}/{interval}: {signal.signal_type} @ ${price:.2f} "
                 f"(z-score: {zscore:.2f}, direction: {signal.direction})"
             )
 
+        # Summary log (INFO level) - one line instead of thousands
         if signals:
-            logger.info(f"[{self.name}] {symbol}/{interval}: Detected {len(signals)} swing signals")
+            high_count = sum(1 for s in signals if s.signal_type == "SWING_HIGH")
+            low_count = sum(1 for s in signals if s.signal_type == "SWING_LOW")
+            logger.info(
+                f"[{self.name}] {symbol}/{interval}: Detected {len(signals)} swing signals "
+                f"({high_count} HIGH, {low_count} LOW)"
+            )
 
         return signals
 

@@ -120,8 +120,8 @@ class BackgroundPreloader {
     const cacheKey = `${symbol}_${this.currentInterval}`;
 
     try {
-      // Verificar si ya hay cache válido
-      const cached = await CandleCache.get(symbol, this.currentInterval);
+      // Verificar si ya hay cache valido (getValidated limpia cache corrupto)
+      const cached = await CandleCache.getValidated(symbol, this.currentInterval, parseInt(this.currentDays));
 
       let url;
       let isIncremental = false;
@@ -131,11 +131,11 @@ class BackgroundPreloader {
         const sinceTs = cached.lastTimestamp;
         url = `${API_BASE_URL}/api/historical/${symbol}?interval=${this.currentInterval}&since_timestamp=${sinceTs}`;
         isIncremental = true;
-        console.log(`[BackgroundPreloader] 🔄 ${symbol} incremental desde ${new Date(sinceTs).toLocaleTimeString()}`);
+        console.log(`[BackgroundPreloader] ${symbol} incremental desde ${new Date(sinceTs).toLocaleTimeString()}`);
       } else {
-        // Carga completa
+        // Carga completa (cache vacio o limpiado por corrupto)
         url = `${API_BASE_URL}/api/historical/${symbol}?interval=${this.currentInterval}&days=${this.currentDays}`;
-        console.log(`[BackgroundPreloader] 📥 ${symbol} carga completa (${this.currentDays} días)`);
+        console.log(`[BackgroundPreloader] ${symbol} carga completa (${this.currentDays} dias)`);
       }
 
       const res = await fetch(url, {

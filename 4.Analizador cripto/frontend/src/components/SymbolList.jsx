@@ -72,8 +72,8 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
     if (sym === currentSymbol) return;
     if (prefetchedSymbolsRef.current.has(`${sym}_${interval}`)) return;
 
-    // Verificar si ya está en cache
-    const cached = await CandleCache.get(sym, interval);
+    // Verificar si ya esta en cache (getValidated limpia cache corrupto automaticamente)
+    const cached = await CandleCache.getValidated(sym, interval, parseInt(days));
     if (cached && cached.candles && cached.candles.length > 0) {
       prefetchedSymbolsRef.current.add(`${sym}_${interval}`);
       console.log(`[Prefetch] ${sym}@${interval} - ya en cache (${cached.candles.length} velas)`);

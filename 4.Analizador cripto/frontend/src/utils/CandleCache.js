@@ -23,6 +23,21 @@ class CandleCache {
   // 🚀 LRU: Máximo de entradas en memoria (el resto queda en IndexedDB)
   static MAX_MEMORY_ENTRIES = 4;
 
+  // Mínimo de velas esperadas por día según timeframe
+  static CANDLES_PER_DAY = {
+    "1": 1440,   // 1 minuto
+    "5": 288,    // 5 minutos
+    "15": 96,    // 15 minutos
+    "30": 48,    // 30 minutos
+    "60": 24,    // 1 hora
+    "240": 6,    // 4 horas
+    "D": 1,      // 1 día
+    "W": 0.14    // 1 semana
+  };
+
+  // Umbral mínimo: si cache tiene menos del 10% de lo esperado, se considera corrupto
+  static MIN_CACHE_RATIO = 0.1;
+
   // Cache en memoria para acceso rápido (LRU order: más reciente al final)
   static memoryCache = new Map();
 
@@ -177,6 +192,49 @@ class CandleCache {
 
     const age = Date.now() - cacheEntry.savedAt;
     return age < this.CLOSED_CANDLE_TTL;
+  }
+
+  /**
+   * Calcula el minimo de velas esperadas para N dias en un intervalo
+   * @param {string} interval - Timeframe ("1", "5", "60", etc)
+   * @param {number} days - Cantidad de dias
+   * @returns {number} - Minimo de velas esperadas
+   */
+  static getExpectedCandles(interval, days) {
+    const candlesPerDay = this.CANDLES_PER_DAY[interval] || 1440;
+    return Math.floor(candlesPerDay * days);
+  }
+
+  /**
+   * Verifica si el cache tiene suficientes velas para los dias solicitados
+   * Si tiene menos del MIN_CACHE_RATIO, se considera corrupto y se limpia
+   * @param {string} symbol
+   * @param {string} interval
+   * @param {number} days - Dias solicitados
+   * @returns {Promise<{candles: Array, lastTimestamp: number}|null>}
+   */
+  static async getValidated(symbol, interval, days) {
+    const cached = await this.get(symbol, interval);
+
+    if (!cached || !cached.candles) {
+      return null;
+    }
+
+    const expectedCandles = this.getExpectedCandles(interval, days);
+    const actualCandles = cached.candles.length;
+    const ratio = actualCandles / expectedCandles;
+
+    // Si el cache tiene menos del 10% de lo esperado, es corrupto
+    if (ratio < this.MIN_CACHE_RATIO) {
+      console.warn(`[CandleCache] ⚠️ ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+      console.log(`[CandleCache] 🗑️ Limpiando cache corrupto para forzar recarga completa...`);
+      await this.clear(symbol, interval);
+      return null;
+    }
+
+    // Cache valido
+    console.log(`[CandleCache] ✓ ${symbol}@${interval} - Cache valido: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+    return cached;
   }
 
   /**

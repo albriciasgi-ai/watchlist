@@ -22,6 +22,47 @@ from vwap_service import get_vwap_service
 
 logger = logging.getLogger(__name__)
 
+# ============================================================================
+# LIMITS: Maximum days allowed by timeframe (must match frontend/backend)
+# ============================================================================
+MAX_DAYS_BY_INTERVAL = {
+    "1": 5,       # 1 min -> max 5 days (7,200 candles)
+    "3": 10,      # 3 min -> max 10 days
+    "5": 30,      # 5 min -> max 30 days (8,640 candles)
+    "15": 90,     # 15 min -> max 90 days (8,640 candles)
+    "30": 150,    # 30 min -> max 150 days
+    "60": 360,    # 1 hour -> max 360 days (8,640 candles)
+    "120": 180,   # 2 hours -> max 180 days
+    "240": 720,   # 4 hours -> max 720 days (4,320 candles)
+    "D": 1440,    # 1 day -> max 1440 days
+    "W": 730,     # 1 week -> max 730 days
+}
+
+# Absolute safety limit to prevent runaway processing
+MAX_CANDLES_ABSOLUTE = 10000
+
+
+def validate_days_for_interval(days: int, interval: str) -> int:
+    """
+    Validate and cap days to the maximum allowed for the given interval.
+
+    Args:
+        days: Requested number of days
+        interval: Timeframe string (e.g., "1", "5", "60", "D")
+
+    Returns:
+        Validated days (capped to max if exceeded)
+    """
+    max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+    if days > max_days:
+        logger.warning(
+            f"[SWING_SERVICE] Days {days} exceeds max {max_days} for interval {interval}, "
+            f"truncating to {max_days}"
+        )
+        return max_days
+    return days
+
+
 # Config file path
 CONFIG_DIR = Path(__file__).parent / "config"
 CONFIG_FILE = CONFIG_DIR / "swing_config.json"
@@ -102,11 +143,20 @@ class SwingServiceConfig:
     # Alert target
     alertTargetUrl: str = "http://localhost:5000/api/watchlist-alert"
 
-    def get_symbol_config(self, symbol: str) -> Dict:
+    def get_symbol_config(self, symbol: str, interval: str = None) -> Dict:
         """
         Get configuration for a specific symbol, merging with defaults.
         Symbol-specific settings override defaults.
+        Days are automatically validated against MAX_DAYS_BY_INTERVAL.
+
+        Args:
+            symbol: The trading symbol (e.g., "BTCUSDT")
+            interval: Optional interval to validate days against. If not provided,
+                     uses self.interval from the service config.
         """
+        # Use provided interval or fall back to config interval
+        effective_interval = interval or self.interval
+
         # Start with defaults
         config = {
             'enabled': self.enabled,
@@ -138,6 +188,9 @@ class SwingServiceConfig:
             if 'priceZones' in symbol_cfg:
                 # Symbol-specific zones override (but also include global zones for this symbol)
                 config['priceZones'] = symbol_cfg['priceZones']
+
+        # CRITICAL: Validate days against MAX_DAYS_BY_INTERVAL
+        config['days'] = validate_days_for_interval(config['days'], effective_interval)
 
         return config
 
@@ -309,15 +362,24 @@ class SwingService:
 
         logger.info("[SWING_SERVICE] Analyzing historical data...")
 
-        # 🚀 OPTIMIZACIÓN: Analizar símbolos en paralelo
+        # 🚀 OPTIMIZACION: Analizar simbolos en paralelo
         async def analyze_symbol(symbol):
             try:
-                # Get symbol-specific config (includes days override)
-                symbol_config = self.config.get_symbol_config(symbol)
+                # Get symbol-specific config (includes days override AND validation)
+                symbol_config = self.config.get_symbol_config(symbol, self.config.interval)
                 symbol_days = symbol_config.get('days', self.config.days)
 
-                # Calculate how many candles based on symbol's days setting
+                # Calculate how many candles based on symbol's VALIDATED days setting
                 desired_candles = calculate_candles_for_days(self.config.interval, symbol_days)
+
+                # SAFETY: Apply absolute candle limit
+                if desired_candles > MAX_CANDLES_ABSOLUTE:
+                    logger.warning(
+                        f"[SWING_SERVICE] {symbol}: Candles {desired_candles} exceeds absolute limit "
+                        f"{MAX_CANDLES_ABSOLUTE}, truncating"
+                    )
+                    desired_candles = MAX_CANDLES_ABSOLUTE
+
                 logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={self.config.interval} -> {desired_candles} candles")
 
                 # Get candles from WebSocket buffer first
@@ -379,7 +441,7 @@ class SwingService:
         Fetch historical candles from Bybit API.
         Bybit max limit is 200 per request, so we make multiple parallel requests.
 
-        No artificial cap - respects user's days setting up to system limits.
+        Respects MAX_DAYS_BY_INTERVAL and MAX_CANDLES_ABSOLUTE limits.
         Max candles by timeframe (based on MAX_DAYS_BY_INTERVAL):
         - 1m/5 days = 7,200 candles
         - 5m/30 days = 8,640 candles
@@ -388,8 +450,14 @@ class SwingService:
         - 4h/720 days = 4,320 candles
         - D/1440 days = 1,440 candles
         """
-        # No cap - let the system limits (MAX_DAYS_BY_INTERVAL) control this
-        # The limit is already calculated based on days setting
+        # SAFETY: Apply absolute candle limit
+        if limit > MAX_CANDLES_ABSOLUTE:
+            logger.warning(
+                f"[SWING_SERVICE] {symbol}: Fetch limit {limit} exceeds MAX_CANDLES_ABSOLUTE "
+                f"{MAX_CANDLES_ABSOLUTE}, truncating"
+            )
+            limit = MAX_CANDLES_ABSOLUTE
+
         logger.info(f"[SWING_SERVICE] {symbol}: Fetching {limit} candles from API...")
 
         # Calculate time ranges for parallel fetches
