@@ -899,7 +899,7 @@ const VWAPSettings = ({
           </button>
         </div>
 
-        {showAdvanced && localConfig.showBands && localConfig.bandMultipliers && (
+        {showAdvanced && (
           <div className="advanced-settings">
             {/* Volatility Indicators Advanced Config */}
             {(localConfig.showBandWidth || localConfig.showBBWP || localConfig.showTTMSqueeze) && (
@@ -1136,43 +1136,48 @@ const VWAPSettings = ({
               </div>
             )}
 
-            <h5>Multiplicadores de Bandas</h5>
+            {/* Multiplicadores de Bandas - solo si bandas están activas */}
+            {localConfig.showBands && localConfig.bandMultipliers && (
+              <>
+                <h5>Multiplicadores de Bandas</h5>
 
-            <div className="setting-row">
-              <label>Banda 1 (±σ):</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                max="5"
-                value={localConfig.bandMultipliers[0] || 1.0}
-                onChange={(e) => handleBandMultiplierChange(0, e.target.value)}
-              />
-            </div>
+                <div className="setting-row">
+                  <label>Banda 1 (±σ):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    max="5"
+                    value={localConfig.bandMultipliers[0] || 1.0}
+                    onChange={(e) => handleBandMultiplierChange(0, e.target.value)}
+                  />
+                </div>
 
-            <div className="setting-row">
-              <label>Banda 2 (±σ):</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                max="5"
-                value={localConfig.bandMultipliers[1] || 2.0}
-                onChange={(e) => handleBandMultiplierChange(1, e.target.value)}
-              />
-            </div>
+                <div className="setting-row">
+                  <label>Banda 2 (±σ):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    max="5"
+                    value={localConfig.bandMultipliers[1] || 2.0}
+                    onChange={(e) => handleBandMultiplierChange(1, e.target.value)}
+                  />
+                </div>
 
-            <div className="setting-row">
-              <label>Banda 3 (±σ):</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                max="5"
-                value={localConfig.bandMultipliers[2] || 3.0}
-                onChange={(e) => handleBandMultiplierChange(2, e.target.value)}
-              />
-            </div>
+                <div className="setting-row">
+                  <label>Banda 3 (±σ):</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    max="5"
+                    value={localConfig.bandMultipliers[2] || 3.0}
+                    onChange={(e) => handleBandMultiplierChange(2, e.target.value)}
+                  />
+                </div>
+              </>
+            )}
 
             {/* Sección de Estilo de Líneas */}
             <div style={{ marginTop: '20px', padding: '12px', background: '#fff3e0', borderRadius: '8px', border: '2px solid #FF9800' }}>
