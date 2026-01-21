@@ -684,7 +684,7 @@ const SingleSymbolAnalyzer = () => {
         {/* Chart principal */}
         <div className="chart-area">
           <MiniChart
-            key={`${symbol}-${chartKeyRef.current}`}
+            key={`${symbol}-${interval}-${chartKeyRef.current}`}
             symbol={symbol}
             interval={interval}
             days={days}

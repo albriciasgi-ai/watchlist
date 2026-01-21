@@ -198,12 +198,18 @@ class SwingDetectorIndicator extends IndicatorBase {
       }
 
       const data = await response.json();
-      this.signals = data.signals || [];
+      const allSignals = data.signals || [];
+
+      // ⚠️ FIX: Filtrar señales por el interval actual del chart
+      // El backend puede tener señales de múltiples timeframes
+      this.signals = allSignals.filter(s => s.interval === this.interval);
 
       // Guardar en cache
       if (this.signals.length > 0) {
         IndicatorCache.set('swing', this.symbol, this.interval, this.signals);
-        console.log(`[${this.symbol}] SwingDetector: ${this.signals.length} signals (cached)`);
+        console.log(`[${this.symbol}] SwingDetector: ${this.signals.length}/${allSignals.length} signals for interval ${this.interval} (cached)`);
+      } else if (allSignals.length > 0) {
+        console.log(`[${this.symbol}] SwingDetector: ${allSignals.length} signals exist but none match interval ${this.interval}`);
       }
     } catch (error) {
       console.error(`[${this.symbol}] SwingDetector fetch error:`, error);

@@ -46,6 +46,11 @@ class SupportResistanceIndicator extends IndicatorBase {
     // 🎯 Control de playback time para evitar sesgo de supervivencia
     this._currentPlaybackTime = null;
     this._lastPlaybackTime = null;
+
+    // Flags de logging
+    this._renderLoggedOnce = false;
+    this._noDataLoggedOnce = false;
+    this._fallbackLoggedOnce = false;
   }
 
   /**
@@ -121,6 +126,8 @@ class SupportResistanceIndicator extends IndicatorBase {
     if (this._lastPlaybackTime && timestamp !== this._lastPlaybackTime) {
       this._calculationValid = false;
       this._renderLoggedOnce = false;
+      this._noDataLoggedOnce = false;
+      this._fallbackLoggedOnce = false;
     }
     this._lastPlaybackTime = timestamp;
   }
@@ -231,25 +238,90 @@ class SupportResistanceIndicator extends IndicatorBase {
     supports = supports.filter(s => s.touches >= this.minTouches);
     console.log(`[${this.symbol}] S&R: Después de filtro minTouches=${this.minTouches}: ${resistances.length}/${beforeFilterR} resistances, ${supports.length}/${beforeFilterS} supports`);
 
-    // 5. Limitar número de niveles
-    resistances = resistances.sort((a, b) => b.strength - a.strength).slice(0, this.maxLevels);
-    supports = supports.sort((a, b) => b.strength - a.strength).slice(0, this.maxLevels);
-
-    // 6. Actualizar precio actual
+    // 5. Actualizar precio actual ANTES de filtrar por proximidad
     const lastCandle = candles[candles.length - 1];
     this.currentPrice = lastCandle.close;
 
-    // 7. Marcar niveles como broken si el precio actual los ha superado
-    resistances = resistances.map(r => ({
-      ...r,
-      status: this.currentPrice > r.price ? 'broken' : 'active'
-    }));
-    supports = supports.map(s => ({
-      ...s,
-      status: this.currentPrice < s.price ? 'broken' : 'active'
-    }));
+    // 6. 🎯 Detectar niveles "rotos" - el precio pasó por ahí recientemente
+    // Usamos las últimas N velas para determinar si un nivel fue roto
+    const recentBarsForBreak = Math.min(50, Math.floor(candles.length * 0.1)); // 10% de las velas o máx 50
+    const recentCandles = candles.slice(-recentBarsForBreak);
+    const recentHigh = Math.max(...recentCandles.map(c => c.high));
+    const recentLow = Math.min(...recentCandles.map(c => c.low));
 
-    // 8. Guardar resultados
+    // 7. Clasificar resistencias: activas vs rotas
+    // Una resistencia está "rota" si el precio reciente la superó (pasó por encima)
+    const classifyResistance = (r) => {
+      const isBroken = recentHigh > r.price; // El precio pasó por encima
+      const isAbovePrice = r.price > this.currentPrice; // Está por encima del precio actual
+      return { ...r, isBroken, isAbovePrice };
+    };
+
+    // Una soporte está "roto" si el precio reciente lo perforó (pasó por debajo)
+    const classifySupport = (s) => {
+      const isBroken = recentLow < s.price; // El precio pasó por debajo
+      const isBelowPrice = s.price < this.currentPrice; // Está por debajo del precio actual
+      return { ...s, isBroken, isBelowPrice };
+    };
+
+    // Clasificar todos los niveles
+    const classifiedResistances = resistances.map(classifyResistance);
+    const classifiedSupports = supports.map(classifySupport);
+
+    // 8. Separar niveles activos (no rotos, por encima/debajo del precio) de los rotos
+    const activeResistances = classifiedResistances
+      .filter(r => r.isAbovePrice && !r.isBroken)
+      .map(r => ({ ...r, distanceToPrice: r.price - this.currentPrice }))
+      .sort((a, b) => a.distanceToPrice - b.distanceToPrice);
+
+    const brokenResistances = classifiedResistances
+      .filter(r => r.isAbovePrice && r.isBroken)
+      .map(r => ({ ...r, distanceToPrice: r.price - this.currentPrice }))
+      .sort((a, b) => a.distanceToPrice - b.distanceToPrice);
+
+    const activeSupports = classifiedSupports
+      .filter(s => s.isBelowPrice && !s.isBroken)
+      .map(s => ({ ...s, distanceToPrice: this.currentPrice - s.price }))
+      .sort((a, b) => a.distanceToPrice - b.distanceToPrice);
+
+    const brokenSupports = classifiedSupports
+      .filter(s => s.isBelowPrice && s.isBroken)
+      .map(s => ({ ...s, distanceToPrice: this.currentPrice - s.price }))
+      .sort((a, b) => a.distanceToPrice - b.distanceToPrice);
+
+    console.log(`[${this.symbol}] S&R: Clasificación - R activas: ${activeResistances.length}, R rotas: ${brokenResistances.length}, S activos: ${activeSupports.length}, S rotos: ${brokenSupports.length}`);
+
+    // 9. 🎯 Solo los niveles ACTIVOS cuentan para maxLevels
+    // Los rotos se muestran adicionales (máximo igual cantidad que activos)
+    const finalActiveResistances = activeResistances
+      .slice(0, this.maxLevels)
+      .map(r => ({ ...r, status: 'active' }));
+
+    const finalBrokenResistances = brokenResistances
+      .slice(0, this.maxLevels) // Mostrar hasta maxLevels rotos también
+      .map(r => ({ ...r, status: 'broken' }));
+
+    const finalActiveSupports = activeSupports
+      .slice(0, this.maxLevels)
+      .map(s => ({ ...s, status: 'active' }));
+
+    const finalBrokenSupports = brokenSupports
+      .slice(0, this.maxLevels) // Mostrar hasta maxLevels rotos también
+      .map(s => ({ ...s, status: 'broken' }));
+
+    // Combinar activos y rotos
+    resistances = [...finalActiveResistances, ...finalBrokenResistances];
+    supports = [...finalActiveSupports, ...finalBrokenSupports];
+
+    console.log(`[${this.symbol}] S&R: Niveles finales - ${finalActiveResistances.length} R activas, ${finalBrokenResistances.length} R rotas, ${finalActiveSupports.length} S activos, ${finalBrokenSupports.length} S rotos`);
+    if (finalActiveResistances.length > 0) {
+      console.log(`[${this.symbol}] S&R: Resistencias activas: ${finalActiveResistances.slice(0, 3).map(r => `$${r.price.toFixed(2)}`).join(', ')}`);
+    }
+    if (finalActiveSupports.length > 0) {
+      console.log(`[${this.symbol}] S&R: Soportes activos: ${finalActiveSupports.slice(0, 3).map(s => `$${s.price.toFixed(2)}`).join(', ')}`);
+    }
+
+    // 10. Guardar resultados
     this.resistances = resistances;
     this.supports = supports;
     this.consolidationZones = []; // Simplificado - no calculamos zonas por ahora
@@ -271,24 +343,43 @@ class SupportResistanceIndicator extends IndicatorBase {
     if (allCandles && allCandles.length > 0) {
       // Filtrar velas hasta el playback time para evitar sesgo de supervivencia
       let candlesToUse = allCandles;
+
+      // 🎯 FIX: Si no hay playbackTime pero hay visibleCandles, usar la última visible como referencia
+      // Esto ocurre cuando el precálculo no se ejecutó (MiniCharts no estaban listos)
       if (this._currentPlaybackTime) {
         candlesToUse = allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
+      } else if (visibleCandles && visibleCandles.length > 0) {
+        // Usar el timestamp de la última vela visible como playback time
+        const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
+        candlesToUse = allCandles.filter(c => c.timestamp <= lastVisibleTs);
+
+        // Log solo la primera vez
+        if (!this._fallbackLoggedOnce) {
+          console.log(`[${this.symbol}] 🔄 S&R: Usando visibleCandles como referencia (playbackTime no inicializado). lastVisibleTs=${new Date(lastVisibleTs).toISOString()}`);
+          this._fallbackLoggedOnce = true;
+        }
       }
 
       const needsRecalculation = !this._calculationValid ||
-                                 this.resistances.length === 0 && this.supports.length === 0 ||
+                                 (this.resistances.length === 0 && this.supports.length === 0) ||
                                  candlesToUse.length !== this._lastCalculatedLength;
 
       if (needsRecalculation && candlesToUse.length > 0) {
-        console.log(`[${this.symbol}] 🔄 S&R: Recalculando (valid=${this._calculationValid}, dataLen=${candlesToUse.length}/${allCandles.length}, playbackTime=${this._currentPlaybackTime ? new Date(this._currentPlaybackTime).toISOString() : 'null'})`);
+        console.log(`[${this.symbol}] 🔄 S&R: Recalculando (valid=${this._calculationValid}, dataLen=${candlesToUse.length}/${allCandles.length}, playbackTime=${this._currentPlaybackTime ? new Date(this._currentPlaybackTime).toISOString() : 'fallback'})`);
         this.calculateFromCandles(candlesToUse);
+        this._renderLoggedOnce = false; // Reset para ver nuevos logs después de recalcular
       }
     }
 
     // Verificar si hay datos para renderizar
     if (this.resistances.length === 0 && this.supports.length === 0) {
+      if (!this._noDataLoggedOnce) {
+        console.warn(`[${this.symbol}] ⚠️ S&R: No hay niveles para renderizar (0 resistencias, 0 soportes). Precio actual: $${this.currentPrice?.toFixed(2) || 'N/A'}`);
+        this._noDataLoggedOnce = true;
+      }
       return;
     }
+    this._noDataLoggedOnce = false;
 
     // DEBUG: Solo log una vez
     if (!this._renderLoggedOnce) {
@@ -396,24 +487,26 @@ class SupportResistanceIndicator extends IndicatorBase {
     }
 
     // Color basado en tipo y estado
-    let color, alpha, lineStyle;
+    let color, alpha, lineStyle, lineWidth;
 
     if (level.status === 'broken') {
-      color = "#999"; // Gris
-      alpha = 0.3;
-      lineStyle = [4, 4]; // Punteado
+      // 🎯 Niveles rotos: más tenues, punteados, delgados
+      color = type === 'resistance' ? "#F44336" : "#4CAF50"; // Mismo color pero más tenue
+      alpha = 0.25;
+      lineStyle = [6, 4]; // Punteado más espaciado
+      lineWidth = 1; // Siempre delgado
     } else if (level.status === 'tested') {
       color = type === 'resistance' ? "#F44336" : "#4CAF50";
       alpha = 0.5;
       lineStyle = [2, 2]; // Punteado fino
+      lineWidth = Math.max(1, Math.min(3, level.strength / 2));
     } else { // active
+      // 🎯 Niveles activos: sólidos, más gruesos, más visibles
       color = type === 'resistance' ? "#F44336" : "#4CAF50";
-      alpha = 0.8;
+      alpha = 0.9;
       lineStyle = []; // Sólido
+      lineWidth = Math.max(2, Math.min(4, level.strength / 2));
     }
-
-    // Grosor basado en strength
-    const lineWidth = Math.max(1, Math.min(4, level.strength / 2));
 
     // Dibujar línea
     ctx.strokeStyle = color;
@@ -430,24 +523,29 @@ class SupportResistanceIndicator extends IndicatorBase {
     ctx.globalAlpha = 1.0;
 
     // Label
-    if (this.showLabels && level.status === 'active') {
-      const labelText = `${type === 'resistance' ? 'R' : 'S'} $${level.price.toFixed(2)} • ${level.touches}x • ${level.strength.toFixed(1)}`;
+    if (this.showLabels) {
+      const isBroken = level.status === 'broken';
+      const prefix = type === 'resistance' ? 'R' : 'S';
+      const suffix = isBroken ? ' (roto)' : '';
+      const labelText = `${prefix} $${level.price.toFixed(2)}${isBroken ? suffix : ` • ${level.touches}x`}`;
 
-      ctx.fillStyle = color;
-      ctx.font = "bold 10px Inter, sans-serif";
+      // Estilo diferente para rotos vs activos
+      ctx.font = isBroken ? "9px Inter, sans-serif" : "bold 10px Inter, sans-serif";
+      ctx.globalAlpha = isBroken ? 0.4 : 1.0;
 
       // Fondo para el label
       const metrics = ctx.measureText(labelText);
       const labelWidth = metrics.width + 8;
-      const labelHeight = 16;
+      const labelHeight = isBroken ? 14 : 16;
       const labelX = x + width - labelWidth - 5;
       const labelY = priceY - labelHeight / 2;
 
-      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.fillStyle = isBroken ? "rgba(200, 200, 200, 0.7)" : "rgba(255, 255, 255, 0.9)";
       ctx.fillRect(labelX, labelY, labelWidth, labelHeight);
 
       ctx.fillStyle = color;
-      ctx.fillText(labelText, labelX + 4, priceY + 4);
+      ctx.fillText(labelText, labelX + 4, priceY + (isBroken ? 3 : 4));
+      ctx.globalAlpha = 1.0;
     }
   }
 

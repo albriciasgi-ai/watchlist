@@ -312,6 +312,24 @@ class IndicatorManager {
             })
           );
         }
+
+        // Double Top/Bottom - usar velas si están disponibles (solo si está habilitado)
+        if (indicator.name === "Double Top/Bottom" && indicator.enabled && indicator.fetchData) {
+          fetchPromises.push(
+            indicator.fetchData(this.allCandles).catch(err => {
+              log.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom:`, err);
+            })
+          );
+        }
+
+        // Rejection Patterns - usar velas si están disponibles (solo si está habilitado)
+        if (indicator.name === "Rejection Patterns" && indicator.enabled && indicator.fetchData) {
+          fetchPromises.push(
+            indicator.fetchData(this.allCandles).catch(err => {
+              log.error(`[${this.symbol}] ❌ Error fetching Rejection Patterns:`, err);
+            })
+          );
+        }
       });
 
       // 🚀 Ejecutar TODOS en paralelo

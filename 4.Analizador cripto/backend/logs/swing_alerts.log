@@ -1,2 +1,6 @@
 2026-01-20 20:00:00 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2950.80 | direction=LONG | volume_zscore=2.59 | interval=60
 2026-01-20 20:00:03 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-21 11:48:20 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2901.00 | direction=LONG | volume_zscore=2.10 | interval=1
+2026-01-21 11:48:23 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-21 11:59:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2897.23 | direction=LONG | volume_zscore=4.69 | interval=1
+2026-01-21 11:59:05 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
