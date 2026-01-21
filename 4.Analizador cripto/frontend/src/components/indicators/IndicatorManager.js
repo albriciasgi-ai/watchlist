@@ -59,63 +59,71 @@ class IndicatorManager {
   }
 
   async initialize(indicatorStates = {}) {
-    // Solo crear indicadores habilitados para optimizar rendimiento
+    // 🚀 LAZY LOADING: Solo crear indicadores HABILITADOS para optimizar rendimiento
     this.indicators = [];
 
-    // Siempre crear los básicos que suelen estar habilitados
-    this.indicators.push(new VolumeProfileIndicator(this.symbol, this.interval, this.days));
-    this.indicators.push(new VolumeIndicator(this.symbol, this.interval, this.days));
-    this.indicators.push(new CVDIndicator(this.symbol, this.interval, this.days));
+    // Volume Profile - solo si habilitado
+    if (indicatorStates['Volume Profile'] === true) {
+      this.indicators.push(new VolumeProfileIndicator(this.symbol, this.interval, this.days));
+    }
 
-    // Solo crear OpenInterest si está habilitado
-    if (indicatorStates['OpenInterest'] !== false) {
+    // Volume Delta - solo si habilitado
+    if (indicatorStates['Volume Delta'] === true) {
+      this.indicators.push(new VolumeIndicator(this.symbol, this.interval, this.days));
+    }
+
+    // CVD - solo si habilitado
+    if (indicatorStates['CVD'] === true) {
+      this.indicators.push(new CVDIndicator(this.symbol, this.interval, this.days));
+    }
+
+    // OpenInterest - solo si habilitado
+    if (indicatorStates['Open Interest'] === true) {
       this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
       this.indicators.push(this.openInterestIndicator);
     }
 
-    // Rejection Patterns - solo si está explícitamente habilitado (desactivado por defecto)
+    // Rejection Patterns - solo si habilitado
     if (indicatorStates['Rejection Patterns'] === true) {
-      console.log(`[${this.symbol}] Creando Rejection Patterns porque está habilitado`);
+      log.debug(`[${this.symbol}] Creando Rejection Patterns`);
       this.indicators.push(new RejectionPatternIndicator(this.symbol, this.interval, this.days));
     }
 
-    // Double Top/Bottom - solo si está explícitamente habilitado (desactivado por defecto)
+    // Double Top/Bottom - solo si habilitado
     if (indicatorStates['Double Top/Bottom'] === true) {
-      console.log(`[${this.symbol}] Creando Double Top/Bottom porque está habilitado`);
+      log.debug(`[${this.symbol}] Creando Double Top/Bottom`);
       this.indicators.push(new DoubleTopBottomIndicator(this.symbol, this.interval, this.days));
     }
 
-    // Support & Resistance - siempre crear para que el checkbox funcione
-    this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
-    // Habilitar si está activo en indicatorStates
+    // Support & Resistance - solo si habilitado
     if (indicatorStates['Support & Resistance'] === true) {
-      console.log(`[${this.symbol}] Support & Resistance habilitado desde inicio`);
+      log.debug(`[${this.symbol}] Creando Support & Resistance`);
+      this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
       this.supportResistanceIndicator.enabled = true;
-    } else {
-      this.supportResistanceIndicator.enabled = false;
+      this.indicators.push(this.supportResistanceIndicator);
     }
-    this.indicators.push(this.supportResistanceIndicator);
 
-    // VWAP (suele estar habilitado)
-    if (indicatorStates['VWAP'] !== false) {
+    // VWAP - solo si habilitado
+    if (indicatorStates['VWAP'] === true) {
+      log.debug(`[${this.symbol}] Creando VWAP`);
       this.indicators.push(new VWAPIndicator(this.symbol, this.interval, this.days));
     }
 
-    // Fibonacci - solo si está habilitado
+    // Fibonacci - solo si habilitado
     if (indicatorStates['Fibonacci'] === true) {
-      console.log(`[${this.symbol}] Creando Fibonacci porque está habilitado`);
+      log.debug(`[${this.symbol}] Creando Fibonacci`);
       this.indicators.push(new FibonacciLevelCalculator(this.symbol, this.interval, this.days));
     }
 
-    // Continuation Patterns - solo si está habilitado
+    // Continuation Patterns - solo si habilitado
     if (indicatorStates['Continuation Patterns'] === true) {
-      console.log(`[${this.symbol}] Creando Continuation Patterns porque está habilitado`);
+      log.debug(`[${this.symbol}] Creando Continuation Patterns`);
       this.indicators.push(new ContinuationPatternIndicator(this.symbol, this.interval, this.days));
     }
 
-    // Swing Detector - solo si está habilitado
+    // Swing Detector - solo si habilitado
     if (indicatorStates['Swing Detector'] === true) {
-      console.log(`[${this.symbol}] Creando Swing Detector porque está habilitado`);
+      log.debug(`[${this.symbol}] Creando Swing Detector`);
       this.indicators.push(new SwingDetectorIndicator(this.symbol, this.interval, this.days));
     }
 
@@ -124,25 +132,56 @@ class IndicatorManager {
       indicator.indicatorManager = this;
     });
 
-    // 🎯 NUEVO: Inicializar Level Source Manager
+    // Inicializar Level Source Manager
     this.levelSourceManager = new LevelSourceManager(this);
-    log.debug(`[${this.symbol}] 🎯 LevelSourceManager inicializado`);
 
-    // Habilitar el indicador de patrones por defecto
+    // Habilitar el indicador de patrones si existe
     const patternIndicator = this.indicators.find(ind => ind.name === "Rejection Patterns");
     if (patternIndicator) {
       patternIndicator.enabled = true;
-      patternIndicator.setShowMode('validated'); // Mostrar solo patrones validados por defecto
+      patternIndicator.setShowMode('validated');
     }
 
-    // ✅ NO cargar datos aquí - se cargarán de forma lazy cuando se activen los indicadores
-    // Esto permite que la precarga corra en background sin bloquear
+    log.debug(`[${this.symbol}] 🚀 Inicializados ${this.indicators.length} indicadores (lazy loading)`);
 
     this.loadFixedRangeProfilesFromStorage();
-    this.syncFixedRangeIndicators(); // ✅ Sincronizar instancias
-
-    // 🎯 NUEVO: Cargar configuración de Range Detection
+    this.syncFixedRangeIndicators();
     this.loadRangeDetectionConfig();
+  }
+
+  /**
+   * 🚀 LAZY: Crea un indicador bajo demanda cuando se habilita
+   */
+  _createIndicator(name) {
+    switch (name) {
+      case 'Volume Profile':
+        return new VolumeProfileIndicator(this.symbol, this.interval, this.days);
+      case 'Volume Delta':
+        return new VolumeIndicator(this.symbol, this.interval, this.days);
+      case 'CVD':
+        return new CVDIndicator(this.symbol, this.interval, this.days);
+      case 'Open Interest':
+        return new OpenInterestIndicator(this.symbol, this.interval, this.days);
+      case 'Rejection Patterns':
+        return new RejectionPatternIndicator(this.symbol, this.interval, this.days);
+      case 'Double Top/Bottom':
+        return new DoubleTopBottomIndicator(this.symbol, this.interval, this.days);
+      case 'Support & Resistance':
+        const sr = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+        this.supportResistanceIndicator = sr;
+        return sr;
+      case 'VWAP':
+        return new VWAPIndicator(this.symbol, this.interval, this.days);
+      case 'Fibonacci':
+        return new FibonacciLevelCalculator(this.symbol, this.interval, this.days);
+      case 'Continuation Patterns':
+        return new ContinuationPatternIndicator(this.symbol, this.interval, this.days);
+      case 'Swing Detector':
+        return new SwingDetectorIndicator(this.symbol, this.interval, this.days);
+      default:
+        log.warn(`[${this.symbol}] Unknown indicator: ${name}`);
+        return null;
+    }
   }
 
   // ✅ NUEVO: Método para cargar datos precargados
@@ -310,74 +349,33 @@ class IndicatorManager {
   }
 
   toggleIndicator(name, enabled) {
-    const indicator = this.indicators.find(ind => ind.name === name);
+    let indicator = this.indicators.find(ind => ind.name === name);
+
+    // 🚀 LAZY: Si se habilita y no existe, crearlo bajo demanda
+    if (enabled && !indicator) {
+      log.debug(`[${this.symbol}] 🚀 Creando ${name} bajo demanda (lazy)`);
+      indicator = this._createIndicator(name);
+      if (indicator) {
+        indicator.indicatorManager = this;
+        this.indicators.push(indicator);
+      }
+    }
+
     if (indicator) {
       indicator.setEnabled(enabled);
 
-      // ✅ NUEVO: Verificar si necesita cargar datos
-      if (enabled) {
-        const preloadableIndicators = [
-          'Volume Profile',
-          'Open Interest',
-          'Support & Resistance'
-        ];
+      // Cargar datos si se habilita
+      if (enabled && indicator.fetchData) {
+        log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
 
-        // Si está precargado, intentar obtener datos
-        if (preloadableIndicators.includes(name)) {
-          // Intentar obtener datos precargados
-          const data = IndicatorPreloader.getData(
-            this.symbol,
-            name,
-            this.interval,
-            this.days
-          );
-
-          if (data && indicator.setPreloadedData) {
-            // Tenemos datos precargados, usarlos
-            log.debug(`[${this.symbol}] ⚡ ${name} activado (datos precargados)`);
-            indicator.setPreloadedData(data);
-
-            // Forzar redibujado
-            if (this.requestRedraw) {
-              this.requestRedraw();
-            }
-          } else {
-            // No hay datos precargados, hacer fetch (fallback)
-            log.debug(`[${this.symbol}] 📥 ${name}: No hay precarga, cargando desde backend...`);
-            if (indicator.fetchData) {
-              indicator.fetchData().then(() => {
-                log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados desde backend`);
-                if (this.requestRedraw) {
-                  this.requestRedraw();
-                }
-              }).catch(err => {
-                log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
-              });
-            }
+        indicator.fetchData().then(() => {
+          log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+          if (this.requestRedraw) {
+            this.requestRedraw();
           }
-        } else {
-          // Indicadores no precargables (VWAP, Fibonacci, Swing Detector, etc.)
-          const needsFetch = ["VWAP", "Fibonacci", "Continuation Patterns", "Swing Detector"];
-
-          // ✅ NOTA: Double Top/Bottom NO está en needsFetch porque se carga cuando las velas están disponibles
-          // Se hace en onHistoricalCandlesLoaded() para garantizar que tenga las velas
-
-          if (needsFetch.includes(name) && indicator.fetchData) {
-            log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
-
-            indicator.fetchData().then(() => {
-              log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
-              if (this.requestRedraw) {
-                this.requestRedraw();
-              }
-            }).catch(err => {
-              log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
-            });
-          } else if (name === "Double Top/Bottom") {
-            // DBT espera a que las velas estén disponibles
-            log.debug(`[${this.symbol}] 🕐 DBT habilitado - esperando velas históricas para análisis inicial`);
-          }
-        }
+        }).catch(err => {
+          log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+        });
       }
     }
   }
