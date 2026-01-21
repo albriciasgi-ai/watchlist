@@ -1433,6 +1433,12 @@ const handleSymbolHover = (sym) => {
 **Datos desactualizados:**
 - POST /api/clear-cache en backend correspondiente
 
+**Modal VWAP opciones avanzadas no se expande:**
+- Fix aplicado (Enero 2026): La condicion `showAdvanced && showBands && bandMultipliers` impedia mostrar contenido
+- Solucion: Separar condicion - `showAdvanced` para mostrar panel, `showBands && bandMultipliers` solo para multiplicadores
+- Archivo: `4.Analizador cripto/frontend/src/components/VWAPSettings.jsx`
+- CSS: Aumentar `max-height` de 70vh a 85vh en `VWAPSettings.css`
+
 **Carga muy lenta de graficos:**
 - Reducir `days` en swing_config.json
 - Verificar que no hay requests de 30+ dias en timeframe 1m
