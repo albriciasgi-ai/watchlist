@@ -109,8 +109,17 @@ class SwingDetectorIndicator extends IndicatorBase {
       this.fetchStatus()
     ]);
 
-    // Start polling for updates
-    this._startPolling();
+    // 🚀 NO iniciar polling aquí - se iniciará después de carga completa
+    // via startPollingIfReady() llamado desde IndicatorManager
+  }
+
+  /**
+   * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
+   */
+  startPollingIfReady() {
+    if (!this._pollingInterval && this.enabled && this.config.enabled) {
+      this._startPolling();
+    }
   }
 
   /**

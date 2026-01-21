@@ -1113,6 +1113,18 @@ class IndicatorManager {
   }
 
   /**
+   * 🚀 Inicia polling en todos los indicadores después de carga completa
+   */
+  startAllPolling() {
+    this.indicators.forEach(indicator => {
+      if (indicator.startPollingIfReady) {
+        indicator.startPollingIfReady();
+      }
+    });
+    log.debug(`[${this.symbol}] 🚀 Polling iniciado para todos los indicadores`);
+  }
+
+  /**
    * 🎯 NUEVO: Convierte índice numérico a etiqueta alfabética
    * 0 -> A, 1 -> B, ..., 25 -> Z, 26 -> AA, 27 -> AB, etc.
    */

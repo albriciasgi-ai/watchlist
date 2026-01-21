@@ -75,6 +75,15 @@ class VWAPIndicator extends IndicatorBase {
     }, this.fetchIntervalMs);
   }
 
+  /**
+   * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
+   */
+  startPollingIfReady() {
+    if (!this._pollingInterval && this.enabled && !this._destroyed) {
+      this._startPolling();
+    }
+  }
+
   _getFetchIntervalForTimeframe(interval) {
     const intervalMs = {
       '1': 60 * 1000,
@@ -108,9 +117,7 @@ class VWAPIndicator extends IndicatorBase {
           this.dataMap.set(point.timestamp, point);
         });
         this.lastFetchTime = Date.now();
-        if (!this._pollingInterval) {
-          this._startPolling();
-        }
+        // 🚀 NO iniciar polling aquí - se iniciará después de carga completa
         log.debug(`[${this.symbol}] ✅ VWAP from cache: ${cached.length} points`);
         return true;
       }
@@ -147,11 +154,7 @@ class VWAPIndicator extends IndicatorBase {
         // Guardar en cache
         IndicatorCache.set('vwap', this.symbol, this.interval, json.data, cacheParams);
 
-        // 🚀 Start polling only on first successful fetch
-        if (!this._pollingInterval) {
-          this._startPolling();
-        }
-
+        // 🚀 NO iniciar polling aquí - se iniciará después de carga completa
         log.debug(`[${this.symbol}] ✅ VWAP loaded: ${json.data.length} points (${this.vwapType}, ${this.days} days, interval=${this.interval})`);
         return true;
       } else {

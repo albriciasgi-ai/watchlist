@@ -1188,6 +1188,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         if (onChartLoaded && indicatorManagerRef.current) {
           // Esperar a que el IndicatorManager refresque los indicadores
           indicatorManagerRef.current.refresh().then(() => {
+            // 🚀 Iniciar polling DESPUÉS de carga completa (optimización)
+            if (indicatorManagerRef.current.startAllPolling) {
+              indicatorManagerRef.current.startAllPolling();
+            }
             onChartLoaded();
           }).catch(() => {
             // Si falla el refresh, notificar de todas formas
@@ -2165,7 +2169,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // Refrescar indicadores (VWAP, etc.) para que tengan datos actualizados
       if (indicatorManagerRef.current) {
         // 🚀 OPTIMIZACIÓN: Restaurar indicadores desde cache o refetch
-        indicatorManagerRef.current.refresh();
+        indicatorManagerRef.current.refresh().then(() => {
+          // Reiniciar polling después de refrescar (se pausó cuando no era visible)
+          if (indicatorManagerRef.current && indicatorManagerRef.current.startAllPolling) {
+            indicatorManagerRef.current.startAllPolling();
+          }
+        });
       }
     } else if (!isVisible && wsSubscribedRef.current) {
       // Chart no visible - desuscribir de WebSocket para ahorrar recursos
