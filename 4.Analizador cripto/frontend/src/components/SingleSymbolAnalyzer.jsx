@@ -584,6 +584,8 @@ const SingleSymbolAnalyzer = () => {
         <SymbolList
           currentSymbol={symbol}
           onSymbolSelect={handleSymbolChange}
+          interval={interval}
+          days={parseInt(days)}
         />
       </div>
 

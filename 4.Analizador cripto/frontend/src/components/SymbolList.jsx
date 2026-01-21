@@ -1,6 +1,7 @@
 // src/components/SymbolList.jsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { API_BASE_URL } from '../config';
+import CandleCache from '../utils/CandleCache';
 
 // Monedas por defecto
 const DEFAULT_SYMBOLS = [
@@ -26,8 +27,9 @@ const DEFAULT_WIDTH = 280;
  * - Agregar/eliminar monedas personalizadas
  * - Expandir/colapsar panel
  * - Redimensionar arrastrando el borde
+ * - 🚀 Prefetch en hover: precarga datos cuando el usuario pasa el mouse
  */
-const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
+const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem(COLLAPSED_KEY);
     return saved === 'true';
@@ -61,6 +63,65 @@ const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
 
   const listRef = useRef(null);
   const inputRef = useRef(null);
+  const prefetchTimeoutRef = useRef(null);
+  const prefetchedSymbolsRef = useRef(new Set());
+
+  // 🚀 Prefetch: precarga velas históricas cuando el usuario hace hover
+  const prefetchSymbolData = useCallback(async (sym) => {
+    // Skip si ya está en cache o es el símbolo actual
+    if (sym === currentSymbol) return;
+    if (prefetchedSymbolsRef.current.has(`${sym}_${interval}`)) return;
+
+    // Verificar si ya está en cache
+    const cached = await CandleCache.get(sym, interval);
+    if (cached && cached.candles && cached.candles.length > 0) {
+      prefetchedSymbolsRef.current.add(`${sym}_${interval}`);
+      console.log(`[Prefetch] ${sym}@${interval} - ya en cache (${cached.candles.length} velas)`);
+      return;
+    }
+
+    try {
+      console.log(`[Prefetch] ${sym}@${interval} - precargando...`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/historical/${sym}?interval=${interval}&days=${days}`
+      );
+      const data = await response.json();
+
+      if (data.success && data.candles && data.candles.length > 0) {
+        await CandleCache.set(sym, interval, data.candles);
+        prefetchedSymbolsRef.current.add(`${sym}_${interval}`);
+        console.log(`[Prefetch] ${sym}@${interval} - precargado (${data.candles.length} velas)`);
+      }
+    } catch (error) {
+      console.warn(`[Prefetch] ${sym}@${interval} - error:`, error);
+    }
+  }, [currentSymbol, interval, days]);
+
+  // Handler para hover con debounce de 300ms
+  const handleSymbolHover = useCallback((sym) => {
+    // Cancelar prefetch anterior
+    if (prefetchTimeoutRef.current) {
+      clearTimeout(prefetchTimeoutRef.current);
+    }
+
+    // Iniciar nuevo prefetch con delay
+    prefetchTimeoutRef.current = setTimeout(() => {
+      prefetchSymbolData(sym);
+    }, 300);
+  }, [prefetchSymbolData]);
+
+  // Cancelar prefetch al salir
+  const handleSymbolLeave = useCallback(() => {
+    if (prefetchTimeoutRef.current) {
+      clearTimeout(prefetchTimeoutRef.current);
+      prefetchTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Limpiar prefetched cuando cambia el interval
+  useEffect(() => {
+    prefetchedSymbolsRef.current.clear();
+  }, [interval]);
 
   // Guardar lista en localStorage cuando cambia
   useEffect(() => {
@@ -379,6 +440,8 @@ const SymbolList = ({ currentSymbol, onSymbolSelect }) => {
               key={sym}
               className={`symbol-item ${isSelected ? 'selected' : ''} ${index === selectedIndex ? 'keyboard-selected' : ''}`}
               onClick={() => onSymbolSelect(sym)}
+              onMouseEnter={() => handleSymbolHover(sym)}
+              onMouseLeave={handleSymbolLeave}
             >
               <span className="symbol-name">{sym.replace('USDT', '')}</span>
               <span className={`price-change ${changeClass}`}>
