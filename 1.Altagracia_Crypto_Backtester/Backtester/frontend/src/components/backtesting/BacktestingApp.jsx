@@ -12,6 +12,7 @@ import VolumeProfileSettings from '../VolumeProfileSettings';
 import RangeDetectionSettings from '../RangeDetectionSettings';
 import RejectionPatternSettings from '../RejectionPatternSettings';
 import SupportResistanceSettings from '../SupportResistanceSettings';
+import SupportResistance2Settings from '../SupportResistance2Settings';
 import VWAPSettings from '../VWAPSettings';
 import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
 import SwingDetectorSettings from '../SwingDetectorSettings';
@@ -44,7 +45,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true,
+        "Support & Resistance": false,
+        "S&R v2": true,
         "Swing Detector": false
       },
       vpConfig: {
@@ -69,7 +71,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true,
+        "Support & Resistance": false,
+        "S&R v2": true,
         "Swing Detector": false
       },
       vpConfig: {
@@ -94,7 +97,8 @@ const BacktestingApp = () => {
         "Range Detection": true,
         "Rejection Patterns": false,
         "Double Top/Bottom": false,
-        "Support & Resistance": true,
+        "Support & Resistance": false,
+        "S&R v2": true,
         "Swing Detector": false
       },
       vpConfig: {
@@ -133,7 +137,8 @@ const BacktestingApp = () => {
     "Range Detection": true,
     "Rejection Patterns": false,  // Opcional (requiere configuración)
     "Double Top/Bottom": false,  // Nuevo indicador
-    "Support & Resistance": true
+    "Support & Resistance": false,
+    "S&R v2": true  // S&R basado en Swing Points (más preciso)
   });
 
   // 🎯 Estados para modales de configuración de indicadores
@@ -141,6 +146,7 @@ const BacktestingApp = () => {
   const [showRangeDetectionSettings, setShowRangeDetectionSettings] = useState(false);
   const [showRejectionPatternSettings, setShowRejectionPatternSettings] = useState(false);
   const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
+  const [showSupportResistance2Settings, setShowSupportResistance2Settings] = useState(false);
   const [showVWAPSettings, setShowVWAPSettings] = useState(false);
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
@@ -1574,6 +1580,7 @@ const BacktestingApp = () => {
                     'Range Detection': () => setShowRangeDetectionSettings(true),
                     'Rejection Patterns': () => setShowRejectionPatternSettings(true),
                     'Support & Resistance': () => setShowSupportResistanceSettings(true),
+                    'S&R v2': () => setShowSupportResistance2Settings(true),
                     'VWAP': () => setShowVWAPSettings(true),
                     'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true),
                     'Swing Detector': () => setShowSwingDetectorSettings(true)
@@ -1986,6 +1993,14 @@ const BacktestingApp = () => {
           symbol={symbol}
           indicatorManager={indicatorManagerRef.current}
           onClose={() => setShowSupportResistanceSettings(false)}
+        />
+      )}
+
+      {showSupportResistance2Settings && indicatorManagerRef.current && (
+        <SupportResistance2Settings
+          symbol={symbol}
+          indicatorManager={indicatorManagerRef.current}
+          onClose={() => setShowSupportResistance2Settings(false)}
         />
       )}
 

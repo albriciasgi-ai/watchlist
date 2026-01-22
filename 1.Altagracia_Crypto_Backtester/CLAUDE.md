@@ -49,7 +49,9 @@ npm install && npm run dev
 │   │   │   ├── IndicatorManager.js  # Orquestador (~56KB)
 │   │   │   ├── DoubleTopBottomIndicator.js  # DTB (~96KB) ⭐
 │   │   │   ├── RejectionPatternIndicator.js # Rejection (~114KB)
+│   │   │   ├── SupportResistance2Indicator.js # S&R v2 basado en Swing Points ⭐
 │   │   │   └── ... (otros indicadores)
+│   │   ├── SupportResistance2Settings.jsx # Modal config S&R v2
 │   │   ├── MiniChart.jsx            # Gráfico con indicadores (~92KB)
 │   │   └── Watchlist.jsx            # Watchlist (~13KB)
 │   └── dist/                        # Build producción
@@ -697,6 +699,88 @@ getDefaultConfig() {
   };
 }
 ```
+
+---
+
+# ⭐ INDICADOR S&R v2 (Support & Resistance basado en Swing Points)
+
+Sistema de detección de soportes y resistencias más preciso que el original, basado en Swing Points con clustering.
+
+## Archivos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `SupportResistance2Indicator.js` | Indicador principal (~750 líneas) |
+| `SupportResistance2Settings.jsx` | Modal de configuración |
+
+## Algoritmo
+
+```
+1. DETECCIÓN DE SWING POINTS
+   - Swing High: máximo local confirmado (N barras a cada lado más bajas)
+   - Swing Low: mínimo local confirmado (N barras a cada lado más altas)
+   - Parámetro: swingBars (default: 5)
+
+2. FILTRO POR RANGO DE PRECIO
+   - Solo busca niveles dentro de ±priceRangePct% del precio actual
+   - Parámetro: priceRangePct (default: 10%)
+
+3. CLUSTERING
+   - Agrupa swings cercanos en precio
+   - Parámetro: clusterDistancePct (default: 0.3%)
+
+4. CÁLCULO DE STRENGTH
+   - strength = (touches × 2) + volumeBonus + recencyBonus
+   - volumeBonus: 0-3 puntos según z-score del volumen
+   - recencyBonus: 0-3 puntos según qué tan reciente es el nivel
+
+5. CLASIFICACIÓN ACTIVO/ROTO
+   - Activo: precio no ha cruzado el nivel recientemente
+   - Roto: precio cruzó el nivel en las últimas N velas
+```
+
+## Parámetros de Configuración
+
+| Parámetro | Default | Descripción |
+|-----------|---------|-------------|
+| `swingBars` | 5 | Velas a cada lado para confirmar swing (2-15) |
+| `priceRangePct` | 10.0 | % arriba/abajo del precio actual para buscar niveles |
+| `clusterDistancePct` | 0.3 | % máximo de distancia para agrupar swings |
+| `minTouches` | 1 | Toques mínimos para considerar nivel válido |
+| `maxLevels` | 5 | Máximo niveles por lado (resistencias/soportes) |
+| `minVolumeZScore` | 0 | Filtro de volumen (0 = sin filtro) |
+| `volumeLookbackBars` | 50 | Velas para calcular z-score de volumen |
+
+## Visualización
+
+- **Líneas rojas**: Resistencias (niveles arriba del precio actual)
+- **Líneas verdes**: Soportes (niveles debajo del precio actual)
+- **Líneas sólidas**: Niveles activos (no rotos)
+- **Líneas punteadas**: Niveles rotos recientemente
+- **Etiquetas**: Lado izquierdo, formato `R1: $price (Nt, S★)`
+
+## Diferencias con S&R Original
+
+| Aspecto | S&R Original | S&R v2 |
+|---------|--------------|--------|
+| Método | Pivots simples | Swing Points confirmados |
+| Filtro de precio | No | Sí (±priceRangePct%) |
+| Clustering | Básico | Avanzado con distancia % |
+| Strength | touches × 2 | touches + volume + recency |
+| Clasificación | Activo/Roto | Activo/Roto con detección reciente |
+
+## Uso en Backtesting
+
+El indicador se sincroniza con el playback:
+- `updatePlaybackDate(timestamp)`: Actualiza el tiempo de referencia
+- Recalcula niveles cuando cambia el precio de referencia
+- Invalida caché automáticamente al cambiar parámetros
+
+## Caché
+
+- **IndexedDB**: Almacena swings detectados para evitar recálculos
+- **Memoria**: `_cachedRawLevels` para acceso rápido
+- **Invalidación**: Automática al cambiar parámetros o precio de referencia (>2%)
 
 ---
 

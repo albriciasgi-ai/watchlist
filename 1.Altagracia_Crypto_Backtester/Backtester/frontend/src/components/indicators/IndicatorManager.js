@@ -11,6 +11,7 @@ import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
 import RejectionPatternIndicator from "./RejectionPatternIndicator";
 import SupportResistanceIndicator from "./SupportResistanceIndicator";
+import SupportResistance2Indicator from "./SupportResistance2Indicator";
 import OpenInterestIndicator from "./OpenInterestIndicator";
 import VWAPIndicator from "./VWAPIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
@@ -33,6 +34,9 @@ class IndicatorManager {
     // 📊 NUEVO: Support & Resistance Indicator
     this.supportResistanceIndicator = null; // Indicador de S/R (solo si está habilitado)
 
+    // 📊 NUEVO: Support & Resistance v2 (Swing Points Based)
+    this.supportResistance2Indicator = null;
+
     // 📊 NUEVO: Open Interest Indicator
     this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
 
@@ -47,6 +51,9 @@ class IndicatorManager {
     // Crear el indicador de S/R
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
 
+    // Crear el indicador de S/R v2 (Swing Points Based)
+    this.supportResistance2Indicator = new SupportResistance2Indicator(this.symbol, this.interval, this.days);
+
     // Crear el indicador de Open Interest
     this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
 
@@ -58,6 +65,7 @@ class IndicatorManager {
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
       new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       this.supportResistanceIndicator,
+      this.supportResistance2Indicator,
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       new SwingDetectorIndicator(this.symbol, this.interval, this.days) // 🎯 Swing High/Low
     ];
@@ -348,9 +356,15 @@ class IndicatorManager {
    * @param {number} timestamp - Timestamp actual del playback
    */
   updateSRPlaybackTime(timestamp) {
+    // S&R v1
     const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
     if (srIndicator && srIndicator.updatePlaybackDate) {
       srIndicator.updatePlaybackDate(timestamp);
+    }
+    // S&R v2
+    const sr2Indicator = this.indicators.find(ind => ind.name === "S&R v2");
+    if (sr2Indicator && sr2Indicator.updatePlaybackDate) {
+      sr2Indicator.updatePlaybackDate(timestamp);
     }
   }
 
@@ -418,6 +432,11 @@ class IndicatorManager {
       const srInd = this.indicators.find(i => i.name === "Support & Resistance");
       if (srInd) {
         console.log(`[${this.symbol}] 📊 S&R Status: enabled=${srInd.enabled}, resistances=${srInd.resistances?.length || 0}, supports=${srInd.supports?.length || 0}`);
+      }
+      // 🔍 DEBUG: S&R v2
+      const sr2Ind = this.indicators.find(i => i.name === "S&R v2");
+      if (sr2Ind) {
+        console.log(`[${this.symbol}] 📊 S&R v2 Status: enabled=${sr2Ind.enabled}, resistances=${sr2Ind.resistances?.length || 0}, supports=${sr2Ind.supports?.length || 0}`);
       }
       this._overlayLogged = true;
     }
