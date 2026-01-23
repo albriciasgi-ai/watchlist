@@ -70,7 +70,8 @@
       "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\frontend\\package.json\")",
       "Bash(echo:*)",
       "Bash(touch:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

@@ -51,6 +51,157 @@ class SupportResistanceIndicator extends IndicatorBase {
     this._renderLoggedOnce = false;
     this._noDataLoggedOnce = false;
     this._fallbackLoggedOnce = false;
+
+    // 🎯 NUEVO: Caché en IndexedDB
+    this._dbName = 'SupportResistanceCache';
+    this._storeName = 'levels';
+    this._dbVersion = 1;
+    this._cachedRawLevels = null; // Niveles sin filtrar por activo/roto
+  }
+
+  // ==================== IndexedDB Cache Methods ====================
+
+  /**
+   * Abre conexión a IndexedDB
+   */
+  async _openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(this._dbName, this._dbVersion);
+
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(this._storeName)) {
+          db.createObjectStore(this._storeName, { keyPath: 'key' });
+        }
+      };
+    });
+  }
+
+  /**
+   * Genera la clave de caché basada en símbolo, intervalo y parámetros
+   */
+  _getCacheKey() {
+    return `sr_${this.symbol}_${this.interval}`;
+  }
+
+  /**
+   * Genera un hash de los parámetros de cálculo
+   */
+  _getParamsHash() {
+    return JSON.stringify({
+      leftBars: this.leftBars,
+      rightBars: this.rightBars,
+      minTouches: this.minTouches,
+      clusterDistance: this.clusterDistance
+    });
+  }
+
+  /**
+   * Guarda niveles calculados en IndexedDB
+   */
+  async _saveLevelsToCache(resistances, supports, candlesLength) {
+    try {
+      const db = await this._openDB();
+      const transaction = db.transaction([this._storeName], 'readwrite');
+      const store = transaction.objectStore(this._storeName);
+
+      const cacheData = {
+        key: this._getCacheKey(),
+        paramsHash: this._getParamsHash(),
+        candlesLength: candlesLength,
+        resistances: resistances,
+        supports: supports,
+        calculatedAt: Date.now()
+      };
+
+      store.put(cacheData);
+
+      await new Promise((resolve, reject) => {
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+
+      console.log(`[${this.symbol}] 💾 S&R: Caché guardado en IndexedDB (${resistances.length} R, ${supports.length} S)`);
+      db.close();
+    } catch (error) {
+      console.warn(`[${this.symbol}] ⚠️ S&R: Error guardando en IndexedDB:`, error);
+    }
+  }
+
+  /**
+   * Carga niveles desde IndexedDB si el caché es válido
+   * @returns {object|null} - { resistances, supports } o null si no hay caché válido
+   */
+  async _loadLevelsFromCache(candlesLength) {
+    try {
+      const db = await this._openDB();
+      const transaction = db.transaction([this._storeName], 'readonly');
+      const store = transaction.objectStore(this._storeName);
+      const request = store.get(this._getCacheKey());
+
+      const result = await new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      db.close();
+
+      if (!result) {
+        console.log(`[${this.symbol}] 📭 S&R: No hay caché en IndexedDB`);
+        return null;
+      }
+
+      // Verificar si los parámetros coinciden
+      if (result.paramsHash !== this._getParamsHash()) {
+        console.log(`[${this.symbol}] 🔄 S&R: Parámetros cambiaron, invalidando caché`);
+        return null;
+      }
+
+      // Verificar si la cantidad de velas es compatible (permite pequeñas diferencias)
+      const lengthDiff = Math.abs(result.candlesLength - candlesLength);
+      const maxAllowedDiff = Math.max(10, candlesLength * 0.01); // 1% o mínimo 10 velas
+
+      if (lengthDiff > maxAllowedDiff) {
+        console.log(`[${this.symbol}] 🔄 S&R: Cantidad de velas cambió significativamente (${result.candlesLength} → ${candlesLength}), invalidando caché`);
+        return null;
+      }
+
+      const ageMinutes = ((Date.now() - result.calculatedAt) / 1000 / 60).toFixed(1);
+      console.log(`[${this.symbol}] ✅ S&R: Usando caché de IndexedDB (edad: ${ageMinutes} min, ${result.resistances.length} R, ${result.supports.length} S)`);
+
+      return {
+        resistances: result.resistances,
+        supports: result.supports
+      };
+    } catch (error) {
+      console.warn(`[${this.symbol}] ⚠️ S&R: Error leyendo IndexedDB:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Invalida el caché (llamar cuando cambian parámetros)
+   */
+  async _invalidateCache() {
+    try {
+      const db = await this._openDB();
+      const transaction = db.transaction([this._storeName], 'readwrite');
+      const store = transaction.objectStore(this._storeName);
+      store.delete(this._getCacheKey());
+
+      await new Promise((resolve, reject) => {
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+
+      console.log(`[${this.symbol}] 🗑️ S&R: Caché invalidado`);
+      db.close();
+    } catch (error) {
+      console.warn(`[${this.symbol}] ⚠️ S&R: Error invalidando caché:`, error);
+    }
   }
 
   /**
@@ -133,17 +284,13 @@ class SupportResistanceIndicator extends IndicatorBase {
   }
 
   /**
-   * 🎯 NUEVO: Calcula S&R localmente a partir de las velas (para backtesting)
-   * @param {Array} candles - Array de velas con formato {timestamp, open, high, low, close, volume}
+   * 🎯 PARTE 1: Cálculo PESADO de niveles (pivots + clustering + filtro toques)
+   * Esto es lo que se cachea en IndexedDB
+   * @param {Array} candles - Array de velas
+   * @returns {object} - { resistances, supports } sin clasificar activo/roto
    */
-  calculateFromCandles(candles) {
-    if (!candles || candles.length < this.leftBars + this.rightBars + 1) {
-      console.warn(`[${this.symbol}] S&R calculateFromCandles: No hay suficientes velas (${candles?.length || 0})`);
-      return;
-    }
-
-    console.log(`[${this.symbol}] 📊 S&R: Calculando localmente con ${candles.length} velas...`);
-    console.log(`[${this.symbol}] 📊 S&R PARAMS: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches}, clusterDistance=${this.clusterDistance}, maxLevels=${this.maxLevels}`);
+  _calculateRawLevels(candles) {
+    const startTime = Date.now();
 
     // 1. Encontrar pivots (máximos y mínimos locales)
     const pivotHighs = [];
@@ -187,13 +334,10 @@ class SupportResistanceIndicator extends IndicatorBase {
       }
     }
 
-    console.log(`[${this.symbol}] S&R: Encontrados ${pivotHighs.length} pivot highs, ${pivotLows.length} pivot lows`);
-
     // 2. Agrupar pivots cercanos (clustering)
     const clusterPivots = (pivots, type) => {
       if (pivots.length === 0) return [];
 
-      // Ordenar por precio
       const sorted = [...pivots].sort((a, b) => a.price - b.price);
       const clusters = [];
       let currentCluster = [sorted[0]];
@@ -210,7 +354,6 @@ class SupportResistanceIndicator extends IndicatorBase {
       }
       clusters.push(currentCluster);
 
-      // Convertir clusters a niveles
       return clusters.map(cluster => {
         const avgPrice = cluster.reduce((sum, p) => sum + p.price, 0) / cluster.length;
         const totalVolume = cluster.reduce((sum, p) => sum + p.volume, 0);
@@ -220,55 +363,59 @@ class SupportResistanceIndicator extends IndicatorBase {
           price: avgPrice,
           touches: touches,
           strength: Math.min(10, touches * 2 + (totalVolume > 0 ? 2 : 0)),
-          status: 'active',
           type: type
         };
       });
     };
 
-    // 3. Crear niveles de resistencia y soporte
+    // 3. Crear niveles
     let resistances = clusterPivots(pivotHighs, 'resistance');
     let supports = clusterPivots(pivotLows, 'support');
-    console.log(`[${this.symbol}] S&R: Clusters creados: ${resistances.length} resistances, ${supports.length} supports`);
 
     // 4. Filtrar por toques mínimos
-    const beforeFilterR = resistances.length;
-    const beforeFilterS = supports.length;
     resistances = resistances.filter(r => r.touches >= this.minTouches);
     supports = supports.filter(s => s.touches >= this.minTouches);
-    console.log(`[${this.symbol}] S&R: Después de filtro minTouches=${this.minTouches}: ${resistances.length}/${beforeFilterR} resistances, ${supports.length}/${beforeFilterS} supports`);
 
-    // 5. Actualizar precio actual ANTES de filtrar por proximidad
+    const duration = Date.now() - startTime;
+    console.log(`[${this.symbol}] 📊 S&R: Cálculo pesado completado en ${duration}ms (${resistances.length} R, ${supports.length} S de ${candles.length} velas)`);
+
+    return { resistances, supports };
+  }
+
+  /**
+   * 🎯 PARTE 2: Clasificación RÁPIDA de niveles (activo/roto según precio actual)
+   * Esto se ejecuta cada vez, es muy rápido
+   * @param {object} rawLevels - { resistances, supports } sin clasificar
+   * @param {Array} candles - Velas para determinar precio actual y niveles rotos
+   */
+  _classifyLevels(rawLevels, candles) {
+    const { resistances, supports } = rawLevels;
+
+    // Precio actual
     const lastCandle = candles[candles.length - 1];
     this.currentPrice = lastCandle.close;
 
-    // 6. 🎯 Detectar niveles "rotos" - el precio pasó por ahí recientemente
-    // Usamos las últimas N velas para determinar si un nivel fue roto
-    const recentBarsForBreak = Math.min(50, Math.floor(candles.length * 0.1)); // 10% de las velas o máx 50
+    // Determinar niveles rotos (precio pasó recientemente)
+    const recentBarsForBreak = Math.min(50, Math.floor(candles.length * 0.1));
     const recentCandles = candles.slice(-recentBarsForBreak);
     const recentHigh = Math.max(...recentCandles.map(c => c.high));
     const recentLow = Math.min(...recentCandles.map(c => c.low));
 
-    // 7. Clasificar resistencias: activas vs rotas
-    // Una resistencia está "rota" si el precio reciente la superó (pasó por encima)
-    const classifyResistance = (r) => {
-      const isBroken = recentHigh > r.price; // El precio pasó por encima
-      const isAbovePrice = r.price > this.currentPrice; // Está por encima del precio actual
-      return { ...r, isBroken, isAbovePrice };
-    };
+    // Clasificar resistencias
+    const classifiedResistances = resistances.map(r => ({
+      ...r,
+      isBroken: recentHigh > r.price,
+      isAbovePrice: r.price > this.currentPrice
+    }));
 
-    // Una soporte está "roto" si el precio reciente lo perforó (pasó por debajo)
-    const classifySupport = (s) => {
-      const isBroken = recentLow < s.price; // El precio pasó por debajo
-      const isBelowPrice = s.price < this.currentPrice; // Está por debajo del precio actual
-      return { ...s, isBroken, isBelowPrice };
-    };
+    // Clasificar soportes
+    const classifiedSupports = supports.map(s => ({
+      ...s,
+      isBroken: recentLow < s.price,
+      isBelowPrice: s.price < this.currentPrice
+    }));
 
-    // Clasificar todos los niveles
-    const classifiedResistances = resistances.map(classifyResistance);
-    const classifiedSupports = supports.map(classifySupport);
-
-    // 8. Separar niveles activos (no rotos, por encima/debajo del precio) de los rotos
+    // Separar y ordenar por proximidad
     const activeResistances = classifiedResistances
       .filter(r => r.isAbovePrice && !r.isBroken)
       .map(r => ({ ...r, distanceToPrice: r.price - this.currentPrice }))
@@ -289,47 +436,67 @@ class SupportResistanceIndicator extends IndicatorBase {
       .map(s => ({ ...s, distanceToPrice: this.currentPrice - s.price }))
       .sort((a, b) => a.distanceToPrice - b.distanceToPrice);
 
-    console.log(`[${this.symbol}] S&R: Clasificación - R activas: ${activeResistances.length}, R rotas: ${brokenResistances.length}, S activos: ${activeSupports.length}, S rotos: ${brokenSupports.length}`);
+    // Limitar y combinar
+    const finalResistances = [
+      ...activeResistances.slice(0, this.maxLevels).map(r => ({ ...r, status: 'active' })),
+      ...brokenResistances.slice(0, this.maxLevels).map(r => ({ ...r, status: 'broken' }))
+    ];
 
-    // 9. 🎯 Solo los niveles ACTIVOS cuentan para maxLevels
-    // Los rotos se muestran adicionales (máximo igual cantidad que activos)
-    const finalActiveResistances = activeResistances
-      .slice(0, this.maxLevels)
-      .map(r => ({ ...r, status: 'active' }));
+    const finalSupports = [
+      ...activeSupports.slice(0, this.maxLevels).map(s => ({ ...s, status: 'active' })),
+      ...brokenSupports.slice(0, this.maxLevels).map(s => ({ ...s, status: 'broken' }))
+    ];
 
-    const finalBrokenResistances = brokenResistances
-      .slice(0, this.maxLevels) // Mostrar hasta maxLevels rotos también
-      .map(r => ({ ...r, status: 'broken' }));
+    // Guardar resultados
+    this.resistances = finalResistances;
+    this.supports = finalSupports;
+    this.consolidationZones = [];
+  }
 
-    const finalActiveSupports = activeSupports
-      .slice(0, this.maxLevels)
-      .map(s => ({ ...s, status: 'active' }));
-
-    const finalBrokenSupports = brokenSupports
-      .slice(0, this.maxLevels) // Mostrar hasta maxLevels rotos también
-      .map(s => ({ ...s, status: 'broken' }));
-
-    // Combinar activos y rotos
-    resistances = [...finalActiveResistances, ...finalBrokenResistances];
-    supports = [...finalActiveSupports, ...finalBrokenSupports];
-
-    console.log(`[${this.symbol}] S&R: Niveles finales - ${finalActiveResistances.length} R activas, ${finalBrokenResistances.length} R rotas, ${finalActiveSupports.length} S activos, ${finalBrokenSupports.length} S rotos`);
-    if (finalActiveResistances.length > 0) {
-      console.log(`[${this.symbol}] S&R: Resistencias activas: ${finalActiveResistances.slice(0, 3).map(r => `$${r.price.toFixed(2)}`).join(', ')}`);
-    }
-    if (finalActiveSupports.length > 0) {
-      console.log(`[${this.symbol}] S&R: Soportes activos: ${finalActiveSupports.slice(0, 3).map(s => `$${s.price.toFixed(2)}`).join(', ')}`);
+  /**
+   * 🎯 NUEVO: Calcula S&R con soporte de caché IndexedDB
+   * @param {Array} candles - Array de velas con formato {timestamp, open, high, low, close, volume}
+   */
+  async calculateFromCandles(candles) {
+    if (!candles || candles.length < this.leftBars + this.rightBars + 1) {
+      console.warn(`[${this.symbol}] S&R calculateFromCandles: No hay suficientes velas (${candles?.length || 0})`);
+      return;
     }
 
-    // 10. Guardar resultados
-    this.resistances = resistances;
-    this.supports = supports;
-    this.consolidationZones = []; // Simplificado - no calculamos zonas por ahora
+    console.log(`[${this.symbol}] 📊 S&R: Procesando ${candles.length} velas (params: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches})`);
+
+    let rawLevels = null;
+
+    // 1. Intentar cargar desde caché
+    if (!this._cachedRawLevels) {
+      const cached = await this._loadLevelsFromCache(candles.length);
+      if (cached) {
+        rawLevels = cached;
+        this._cachedRawLevels = cached;
+      }
+    } else {
+      // Ya tenemos caché en memoria
+      rawLevels = this._cachedRawLevels;
+      console.log(`[${this.symbol}] ⚡ S&R: Usando caché en memoria`);
+    }
+
+    // 2. Si no hay caché válido, calcular
+    if (!rawLevels) {
+      console.log(`[${this.symbol}] 🔄 S&R: Calculando niveles (sin caché)...`);
+      rawLevels = this._calculateRawLevels(candles);
+      this._cachedRawLevels = rawLevels;
+
+      // Guardar en IndexedDB (async, no bloqueante)
+      this._saveLevelsToCache(rawLevels.resistances, rawLevels.supports, candles.length);
+    }
+
+    // 3. Clasificar según precio actual (siempre se ejecuta, es rápido)
+    this._classifyLevels(rawLevels, candles);
 
     this._lastCalculatedLength = candles.length;
     this._calculationValid = true;
 
-    console.log(`[${this.symbol}] ✅ S&R Local: ${this.resistances.length} R, ${this.supports.length} S (${candles.length} velas analizadas)`);
+    console.log(`[${this.symbol}] ✅ S&R: ${this.resistances.length} R, ${this.supports.length} S (precio actual: $${this.currentPrice.toFixed(2)})`);
   }
 
   /**
@@ -677,6 +844,11 @@ class SupportResistanceIndicator extends IndicatorBase {
       console.log(`[${this.symbol}] S&R: Config changed, invalidating cache for recalculation. _calculationValid = false`);
       this._calculationValid = false;
       this._renderLoggedOnce = false; // Reset log flag para mostrar nuevo cálculo
+
+      // 🎯 NUEVO: Invalidar caché en memoria e IndexedDB
+      this._cachedRawLevels = null;
+      this._invalidateCache(); // Async, no bloqueante
+
       // NO limpiar los datos aquí - dejar que renderOverlay los recalcule
       // Esto evita que desaparezcan mientras esperamos el siguiente render
     }

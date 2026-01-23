@@ -1,0 +1,460 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ ✅ [11:00:31 a. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [BTCUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ ✅ [11:00:31 a. m.] [VWAP] [BTCUSDT] Config changed (vwapType=rolling), refetching...
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (1447 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1447 velas (esperadas: ~1440, ratio: 100.5%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 10:58:00 a.m. (1447 velas en cache)
+ [IndicatorCache] 💾 sr2@BTCUSDT desde IndexedDB
+ [BTCUSDT] S&R v2 from cache: 1R, 2S
+ [IndicatorCache] 💾 sr2@BTCUSDT desde IndexedDB
+ [BTCUSDT] S&R v2 from cache: 1R, 2S
+ [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [CandleCache] 🔄 Merge: 1447 cached + 2 new = 1448 total
+ [BTCUSDT] ✅ Incremental: +2 velas nuevas = 1448 total
+ [BTCUSDT] ✅ Histórico final: 1448 velas
+ [BTCUSDT] S&R v2 renderOverlay: Object
+ [IndicatorCache] 💾 sr2@BTCUSDT desde memoria
+ [BTCUSDT] S&R v2 from cache: 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1448 velas, memoria: 1/4)
+ ✅ [11:00:43 a. m.] [SingleSymbolAnalyzer] Backend monitoring interval: 1
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:00:47 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:00:47 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:00:47 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=false, enabled=true, destroyed=false
+ ✅ [11:00:47 a. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 60000ms)
+ ✅ [11:00:47 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+ [BTCUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ ✅ [11:00:47 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ [BTCUSDT] S&R v2 polling started (interval: 60000ms)
+ ✅ [11:00:47 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1449 velas, memoria: 1/4)
+ [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [11:01:06 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:01:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+ ✅ [11:01:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1450 velas, memoria: 1/4)
+ ✅ [11:02:02 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1441 points
+ [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:02:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1441 points
+ ✅ [11:02:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1451 velas, memoria: 1/4)
+ ✅ [11:03:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1442 points
+ [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:03:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1442 points
+ ✅ [11:03:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1451 velas, memoria: 1/4)
+ ✅ [11:04:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1443 points
+ [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [11:04:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1443 points
+ ✅ [11:04:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1451 velas, memoria: 1/4)
+ ✅ [11:05:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1444 points
+ [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1451 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1451 velas (esperadas: ~1440, ratio: 100.8%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:02:00 a.m. (1451 velas en cache)
+ [CandleCache] 🔄 Merge: 1451 cached + 3 new = 1453 total
+ [BTCUSDT] ✅ Incremental: +3 velas nuevas = 1453 total
+ [BTCUSDT] ✅ Histórico final: 1453 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:05:40 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:05:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:05:40 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:05:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:05:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:05:40 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ ✅ [11:05:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1444 points
+ ✅ [11:05:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ ✅ [11:06:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1445 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ ✅ [11:06:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1445 points
+ ✅ [11:06:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ ✅ [11:07:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1446 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ ✅ [11:08:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1447 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ ✅ [11:08:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1447 points
+ ✅ [11:08:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ ✅ [11:09:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1448 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:09:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1448 points
+ ✅ [11:09:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ ✅ [11:10:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1449 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:10:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1449 points
+ ✅ [11:10:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1453 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1453 velas (esperadas: ~1440, ratio: 100.9%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:04:00 a.m. (1453 velas en cache)
+ [CandleCache] 🔄 Merge: 1453 cached + 6 new = 1458 total
+ [BTCUSDT] ✅ Incremental: +6 velas nuevas = 1458 total
+ [BTCUSDT] ✅ Histórico final: 1458 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:10:40 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:10:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:10:40 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:10:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:10:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:10:40 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ ✅ [11:11:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1450 points
+ [BTCUSDT] SwingDetector: 165/165 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:11:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1450 points
+ ✅ [11:11:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ ✅ [11:12:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1451 points
+ [BTCUSDT] SwingDetector: 165/165 signals for interval 1 (cached)
+ ✅ [11:12:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1451 points
+ ✅ [11:12:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ ✅ [11:13:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1452 points
+ [BTCUSDT] SwingDetector: 165/165 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:13:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1452 points
+ ✅ [11:13:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ ✅ [11:14:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1453 points
+ [BTCUSDT] SwingDetector: 165/165 signals for interval 1 (cached)
+ ✅ [11:14:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1453 points
+ ✅ [11:14:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1458 velas, memoria: 1/4)
+ ✅ [11:15:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1454 points
+ [BTCUSDT] SwingDetector: 165/165 signals for interval 1 (cached)
+ ✅ [11:15:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1454 points
+ ✅ [11:15:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1458 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1458 velas (esperadas: ~1440, ratio: 101.3%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:09:00 a.m. (1458 velas en cache)
+ [CandleCache] 🔄 Merge: 1458 cached + 6 new = 1463 total
+ [BTCUSDT] ✅ Incremental: +6 velas nuevas = 1463 total
+ [BTCUSDT] ✅ Histórico final: 1463 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:15:40 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:15:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:15:40 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:15:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:15:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:15:40 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ ✅ [11:16:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1455 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:16:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1455 points
+ ✅ [11:16:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ ✅ [11:17:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1456 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:17:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1456 points
+ ✅ [11:17:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ ✅ [11:18:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1457 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:18:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1457 points
+ ✅ [11:18:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ ✅ [11:19:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1458 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:19:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1458 points
+ ✅ [11:19:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1463 velas, memoria: 1/4)
+ ✅ [11:20:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1459 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ ✅ [11:20:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1459 points
+ ✅ [11:20:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1463 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1463 velas (esperadas: ~1440, ratio: 101.6%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:14:00 a.m. (1463 velas en cache)
+ [CandleCache] 🔄 Merge: 1463 cached + 6 new = 1468 total
+ [BTCUSDT] ✅ Incremental: +6 velas nuevas = 1468 total
+ [BTCUSDT] ✅ Histórico final: 1468 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:20:41 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:20:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:20:41 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:20:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:20:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:20:41 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ ✅ [11:21:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1460 points
+ [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:21:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1460 points
+ ✅ [11:21:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ ✅ [11:22:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1461 points
+ [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:22:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1461 points
+ ✅ [11:22:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ ✅ [11:23:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1462 points
+ [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:23:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1462 points
+ ✅ [11:23:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ ✅ [11:24:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1463 points
+ [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:24:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1463 points
+ ✅ [11:24:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1468 velas, memoria: 1/4)
+ ✅ [11:25:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1464 points
+ [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:25:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1464 points
+ ✅ [11:25:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1468 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1468 velas (esperadas: ~1440, ratio: 101.9%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:19:00 a.m. (1468 velas en cache)
+ [CandleCache] 🔄 Merge: 1468 cached + 6 new = 1473 total
+ [BTCUSDT] ✅ Incremental: +6 velas nuevas = 1473 total
+ [BTCUSDT] ✅ Histórico final: 1473 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:25:42 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:25:42 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:25:42 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:25:42 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:25:42 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:25:42 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ ✅ [11:26:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1465 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:26:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1465 points
+ ✅ [11:26:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ ✅ [11:27:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1466 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ ✅ [11:27:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1466 points
+ ✅ [11:27:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ ✅ [11:28:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1467 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:28:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1467 points
+ ✅ [11:28:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ ✅ [11:29:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1468 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:29:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1468 points
+ ✅ [11:29:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1473 velas, memoria: 1/4)
+ ✅ [11:30:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1469 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:30:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1469 points
+ ✅ [11:30:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1473 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1473 velas (esperadas: ~1440, ratio: 102.3%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:24:00 a.m. (1473 velas en cache)
+ [CandleCache] 🔄 Merge: 1473 cached + 6 new = 1478 total
+ [BTCUSDT] ✅ Incremental: +6 velas nuevas = 1478 total
+ [BTCUSDT] ✅ Histórico final: 1478 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:30:40 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:30:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:30:40 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:30:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:30:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:30:40 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ ✅ [11:31:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1470 points
+ ✅ [11:31:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1470 points
+ ✅ [11:31:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ ✅ [11:32:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1471 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:32:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1471 points
+ ✅ [11:32:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ ✅ [11:33:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1472 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:33:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1472 points
+ ✅ [11:33:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ ✅ [11:34:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1473 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ ✅ [11:34:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1473 points
+ ✅ [11:34:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:34:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1473 points
+ ✅ [11:34:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+ [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1479 velas, memoria: 1/4)
+ ✅ [11:35:02 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1474 points
+ [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1479 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1479 velas (esperadas: ~1440, ratio: 102.7%)
+ [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:34:00 a.m. (1479 velas en cache)
+ [CandleCache] 🔄 Merge: 1479 cached + 1 new = 1479 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 1479 total
+ [BTCUSDT] ✅ Histórico final: 1479 velas
+ [BTCUSDT] S&R v2: Fetching from backend...
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1479 velas, memoria: 1/4)
+ [BTCUSDT] S&R v2 loaded: 1R, 2S
+ [BTCUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ ✅ [11:35:41 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [11:35:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [11:35:41 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+ ✅ [11:35:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ ✅ [11:35:41 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [11:35:41 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:35:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1474 points
+Logger.js:100 ✅ [11:35:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1480 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:36:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1475 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:36:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1475 points
+Logger.js:100 ✅ [11:36:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1481 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:37:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1476 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:37:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1476 points
+Logger.js:100 ✅ [11:37:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1482 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:38:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1477 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1482 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:39:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1478 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+Logger.js:100 ✅ [11:39:24 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1478 points
+Logger.js:100 ✅ [11:39:24 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:39:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1478 points
+Logger.js:100 ✅ [11:39:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1483 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:40:02 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1479 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 163/163 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+CandleCache.js:67 [CandleCache] 💾 BTCUSDT@1 - desde memoria (1483 velas)
+CandleCache.js:236 [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1483 velas (esperadas: ~1440, ratio: 103.0%)
+MiniChart.jsx:1073 [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 11:39:00 a.m. (1483 velas en cache)
+CandleCache.js:182 [CandleCache] 🔄 Merge: 1483 cached + 1 new = 1483 total
+MiniChart.jsx:1115 [BTCUSDT] ✅ Incremental: +1 velas nuevas = 1483 total
+MiniChart.jsx:1139 [BTCUSDT] ✅ Histórico final: 1483 velas
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1483 velas, memoria: 1/4)
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 1R, 2S
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:40:40 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [11:40:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [11:40:40 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [11:40:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [11:40:40 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+Logger.js:100 ✅ [11:40:40 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:40:48 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1479 points
+Logger.js:100 ✅ [11:40:48 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1484 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:41:04 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1480 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [11:41:47 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1480 points
+Logger.js:100 ✅ [11:41:47 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1485 velas, memoria: 1/4)
+Logger.js:100 ✅ [11:42:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1481 points
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+SymbolList.jsx:84 [Prefetch] DOGEUSDT@1 - precargando...

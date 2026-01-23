@@ -10,81 +10,161 @@
     "TRBUSDT",
     "SOLUSDT",
     "ADAUSDT",
-    "DOGEUSDT"
+    "DOGEUSDT",
+    "PAXGUSDT",
+    "BNBUSDT",
+    "POLUSDT"
   ],
   "interval": "1",
   "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 1.5,
-        "lookbackBars": 100
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
       },
       "days": 1,
       "vwapFilter": {
-        "enabled": true,
+        "enabled": false,
         "deviations": [
           2,
           3
         ],
         "marginPercent": 20,
         "skipVolumeInRectangle": false
-      }
+      },
+      "alertsEnabled": true
     },
     "BTCUSDT": {
       "volumeFilter": {
         "enabled": false,
-        "minZScore": 1.5,
-        "lookbackBars": 45
-      },
-      "swingBars": 5,
-      "days": 1,
-      "cooldownMinutes": 20
-    },
-    "XRPUSDT": {
-      "volumeFilter": {
-        "enabled": true,
         "minZScore": 1,
         "lookbackBars": 10
       },
-      "days": 1
+      "swingBars": 5,
+      "days": 1,
+      "cooldownMinutes": 20,
+      "alertsEnabled": true
+    },
+    "XRPUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      },
+      "days": 1,
+      "alertsEnabled": true
     },
     "TRXUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 1.5,
-        "lookbackBars": 50
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
       },
-      "days": 1
+      "days": 1,
+      "alertsEnabled": true
     },
     "GALAUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 1.5,
-        "lookbackBars": 50
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
       },
-      "days": 1
+      "days": 1,
+      "alertsEnabled": true
     },
     "SUIUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 1.5,
-        "lookbackBars": 50
-      }
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      },
+      "days": 1,
+      "alertsEnabled": true
     },
     "SOLUSDT": {
       "days": 1,
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 3,
-        "lookbackBars": 50
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      },
+      "alertsEnabled": true
+    },
+    "PAXGUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "TRBUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "ADAUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "DOGEUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "BNBUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
+      }
+    },
+    "POLUSDT": {
+      "days": 1,
+      "alertsEnabled": true,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1,
+        "lookbackBars": 10
       }
     }
   },
   "swingBars": 3,
   "direction": "BOTH",
-  "priceZones": [],
+  "alertsEnabled": false,
+  "priceZones": [
+    {
+      "id": "zone_rect_rectangle_1769031374194_0.4896187440234493",
+      "symbol": "GALAUSDT",
+      "min": 0.00630952733686067,
+      "max": 0.006686980599647266,
+      "direction": "LONG",
+      "enabled": true,
+      "sourceRectId": "rectangle_1769031374194_0.4896187440234493",
+      "label": "Zone",
+      "timeStart": null,
+      "timeEnd": null,
+      "timeBound": false
+    }
+  ],
   "useDrawingZones": true,
   "volumeFilter": {
     "enabled": false,

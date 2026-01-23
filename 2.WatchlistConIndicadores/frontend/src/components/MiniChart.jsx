@@ -1048,19 +1048,20 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     try {
       const timestamp = Date.now();
 
-      // 🔄 CARGA INCREMENTAL: Verificar si hay cache disponible
-      const cached = await CandleCache.get(symbol, interval);
+      // 🔄 CARGA INCREMENTAL: Verificar si hay cache disponible Y suficiente
+      const hasSufficientCache = await CandleCache.hasSufficientData(symbol, interval, days);
+      const cached = hasSufficientCache ? await CandleCache.get(symbol, interval) : null;
       let url;
       let isIncremental = false;
 
       if (cached && cached.candles.length > 0) {
-        // Tenemos cache - pedir solo velas nuevas desde el último timestamp
+        // Tenemos cache suficiente - pedir solo velas nuevas desde el último timestamp
         const sinceTs = cached.lastTimestamp;
         url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&since_timestamp=${sinceTs}&t=${timestamp}`;
         isIncremental = true;
         console.log(`[${symbol}] 🔄 Carga INCREMENTAL: desde ${new Date(sinceTs).toLocaleString()} (${cached.candles.length} velas en cache)`);
       } else {
-        // No hay cache - carga completa
+        // No hay cache o es insuficiente - carga completa
         url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
         console.log(`[${symbol}] 📥 Carga COMPLETA: ${days} días @ ${interval}`);
       }

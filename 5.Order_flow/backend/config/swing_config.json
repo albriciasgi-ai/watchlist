@@ -1,0 +1,155 @@
+{
+  "enabled": true,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "XRPUSDT",
+    "TRXUSDT",
+    "GALAUSDT",
+    "SUIUSDT",
+    "TRBUSDT",
+    "SOLUSDT",
+    "ADAUSDT",
+    "DOGEUSDT",
+    "PAXGUSDT",
+    "BNBUSDT",
+    "POLUSDT"
+  ],
+  "interval": "1",
+  "days": 1,
+  "symbolConfigs": {
+    "ETHUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1.5,
+        "lookbackBars": 100
+      },
+      "days": 1,
+      "vwapFilter": {
+        "enabled": false,
+        "deviations": [
+          2,
+          3
+        ],
+        "marginPercent": 20,
+        "skipVolumeInRectangle": false
+      },
+      "alertsEnabled": true
+    },
+    "BTCUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1.5,
+        "lookbackBars": 45
+      },
+      "swingBars": 5,
+      "days": 1,
+      "cooldownMinutes": 20,
+      "alertsEnabled": true
+    },
+    "XRPUSDT": {
+      "volumeFilter": {
+        "enabled": true,
+        "minZScore": 1,
+        "lookbackBars": 10
+      },
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "TRXUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 2.5,
+        "lookbackBars": 50
+      },
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "GALAUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "SUIUSDT": {
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "SOLUSDT": {
+      "days": 1,
+      "volumeFilter": {
+        "enabled": false,
+        "minZScore": 3,
+        "lookbackBars": 50
+      },
+      "alertsEnabled": true
+    },
+    "PAXGUSDT": {
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "TRBUSDT": {
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "ADAUSDT": {
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "DOGEUSDT": {
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "BNBUSDT": {
+      "days": 1,
+      "alertsEnabled": true
+    },
+    "POLUSDT": {
+      "days": 1
+    }
+  },
+  "swingBars": 3,
+  "direction": "BOTH",
+  "alertsEnabled": false,
+  "priceZones": [
+    {
+      "id": "zone_rect_rectangle_1769031374194_0.4896187440234493",
+      "symbol": "GALAUSDT",
+      "min": 0.00630952733686067,
+      "max": 0.006686980599647266,
+      "direction": "LONG",
+      "enabled": true,
+      "sourceRectId": "rectangle_1769031374194_0.4896187440234493",
+      "label": "Zone",
+      "timeStart": null,
+      "timeEnd": null,
+      "timeBound": false
+    }
+  ],
+  "useDrawingZones": true,
+  "volumeFilter": {
+    "enabled": false,
+    "minZScore": 1,
+    "lookbackBars": 10
+  },
+  "vwapFilter": {
+    "enabled": false,
+    "deviations": [
+      1,
+      2,
+      3
+    ],
+    "marginPercent": 20,
+    "skipVolumeInRectangle": false
+  },
+  "cooldownMinutes": 5,
+  "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
+}

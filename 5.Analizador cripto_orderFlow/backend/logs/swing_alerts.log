@@ -1,2 +1,0 @@
-2026-01-20 20:00:00 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2950.80 | direction=LONG | volume_zscore=2.59 | interval=60
-2026-01-20 20:00:03 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed

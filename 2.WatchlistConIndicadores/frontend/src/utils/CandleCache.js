@@ -180,6 +180,57 @@ class CandleCache {
   }
 
   /**
+   * Calcula el número mínimo esperado de velas según días e intervalo
+   * @param {number} days - Días de datos esperados
+   * @param {string} interval - Intervalo ("1", "5", "15", "60", "240", "D")
+   * @returns {number} - Número mínimo de velas esperadas (80% del total teórico)
+   */
+  static getMinExpectedCandles(days, interval) {
+    const intervalsPerDay = {
+      '1': 1440,    // 1440 minutos por día
+      '3': 480,
+      '5': 288,
+      '15': 96,
+      '30': 48,
+      '60': 24,
+      '120': 12,
+      '240': 6,
+      '360': 4,
+      '720': 2,
+      'D': 1,
+      'W': 1/7
+    };
+
+    const perDay = intervalsPerDay[interval] || 24;
+    const expected = Math.floor(days * perDay);
+    // Retornar 80% del esperado como mínimo (tolerancia para fines de semana, gaps, etc.)
+    return Math.floor(expected * 0.8);
+  }
+
+  /**
+   * Verifica si el cache tiene suficientes velas para los días solicitados
+   * @param {string} symbol
+   * @param {string} interval
+   * @param {number} days - Días de datos esperados
+   * @returns {Promise<boolean>}
+   */
+  static async hasSufficientData(symbol, interval, days) {
+    const cached = await this.get(symbol, interval);
+    if (!cached || !cached.candles || cached.candles.length === 0) {
+      return false;
+    }
+
+    const minExpected = this.getMinExpectedCandles(days, interval);
+    const hasSufficient = cached.candles.length >= minExpected;
+
+    if (!hasSufficient) {
+      console.log(`[CandleCache] ⚠️ ${symbol}@${interval} - cache insuficiente: ${cached.candles.length} velas < ${minExpected} mínimo (${days} días)`);
+    }
+
+    return hasSufficient;
+  }
+
+  /**
    * Obtiene el timestamp desde el cual pedir datos nuevos
    * @returns {number|null} - Timestamp o null si no hay cache
    */

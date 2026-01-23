@@ -1,0 +1,169 @@
+:10001/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+:10000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [10:45:07 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2150:5
+    at commitHookEffectListMount (react-dom_client.js?v=9e5bb573:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=9e5bb573:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=9e5bb573:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=9e5bb573:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=9e5bb573:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=9e5bb573:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=9e5bb573:19447:22)
+    at react-dom_client.js?v=9e5bb573:19328:17
+error @ Logger.js:88
+:10000/api/swing/config:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [10:45:07 a. m.] [SingleSymbolAnalyzer] Error sincronizando Swing Detector: TypeError: Failed to fetch
+    at syncSwingDetector (SingleSymbolAnalyzer.jsx:220:32)
+    at SingleSymbolAnalyzer.jsx:237:5
+    at commitHookEffectListMount (react-dom_client.js?v=9e5bb573:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=9e5bb573:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=9e5bb573:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=9e5bb573:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=9e5bb573:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=9e5bb573:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=9e5bb573:19447:22)
+    at react-dom_client.js?v=9e5bb573:19328:17
+error @ Logger.js:88
+:10000/api/swing/config/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT,BNBUSDT,PAXGUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:224 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:198:30
+    at SymbolList.jsx:232:5
+    at commitHookEffectListMount (react-dom_client.js?v=9e5bb573:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=9e5bb573:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=9e5bb573:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=9e5bb573:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=9e5bb573:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=9e5bb573:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=9e5bb573:19447:22)
+    at react-dom_client.js?v=9e5bb573:19328:17
+(anonymous) @ SymbolList.jsx:224
+:10000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (react-dom_client.js?v=9e5bb573:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=9e5bb573:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=9e5bb573:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=9e5bb573:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=9e5bb573:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=9e5bb573:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=9e5bb573:19447:22)
+    at react-dom_client.js?v=9e5bb573:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+:10000/api/realtime/set-interval:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:10000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (react-dom_client.js?v=9e5bb573:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=9e5bb573:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=9e5bb573:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=9e5bb573:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=9e5bb573:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=9e5bb573:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=9e5bb573:19447:22)
+    at react-dom_client.js?v=9e5bb573:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+:10000/api/swing/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:250 [BTCUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:239:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:109:12)
+fetchStatus @ SwingDetectorIndicator.js:250
+:10000/api/historical/BTCUSDT?interval=1&since_timestamp=1769096520000&t=1769096705359:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+MiniChart.jsx:1220 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1081:25)
+loadHistoricalData @ MiniChart.jsx:1220
+:10000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [10:45:10 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2155:9
+error @ Logger.js:88
+
+
+=================
+=================
+
+
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ ✅ [10:45:05 a. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:41 [BTCUSDT] SwingDetectorIndicator initialized
+SupportResistance2Indicator.js:15 [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+Logger.js:100 ✅ [10:45:05 a. m.] [VWAP] [BTCUSDT] Config changed (vwapType=rolling), refetching...
+CandleCache.js:78 [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (1439 velas)
+CandleCache.js:236 [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1439 velas (esperadas: ~1440, ratio: 99.9%)
+MiniChart.jsx:1073 [BTCUSDT] Carga INCREMENTAL: desde 22/1/2026, 10:42:00 a.m. (1439 velas en cache)
+IndicatorCache.js:85 [IndicatorCache] 💾 sr2@BTCUSDT desde IndexedDB
+SupportResistance2Indicator.js:103 [BTCUSDT] S&R v2 from cache: 1R, 2S
+IndicatorCache.js:85 [IndicatorCache] 💾 sr2@BTCUSDT desde IndexedDB
+SupportResistance2Indicator.js:103 [BTCUSDT] S&R v2 from cache: 1R, 2S
+IndicatorCache.js:85 [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 vwap@BTCUSDT desde IndexedDB
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+SupportResistance2Indicator.js:200 [BTCUSDT] S&R v2 renderOverlay: Object
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1 velas, memoria: 1/4)
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+Logger.js:100 ✅ [10:46:07 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (2 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:47:04 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (3 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:48:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (4 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:49:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (5 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:50:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+CandleCache.js:67 [CandleCache] 💾 BTCUSDT@1 - desde memoria (5 velas)
+CandleCache.js:230 [CandleCache] 🗑️ Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:262 [CandleCache] 🗑️ BTCUSDT@1 - cache limpiado
+MiniChart.jsx:1078 [BTCUSDT] Carga COMPLETA: 1 dias @ 1
+MiniChart.jsx:1120 [BTCUSDT] ✅ Completa: 1439 velas
+MiniChart.jsx:1139 [BTCUSDT] ✅ Histórico final: 1439 velas
+SupportResistance2Indicator.js:122 [BTCUSDT] S&R v2: Fetching from backend...
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1439 velas, memoria: 1/4)
+SupportResistance2Indicator.js:147 [BTCUSDT] S&R v2 loaded: 1R, 2S
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [10:50:15 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [10:50:15 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [10:50:15 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=false, enabled=true, destroyed=false
+Logger.js:100 ✅ [10:50:15 a. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 60000ms)
+Logger.js:100 ✅ [10:50:15 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+SwingDetectorIndicator.js:169 [BTCUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+Logger.js:100 ✅ [10:50:15 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+SupportResistance2Indicator.js:70 [BTCUSDT] S&R v2 polling started (interval: 60000ms)
+Logger.js:100 ✅ [10:50:15 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1440 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:51:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [10:51:16 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [10:51:16 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:145 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1441 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:52:03 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:217 [BTCUSDT] SwingDetector: 164/164 signals for interval 1 (cached)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [10:52:15 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [10:52:15 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:145 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+
+

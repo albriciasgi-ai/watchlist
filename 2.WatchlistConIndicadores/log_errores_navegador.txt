@@ -1,0 +1,167 @@
+:5173/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+:8000/api/historical/BTCUSDT?interval=60&since_timestamp=1769083200000&t=1769088105540:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/DOGEUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ADAUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/POLUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SOLUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SUIUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/historical/BTCUSDT?interval=60&since_timestamp=1769083200000:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ETHUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRBUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/DOGEUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/XRPUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRXUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ADAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/GALAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/POLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SOLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SUIUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/swing/status:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ETHUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ETHUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRBUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRBUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/XRPUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/XRPUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRXUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/TRXUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/GALAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/GALAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/DOGEUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/DOGEUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ADAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ADAUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/POLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/POLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SOLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SOLUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SUIUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SUIUSDT?days=1&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/DOGEUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/ADAUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/POLUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SOLUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/vwap-service/data/SUIUSDT?days=90&interval=60&vwapType=rolling&rollingPeriod=200:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+BTCUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ETHUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRBUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+XRPUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+TRXUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+GALAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+DOGEUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+ADAUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+POLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SOLUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+SUIUSDT:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+:8000/api/historical/ETHUSDT?interval=60&since_timestamp=1769083200000:1  Failed to load resource: net::ERR_NETWORK_CHANGED
+MiniChart.jsx:1200 [SUIUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [ETHUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [XRPUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [TRBUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [TRXUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [ETHUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [TRBUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [XRPUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [TRXUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [GALAUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [DOGEUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [ADAUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [POLUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [SOLUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [SUIUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200
+MiniChart.jsx:1200 [BTCUSDT] Error en respuesta histórica Object
+loadHistoricalData @ MiniChart.jsx:1200

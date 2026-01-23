@@ -422,13 +422,14 @@ async def process_watchlist_alert(alert: dict):
 
 # ESTADISTICAS GLOBALES
 
-| Metrica | Backtester | Watchlist | Trading Bot | Total |
-|---------|------------|-----------|-------------|-------|
-| Python LOC | ~3,000 | ~3,000 | ~2,200 | ~8,200 |
-| React LOC | ~4,000 | ~15,000 | ~3,000 | ~22,000 |
-| Indicadores | 10 | 13 | - | 13 (compartidos) |
-| Simbolos | 29 | 2 activos | 16 | 29 |
-| Endpoints | 8 | 10 | 12 | 30 |
+| Metrica | Backtester | Watchlist | Trading Bot | Analizador | Total |
+|---------|------------|-----------|-------------|------------|-------|
+| Python LOC | ~3,000 | ~3,000 | ~2,200 | ~3,500 | ~11,700 |
+| React LOC | ~4,000 | ~15,000 | ~3,000 | ~15,000 | ~37,000 |
+| Indicadores | 10 | 13 | - | 13 | 13 (compartidos) |
+| Simbolos | 29 | 2 activos | 16 | 12 activos | 29 |
+| Endpoints | 8 | 10 | 12 | 15 | 45 |
+| Puerto Backend | 9000 | 8000 | 5000 | 10000 | - |
 
 ---
 
@@ -823,6 +824,131 @@ async def process_watchlist_alert(request: Dict[str, Any]):
         ...
 ```
 
+### Fuentes de Alertas (Sources)
+
+El Trading Bot reconoce diferentes sources de alertas:
+
+| Source | Origen | Formato |
+|--------|--------|---------|
+| `SWING_DETECTOR` | `swing_service.py` | `{source, symbol, interval, pattern: {direction, ...}}` |
+| `backend_realtime` | `realtime_pattern_service.py` | Formato Watchlist original |
+| `WATCHLIST` (default) | Cualquier otro | Si no se especifica source |
+
+**Nota:** Alertas con `source: 'backend_realtime'` (Double Top/Bottom, Rejection Patterns)
+aparecen en logs como "WATCHLIST" porque el Trading Bot usa ese valor como default.
+
+## Expansion a 12 Simbolos (22 Enero 2026)
+
+El Swing Detector fue expandido para soportar los 12 simbolos configurados en el Trading Bot.
+
+### Simbolos Soportados
+
+```python
+symbols = [
+    "BTCUSDT", "ETHUSDT", "SOLUSDT", "ADAUSDT",
+    "XRPUSDT", "DOGEUSDT", "AVAXUSDT", "DOTUSDT",
+    "LINKUSDT", "TRXUSDT", "NEARUSDT", "GALAUSDT"
+]
+```
+
+### Problema: Limite de WebSocket Bybit
+
+**Sintoma:** Solo BTCUSDT y ETHUSDT generaban senales, los demas simbolos no.
+
+**Causa:** Bybit WebSocket tiene un limite de **10 argumentos por mensaje de suscripcion**.
+El codigo original enviaba todas las suscripciones en un solo mensaje, lo cual fallaba silenciosamente.
+
+**Fix en `websocket_manager.py`:**
+```python
+# Subscribe to all channels (Bybit limits to 10 args per subscribe message)
+if self.subscriptions:
+    subs_list = list(self.subscriptions)
+    batch_size = 10  # Bybit WebSocket limit per subscribe request
+    total_batches = (len(subs_list) + batch_size - 1) // batch_size
+
+    for i in range(0, len(subs_list), batch_size):
+        batch = subs_list[i:i + batch_size]
+        subscribe_msg = {"op": "subscribe", "args": batch}
+        await self.ws.send(json.dumps(subscribe_msg))
+        logger.info(f"[WS] Subscribed batch {i//batch_size + 1}/{total_batches}: {len(batch)} channels")
+        await asyncio.sleep(0.1)  # Small delay between batches
+```
+
+### Problema: Buffers Vacios al Iniciar
+
+**Sintoma:** Despues del fix de batching, los buffers solo tenian 4-5 velas (insuficiente para deteccion).
+
+**Causa:** El Swing Service cargaba velas historicas de la API pero no las preloadeaba al buffer del WebSocket.
+
+**Fix en `swing_service.py`:**
+```python
+# If not enough candles, load more from Bybit API
+if len(candles) < desired_candles:
+    logger.info(f"[SWING_SERVICE] {symbol}: Loading extended history from API...")
+    candles = await self._fetch_historical_candles(symbol, desired_candles)
+
+    # IMPORTANT: Preload fetched candles to WebSocket buffer
+    if candles:
+        self.ws_manager.preload_historical(symbol, self.config.interval, candles)
+        logger.info(f"[SWING_SERVICE] {symbol}: Preloaded {len(candles)} candles to WebSocket buffer")
+```
+
+### Endpoint de Debug
+
+Se agrego endpoint para verificar estado del WebSocket:
+
+```python
+@app.get("/api/ws/debug")
+async def get_websocket_debug():
+    return {
+        "connected": ws_manager.is_connected(),
+        "running": ws_manager.is_running(),
+        "subscriptions_count": len(ws_manager.subscriptions),
+        "subscriptions": list(ws_manager.subscriptions),
+        "subscribed_symbols": list(ws_manager._subscribed_symbols),
+        "subscribed_intervals": list(ws_manager._subscribed_intervals),
+        "callbacks_count": len(ws_manager._candle_close_listeners),
+        "buffers": {
+            symbol: {
+                interval: len(candles)
+                for interval, candles in intervals.items()
+            }
+            for symbol, intervals in ws_manager._candle_buffers.items()
+        }
+    }
+```
+
+### Verificacion Post-Fix
+
+```bash
+# Verificar suscripciones
+curl http://localhost:10000/api/ws/debug
+
+# Respuesta esperada:
+{
+  "subscriptions_count": 24,  # 12 simbolos x 2 intervalos
+  "subscribed_symbols": ["BTCUSDT", "ETHUSDT", ...],  # 12 simbolos
+  "buffers": {
+    "BTCUSDT": {"1": 500, "60": 168},
+    "ETHUSDT": {"1": 500, "60": 168},
+    ...
+  }
+}
+```
+
+### Configuracion de Alertas (Enero 2026)
+
+Para evitar alertas de indicadores no deseados, se desactivaron las alertas de:
+
+- **Double Top/Bottom**: `alertsEnabled: false` en `realtime_configs.json`
+- **Rejection Patterns**: `alertsEnabled: false` en `realtime_configs.json`
+
+**Solo el Swing Detector envia alertas al Trading Bot.**
+
+Los indicadores siguen funcionando para visualizacion, pero no generan alertas.
+
+---
+
 ## Resultados de Pruebas (17 Enero 2026)
 
 Sistema probado durante ~3 horas con resultados exitosos:
@@ -916,6 +1042,22 @@ Tasa de exito de envio: 100%
 **SKIPPED_POSITION_EXISTS en todas las alertas:**
 - Comportamiento esperado si ya tienes posiciones abiertas
 - El bot solo ejecuta si no hay posicion existente en ese simbolo
+
+**Solo algunos simbolos generan senales (ej: solo BTC/ETH):**
+- Verificar suscripciones WebSocket: GET /api/ws/debug
+- Bybit limita a 10 suscripciones por mensaje
+- El fix en `websocket_manager.py` divide en batches de 10
+- Verificar que todos los simbolos aparecen en `subscribed_symbols`
+
+**Buffers con pocas velas al iniciar:**
+- El Swing Service debe preloadear velas al buffer del WebSocket
+- Verificar que `ws_manager.preload_historical()` se llama en `_analyze_historical()`
+- Cada simbolo debe tener 500+ velas en buffer para interval "1"
+
+**Alertas "WATCHLIST" aparecen sin tener la Watchlist corriendo:**
+- Estas alertas vienen de `realtime_pattern_service` (Double Top/Bottom, Rejection Patterns)
+- El Trading Bot usa "WATCHLIST" como source por defecto
+- Para desactivar: poner `alertsEnabled: false` en `realtime_configs.json`
 
 ## Price Zones con Time-Bound (Enero 2026)
 

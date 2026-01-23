@@ -13,7 +13,12 @@
       "Bash(=3.9.0)",
       "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\backend\\config\\vwap_config.json\" 2)",
       "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\2.WatchlistConIndicadores\\backend\\config\\vwap_config.json\")",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat(backtester): Add S&R v2 indicator based on Swing Points\n\n- New SupportResistance2Indicator.js with Swing Point detection\n- More accurate than original S&R using confirmed local extremes\n- Price range filtering (±10% of current price by default)\n- Clustering algorithm to group nearby levels\n- Strength calculation based on touches + volume + recency\n- Active/Broken level classification\n- IndexedDB caching for performance\n- New SupportResistance2Settings.jsx modal for configuration\n- Labels positioned on left side without background box\n- Updated CLAUDE.md with full documentation\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

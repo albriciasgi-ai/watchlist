@@ -2019,3 +2019,13 @@
 2026-01-19 18:10:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
 2026-01-19 23:30:00 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=3181.70 | direction=LONG | volume_zscore=5.76 | interval=1
 2026-01-19 23:30:02 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-22 17:05:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2943.51 | direction=LONG | volume_zscore=2.31 | interval=1
+2026-01-22 17:05:05 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2943.51 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 17:16:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2954.30 | direction=SHORT | volume_zscore=7.86 | interval=1
+2026-01-22 17:16:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2954.30 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 18:12:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2945.65 | direction=SHORT | volume_zscore=2.31 | interval=1
+2026-01-22 18:12:05 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2945.65 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 19:21:00 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2953.76 | direction=SHORT | volume_zscore=2.71 | interval=1
+2026-01-22 19:21:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2953.76 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 19:22:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2953.48 | direction=LONG | volume_zscore=4.20 | interval=1
+2026-01-22 19:22:04 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2953.48 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
