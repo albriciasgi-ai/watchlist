@@ -373,7 +373,8 @@ const OrderFlowSettings = ({
         <label style={{
           display: 'flex',
           alignItems: 'center',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          marginBottom: '12px'
         }}>
           <input
             type="checkbox"
@@ -383,6 +384,28 @@ const OrderFlowSettings = ({
           />
           Show delta values
         </label>
+
+        {/* History Hours */}
+        <div>
+          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+            Horas de historial: {localConfig.historyHours || 12}h
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="24"
+            value={localConfig.historyHours || 12}
+            onChange={(e) => handleConfigChange('historyHours', parseInt(e.target.value))}
+            style={{ width: '100%' }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
+            <span>1h</span>
+            <span>24h</span>
+          </div>
+          <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            Cantidad de horas de footprints a cargar. Mas horas = mas datos pero carga mas lenta.
+          </div>
+        </div>
       </div>
 
       {/* Step Size Configuration - Per Symbol */}

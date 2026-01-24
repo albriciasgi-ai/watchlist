@@ -20,6 +20,7 @@ from collections import defaultdict, deque
 
 from footprint_calculator import FootprintCalculator, Footprint
 from trade_aggregator import TradeAggregator, CandleBucket, Trade
+from footprint_storage import get_footprint_storage, FootprintStorage
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ class OrderFlowConfig:
     alerts_enabled: bool = True
     alert_cooldown_minutes: int = 15
     max_footprints_in_memory: int = 2880  # 1 dia de velas 1min x 2 simbolos
+    max_history_hours: float = 12.0  # Horas de historial a mantener en disco
     log_trades: bool = False
     # Step sizes por simbolo (tamano de cada nivel en USD)
     # Si no esta configurado, usa el default de footprint_calculator.py
@@ -50,6 +52,7 @@ class OrderFlowConfig:
             "alerts_enabled": self.alerts_enabled,
             "alert_cooldown_minutes": self.alert_cooldown_minutes,
             "max_footprints_in_memory": self.max_footprints_in_memory,
+            "max_history_hours": self.max_history_hours,
             "log_trades": self.log_trades,
             "symbol_step_sizes": self.symbol_step_sizes
         }
@@ -65,6 +68,7 @@ class OrderFlowConfig:
             alerts_enabled=data.get("alerts_enabled", True),
             alert_cooldown_minutes=data.get("alert_cooldown_minutes", 15),
             max_footprints_in_memory=data.get("max_footprints_in_memory", 2880),
+            max_history_hours=data.get("max_history_hours", 12.0),
             log_trades=data.get("log_trades", False),
             symbol_step_sizes=data.get("symbol_step_sizes", {})
         )
@@ -120,6 +124,14 @@ class OrderFlowService:
         self.config = OrderFlowConfig()
         self._config_path = Path(__file__).parent / "config" / "orderflow_config.json"
 
+        # Cargar config persistente primero (para tener max_history_hours)
+        self._load_config()
+
+        # Storage para persistencia de footprints
+        self._storage: FootprintStorage = get_footprint_storage(
+            max_age_hours=self.config.max_history_hours
+        )
+
         # WebSocket manager (se asigna en start())
         self._ws_manager = None
 
@@ -148,8 +160,8 @@ class OrderFlowService:
         # { "BTCUSDT_BUY": timestamp_last_alert }
         self._alert_cooldowns: Dict[str, float] = {}
 
-        # Cargar config persistente
-        self._load_config()
+        # Task de limpieza periodica
+        self._cleanup_task: Optional[asyncio.Task] = None
 
         logger.info("[ORDERFLOW_SERVICE] Inicializado")
 
@@ -283,6 +295,9 @@ class OrderFlowService:
                     imbalance_threshold=self.config.imbalance_threshold
                 )
 
+        # Cargar footprints historicos desde disco
+        await self._load_historical_footprints(active_symbols, active_intervals)
+
         # Suscribirse a trades del WebSocket
         if self._ws_manager:
             # Registrar callback para trades
@@ -291,6 +306,9 @@ class OrderFlowService:
             # Suscribirse a trades de todos los simbolos (subscribe_trades espera una lista)
             await self._ws_manager.subscribe_trades(active_symbols)
             logger.info(f"[ORDERFLOW_SERVICE] Suscrito a trades de {active_symbols}")
+
+        # Iniciar tarea de limpieza periodica (cada hora)
+        self._cleanup_task = asyncio.create_task(self._periodic_cleanup())
 
         logger.info("[ORDERFLOW_SERVICE] Servicio iniciado correctamente")
 
@@ -301,12 +319,67 @@ class OrderFlowService:
 
         logger.info("[ORDERFLOW_SERVICE] Deteniendo servicio...")
 
+        # Cancelar tarea de limpieza
+        if self._cleanup_task:
+            self._cleanup_task.cancel()
+            try:
+                await self._cleanup_task
+            except asyncio.CancelledError:
+                pass
+            self._cleanup_task = None
+
         # Flush de aggregators para no perder datos
         for aggregator in self._aggregators.values():
             await aggregator.flush_all()
 
+        # Guardar footprints pendientes a disco
+        self._storage.flush_all()
+
         self._running = False
         logger.info("[ORDERFLOW_SERVICE] Servicio detenido")
+
+    async def _load_historical_footprints(self, symbols: List[str], intervals: List[str]):
+        """Carga footprints historicos desde disco al iniciar."""
+        total_loaded = 0
+
+        for symbol in symbols:
+            for interval in intervals:
+                key = f"{symbol}_{interval}"
+
+                # Cargar desde storage
+                historical = self._storage.load(symbol, interval)
+
+                if historical:
+                    # Agregar a la deque en memoria
+                    for fp_dict in historical:
+                        self._footprints[key].append(fp_dict)
+
+                    total_loaded += len(historical)
+                    logger.info(
+                        f"[ORDERFLOW_SERVICE] Cargados {len(historical)} footprints historicos para {key}"
+                    )
+
+        if total_loaded > 0:
+            logger.info(f"[ORDERFLOW_SERVICE] Total footprints historicos cargados: {total_loaded}")
+
+    async def _periodic_cleanup(self):
+        """Tarea que limpia footprints antiguos cada hora."""
+        while self._running:
+            try:
+                await asyncio.sleep(3600)  # Cada hora
+
+                if not self._running:
+                    break
+
+                # Limpiar footprints antiguos
+                removed = self._storage.cleanup_old()
+                if removed > 0:
+                    logger.info(f"[ORDERFLOW_SERVICE] Limpieza periodica: {removed} footprints eliminados")
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"[ORDERFLOW_SERVICE] Error en limpieza periodica: {e}")
 
     async def _on_trade_received(self, symbol: str, ws_trade):
         """
@@ -388,9 +461,15 @@ class OrderFlowService:
         # Obtener footprint completado
         footprint = calculator.get_footprint()
         if footprint:
+            # Serializar footprint
+            footprint_dict = footprint.to_dict()
+
             # Guardar en memoria
-            self._footprints[key].append(footprint)
+            self._footprints[key].append(footprint_dict)
             self._footprints_completed += 1
+
+            # Persistir a disco
+            self._storage.save_footprint(footprint_dict)
 
             logger.info(
                 f"[ORDERFLOW_SERVICE] Footprint completado: {symbol} | "
@@ -543,7 +622,7 @@ class OrderFlowService:
             logger.error(f"[ORDERFLOW_SERVICE] Error escribiendo log: {e}")
 
     def get_footprints(self, symbol: str, interval: str = "1",
-                       limit: int = 100) -> List[dict]:
+                       limit: int = 100, since_hours: float = None) -> List[dict]:
         """
         Retorna los footprints almacenados para un simbolo.
 
@@ -551,19 +630,31 @@ class OrderFlowService:
             symbol: Simbolo a consultar
             interval: Intervalo de las velas
             limit: Cantidad maxima de footprints a retornar
+            since_hours: Si se especifica, solo footprints de las ultimas N horas
 
         Returns:
             Lista de footprints serializados
         """
         key = f"{symbol}_{interval}"
-        footprints = self._footprints.get(key, [])
 
-        # Retornar los ultimos N footprints
-        result = []
-        for fp in list(footprints)[-limit:]:
-            result.append(fp.to_dict())
+        # Si no hay datos en memoria, intentar cargar desde disco
+        if key not in self._footprints or len(self._footprints[key]) == 0:
+            logger.info(f"[ORDERFLOW_SERVICE] No hay footprints en memoria para {key}, cargando desde disco...")
+            historical = self._storage.load(symbol, interval)
+            if historical:
+                for fp_dict in historical:
+                    self._footprints[key].append(fp_dict)
+                logger.info(f"[ORDERFLOW_SERVICE] Cargados {len(historical)} footprints desde disco para {key}")
 
-        return result
+        footprints = list(self._footprints.get(key, []))
+
+        # Filtrar por tiempo si se especifica
+        if since_hours:
+            cutoff_ms = int((time.time() - since_hours * 3600) * 1000)
+            footprints = [fp for fp in footprints if fp.get("candle_timestamp", 0) >= cutoff_ms]
+
+        # Retornar los ultimos N footprints (ya son diccionarios)
+        return footprints[-limit:]
 
     def get_status(self) -> dict:
         """Retorna el estado del servicio."""
@@ -582,6 +673,8 @@ class OrderFlowService:
             "footprints_in_memory": sum(len(fp) for fp in self._footprints.values()),
             "alerts_sent": self._alerts_sent,
             "uptime_seconds": round(uptime, 2),
+            "max_history_hours": self.config.max_history_hours,
+            "storage": self._storage.get_stats() if self._storage else None,
             "config": self.config.to_dict()
         }
 

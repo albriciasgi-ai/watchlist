@@ -70,7 +70,9 @@ class OrderFlowIndicator extends IndicatorBase {
       fontSize: 20,          // Duplicado de 10 a 20
       minCandleWidth: 12,    // Minimum width for simplified mode
       minCandleWidthFull: 60, // Width needed for full text mode
-      opacity: 0.9
+      opacity: 0.9,
+      // History
+      historyHours: 12       // Horas de historial a cargar
     };
   }
 
@@ -149,7 +151,20 @@ class OrderFlowIndicator extends IndicatorBase {
     this.lastFetchTime = Date.now();
 
     try {
-      const url = `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=${this.interval}&limit=500`;
+      // OrderFlow solo soporta intervalos 1 y 5 minutos
+      const supportedIntervals = ["1", "5"];
+      if (!supportedIntervals.includes(this.interval)) {
+        console.warn(`[${this.symbol}] OrderFlow: Intervalo ${this.interval} no soportado (solo 1, 5)`);
+        this.footprints = [];
+        return false;
+      }
+
+      // Solicitar footprints de las ultimas 12 horas (configurable via historyHours)
+      const hours = this.config.historyHours || 12;
+      const url = `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=${this.interval}&limit=2000&hours=${hours}`;
+
+      console.log(`[${this.symbol}] OrderFlow fetching: interval=${this.interval}, hours=${hours}`);
+
       const response = await fetch(url);
 
       if (this._destroyed) return false;
@@ -160,9 +175,30 @@ class OrderFlowIndicator extends IndicatorBase {
       }
 
       const data = await response.json();
+
+      if (!data.success) {
+        console.warn(`[${this.symbol}] OrderFlow API error:`, data.error);
+        return false;
+      }
+
       this.footprints = data.footprints || [];
 
-      console.log(`[${this.symbol}] OrderFlow: ${this.footprints.length} footprints loaded`);
+      // Log detallado de lo que recibimos
+      if (this.footprints.length > 0) {
+        const firstTs = this.footprints[0].candle_timestamp;
+        const lastTs = this.footprints[this.footprints.length - 1].candle_timestamp;
+        console.log(`[${this.symbol}] OrderFlow: ${this.footprints.length} footprints loaded`, {
+          interval: this.interval,
+          hours: hours,
+          firstTimestamp: firstTs,
+          lastTimestamp: lastTs,
+          firstDate: new Date(firstTs).toLocaleString(),
+          lastDate: new Date(lastTs).toLocaleString()
+        });
+      } else {
+        console.log(`[${this.symbol}] OrderFlow: 0 footprints loaded (interval=${this.interval})`);
+      }
+
       return true;
     } catch (error) {
       console.error(`[${this.symbol}] OrderFlow fetch error:`, error);
@@ -215,6 +251,20 @@ class OrderFlowIndicator extends IndicatorBase {
     // Debug: log matching info
     let matchCount = 0;
     const debugMatches = [];
+
+    // DEBUG: Log timestamp comparison (only once every 5 seconds)
+    if (!this._lastTimestampDebug || Date.now() - this._lastTimestampDebug > 5000) {
+      const fpTimestamps = this.footprints.slice(-5).map(fp => fp.candle_timestamp);
+      const candleTimestamps = visibleCandles.slice(-5).map(c => c.timestamp);
+      console.log(`[${this.symbol}] OrderFlow DEBUG:`, {
+        footprintCount: this.footprints.length,
+        visibleCandleCount: visibleCandles.length,
+        lastFpTimestamps: fpTimestamps,
+        lastCandleTimestamps: candleTimestamps,
+        interval: this.interval
+      });
+      this._lastTimestampDebug = Date.now();
+    }
 
     // Render footprint for each visible candle
     for (let i = 0; i < visibleCandles.length; i++) {

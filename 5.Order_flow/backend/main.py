@@ -3731,7 +3731,12 @@ async def get_orderflow_status():
 
 
 @app.get("/api/orderflow/footprint/{symbol}")
-async def get_orderflow_footprint(symbol: str, interval: str = "1", limit: int = 100):
+async def get_orderflow_footprint(
+    symbol: str,
+    interval: str = "1",
+    limit: int = 500,
+    hours: float = None
+):
     """
     Get Order Flow footprint data for a symbol.
 
@@ -3741,15 +3746,16 @@ async def get_orderflow_footprint(symbol: str, interval: str = "1", limit: int =
     Args:
         symbol: Trading pair (e.g., BTCUSDT)
         interval: Candle interval - "1" (1 min) or "5" (5 min)
-        limit: Maximum number of footprints to return (default 100, max 1000)
+        limit: Maximum number of footprints to return (default 500, max 2000)
+        hours: If specified, only return footprints from last N hours
 
     Returns:
         JSON with symbol, interval, and array of footprints
     """
     try:
         # Validar parametros
-        if limit > 1000:
-            limit = 1000
+        if limit > 2000:
+            limit = 2000
         if limit < 1:
             limit = 1
 
@@ -3765,13 +3771,14 @@ async def get_orderflow_footprint(symbol: str, interval: str = "1", limit: int =
             }
 
         service = get_orderflow_service()
-        footprints = service.get_footprints(symbol, interval, limit)
+        footprints = service.get_footprints(symbol, interval, limit, since_hours=hours)
 
         return {
             "success": True,
             "symbol": symbol,
             "interval": interval,
             "count": len(footprints),
+            "hours_requested": hours,
             "footprints": footprints
         }
 
