@@ -242,125 +242,134 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
-   * Render footprint for a single candle
-   * @param fullMode - true for text labels, false for simplified color bars
+   * Render footprint for a single candle - ESTILO PROFESIONAL con STEP SIZE ABSOLUTO
+   * Similar a ATAS/Sierra Chart: El footprint ES la vela
+   * Cada nivel tiene BID (izquierda, rojo) | ASK (derecha, verde)
+   * Los niveles usan precios ABSOLUTOS (price_min/price_max) para posicionamiento
    */
   renderCandleFootprint(ctx, footprint, x, width, priceToY, fullMode = true) {
     const levels = footprint.levels;
     const pocIndex = footprint.poc_index;
     const imbalances = footprint.imbalances || [];
 
+    if (!levels || levels.length === 0) return;
+
     // Create set of imbalance level indices for quick lookup
     const imbalanceSet = new Set(imbalances.map(ib => ib.level_index));
 
-    // Calculate dimensions - in simplified mode, make levels fill more vertical space
-    const padding = fullMode ? 2 : 0;
+    // El footprint ocupa TODO el ancho de la barra (es la vela)
+    const margin = Math.max(1, width * 0.02);
+    const footprintWidth = width - margin * 2;
+    const footprintX = x + margin;
 
-    // Calculate price range of this candle to determine level heights
-    const priceRange = footprint.candle_high - footprint.candle_low;
-    const candleTopY = priceToY(footprint.candle_high);
-    const candleBottomY = priceToY(footprint.candle_low);
-    const candleHeightPx = Math.abs(candleBottomY - candleTopY);
+    // Colors for bid/ask backgrounds
+    const bidBgColor = 'rgba(183, 28, 28, 0.85)';   // Dark red for bids
+    const askBgColor = 'rgba(27, 94, 32, 0.85)';    // Dark green for asks
+    const bidBgLight = 'rgba(239, 154, 154, 0.7)';  // Light red
+    const askBgLight = 'rgba(165, 214, 167, 0.7)';  // Light green
 
-    // Each level gets equal height within the candle
-    const levelHeight = fullMode
-      ? Math.max(14, candleHeightPx / levels.length)
-      : Math.max(6, candleHeightPx / levels.length);
+    const levelGap = 1; // Small gap between levels
 
     for (let i = 0; i < levels.length; i++) {
       const level = levels[i];
+
+      // IMPORTANTE: Usar precios ABSOLUTOS del nivel para posicionamiento
+      // Esto asegura que los niveles estan alineados globalmente entre velas
+      const levelTopY = priceToY(level.price_max);
+      const levelBottomY = priceToY(level.price_min);
+      const levelHeight = Math.abs(levelBottomY - levelTopY);
+
+      // Skip if level is too small to render or outside bounds
+      if (levelHeight < 2) continue;
+      const bgY = Math.min(levelTopY, levelBottomY);
+      if (bgY < -100 || bgY > 2100) continue;
+
+      // Precio medio para texto
       const priceMid = (level.price_min + level.price_max) / 2;
-      const y = priceToY(priceMid);
+      const textY = priceToY(priceMid);
 
-      // Skip if outside bounds
-      if (y < 0 || y > 2000) continue;
+      const halfWidth = footprintWidth / 2;
 
-      // Skip empty levels in simplified mode
-      if (!fullMode && level.total_volume === 0) continue;
+      // Determine which side dominates for background intensity
+      const bidDominates = level.bid_volume > level.ask_volume;
+      const askDominates = level.ask_volume > level.bid_volume;
 
-      // Calculate color based on delta
-      const color = this.getColorForDelta(level.delta, level.total_volume || 1);
+      // LEFT SIDE: BID (sells hitting the bid)
+      const bidBg = bidDominates ? bidBgColor : bidBgLight;
+      ctx.fillStyle = bidBg;
+      ctx.fillRect(footprintX, bgY, halfWidth - 0.5, levelHeight - levelGap);
 
-      // Draw level background
-      const bgWidth = width - padding * 2;
-      const bgX = x + padding;
-      const bgY = y - levelHeight / 2;
+      // RIGHT SIDE: ASK (buys lifting the ask)
+      const askBg = askDominates ? askBgColor : askBgLight;
+      ctx.fillStyle = askBg;
+      ctx.fillRect(footprintX + halfWidth + 0.5, bgY, halfWidth - 0.5, levelHeight - levelGap);
 
-      // Background with color tint - more opaque in simplified mode
-      const bgOpacity = fullMode ? 0.4 : 0.75;
-      ctx.fillStyle = this.hexToRgba(color, bgOpacity);
-      ctx.fillRect(bgX, bgY, bgWidth, levelHeight);
+      // Border for the entire level
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(footprintX, bgY, footprintWidth, levelHeight - levelGap);
 
-      // In simplified mode, add a thin border to separate levels
-      if (!fullMode && level.total_volume > 0) {
-        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(bgX, bgY, bgWidth, levelHeight);
+      // Center divider line
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(footprintX + halfWidth, bgY);
+      ctx.lineTo(footprintX + halfWidth, bgY + levelHeight - levelGap);
+      ctx.stroke();
+
+      // POC marker - horizontal bar on both sides
+      if (this.config.showPOC && i === pocIndex) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(footprintX, textY - 1.5, footprintWidth, 3);
       }
 
       // Border for imbalances
       if (this.config.showImbalances && imbalanceSet.has(i)) {
         ctx.strokeStyle = this.colors.IMBALANCE_BORDER;
-        ctx.lineWidth = fullMode ? 2 : 1;
-        ctx.strokeRect(bgX, bgY, bgWidth, levelHeight);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(footprintX, bgY, footprintWidth, levelHeight - levelGap);
       }
 
-      // POC marker
-      if (this.config.showPOC && i === pocIndex) {
-        ctx.strokeStyle = this.colors.POC_LINE;
-        ctx.lineWidth = fullMode ? 2 : 1;
-        ctx.setLineDash(fullMode ? [3, 2] : [2, 1]);
-        ctx.beginPath();
-        ctx.moveTo(bgX, y);
-        ctx.lineTo(bgX + bgWidth, y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Text labels only in full mode
-      if (fullMode) {
-        ctx.font = `${this.config.fontSize}px Arial`;
-        ctx.textAlign = 'center';
+      // Text labels - BID on left, ASK on right
+      // Solo mostrar texto si el nivel tiene suficiente altura
+      const minHeightForText = fullMode ? 12 : 6;
+      if (fullMode && footprintWidth >= 40 && levelHeight >= minHeightForText) {
+        const fontSize = Math.min(this.config.fontSize, levelHeight - 2, 16);
+        ctx.font = `bold ${fontSize}px Arial`;
         ctx.textBaseline = 'middle';
 
-        if (this.config.showBidAsk && bgWidth >= 50) {
-          // Bid on left, Ask on right
-          const bidX = bgX + bgWidth * 0.25;
-          const askX = bgX + bgWidth * 0.75;
-
-          // Bid (red side)
-          ctx.fillStyle = this.colors.SELL_WEAK;
-          this.drawTextWithShadow(ctx, this.formatVolume(level.bid_volume), bidX, y);
-
-          // Ask (green side)
-          ctx.fillStyle = this.colors.BUY_WEAK;
-          this.drawTextWithShadow(ctx, this.formatVolume(level.ask_volume), askX, y);
+        // BID volume (left side, right-aligned within left half)
+        if (level.bid_volume > 0) {
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#FFFFFF';
+          const bidText = this.formatVolume(level.bid_volume);
+          const bidX = footprintX + halfWidth - 4;
+          this.drawTextWithShadow(ctx, bidText, bidX, textY);
         }
 
-        if (this.config.showDelta && bgWidth >= 30) {
-          // Delta in center
-          const deltaX = bgX + bgWidth * 0.5;
-          ctx.fillStyle = level.delta >= 0 ? this.colors.BUY_STRONG : this.colors.SELL_STRONG;
-
-          // Only show delta if not showing bid/ask (to avoid overlap)
-          if (!this.config.showBidAsk || bgWidth < 50) {
-            const deltaText = level.delta >= 0 ? `+${this.formatVolume(level.delta)}` : this.formatVolume(level.delta);
-            this.drawTextWithShadow(ctx, deltaText, deltaX, y);
-          }
+        // ASK volume (right side, left-aligned within right half)
+        if (level.ask_volume > 0) {
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#FFFFFF';
+          const askText = this.formatVolume(level.ask_volume);
+          const askX = footprintX + halfWidth + 4;
+          this.drawTextWithShadow(ctx, askText, askX, textY);
         }
       }
     }
 
-    // Draw total delta at bottom of candle (only in full mode)
+    // Draw total delta at bottom of candle
     if (fullMode) {
       const totalDelta = footprint.total_delta;
       if (this.config.showDelta && Math.abs(totalDelta) > 0.01) {
-        const bottomY = priceToY(footprint.candle_low) + 25;
-        ctx.font = `bold ${this.config.fontSize + 2}px Arial`;
+        // Usar el nivel mas bajo para posicionar el delta
+        const lowestLevel = levels[0];
+        const bottomY = priceToY(lowestLevel.price_min) + 18;
+        ctx.font = `bold ${this.config.fontSize}px Arial`;
         ctx.fillStyle = totalDelta >= 0 ? this.colors.BUY_STRONG : this.colors.SELL_STRONG;
         ctx.textAlign = 'center';
         const deltaText = totalDelta >= 0 ? `+${this.formatVolume(totalDelta)}` : this.formatVolume(totalDelta);
-        this.drawTextWithShadow(ctx, deltaText, x + width / 2, bottomY);
+        this.drawTextWithShadow(ctx, deltaText, footprintX + footprintWidth / 2, bottomY);
       }
     }
   }
@@ -418,6 +427,21 @@ class OrderFlowIndicator extends IndicatorBase {
   // No separate pane rendering needed - this is an overlay
   render(ctx, bounds) {
     return;
+  }
+
+  /**
+   * Returns true if there are footprints loaded and ready to display
+   */
+  hasFootprintData() {
+    return this.footprints && this.footprints.length > 0;
+  }
+
+  /**
+   * Check if Order Flow should replace Japanese candles
+   * Siempre false - las velas se dibujan primero, el footprint se dibuja encima
+   */
+  shouldReplaceCandles() {
+    return false;
   }
 }
 

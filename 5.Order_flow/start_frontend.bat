@@ -1,10 +1,10 @@
 @echo off
-title Analizador Cripto - Frontend (Puerto 10001)
+title Order Flow - Frontend (Puerto 11001)
 cd /d "%~dp0frontend"
 
 echo ========================================
-echo    ANALIZADOR CRIPTO - FRONTEND
-echo    Puerto: 10001
+echo    ORDER FLOW - FRONTEND
+echo    Puerto: 11001
 echo ========================================
 echo.
 
@@ -16,7 +16,7 @@ if not exist "node_modules" (
 echo.
 echo Iniciando servidor de desarrollo...
 echo.
-echo Abre tu navegador en: http://localhost:10001
+echo Abre tu navegador en: http://localhost:11001
 echo.
 npm run dev
 

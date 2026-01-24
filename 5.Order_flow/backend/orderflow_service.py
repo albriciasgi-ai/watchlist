@@ -30,26 +30,28 @@ class OrderFlowConfig:
     enabled: bool = True
     symbols: List[str] = field(default_factory=lambda: ["BTCUSDT", "ETHUSDT"])
     intervals: List[str] = field(default_factory=lambda: ["1"])
-    num_levels: int = 6
     imbalance_threshold: float = 3.0
     stacked_min_levels: int = 3
     alerts_enabled: bool = True
     alert_cooldown_minutes: int = 15
     max_footprints_in_memory: int = 2880  # 1 dia de velas 1min x 2 simbolos
     log_trades: bool = False
+    # Step sizes por simbolo (tamano de cada nivel en USD)
+    # Si no esta configurado, usa el default de footprint_calculator.py
+    symbol_step_sizes: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
             "enabled": self.enabled,
             "symbols": self.symbols,
             "intervals": self.intervals,
-            "num_levels": self.num_levels,
             "imbalance_threshold": self.imbalance_threshold,
             "stacked_min_levels": self.stacked_min_levels,
             "alerts_enabled": self.alerts_enabled,
             "alert_cooldown_minutes": self.alert_cooldown_minutes,
             "max_footprints_in_memory": self.max_footprints_in_memory,
-            "log_trades": self.log_trades
+            "log_trades": self.log_trades,
+            "symbol_step_sizes": self.symbol_step_sizes
         }
 
     @classmethod
@@ -58,14 +60,26 @@ class OrderFlowConfig:
             enabled=data.get("enabled", True),
             symbols=data.get("symbols", ["BTCUSDT", "ETHUSDT"]),
             intervals=data.get("intervals", ["1"]),
-            num_levels=data.get("num_levels", 6),
             imbalance_threshold=data.get("imbalance_threshold", 3.0),
             stacked_min_levels=data.get("stacked_min_levels", 3),
             alerts_enabled=data.get("alerts_enabled", True),
             alert_cooldown_minutes=data.get("alert_cooldown_minutes", 15),
             max_footprints_in_memory=data.get("max_footprints_in_memory", 2880),
-            log_trades=data.get("log_trades", False)
+            log_trades=data.get("log_trades", False),
+            symbol_step_sizes=data.get("symbol_step_sizes", {})
         )
+
+    def get_step_size_for_symbol(self, symbol: str) -> Optional[float]:
+        """
+        Retorna el step size configurado para un simbolo.
+        Si no esta configurado, retorna None (usara el default del calculator).
+        """
+        return self.symbol_step_sizes.get(symbol)
+
+    def set_step_size_for_symbol(self, symbol: str, step_size: float) -> None:
+        """Guarda step size personalizado para un simbolo."""
+        if step_size > 0:
+            self.symbol_step_sizes[symbol] = step_size
 
 
 class OrderFlowService:
@@ -189,6 +203,37 @@ class OrderFlowService:
             logger.error(f"[ORDERFLOW_SERVICE] Error actualizando config: {e}")
             return False
 
+    def update_symbol_step_size(self, symbol: str, step_size: float) -> bool:
+        """
+        Actualiza el step size para un simbolo especifico.
+
+        Args:
+            symbol: Simbolo (ej: "BTCUSDT")
+            step_size: Tamano del step en USD (ej: 10.0 para BTC)
+
+        Returns:
+            True si se actualizo correctamente
+        """
+        try:
+            # Guardar en config
+            self.config.set_step_size_for_symbol(symbol, step_size)
+            self._save_config()
+
+            # Actualizar calculators existentes para este simbolo
+            for key, calculator in self._calculators.items():
+                if key.startswith(f"{symbol}_"):
+                    calculator.set_step_size(step_size)
+                    logger.info(f"[ORDERFLOW_SERVICE] Step size actualizado para {key}: {step_size}")
+
+            return True
+        except Exception as e:
+            logger.error(f"[ORDERFLOW_SERVICE] Error actualizando step size de {symbol}: {e}")
+            return False
+
+    def get_symbol_step_size(self, symbol: str) -> Optional[float]:
+        """Retorna el step size configurado para un simbolo (None si usa default)."""
+        return self.config.get_step_size_for_symbol(symbol)
+
     async def start(self, ws_manager, symbols: Optional[List[str]] = None,
                     intervals: Optional[List[str]] = None):
         """
@@ -230,8 +275,11 @@ class OrderFlowService:
         for symbol in active_symbols:
             for interval in active_intervals:
                 key = f"{symbol}_{interval}"
+                # Usar step size especifico del simbolo si esta configurado
+                symbol_step_size = self.config.get_step_size_for_symbol(symbol)
                 self._calculators[key] = FootprintCalculator(
-                    num_levels=self.config.num_levels,
+                    symbol=symbol,
+                    step_size=symbol_step_size,  # None usa default del calculator
                     imbalance_threshold=self.config.imbalance_threshold
                 )
 

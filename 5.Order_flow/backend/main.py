@@ -3863,6 +3863,87 @@ async def update_orderflow_config(request: Request):
         }
 
 
+@app.get("/api/orderflow/step-size/{symbol}")
+async def get_symbol_step_size(symbol: str):
+    """
+    Get step size for a specific symbol.
+
+    Returns:
+        Step size configuration for the symbol (or default if not customized)
+    """
+    from footprint_calculator import get_default_step_size, DEFAULT_STEP_SIZES
+
+    try:
+        service = get_orderflow_service()
+        custom_step_size = service.get_symbol_step_size(symbol)
+        default_step_size = get_default_step_size(symbol)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "step_size": custom_step_size if custom_step_size else default_step_size,
+            "is_custom": custom_step_size is not None,
+            "default_step_size": default_step_size,
+            "all_defaults": DEFAULT_STEP_SIZES
+        }
+    except Exception as e:
+        print(f"[ERROR] Get step size for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/orderflow/step-size/{symbol}")
+async def update_symbol_step_size(symbol: str, request: Request):
+    """
+    Update step size for a specific symbol.
+
+    Body example:
+    {
+        "step_size": 10.0
+    }
+
+    Returns:
+        Updated step size and success status
+    """
+    from footprint_calculator import get_default_step_size
+
+    try:
+        data = await request.json()
+        step_size = data.get("step_size")
+
+        if step_size is None or step_size <= 0:
+            return {
+                "success": False,
+                "error": "step_size must be a positive number"
+            }
+
+        service = get_orderflow_service()
+        success = service.update_symbol_step_size(symbol, float(step_size))
+
+        if success:
+            return {
+                "success": True,
+                "message": f"Step size updated for {symbol}",
+                "symbol": symbol,
+                "step_size": float(step_size),
+                "default_step_size": get_default_step_size(symbol)
+            }
+        else:
+            return {
+                "success": False,
+                "error": f"Failed to update step size for {symbol}"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Update step size for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.post("/api/swing/config")
 async def update_swing_config(request: Request):
     """

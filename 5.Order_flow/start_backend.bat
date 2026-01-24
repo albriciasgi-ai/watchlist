@@ -1,10 +1,10 @@
 @echo off
-title Analizador Cripto - Backend (Puerto 10000)
+title Order Flow - Backend (Puerto 11000)
 cd /d "%~dp0backend"
 
 echo ========================================
-echo    ANALIZADOR CRIPTO - BACKEND
-echo    Puerto: 10000
+echo    ORDER FLOW - BACKEND
+echo    Puerto: 11000
 echo ========================================
 echo.
 
@@ -20,8 +20,8 @@ echo Verificando dependencias...
 pip install -r requirements.txt -q
 
 echo.
-echo Iniciando servidor en puerto 10000...
+echo Iniciando servidor en puerto 11000...
 echo.
-python -m uvicorn main:app --reload --port 10000 --host 0.0.0.0
+python -m uvicorn main:app --reload --port 11000 --host 0.0.0.0
 
 pause

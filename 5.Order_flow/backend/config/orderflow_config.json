@@ -1,12 +1,41 @@
 {
   "enabled": true,
-  "symbols": ["BTCUSDT", "ETHUSDT"],
-  "intervals": ["1", "5"],
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "XRPUSDT",
+    "TRXUSDT",
+    "GALAUSDT",
+    "SUIUSDT",
+    "TRBUSDT",
+    "SOLUSDT",
+    "ADAUSDT",
+    "DOGEUSDT",
+    "PAXGUSDT",
+    "BNBUSDT",
+    "POLUSDT"
+  ],
+  "intervals": [
+    "1",
+    "5"
+  ],
   "num_levels": 6,
   "imbalance_threshold": 3.0,
   "stacked_min_levels": 3,
   "alerts_enabled": true,
   "alert_cooldown_minutes": 15,
   "max_footprints_in_memory": 2880,
-  "log_trades": false
+  "log_trades": false,
+  "level_thresholds": {
+    "threshold_3_levels": 0.3,
+    "threshold_4_levels": 0.5,
+    "threshold_5_levels": 0.8
+  },
+  "symbol_thresholds": {
+    "BTCUSDT": {
+      "threshold_3_levels": 0.4,
+      "threshold_4_levels": 0.7,
+      "threshold_5_levels": 1.5
+    }
+  }
 }

@@ -30,10 +30,15 @@ const OrderFlowSettings = ({
   const [backendStatus, setBackendStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
+  const [symbolStepSize, setSymbolStepSize] = useState(null);
+  const [defaultStepSize, setDefaultStepSize] = useState(null);
+  const [allDefaultStepSizes, setAllDefaultStepSizes] = useState({});
+  const [pendingStepSize, setPendingStepSize] = useState(null);
 
-  // Fetch backend status on mount
+  // Fetch backend status and symbol step size on mount/symbol change
   useEffect(() => {
     fetchBackendStatus();
+    fetchSymbolStepSize();
   }, [currentSymbol]);
 
   // Update local config when props change
@@ -66,6 +71,24 @@ const OrderFlowSettings = ({
       console.error('Failed to fetch orderflow config:', error);
     }
     return null;
+  };
+
+  const fetchSymbolStepSize = async () => {
+    if (!currentSymbol) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/orderflow/step-size/${currentSymbol}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setSymbolStepSize(data.step_size);
+          setDefaultStepSize(data.default_step_size);
+          setAllDefaultStepSizes(data.all_defaults || {});
+          setPendingStepSize(null);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch symbol step size:', error);
+    }
   };
 
   // Handle frontend display config changes (immediate)
@@ -131,13 +154,58 @@ const OrderFlowSettings = ({
   };
 
   const enabled = getCurrentValue('enabled', true);
-  const numLevels = getCurrentValue('num_levels', 6);
   const imbalanceThreshold = getCurrentValue('imbalance_threshold', 3.0);
   const stackedMinLevels = getCurrentValue('stacked_min_levels', 3);
   const alertsEnabled = getCurrentValue('alerts_enabled', true);
   const alertCooldown = getCurrentValue('alert_cooldown_minutes', 15);
   const maxFootprints = getCurrentValue('max_footprints_in_memory', 2880);
   const logTrades = getCurrentValue('log_trades', false);
+
+  // Current step size value (pending overrides actual)
+  const currentStepSize = pendingStepSize !== null ? pendingStepSize : (symbolStepSize || defaultStepSize || 1);
+
+  const handleStepSizeChange = (value) => {
+    setPendingStepSize(value);
+  };
+
+  const hasUnsavedStepSize = pendingStepSize !== null && pendingStepSize !== symbolStepSize;
+
+  const handleSaveStepSize = async () => {
+    if (!hasUnsavedStepSize || !currentSymbol) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/orderflow/step-size/${currentSymbol}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step_size: pendingStepSize })
+      });
+
+      if (response.ok) {
+        console.log(`[OrderFlow] Step size saved for ${currentSymbol}: ${pendingStepSize}`);
+        setSymbolStepSize(pendingStepSize);
+        setPendingStepSize(null);
+        if (onBackendConfigSaved) {
+          onBackendConfigSaved();
+        }
+      } else {
+        alert('Error al guardar step size');
+      }
+    } catch (error) {
+      console.error('[OrderFlow] Step size save error:', error);
+      alert('Error de conexion al guardar');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetStepSize = () => {
+    setPendingStepSize(defaultStepSize);
+  };
+
+  const handleDiscardStepSize = () => {
+    setPendingStepSize(null);
+  };
 
   return (
     <div className="orderflow-settings" style={{ padding: '16px', maxHeight: '70vh', overflowY: 'auto' }}>
@@ -317,6 +385,140 @@ const OrderFlowSettings = ({
         </label>
       </div>
 
+      {/* Step Size Configuration - Per Symbol */}
+      <div style={{
+        background: '#E3F2FD',
+        padding: '12px',
+        borderRadius: '8px',
+        marginBottom: '16px',
+        border: '2px solid #2196F3'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <h5 style={{ margin: 0, color: '#1565C0' }}>
+            Step Size - {currentSymbol}
+          </h5>
+          {hasUnsavedStepSize && (
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button
+                onClick={handleDiscardStepSize}
+                disabled={loading}
+                style={{
+                  padding: '4px 8px',
+                  background: '#f5f5f5',
+                  color: '#666',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px'
+                }}
+              >
+                Descartar
+              </button>
+              <button
+                onClick={handleSaveStepSize}
+                disabled={loading}
+                style={{
+                  padding: '4px 8px',
+                  background: loading ? '#64B5F6' : '#2196F3',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: loading ? 'default' : 'pointer',
+                  fontSize: '11px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {loading ? 'Guardando...' : 'Guardar'}
+              </button>
+            </div>
+          )}
+        </div>
+        <div style={{ fontSize: '11px', color: '#1976D2', marginBottom: '12px' }}>
+          Tamano de cada nivel de precio en USD. Todos los niveles tendran este tamano fijo.
+        </div>
+
+        {/* Step Size Input */}
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+            Step Size: ${currentStepSize} USD
+          </label>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input
+              type="number"
+              min="0.001"
+              max="100"
+              step="0.1"
+              value={currentStepSize}
+              onChange={(e) => handleStepSizeChange(parseFloat(e.target.value) || 0.1)}
+              disabled={loading}
+              style={{
+                flex: 1,
+                padding: '8px',
+                border: '1px solid #90CAF9',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}
+            />
+            <button
+              onClick={handleResetStepSize}
+              disabled={loading}
+              style={{
+                padding: '8px 12px',
+                background: '#f5f5f5',
+                color: '#666',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '11px'
+              }}
+              title={`Reset to default: $${defaultStepSize}`}
+            >
+              Reset
+            </button>
+          </div>
+          <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            Default para {currentSymbol}: ${defaultStepSize} USD
+          </div>
+        </div>
+
+        {/* Common Presets */}
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '6px', fontSize: '11px', color: '#1565C0' }}>
+            Presets rapidos:
+          </label>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {[0.5, 1, 2, 5, 10, 20, 50].map(preset => (
+              <button
+                key={preset}
+                onClick={() => handleStepSizeChange(preset)}
+                disabled={loading}
+                style={{
+                  padding: '4px 10px',
+                  background: currentStepSize === preset ? '#2196F3' : '#E3F2FD',
+                  color: currentStepSize === preset ? 'white' : '#1565C0',
+                  border: '1px solid #90CAF9',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: currentStepSize === preset ? 'bold' : 'normal'
+                }}
+              >
+                ${preset}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ fontSize: '10px', color: '#1565C0', marginTop: '8px', background: '#BBDEFB', padding: '8px', borderRadius: '4px' }}>
+          <strong>Como funciona:</strong><br/>
+          - Cada nivel tiene exactamente ${currentStepSize} de alto<br/>
+          - Velas grandes tendran MAS niveles, velas pequenas MENOS<br/>
+          - Los niveles estan ALINEADOS entre velas (mismo precio = misma posicion Y)<br/>
+          - Similar a ATAS, Sierra Chart y plataformas profesionales
+        </div>
+      </div>
+
       {/* Footprint Parameters (Backend) */}
       <div style={{
         background: '#fff3e0',
@@ -326,26 +528,6 @@ const OrderFlowSettings = ({
         border: '2px solid #FF9800'
       }}>
         <h5 style={{ margin: '0 0 12px 0', color: '#E65100' }}>Footprint Parameters</h5>
-
-        {/* Number of Levels */}
-        <div style={{ marginBottom: '12px' }}>
-          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Number of Levels: {numLevels}
-          </label>
-          <input
-            type="range"
-            min="3"
-            max="12"
-            value={numLevels}
-            onChange={(e) => handleBackendConfigUpdate({ num_levels: parseInt(e.target.value) })}
-            disabled={loading}
-            style={{ width: '100%' }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
-            <span>3 (menos detalle)</span>
-            <span>12 (mas detalle)</span>
-          </div>
-        </div>
 
         {/* Imbalance Threshold */}
         <div style={{ marginBottom: '12px' }}>
@@ -530,8 +712,9 @@ const OrderFlowSettings = ({
         fontSize: '11px',
         color: '#1565C0'
       }}>
-        <strong>Order Flow Footprint</strong>
+        <strong>Order Flow Footprint (Step Size Absoluto)</strong>
         <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
+          <li><strong>Step Size</strong>: Tamano fijo de cada nivel (${currentStepSize} USD para {currentSymbol})</li>
           <li><strong>POC</strong>: Nivel con mayor volumen (Point of Control)</li>
           <li><strong>Imbalance</strong>: Nivel donde un lado tiene {imbalanceThreshold}x mas volumen</li>
           <li><strong>Stacked Imbalance</strong>: {stackedMinLevels}+ niveles consecutivos con imbalance en misma direccion</li>

@@ -76,7 +76,13 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.aihero.dev)",
       "WebFetch(domain:paddo.dev)",
-      "Bash(curl.exe:*)"
+      "Bash(curl.exe:*)",
+      "Bash(C:UsersinvenOneDriveDocumentosGitHubwatchlist5.Order_flowopenapi_temp.json)",
+      "Bash(Select-String -Pattern \"orderflow\" -CaseSensitive:$false)",
+      "WebFetch(domain:www.sierrachart.com)",
+      "WebFetch(domain:atas.net)",
+      "WebFetch(domain:help.atas.net)",
+      "WebFetch(domain:help.quantower.com)"
     ],
     "deny": [],
     "ask": []

@@ -1,28 +1,28 @@
 @echo off
-title Analizador Cripto - Launcher
+title Order Flow - Launcher
 echo ========================================
-echo    ANALIZADOR CRIPTO
-echo    Single Symbol Analysis Tool
+echo    ORDER FLOW ANALYZER
+echo    Footprint Chart Visualization
 echo ========================================
 echo.
 echo Iniciando servicios...
 echo.
 
-echo [1/2] Iniciando Backend (Puerto 10000)...
-start "Backend - 10000" cmd /k "call start_backend.bat"
+echo [1/2] Iniciando Backend (Puerto 11000)...
+start "Backend - 11000" cmd /k "call start_backend.bat"
 
 timeout /t 3 /nobreak > nul
 
-echo [2/2] Iniciando Frontend (Puerto 10001)...
-start "Frontend - 10001" cmd /k "call start_frontend.bat"
+echo [2/2] Iniciando Frontend (Puerto 11001)...
+start "Frontend - 11001" cmd /k "call start_frontend.bat"
 
 echo.
 echo ========================================
 echo    SERVICIOS INICIADOS
 echo ========================================
 echo.
-echo Backend:  http://localhost:10000
-echo Frontend: http://localhost:10001
+echo Backend:  http://localhost:11000
+echo Frontend: http://localhost:11001
 echo.
 echo Presiona cualquier tecla para cerrar esta ventana...
 pause > nul

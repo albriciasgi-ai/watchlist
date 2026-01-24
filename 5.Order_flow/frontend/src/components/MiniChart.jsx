@@ -860,33 +860,76 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
 
     ctx.lineWidth = 1;
-    visibleCandles.forEach((d, i) => {
-      const x = marginLeft + (i * barWidth);
-      const yOpen = marginTop + priceChartHeight - (d.open - minPrice) * yScale + verticalOffset;
-      const yClose = marginTop + priceChartHeight - (d.close - minPrice) * yScale + verticalOffset;
-      const yHigh = marginTop + priceChartHeight - (d.high - minPrice) * yScale + verticalOffset;
-      const yLow = marginTop + priceChartHeight - (d.low - minPrice) * yScale + verticalOffset;
 
-      const color = d.close >= d.open ? bullColor : bearColor;
-      ctx.strokeStyle = color;
-      ctx.fillStyle = color;
-
-      ctx.beginPath();
-      ctx.moveTo(x + barWidth / 2, yHigh);
-      ctx.lineTo(x + barWidth / 2, yLow);
-      ctx.stroke();
-
-      const bodyHeight = Math.abs(yClose - yOpen);
-      const bodyWidth = Math.max(barWidth * 0.7, 2);
-      
-      if (bodyHeight < 2) {
-        const y = (yOpen + yClose) / 2;
-        ctx.fillRect(x + (barWidth - bodyWidth) / 2, y - 1.5, bodyWidth, 3);
-      } else {
-        const topY = Math.min(yOpen, yClose);
-        ctx.fillRect(x + (barWidth - bodyWidth) / 2, topY, bodyWidth, Math.max(bodyHeight, 2));
+    // Check if Order Flow should replace Japanese candles
+    // Only hide candles if Order Flow is enabled AND has data to display
+    let orderFlowReplacesCandles = false;
+    try {
+      const orderFlowIndicator = indicatorManagerRef.current?.indicators?.find(
+        ind => ind.name === "Order Flow"
+      );
+      if (orderFlowIndicator && typeof orderFlowIndicator.shouldReplaceCandles === 'function') {
+        orderFlowReplacesCandles = orderFlowIndicator.shouldReplaceCandles();
       }
-    });
+    } catch (e) {
+      console.error('[MiniChart] Error checking orderFlowReplacesCandles:', e);
+      orderFlowReplacesCandles = false;
+    }
+
+    // When Order Flow has data, DON'T draw Japanese candles - the footprint IS the candle
+    // If there's any error or no data, always show Japanese candles
+    if (!orderFlowReplacesCandles) {
+      visibleCandles.forEach((d, i) => {
+        const x = marginLeft + (i * barWidth);
+        const yOpen = marginTop + priceChartHeight - (d.open - minPrice) * yScale + verticalOffset;
+        const yClose = marginTop + priceChartHeight - (d.close - minPrice) * yScale + verticalOffset;
+        const yHigh = marginTop + priceChartHeight - (d.high - minPrice) * yScale + verticalOffset;
+        const yLow = marginTop + priceChartHeight - (d.low - minPrice) * yScale + verticalOffset;
+
+        const color = d.close >= d.open ? bullColor : bearColor;
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+
+        const candleCenterX = x + barWidth / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(candleCenterX, yHigh);
+        ctx.lineTo(candleCenterX, yLow);
+        ctx.stroke();
+
+        const bodyHeight = Math.abs(yClose - yOpen);
+        const bodyWidth = Math.max(barWidth * 0.7, 2);
+
+        if (bodyHeight < 2) {
+          const y = (yOpen + yClose) / 2;
+          ctx.fillRect(candleCenterX - bodyWidth / 2, y - 1.5, bodyWidth, 3);
+        } else {
+          const topY = Math.min(yOpen, yClose);
+          ctx.fillRect(candleCenterX - bodyWidth / 2, topY, bodyWidth, Math.max(bodyHeight, 2));
+        }
+      });
+    }
+
+    // ✅ Render Order Flow footprints ENCIMA de las velas japonesas
+    if (indicatorManagerRef.current) {
+      const orderFlowIndicator = indicatorManagerRef.current.indicators?.find(
+        ind => ind.name === "Order Flow"
+      );
+      if (orderFlowIndicator && orderFlowIndicator.enabled && orderFlowIndicator.hasFootprintData()) {
+        const overlayBounds = {
+          x: marginLeft,
+          y: marginTop,
+          width: chartWidth,
+          height: priceChartHeight
+        };
+        const priceContext = {
+          minPrice,
+          maxPrice,
+          priceToY: (price) => marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset
+        };
+        orderFlowIndicator.renderOverlay(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
+      }
+    }
 
     // ✅ NUEVO: Línea horizontal de precio actual
     if (displayCandles.length > 0) {
