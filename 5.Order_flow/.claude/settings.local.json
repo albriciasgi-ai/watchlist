@@ -75,7 +75,8 @@
       "WebFetch(domain:bybit-exchange.github.io)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.aihero.dev)",
-      "WebFetch(domain:paddo.dev)"
+      "WebFetch(domain:paddo.dev)",
+      "Bash(curl.exe:*)"
     ],
     "deny": [],
     "ask": []

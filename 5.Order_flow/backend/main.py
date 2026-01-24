@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- # v7 - logging with timestamps for all loggers
+# -*- coding: utf-8 -*- # v8 - reduced logging noise
 import logging
 import sys
 
@@ -11,7 +11,7 @@ formatter = logging.Formatter(LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
 
 # Configure root logger
 root_logger = logging.getLogger()
-root_logger.setLevel(logging.INFO)
+root_logger.setLevel(logging.WARNING)  # Only WARNING and above by default
 
 # Remove existing handlers and add our own
 for handler in root_logger.handlers[:]:
@@ -22,11 +22,21 @@ stdout_handler = logging.StreamHandler(sys.stdout)
 stdout_handler.setFormatter(formatter)
 root_logger.addHandler(stdout_handler)
 
-# Also configure uvicorn loggers specifically
-for logger_name in ['uvicorn', 'uvicorn.error', 'uvicorn.access']:
-    uvicorn_logger = logging.getLogger(logger_name)
-    uvicorn_logger.handlers = []
-    uvicorn_logger.addHandler(stdout_handler)
+# Silence noisy loggers
+logging.getLogger('uvicorn.access').setLevel(logging.WARNING)  # No HTTP request logs
+logging.getLogger('httpx').setLevel(logging.WARNING)  # No HTTP client logs
+logging.getLogger('httpcore').setLevel(logging.WARNING)
+logging.getLogger('websocket_manager').setLevel(logging.WARNING)
+logging.getLogger('trade_aggregator').setLevel(logging.WARNING)
+logging.getLogger('swing_detector').setLevel(logging.WARNING)
+logging.getLogger('swing_service').setLevel(logging.WARNING)
+logging.getLogger('pattern_state_manager').setLevel(logging.WARNING)
+logging.getLogger('config_store').setLevel(logging.WARNING)
+logging.getLogger('realtime_pattern_service').setLevel(logging.WARNING)
+logging.getLogger('alert_sender').setLevel(logging.WARNING)
+
+# Keep orderflow_service at INFO to see footprints
+logging.getLogger('orderflow_service').setLevel(logging.INFO)
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,6 +59,10 @@ from swing_service import get_swing_service
 
 # VWAP service imports
 from vwap_service import get_vwap_service
+
+# Order Flow / Trade Aggregator imports
+from trade_aggregator import TradeAggregator, create_trade_from_bybit, Trade as AggregatorTrade
+from orderflow_service import get_orderflow_service
 
 # S&R v2 detector imports
 from sr_detector import get_sr_detector
@@ -85,8 +99,53 @@ MAX_DAYS_BY_INTERVAL = {
     "120": 180,   # 2 horas -> máx 180 días
     "240": 720,   # 4 horas -> máx 720 días
     "D": 1440,    # 1 día -> máx 1440 días (4 años)
-    "W": 730,     # 1 semana -> máx 730 días
+    "W": 730,     # 1 semana -> max 730 dias
 }
+
+# ==================== ORDER FLOW / TRADE AGGREGATOR ====================
+# Singleton instance for trade aggregation
+_trade_aggregator: Optional[TradeAggregator] = None
+
+
+def get_trade_aggregator() -> TradeAggregator:
+    """Get or create the singleton TradeAggregator instance"""
+    global _trade_aggregator
+    if _trade_aggregator is None:
+        _trade_aggregator = TradeAggregator(interval="1")  # Default to 1 minute
+    return _trade_aggregator
+
+
+def _on_websocket_trade(symbol: str, ws_trade):
+    """
+    Callback invocado cuando el WebSocketManager recibe un trade.
+    Convierte el formato de websocket_manager.Trade a trade_aggregator.Trade
+    y lo pasa al aggregator.
+
+    Args:
+        symbol: Trading pair (e.g., "BTCUSDT")
+        ws_trade: Trade object from websocket_manager.py
+    """
+    try:
+        aggregator = get_trade_aggregator()
+
+        # Convert from websocket_manager.Trade to trade_aggregator.Trade
+        agg_trade = AggregatorTrade(
+            timestamp=ws_trade.timestamp,
+            symbol=ws_trade.symbol,
+            side=ws_trade.side,
+            price=ws_trade.price,
+            volume=ws_trade.size,  # websocket_manager uses 'size', aggregator uses 'volume'
+            trade_id=ws_trade.trade_id
+        )
+
+        # Use asyncio to schedule the async add_trade method
+        asyncio.create_task(aggregator.add_trade(agg_trade))
+
+    except Exception as e:
+        print(f"[TRADE_CALLBACK] Error processing trade: {e}")
+
+
+# ==================== END ORDER FLOW ====================
 
 def load_cache(symbol: str, interval: str, indicator: str):
     """Carga datos del cache si existen y son recientes"""
@@ -2399,40 +2458,54 @@ async def startup_event():
     print("[STARTUP] Alert sender initialized")
     print("[STARTUP] Proximity alerts system ready")
 
-    # Start swing detector service FIRST (it loads config with all symbols)
+    # Get symbols from swing config (used as master list for other services)
     swing_service = None
     try:
         swing_service = get_swing_service()
-        # Get symbols from swing config - this is the master list
         swing_symbols = swing_service.config.symbols or ["BTCUSDT", "ETHUSDT"]
         swing_interval = swing_service.config.interval or "1"
-        print(f"[STARTUP] Swing config loaded: {len(swing_symbols)} symbols, interval={swing_interval}m")
+        print(f"[STARTUP] Swing config loaded: {len(swing_symbols)} symbols")
     except Exception as e:
         print(f"[STARTUP] Warning: Could not load swing config: {e}")
         swing_symbols = ["BTCUSDT", "ETHUSDT"]
         swing_interval = "1"
 
-    # Start real-time pattern detection service with ALL symbols from swing config
-    try:
-        realtime_service = get_realtime_pattern_service()
-        # Use swing symbols but start with 60m interval for realtime patterns
-        # The swing service will add its own interval subscription
-        intervals = ["60"]  # Realtime patterns use 1h, swing detector will add "1"
-        await realtime_service.start(swing_symbols, intervals)
-        print("[STARTUP] Real-time pattern detection service started")
-        print(f"[STARTUP] Monitoring symbols: {swing_symbols}")
-        print(f"[STARTUP] Initial interval: {intervals}")
-    except Exception as e:
-        print(f"[STARTUP] Warning: Could not start real-time service: {e}")
-        print("[STARTUP] Real-time detection disabled - install websockets: pip install websockets>=12.0")
+    # NOTE: Swing detector and realtime pattern services are DISABLED by default
+    # They consume too many resources. Enable them only if needed.
+    # To enable, uncomment the sections below.
 
-    # Now start swing detector service (WebSocket already running with all symbols)
-    if swing_service:
-        try:
-            await swing_service.start()
-            print(f"[STARTUP] Swing detector service started - monitoring {len(swing_symbols)} symbols @ {swing_interval}m")
-        except Exception as e:
-            print(f"[STARTUP] Warning: Could not start swing service: {e}")
+    # # Start real-time pattern detection service (DTB, Rejection patterns)
+    # try:
+    #     realtime_service = get_realtime_pattern_service()
+    #     intervals = ["60"]
+    #     await realtime_service.start(swing_symbols, intervals)
+    #     print("[STARTUP] Real-time pattern detection service started")
+    # except Exception as e:
+    #     print(f"[STARTUP] Warning: Could not start real-time service: {e}")
+
+    # # Start swing detector service
+    # if swing_service:
+    #     try:
+    #         await swing_service.start()
+    #         print(f"[STARTUP] Swing detector service started")
+    #     except Exception as e:
+    #         print(f"[STARTUP] Warning: Could not start swing service: {e}")
+
+    print("[STARTUP] Swing/DTB/Rejection services DISABLED (enable in main.py if needed)")
+
+    # Start WebSocket Manager FIRST (required for all real-time services)
+    try:
+        from websocket_manager import get_websocket_manager
+        ws_manager = get_websocket_manager()
+
+        # Start the WebSocket connection with kline subscriptions for VWAP
+        # This actually connects to Bybit - required before any other service
+        await ws_manager.start(swing_symbols, ["1"])  # Kline subscription for interval 1
+        print(f"[STARTUP] WebSocket Manager started - connected to Bybit")
+    except Exception as e:
+        print(f"[STARTUP] ERROR: Could not start WebSocket Manager: {e}")
+        import traceback
+        traceback.print_exc()
 
     # Start VWAP service
     try:
@@ -2443,6 +2516,47 @@ async def startup_event():
         print("[STARTUP] VWAP service started")
     except Exception as e:
         print(f"[STARTUP] Warning: Could not start VWAP service: {e}")
+
+    # Start Order Flow / Trade Aggregator
+    try:
+        from websocket_manager import get_websocket_manager
+        ws_manager = get_websocket_manager()
+
+        # Initialize the trade aggregator
+        trade_aggregator = get_trade_aggregator()
+        print(f"[STARTUP] Trade Aggregator initialized (interval={trade_aggregator.interval})")
+
+        # Register the trade callback to receive trades from WebSocket
+        ws_manager.add_trade_listener(_on_websocket_trade)
+        print("[STARTUP] Trade callback registered with WebSocket manager")
+
+        # Subscribe to trade streams for all symbols
+        # Using the same symbols as swing detector for consistency
+        trade_symbols = swing_symbols if swing_symbols else ["BTCUSDT", "ETHUSDT"]
+        await ws_manager.subscribe_trades(trade_symbols)
+        print(f"[STARTUP] Subscribed to trades for {len(trade_symbols)} symbols: {trade_symbols}")
+
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start Trade Aggregator: {e}")
+        import traceback
+        traceback.print_exc()
+
+    # Start OrderFlow Service
+    try:
+        from websocket_manager import get_websocket_manager
+        ws_manager = get_websocket_manager()
+        orderflow_service = get_orderflow_service()
+
+        # Use same symbols as other services
+        of_symbols = swing_symbols if swing_symbols else ["BTCUSDT", "ETHUSDT"]
+        of_intervals = ["1", "5"]  # 1min and 5min footprints
+
+        await orderflow_service.start(ws_manager, of_symbols, of_intervals)
+        print(f"[STARTUP] OrderFlow Service started - {len(of_symbols)} symbols, intervals: {of_intervals}")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start OrderFlow Service: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 @app.on_event("shutdown")
@@ -2474,6 +2588,15 @@ async def shutdown_event():
         print("[SHUTDOWN] VWAP service stopped")
     except Exception as e:
         print(f"[SHUTDOWN] Warning: Error stopping VWAP service: {e}")
+
+    # Flush Trade Aggregator (save any pending candle data)
+    try:
+        trade_aggregator = get_trade_aggregator()
+        await trade_aggregator.flush_all()
+        stats = trade_aggregator.get_stats()
+        print(f"[SHUTDOWN] Trade Aggregator flushed - trades processed: {stats['trades_processed']}, candles completed: {stats['candles_completed']}")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error flushing Trade Aggregator: {e}")
 
     # Save config store
     try:
@@ -3080,10 +3203,10 @@ async def get_drawings(symbol: str):
         if drawings_file.exists():
             with open(drawings_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                print(f"[DRAWINGS] [OK] Loaded {len(data.get('shapes', []))} shapes for {symbol}")
+                # print(f"[DRAWINGS] [OK] Loaded {len(data.get('shapes', []))} shapes for {symbol}")
                 return data
         else:
-            print(f"[DRAWINGS] No drawings found for {symbol}")
+            # print(f"[DRAWINGS] No drawings found for {symbol}")
             return {
                 "symbol": symbol,
                 "shapes": [],
@@ -3127,7 +3250,7 @@ async def save_drawings(symbol: str, request: Request):
         with open(drawings_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        print(f"[DRAWINGS] [OK] Saved {len(shapes)} shapes for {symbol}")
+        # print(f"[DRAWINGS] [OK] Saved {len(shapes)} shapes for {symbol}")
 
         return {
             "success": True,
@@ -3154,7 +3277,7 @@ async def delete_drawings(symbol: str):
 
         if drawings_file.exists():
             drawings_file.unlink()
-            print(f"[DRAWINGS] [OK] Deleted all drawings for {symbol}")
+            # print(f"[DRAWINGS] [OK] Deleted all drawings for {symbol}")
             return {
                 "success": True,
                 "message": f"Drawings deleted for {symbol}"
@@ -3544,6 +3667,196 @@ async def get_websocket_debug():
             "buffers": buffer_stats
         }
     except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/orderflow/aggregator/stats")
+async def get_trade_aggregator_stats():
+    """
+    Get Trade Aggregator statistics for Order Flow analysis.
+    Shows trades processed, candles completed, and active buckets.
+    """
+    try:
+        from websocket_manager import get_websocket_manager
+        ws_manager = get_websocket_manager()
+
+        aggregator = get_trade_aggregator()
+        stats = aggregator.get_stats()
+        trade_stats = ws_manager.get_trade_stats()
+
+        return {
+            "success": True,
+            "aggregator": stats,
+            "websocket_trades": trade_stats
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/orderflow/status")
+async def get_orderflow_status():
+    """
+    Get Order Flow service status.
+
+    Returns current state of the OrderFlowService including:
+    - enabled: whether service is active
+    - running: whether service is currently processing
+    - symbols: monitored trading pairs
+    - intervals: monitored timeframes
+    - websocket_connected: connection status
+    - trades_received: total trades processed
+    - footprints_completed: total footprints generated
+    - alerts_sent: total alerts sent to TradingBot
+    """
+    try:
+        service = get_orderflow_service()
+        status = service.get_status()
+        return {
+            "success": True,
+            **status
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "status": "error",
+            "service": "orderflow"
+        }
+
+
+@app.get("/api/orderflow/footprint/{symbol}")
+async def get_orderflow_footprint(symbol: str, interval: str = "1", limit: int = 100):
+    """
+    Get Order Flow footprint data for a symbol.
+
+    Returns footprint data including levels with bid/ask volumes,
+    POC (Point of Control), and detected imbalances.
+
+    Args:
+        symbol: Trading pair (e.g., BTCUSDT)
+        interval: Candle interval - "1" (1 min) or "5" (5 min)
+        limit: Maximum number of footprints to return (default 100, max 1000)
+
+    Returns:
+        JSON with symbol, interval, and array of footprints
+    """
+    try:
+        # Validar parametros
+        if limit > 1000:
+            limit = 1000
+        if limit < 1:
+            limit = 1
+
+        # Normalizar symbol a mayusculas
+        symbol = symbol.upper()
+
+        # Validar interval
+        valid_intervals = ["1", "5"]
+        if interval not in valid_intervals:
+            return {
+                "success": False,
+                "error": f"Invalid interval. Must be one of: {valid_intervals}"
+            }
+
+        service = get_orderflow_service()
+        footprints = service.get_footprints(symbol, interval, limit)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "count": len(footprints),
+            "footprints": footprints
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "symbol": symbol,
+            "interval": interval,
+            "footprints": []
+        }
+
+
+@app.get("/api/orderflow/config")
+async def get_orderflow_config():
+    """
+    Get Order Flow service configuration.
+
+    Returns the current configuration including:
+    - enabled: whether service is active
+    - symbols: monitored trading pairs
+    - intervals: monitored timeframes (e.g., "1", "5")
+    - num_levels: number of price levels per candle
+    - imbalance_threshold: ratio threshold for imbalance detection
+    - stacked_min_levels: minimum consecutive levels for stacked imbalance
+    - alerts_enabled: whether alerts are sent to TradingBot
+    - alert_cooldown_minutes: cooldown between alerts
+    - max_footprints_in_memory: max footprints stored
+    - log_trades: whether to log individual trades
+    """
+    try:
+        service = get_orderflow_service()
+        config = service.get_config()
+        return {
+            "success": True,
+            **config
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/orderflow/config")
+async def update_orderflow_config(request: Request):
+    """
+    Update Order Flow service configuration.
+
+    Body example:
+    {
+        "enabled": true,
+        "symbols": ["BTCUSDT", "ETHUSDT"],
+        "intervals": ["1", "5"],
+        "num_levels": 6,
+        "imbalance_threshold": 3.0,
+        "stacked_min_levels": 3,
+        "alerts_enabled": true,
+        "alert_cooldown_minutes": 15,
+        "max_footprints_in_memory": 2880,
+        "log_trades": false
+    }
+
+    Returns:
+        Updated configuration and success status
+    """
+    try:
+        data = await request.json()
+        service = get_orderflow_service()
+        success = service.update_config(data)
+
+        if success:
+            return {
+                "success": True,
+                "message": "Order Flow config updated",
+                "config": service.get_config()
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Failed to update config"
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Order Flow config update: {str(e)}")
         return {
             "success": False,
             "error": str(e)

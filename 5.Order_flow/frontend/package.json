@@ -1,9 +1,9 @@
 {
-  "name": "analizador-cripto",
+  "name": "Order flow",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --port 10001",
+    "dev": "vite --port 11001",
     "build": "vite build",
     "preview": "vite preview"
   },

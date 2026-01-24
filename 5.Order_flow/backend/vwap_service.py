@@ -19,6 +19,9 @@ from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
+# Set VWAP service logging to WARNING to reduce noise
+logger.setLevel(logging.WARNING)
+
 # Bybit API for historical data
 BYBIT_API_URL = "https://api.bybit.com/v5/market/kline"
 

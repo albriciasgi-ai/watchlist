@@ -651,7 +651,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     // ✅ FIX: Zoom manual con rueda del mouse
     const minCandleWidth = 1;  // Permitir zoom out hasta 1px por vela
-    const maxCandleWidth = 15;
+    const maxCandleWidth = 200; // Aumentado para Order Flow (antes 15)
     let candlesPerScreen, barWidth;
 
     // Calcular barWidth basado en zoom manual (rueda del mouse)
@@ -1737,8 +1737,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // Zoom horizontal normal (zoom in/out de velas)
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
-    // Permitir más compresión (min 0.1) para ver más velas y más contexto
-    const newZoom = Math.max(0.1, Math.min(5, oldZoom * zoomFactor));
+    // Permitir mucho más zoom (max 150) para Order Flow / Footprint visualization
+    const newZoom = Math.max(0.1, Math.min(150, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
 
     const canvas = canvasRef.current;

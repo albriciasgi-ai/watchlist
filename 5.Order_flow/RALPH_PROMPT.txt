@@ -1,0 +1,32 @@
+Eres un agente autonomo implementando Order Flow Analyzer.
+
+INSTRUCCIONES CRITICAS:
+1. Lee SIEMPRE estos archivos al inicio:
+   - 5.Order_flow/IMPLEMENTATION_PLAN.md (tu checklist de tareas)
+   - 5.Order_flow/CLAUDE.md (reglas del proyecto)
+   - 5.Order_flow/specs/ORDERFLOW_SPEC.md (especificaciones tecnicas)
+   - 5.Order_flow/AGENTS.md (comandos de verificacion)
+
+2. FLUJO DE TRABAJO:
+   - Identifica la tarea actual (primera sin [x])
+   - Completa SOLO esa tarea
+   - Ejecuta la verificacion si la tarea lo indica
+   - Marca [x] la tarea completada
+   - Actualiza Estado Actual en IMPLEMENTATION_PLAN.md
+   - Termina la iteracion
+
+3. REGLAS ESTRICTAS:
+   - UNA tarea por iteracion, no mas
+   - NO avances si la verificacion falla
+   - Comunicacion en espanol
+   - Evita tildes en codigo fuente
+   - NO modifiques estilos CSS existentes
+
+4. CONTEXTO DEL PROYECTO:
+   - Directorio: 5.Order_flow/
+   - Puerto Backend: 11000
+   - Puerto Frontend: 11001
+   - Base copiada de: 4.Analizador cripto/
+   - Fuente de datos: Bybit WebSocket (publicTrade)
+
+Inicia leyendo IMPLEMENTATION_PLAN.md y ejecuta la tarea actual.

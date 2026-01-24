@@ -58,6 +58,27 @@ class Candle:
 
 
 @dataclass
+class Trade:
+    """Represents a single trade from publicTrade stream"""
+    timestamp: int      # Trade execution time in milliseconds
+    symbol: str         # Trading pair (e.g., "BTCUSDT")
+    side: str           # "Buy" or "Sell" (taker side)
+    price: float        # Trade price
+    size: float         # Trade size in base currency
+    trade_id: str       # Unique trade ID
+
+    def to_dict(self) -> Dict:
+        return {
+            'timestamp': self.timestamp,
+            'symbol': self.symbol,
+            'side': self.side,
+            'price': self.price,
+            'size': self.size,
+            'trade_id': self.trade_id
+        }
+
+
+@dataclass
 class CandleBuffer:
     """Buffer for storing candles per symbol/interval"""
     candles: List[Candle] = field(default_factory=list)
@@ -156,6 +177,7 @@ class WebSocketManager:
         self.running = False
         self.connected = False
         self.subscriptions: Set[str] = set()  # "kline.{interval}.{symbol}"
+        self._trade_subscriptions: Set[str] = set()  # "publicTrade.{symbol}"
 
         # Candle buffers: {symbol: {interval: CandleBuffer}}
         self.buffers: Dict[str, Dict[str, CandleBuffer]] = defaultdict(lambda: defaultdict(CandleBuffer))
@@ -163,10 +185,17 @@ class WebSocketManager:
         # Callbacks - support multiple listeners
         self._candle_close_callbacks: List[Callable[[str, str, Candle], None]] = []
         self._candle_update_callbacks: List[Callable[[str, str, Candle], None]] = []
+        self._trade_callbacks: List[Callable[[str, Trade], None]] = []  # Trade callbacks
         self.on_connection_change: Optional[Callable[[bool], None]] = None
 
         # Legacy single callback support (for backwards compatibility)
         self._legacy_on_candle_close: Optional[Callable[[str, str, Candle], None]] = None
+        self._legacy_on_trade: Optional[Callable[[str, Trade], None]] = None
+
+        # Trade statistics (for debugging/verification)
+        self._trade_count: int = 0
+        self._trade_count_per_symbol: Dict[str, int] = defaultdict(int)
+        self._last_trade_log_time: float = 0
 
         # Reconnection state
         self.reconnect_attempts = 0
@@ -212,6 +241,118 @@ class WebSocketManager:
         if callback in self._candle_close_callbacks:
             self._candle_close_callbacks.remove(callback)
             logger.info(f"Candle close listener removed (total: {len(self._candle_close_callbacks)})")
+
+    def add_trade_listener(self, callback: Callable[[str, 'Trade'], None]):
+        """Add a trade listener callback"""
+        if callback not in self._trade_callbacks:
+            self._trade_callbacks.append(callback)
+            logger.info(f"Trade listener added (total: {len(self._trade_callbacks)})")
+
+    def remove_trade_listener(self, callback: Callable[[str, 'Trade'], None]):
+        """Remove a trade listener callback"""
+        if callback in self._trade_callbacks:
+            self._trade_callbacks.remove(callback)
+            logger.info(f"Trade listener removed (total: {len(self._trade_callbacks)})")
+
+    @property
+    def on_trade(self):
+        """Legacy getter for backwards compatibility with trade callbacks"""
+        return self._legacy_on_trade
+
+    @on_trade.setter
+    def on_trade(self, callback):
+        """
+        Legacy setter for trade callback - adds callback to the list if not already present.
+        For backwards compatibility with services that set this property directly.
+
+        The callback signature is: callback(symbol: str, trade: Trade)
+        """
+        if callback is None:
+            return
+        # Remove any previous legacy callback
+        if self._legacy_on_trade and self._legacy_on_trade in self._trade_callbacks:
+            self._trade_callbacks.remove(self._legacy_on_trade)
+        # Add new callback
+        if callback not in self._trade_callbacks:
+            self._trade_callbacks.append(callback)
+        self._legacy_on_trade = callback
+        logger.info(f"Trade callback registered (total: {len(self._trade_callbacks)})")
+
+    async def _notify_trade_listeners(self, symbol: str, trade: Trade):
+        """
+        Internal method to notify all trade listeners when a new trade arrives.
+        Called from _handle_trade() after parsing the trade message.
+        Supports both sync and async callbacks.
+        """
+        if not self._trade_callbacks:
+            return
+
+        for callback in self._trade_callbacks:
+            try:
+                result = callback(symbol, trade)
+                # If callback is async, await it
+                if asyncio.iscoroutine(result):
+                    await result
+            except Exception as e:
+                logger.error(f"Error in trade callback: {e}")
+
+    async def subscribe_trades(self, symbols: List[str]):
+        """
+        Subscribe to publicTrade stream for the given symbols.
+        This allows receiving individual trade data for Order Flow analysis.
+
+        Args:
+            symbols: List of symbols to subscribe (e.g., ["BTCUSDT", "ETHUSDT"])
+        """
+        new_trade_subs = {f"publicTrade.{symbol}" for symbol in symbols}
+
+        # Filter out already subscribed
+        subs_to_add = new_trade_subs - self._trade_subscriptions
+
+        if not subs_to_add:
+            logger.info(f"[TRADES] All {len(new_trade_subs)} trade subscriptions already exist")
+            return
+
+        # Track subscriptions
+        self._trade_subscriptions.update(subs_to_add)
+        # Also add to main subscriptions set for reconnection
+        self.subscriptions.update(subs_to_add)
+
+        logger.info(f"[TRADES] Adding {len(subs_to_add)} trade subscriptions: {sorted(subs_to_add)}")
+
+        # Wait for connection if not yet connected
+        if not self.connected:
+            logger.info(f"[TRADES] WebSocket not yet connected, waiting...")
+            for i in range(20):  # 10 seconds max
+                await asyncio.sleep(0.5)
+                if self.connected:
+                    logger.info(f"[TRADES] WebSocket connected after {(i+1)*0.5}s")
+                    break
+            else:
+                logger.warning(f"[TRADES] Timeout waiting for connection, subscriptions will be sent on reconnect")
+                return
+
+        # Send subscribe message
+        if self.connected and self.ws:
+            try:
+                subs_list = list(subs_to_add)
+                batch_size = 10  # Bybit limit
+
+                for i in range(0, len(subs_list), batch_size):
+                    batch = subs_list[i:i + batch_size]
+                    subscribe_msg = {
+                        "op": "subscribe",
+                        "args": batch
+                    }
+                    await self.ws.send(json.dumps(subscribe_msg))
+                    logger.info(f"[TRADES] Subscribed to batch: {batch}")
+
+                    if i + batch_size < len(subs_list):
+                        await asyncio.sleep(0.1)
+
+                logger.info(f"[TRADES] Total trade subscriptions: {len(self._trade_subscriptions)}")
+            except Exception as e:
+                logger.error(f"[TRADES] Failed to subscribe: {e}")
 
     async def start(self, symbols: List[str], intervals: List[str]):
         """
@@ -452,6 +593,8 @@ class WebSocketManager:
         topic = data.get("topic", "")
         if topic.startswith("kline."):
             await self._handle_kline(data)
+        elif topic.startswith("publicTrade."):
+            await self._handle_trade(data)
 
     async def _handle_kline(self, data: Dict):
         """Handle kline/candlestick data"""
@@ -500,6 +643,71 @@ class WebSocketManager:
                         callback(symbol, interval, candle)
                     except Exception as e:
                         logger.error(f"Error in candle close callback: {e}")
+
+    async def _handle_trade(self, data: Dict):
+        """
+        Handle publicTrade data from Bybit WebSocket.
+
+        Bybit publicTrade message format:
+        {
+            "topic": "publicTrade.BTCUSDT",
+            "type": "snapshot",
+            "ts": 1672304486868,
+            "data": [
+                {
+                    "T": 1672304486865,  # Trade timestamp (ms)
+                    "s": "BTCUSDT",       # Symbol
+                    "S": "Buy",           # Side: "Buy" or "Sell"
+                    "v": "0.001",         # Volume/size
+                    "p": "95000.50",      # Price
+                    "L": "PlusTick",      # Tick direction
+                    "i": "trade-id",      # Trade ID
+                    "BT": false           # Block trade flag
+                }
+            ]
+        }
+        """
+        topic = data.get("topic", "")
+        # topic format: "publicTrade.{symbol}"
+        parts = topic.split(".")
+        if len(parts) != 2:
+            return
+
+        symbol = parts[1]
+        trades_data = data.get("data", [])
+
+        if not trades_data:
+            return
+
+        for trade_data in trades_data:
+            try:
+                # Parse trade from Bybit format
+                trade = Trade(
+                    timestamp=int(trade_data.get("T", 0)),
+                    symbol=trade_data.get("s", symbol),
+                    side=trade_data.get("S", "Buy"),  # "Buy" or "Sell"
+                    price=float(trade_data.get("p", 0)),
+                    size=float(trade_data.get("v", 0)),
+                    trade_id=str(trade_data.get("i", ""))
+                )
+
+                # Update trade counters
+                self._trade_count += 1
+                self._trade_count_per_symbol[symbol] += 1
+
+                # Log trades periodically (every 5 seconds) to avoid spam
+                now = time.time()
+                if now - self._last_trade_log_time >= 5.0:
+                    logger.info(f"[TRADE] {symbol}: {trade.side} {trade.size} @ {trade.price} (total: {self._trade_count})")
+                    self._last_trade_log_time = now
+                else:
+                    logger.debug(f"[TRADE] {symbol}: {trade.side} {trade.size} @ {trade.price}")
+
+                # Notify all trade listeners
+                await self._notify_trade_listeners(symbol, trade)
+
+            except Exception as e:
+                logger.error(f"[TRADE] Error parsing trade: {e}, data={trade_data}")
 
     async def _ping_loop(self):
         """Send periodic pings to keep connection alive"""
@@ -665,6 +873,14 @@ class WebSocketManager:
                     'last_closed': buffer.get_last_closed_candle().to_dict() if buffer.get_last_closed_candle() else None
                 }
         return stats
+
+    def get_trade_stats(self) -> Dict:
+        """Get trade reception statistics for debugging"""
+        return {
+            'total_trades': self._trade_count,
+            'trades_per_symbol': dict(self._trade_count_per_symbol),
+            'trade_subscriptions': list(self._trade_subscriptions)
+        }
 
     def is_connected(self) -> bool:
         """Check if WebSocket is connected"""

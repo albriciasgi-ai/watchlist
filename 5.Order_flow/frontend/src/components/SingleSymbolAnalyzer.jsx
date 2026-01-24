@@ -13,6 +13,7 @@ import SupportResistance2Settings from "./SupportResistance2Settings";
 import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
+import OrderFlowSettings from "./OrderFlowSettings";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
@@ -99,7 +100,8 @@ const SingleSymbolAnalyzer = () => {
       "Double Top/Bottom": false,
       "Support & Resistance": false,
       "S&R v2": true,
-      "Swing Detector": true
+      "Swing Detector": true,
+      "Order Flow": true  // Enabled by default for this project
     };
 
     const saved = localStorage.getItem('analyzer_indicators');
@@ -154,6 +156,7 @@ const SingleSymbolAnalyzer = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showSR2Settings, setShowSR2Settings] = useState(false);
+  const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
 
   // Trading Panel state
   const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
@@ -461,6 +464,13 @@ const SingleSymbolAnalyzer = () => {
     setShowSR2Settings(true);
   }, []);
 
+  const handleOpenOrderFlowSettings = useCallback((manager) => {
+    if (manager) {
+      indicatorManagerRef.current = manager;
+    }
+    setShowOrderFlowSettings(true);
+  }, []);
+
   // Handlers de cambio de configuracion
   const handleVWAPConfigChange = useCallback((config) => {
     const manager = indicatorManagerRef.current;
@@ -689,6 +699,16 @@ const SingleSymbolAnalyzer = () => {
             title="Configurar Volume Profile"
           >
             VP Config
+          </button>
+        )}
+
+        {indicatorStates["Order Flow"] && (
+          <button
+            onClick={() => handleOpenOrderFlowSettings(indicatorManagerRef.current)}
+            className="vp-settings-btn"
+            title="Configurar Order Flow"
+          >
+            Order Flow Config
           </button>
         )}
       </div>
@@ -991,6 +1011,31 @@ const SingleSymbolAnalyzer = () => {
           }}
           onClose={() => setShowSR2Settings(false)}
         />
+      )}
+
+      {showOrderFlowSettings && (
+        <div className="modal-overlay" onClick={() => setShowOrderFlowSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Order Flow Settings - {symbol}</h3>
+              <button className="modal-close-btn" onClick={() => setShowOrderFlowSettings(false)}>X</button>
+            </div>
+            <div className="modal-body">
+              <OrderFlowSettings
+                currentSymbol={symbol}
+                currentInterval={interval}
+                indicatorManager={indicatorManagerRef.current}
+                onConfigChange={(config) => {
+                  const manager = indicatorManagerRef.current;
+                  const ofIndicator = manager?.indicators?.find(ind => ind.name === "Order Flow");
+                  if (ofIndicator) {
+                    ofIndicator.updateConfig(config);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

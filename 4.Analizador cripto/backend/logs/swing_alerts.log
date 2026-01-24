@@ -737,3 +737,21 @@
 2026-01-22 21:51:06 | INFO | ALERT_SENT | BNBUSDT | SWING_HIGH | price=889.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
 2026-01-22 21:52:01 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=4975.00 | direction=SHORT | volume_zscore=0.00 | interval=1
 2026-01-22 21:52:01 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=4975.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 21:53:01 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.13 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:53:03 | INFO | ALERT_SENT | POLUSDT | SWING_LOW | price=0.13 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 21:54:00 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.36 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:54:02 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.36 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 21:55:01 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.91 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:55:01 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.31 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:55:03 | INFO | ALERT_SENT | TRXUSDT | SWING_LOW | price=0.31 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 21:55:03 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.91 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 21:58:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2951.99 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:58:01 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.91 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 21:58:01 | INFO | BLOCKED_COOLDOWN | XRPUSDT | SWING_LOW | remaining=120s
+2026-01-22 21:58:03 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2951.99 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 22:01:01 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-22 22:01:02 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-22 22:02:01 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.91 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-22 22:02:01 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=128.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-22 22:02:10 | ERROR | ALERT_ERROR | XRPUSDT | 
+2026-01-22 22:02:10 | ERROR | ALERT_ERROR | SOLUSDT | 

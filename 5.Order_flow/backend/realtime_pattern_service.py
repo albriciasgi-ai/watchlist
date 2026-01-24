@@ -351,8 +351,13 @@ class RealtimePatternService:
         config = self.config_store.get_config(symbol, interval, indicator_type)
 
         if not config:
-            logger.debug(f"{symbol}/{interval}: No DBT config synced, using defaults")
-            config = self._get_default_dbt_config()
+            # No config synced = indicator not enabled in frontend, skip detection
+            logger.debug(f"{symbol}/{interval}: No DBT config synced, skipping detection")
+            return
+
+        # Check if indicator is enabled
+        if not config.get('enabled', False):
+            return
 
         # Check if alerts are enabled
         if not config.get('alertsEnabled', False):
@@ -404,8 +409,13 @@ class RealtimePatternService:
         config = self.config_store.get_config(symbol, interval, indicator_type)
 
         if not config:
-            logger.debug(f"{symbol}/{interval}: No Rejection config synced, using defaults")
-            config = self._get_default_rejection_config()
+            # No config synced = indicator not enabled in frontend, skip detection
+            logger.debug(f"{symbol}/{interval}: No Rejection config synced, skipping detection")
+            return
+
+        # Check if indicator is enabled
+        if not config.get('enabled', False):
+            return
 
         # Check if alerts are enabled
         if not config.get('alertsEnabled', False):

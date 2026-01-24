@@ -12,6 +12,14 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
 import math
 
+# Debug flag - set to False to disable verbose logging
+DTB_DEBUG = False
+
+def dtb_log(msg: str):
+    """Print debug message only if DTB_DEBUG is True"""
+    if DTB_DEBUG:
+        print(msg)
+
 
 @dataclass
 class DoublePattern:
@@ -95,10 +103,10 @@ class DoubleTopBottomDetector:
         search_start = 0
         search_candles = candles
 
-        print(f"[PRUEBA_DBT] {symbol} - Double Top/Bottom Detection Started")
-        print(f"  [PRUEBA_DBT] Interval: {interval}, Days: {days}")
-        print(f"  [PRUEBA_DBT] Total candles available: {len(candles)}")
-        print(f"  [PRUEBA_DBT] Config Parameters:")
+        dtb_log(f"[PRUEBA_DBT] {symbol} - Double Top/Bottom Detection Started")
+        dtb_log(f"  [PRUEBA_DBT] Interval: {interval}, Days: {days}")
+        dtb_log(f"  [PRUEBA_DBT] Total candles available: {len(candles)}")
+        dtb_log(f"  [PRUEBA_DBT] Config Parameters:")
         print(f"    - Lookback candles: {lookback_candles}")
         print(f"    - Searching ALL {len(search_candles)} candles (no lookback limit)")
         print(f"    - Extremes window: {candles_per_extreme} candles")
@@ -134,8 +142,8 @@ class DoubleTopBottomDetector:
             search_start
         )
 
-        print(f"  [PRUEBA_DBT] Found {len(local_highs)} local highs")
-        print(f"  [PRUEBA_DBT] Found {len(local_lows)} local lows")
+        dtb_log(f"  [PRUEBA_DBT] Found {len(local_highs)} local highs")
+        dtb_log(f"  [PRUEBA_DBT] Found {len(local_lows)} local lows")
 
         # Filter extremes by volume if required
         require_high_volume = config.get('doubleTopBottom', {}).get('requireHighVolumeAtExtremes', {})
@@ -152,7 +160,7 @@ class DoubleTopBottomDetector:
                 require_high_volume,
                 z_scores
             )
-            print(f"  [PRUEBA_DBT] After volume filter: {len(local_highs)} highs, {len(local_lows)} lows")
+            dtb_log(f"  [PRUEBA_DBT] After volume filter: {len(local_highs)} highs, {len(local_lows)} lows")
 
         # Step 2: Find double tops
         double_tops = self._find_double_tops(
@@ -184,7 +192,7 @@ class DoubleTopBottomDetector:
 
         detected_patterns.extend(double_bottoms)
 
-        print(f"  [PRUEBA_DBT] Before post-validation: {len(detected_patterns)} patterns")
+        dtb_log(f"  [PRUEBA_DBT] Before post-validation: {len(detected_patterns)} patterns")
 
         # Step 4: Post-pattern validation (confirm directional movement)
         detected_patterns = self._validate_post_pattern_movement(
@@ -193,7 +201,7 @@ class DoubleTopBottomDetector:
             config
         )
 
-        print(f"  [PRUEBA_DBT] After post-validation: {len(detected_patterns)} patterns")
+        dtb_log(f"  [PRUEBA_DBT] After post-validation: {len(detected_patterns)} patterns")
 
         # Step 5: Remove duplicate patterns in same zone
         detected_patterns = self._filter_duplicate_patterns(
@@ -201,7 +209,7 @@ class DoubleTopBottomDetector:
             config
         )
 
-        print(f"  [PRUEBA_DBT] After deduplication: {len(detected_patterns)} patterns")
+        dtb_log(f"  [PRUEBA_DBT] After deduplication: {len(detected_patterns)} patterns")
 
         # Step 6: Apply momentum confirmation if enabled (Phase 2)
         if config.get('momentumConfirmation', {}).get('enabled', False):
@@ -210,29 +218,29 @@ class DoubleTopBottomDetector:
                 candles,
                 config
             )
-            print(f"  [PRUEBA_DBT] After momentum: {len(detected_patterns)} patterns")
+            dtb_log(f"  [PRUEBA_DBT] After momentum: {len(detected_patterns)} patterns")
 
         # Step 7: Filter by minimum confidence
         min_confidence = config.get('filters', {}).get('minConfidence', 60)
         patterns_before_conf_filter = len(detected_patterns)
 
-        print(f"  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====")
-        print(f"  [PRUEBA_DBT] Min confidence threshold: {min_confidence}%")
-        print(f"  [PRUEBA_DBT] Patterns before filter: {patterns_before_conf_filter}")
+        dtb_log(f"  [PRUEBA_DBT] ===== CONFIDENCE FILTER ANALYSIS =====")
+        dtb_log(f"  [PRUEBA_DBT] Min confidence threshold: {min_confidence}%")
+        dtb_log(f"  [PRUEBA_DBT] Patterns before filter: {patterns_before_conf_filter}")
 
         if patterns_before_conf_filter > 0:
             confidence_values = [p.confidence for p in detected_patterns]
-            print(f"  [PRUEBA_DBT] Confidence values: {confidence_values[:10]}{'...' if len(confidence_values) > 10 else ''}")
-            print(f"  [PRUEBA_DBT] Min confidence in patterns: {min(confidence_values):.1f}%")
-            print(f"  [PRUEBA_DBT] Max confidence in patterns: {max(confidence_values):.1f}%")
-            print(f"  [PRUEBA_DBT] Avg confidence in patterns: {sum(confidence_values)/len(confidence_values):.1f}%")
+            dtb_log(f"  [PRUEBA_DBT] Confidence values: {confidence_values[:10]}{'...' if len(confidence_values) > 10 else ''}")
+            dtb_log(f"  [PRUEBA_DBT] Min confidence in patterns: {min(confidence_values):.1f}%")
+            dtb_log(f"  [PRUEBA_DBT] Max confidence in patterns: {max(confidence_values):.1f}%")
+            dtb_log(f"  [PRUEBA_DBT] Avg confidence in patterns: {sum(confidence_values)/len(confidence_values):.1f}%")
 
         detected_patterns = [p for p in detected_patterns if p.confidence >= min_confidence]
         filtered_count = patterns_before_conf_filter - len(detected_patterns)
 
-        print(f"  [PRUEBA_DBT] After min_confidence filter: {len(detected_patterns)} patterns")
-        print(f"  [PRUEBA_DBT] Filtered out: {filtered_count} patterns (confidence < {min_confidence}%)")
-        print(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
+        dtb_log(f"  [PRUEBA_DBT] After min_confidence filter: {len(detected_patterns)} patterns")
+        dtb_log(f"  [PRUEBA_DBT] Filtered out: {filtered_count} patterns (confidence < {min_confidence}%)")
+        dtb_log(f"[PRUEBA_DBT] {symbol} - Detection Complete: {len(detected_patterns)} patterns returned")
         print(f"  [OK] Detected {len(detected_patterns)} patterns (after all filtering)")
 
         return detected_patterns
@@ -362,7 +370,7 @@ class DoubleTopBottomDetector:
         window_size = config.get('volumeWindowCandles', 3)  # NUEVO: ventana de busqueda
         filtered_extremes = []
 
-        print(f"  [PRUEBA_DBT] Filtering {len(extremes)} extremes by volume (z-threshold={z_threshold:.1f}, window=±{window_size})")
+        dtb_log(f"  [PRUEBA_DBT] Filtering {len(extremes)} extremes by volume (z-threshold={z_threshold:.1f}, window=±{window_size})")
 
         for extreme in extremes:
             candle_idx = extreme['candle_index']
@@ -397,7 +405,7 @@ class DoubleTopBottomDetector:
                 # Edge case: sin z-scores disponibles, mantener
                 filtered_extremes.append(extreme)
 
-        print(f"  [PRUEBA_DBT] Volume filter result: {len(extremes)} -> {len(filtered_extremes)} extremes")
+        dtb_log(f"  [PRUEBA_DBT] Volume filter result: {len(extremes)} -> {len(filtered_extremes)} extremes")
         return filtered_extremes
 
     def _find_double_tops(
@@ -483,7 +491,7 @@ class DoubleTopBottomDetector:
                     if breakout_amount > breakout_tolerance_pct:
                         # El precio sobrepasó el primer extremo - patrón invalidado
                         stats['rejected_breakout'] += 1
-                        print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        dtb_log(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
                 # NUEVO: Verificar si se requiere validación de patrones
@@ -515,7 +523,7 @@ class DoubleTopBottomDetector:
                     # Sin validación de patrones - aceptar todos los extremos
                     rejection_h1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
                     rejection_h2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
-                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
+                    dtb_log(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance if enabled
                 volume_ok_h1 = True
@@ -598,7 +606,7 @@ class DoubleTopBottomDetector:
                 stats['accepted'] += 1
 
                 # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
+                dtb_log(f"    [PRUEBA_DBT] [OK] DOUBLE TOP detected:")
                 print(f"      Level Price: ${level_price:.2f}")
                 print(f"      First extreme:  ${h1['price']:.2f} @ {h1['timestamp']} (candle {h1['candle_index']}) | Rejection: {rejection_h1['pattern_type']} (quality: {rejection_h1['quality']:.2f}) | Vol Z-Score: {zscore_h1:.2f}")
                 print(f"      Second extreme: ${h2['price']:.2f} @ {h2['timestamp']} (candle {h2['candle_index']}) | Rejection: {rejection_h2['pattern_type']} (quality: {rejection_h2['quality']:.2f}) | Vol Z-Score: {zscore_h2:.2f}")
@@ -609,7 +617,7 @@ class DoubleTopBottomDetector:
                 print(f"      Confidence: {confidence:.1f}/100")
 
         # DIAGNOSTICO: Imprimir resumen de rechazos
-        print(f"  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:")
+        dtb_log(f"  [PRUEBA_DBT] [STATS] DOUBLE TOP Stats:")
         print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
         print(f"    - Rejected (too close): {stats['rejected_too_close']}")
         print(f"    - Rejected (too far): {stats['rejected_too_far']}")
@@ -704,7 +712,7 @@ class DoubleTopBottomDetector:
                     if breakdown_amount > breakout_tolerance_pct:
                         # El precio cayó por debajo del primer extremo - patrón invalidado
                         stats['rejected_breakout'] += 1
-                        print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        dtb_log(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
                 # NUEVO: Verificar si se requiere validación de patrones
@@ -735,7 +743,7 @@ class DoubleTopBottomDetector:
                     # Sin validación de patrones - aceptar todos los extremos
                     rejection_l1 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
                     rejection_l2 = {'has_pattern': True, 'pattern_type': 'NO_VALIDATION', 'quality': 0.5}
-                    print(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
+                    dtb_log(f"    [PRUEBA_DBT] Pattern validation disabled - accepting extremes without rejection patterns")
 
                 # Check volume significance
                 volume_ok_l1 = True
@@ -815,7 +823,7 @@ class DoubleTopBottomDetector:
                 stats['accepted'] += 1
 
                 # Detailed logging for detected pattern
-                print(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
+                dtb_log(f"    [PRUEBA_DBT] [OK] DOUBLE BOTTOM detected:")
                 print(f"      Level Price: ${level_price:.2f}")
                 print(f"      First extreme:  ${l1['price']:.2f} @ {l1['timestamp']} (candle {l1['candle_index']}) | Rejection: {rejection_l1['pattern_type']} (quality: {rejection_l1['quality']:.2f}) | Vol Z-Score: {zscore_l1:.2f}")
                 print(f"      Second extreme: ${l2['price']:.2f} @ {l2['timestamp']} (candle {l2['candle_index']}) | Rejection: {rejection_l2['pattern_type']} (quality: {rejection_l2['quality']:.2f}) | Vol Z-Score: {zscore_l2:.2f}")
@@ -826,7 +834,7 @@ class DoubleTopBottomDetector:
                 print(f"      Confidence: {confidence:.1f}/100")
 
         # DIAGNOSTICO: Imprimir resumen de rechazos
-        print(f"  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:")
+        dtb_log(f"  [PRUEBA_DBT] [STATS] DOUBLE BOTTOM Stats:")
         print(f"    - Pairs evaluated: {stats['pairs_evaluated']}")
         print(f"    - Rejected (too close): {stats['rejected_too_close']}")
         print(f"    - Rejected (too far): {stats['rejected_too_far']}")

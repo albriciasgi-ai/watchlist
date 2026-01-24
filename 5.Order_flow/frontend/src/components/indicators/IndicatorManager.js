@@ -19,6 +19,7 @@ import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: minConfidence 20%
 import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
+import OrderFlowIndicator from "./OrderFlowIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import Logger from '../../utils/Logger.js';
 
@@ -134,6 +135,12 @@ class IndicatorManager {
       this.indicators.push(new SupportResistance2Indicator(this.symbol, this.interval, this.days));
     }
 
+    // Order Flow - solo si habilitado
+    if (indicatorStates['Order Flow'] === true) {
+      log.debug(`[${this.symbol}] Creando Order Flow`);
+      this.indicators.push(new OrderFlowIndicator(this.symbol, this.interval, this.days));
+    }
+
     // Asignar referencia al manager a todos los indicadores
     this.indicators.forEach(indicator => {
       indicator.indicatorManager = this;
@@ -187,6 +194,8 @@ class IndicatorManager {
         return new SwingDetectorIndicator(this.symbol, this.interval, this.days);
       case 'S&R v2':
         return new SupportResistance2Indicator(this.symbol, this.interval, this.days);
+      case 'Order Flow':
+        return new OrderFlowIndicator(this.symbol, this.interval, this.days);
       default:
         log.warn(`[${this.symbol}] Unknown indicator: ${name}`);
         return null;
@@ -327,6 +336,19 @@ class IndicatorManager {
           fetchPromises.push(
             indicator.fetchData().catch(err => {
               log.error(`[${this.symbol}] ❌ Error fetching S&R v2:`, err);
+            })
+          );
+        }
+
+        // Order Flow
+        if (indicator.name === "Order Flow" && indicator.fetchData) {
+          // Sync interval if changed
+          if (indicator.interval !== this.interval && indicator.setInterval) {
+            indicator.setInterval(this.interval);
+          }
+          fetchPromises.push(
+            indicator.fetchData().catch(err => {
+              log.error(`[${this.symbol}] ❌ Error fetching Order Flow:`, err);
             })
           );
         }
