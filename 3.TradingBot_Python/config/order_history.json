@@ -3390,5 +3390,61 @@
     "confidence": 50.0,
     "source": "SWING_DETECTOR",
     "status": "success"
+  },
+  {
+    "timestamp": "2026-01-26T00:00:18.180910",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "entry_price": 89105.7,
+    "quantity_coin": 0.001,
+    "quantity_usdt": 89.1057,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "DOUBLE BOTTOM (ABRIR LONG)",
+    "confidence": 69.2,
+    "source": "WATCHLIST",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-26T00:15:18.304885",
+    "symbol": "GALAUSDT",
+    "side": "Buy",
+    "entry_price": 0.006188,
+    "quantity_coin": 16160.0,
+    "quantity_usdt": 99.99808,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "DOUBLE BOTTOM (ABRIR LONG)",
+    "confidence": 90.9,
+    "source": "WATCHLIST",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-26T00:30:18.418297",
+    "symbol": "XRPUSDT",
+    "side": "Buy",
+    "entry_price": 1.9083,
+    "quantity_coin": 52.4,
+    "quantity_usdt": 99.99492,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "DOUBLE BOTTOM (ABRIR LONG)",
+    "confidence": 82.5,
+    "source": "WATCHLIST",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-01-26T00:45:14.964013",
+    "symbol": "SOLUSDT",
+    "side": "Buy",
+    "entry_price": 126.56,
+    "quantity_coin": 1.5,
+    "quantity_usdt": 189.84,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "pattern": "DOUBLE BOTTOM (ABRIR LONG)",
+    "confidence": 60.7,
+    "source": "WATCHLIST",
+    "status": "success"
   }
 ]

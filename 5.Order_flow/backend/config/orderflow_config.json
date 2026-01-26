@@ -27,6 +27,6 @@
   "max_history_hours": 12.0,
   "log_trades": false,
   "symbol_step_sizes": {
-    "BTCUSDT": 1.0
+    "BTCUSDT": 20.0
   }
 }

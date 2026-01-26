@@ -15,8 +15,8 @@
     "BNBUSDT",
     "POLUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "[object Promise]",
+  "days": 15,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -43,7 +43,7 @@
         "lookbackBars": 10
       },
       "swingBars": 5,
-      "days": 1,
+      "days": 15,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },

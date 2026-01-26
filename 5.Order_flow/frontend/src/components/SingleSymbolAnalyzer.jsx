@@ -79,7 +79,17 @@ const SingleSymbolAnalyzer = () => {
 
   const [interval, setInterval] = useState(() => {
     const saved = localStorage.getItem('analyzer_interval');
-    return saved || "60";
+    // Validar que sea un intervalo valido (no un Promise convertido a string)
+    const validIntervals = ["1", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"];
+    if (saved && validIntervals.includes(saved)) {
+      return saved;
+    }
+    // Si el valor es invalido (como "[object Promise]"), limpiar y usar default
+    if (saved && !validIntervals.includes(saved)) {
+      console.warn(`[Analyzer] Invalid interval in localStorage: "${saved}", resetting to "1"`);
+      localStorage.removeItem('analyzer_interval');
+    }
+    return "1"; // Default: 1 minuto para Order Flow
   });
 
   const [days, setDays] = useState(() => {
@@ -183,7 +193,13 @@ const SingleSymbolAnalyzer = () => {
   }, [symbol]);
 
   useEffect(() => {
-    localStorage.setItem('analyzer_interval', interval);
+    // Validar antes de guardar para evitar corrupcion
+    const validIntervals = ["1", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"];
+    if (validIntervals.includes(interval)) {
+      localStorage.setItem('analyzer_interval', interval);
+    } else {
+      console.error(`[Analyzer] Attempted to save invalid interval: "${interval}"`);
+    }
   }, [interval]);
 
   useEffect(() => {

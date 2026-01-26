@@ -651,7 +651,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     // ✅ FIX: Zoom manual con rueda del mouse
     const minCandleWidth = 1;  // Permitir zoom out hasta 1px por vela
-    const maxCandleWidth = 200; // Aumentado para Order Flow (antes 15)
+    const maxCandleWidth = 400; // Aumentado para Order Flow con numeros visibles
     let candlesPerScreen, barWidth;
 
     // Calcular barWidth basado en zoom manual (rueda del mouse)
@@ -862,14 +862,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     ctx.lineWidth = 1;
 
     // Check if Order Flow should replace Japanese candles
-    // Only hide candles if Order Flow is enabled AND has data to display
+    // Only hide candles if Order Flow is enabled AND has data AND candle width is sufficient
     let orderFlowReplacesCandles = false;
     try {
       const orderFlowIndicator = indicatorManagerRef.current?.indicators?.find(
         ind => ind.name === "Order Flow"
       );
       if (orderFlowIndicator && typeof orderFlowIndicator.shouldReplaceCandles === 'function') {
-        orderFlowReplacesCandles = orderFlowIndicator.shouldReplaceCandles();
+        // Pass the current barWidth so Order Flow can decide based on zoom level
+        orderFlowReplacesCandles = orderFlowIndicator.shouldReplaceCandles(barWidth);
       }
     } catch (e) {
       console.error('[MiniChart] Error checking orderFlowReplacesCandles:', e);

@@ -21,6 +21,7 @@ from collections import defaultdict, deque
 from footprint_calculator import FootprintCalculator, Footprint
 from trade_aggregator import TradeAggregator, CandleBucket, Trade
 from footprint_storage import get_footprint_storage, FootprintStorage
+from footprint_reconstructor import reconstruct_historical_footprints
 
 logger = logging.getLogger(__name__)
 
@@ -339,7 +340,11 @@ class OrderFlowService:
         logger.info("[ORDERFLOW_SERVICE] Servicio detenido")
 
     async def _load_historical_footprints(self, symbols: List[str], intervals: List[str]):
-        """Carga footprints historicos desde disco al iniciar."""
+        """
+        Carga footprints historicos desde disco al iniciar.
+        La reconstruccion de footprints faltantes se hace en background
+        para no bloquear el inicio del servicio.
+        """
         total_loaded = 0
 
         for symbol in symbols:
@@ -360,7 +365,67 @@ class OrderFlowService:
                     )
 
         if total_loaded > 0:
-            logger.info(f"[ORDERFLOW_SERVICE] Total footprints historicos cargados: {total_loaded}")
+            logger.info(f"[ORDERFLOW_SERVICE] Total footprints cargados desde disco: {total_loaded}")
+
+        # Iniciar reconstruccion en background (no bloquea el inicio)
+        asyncio.create_task(self._reconstruct_missing_footprints(symbols, intervals))
+
+    async def _reconstruct_missing_footprints(self, symbols: List[str], intervals: List[str]):
+        """
+        Reconstruye footprints faltantes en background.
+        Se ejecuta despues de que el servicio ya esta corriendo.
+        """
+        await asyncio.sleep(2)  # Esperar a que el servicio este estable
+
+        logger.info("[ORDERFLOW_SERVICE] Iniciando reconstruccion de footprints en background...")
+        total_reconstructed = 0
+
+        for symbol in symbols:
+            for interval in intervals:
+                key = f"{symbol}_{interval}"
+
+                try:
+                    # Obtener timestamps existentes
+                    existing_timestamps = set()
+                    for fp_dict in self._footprints.get(key, []):
+                        existing_timestamps.add(fp_dict.get("candle_timestamp", 0))
+
+                    # Reconstruir faltantes
+                    step_size = self.config.get_step_size_for_symbol(symbol)
+                    reconstructed = await reconstruct_historical_footprints(
+                        symbol=symbol,
+                        interval=interval,
+                        hours=self.config.max_history_hours,
+                        step_size=step_size,
+                        existing_timestamps=existing_timestamps
+                    )
+
+                    if reconstructed:
+                        # Agregar a memoria y guardar en disco
+                        for fp_dict in reconstructed:
+                            self._footprints[key].append(fp_dict)
+                            self._storage.save_footprint(fp_dict)
+
+                        total_reconstructed += len(reconstructed)
+                        logger.info(
+                            f"[ORDERFLOW_SERVICE] Reconstruidos {len(reconstructed)} footprints para {key}"
+                        )
+
+                        # Ordenar por timestamp
+                        sorted_fps = sorted(
+                            self._footprints[key],
+                            key=lambda x: x.get("candle_timestamp", 0)
+                        )
+                        self._footprints[key] = deque(sorted_fps, maxlen=self.config.max_footprints_in_memory)
+
+                except Exception as e:
+                    logger.error(f"[ORDERFLOW_SERVICE] Error reconstruyendo footprints para {key}: {e}")
+
+                # Pequeno delay entre simbolos para no saturar
+                await asyncio.sleep(0.5)
+
+        if total_reconstructed > 0:
+            logger.info(f"[ORDERFLOW_SERVICE] Reconstruccion completada: {total_reconstructed} footprints")
 
     async def _periodic_cleanup(self):
         """Tarea que limpia footprints antiguos cada hora."""
