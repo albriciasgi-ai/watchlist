@@ -30,11 +30,16 @@ logger = logging.getLogger(__name__)
 class AlertSender:
     """Sends alerts to external notification service on port 5000"""
 
+    # ✅ OPTIMIZACIÓN: Límite de cola para evitar memory leak si bot está offline
+    MAX_QUEUE_SIZE = 100
+
     def __init__(self, alert_service_url: str = "http://localhost:5000"):
         self.alert_service_url = alert_service_url
         self.client: Optional[httpx.AsyncClient] = None
-        self.alert_queue: asyncio.Queue = asyncio.Queue()
+        # ✅ OPTIMIZACIÓN: Cola con límite máximo
+        self.alert_queue: asyncio.Queue = asyncio.Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.is_running = False
+        self._discarded_count = 0  # Contador de alertas descartadas
 
     async def start(self):
         """Start the alert sender service"""
@@ -97,10 +102,22 @@ class AlertSender:
         logger.debug(f"\n[QUEUE] Adding alert to queue for async processing")
         logger.debug(f"   Current queue size: {self.alert_queue.qsize()}")
 
-        await self.alert_queue.put(alert_payload)
+        # ✅ OPTIMIZACIÓN: Manejar cola llena sin bloquear
+        try:
+            self.alert_queue.put_nowait(alert_payload)
+            logger.debug(f"   [OK] Alert added to queue successfully")
+            logger.debug(f"   New queue size: {self.alert_queue.qsize()}")
+        except asyncio.QueueFull:
+            # Cola llena: descartar alerta más antigua y agregar nueva
+            try:
+                discarded = self.alert_queue.get_nowait()
+                self._discarded_count += 1
+                logger.warning(f"[QUEUE FULL] Discarded oldest alert for {discarded.get('symbol', 'unknown')} (total discarded: {self._discarded_count})")
+                self.alert_queue.put_nowait(alert_payload)
+            except Exception as e:
+                logger.error(f"[QUEUE ERROR] Failed to handle full queue: {e}")
+                return False
 
-        logger.debug(f"   [OK] Alert added to queue successfully")
-        logger.debug(f"   New queue size: {self.alert_queue.qsize()}")
         logger.debug("="*80 + "\n")
 
         return True

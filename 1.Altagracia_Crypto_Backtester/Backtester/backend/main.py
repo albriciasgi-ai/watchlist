@@ -1,13 +1,23 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import httpx
 import asyncio
 import time
 import json
+import sys
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from collections import OrderedDict
+
+# Rate Limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
 
 # Configuración global
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -16,11 +26,117 @@ CACHE_DIR.mkdir(exist_ok=True)
 BACKTESTING_CACHE_DIR = Path("backtesting_cache")
 BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
 
+
+# =============================================================================
+# LRU CACHE CON LÍMITE DE MEMORIA
+# =============================================================================
+class LimitedMemoryCache:
+    """
+    Caché LRU (Least Recently Used) con límite de memoria.
+    Evicta entradas antiguas cuando se supera el límite.
+    """
+
+    def __init__(self, max_size_mb: int = 100, name: str = "cache"):
+        self.cache = OrderedDict()
+        self.max_bytes = max_size_mb * 1024 * 1024
+        self.current_bytes = 0
+        self.name = name
+        self.hits = 0
+        self.misses = 0
+
+    def _estimate_size(self, value) -> int:
+        """Estima el tamaño en bytes de un valor."""
+        try:
+            # Para listas/dicts, serializar a JSON es más preciso
+            if isinstance(value, (dict, list)):
+                return len(json.dumps(value, default=str).encode('utf-8'))
+            return sys.getsizeof(value)
+        except:
+            return 1024  # Fallback: asumir 1KB
+
+    def get(self, key: str):
+        """Obtiene un valor del caché, moviéndolo al final (más reciente)."""
+        if key in self.cache:
+            self.cache.move_to_end(key)
+            self.hits += 1
+            return self.cache[key]
+        self.misses += 1
+        return None
+
+    def set(self, key: str, value):
+        """Guarda un valor en el caché, evictando si es necesario."""
+        size = self._estimate_size(value)
+
+        # Si el valor es más grande que el límite total, no almacenar
+        if size > self.max_bytes:
+            print(f"[{self.name}] WARN: Valor demasiado grande ({size / 1024 / 1024:.1f}MB > {self.max_bytes / 1024 / 1024:.0f}MB), no se almacena")
+            return
+
+        # Si la key ya existe, remover primero para recalcular tamaño
+        if key in self.cache:
+            old_size = self._estimate_size(self.cache[key])
+            self.current_bytes -= old_size
+            del self.cache[key]
+
+        # Evictar entradas antiguas hasta que haya espacio
+        evicted = 0
+        while self.current_bytes + size > self.max_bytes and self.cache:
+            old_key, old_val = self.cache.popitem(last=False)  # FIFO - remueve el más antiguo
+            old_size = self._estimate_size(old_val)
+            self.current_bytes -= old_size
+            evicted += 1
+
+        if evicted > 0:
+            print(f"[{self.name}] Evicted {evicted} entries to make room (current: {self.current_bytes / 1024 / 1024:.1f}MB)")
+
+        # Guardar el nuevo valor
+        self.cache[key] = value
+        self.current_bytes += size
+
+    def __contains__(self, key: str) -> bool:
+        """Permite usar 'key in cache'."""
+        return key in self.cache
+
+    def __getitem__(self, key: str):
+        """Permite usar cache[key]."""
+        value = self.get(key)
+        if value is None:
+            raise KeyError(key)
+        return value
+
+    def __setitem__(self, key: str, value):
+        """Permite usar cache[key] = value."""
+        self.set(key, value)
+
+    def stats(self) -> dict:
+        """Retorna estadísticas del caché."""
+        total_requests = self.hits + self.misses
+        hit_rate = (self.hits / total_requests * 100) if total_requests > 0 else 0
+        return {
+            "name": self.name,
+            "entries": len(self.cache),
+            "size_mb": round(self.current_bytes / 1024 / 1024, 2),
+            "max_size_mb": self.max_bytes / 1024 / 1024,
+            "hits": self.hits,
+            "misses": self.misses,
+            "hit_rate_percent": round(hit_rate, 1)
+        }
+
+    def clear(self):
+        """Limpia todo el caché."""
+        self.cache.clear()
+        self.current_bytes = 0
+        self.hits = 0
+        self.misses = 0
+
+
 # >> Caché en memoria para velas de DTB (evitar enviar 11MB cada vez)
-DTB_CANDLES_CACHE = {}
+# Límite: 150MB (aproximadamente 13-14 símbolos × timeframe)
+DTB_CANDLES_CACHE = LimitedMemoryCache(max_size_mb=150, name="DTB_CANDLES")
 
 # >> Caché en memoria para patrones DTB divididos por chunks (sin sesgo de supervivencia)
-DTB_PATTERNS_CACHE = {}
+# Límite: 50MB (patrones son más pequeños que velas)
+DTB_PATTERNS_CACHE = LimitedMemoryCache(max_size_mb=50, name="DTB_PATTERNS")
 # Formato: { "BTCUSDT_15m": { "2023-Q1": [...], "2023-Q2": [...], ... } }
 
 
@@ -44,16 +160,27 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Crypto Watchlist Backend",
     description="Servidor backend para la Watchlist de criptomonedas con Bybit Futures",
-    version="2.5.0",
+    version="2.7.0 - Rate Limiting",
     lifespan=lifespan
 )
 
+# Rate Limiting: registrar en la app
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# SEGURIDAD: CORS limitado a orígenes conocidos
+# Backtester frontend corre en puerto 9001
+ALLOWED_ORIGINS = [
+    "http://localhost:9001",      # Backtester frontend (Vite)
+    "http://127.0.0.1:9001",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
 )
 
 # Cache reducido a 30 minutos para datos más frescos
@@ -73,9 +200,28 @@ MAX_DAYS_BY_INTERVAL = {
     "W": 730,    # 1 semana -> máx 730 días
 }
 
+def sanitize_filename(name: str) -> str:
+    """
+    Sanitiza un nombre para uso seguro en rutas de archivo.
+    Previene Path Traversal eliminando caracteres peligrosos.
+    """
+    import re
+    # Solo permite alfanuméricos, guiones y guiones bajos
+    sanitized = re.sub(r'[^a-zA-Z0-9_\-]', '', name)
+    # Previene nombres vacíos
+    if not sanitized:
+        sanitized = "invalid"
+    return sanitized
+
+
 def load_cache(symbol: str, interval: str, indicator: str):
     """Carga datos del cache si existen y son recientes"""
-    cache_file = CACHE_DIR / f"{symbol}_{interval}_{indicator}.json"
+    # SEGURIDAD: Sanitizar inputs para prevenir Path Traversal
+    safe_symbol = sanitize_filename(symbol)
+    safe_interval = sanitize_filename(interval)
+    safe_indicator = sanitize_filename(indicator)
+
+    cache_file = CACHE_DIR / f"{safe_symbol}_{safe_interval}_{safe_indicator}.json"
     if cache_file.exists():
         try:
             with open(cache_file, 'r', encoding='utf-8') as f:
@@ -92,8 +238,13 @@ def load_cache(symbol: str, interval: str, indicator: str):
 
 def save_cache(symbol: str, interval: str, indicator: str, data: dict):
     """Guarda datos en cache con timestamp"""
+    # SEGURIDAD: Sanitizar inputs para prevenir Path Traversal
+    safe_symbol = sanitize_filename(symbol)
+    safe_interval = sanitize_filename(interval)
+    safe_indicator = sanitize_filename(indicator)
+
     data['timestamp'] = time.time()
-    cache_file = CACHE_DIR / f"{symbol}_{interval}_{indicator}.json"
+    cache_file = CACHE_DIR / f"{safe_symbol}_{safe_interval}_{safe_indicator}.json"
     with open(cache_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -129,22 +280,27 @@ def calculate_volume_delta(candles_data):
     return klines
 
 @app.get("/api/status")
-def status():
+@limiter.limit("100/minute")
+def status(request: Request):
     now_utc = datetime.now(timezone.utc)
     now_colombia = now_utc.astimezone(COLOMBIA_TZ)
-    
+
     cache_files = list(CACHE_DIR.glob("*_volumedelta.json"))
-    
+
     return {
         "status": "ok",
         "time_utc": int(now_utc.timestamp()),
         "time_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
         "timezone": "America/Bogota (UTC-5)",
         "cache_files": len(cache_files),
-        "version": "2.5.0 - FIX: Volume Delta respeta límites por timeframe",
+        "version": "2.6.0 - OPT: LRU Cache con límite de memoria",
         "cache_duration": "30 minutos",
         "cache_max_age_seconds": CACHE_MAX_AGE,
-        "max_days_limits": MAX_DAYS_BY_INTERVAL
+        "max_days_limits": MAX_DAYS_BY_INTERVAL,
+        "memory_cache": {
+            "dtb_candles": DTB_CANDLES_CACHE.stats(),
+            "dtb_patterns": DTB_PATTERNS_CACHE.stats()
+        }
     }
 
 INTERVAL_MAP = {
@@ -169,7 +325,8 @@ def get_interval_minutes(interval: str) -> int:
         return int(interval)
 
 @app.get("/api/historical/{symbol}")
-async def get_historical(symbol: str, interval: str = "15", days: int = 30):
+@limiter.limit("60/minute")
+async def get_historical(request: Request, symbol: str, interval: str = "15", days: int = 30):
     try:
         interval_clean = (
             interval.replace("m", "")
@@ -309,7 +466,8 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30):
         }
 
 @app.get("/api/volume-delta/{symbol}")
-async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
+@limiter.limit("60/minute")
+async def get_volume_delta(request: Request, symbol: str, interval: str = "15", days: int = 30):
     """Endpoint para obtener Volume Delta con límites por timeframe"""
     try:
         interval_clean = (
@@ -1527,23 +1685,27 @@ BACKTESTING_CONFIG = {
 
 def save_backtesting_cache(symbol: str, data: dict):
     """Guarda datos de backtesting en caché permanente"""
-    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    # SEGURIDAD: Sanitizar symbol para prevenir Path Traversal
+    safe_symbol = sanitize_filename(symbol)
+    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
     with open(cache_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"[BACKTESTING CACHE] Guardado {symbol} - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+    print(f"[BACKTESTING CACHE] Guardado {safe_symbol} - {cache_file.stat().st_size / (1024*1024):.2f} MB")
 
 
 def load_backtesting_cache(symbol: str):
     """Carga datos de backtesting del caché"""
-    cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_backtesting_data.json"
+    # SEGURIDAD: Sanitizar symbol para prevenir Path Traversal
+    safe_symbol = sanitize_filename(symbol)
+    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
     if cache_file.exists():
         try:
             with open(cache_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                print(f"[BACKTESTING CACHE] Cargado {symbol} desde caché - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+                print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché - {cache_file.stat().st_size / (1024*1024):.2f} MB")
                 return data
         except Exception as e:
-            print(f"[BACKTESTING CACHE ERROR] {symbol}: {str(e)}")
+            print(f"[BACKTESTING CACHE ERROR] {safe_symbol}: {str(e)}")
     return None
 
 
@@ -1644,7 +1806,8 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
 
 
 @app.get("/api/backtesting/bulk-data/{symbol}")
-async def get_backtesting_bulk_data(symbol: str, force_refresh: bool = False):
+@limiter.limit("10/minute")
+async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh: bool = False):
     """
     Descarga y cachea 3 años de datos para backtesting
 
@@ -2096,6 +2259,7 @@ async def delete_drawings(symbol: str):
 # ==================== DOUBLE TOP/BOTTOM ENDPOINTS ====================
 
 @app.post("/api/double-topbottom/detect")
+@limiter.limit("30/minute")
 async def detect_double_topbottom(request: Request):
     """
     Detects double top/bottom patterns
@@ -2233,6 +2397,7 @@ async def detect_double_topbottom(request: Request):
 
 
 @app.post("/api/double-topbottom/chunk")
+@limiter.limit("60/minute")
 async def get_dtb_chunk(request: Request):
     """
     Obtiene un chunk específico de patrones DTB

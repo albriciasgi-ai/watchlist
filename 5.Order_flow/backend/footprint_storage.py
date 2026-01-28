@@ -2,10 +2,15 @@
 #
 # Guarda footprints completados en archivos JSON para poder cargarlos
 # al reiniciar el servicio. Mantiene un historial configurable (default 12h).
+#
+# CLOUD INTEGRATION: Al iniciar, intenta obtener footprints del cloud collector
+# en Northflank para tener datos reales en vez de estimaciones.
 
 import json
 import logging
 import time
+import asyncio
+import httpx
 from pathlib import Path
 from typing import Dict, List, Optional
 from dataclasses import asdict
@@ -13,8 +18,78 @@ from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
+# URL del Cloud Footprint Collector en Northflank
+CLOUD_COLLECTOR_URL = "https://p01--altagracia--rxv8nrbhxln9.code.run"
+CLOUD_TIMEOUT = 30.0  # segundos
+
 # Directorio donde se guardan los footprints
 STORAGE_DIR = Path(__file__).parent / "footprint_cache"
+
+
+async def fetch_footprints_from_cloud(symbol: str, interval: str, hours: int = 12) -> List[dict]:
+    """
+    Obtiene footprints del Cloud Collector en Northflank.
+
+    Args:
+        symbol: Simbolo (ej: BTCUSDT)
+        interval: Intervalo (ej: 1)
+        hours: Horas de historico
+
+    Returns:
+        Lista de footprints o lista vacia si falla
+    """
+    try:
+        url = f"{CLOUD_COLLECTOR_URL}/api/footprints/{symbol}"
+        params = {"hours": hours, "interval": interval}
+
+        async with httpx.AsyncClient(timeout=CLOUD_TIMEOUT) as client:
+            response = await client.get(url, params=params)
+
+            if response.status_code == 200:
+                data = response.json()
+                footprints = data.get("footprints", [])
+
+                logger.info(
+                    f"[CLOUD] Obtenidos {len(footprints)} footprints reales de {symbol} "
+                    f"desde el cloud collector"
+                )
+                return footprints
+            else:
+                logger.warning(
+                    f"[CLOUD] Error obteniendo footprints de {symbol}: "
+                    f"HTTP {response.status_code}"
+                )
+                return []
+
+    except httpx.TimeoutException:
+        logger.warning(f"[CLOUD] Timeout obteniendo footprints de {symbol}")
+        return []
+    except Exception as e:
+        logger.warning(f"[CLOUD] Error conectando al cloud collector: {e}")
+        return []
+
+
+def fetch_footprints_from_cloud_sync(symbol: str, interval: str, hours: int = 12) -> List[dict]:
+    """Version sincrona de fetch_footprints_from_cloud."""
+    try:
+        # Intentar usar el event loop existente
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # Si ya hay un loop corriendo, crear una tarea
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(
+                    asyncio.run,
+                    fetch_footprints_from_cloud(symbol, interval, hours)
+                )
+                return future.result(timeout=CLOUD_TIMEOUT + 5)
+        else:
+            return loop.run_until_complete(
+                fetch_footprints_from_cloud(symbol, interval, hours)
+            )
+    except Exception as e:
+        logger.warning(f"[CLOUD] Error en fetch sincrono: {e}")
+        return []
 
 
 class FootprintStorage:
@@ -47,6 +122,9 @@ class FootprintStorage:
 
         # Crear directorio si no existe
         self.storage_dir.mkdir(parents=True, exist_ok=True)
+
+        # Flag para saber si ya se intento cargar del cloud
+        self._cloud_loaded: Dict[str, bool] = defaultdict(bool)
 
         logger.info(f"[FOOTPRINT_STORAGE] Initialized at {self.storage_dir}, max_age={max_age_hours}h")
 
@@ -119,6 +197,68 @@ class FootprintStorage:
         except Exception as e:
             logger.error(f"[FOOTPRINT_STORAGE] Error loading {key}: {e}")
             return []
+
+    async def load_from_cloud(self, symbol: str, interval: str, hours: int = 12) -> int:
+        """
+        Carga footprints desde el Cloud Collector y los guarda en cache local.
+
+        Esta funcion debe llamarse al iniciar el servicio para obtener
+        datos historicos reales en vez de estimaciones.
+
+        Args:
+            symbol: Simbolo (ej: BTCUSDT)
+            interval: Intervalo (ej: 1)
+            hours: Horas de historico a obtener
+
+        Returns:
+            Cantidad de footprints cargados
+        """
+        key = self._get_key(symbol, interval)
+
+        # Solo cargar una vez por sesion
+        if self._cloud_loaded.get(key):
+            logger.debug(f"[CLOUD] Ya se cargo {key} del cloud en esta sesion")
+            return 0
+
+        logger.info(f"[CLOUD] Intentando cargar {symbol} intervalo {interval} del cloud collector...")
+
+        cloud_footprints = await fetch_footprints_from_cloud(symbol, interval, hours)
+
+        if not cloud_footprints:
+            logger.info(f"[CLOUD] No se obtuvieron footprints del cloud para {key}")
+            self._cloud_loaded[key] = True
+            return 0
+
+        # Cargar cache local existente
+        local_footprints = self.load(symbol, interval)
+        local_timestamps = {fp.get("candle_timestamp") for fp in local_footprints}
+
+        # Agregar footprints del cloud que no existan localmente
+        added = 0
+        for fp in cloud_footprints:
+            ts = fp.get("candle_timestamp")
+            if ts and ts not in local_timestamps:
+                self._cache[key].append(fp)
+                added += 1
+                local_timestamps.add(ts)
+
+        if added > 0:
+            # Ordenar por timestamp
+            self._cache[key].sort(key=lambda x: x.get("candle_timestamp", 0))
+            self._dirty[key] = True
+
+            # Guardar a disco
+            parts = key.split("_")
+            if len(parts) >= 2:
+                self._flush_to_disk(symbol, interval)
+
+            logger.info(
+                f"[CLOUD] Agregados {added} footprints reales del cloud para {key}. "
+                f"Total en cache: {len(self._cache[key])}"
+            )
+
+        self._cloud_loaded[key] = True
+        return added
 
     def save_footprint(self, footprint_dict: dict) -> bool:
         """

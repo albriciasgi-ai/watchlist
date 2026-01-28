@@ -84,30 +84,25 @@ class IndicatorManager {
       swingDetector.setVWAPIndicator(vwapIndicator);
     }
 
-    // ✅ Ya NO necesitamos cargar datos del backend para Volume Delta y CVD
-    // Solo cargar indicadores que requieren backend API
+    // 🎯 OPTIMIZACIÓN: NO cargar datos de indicadores pesados aquí
+    // updateIndicatorStates() se llamará después con los estados reales
+    // y solo cargará los indicadores que realmente están habilitados
+    //
+    // Solo cargamos Volume Profile porque es crítico para la visualización inicial
     await Promise.all(
       this.indicators.map(ind => {
-        // En modo backtesting: cargar Volume Profile, Open Interest (si tiene datos), y S&R
-        if (backtestingMode) {
-          if (ind.name === "Volume Profile" ||
-              ind.name === "Support & Resistance" ||
-              (ind.name === "Open Interest" && ind._dataPreloaded)) {
-            console.log(`[${this.symbol}] Fetching data for ${ind.name} (backtesting mode)`);
-            return ind.fetchData();
-          }
-          console.log(`[${this.symbol}] Skipping fetchData for ${ind.name} (backtesting mode)`);
-          return Promise.resolve();
-        }
-
-        // En modo normal: cargar todos los indicadores que requieren backend
-        if (ind.name === "Volume Profile" ||
-            ind.name === "Open Interest" ||
-            ind.name === "Double Top/Bottom" ||
-            ind.name === "Rejection Patterns" ||
-            ind.name === "Support & Resistance") {
+        // Volume Profile siempre se carga (es parte esencial del chart)
+        if (ind.name === "Volume Profile") {
+          console.log(`[${this.symbol}] Fetching data for ${ind.name} (siempre requerido)`);
           return ind.fetchData();
         }
+        // Open Interest: solo si ya tiene datos precargados
+        if (ind.name === "Open Interest" && ind._dataPreloaded) {
+          console.log(`[${this.symbol}] Fetching data for ${ind.name} (datos precargados)`);
+          return ind.fetchData();
+        }
+        // Los demás indicadores se cargarán on-demand en updateIndicatorStates()
+        console.log(`[${this.symbol}] ⏳ Deferring load for ${ind.name} (lazy loading)`);
         return Promise.resolve();
       })
     );
@@ -284,12 +279,33 @@ class IndicatorManager {
       } else if (shouldBeEnabled && wasEnabled) {
         // 🎯 FIX v2: Si ya estaba habilitado pero no tiene datos, intentar cargar
         // Esto soluciona el caso donde el indicador tiene enabled=true por defecto
-        // pero el fetch inicial no se ejecutó correctamente
+        // pero el fetch inicial no se ejecutó (ahora usamos lazy loading)
         if (backendIndicators.includes(indicator.name)) {
           // S&R: verificar si tiene datos
           if (indicator.name === "Support & Resistance") {
             if ((!indicator.resistances || indicator.resistances.length === 0) &&
                 (!indicator.supports || indicator.supports.length === 0)) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+              promises.push(indicator.fetchData());
+            }
+          }
+          // VWAP: verificar si tiene datos
+          else if (indicator.name === "VWAP") {
+            if (!indicator.vwapData || Object.keys(indicator.vwapData || {}).length === 0) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+              promises.push(indicator.fetchData());
+            }
+          }
+          // DTB: verificar si tiene patrones (en modo NO backtesting)
+          else if (indicator.name === "Double Top/Bottom" && !backtestingMode) {
+            if (!indicator.patterns || indicator.patterns.length === 0) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+              promises.push(indicator.fetchData());
+            }
+          }
+          // Rejection Patterns: verificar si tiene patrones
+          else if (indicator.name === "Rejection Patterns") {
+            if (!indicator.patterns || indicator.patterns.length === 0) {
               console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
               promises.push(indicator.fetchData());
             }

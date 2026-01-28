@@ -182,4 +182,5 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
   );
 };
 
-export default EquityCurveChart;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+export default React.memo(EquityCurveChart);

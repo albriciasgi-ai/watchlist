@@ -367,8 +367,14 @@ class OrderFlowService:
         if total_loaded > 0:
             logger.info(f"[ORDERFLOW_SERVICE] Total footprints cargados desde disco: {total_loaded}")
 
-        # Iniciar reconstruccion en background (no bloquea el inicio)
-        asyncio.create_task(self._reconstruct_missing_footprints(symbols, intervals))
+        # DESACTIVADO: Ya no usamos estimados, solo datos reales del cloud o tiempo real
+        # La reconstruccion generaba footprints estimados con heuristica 60/40 bid/ask
+        # que no son precisos. Ahora solo usamos:
+        # 1. Footprints reales del Cloud Collector (Northflank)
+        # 2. Footprints capturados en tiempo real via WebSocket
+        #
+        # asyncio.create_task(self._reconstruct_missing_footprints(symbols, intervals))
+        logger.info("[ORDERFLOW_SERVICE] Reconstruccion de estimados DESACTIVADA - solo datos reales")
 
     async def _reconstruct_missing_footprints(self, symbols: List[str], intervals: List[str]):
         """
@@ -691,6 +697,11 @@ class OrderFlowService:
         """
         Retorna los footprints almacenados para un simbolo.
 
+        Busca en este orden:
+        1. Memoria local
+        2. Disco local (footprint_cache/)
+        3. Cloud Collector (Northflank) - si los datos locales son insuficientes
+
         Args:
             symbol: Simbolo a consultar
             interval: Intervalo de las velas
@@ -701,6 +712,7 @@ class OrderFlowService:
             Lista de footprints serializados
         """
         key = f"{symbol}_{interval}"
+        hours_to_fetch = since_hours or 12  # Default 12 horas
 
         # Si no hay datos en memoria, intentar cargar desde disco
         if key not in self._footprints or len(self._footprints[key]) == 0:
@@ -717,6 +729,52 @@ class OrderFlowService:
         if since_hours:
             cutoff_ms = int((time.time() - since_hours * 3600) * 1000)
             footprints = [fp for fp in footprints if fp.get("candle_timestamp", 0) >= cutoff_ms]
+
+        # Si tenemos pocos footprints, intentar obtener del Cloud Collector
+        # Esperamos ~60 footprints por hora en intervalo 1min
+        expected_footprints = int(hours_to_fetch * 60) if interval == "1" else int(hours_to_fetch * 12)
+        min_threshold = expected_footprints * 0.3  # Al menos 30% de lo esperado
+
+        if len(footprints) < min_threshold:
+            logger.info(
+                f"[ORDERFLOW_SERVICE] Pocos footprints para {key} ({len(footprints)}/{expected_footprints}), "
+                f"intentando cargar del Cloud Collector..."
+            )
+            try:
+                from footprint_storage import fetch_footprints_from_cloud_sync
+                cloud_footprints = fetch_footprints_from_cloud_sync(symbol, interval, hours=int(hours_to_fetch))
+
+                if cloud_footprints:
+                    # Agregar footprints del cloud que no existan localmente
+                    existing_timestamps = {fp.get("candle_timestamp") for fp in self._footprints[key]}
+                    added = 0
+
+                    for fp in cloud_footprints:
+                        ts = fp.get("candle_timestamp")
+                        if ts and ts not in existing_timestamps:
+                            self._footprints[key].append(fp)
+                            self._storage.save_footprint(fp)
+                            existing_timestamps.add(ts)
+                            added += 1
+
+                    if added > 0:
+                        # Reordenar por timestamp
+                        sorted_fps = sorted(
+                            self._footprints[key],
+                            key=lambda x: x.get("candle_timestamp", 0)
+                        )
+                        self._footprints[key] = deque(sorted_fps, maxlen=self.config.max_footprints_in_memory)
+
+                        logger.info(f"[ORDERFLOW_SERVICE] Agregados {added} footprints del Cloud para {key}")
+
+                        # Actualizar lista de footprints a retornar
+                        footprints = list(self._footprints.get(key, []))
+                        if since_hours:
+                            cutoff_ms = int((time.time() - since_hours * 3600) * 1000)
+                            footprints = [fp for fp in footprints if fp.get("candle_timestamp", 0) >= cutoff_ms]
+
+            except Exception as e:
+                logger.warning(f"[ORDERFLOW_SERVICE] Error obteniendo del Cloud: {e}")
 
         # Retornar los ultimos N footprints (ya son diccionarios)
         return footprints[-limit:]

@@ -1,475 +1,1703 @@
-react-dom_client.js?v=2b7f99a5:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-Logger.js:259 💡 Debug utilities available:
-Logger.js:260    window.toggleDebugMode() - Toggle all logs
-Logger.js:261    window.disableHeavyLogs() - Disable performance-heavy logs
-useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
-useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
-useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
-MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
-useProximityAlerts.js:274 [useProximityAlerts] Alerts or timeframe changed: 0 alerts total, timeframe: 15
-useProximityAlerts.js:275 [useProximityAlerts] Enabled alerts: 0
-useProximityAlerts.js:281 [useProximityAlerts] No enabled alerts, stopping polling
-MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 60
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 60
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 2)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-WebSocketManager.js:25 WebSocket Manager conectado [60]
-WebSocketManager.js:40 ✓ Suscrito: 
-WebSocketManager.js:40 ✓ Suscrito: 
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
-MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 90 días @ 1
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 90 días @ 1
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 1)
-IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
-MiniChart.jsx:1333 [BTCUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [BTCUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [BTCUSDT] Pattern show mode: validated
-MiniChart.jsx:1333 [ETHUSDT] 🚀 Componente montado, iniciando...
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
-IndicatorManager.js:77 [ETHUSDT] Creando Double Top/Bottom porque está habilitado
-RejectionPatternIndicator.js:215 [ETHUSDT] Pattern show mode: validated
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-RejectionPatternIndicator.js:205 [BTCUSDT] 🔄 Config updated - patterns will be re-detected on next render
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
-RejectionPatternIndicator.js:205 [ETHUSDT] 🔄 Config updated - patterns will be re-detected on next render
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
-WebSocketManager.js:68 WebSocket Manager cerrado
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 2159 velas confirmadas
-WebSocketManager.js:25 WebSocket Manager conectado [1]
-WebSocketManager.js:40 ✓ Suscrito: 
-WebSocketManager.js:40 ✓ Suscrito: 
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 2159 velas confirmadas
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 7199 velas confirmadas
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 7199 velas confirmadas
-DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for BTCUSDT
-DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] BTCUSDT - User clicked Save & Close - will reload patterns
-DoubleTopBottomSettings.jsx:228 [PRUEBA_DBT] Config saved to localStorage for ETHUSDT
-DoubleTopBottomSettings.jsx:240 [PRUEBA_DBT] ETHUSDT - User clicked Save & Close - will reload patterns
-Logger.js:100 ✅ [3:23:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:23:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:23:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 7199 totales)
-Logger.js:100 ✅ [3:23:02 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:23:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:23:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 7199 totales)
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1943ms
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2342ms
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:23:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:24:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:24:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:24:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 7199 totales)
-Logger.js:100 ✅ [3:24:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:24:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:24:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 7199 totales)
-Logger.js:100 ✅ [3:24:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1564ms
-Logger.js:100 ✅ [3:24:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:24:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:24:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 2820ms
-Logger.js:100 ✅ [3:24:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:24:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:25:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:25:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:25:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 7199 totales)
-Logger.js:100 ✅ [3:25:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:25:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:25:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 7199 totales)
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1397ms
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1788ms
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:25:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:26:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:26:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:26:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 7199 totales)
-Logger.js:100 ✅ [3:26:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:26:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:26:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 7199 totales)
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1614ms
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1932ms
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:26:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:27:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:27:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:27:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 7199 totales)
-Logger.js:100 ✅ [3:27:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:27:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:27:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 7199 totales)
-Logger.js:100 ✅ [3:27:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1706ms
-Logger.js:100 ✅ [3:27:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:27:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:27:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2638ms
-Logger.js:100 ✅ [3:27:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:27:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-Logger.js:100 ✅ [3:28:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:28:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:28:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1440 totales)
-Logger.js:100 ✅ [3:28:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:28:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:28:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1440 totales)
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1691ms
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1719ms
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:28:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:29:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:29:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:29:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1441 totales)
-Logger.js:100 ✅ [3:29:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:29:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:29:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1441 totales)
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1393ms
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1910ms
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:29:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:30:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:30:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:30:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1442 totales)
-Logger.js:100 ✅ [3:30:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:30:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:30:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1442 totales)
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1917ms
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1988ms
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:30:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:31:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:31:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:31:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1443 totales)
-Logger.js:100 ✅ [3:31:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:31:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:31:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1443 totales)
-Logger.js:100 ✅ [3:31:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1493ms
-Logger.js:100 ✅ [3:31:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:31:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:31:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 2555ms
-Logger.js:100 ✅ [3:31:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:31:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:32:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:32:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:32:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1444 totales)
-Logger.js:100 ✅ [3:32:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:32:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:32:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1444 totales)
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1769ms
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1759ms
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:32:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-Logger.js:100 ✅ [3:33:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:33:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:33:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1440 totales)
-Logger.js:100 ✅ [3:33:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:33:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:33:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1440 totales)
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 2307ms
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2008ms
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:33:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:34:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:34:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:34:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1441 totales)
-Logger.js:100 ✅ [3:34:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:34:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:34:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1441 totales)
-Logger.js:100 ✅ [3:34:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 3007ms
-Logger.js:100 ✅ [3:34:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:34:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:34:05 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 3309ms
-Logger.js:100 ✅ [3:34:05 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:34:05 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:35:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:35:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:35:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1442 totales)
-Logger.js:100 ✅ [3:35:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:35:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1442 totales)
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2642ms
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 2548ms
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:35:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:36:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:36:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:36:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1443 totales)
-Logger.js:100 ✅ [3:36:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:36:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:36:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1443 totales)
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1592ms
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1628ms
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:36:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:37:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:37:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:37:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1444 totales)
-Logger.js:100 ✅ [3:37:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:37:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:37:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1444 totales)
-Logger.js:100 ✅ [3:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1526ms
-Logger.js:100 ✅ [3:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:37:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1694ms
-Logger.js:100 ✅ [3:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:37:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-Logger.js:100 ✅ [3:38:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:38:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:38:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1440 totales)
-Logger.js:100 ✅ [3:38:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:38:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:38:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1440 totales)
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1920ms
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1811ms
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:38:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:39:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:39:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:39:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1441 totales)
-Logger.js:100 ✅ [3:39:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:39:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:39:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1441 totales)
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1805ms
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1847ms
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:39:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:40:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:40:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:40:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1442 totales)
-Logger.js:100 ✅ [3:40:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:40:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:40:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1442 totales)
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1999ms
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1910ms
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:40:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:41:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:41:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:41:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1443 totales)
-Logger.js:100 ✅ [3:41:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:41:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:41:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1443 totales)
-Logger.js:100 ✅ [3:41:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1756ms
-Logger.js:100 ✅ [3:41:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:41:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:41:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 2142ms
-Logger.js:100 ✅ [3:41:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:41:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:42:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:42:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:42:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1444 totales)
-Logger.js:100 ✅ [3:42:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:42:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:42:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1444 totales)
-Logger.js:100 ✅ [3:42:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 2592ms
-Logger.js:100 ✅ [3:42:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:42:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:42:05 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2529ms
-Logger.js:100 ✅ [3:42:05 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:42:05 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-Logger.js:100 ✅ [3:43:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:43:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:43:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1440 totales)
-Logger.js:100 ✅ [3:43:02 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:43:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:43:02 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1440 totales)
-Logger.js:100 ✅ [3:43:02 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1295ms
-Logger.js:100 ✅ [3:43:02 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:43:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:43:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1514ms
-Logger.js:100 ✅ [3:43:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:43:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:44:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:44:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:44:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1441 totales)
-Logger.js:100 ✅ [3:44:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:44:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:44:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1441 totales)
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 6 patrones en 1738ms
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 6 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 2107ms
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:44:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:45:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:45:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:45:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1442 totales)
-Logger.js:100 ✅ [3:45:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:45:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:45:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1442 totales)
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 6 patrones en 2206ms
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 6 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 2095ms
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:45:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:46:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:46:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:46:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1443 totales)
-Logger.js:100 ✅ [3:46:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:46:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:46:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1443 totales)
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1457ms
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1853ms
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:46:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:47:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:47:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:47:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1444 totales)
-Logger.js:100 ✅ [3:47:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:47:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:47:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1444 totales)
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1893ms
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 8 patrones en 1804ms
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 8 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:47:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-Logger.js:100 ✅ [3:48:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:48:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:48:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1440 totales)
-Logger.js:100 ✅ [3:48:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:48:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:48:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1440 totales)
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1416ms
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1984ms
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:48:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:49:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:49:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:49:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1441 totales)
-Logger.js:100 ✅ [3:49:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:49:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:49:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1441 totales)
-Logger.js:100 ✅ [3:49:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2214ms
-Logger.js:100 ✅ [3:49:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:49:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:49:04 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 2116ms
-Logger.js:100 ✅ [3:49:04 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:49:04 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:50:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:50:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:50:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1442 totales)
-Logger.js:100 ✅ [3:50:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:50:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:50:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1442 totales)
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1467ms
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 10 patrones en 1660ms
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 10 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:50:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:51:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:51:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:51:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1443 totales)
-Logger.js:100 ✅ [3:51:02 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:51:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:51:02 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1443 totales)
-Logger.js:100 ✅ [3:51:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 10 patrones en 1551ms
-Logger.js:100 ✅ [3:51:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 10 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:51:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:51:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 1671ms
-Logger.js:100 ✅ [3:51:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:51:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:52:01 p. m.] [Manager] [BTCUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:52:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:52:01 p. m.] [DoubleTopBottom] [BTCUSDT] 🔍 Detección incremental con últimas 200 velas (de 1444 totales)
-Logger.js:100 ✅ [3:52:01 p. m.] [Manager] [ETHUSDT] 🕐 Vela cerrada - notificando a DBT indicator
-Logger.js:100 ✅ [3:52:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🕐 Vela cerrada - detectando patrones DBT...
-Logger.js:100 ✅ [3:52:01 p. m.] [DoubleTopBottom] [ETHUSDT] 🔍 Detección incremental con últimas 240 velas (de 1444 totales)
-Logger.js:100 ✅ [3:52:03 p. m.] [DoubleTopBottom] [ETHUSDT] ✅ Detección incremental: 9 patrones en 1761ms
-Logger.js:100 ✅ [3:52:03 p. m.] [DoubleTopBottom] [ETHUSDT] 📊 9 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:52:03 p. m.] [DoubleTopBottom] [ETHUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-Logger.js:100 ✅ [3:52:04 p. m.] [DoubleTopBottom] [BTCUSDT] ✅ Detección incremental: 7 patrones en 2618ms
-Logger.js:100 ✅ [3:52:04 p. m.] [DoubleTopBottom] [BTCUSDT] 📊 7 patrones detectados en tiempo real
-Logger.js:100 ✅ [3:52:04 p. m.] [DoubleTopBottom] [BTCUSDT] 🔔 Alertas habilitadas - verificando patrones nuevos...
-MiniChart.jsx:720 [BTCUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:720 [ETHUSDT] Solicitando histórico: 1 días @ 1
-MiniChart.jsx:749 [BTCUSDT] ✅ Histórico cargado: 1439 velas confirmadas
-MiniChart.jsx:749 [ETHUSDT] ✅ Histórico cargado: 1439 velas confirmadas
+errores fronend:
+
+:11001/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:48 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2262:5
+    at commitHookEffectListMount (react-dom_client.js?v=49586451:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=49586451:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=49586451:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=49586451:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=49586451:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=49586451:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=49586451:19447:22)
+    at performConcurrentWorkOnRoot (react-dom_client.js?v=49586451:18667:40)
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:226 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:200:30
+    at SymbolList.jsx:234:5
+    at commitHookEffectListMount (react-dom_client.js?v=49586451:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=49586451:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=49586451:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=49586451:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=49586451:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=49586451:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=49586451:19447:22)
+    at performConcurrentWorkOnRoot (react-dom_client.js?v=49586451:18667:40)
+(anonymous) @ SymbolList.jsx:226
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (react-dom_client.js?v=49586451:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=49586451:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=49586451:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=49586451:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=49586451:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=49586451:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=49586451:19447:22)
+    at performConcurrentWorkOnRoot (react-dom_client.js?v=49586451:18667:40)
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/swing/config:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:50 a. m.] [SingleSymbolAnalyzer] Error sincronizando Swing Detector: TypeError: Failed to fetch
+    at syncSwingDetector (SingleSymbolAnalyzer.jsx:239:32)
+    at SingleSymbolAnalyzer.jsx:256:5
+    at commitHookEffectListMount (react-dom_client.js?v=49586451:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=49586451:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=49586451:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=49586451:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=49586451:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=49586451:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=49586451:19447:22)
+    at performConcurrentWorkOnRoot (react-dom_client.js?v=49586451:18667:40)
+error @ Logger.js:88
+syncSwingDetector @ SingleSymbolAnalyzer.jsx:252
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.fetchData (OrderFlowIndicator.js:126:32)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:429:19)
+    at MiniChart.jsx:2098:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:2097:41)
+fetchFootprints @ OrderFlowIndicator.js:221
+:11000/api/realtime/set-interval:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/swing/config/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/historical/BTCUSDT?interval=1&since_timestamp=1769525520000&t=1769525748221:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+MiniChart.jsx:1317 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1163:25)
+loadHistoricalData @ MiniChart.jsx:1317
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:50 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (react-dom_client.js?v=49586451:16915:34)
+    at commitPassiveMountOnFiber (react-dom_client.js?v=49586451:18156:19)
+    at commitPassiveMountEffects_complete (react-dom_client.js?v=49586451:18129:17)
+    at commitPassiveMountEffects_begin (react-dom_client.js?v=49586451:18119:15)
+    at commitPassiveMountEffects (react-dom_client.js?v=49586451:18109:11)
+    at flushPassiveEffectsImpl (react-dom_client.js?v=49586451:19490:11)
+    at flushPassiveEffects (react-dom_client.js?v=49586451:19447:22)
+    at performConcurrentWorkOnRoot (react-dom_client.js?v=49586451:18667:40)
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/swing/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:259 [BTCUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:248:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:109:12)
+fetchStatus @ SwingDetectorIndicator.js:259
+:11000/api/swing/signals/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at async Promise.all (:11001/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:107:5)
+fetchSignals @ SwingDetectorIndicator.js:234
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:53 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:53 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.js:233:42
+fetchFootprints @ OrderFlowIndicator.js:221
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:55 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:55:59 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.js:233:42
+fetchFootprints @ OrderFlowIndicator.js:221
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:02 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:05 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:05 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1387:21)
+    at handleWebSocketMessage (MiniChart.jsx:1455:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+error @ Logger.js:88
+:11000/api/swing/signals/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1393:22)
+    at handleWebSocketMessage (MiniChart.jsx:1455:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+fetchSignals @ SwingDetectorIndicator.js:234
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:06 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.js:233:42
+fetchFootprints @ OrderFlowIndicator.js:221
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:10 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:14 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:56:17 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:20 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:22 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:26 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+OrderFlowIndicator.js:212  GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:212
+(anonymous) @ OrderFlowIndicator.js:233
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.js:233:42
+fetchFootprints @ OrderFlowIndicator.js:221
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:29 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:32 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+SymbolList.jsx:87  GET http://localhost:11000/api/historical/ETHUSDT?interval=1&days=1 net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:87
+await in (anonymous)
+(anonymous) @ SymbolList.jsx:111
+setTimeout
+(anonymous) @ SymbolList.jsx:110
+onMouseEnter @ SymbolList.jsx:445
+callCallback2 @ react-dom_client.js?v=49586451:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=49586451:3699
+invokeGuardedCallback @ react-dom_client.js?v=49586451:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=49586451:3736
+executeDispatch @ react-dom_client.js?v=49586451:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=49586451:7034
+processDispatchQueue @ react-dom_client.js?v=49586451:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=49586451:7051
+(anonymous) @ react-dom_client.js?v=49586451:7174
+batchedUpdates$1 @ react-dom_client.js?v=49586451:18913
+batchedUpdates @ react-dom_client.js?v=49586451:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=49586451:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=49586451:5478
+dispatchEvent @ react-dom_client.js?v=49586451:5472
+dispatchContinuousEvent @ react-dom_client.js?v=49586451:5461
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:35 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:38 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:41 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:44 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:47 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:50 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+SymbolList.jsx:200  GET http://localhost:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:200
+SymbolList.jsx:226 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:200:30
+(anonymous) @ SymbolList.jsx:226
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:52 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:56 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:56:59 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+OrderFlowIndicator.js:212  GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:212
+(anonymous) @ OrderFlowIndicator.js:233
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:230
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+OrderFlowIndicator.js:221 [BTCUSDT] OrderFlow fetch network error: TypeError: Failed to fetch
+    at OrderFlowIndicator.fetchFootprints (OrderFlowIndicator.js:212:26)
+    at OrderFlowIndicator.js:233:42
+fetchFootprints @ OrderFlowIndicator.js:221
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:230
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+OrderFlowIndicator.js:240 [BTCUSDT] OrderFlow: max retries (5) exceeded, giving up
+fetchFootprints @ OrderFlowIndicator.js:240
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:230
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:233
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:01 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:05 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+VWAPIndicator.js:161  GET http://localhost:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:161
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1455
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+Logger.js:88 ❌ [9:57:05 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1387:21)
+    at handleWebSocketMessage (MiniChart.jsx:1455:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+await in fetchData
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1455
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+SwingDetectorIndicator.js:209  GET http://localhost:11000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:209
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1455
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1393:22)
+    at handleWebSocketMessage (MiniChart.jsx:1455:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+fetchSignals @ SwingDetectorIndicator.js:234
+await in fetchSignals
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1455
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:06 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:11 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:14 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:19 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:21 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+useGlobalAlerts.js:35  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:24 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:26 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:29 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:32 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:35 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+MiniChart.jsx:492  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2267
+Logger.js:88 ❌ [9:57:38 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2267:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2267
+
+
+==================
+==================
+
+consola frontend:
+
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ ✅ [9:55:48 a. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [BTCUSDT] SwingDetectorIndicator initialized
+ [BTCUSDT] OrderFlowIndicator initialized
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (1481 velas)
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1481 velas (esperadas: ~1440, ratio: 102.8%)
+ [BTCUSDT] Carga INCREMENTAL: desde 27/1/2026, 9:52:00 a.m. (1481 velas en cache)
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [BTCUSDT] OrderFlow scheduling retry 1/5 in 2000ms...
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1481 velas)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [BTCUSDT] OrderFlow scheduling retry 2/5 in 4000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=89
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=110
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=123
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=123
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=136
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=124
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=113
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=102
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=93
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=84
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=84
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=84
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=84
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=77
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=70
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=63
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=58
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=52
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=43
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=39
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=39
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=39
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=36
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=29
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=27
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=22
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=20
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=18
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=18
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=16
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=13
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=12
+ [BTCUSDT] OrderFlow scheduling retry 3/5 in 8000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1482 velas, memoria: 1/4)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=19
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=21
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=23
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=26
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=29
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=36
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=44
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=61
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=68
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=83
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=93
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=103
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=115
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=127
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=142
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=158
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=158
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=175
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=195
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=216
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=240
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=267
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=297
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=330
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=367
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=367
+ [BTCUSDT] OrderFlow scheduling retry 4/5 in 16000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=367
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=407
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=453
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=503
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=559
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=621
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=690
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=767
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=852
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=852
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=947
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1052
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1169
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1299
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1247
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1133
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1030
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=937
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=851
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=774
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=704
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=704
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=640
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=581
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=528
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=480
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=437
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=397
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=361
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=328
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=298
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=271
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=246
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=246
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=224
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=203
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=185
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=168
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=153
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=139
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=126
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=115
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=104
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=95
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=95
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=86
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=78
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=71
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=71
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=71
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=64
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=59
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=53
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=44
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=36
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=33
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=30
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=27
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=25
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=22
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=22
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=22
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=22
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=20
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=18
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=12
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [BTCUSDT] OrderFlow scheduling retry 5/5 in 32000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=1
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=19
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=21
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=23
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=26
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=29
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=36
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=40
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=44
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+SymbolList.jsx:86 [Prefetch] ETHUSDT@1 - precargando...
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:177 [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+OrderFlowIndicator.js:193 [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+OrderFlowIndicator.js:204 [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+CandleCache.js:154 [CandleCache] ✅ BTCUSDT@1 - guardado (1483 velas, memoria: 1/4)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:702 [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+OrderFlowIndicator.js:306 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1484 velas, memoria: 1/4)
+ [BTCUSDT] SwingDetector: Backend returned 0 signals
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ ✅ [9:58:11 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1485 velas, memoria: 1/4)
+ ✅ [9:59:04 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1441 points
+ [BTCUSDT] SwingDetector: Backend returned 0 signals
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=55
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=50
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=45
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=41
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=37
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=34
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=31
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=28
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=28
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=28
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=25
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=23
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=21
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=19
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=16
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=14
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=13
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=6
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=7
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=8
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=9
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=10
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=11
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=12
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=13
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=15
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=17
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=19
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=21
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=23
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=26
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=29
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=32
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=35
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=39
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=44
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=54
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=60
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=67
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=75
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=83
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=92
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=92
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=102
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=114
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=127
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=141
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=156
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=174
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=193
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=193
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=176
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=160
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=145
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=132
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=120
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=109
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1486 velas, memoria: 1/4)
+ ✅ [10:00:07 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1442 points
+ [BTCUSDT] SwingDetector: Backend returned 0 signals
+ ✅ [10:00:08 a. m.] [MiniChart] [BTCUSDT] 🔄 Tab activo después de 36s de inactividad - recargando histórico
+ [CandleCache] 💾 BTCUSDT@1 - desde memoria (1486 velas)
+ [BTCUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [BTCUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [BTCUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=12
+ [CandleCache] ✓ BTCUSDT@1 - Cache valido: 1486 velas (esperadas: ~1440, ratio: 103.2%)
+ [BTCUSDT] Carga INCREMENTAL: desde 27/1/2026, 9:59:00 a.m. (1486 velas en cache)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=99
+ [BTCUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [BTCUSDT] OrderFlow fetch response: status=200
+ [BTCUSDT] OrderFlow data received: success=true, count=718
+ [BTCUSDT] OrderFlow: 718 footprints loaded
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+ [OrderFlow] renderOverlay - candleWidth=7.3px, minWidth=15px, footprints=718
+ [OrderFlow] renderOverlay - width too small, skipping
+
+
+=============
+=============
+
+Backend:
+
+========================================
+   ORDER FLOW - BACKEND
+   Puerto: 11000
+========================================
+
+Activando entorno virtual...
+Verificando dependencias...
+
+[notice] A new release of pip is available: 25.2 -> 25.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+
+Iniciando servidor en puerto 11000...
+
+INFO:     Will watch for changes in these directories: ['C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\5.Order_flow\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+INFO:     Started reloader process [36932] using WatchFiles
+INFO:     Started server process [37820]
+INFO:     Waiting for application startup.
+2026-01-27 09:55:13 - alert_sender - WARNING - [WARN] Alert service not reachable at http://localhost:5000
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 21 symbols
+[STARTUP] Swing/DTB/Rejection services DISABLED (enable in main.py if needed)
+[STARTUP] WebSocket Manager started - connected to Bybit
+[STARTUP] VWAP service started
+[STARTUP] Trade Aggregator initialized (interval=1)
+[STARTUP] Trade callback registered with WebSocket manager
+[STARTUP] Subscribed to trades for 21 symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Config cargada: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\config\orderflow_config.json
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Inicializado
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Iniciando con symbols=['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT'], intervals=['1', '5']
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para BTCUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 712 footprints historicos para BTCUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para ETHUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 712 footprints historicos para ETHUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SOLUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 712 footprints historicos para SOLUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para XRPUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 712 footprints historicos para XRPUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 716 footprints historicos para ADAUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 710 footprints historicos para ADAUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 684 footprints historicos para TRXUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 683 footprints historicos para TRXUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para PAXGUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 713 footprints historicos para PAXGUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 711 footprints historicos para GALAUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para GALAUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SUIUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 713 footprints historicos para SUIUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 612 footprints historicos para TRBUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 619 footprints historicos para TRBUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para DOGEUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 713 footprints historicos para DOGEUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 716 footprints historicos para AAVEUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 711 footprints historicos para AAVEUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 716 footprints historicos para AVAXUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 711 footprints historicos para AVAXUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 715 footprints historicos para ARBUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 710 footprints historicos para ARBUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 713 footprints historicos para BNBUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para BNBUSDT_5
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 699 footprints historicos para INJUSDT_1
+2026-01-27 09:55:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 699 footprints historicos para INJUSDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 678 footprints historicos para KASUSDT_1
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 681 footprints historicos para KASUSDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 677 footprints historicos para SHIB1000USDT_1
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 677 footprints historicos para SHIB1000USDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para TONUSDT_1
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 714 footprints historicos para TONUSDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 705 footprints historicos para UNIUSDT_1
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 702 footprints historicos para UNIUSDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para LPTUSDT_1
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 713 footprints historicos para LPTUSDT_5
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Total footprints cargados desde disco: 29536
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Reconstruccion de estimados DESACTIVADA - solo datos reales
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Suscrito a trades de ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-27 09:55:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Servicio iniciado correctamente
+[STARTUP] OrderFlow Service started - 21 symbols, intervals: ['1', '5']
+2026-01-27 09:55:17 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:publicTrade.KASUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:publicTrade.KASUSDT', 'conn_id': 'd50fl394oce634fgrk30-939ea', 'req_id': '', 'op': 'subscribe'}
+2026-01-27 09:55:17 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:publicTrade.INJUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:publicTrade.INJUSDT', 'conn_id': 'd50fl394oce634fgrk30-939ea', 'req_id': '', 'op': 'subscribe'}
+2026-01-27 09:55:17 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:publicTrade.TRBUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:publicTrade.TRBUSDT', 'conn_id': 'd50fl394oce634fgrk30-939ea', 'req_id': '', 'op': 'subscribe'}
+2026-01-27 09:56:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525700000 | trades=259 | delta=-60134.0000 | poc=0
+2026-01-27 09:56:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525700000 | trades=565 | delta=-2769.4000 | poc=0
+2026-01-27 09:56:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525700000 | trades=217 | delta=1560.0000 | poc=20
+2026-01-27 09:56:06 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:56:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525700000 | trades=3186 | delta=17.1980 | poc=8
+2026-01-27 09:56:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525700000 | trades=581 | delta=-49809.5000 | poc=0
+2026-01-27 09:56:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525700000 | trades=16 | delta=-162.5000 | poc=8
+2026-01-27 09:56:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525700000 | trades=167 | delta=13473.1000 | poc=0
+2026-01-27 09:56:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525700000 | trades=246 | delta=13.9800 | poc=21
+2026-01-27 09:56:09 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:56:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525700000 | trades=2493 | delta=-259.4500 | poc=2
+2026-01-27 09:56:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525700000 | trades=100 | delta=2236694.0000 | poc=0
+2026-01-27 09:56:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525700000 | trades=161 | delta=0.7100 | poc=2
+2026-01-27 09:56:12 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:56:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525700000 | trades=29 | delta=28.5000 | poc=3
+2026-01-27 09:56:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525700000 | trades=72 | delta=-2.7900 | poc=0
+2026-01-27 09:56:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525700000 | trades=181 | delta=-79449.0000 | poc=1
+2026-01-27 09:56:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525700000 | trades=82 | delta=-382.5000 | poc=6
+2026-01-27 09:56:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525700000 | trades=25 | delta=-32020.0000 | poc=0
+2026-01-27 09:56:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525700000 | trades=181 | delta=-576.4000 | poc=0
+2026-01-27 09:56:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525700000 | trades=44 | delta=-748810.0000 | poc=0
+2026-01-27 09:56:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525700000 | trades=136 | delta=20364.0000 | poc=0
+2026-01-27 09:56:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525700000 | trades=72 | delta=42.8000 | poc=5
+2026-01-27 09:56:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769525700000 | trades=1 | delta=-0.1100 | poc=0
+2026-01-27 09:57:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525760000 | trades=2226 | delta=-155.9000 | poc=2
+2026-01-27 09:57:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525760000 | trades=2232 | delta=10.0320 | poc=4
+2026-01-27 09:57:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525760000 | trades=503 | delta=212.5000 | poc=0
+2026-01-27 09:57:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525760000 | trades=165 | delta=-3918.4000 | poc=0
+2026-01-27 09:57:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525760000 | trades=198 | delta=44479.0000 | poc=0
+2026-01-27 09:57:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525760000 | trades=404 | delta=7071.9000 | poc=0
+2026-01-27 09:57:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525760000 | trades=108 | delta=0.7020 | poc=5
+2026-01-27 09:57:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525760000 | trades=108 | delta=-33621.0000 | poc=0
+2026-01-27 09:57:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525760000 | trades=39 | delta=-457.6000 | poc=1
+2026-01-27 09:57:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525760000 | trades=56 | delta=-162.5000 | poc=0
+2026-01-27 09:57:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525760000 | trades=87 | delta=7828.0000 | poc=0
+2026-01-27 09:57:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525760000 | trades=281 | delta=30.9900 | poc=20
+2026-01-27 09:57:08 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:57:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525760000 | trades=58 | delta=1692.6000 | poc=14
+2026-01-27 09:57:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525760000 | trades=33 | delta=68.3000 | poc=13
+2026-01-27 09:57:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525760000 | trades=87 | delta=-1.7100 | poc=0
+2026-01-27 09:57:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525760000 | trades=204 | delta=-59.2000 | poc=0
+2026-01-27 09:57:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525760000 | trades=231 | delta=400.0000 | poc=3
+2026-01-27 09:57:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525760000 | trades=29 | delta=-1680.0000 | poc=0
+2026-01-27 09:57:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525760000 | trades=62 | delta=-197531.0000 | poc=0
+2026-01-27 09:57:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525760000 | trades=9 | delta=-12190.0000 | poc=0
+[STARTUP] Loaded 169 footprints from Cloud Collector
+INFO:     Application startup complete.
+2026-01-27 09:57:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769525760000 | trades=23 | delta=-59.6600 | poc=0
+2026-01-27 09:58:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525820000 | trades=213 | delta=16740.0000 | poc=12
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+2026-01-27 09:58:05 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525820000 | trades=2005 | delta=177.3200 | poc=2
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525820000 | trades=283 | delta=246.1000 | poc=11
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525820000 | trades=60 | delta=2201.3000 | poc=10
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525820000 | trades=1469 | delta=2.2630 | poc=0
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525820000 | trades=469 | delta=69239.3000 | poc=0
+2026-01-27 09:58:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525820000 | trades=244 | delta=469714.0000 | poc=0
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525820000 | trades=96 | delta=4191.8000 | poc=9
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525820000 | trades=682 | delta=4791.0000 | poc=0
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525820000 | trades=239 | delta=187742.0000 | poc=0
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525820000 | trades=96 | delta=-25360.0000 | poc=0
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525820000 | trades=198 | delta=2002.0000 | poc=0
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525820000 | trades=159 | delta=2.4520 | poc=1
+2026-01-27 09:58:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525820000 | trades=96 | delta=4761.1000 | poc=5
+2026-01-27 09:58:09 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:58:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525820000 | trades=142 | delta=-57588.0000 | poc=0
+2026-01-27 09:58:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525820000 | trades=98 | delta=1222759.0000 | poc=0
+2026-01-27 09:58:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525820000 | trades=68 | delta=28.6100 | poc=0
+2026-01-27 09:58:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525820000 | trades=73 | delta=6039700.0000 | poc=0
+2026-01-27 09:58:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525820000 | trades=58 | delta=177.2000 | poc=10
+2026-01-27 09:58:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769525820000 | trades=4 | delta=43.2300 | poc=0
+2026-01-27 09:58:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525820000 | trades=22 | delta=70970.0000 | poc=0
+2026-01-27 09:59:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525880000 | trades=1363 | delta=-3.8360 | poc=2
+2026-01-27 09:59:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525880000 | trades=29 | delta=-464.9000 | poc=3
+2026-01-27 09:59:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525880000 | trades=195 | delta=1.6500 | poc=9
+2026-01-27 09:59:06 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: All connection attempts failed
+2026-01-27 09:59:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525880000 | trades=135 | delta=-95730.2000 | poc=0
+2026-01-27 09:59:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525880000 | trades=230 | delta=-201.1000 | poc=0
+2026-01-27 09:59:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525880000 | trades=77 | delta=-7899.0000 | poc=0
+2026-01-27 09:59:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525880000 | trades=79 | delta=-1760.0000 | poc=0
+2026-01-27 09:59:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525880000 | trades=20 | delta=3025.0000 | poc=0
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525880000 | trades=137 | delta=2.8400 | poc=0
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525880000 | trades=28 | delta=624.7000 | poc=3
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525880000 | trades=23 | delta=-83.6000 | poc=4
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525880000 | trades=204 | delta=-9216.1000 | poc=0
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525880000 | trades=998 | delta=-7.2500 | poc=1
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525880000 | trades=91 | delta=-611.8000 | poc=0
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525880000 | trades=13 | delta=68630.0000 | poc=0
+2026-01-27 09:59:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525880000 | trades=30 | delta=-210084.0000 | poc=0
+2026-01-27 09:59:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525880000 | trades=51 | delta=-12769.0000 | poc=0
+2026-01-27 09:59:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525880000 | trades=22 | delta=3.1100 | poc=0
+2026-01-27 09:59:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525880000 | trades=2 | delta=-18640.0000 | poc=0
+2026-01-27 09:59:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525880000 | trades=33 | delta=-24.8000 | poc=2
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525940000 | trades=1 | delta=38.0000 | poc=0
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769525700000 | trades=406 | delta=-135367.0000 | poc=0
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525940000 | trades=50 | delta=-937341.0000 | poc=0
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769525700000 | trades=340 | delta=2114497.0000 | poc=0
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525940000 | trades=20 | delta=-0.8000 | poc=0
+2026-01-27 10:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769525700000 | trades=269 | delta=26.4200 | poc=0
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525940000 | trades=56 | delta=-4.6000 | poc=0
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769525700000 | trades=730 | delta=750.0000 | poc=0
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525940000 | trades=19 | delta=-294.5000 | poc=3
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769525700000 | trades=278 | delta=5123.8000 | poc=10
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525940000 | trades=1480 | delta=96.2700 | poc=1
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769525700000 | trades=9202 | delta=-149.0100 | poc=1
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525940000 | trades=202 | delta=567.5000 | poc=0
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769525700000 | trades=2182 | delta=2600.5000 | poc=0
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525940000 | trades=129 | delta=-1060.0000 | poc=5
+2026-01-27 10:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769525700000 | trades=869 | delta=15880.0000 | poc=10
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525940000 | trades=169 | delta=-94292.0000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769525700000 | trades=947 | delta=351868.0000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525940000 | trades=91 | delta=41.9200 | poc=4
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769525700000 | trades=1038 | delta=335.8300 | poc=12
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525940000 | trades=202 | delta=5345.1000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769525700000 | trades=1860 | delta=22630.7000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525940000 | trades=55 | delta=-5578.3000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769525700000 | trades=761 | delta=95988.2000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525940000 | trades=28 | delta=-1341.0000 | poc=0
+2026-01-27 10:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769525700000 | trades=444 | delta=-43506.0000 | poc=0
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525940000 | trades=30 | delta=623.0000 | poc=2
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769525700000 | trades=191 | delta=2034.4000 | poc=10
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525940000 | trades=58 | delta=3469.7000 | poc=3
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769525700000 | trades=298 | delta=7791.2000 | poc=5
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525940000 | trades=4 | delta=-20000.0000 | poc=0
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769525700000 | trades=62 | delta=-11880.0000 | poc=0
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525940000 | trades=898 | delta=4.0690 | poc=0
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769525700000 | trades=9148 | delta=29.7260 | poc=1
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525940000 | trades=91 | delta=0.0810 | poc=1
+2026-01-27 10:00:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769525700000 | trades=714 | delta=5.5950 | poc=12
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769525880000 | trades=4 | delta=-7.9300 | poc=0
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769525700000 | trades=32 | delta=-24.4700 | poc=2
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525940000 | trades=9 | delta=-13910.0000 | poc=0
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769525700000 | trades=168 | delta=5343930.0000 | poc=0
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525940000 | trades=2 | delta=-23.9000 | poc=0
+2026-01-27 10:00:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769525700000 | trades=150 | delta=874.8000 | poc=10
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1769525940000 (~11 velas esperadas) @ 1
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+[BTCUSDT] Historical: [OK] Devolviendo 2 velas (esperadas: 11)
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...

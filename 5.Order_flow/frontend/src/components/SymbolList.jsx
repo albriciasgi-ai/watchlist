@@ -3,10 +3,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { API_BASE_URL } from '../config';
 import CandleCache from '../utils/CandleCache';
 
-// Monedas por defecto
+// Monedas por defecto (sincronizadas con Cloud Footprint Collector)
 const DEFAULT_SYMBOLS = [
-  "BTCUSDT", "ETHUSDT", "XRPUSDT", "TRXUSDT", "GALAUSDT",
-  "SUIUSDT", "TRBUSDT", "SOLUSDT", "ADAUSDT", "DOGEUSDT"
+  "BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT",
+  "TRXUSDT", "PAXGUSDT", "GALAUSDT", "SUIUSDT", "TRBUSDT",
+  "DOGEUSDT", "AAVEUSDT", "AVAXUSDT", "ARBUSDT", "BNBUSDT",
+  "INJUSDT", "KASUSDT", "SHIB1000USDT", "TONUSDT", "UNIUSDT", "LPTUSDT"
 ];
 
 const STORAGE_KEY = 'analyzer_symbol_list';

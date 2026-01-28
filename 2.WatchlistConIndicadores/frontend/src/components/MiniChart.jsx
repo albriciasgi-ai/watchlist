@@ -1,7 +1,7 @@
 // src/components/MiniChart.jsx
 // ✅ SOLUCIÓN COMPLETA: Sincronización automática de indicadores + Detección de gaps
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
 import { API_BASE_URL } from "../config";
 import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
@@ -2848,4 +2848,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   );
 };
 
-export default MiniChart;
+// ✅ OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+// Solo re-renderiza si cambian props importantes (symbol, interval, days, indicatorStates)
+export default React.memo(MiniChart, (prevProps, nextProps) => {
+  // Comparación shallow de props principales
+  return (
+    prevProps.symbol === nextProps.symbol &&
+    prevProps.interval === nextProps.interval &&
+    prevProps.days === nextProps.days &&
+    prevProps.indicatorStates === nextProps.indicatorStates &&
+    prevProps.isFullscreenChild === nextProps.isFullscreenChild &&
+    prevProps.externalDrawingMode === nextProps.externalDrawingMode
+  );
+});

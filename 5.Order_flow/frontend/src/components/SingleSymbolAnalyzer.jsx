@@ -167,6 +167,7 @@ const SingleSymbolAnalyzer = () => {
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
+  const [orderFlowConfig, setOrderFlowConfig] = useState(null);
 
   // Trading Panel state
   const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
@@ -483,6 +484,11 @@ const SingleSymbolAnalyzer = () => {
   const handleOpenOrderFlowSettings = useCallback((manager) => {
     if (manager) {
       indicatorManagerRef.current = manager;
+      // Get current config from the indicator
+      const ofIndicator = manager.indicators?.find(ind => ind.name === "Order Flow");
+      if (ofIndicator) {
+        setOrderFlowConfig({ ...ofIndicator.config });
+      }
     }
     setShowOrderFlowSettings(true);
   }, []);
@@ -752,6 +758,7 @@ const SingleSymbolAnalyzer = () => {
             onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
             onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
             onOpenSR2Settings={handleOpenSR2Settings}
+            onOpenOrderFlowSettings={handleOpenOrderFlowSettings}
             rejectionPatternConfig={rejectionPatternConfig}
             onFullscreenChange={handleFullscreenChange}
             onChartLoaded={() => log.debug(`Chart loaded: ${symbol}`)}
@@ -1041,11 +1048,13 @@ const SingleSymbolAnalyzer = () => {
                 currentSymbol={symbol}
                 currentInterval={interval}
                 indicatorManager={indicatorManagerRef.current}
+                config={orderFlowConfig}
                 onConfigChange={(config) => {
                   const manager = indicatorManagerRef.current;
                   const ofIndicator = manager?.indicators?.find(ind => ind.name === "Order Flow");
                   if (ofIndicator) {
                     ofIndicator.updateConfig(config);
+                    setOrderFlowConfig({ ...config });
                   }
                 }}
               />

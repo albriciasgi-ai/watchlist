@@ -1,7 +1,0 @@
-● Veo que el TradingBot ya tiene logging de alertas recibidas implementado en las líneas 23-34 y se usa en el
-  endpoint /api/watchlist-alert. El archivo de log es alerts_received.log en la carpeta backend. Solo necesito
-  mejorar el formato para que también capture las alertas del SwingDetector (que envía un formato diferente).
-  
-  
-  
-  En backend/logs/swing_alerts.log y backend/logs/alerts_received.log

@@ -2553,6 +2553,27 @@ async def startup_event():
 
         await orderflow_service.start(ws_manager, of_symbols, of_intervals)
         print(f"[STARTUP] OrderFlow Service started - {len(of_symbols)} symbols, intervals: {of_intervals}")
+
+        # Load historical footprints from Cloud Collector (Northflank)
+        # This provides real trade data instead of estimations
+        try:
+            from footprint_storage import get_footprint_storage
+            storage = get_footprint_storage()
+
+            cloud_loaded_total = 0
+            for symbol in of_symbols:
+                for interval in of_intervals:
+                    loaded = await storage.load_from_cloud(symbol, interval, hours=12)
+                    cloud_loaded_total += loaded
+
+            if cloud_loaded_total > 0:
+                print(f"[STARTUP] Loaded {cloud_loaded_total} footprints from Cloud Collector")
+            else:
+                print("[STARTUP] No footprints loaded from cloud (may be unavailable or empty)")
+
+        except Exception as e:
+            print(f"[STARTUP] Cloud footprint loading skipped: {e}")
+
     except Exception as e:
         print(f"[STARTUP] Warning: Could not start OrderFlow Service: {e}")
         import traceback

@@ -155,6 +155,10 @@ class WebSocketManager:
         # Candle buffers: {symbol: {interval: CandleBuffer}}
         self.buffers: Dict[str, Dict[str, CandleBuffer]] = defaultdict(lambda: defaultdict(CandleBuffer))
 
+        # ✅ OPTIMIZACIÓN: Rastreo de último acceso para limpieza de buffers inactivos
+        self._buffer_access_times: Dict[tuple, float] = {}
+        self._buffer_cleanup_task: Optional[asyncio.Task] = None
+
         # Callbacks - support multiple listeners
         self._candle_close_callbacks: List[Callable[[str, str, Candle], None]] = []
         self._candle_update_callbacks: List[Callable[[str, str, Candle], None]] = []
@@ -195,11 +199,22 @@ class WebSocketManager:
         self._legacy_on_candle_close = callback
         logger.info(f"Candle close callback registered (total: {len(self._candle_close_callbacks)})")
 
+    # ✅ OPTIMIZACIÓN: Límite máximo de callbacks para evitar acumulación
+    MAX_CALLBACKS = 5
+
     def add_candle_close_listener(self, callback: Callable[[str, str, Candle], None]):
         """Add a candle close listener (preferred method for multiple listeners)"""
-        if callback not in self._candle_close_callbacks:
-            self._candle_close_callbacks.append(callback)
-            logger.info(f"Candle close listener added (total: {len(self._candle_close_callbacks)})")
+        if callback in self._candle_close_callbacks:
+            logger.debug("Callback already registered, skipping")
+            return
+
+        # ✅ OPTIMIZACIÓN: Limitar cantidad de callbacks
+        if len(self._candle_close_callbacks) >= self.MAX_CALLBACKS:
+            logger.warning(f"Max callbacks ({self.MAX_CALLBACKS}) reached, removing oldest")
+            self._candle_close_callbacks.pop(0)
+
+        self._candle_close_callbacks.append(callback)
+        logger.info(f"Candle close listener added (total: {len(self._candle_close_callbacks)})")
 
     def remove_candle_close_listener(self, callback: Callable[[str, str, Candle], None]):
         """Remove a candle close listener"""
@@ -238,6 +253,14 @@ class WebSocketManager:
         logger.info("Stopping WebSocketManager...")
         self.running = False
 
+        # ✅ OPTIMIZACIÓN: Cancelar tarea de limpieza de buffers
+        if self._buffer_cleanup_task:
+            self._buffer_cleanup_task.cancel()
+            try:
+                await self._buffer_cleanup_task
+            except asyncio.CancelledError:
+                pass
+
         if self._ping_task:
             self._ping_task.cancel()
             try:
@@ -254,6 +277,12 @@ class WebSocketManager:
                 await self._ws_task
             except asyncio.CancelledError:
                 pass
+
+        # ✅ OPTIMIZACIÓN: Limpiar callbacks y buffers al detener
+        self._candle_close_callbacks.clear()
+        self._candle_update_callbacks.clear()
+        self.buffers.clear()
+        self._buffer_access_times.clear()
 
         self.connected = False
         logger.info("WebSocketManager stopped")

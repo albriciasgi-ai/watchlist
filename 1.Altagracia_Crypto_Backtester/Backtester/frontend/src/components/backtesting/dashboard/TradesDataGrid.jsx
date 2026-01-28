@@ -283,4 +283,5 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
   );
 };
 
-export default TradesDataGrid;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+export default React.memo(TradesDataGrid);

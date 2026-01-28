@@ -20,6 +20,7 @@ import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: m
 import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import Logger from '../../utils/Logger.js';
+import pollingScheduler from '../../utils/PollingScheduler.js';
 
 // Logger instance
 const log = new Logger('Manager', { level: 'info' });
@@ -54,6 +55,9 @@ class IndicatorManager {
 
     // ✅ NUEVO: Referencia a las velas históricas (necesario para fetchData en DBT)
     this.allCandles = null;
+
+    // ✅ OPTIMIZACIÓN: IDs de polling registrados en el scheduler centralizado
+    this._pollingIds = [];
 
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
@@ -1036,6 +1040,14 @@ class IndicatorManager {
 
   destroy() {
     log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
+
+    // ✅ OPTIMIZACIÓN: Cancelar registros en el scheduler centralizado
+    if (this._pollingIds) {
+      for (const id of this._pollingIds) {
+        pollingScheduler.unregister(id);
+      }
+      this._pollingIds = [];
+    }
 
     // Destroy all indicators (stops pending fetches)
     this.indicators.forEach(indicator => {

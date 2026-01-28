@@ -36,6 +36,9 @@ Dependencies:
 - fastapi==0.115.0
 - uvicorn[standard]==0.32.0
 - httpx==0.27.2
+- slowapi==0.1.9 (Rate Limiting)
+- pytest==8.3.4 (Testing)
+- pytest-asyncio==0.24.0 (Async Testing)
 
 ### Frontend (React + Vite)
 
@@ -60,6 +63,19 @@ npm run preview
 
 Frontend dev server runs on `http://localhost:9001` (default Vite port)
 
+### Running Tests
+
+```bash
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m pytest -v
+```
+
+Tests include:
+- `test_sanitize_filename.py` - Path Traversal prevention
+- `test_lru_cache.py` - LRU Cache functionality
+- `test_endpoints.py` - API endpoint tests
+
 ## Architecture
 
 ### Backend Architecture (backend/main.py)
@@ -67,7 +83,9 @@ Frontend dev server runs on `http://localhost:9001` (default Vite port)
 **Core Responsibilities:**
 1. **Historical Data Fetcher**: Fetches OHLCV candles from Bybit API with timeframe-specific limits
 2. **Volume Delta Calculator**: Computes Volume Delta and CVD from candle data
-3. **Caching Layer**: 30-minute file-based cache to reduce API calls
+3. **Caching Layer**: 30-minute file-based cache + LRU memory cache with limits
+4. **Rate Limiting**: slowapi-based request limiting per IP
+5. **Security**: Path Traversal prevention, CORS restrictions
 
 **Key Endpoints:**
 - `GET /api/status` - Server status and cache info
@@ -92,6 +110,9 @@ Frontend dev server runs on `http://localhost:9001` (default Vite port)
 - Maximum 1000 candles per Bybit API request (pagination required for larger datasets)
 - Cache stored in `backend/cache/` directory with format `{symbol}_{interval}_{indicator}.json`
 - Volume Delta calculation: positive if close >= open, negative otherwise
+- **LRU Memory Cache**: DTB_CANDLES (150MB max), DTB_PATTERNS (50MB max)
+- **Rate Limits**: `/api/status` 100/min, `/api/historical` 60/min, `/api/double-topbottom/detect` 30/min
+- **CORS**: Restricted to localhost:9001 only
 
 ### Frontend Architecture
 
@@ -116,6 +137,11 @@ The indicator architecture uses a manager pattern with specialized indicator cla
   - Synchronizes persistent fixed ranges from localStorage
 
 - **IndicatorBase.js** - Abstract base class for all indicators
+
+- **Web Workers (src/workers/):**
+  - `VolumeProfileWorker.js` - Volume Profile calculations off main thread
+  - `PatternDetectionWorker.js` - Pattern detection off main thread
+  - `WorkerPool.js` - Promise-based worker management
 
 - **Specialized Indicators:**
   - `VolumeProfileIndicator.js` - Dynamic Volume Profile (recalculated as new candles arrive)
@@ -292,3 +318,65 @@ Automatically detects consolidation zones using the ATR (Average True Range) ind
 - Alert service on port 5000 is optional
 - Alerts will be logged locally if service is unavailable
 - To enable external alerts, start `alert_listener.py` separately
+
+**Rate limit errors (429 Too Many Requests):**
+- Wait 1 minute before retrying
+- Limits: status 100/min, historical 60/min, DTB detect 30/min, bulk-data 10/min
+
+**Tests failing:**
+- Ensure venv is activated: `.\.venv\Scripts\Activate.ps1`
+- Run: `python -m pytest -v`
+- Check pytest is installed: `pip install pytest pytest-asyncio`
+
+## Security Features (v2.7.0+)
+
+### Path Traversal Prevention
+All cache file operations sanitize inputs via `sanitize_filename()`:
+```python
+# Removes: ../, ..\, /, \, <, >, |, :, *, ?
+# Only allows: a-zA-Z0-9_-
+sanitize_filename("../../../etc/passwd")  # Returns: "etcpasswd"
+```
+
+### Rate Limiting
+Implemented via slowapi to prevent abuse:
+
+| Endpoint | Limit |
+|----------|-------|
+| `/api/status` | 100/min |
+| `/api/historical/{symbol}` | 60/min |
+| `/api/volume-delta/{symbol}` | 60/min |
+| `/api/double-topbottom/detect` | 30/min |
+| `/api/double-topbottom/chunk` | 60/min |
+| `/api/backtesting/bulk-data/{symbol}` | 10/min |
+
+### CORS Restrictions
+Only allows requests from:
+- `http://localhost:9001`
+- `http://127.0.0.1:9001`
+
+### LRU Memory Cache
+Prevents unbounded memory growth:
+- `DTB_CANDLES_CACHE`: 150MB max (~13 symbols)
+- `DTB_PATTERNS_CACHE`: 50MB max
+- Auto-evicts oldest entries when limit reached
+
+## Performance Optimizations (v2.6.0+)
+
+### Canvas Throttle
+MiniChart.jsx throttles rendering to ~30fps to reduce CPU usage.
+
+### Lazy Loading Indicators
+Indicators defer `fetchData()` until explicitly enabled.
+
+### Web Workers
+Heavy calculations can be offloaded to workers:
+```javascript
+import { workerPool } from './workers';
+
+// Calculate Volume Profile in background
+const profile = await workerPool.calculateVolumeProfile(candles, 100, 70);
+
+// Detect patterns in background
+const patterns = await workerPool.detectRejectionPatterns(candles, config);
+```

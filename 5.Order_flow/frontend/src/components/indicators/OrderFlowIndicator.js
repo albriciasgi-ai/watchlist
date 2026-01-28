@@ -29,6 +29,12 @@ class OrderFlowIndicator extends IndicatorBase {
     this._pollingInterval = null;
     this._destroyed = false;
 
+    // Retry settings for initial fetch
+    this._retryCount = 0;
+    this._maxRetries = 5;
+    this._retryDelayMs = 2000; // Start with 2 seconds
+    this._retryTimeoutId = null;
+
 
     // Layout proportions (as fractions of total candle width)
     // Order: Candle | Footprint (bid|ask) | Volume Profile
@@ -78,11 +84,28 @@ class OrderFlowIndicator extends IndicatorBase {
         const merged = { ...defaults, ...parsed };
         // Force enabled if it was somehow disabled
         merged.enabled = true;
+        // Force update minCandleWidth if it was set to old value (15)
+        if (merged.minCandleWidth === 15) {
+          merged.minCandleWidth = defaults.minCandleWidth;
+        }
+        if (merged.minCandleWidthFull === 80) {
+          merged.minCandleWidthFull = defaults.minCandleWidthFull;
+        }
+        // Force update historyHours if it was set to old value (12)
+        if (merged.historyHours === 12) {
+          merged.historyHours = defaults.historyHours;
+        }
+        console.log(`[${this.symbol}] OrderFlow config loaded from localStorage:`, {
+          minCandleWidth: merged.minCandleWidth,
+          minCandleWidthFull: merged.minCandleWidthFull,
+          historyHours: merged.historyHours
+        });
         return merged;
       } catch (e) {
         console.error('Failed to load orderflow config:', e);
       }
     }
+    console.log(`[${this.symbol}] OrderFlow using default config`);
     return this.getDefaultConfig();
   }
 
@@ -96,17 +119,21 @@ class OrderFlowIndicator extends IndicatorBase {
       showImbalances: true,   // Highlight imbalances
       showDelta: true,        // Show delta at bottom
       fontSize: 9,            // Slightly smaller font
-      minCandleWidth: 15,     // Minimum width for basic display
-      minCandleWidthFull: 80, // Width needed for full text display (increased)
+      minCandleWidth: 8,      // Minimum width for basic display (reduced from 15)
+      minCandleWidthFull: 60, // Width needed for full text display (reduced from 80)
       opacity: 0.9,
-      historyHours: 12
+      historyHours: 24        // Horas de historico de footprints (aumentado de 12 a 24)
     };
   }
 
   updateConfig(config) {
     this.config = { ...this.config, ...config };
     localStorage.setItem(`orderflow_config_${this.symbol}`, JSON.stringify(this.config));
-    console.log(`[${this.symbol}] OrderFlow config updated`);
+    console.log(`[${this.symbol}] OrderFlow config updated:`, {
+      minCandleWidth: this.config.minCandleWidth,
+      minCandleWidthFull: this.config.minCandleWidthFull,
+      historyHours: this.config.historyHours
+    });
   }
 
   setInterval(newInterval) {
@@ -160,6 +187,11 @@ class OrderFlowIndicator extends IndicatorBase {
   destroy() {
     this._destroyed = true;
     this.stopPolling();
+    // Cancel any pending retry
+    if (this._retryTimeoutId) {
+      clearTimeout(this._retryTimeoutId);
+      this._retryTimeoutId = null;
+    }
   }
 
   async fetchFootprints() {
@@ -192,7 +224,47 @@ class OrderFlowIndicator extends IndicatorBase {
 
       console.log(`[${this.symbol}] OrderFlow fetching: ${url}`);
 
-      const response = await fetch(url);
+      // Timeout de 120 segundos para el fetch (cloud service puede tardar)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+      let response;
+      try {
+        response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        // Reset retry count on success
+        this._retryCount = 0;
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error(`[${this.symbol}] OrderFlow fetch TIMEOUT after 120s`);
+        } else {
+          console.error(`[${this.symbol}] OrderFlow fetch network error:`, fetchError);
+        }
+
+        // Schedule retry if we haven't exceeded max retries
+        if (this._retryCount < this._maxRetries && !this._destroyed) {
+          this._retryCount++;
+          const delay = this._retryDelayMs * Math.pow(2, this._retryCount - 1); // Exponential backoff
+          console.log(`[${this.symbol}] OrderFlow scheduling retry ${this._retryCount}/${this._maxRetries} in ${delay}ms...`);
+
+          this._retryTimeoutId = setTimeout(async () => {
+            if (!this._destroyed) {
+              this.isFetching = false; // Reset flag before retry
+              const success = await this.fetchFootprints();
+              if (success && this.indicatorManager?.requestRedraw) {
+                this.indicatorManager.requestRedraw();
+              }
+            }
+          }, delay);
+        } else if (this._retryCount >= this._maxRetries) {
+          console.error(`[${this.symbol}] OrderFlow: max retries (${this._maxRetries}) exceeded, giving up`);
+        }
+
+        return false;
+      }
+
+      console.log(`[${this.symbol}] OrderFlow fetch response: status=${response.status}`);
 
       if (this._destroyed) return false;
 
@@ -202,6 +274,7 @@ class OrderFlowIndicator extends IndicatorBase {
       }
 
       const data = await response.json();
+      console.log(`[${this.symbol}] OrderFlow data received: success=${data.success}, count=${data.count}`);
 
       if (!data.success) {
         console.warn(`[${this.symbol}] OrderFlow API error:`, data.error);

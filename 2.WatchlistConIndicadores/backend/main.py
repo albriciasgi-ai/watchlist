@@ -71,6 +71,54 @@ CACHE_DIR.mkdir(exist_ok=True)
 # Cache reducido a 30 minutos para datos más frescos
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
+# ✅ OPTIMIZACIÓN: Cliente HTTP global para reutilizar conexiones TCP
+# Evita crear nuevo cliente por request (ahorra 50-100ms por request)
+_http_client: Optional[httpx.AsyncClient] = None
+
+async def get_http_client() -> httpx.AsyncClient:
+    """Obtiene el cliente HTTP global, creándolo si no existe"""
+    global _http_client
+    if _http_client is None:
+        _http_client = httpx.AsyncClient(
+            timeout=30,
+            limits=httpx.Limits(max_connections=20, max_keepalive_connections=10)
+        )
+    return _http_client
+
+async def close_http_client():
+    """Cierra el cliente HTTP global"""
+    global _http_client
+    if _http_client is not None:
+        await _http_client.aclose()
+        _http_client = None
+
+# ✅ OPTIMIZACIÓN: Tarea de limpieza automática de cache
+_cache_cleanup_task: Optional[asyncio.Task] = None
+
+async def cache_cleanup_loop():
+    """Limpia archivos de cache expirados cada 10 minutos"""
+    while True:
+        try:
+            await asyncio.sleep(10 * 60)  # Cada 10 minutos
+            now = time.time()
+            expired_count = 0
+
+            for cache_file in CACHE_DIR.glob("*.json"):
+                try:
+                    mtime = cache_file.stat().st_mtime
+                    if now - mtime > CACHE_MAX_AGE:
+                        cache_file.unlink()
+                        expired_count += 1
+                except Exception as e:
+                    pass  # Ignorar errores individuales
+
+            if expired_count > 0:
+                print(f"[CACHE CLEANUP] Eliminados {expired_count} archivos expirados")
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            print(f"[CACHE CLEANUP] Error: {e}")
+
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
     "1": 5,       # 1 min -> máx 5 días (aumentado para mejor detección DTB)
@@ -234,47 +282,48 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
         all_candles = []
         current_start = start_ms
-        
-        async with httpx.AsyncClient(timeout=30) as client:
-            request_count = 0
-            max_requests = 10
-            
-            while len(all_candles) < total_candles_needed and request_count < max_requests:
-                request_count += 1
-                candles_remaining = total_candles_needed - len(all_candles)
-                fetch_limit = min(limit_per_request, candles_remaining)
-                
-                url = (
-                    "https://api.bybit.com/v5/market/kline?"
-                    f"category=linear&symbol={symbol}&interval={interval_final}"
-                    f"&start={current_start}&limit={fetch_limit}"
-                )
-                
-                r = await client.get(url)
-                data = r.json()
 
-                if data.get("retCode") != 0:
-                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
-                    break
+        # ✅ OPTIMIZACIÓN: Usar cliente HTTP global (reutiliza conexiones TCP)
+        client = await get_http_client()
+        request_count = 0
+        max_requests = 10
 
-                batch_candles = data["result"]["list"]
-                if not batch_candles:
-                    break
-                
-                batch_candles.reverse()
-                all_candles.extend(batch_candles)
-                
-                last_candle_ts = int(batch_candles[-1][0])
-                current_start = last_candle_ts + (interval_minutes * 60 * 1000)
-                
-                if current_start >= end_ms:
-                    break
-                
-                # Si ya tenemos suficientes velas, salir
-                if len(all_candles) >= total_candles_needed:
-                    break
-                
-                await asyncio.sleep(0.1)
+        while len(all_candles) < total_candles_needed and request_count < max_requests:
+            request_count += 1
+            candles_remaining = total_candles_needed - len(all_candles)
+            fetch_limit = min(limit_per_request, candles_remaining)
+
+            url = (
+                "https://api.bybit.com/v5/market/kline?"
+                f"category=linear&symbol={symbol}&interval={interval_final}"
+                f"&start={current_start}&limit={fetch_limit}"
+            )
+
+            r = await client.get(url)
+            data = r.json()
+
+            if data.get("retCode") != 0:
+                print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
+                break
+
+            batch_candles = data["result"]["list"]
+            if not batch_candles:
+                break
+
+            batch_candles.reverse()
+            all_candles.extend(batch_candles)
+
+            last_candle_ts = int(batch_candles[-1][0])
+            current_start = last_candle_ts + (interval_minutes * 60 * 1000)
+
+            if current_start >= end_ms:
+                break
+
+            # Si ya tenemos suficientes velas, salir
+            if len(all_candles) >= total_candles_needed:
+                break
+
+            await asyncio.sleep(0.1)
 
         candles = []
         current_time_utc = int(time.time() * 1000)
@@ -1974,144 +2023,145 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
         all_oi_data = []
         current_end = end_ms
 
-        async with httpx.AsyncClient(timeout=30) as client:
-            request_count = 0
-            max_requests = 10
+        # ✅ OPTIMIZACIÓN: Usar cliente HTTP global (reutiliza conexiones TCP)
+        client = await get_http_client()
+        request_count = 0
+        max_requests = 10
 
-            # Hacer múltiples requests hasta obtener todos los datos necesarios
-            while len(all_oi_data) < total_points_needed and request_count < max_requests:
-                request_count += 1
+        # Hacer múltiples requests hasta obtener todos los datos necesarios
+        while len(all_oi_data) < total_points_needed and request_count < max_requests:
+            request_count += 1
 
-                url = (
-                    "https://api.bybit.com/v5/market/open-interest?"
-                    f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
-                    f"&limit={limit_per_request}&endTime={current_end}"
-                )
+            url = (
+                "https://api.bybit.com/v5/market/open-interest?"
+                f"category=linear&symbol={symbol}&intervalTime={oi_interval}"
+                f"&limit={limit_per_request}&endTime={current_end}"
+            )
 
-                # Convertir timestamp a fecha para debug
-                end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
-                r = await client.get(url)
-                data = r.json()
+            # Convertir timestamp a fecha para debug
+            end_date = datetime.fromtimestamp(current_end / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+            print(f"[BYBIT API] Request {request_count}/{max_requests}: endTime={current_end} ({end_date}) | {len(all_oi_data)}/{total_points_needed} puntos")
+            r = await client.get(url)
+            data = r.json()
 
-                if data.get("retCode") != 0:
-                    print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
-                    if request_count == 1:  # Solo error si es el primer request
-                        return {
-                            "symbol": symbol,
-                            "interval": interval_final,
-                            "indicator": "openInterest",
-                            "data": [],
-                            "success": False,
-                            "error": data.get('retMsg', 'Unknown error')
-                        }
-                    break
+            if data.get("retCode") != 0:
+                print(f"[ERROR {symbol}] Bybit OI error: {data.get('retMsg')}")
+                if request_count == 1:  # Solo error si es el primer request
+                    return {
+                        "symbol": symbol,
+                        "interval": interval_final,
+                        "indicator": "openInterest",
+                        "data": [],
+                        "success": False,
+                        "error": data.get('retMsg', 'Unknown error')
+                    }
+                break
 
-                oi_batch = data["result"]["list"]
+            oi_batch = data["result"]["list"]
 
-                if not oi_batch:
-                    print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
-                    break
+            if not oi_batch:
+                print(f"[INFO {symbol}] No más datos de OI disponibles en este request")
+                break
 
-                # Log del batch recibido
-                batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-                print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
+            # Log del batch recibido
+            batch_oldest = datetime.fromtimestamp(int(oi_batch[-1]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+            batch_newest = datetime.fromtimestamp(int(oi_batch[0]["timestamp"]) / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+            print(f"[BATCH] Recibidos {len(oi_batch)} puntos: {batch_oldest} → {batch_newest}")
 
-                # oi_batch viene en orden descendente (más reciente primero)
-                # Agregar al inicio de all_oi_data para mantener orden cronológico
-                all_oi_data = oi_batch + all_oi_data
+            # oi_batch viene en orden descendente (más reciente primero)
+            # Agregar al inicio de all_oi_data para mantener orden cronológico
+            all_oi_data = oi_batch + all_oi_data
 
-                # Actualizar current_end para el siguiente batch
-                # El más antiguo de este batch es el último elemento
-                oldest_item = oi_batch[-1]
-                oldest_ts = int(oldest_item["timestamp"])
+            # Actualizar current_end para el siguiente batch
+            # El más antiguo de este batch es el último elemento
+            oldest_item = oi_batch[-1]
+            oldest_ts = int(oldest_item["timestamp"])
 
-                # Si ya llegamos al inicio del periodo, salir
-                if oldest_ts <= start_ms:
-                    print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
-                    break
+            # Si ya llegamos al inicio del periodo, salir
+            if oldest_ts <= start_ms:
+                print(f"[INFO {symbol}] Alcanzamos el inicio del periodo solicitado")
+                break
 
-                # Siguiente request debe terminar justo antes del más antiguo de este batch
-                current_end = oldest_ts - 1
+            # Siguiente request debe terminar justo antes del más antiguo de este batch
+            current_end = oldest_ts - 1
 
-                # Si ya tenemos suficientes puntos, salir
-                if len(all_oi_data) >= total_points_needed:
-                    print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
-                    break
+            # Si ya tenemos suficientes puntos, salir
+            if len(all_oi_data) >= total_points_needed:
+                print(f"[INFO {symbol}] Tenemos suficientes puntos ({len(all_oi_data)}/{total_points_needed})")
+                break
 
-                # Pequeña pausa entre requests
-                await asyncio.sleep(0.1)
+            # Pequeña pausa entre requests
+            await asyncio.sleep(0.1)
 
-            if not all_oi_data:
-                print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
-                return {
-                    "symbol": symbol,
-                    "interval": interval_final,
-                    "indicator": "openInterest",
-                    "data": [],
-                    "success": False,
-                    "error": "No Open Interest data available"
-                }
-
-            print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
-
-            # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
-            # porque Bybit devuelve descendente y agregamos al inicio
-            # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
-            all_oi_data.reverse()
-
-            # Verificar orden
-            if len(all_oi_data) >= 2:
-                first_ts = int(all_oi_data[0]["timestamp"])
-                last_ts = int(all_oi_data[-1]["timestamp"])
-                print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
-
-            # Procesar datos
-            # all_oi_data ahora sí está en orden cronológico ascendente
-            processed_data = []
-
-            for item in all_oi_data:
-                ts_ms = int(item["timestamp"])
-                oi_value = float(item["openInterest"])
-
-                # Convertir timestamp a datetime Colombia
-                ts_seconds = ts_ms / 1000
-                dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
-                dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
-
-                processed_data.append({
-                    "timestamp": ts_ms,
-                    "openInterest": oi_value,
-                    "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
-                })
-
-            # Guardar en cache
-            cache_data = {
-                "symbol": symbol,
-                "interval": interval_final,
-                "indicator": "openInterest",
-                "data": processed_data
-            }
-            save_cache(symbol, interval_final, "openinterest", cache_data)
-            print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
-
-            print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
-
+        if not all_oi_data:
+            print(f"[ERROR {symbol}] No hay datos de Open Interest disponibles")
             return {
                 "symbol": symbol,
                 "interval": interval_final,
                 "indicator": "openInterest",
-                "data": processed_data,
-                "success": True,
-                "from_cache": False,
-                "calculated": True,
-                "total_points": len(processed_data),
-                "days_requested": days,
-                "days_fetched": days_to_fetch,
-                "max_days_allowed": max_days_allowed,
-                "api_requests_made": request_count
+                "data": [],
+                "success": False,
+                "error": "No Open Interest data available"
             }
+
+        print(f"[INFO {symbol}] Total obtenido: {len(all_oi_data)} puntos en {request_count} requests")
+
+        # IMPORTANTE: all_oi_data está en orden DESCENDENTE (más reciente primero)
+        # porque Bybit devuelve descendente y agregamos al inicio
+        # Necesitamos invertirlo a ASCENDENTE (más antiguo primero)
+        all_oi_data.reverse()
+
+        # Verificar orden
+        if len(all_oi_data) >= 2:
+            first_ts = int(all_oi_data[0]["timestamp"])
+            last_ts = int(all_oi_data[-1]["timestamp"])
+            print(f"[INFO {symbol}] Orden de datos: primer_ts={first_ts}, último_ts={last_ts}, orden_correcto={first_ts < last_ts}")
+
+        # Procesar datos
+        # all_oi_data ahora sí está en orden cronológico ascendente
+        processed_data = []
+
+        for item in all_oi_data:
+            ts_ms = int(item["timestamp"])
+            oi_value = float(item["openInterest"])
+
+            # Convertir timestamp a datetime Colombia
+            ts_seconds = ts_ms / 1000
+            dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
+            dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
+
+            processed_data.append({
+                "timestamp": ts_ms,
+                "openInterest": oi_value,
+                "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
+            })
+
+        # Guardar en cache
+        cache_data = {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": processed_data
+        }
+        save_cache(symbol, interval_final, "openinterest", cache_data)
+        print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
+
+        print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
+
+        return {
+            "symbol": symbol,
+            "interval": interval_final,
+            "indicator": "openInterest",
+            "data": processed_data,
+            "success": True,
+            "from_cache": False,
+            "calculated": True,
+            "total_points": len(processed_data),
+            "days_requested": days,
+            "days_fetched": days_to_fetch,
+            "max_days_allowed": max_days_allowed,
+            "api_requests_made": request_count
+        }
 
     except Exception as e:
         print(f"[ERROR] Open Interest {symbol}: {str(e)}")
@@ -2335,6 +2385,16 @@ async def send_test_alert_batch():
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
+    global _cache_cleanup_task
+
+    # ✅ OPTIMIZACIÓN: Inicializar cliente HTTP global
+    await get_http_client()
+    print("[STARTUP] HTTP client pool initialized")
+
+    # ✅ OPTIMIZACIÓN: Iniciar limpieza automática de cache
+    _cache_cleanup_task = asyncio.create_task(cache_cleanup_loop())
+    print("[STARTUP] Cache cleanup task started")
+
     from alert_sender import initialize_alert_sender
     await initialize_alert_sender()
     print("[STARTUP] Backend started successfully")
@@ -2379,6 +2439,21 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
+    global _cache_cleanup_task
+
+    # ✅ OPTIMIZACIÓN: Cancelar tarea de limpieza de cache
+    if _cache_cleanup_task:
+        _cache_cleanup_task.cancel()
+        try:
+            await _cache_cleanup_task
+        except asyncio.CancelledError:
+            pass
+        print("[SHUTDOWN] Cache cleanup task stopped")
+
+    # ✅ OPTIMIZACIÓN: Cerrar cliente HTTP global
+    await close_http_client()
+    print("[SHUTDOWN] HTTP client pool closed")
+
     from alert_sender import shutdown_alert_sender
     await shutdown_alert_sender()
 

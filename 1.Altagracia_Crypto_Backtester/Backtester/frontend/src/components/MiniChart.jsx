@@ -449,10 +449,29 @@ const MiniChart = forwardRef(({
   };
 
   // ==================== DRAW CHART ====================
-  
-  const drawChart = (candles, livePrice = null, mouseX = null, mouseY = null) => {
+  // 🎯 OPTIMIZACIÓN: Throttle a 30fps para reducir uso de CPU
+  const FRAME_BUDGET_MS = 33; // ~30fps (1000ms / 30 = 33.3ms)
+
+  const drawChart = (candles, livePrice = null, mouseX = null, mouseY = null, forceRender = false) => {
     if (!mountedRef.current) return;
-    
+
+    // 🎯 THROTTLE: Saltar frame si no ha pasado suficiente tiempo
+    // Excepciones: forceRender=true, o primer render (!initialRenderDoneRef.current)
+    const now = performance.now();
+    const isFirstRender = !initialRenderDoneRef.current;
+
+    if (!forceRender && !isFirstRender && now - lastRenderTimeRef.current < FRAME_BUDGET_MS) {
+      // Programar un render para el próximo frame disponible si no hay uno pendiente
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(() => {
+          rafRef.current = null;
+          drawChart(candles, livePrice, mouseX, mouseY, true);
+        });
+      }
+      return;
+    }
+    lastRenderTimeRef.current = now;
+
     const canvas = canvasRef.current;
     if (!canvas || candles.length === 0) return;
 

@@ -105,4 +105,5 @@ const DrawdownGrowthCards = ({ metrics }) => {
   );
 };
 
-export default DrawdownGrowthCards;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+export default React.memo(DrawdownGrowthCards);

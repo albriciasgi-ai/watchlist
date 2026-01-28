@@ -18,12 +18,20 @@ const OrderFlowSettings = ({
   currentSymbol,
   onBackendConfigSaved
 }) => {
-  // Default config if none provided
+  // Default config if none provided (must match OrderFlowIndicator defaults)
   const defaultConfig = {
     enabled: true,
+    showCandle: true,
+    showProfile: true,
+    showFootprint: true,
     showPOC: true,
     showImbalances: true,
-    showDelta: true
+    showDelta: true,
+    fontSize: 9,
+    minCandleWidth: 8,
+    minCandleWidthFull: 60,
+    opacity: 0.9,
+    historyHours: 24
   };
 
   const [localConfig, setLocalConfig] = useState(config || defaultConfig);
@@ -386,24 +394,160 @@ const OrderFlowSettings = ({
         </label>
 
         {/* History Hours */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Horas de historial: {localConfig.historyHours || 12}h
+            Horas de historial: {localConfig.historyHours || 24}h
+            {(localConfig.historyHours || 24) >= 24 && ` (${((localConfig.historyHours || 24) / 24).toFixed(1)} dias)`}
           </label>
           <input
             type="range"
             min="1"
-            max="24"
-            value={localConfig.historyHours || 12}
+            max="168"
+            value={localConfig.historyHours || 24}
             onChange={(e) => handleConfigChange('historyHours', parseInt(e.target.value))}
             style={{ width: '100%' }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#666' }}>
             <span>1h</span>
             <span>24h</span>
+            <span>72h (3d)</span>
+            <span>168h (7d)</span>
           </div>
           <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
-            Cantidad de horas de footprints a cargar. Mas horas = mas datos pero carga mas lenta.
+            Cantidad de horas de footprints a cargar del Cloud Collector. Mas horas = mas datos pero carga mas lenta.
+          </div>
+          {/* Quick presets */}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+            {[6, 12, 24, 48, 72, 168].map(hours => (
+              <button
+                key={hours}
+                onClick={() => handleConfigChange('historyHours', hours)}
+                style={{
+                  padding: '4px 10px',
+                  background: (localConfig.historyHours || 24) === hours ? '#4CAF50' : '#e0e0e0',
+                  color: (localConfig.historyHours || 24) === hours ? 'white' : '#333',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: (localConfig.historyHours || 24) === hours ? 'bold' : 'normal'
+                }}
+              >
+                {hours}h{hours >= 24 ? ` (${hours/24}d)` : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Minimum Candle Width for Footprint */}
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+            Ancho minimo para mostrar footprint: {localConfig.minCandleWidth || 8}px
+          </label>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input
+              type="range"
+              min="1"
+              max="30"
+              value={localConfig.minCandleWidth || 8}
+              onChange={(e) => handleConfigChange('minCandleWidth', parseInt(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <input
+              type="number"
+              min="1"
+              max="100"
+              value={localConfig.minCandleWidth || 8}
+              onChange={(e) => handleConfigChange('minCandleWidth', parseInt(e.target.value) || 1)}
+              style={{
+                width: '60px',
+                padding: '4px 6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px',
+                textAlign: 'center'
+              }}
+            />
+          </div>
+          <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            Ancho minimo de vela para mostrar el footprint (barras de colores). Reducir para ver con mas zoom out.
+          </div>
+          {/* Quick presets */}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+            {[3, 5, 8, 12, 15, 20].map(width => (
+              <button
+                key={width}
+                onClick={() => handleConfigChange('minCandleWidth', width)}
+                style={{
+                  padding: '4px 10px',
+                  background: (localConfig.minCandleWidth || 8) === width ? '#2196F3' : '#e0e0e0',
+                  color: (localConfig.minCandleWidth || 8) === width ? 'white' : '#333',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: (localConfig.minCandleWidth || 8) === width ? 'bold' : 'normal'
+                }}
+              >
+                {width}px
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Minimum Candle Width for Full Text */}
+        <div>
+          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+            Ancho minimo para mostrar numeros: {localConfig.minCandleWidthFull || 60}px
+          </label>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input
+              type="range"
+              min="30"
+              max="150"
+              value={localConfig.minCandleWidthFull || 60}
+              onChange={(e) => handleConfigChange('minCandleWidthFull', parseInt(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <input
+              type="number"
+              min="20"
+              max="200"
+              value={localConfig.minCandleWidthFull || 60}
+              onChange={(e) => handleConfigChange('minCandleWidthFull', parseInt(e.target.value) || 30)}
+              style={{
+                width: '60px',
+                padding: '4px 6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px',
+                textAlign: 'center'
+              }}
+            />
+          </div>
+          <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            Ancho minimo de vela para mostrar los numeros de volumen dentro del footprint.
+          </div>
+          {/* Quick presets */}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+            {[40, 50, 60, 80, 100, 120].map(width => (
+              <button
+                key={width}
+                onClick={() => handleConfigChange('minCandleWidthFull', width)}
+                style={{
+                  padding: '4px 10px',
+                  background: (localConfig.minCandleWidthFull || 60) === width ? '#9C27B0' : '#e0e0e0',
+                  color: (localConfig.minCandleWidthFull || 60) === width ? 'white' : '#333',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: (localConfig.minCandleWidthFull || 60) === width ? 'bold' : 'normal'
+                }}
+              >
+                {width}px
+              </button>
+            ))}
           </div>
         </div>
       </div>

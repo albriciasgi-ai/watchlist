@@ -1,1 +1,0 @@
-el indicador de support & resistance no arranca desde que se activó el pattern detector

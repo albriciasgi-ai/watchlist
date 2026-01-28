@@ -69,6 +69,10 @@ class VWAPIndicator extends IndicatorBase {
 
     // Poll at configured interval
     this._pollingInterval = setInterval(() => {
+      // ✅ OPTIMIZACIÓN: No hacer polling si el tab no está visible
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
       if (this.enabled && !this._destroyed) {
         this.fetchData();
       }

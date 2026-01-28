@@ -107,6 +107,9 @@ class RealtimePatternService:
         # Cleanup task
         self._cleanup_task: Optional[asyncio.Task] = None
 
+        # ✅ OPTIMIZACIÓN: Rastrear tasks activas para cancelación limpia
+        self._active_tasks: set = set()
+
         logger.info("RealtimePatternService initialized")
 
     async def start(self, symbols: List[str] = None, intervals: List[str] = None):
@@ -135,17 +138,20 @@ class RealtimePatternService:
         self.ws_manager.on_candle_close = self._on_candle_close
         self.ws_manager.on_connection_change = self._on_connection_change
 
-        # ✅ CRITICAL: Pre-load historical candles BEFORE starting WebSocket
-        # This ensures we have enough data (50+ candles) for pattern detection from the start
-        await self._preload_historical_candles()
-
-        # Start WebSocket manager
+        # ✅ OPTIMIZACIÓN: Iniciar WebSocket INMEDIATAMENTE, cargar histórico en background
+        # Esto permite que el servicio responda rápido mientras se carga el histórico
         await self.ws_manager.start(self.symbols, self.intervals)
+        logger.info("WebSocket started, loading historical data in background...")
+
+        # ✅ Cargar histórico en background (no-bloqueante)
+        preload_task = asyncio.create_task(self._preload_historical_candles())
+        self._active_tasks.add(preload_task)
+        preload_task.add_done_callback(self._active_tasks.discard)
 
         # Start cleanup task
         self._cleanup_task = asyncio.create_task(self._cleanup_loop())
 
-        logger.info("RealtimePatternService started successfully")
+        logger.info("RealtimePatternService started successfully (historical data loading in background)")
 
     async def _preload_historical_candles(self):
         """
@@ -221,6 +227,17 @@ class RealtimePatternService:
             except asyncio.CancelledError:
                 pass
 
+        # ✅ OPTIMIZACIÓN: Cancelar todas las tasks de detección activas
+        if self._active_tasks:
+            logger.info(f"Cancelling {len(self._active_tasks)} active detection tasks...")
+            for task in list(self._active_tasks):
+                if not task.done():
+                    task.cancel()
+            # Esperar que todas terminen
+            if self._active_tasks:
+                await asyncio.gather(*self._active_tasks, return_exceptions=True)
+            self._active_tasks.clear()
+
         # Stop WebSocket manager
         await self.ws_manager.stop()
 
@@ -243,8 +260,10 @@ class RealtimePatternService:
 
         logger.info(f"Candle closed: {symbol} {interval}m @ {candle.close:.2f}")
 
-        # Run detection in a new task to not block the WebSocket
-        asyncio.create_task(self._detect_patterns(symbol, interval, candle))
+        # ✅ OPTIMIZACIÓN: Rastrear task para cancelación limpia en shutdown
+        task = asyncio.create_task(self._detect_patterns(symbol, interval, candle))
+        self._active_tasks.add(task)
+        task.add_done_callback(self._active_tasks.discard)
 
         # ✅ Evaluate pending trades against this candle
         asyncio.create_task(self._evaluate_pending_trades(symbol, interval, candle))

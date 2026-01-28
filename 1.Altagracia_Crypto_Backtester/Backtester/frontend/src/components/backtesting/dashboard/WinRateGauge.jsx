@@ -95,4 +95,5 @@ const WinRateGauge = ({ trades }) => {
   );
 };
 
-export default WinRateGauge;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+export default React.memo(WinRateGauge);

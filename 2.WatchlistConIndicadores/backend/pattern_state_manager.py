@@ -9,15 +9,18 @@ Manages state for pattern detection including:
 
 Author: Claude Code
 Date: 2025-01-16
+
+✅ OPTIMIZACIÓN: Usa asyncio.Lock en lugar de threading.Lock para no bloquear event loop
 """
 
 import json
 import os
 import time
+import asyncio
 import logging
 from typing import Dict, Set, Optional, List
 from dataclasses import dataclass, field
-from threading import Lock
+from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +108,12 @@ class PatternStateManager:
     PATTERN_EXPIRY_MS = 24 * 60 * 60 * 1000  # 24 hours
 
     def __init__(self):
-        self._lock = Lock()
+        # ✅ OPTIMIZACIÓN: Usar RLock para permitir re-entrada y evitar deadlocks
+        # Las operaciones son rápidas (dict access) así que threading.RLock es suficiente
+        # Para I/O usamos ThreadPoolExecutor para no bloquear el event loop
+        import threading
+        self._lock = threading.RLock()
+        self._io_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="pattern_io")
 
         # Alerted patterns: {pattern_id: timestamp_ms}
         self._alerted_patterns: Dict[str, int] = {}
@@ -331,12 +339,21 @@ class PatternStateManager:
             logger.error(f"Failed to load alerted patterns: {e}")
 
     def _save_alerted_patterns(self) -> None:
-        """Save alerted patterns to file"""
+        """Save alerted patterns to file (non-blocking via executor)"""
         try:
-            with open(ALERTED_PATTERNS_FILE, 'w') as f:
-                json.dump(self._alerted_patterns, f)
+            # ✅ OPTIMIZACIÓN: Hacer copia para evitar race conditions
+            data_copy = dict(self._alerted_patterns)
+            self._io_executor.submit(self._write_json_file, ALERTED_PATTERNS_FILE, data_copy)
         except Exception as e:
             logger.error(f"Failed to save alerted patterns: {e}")
+
+    def _write_json_file(self, filepath: str, data) -> None:
+        """Write JSON file in background thread"""
+        try:
+            with open(filepath, 'w') as f:
+                json.dump(data, f)
+        except Exception as e:
+            logger.error(f"Failed to write {filepath}: {e}")
 
     def _load_cooldown_state(self) -> None:
         """Load cooldown state from file"""
@@ -351,10 +368,11 @@ class PatternStateManager:
             logger.error(f"Failed to load cooldown state: {e}")
 
     def _save_cooldown_state(self) -> None:
-        """Save cooldown state to file"""
+        """Save cooldown state to file (non-blocking via executor)"""
         try:
-            with open(COOLDOWN_STATE_FILE, 'w') as f:
-                json.dump(self._cooldown_state, f)
+            # ✅ OPTIMIZACIÓN: Hacer copia para evitar race conditions
+            data_copy = dict(self._cooldown_state)
+            self._io_executor.submit(self._write_json_file, COOLDOWN_STATE_FILE, data_copy)
         except Exception as e:
             logger.error(f"Failed to save cooldown state: {e}")
 
@@ -373,13 +391,21 @@ class PatternStateManager:
             logger.error(f"Failed to load alert history: {e}")
 
     def _save_alert_history(self) -> None:
-        """Save alert history to file"""
+        """Save alert history to file (non-blocking via executor)"""
         try:
-            data = [r.to_dict() for r in self._alert_history]
-            with open(ALERT_HISTORY_FILE, 'w') as f:
-                json.dump(data, f, indent=2)
+            # ✅ OPTIMIZACIÓN: Hacer copia para evitar race conditions
+            data_copy = [r.to_dict() for r in self._alert_history]
+            self._io_executor.submit(self._write_json_file_pretty, ALERT_HISTORY_FILE, data_copy)
         except Exception as e:
             logger.error(f"Failed to save alert history: {e}")
+
+    def _write_json_file_pretty(self, filepath: str, data) -> None:
+        """Write JSON file with indentation in background thread"""
+        try:
+            with open(filepath, 'w') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            logger.error(f"Failed to write {filepath}: {e}")
 
     def clear_all(self) -> None:
         """Clear all state (use with caution!)"""

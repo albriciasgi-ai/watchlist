@@ -52,7 +52,7 @@
     "TRXUSDT": {
       "volumeFilter": {
         "enabled": true,
-        "minZScore": 2,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },

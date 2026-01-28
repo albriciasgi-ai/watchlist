@@ -1,0 +1,1124 @@
+errores frontend:
+OrderFlowIndicator.js:230 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:230
+OrderFlowIndicator.js:230 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:230
+OrderFlowIndicator.js?t=1769534443965:234 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js?t=1769534443965:234
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:261 [SOLUSDT] OrderFlow: max retries (5) exceeded, giving up
+fetchFootprints @ OrderFlowIndicator.js:261
+OrderFlowIndicator.js:240 [SOLUSDT] OrderFlow fetch TIMEOUT after 30s
+fetchFootprints @ OrderFlowIndicator.js:240
+OrderFlowIndicator.js:261 [SOLUSDT] OrderFlow: max retries (5) exceeded, giving up
+fetchFootprints @ OrderFlowIndicator.js:261
+
+==============
+consola frontend:
+
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:713 [SOLUSDT] OrderFlow hasFootprintData: true (758 footprints)
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+OrderFlowIndicator.js:713 [SOLUSDT] OrderFlow hasFootprintData: true (758 footprints)
+OrderFlowIndicator.js:322 [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+OrderFlowIndicator.js:358 [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+OrderFlowIndicator.js:359 [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+OrderFlowIndicator.js:380 [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [SOLUSDT] OrderFlow hasFootprintData: true (758 footprints)
+ [OrderFlow] renderOverlay - candleWidth=57.7px, minWidth=8px, footprints=758
+ [OrderFlow] First candle timestamps: 1769533020000, 1769533080000, 1769533140000
+ [OrderFlow] First footprint timestamps: 1769488500000, 1769488560000, 1769488620000
+ [OrderFlow] renderOverlay complete - matches=20, noMatch=3
+ [Registry] 🗑️ Desregistrado manager para SOLUSDT (total: 0)
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [SOLUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ ✅ [12:20:01 p. m.] [VWAP] [SOLUSDT] VWAPIndicator initialized (backend native, type=session)
+ [SOLUSDT] SwingDetectorIndicator initialized
+ [SOLUSDT] OrderFlowIndicator initialized
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [Registry] ✅ Registrado manager para SOLUSDT (total: 1)
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+ ✓ Suscrito: 
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow scheduling retry 1/5 in 2000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [Registry] 🗑️ Desregistrado manager para SOLUSDT (total: 0)
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [SOLUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ ✅ [12:20:44 p. m.] [VWAP] [SOLUSDT] VWAPIndicator initialized (backend native, type=session)
+ [SOLUSDT] SwingDetectorIndicator initialized
+ [SOLUSDT] OrderFlowIndicator initialized
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [Registry] ✅ Registrado manager para SOLUSDT (total: 1)
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+ ✓ Suscrito: 
+ [Registry] 🗑️ Desregistrado manager para SOLUSDT (total: 0)
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [SOLUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ ✅ [12:20:58 p. m.] [VWAP] [SOLUSDT] VWAPIndicator initialized (backend native, type=session)
+ [SOLUSDT] SwingDetectorIndicator initialized
+ [SOLUSDT] OrderFlow using default config
+ [SOLUSDT] OrderFlowIndicator initialized
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [Registry] ✅ Registrado manager para SOLUSDT (total: 1)
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+ ✓ Suscrito: 
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow scheduling retry 1/5 in 2000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow scheduling retry 2/5 in 4000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=2
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow scheduling retry 3/5 in 8000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=3
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow scheduling retry 4/5 in 16000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow scheduling retry 5/5 in 32000ms...
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=4
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=5
+ [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+ [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+ [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+ [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+ [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+ [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+Logger.js:100 ✅ [1:07:30 p. m.] [MiniChart] [SOLUSDT] 🔄 Tab activo después de 2600s de inactividad - recargando histórico
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+OrderFlowIndicator.js:198 [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+OrderFlowIndicator.js:214 [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+OrderFlowIndicator.js:225 [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=48
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=49
+Logger.js:100 ✅ [1:10:09 p. m.] [MiniChart] [SOLUSDT] 🔄 Tab activo después de 73s de inactividad - recargando histórico
+CandleCache.js:67 [CandleCache] 💾 SOLUSDT@1 - desde memoria (1494 velas)
+OrderFlowIndicator.js:198 [SOLUSDT] OrderFlow fetchFootprints called - interval=1, type=string
+OrderFlowIndicator.js:214 [SOLUSDT] OrderFlow checking interval: "1" in [1, 5] = true
+OrderFlowIndicator.js:225 [SOLUSDT] OrderFlow fetching: http://localhost:11000/api/orderflow/footprint/SOLUSDT?interval=1&limit=2000&hours=24
+CandleCache.js:236 [CandleCache] ✓ SOLUSDT@1 - Cache valido: 1494 velas (esperadas: ~1440, ratio: 103.8%)
+MiniChart.jsx:1155 [SOLUSDT] Carga INCREMENTAL: desde 27/1/2026, 12:18:00 p.m. (1494 velas en cache)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=51
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:723 [SOLUSDT] OrderFlow hasFootprintData: false (0 footprints)
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+OrderFlowIndicator.js:327 [OrderFlow] renderOverlay - no data: footprints=0, visibleCandles=47
+
+
+=============
+
+consola backend:
+
+[SWING] Symbol config updated for SOLUSDT - Re-analyzing...
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "C:\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 2008, in _run_once
+    event_list = self._selector.select(timeout)
+  File "C:\Python314\Lib\selectors.py", line 314, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\selectors.py", line 305, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ValueError: too many file descriptors in select()
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python314\Lib\multiprocessing\process.py", line 320, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Python314\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\uvicorn\server.py", line 65, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 203, in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 63, in __exit__
+    self.close()
+    ~~~~~~~~~~^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 71, in close
+    _cancel_all_tasks(loop)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\asyncio\runners.py", line 215, in _cancel_all_tasks
+    loop.run_until_complete(tasks.gather(*to_cancel, return_exceptions=True))
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\asyncio\base_events.py", line 2008, in _run_once
+    event_list = self._selector.select(timeout)
+  File "C:\Python314\Lib\selectors.py", line 314, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\selectors.py", line 305, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ValueError: too many file descriptors in select()
+
+
+

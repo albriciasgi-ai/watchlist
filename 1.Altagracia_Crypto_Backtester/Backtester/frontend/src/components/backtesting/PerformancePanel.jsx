@@ -310,4 +310,6 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   );
 };
 
-export default PerformancePanel;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+// Solo re-renderiza si orderManager, currentPrice o currentTime cambian
+export default React.memo(PerformancePanel);

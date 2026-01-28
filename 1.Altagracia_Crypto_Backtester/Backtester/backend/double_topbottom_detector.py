@@ -43,6 +43,9 @@ class DoubleTopBottomDetector:
 
     def __init__(self):
         self.patterns_cache = {}
+        # 🎯 OPTIMIZACIÓN: Caché de z-scores para evitar recálculos
+        # Formato: { "hash_key": { "z_scores": [...], "period": int } }
+        self._z_score_cache = {}
 
     def detect_patterns(
         self,
@@ -258,7 +261,22 @@ class DoubleTopBottomDetector:
         Calculate z-scores for volume in candles
 
         Z-Score = (value - mean) / stdev
+
+        🎯 OPTIMIZACIÓN: Usa caché basado en hash de timestamps para evitar recálculos
         """
+        # Crear clave de caché basada en timestamps de velas
+        if len(candles) > 0:
+            # Usar primer y último timestamp + cantidad como hash key
+            first_ts = candles[0].get('timestamp', 0)
+            last_ts = candles[-1].get('timestamp', 0)
+            cache_key = f"{first_ts}_{last_ts}_{len(candles)}_{period}"
+
+            # Verificar si ya tenemos el resultado en caché
+            if cache_key in self._z_score_cache:
+                cached = self._z_score_cache[cache_key]
+                print(f"  [Z-SCORE CACHE HIT] Usando caché ({len(cached)} valores)")
+                return cached
+
         z_scores = []
         volumes = [c.get('volume', 0) for c in candles]
 
@@ -277,6 +295,15 @@ class DoubleTopBottomDetector:
             else:
                 z_score = (volumes[i] - mean) / stdev
                 z_scores.append(z_score)
+
+        # Guardar en caché (limitar tamaño del caché a 10 entradas)
+        if len(candles) > 0:
+            if len(self._z_score_cache) > 10:
+                # Eliminar la entrada más antigua
+                oldest_key = next(iter(self._z_score_cache))
+                del self._z_score_cache[oldest_key]
+            self._z_score_cache[cache_key] = z_scores
+            print(f"  [Z-SCORE CACHE MISS] Calculado y guardado ({len(z_scores)} valores)")
 
         return z_scores
 

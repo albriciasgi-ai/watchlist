@@ -11,9 +11,13 @@ class CVDIndicator extends IndicatorBase {
     this.height = 100;
     this.resetPeriod = 100; // Resetear CVD cada X velas (configurable)
     this.days = days;
-    
+
     // ✅ Ya NO necesitamos dataMap del backend
     this.dataMap = null;
+
+    // ✅ OPTIMIZACIÓN: Cache de cálculos para evitar recalcular en cada frame
+    this._cvdCache = null;
+    this._cvdCacheKey = null;
   }
 
   async fetchData() {
@@ -26,26 +30,33 @@ class CVDIndicator extends IndicatorBase {
 
   // ✅ NUEVO: Calcular CVD directamente desde las velas
   // ✅ CORREGIDO: Ahora INCLUYE velas en progreso
+  // ✅ OPTIMIZACIÓN: Cache de resultados para evitar recálculo en cada frame
   calculateCVD(candles) {
     if (!candles || candles.length === 0) return [];
-    
+
+    // ✅ OPTIMIZACIÓN: Crear clave de cache basada en las velas
+    // Solo recalcular si cambió el número de velas o el último timestamp
+    const lastCandle = candles[candles.length - 1];
+    const cacheKey = `${candles.length}_${lastCandle?.timestamp}_${lastCandle?.close}`;
+
+    if (this._cvdCacheKey === cacheKey && this._cvdCache) {
+      return this._cvdCache;
+    }
+
     const cvdData = [];
     let cumulativeCVD = 0;
     let barCount = 0;
-    
+
     for (const candle of candles) {
-      // ✅ YA NO ignoramos velas en progreso
-      // Las procesamos igual para mostrar la última barra en tiempo real
-      
       // Reset cada X velas
       if (barCount >= this.resetPeriod) {
         cumulativeCVD = 0;
         barCount = 0;
       }
-      
+
       // ✅ CALCULAR Volume Delta
       let volumeDelta;
-      
+
       if (candle.close > candle.open) {
         // Vela alcista - Volumen de compra
         volumeDelta = candle.volume;
@@ -56,13 +67,13 @@ class CVDIndicator extends IndicatorBase {
         // Vela doji - Neutral
         volumeDelta = 0;
       }
-      
+
       // Guardar CVD anterior (para dibujar barras)
       const previousCVD = cumulativeCVD;
-      
+
       // ✅ ACUMULAR CVD
       cumulativeCVD += volumeDelta;
-      
+
       cvdData.push({
         timestamp: candle.timestamp,
         openCVD: previousCVD,
@@ -72,10 +83,14 @@ class CVDIndicator extends IndicatorBase {
         isReset: barCount === 0,
         in_progress: candle.in_progress || false
       });
-      
+
       barCount++;
     }
-    
+
+    // ✅ Guardar en cache
+    this._cvdCache = cvdData;
+    this._cvdCacheKey = cacheKey;
+
     return cvdData;
   }
 

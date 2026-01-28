@@ -349,4 +349,6 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
   );
 };
 
-export default TradingControls;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+// Solo re-renderiza si las props relevantes cambian
+export default React.memo(TradingControls);

@@ -109,7 +109,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, onOpenOrderFlowSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
 
@@ -1199,14 +1199,24 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         let shouldResetZoom = isFirstLoad;
 
         if (isIncremental && cached) {
+          // DIAGNOSTICO: Analizar gaps en cache ANTES del merge
+          CandleCache.analyzeGaps(cached.candles, interval, `CACHE-ANTES-MERGE ${symbol}`);
+          CandleCache.analyzeGaps(newCandles, interval, `BACKEND-NUEVAS ${symbol}`);
+
           // Merge: cache + nuevas velas
           finalCandles = CandleCache.merge(cached.candles, newCandles);
-          console.log(`[${symbol}] ✅ Incremental: +${newCandles.length} velas nuevas = ${finalCandles.length} total`);
+          console.log(`[${symbol}] Incremental: +${newCandles.length} velas nuevas = ${finalCandles.length} total`);
+
+          // DIAGNOSTICO: Analizar gaps DESPUES del merge
+          CandleCache.analyzeGaps(finalCandles, interval, `MERGED ${symbol}`);
         } else {
           // Carga completa - usar todas las velas
           finalCandles = newCandles;
           shouldResetZoom = true;
-          console.log(`[${symbol}] ✅ Completa: ${finalCandles.length} velas`);
+          console.log(`[${symbol}] Completa: ${finalCandles.length} velas`);
+
+          // DIAGNOSTICO: Analizar gaps en datos del backend
+          CandleCache.analyzeGaps(finalCandles, interval, `BACKEND-COMPLETO ${symbol}`);
         }
 
         // Preservar velas del WebSocket que son más nuevas
@@ -2653,6 +2663,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               }}
             >
               SR2
+            </button>
+          )}
+          {indicatorStates && indicatorStates["Order Flow"] && (
+            <button
+              className="orderflow-settings-btn"
+              onClick={() => onOpenOrderFlowSettings && onOpenOrderFlowSettings(indicatorManagerRef.current)}
+              title="Configurar Order Flow"
+              style={{
+                background: '#FF5722',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              OF
             </button>
           )}
           <button

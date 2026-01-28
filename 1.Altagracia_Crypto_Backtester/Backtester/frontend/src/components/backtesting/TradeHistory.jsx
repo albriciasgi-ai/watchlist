@@ -197,4 +197,6 @@ const TradeHistory = ({ orderManager }) => {
   );
 };
 
-export default TradeHistory;
+// 🎯 OPTIMIZACIÓN: React.memo para evitar re-renders innecesarios
+// Solo re-renderiza si orderManager cambia (las órdenes se actualizan vía useEffect interno)
+export default React.memo(TradeHistory);

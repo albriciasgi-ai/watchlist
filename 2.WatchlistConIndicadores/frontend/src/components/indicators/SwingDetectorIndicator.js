@@ -93,6 +93,10 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     // Poll signals at configured interval
     this._pollingInterval = setInterval(() => {
+      // ✅ OPTIMIZACIÓN: No hacer polling si el tab no está visible
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
       if (this.enabled && this.config.enabled) {
         this.fetchSignals();
       }
@@ -100,6 +104,10 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     // Poll status less frequently
     this._statusPollingInterval = setInterval(() => {
+      // ✅ OPTIMIZACIÓN: No hacer polling si el tab no está visible
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
       if (this.enabled && this.config.enabled) {
         this.fetchStatus();
       }

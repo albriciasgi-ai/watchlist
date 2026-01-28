@@ -47,7 +47,11 @@
       "Bash(....LOG_BACKEND_3.txt)",
       "Bash(ping:*)",
       "Bash(del /S /Q \"node_modules\\.vite\" 2)",
-      "Bash(if exist \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\" rmdir /S /Q \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\")"
+      "Bash(if exist \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\" rmdir /S /Q \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\WatchlistConIndicadores\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\node_modules\\.vite\")",
+      "Bash(npx eslint:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\1.Altagracia_Crypto_Backtester\\Backtester\\frontend\\src\\components\\indicators\\IndicatorManager_1.js\")"
     ],
     "deny": [],
     "ask": []

@@ -305,6 +305,63 @@ class CandleCache {
 
     return stats;
   }
+
+  /**
+   * DIAGNOSTICO: Analiza gaps en un array de velas
+   * @param {Array} candles - Array de velas a analizar
+   * @param {string} interval - Timeframe
+   * @param {string} context - Contexto del log
+   * @returns {Object} - Reporte de gaps
+   */
+  static analyzeGaps(candles, interval, context = "unknown") {
+    if (!candles || candles.length < 2) {
+      return { gapCount: 0, gaps: [], totalGapMinutes: 0 };
+    }
+
+    const intervalMs = {
+      "1": 60000, "3": 180000, "5": 300000, "15": 900000,
+      "30": 1800000, "60": 3600000, "240": 14400000,
+      "D": 86400000, "W": 604800000
+    }[interval] || 60000;
+
+    const gapThreshold = intervalMs * 2;
+    const gaps = [];
+
+    for (let i = 1; i < candles.length; i++) {
+      const ts1 = candles[i - 1].timestamp;
+      const ts2 = candles[i].timestamp;
+      const diff = ts2 - ts1;
+
+      if (diff > gapThreshold) {
+        const gapMinutes = diff / 60000;
+        gaps.push({
+          index: i,
+          from: new Date(ts1).toLocaleString('es-CO'),
+          to: new Date(ts2).toLocaleString('es-CO'),
+          gapMinutes: gapMinutes.toFixed(1),
+          gapHours: (gapMinutes / 60).toFixed(2)
+        });
+      }
+    }
+
+    const totalGapMinutes = gaps.reduce((sum, g) => sum + parseFloat(g.gapMinutes), 0);
+
+    if (gaps.length > 0) {
+      console.error(`[CandleCache] === GAPS en ${context} ===`);
+      console.error(`  Total velas: ${candles.length}`);
+      console.error(`  Primera: ${new Date(candles[0].timestamp).toLocaleString('es-CO')}`);
+      console.error(`  Ultima: ${new Date(candles[candles.length - 1].timestamp).toLocaleString('es-CO')}`);
+      console.error(`  Gaps encontrados: ${gaps.length}`);
+      gaps.forEach((g, i) => {
+        console.error(`    Gap #${i + 1}: ${g.from} -> ${g.to} (${g.gapMinutes} min = ${g.gapHours} hrs)`);
+      });
+      console.error(`  Tiempo total perdido: ${totalGapMinutes.toFixed(1)} min (${(totalGapMinutes / 60).toFixed(2)} hrs)`);
+    } else {
+      console.log(`[CandleCache] OK ${context}: ${candles.length} velas sin gaps`);
+    }
+
+    return { gapCount: gaps.length, gaps, totalGapMinutes };
+  }
 }
 
 export default CandleCache;
