@@ -12,18 +12,18 @@
     "ADAUSDT",
     "DOGEUSDT"
   ],
-  "interval": "60",
-  "days": 90,
+  "interval": "1",
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 2,
         "lookbackBars": 50
       },
-      "days": 1,
+      "days": 90,
       "vwapFilter": {
-        "enabled": true,
+        "enabled": false,
         "deviations": [
           2,
           3
@@ -34,12 +34,11 @@
     },
     "BTCUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 2,
         "lookbackBars": 50
       },
-      "swingBars": 5,
-      "days": 5,
+      "days": 90,
       "cooldownMinutes": 20
     },
     "XRPUSDT": {
@@ -101,16 +100,7 @@
   },
   "swingBars": 3,
   "direction": "BOTH",
-  "priceZones": [
-    {
-      "id": "zone_1768764021306",
-      "symbol": "BTCUSDT",
-      "min": 90000,
-      "max": 97000,
-      "direction": "BOTH",
-      "enabled": true
-    }
-  ],
+  "priceZones": [],
   "useDrawingZones": true,
   "volumeFilter": {
     "enabled": false,

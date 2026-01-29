@@ -1,0 +1,300 @@
+// src/components/drawing/shapes/FibonacciRetracement.js
+// Fibonacci Retracement con todos los niveles (básicos + extendidos)
+
+class FibonacciRetracement {
+  constructor(price1, time1, price2, time2) {
+    this.type = 'fibonacci';
+    this.id = `fibonacci_${Date.now()}_${Math.random()}`;
+
+    this.price1 = price1;
+    this.time1 = time1;
+    this.price2 = price2;
+    this.time2 = time2;
+
+    // Todos los niveles (negativos, básicos y extendidos)
+    this.levels = [
+      // Extensiones negativas (debajo del 0%)
+      { value: -0.789, color: '#FF4444', label: '-78.9%' },
+      { value: -0.618, color: '#FF6B6B', label: '-61.8%' },
+      { value: -0.5, color: '#FF8888', label: '-50%' },
+      { value: -0.382, color: '#FFA07A', label: '-38.2%' },
+      { value: -0.236, color: '#FFB84D', label: '-23.6%' },
+
+      // Nivel base (Click 2)
+      { value: 0, color: '#EF4444', label: '0%' },
+
+      // Retracements (entre 0% y 100%)
+      { value: 0.27, color: '#F59E0B', label: '27%' },
+      { value: 0.618, color: '#8B5CF6', label: '61.8%' },
+
+      // Nivel del Click 1 (100%, con precio)
+      { value: 1, color: '#666666', label: '100%' },
+
+      // Extensiones positivas (más allá del Click 1)
+      { value: 1.618, color: '#14B8A6', label: '161.8%' },
+      { value: 2.414, color: '#06B6D4', label: '241.4%' },
+      { value: 4.618, color: '#A855F7', label: '461.8%' }
+    ];
+
+    this.isDragging = false;
+    this.isResizing = false;
+    this.dragHandle = null;
+    this.dragStartX = 0;
+    this.dragStartY = 0;
+    this.dragStartPrice1 = 0;
+    this.dragStartTime1 = 0;
+    this.dragStartPrice2 = 0;
+    this.dragStartTime2 = 0;
+  }
+
+  setEnd(price, time) {
+    this.price2 = price;
+    this.time2 = time;
+  }
+
+  hitTest(x, y, scaleConverter, tolerance = 15) {
+    const x1 = scaleConverter.timeToX(this.time1);
+    const x2 = scaleConverter.timeToX(this.time2);
+
+    if (!x1 || !x2) return false;
+
+    // Usar misma fórmula que render
+    const priceRange = Math.abs(this.price2 - this.price1);
+    const direction = Math.sign(this.price2 - this.price1);
+    const minX = Math.min(x1, x2);
+    const maxX = Math.max(x1, x2);
+
+    // Verificar si está dentro del rango horizontal
+    if (x < minX - tolerance || x > maxX + tolerance) return false;
+
+    // Verificar si está cerca de algún nivel
+    for (const level of this.levels) {
+      const price = this.price2 + (direction * priceRange * level.value);
+      const yLevel = scaleConverter.priceToY(price);
+
+      if (Math.abs(y - yLevel) <= tolerance) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  hitTestHandle(x, y, scaleConverter, handleRadius = 8) {
+    const x1 = scaleConverter.timeToX(this.time1);
+    const y1 = scaleConverter.priceToY(this.price1);
+    const x2 = scaleConverter.timeToX(this.time2);
+    const y2 = scaleConverter.priceToY(this.price2);
+
+    if (!x1 || !x2) return null;
+
+    const dist1 = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
+    if (dist1 <= handleRadius) return 'start';
+
+    const dist2 = Math.sqrt((x - x2) ** 2 + (y - y2) ** 2);
+    if (dist2 <= handleRadius) return 'end';
+
+    return null;
+  }
+
+  startDrag(x, y, scaleConverter) {
+    this.isDragging = true;
+    this.dragStartX = x;
+    this.dragStartY = y;
+    this.dragStartPrice1 = this.price1;
+    this.dragStartTime1 = this.time1;
+    this.dragStartPrice2 = this.price2;
+    this.dragStartTime2 = this.time2;
+  }
+
+  startResize(handle, x, y, scaleConverter) {
+    this.isResizing = true;
+    this.dragHandle = handle;
+    this.dragStartX = x;
+    this.dragStartY = y;
+    this.dragStartPrice1 = this.price1;
+    this.dragStartTime1 = this.time1;
+    this.dragStartPrice2 = this.price2;
+    this.dragStartTime2 = this.time2;
+  }
+
+  updateDrag(x, y, scaleConverter) {
+    if (this.isDragging) {
+      const deltaPrice = scaleConverter.yToPrice(y) - scaleConverter.yToPrice(this.dragStartY);
+      const currentTime = scaleConverter.xToTime(x);
+      const startTime = scaleConverter.xToTime(this.dragStartX);
+
+      if (!currentTime || !startTime) return;
+
+      const deltaTime = currentTime - startTime;
+
+      this.price1 = this.dragStartPrice1 + deltaPrice;
+      this.price2 = this.dragStartPrice2 + deltaPrice;
+      this.time1 = this.dragStartTime1 + deltaTime;
+      this.time2 = this.dragStartTime2 + deltaTime;
+    } else if (this.isResizing) {
+      const newPrice = scaleConverter.yToPrice(y);
+      const newTime = scaleConverter.xToTime(x);
+
+      if (!newTime) return;
+
+      if (this.dragHandle === 'start') {
+        this.price1 = newPrice;
+        this.time1 = newTime;
+      } else if (this.dragHandle === 'end') {
+        this.price2 = newPrice;
+        this.time2 = newTime;
+      }
+    }
+  }
+
+  endDrag() {
+    this.isDragging = false;
+    this.isResizing = false;
+    this.dragHandle = null;
+  }
+
+  render(ctx, scaleConverter, isSelected = false, isHovered = false, isPreview = false) {
+    const x1 = scaleConverter.timeToX(this.time1);
+    const y1 = scaleConverter.priceToY(this.price1);
+    const x2 = scaleConverter.timeToX(this.time2);
+    const y2 = scaleConverter.priceToY(this.price2);
+
+    if (!x1 || !x2) return;
+
+    ctx.save();
+
+    // Fórmula correcta: Click 2 es el 0% de referencia
+    const priceRange = Math.abs(this.price2 - this.price1);
+    const direction = Math.sign(this.price2 - this.price1);
+
+    const xStart = Math.min(x1, x2);
+    const xEnd = Math.max(x1, x2);
+
+    // Renderizar niveles
+    this.levels.forEach((level, idx) => {
+      // Click 2 + (dirección hacia Click 1 * rango * nivel)
+      const price = this.price2 + (direction * priceRange * level.value);
+      const y = scaleConverter.priceToY(price);
+
+      // Línea horizontal
+      ctx.strokeStyle = isPreview ? `${level.color}80` : level.color;
+      ctx.lineWidth = isSelected && idx === 4 ? 2 : 1; // 61.8% más grueso si está seleccionado
+      ctx.setLineDash([5, 3]);
+
+      ctx.beginPath();
+      ctx.moveTo(xStart, y);
+      ctx.lineTo(xEnd, y);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      // Label
+      ctx.fillStyle = level.color;
+      ctx.font = 'bold 11px Arial';
+      // Si level.label está vacío (nivel 1.0 = click 1), solo mostrar precio
+      const labelText = level.label ? `${level.label} (${price.toFixed(2)})` : `${price.toFixed(2)}`;
+      ctx.fillText(labelText, xEnd + 5, y + 4);
+
+      // Zona sombreada entre niveles
+      if (idx > 0 && !isPreview) {
+        const prevLevel = this.levels[idx - 1];
+        const prevPrice = this.price2 + (direction * priceRange * prevLevel.value);
+        const prevY = scaleConverter.priceToY(prevPrice);
+
+        ctx.fillStyle = `${level.color}15`; // 15 = muy transparente
+        ctx.fillRect(xStart, prevY, xEnd - xStart, y - prevY);
+      }
+    });
+
+    // Flecha indicando dirección
+    this.renderArrow(ctx, x1, y1, x2, y2, isPreview);
+
+    // Precio del primer click (sin porcentaje, solo valor)
+    if (!isPreview) {
+      ctx.fillStyle = '#888888';
+      ctx.font = 'bold 12px Arial';
+      ctx.fillText(`${this.price1.toFixed(2)}`, x1 + 5, y1 - 5);
+    }
+
+    // Handles
+    if (isSelected && !isPreview) {
+      this.renderHandles(ctx, x1, y1, x2, y2);
+    }
+
+    // Efecto hover
+    if (isHovered && !isSelected && !isPreview) {
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(xStart, Math.min(y1, y2), xEnd - xStart, Math.abs(y2 - y1));
+    }
+
+    ctx.restore();
+  }
+
+  renderArrow(ctx, x1, y1, x2, y2, isPreview) {
+    const arrowColor = isPreview ? 'rgba(100, 100, 100, 0.5)' : '#666666';
+
+    ctx.strokeStyle = arrowColor;
+    ctx.fillStyle = arrowColor;
+    ctx.lineWidth = 2;
+
+    // Línea vertical
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1, y2);
+    ctx.stroke();
+
+    // Punta de flecha
+    const arrowSize = 8;
+    const direction = y2 > y1 ? 1 : -1; // Hacia abajo o arriba
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y2);
+    ctx.lineTo(x1 - arrowSize / 2, y2 - arrowSize * direction);
+    ctx.lineTo(x1 + arrowSize / 2, y2 - arrowSize * direction);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  renderHandles(ctx, x1, y1, x2, y2) {
+    const handles = [
+      { x: x1, y: y1 },
+      { x: x2, y: y2 }
+    ];
+
+    handles.forEach(handle => {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#3B82F6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(handle.x, handle.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#3B82F6';
+      ctx.beginPath();
+      ctx.arc(handle.x, handle.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  serialize() {
+    return {
+      type: this.type,
+      id: this.id,
+      price1: this.price1,
+      time1: this.time1,
+      price2: this.price2,
+      time2: this.time2
+    };
+  }
+
+  static deserialize(data) {
+    const fib = new FibonacciRetracement(data.price1, data.time1, data.price2, data.time2);
+    fib.id = data.id;
+    return fib;
+  }
+}
+
+export default FibonacciRetracement;

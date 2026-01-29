@@ -1,0 +1,1164 @@
+import React, { useEffect, useRef, useState } from 'react';
+// import * as fabric from 'fabric'; // TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
+import OpenInterestIndicator from '../indicators/OpenInterestIndicator';
+
+const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlaying, timeController, orderManager }) => {
+  const chartCanvasRef = useRef(null);
+  const drawingCanvasRef = useRef(null);
+  const containerRef = useRef(null);
+  const openInterestIndicatorRef = useRef(null);
+
+  const [fabricCanvas, setFabricCanvas] = useState(null);
+  const [drawingTool, setDrawingTool] = useState('none'); // 'none', 'line', 'rect', 'text'
+  const [visibleCandles, setVisibleCandles] = useState([]);
+  const [chartDimensions, setChartDimensions] = useState({ width: 0, height: 0 });
+  const [orders, setOrders] = useState([]);
+
+  // Estado de zoom y pan
+  const [scaleX, setScaleX] = useState(1); // Zoom horizontal
+  const [scaleY, setScaleY] = useState(1); // Zoom vertical (precio)
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [manualPan, setManualPan] = useState(false); // Usuario movió manualmente
+  const [followMode, setFollowMode] = useState(true); // Seguir precio actual automáticamente
+
+  // Ref para evitar que useEffect recalcule offsetX durante zoom manual
+  const isZoomingRef = useRef(false);
+
+  // Estado para controlar Open Interest
+  const [showOpenInterest, setShowOpenInterest] = useState(true);
+
+  // Configuración de visualización
+  const CANDLE_WIDTH = 8; // Ancho fijo por vela
+  const CANDLE_SPACING = 2; // Espacio entre velas
+
+  // CRÍTICO: Mostrar contexto histórico completo antes de currentTime
+  // Esto permite que el usuario vea todo el historial de 3 años
+  // - TimeController.startTime = inicio del historial completo
+  // - TimeController.simulationStartTime = donde empieza la simulación
+  // - TimeController.currentTime = posición actual (inicia en simulationStartTime)
+  // - El chart muestra TODAS las velas antes de currentTime para contexto completo
+  const VISIBLE_HISTORY = Infinity; // Mostrar TODAS las velas históricas para contexto completo
+
+  /**
+   * Ir a la última vela - resetea el paneo manual y reactiva auto-scroll
+   */
+  const goToLastCandle = () => {
+    setManualPan(false); // Reactivar auto-scroll
+    setFollowMode(true); // Reactivar seguimiento automático
+    setScaleX(1); // Resetear zoom horizontal
+    setScaleY(1); // Resetear zoom vertical
+    setOffsetY(0); // Resetear offset vertical
+    console.log('[BacktestingChart] Navegando a última vela + Follow activado');
+  };
+
+  /**
+   * Actualizar órdenes cuando cambia el orderManager
+   */
+  useEffect(() => {
+    if (!orderManager) return;
+
+    const updateOrders = () => {
+      setOrders(orderManager.getAllOrders());
+    };
+
+    updateOrders();
+    const interval = setInterval(updateOrders, 1000);
+
+    return () => clearInterval(interval);
+  }, [orderManager]);
+
+  /**
+   * Inicialización del Fabric.js canvas
+   * TEMPORALMENTE DESHABILITADO - Fabric.js tiene issues con Vite
+   */
+  useEffect(() => {
+    // TODO: Re-habilitar cuando se solucione el problema de Fabric.js con Vite
+    console.log('[BacktestingChart] Drawing tools disabled - Fabric.js compatibility issue');
+  }, []);
+
+  /**
+   * 🎯 NUEVO: Inicializar indicador Open Interest
+   */
+  useEffect(() => {
+    if (!marketData || !symbol || !timeframe) {
+      console.log('[BacktestingChart] ⏭️ Saltando inicialización OI (sin datos o símbolo)');
+      return;
+    }
+
+    // 🎯 FIX: Acceder a los datos OI específicos del timeframe activo
+    const timeframeData = marketData.timeframes?.[timeframe];
+    const oiData = timeframeData?.open_interest || [];
+
+    console.log('[BacktestingChart] 🔍 Verificando datos de Open Interest:', {
+      timeframe,
+      hasTimeframeData: !!timeframeData,
+      oiLength: oiData.length,
+      timeframesAvailable: marketData.timeframes ? Object.keys(marketData.timeframes) : []
+    });
+
+    // Crear instancia del indicador si no existe
+    if (!openInterestIndicatorRef.current) {
+      const indicator = new OpenInterestIndicator(symbol, timeframe, 1095); // 3 años
+      indicator.enabled = true;
+      indicator.mode = "histogram"; // Modo por defecto
+      openInterestIndicatorRef.current = indicator;
+      console.log('[BacktestingChart] ✅ OpenInterestIndicator creado para', timeframe);
+    }
+
+    // 🎯 FIX: Cargar datos del timeframe específico
+    if (oiData.length > 0) {
+      console.log(`[BacktestingChart] 📊 Cargando datos OI para ${timeframe}:`, {
+        count: oiData.length,
+        first: oiData[0],
+        last: oiData[oiData.length - 1]
+      });
+
+      const success = openInterestIndicatorRef.current.loadFromData(oiData);
+      if (success) {
+        console.log(`[BacktestingChart] ✅ Open Interest data loaded successfully for ${timeframe}`);
+      } else {
+        console.error(`[BacktestingChart] ❌ Failed to load Open Interest data for ${timeframe}`);
+      }
+    } else {
+      console.warn(`[BacktestingChart] ⚠️ No Open Interest data for ${timeframe}:`, {
+        hasTimeframeData: !!timeframeData,
+        timeframeKeys: timeframeData ? Object.keys(timeframeData) : []
+      });
+
+      // Limpiar datos del indicador si no hay datos para este timeframe
+      if (openInterestIndicatorRef.current) {
+        openInterestIndicatorRef.current.data = [];
+      }
+    }
+  }, [marketData, symbol, timeframe]);
+
+  /**
+   * Ajustar tamaño del canvas al contenedor
+   */
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current && chartCanvasRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+
+        // Actualizar canvas de chart
+        chartCanvasRef.current.width = width;
+        chartCanvasRef.current.height = height;
+
+        setChartDimensions({ width, height });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  /**
+   * Actualizar velas visibles según currentTime
+   * IMPORTANTE: Muestra TODO el historial desde el inicio hasta currentTime
+   * - VISIBLE_HISTORY = Infinity garantiza que se muestren TODAS las velas históricas
+   * - currentTime inicia en simulationStartTime (la fecha donde empieza la simulación)
+   * - Al dar play, currentTime avanza desde simulationStartTime hacia adelante
+   * - TODAS las velas anteriores a simulationStartTime permanecen visibles para contexto
+   * - Esto permite ver el historial completo sin importar donde empiece la simulación
+   */
+  useEffect(() => {
+    if (!marketData) return;
+
+    const timeframeData = marketData.timeframes[timeframe];
+    if (!timeframeData) return;
+
+    // Si no hay currentTime, mostrar todas las velas disponibles
+    if (!currentTime) {
+      setVisibleCandles({
+        main: timeframeData.main,
+        currentSubdivisions: [],
+        isFormingNewCandle: false,
+        currentTimeMarker: null
+      });
+      return;
+    }
+
+    // Encontrar el índice de la última vela que no excede currentTime
+    const currentIndex = timeframeData.main.findIndex(candle => candle.timestamp > currentTime);
+    const lastVisibleIndex = currentIndex === -1 ? timeframeData.main.length : currentIndex;
+
+    // Calcular índice de inicio (incluir historial previo)
+    // Con VISIBLE_HISTORY = Infinity, startIndex siempre será 0, mostrando TODO el historial
+    const startIndex = Math.max(0, lastVisibleIndex - VISIBLE_HISTORY);
+
+    // Obtener velas desde el inicio del historial (startIndex = 0) hasta lastVisibleIndex
+    // Esto garantiza que se vea todo el contexto histórico antes de la fecha de inicio
+    const candles = timeframeData.main.slice(startIndex, lastVisibleIndex);
+
+    // DEBUG: Mostrar información sobre las velas visibles
+    console.log('[BacktestingChart] Velas visibles:');
+    console.log(`  - Total de velas en datos: ${timeframeData.main.length}`);
+    console.log(`  - currentTime: ${new Date(currentTime).toISOString()}`);
+    console.log(`  - lastVisibleIndex: ${lastVisibleIndex}`);
+    console.log(`  - startIndex: ${startIndex}`);
+    console.log(`  - Velas a mostrar: ${candles.length}`);
+    if (candles.length > 0) {
+      console.log(`  - Primera vela: ${new Date(candles[0].timestamp).toISOString()}`);
+      console.log(`  - Última vela: ${new Date(candles[candles.length - 1].timestamp).toISOString()}`);
+    }
+
+    // Obtener subdivisiones de la última vela en progreso
+    const lastCandleTime = candles.length > 0 ? candles[candles.length - 1].timestamp : 0;
+
+    // Calcular duración del timeframe en ms
+    const timeframeMinutes = {
+      "15m": 15,
+      "1h": 60,
+      "4h": 240
+    };
+    const timeframeDuration = (timeframeMinutes[timeframe] || 15) * 60 * 1000;
+    const nextCandleTime = lastCandleTime + timeframeDuration;
+
+    // Si currentTime está entre lastCandleTime y nextCandleTime, mostrar subdivisiones
+    if (currentTime > lastCandleTime && currentTime < nextCandleTime) {
+      const subdivisions = timeframeData.subdivisions.filter(
+        sub => sub.timestamp > lastCandleTime && sub.timestamp <= currentTime
+      );
+
+      setVisibleCandles({
+        main: candles,
+        currentSubdivisions: subdivisions,
+        isFormingNewCandle: true,
+        currentTimeMarker: currentTime
+      });
+    } else {
+      setVisibleCandles({
+        main: candles,
+        currentSubdivisions: [],
+        isFormingNewCandle: false,
+        currentTimeMarker: currentTime
+      });
+    }
+
+    // Auto-scroll: SOLO si followMode está activo
+    // followMode se desactiva cuando el usuario hace paneo manual
+    const shouldAutoScroll = chartDimensions.width > 0 && candles.length > 0 && followMode && isPlaying;
+
+    // CRÍTICO: Si estamos haciendo zoom manual, NO recalcular offsetX
+    if (isZoomingRef.current) {
+      console.log('[BacktestingChart] Saltando recalculo de offsetX durante zoom manual');
+      isZoomingRef.current = false; // Resetear para el próximo render
+      return;
+    }
+
+    if (shouldAutoScroll) {
+      const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+      const maxVisibleCandles = Math.floor((chartDimensions.width - 100) / totalCandleWidth);
+
+      // NUEVO: Al inicio (no reproduciendo), ajustar scaleX para mostrar al menos 200 velas
+      if (!isPlaying && scaleX === 1 && candles.length >= 200) {
+        // Calcular el scaleX necesario para mostrar 200 velas
+        const targetVisibleCandles = 200;
+        const availableWidth = chartDimensions.width - 100;
+        const requiredCandleWidth = availableWidth / targetVisibleCandles;
+        const baseCandleWidth = CANDLE_WIDTH + CANDLE_SPACING;
+        const newScaleX = Math.max(0.1, Math.min(1, requiredCandleWidth / baseCandleWidth));
+
+        console.log('[BacktestingChart] Ajustando zoom inicial para mostrar 200 velas:');
+        console.log(`  - scaleX ajustado: ${newScaleX.toFixed(3)} (era 1.0)`);
+        console.log(`  - Velas visibles estimadas: ${Math.floor(availableWidth / (baseCandleWidth * newScaleX))}`);
+
+        setScaleX(newScaleX);
+        return; // Esperar a que se actualice scaleX
+      }
+
+      if (candles.length > maxVisibleCandles) {
+        // Calcular cuántas velas hay antes de currentTime
+        // Esto nos permite posicionar el chart para mostrar contexto
+        const candlesBeforeCurrent = candles.filter(c => c.timestamp < currentTime).length;
+
+        // Si estamos al inicio de la simulación (no reproduciendo), mostrar contexto histórico amplio
+        // Mostrar las velas del historial previo + la posición actual
+        if (!isPlaying) {
+          // Mostrar el 70% del espacio disponible para contexto histórico antes de currentTime
+          // Esto permite ver suficiente historia sin perder la posición actual
+          const contextCandles = Math.min(candlesBeforeCurrent, Math.floor(maxVisibleCandles * 0.7));
+          const startCandle = Math.max(0, candlesBeforeCurrent - contextCandles);
+          const newOffsetX = -startCandle * totalCandleWidth;
+          setOffsetX(newOffsetX);
+          console.log('[BacktestingChart] Posicionando chart con contexto histórico:');
+          console.log(`  - maxVisibleCandles: ${maxVisibleCandles}`);
+          console.log(`  - candlesBeforeCurrent: ${candlesBeforeCurrent}`);
+          console.log(`  - Mostrando desde vela: ${startCandle} (contexto: ${contextCandles} velas)`);
+          console.log(`  - currentTime: ${new Date(currentTime).toISOString()}`);
+        } else {
+          // Durante reproducción: Mantener la última vela visible con espacio a la derecha
+          // Queremos que la última vela esté en el 75% del ancho (dejando 25% de espacio vacío)
+
+          const targetPosition = chartWidth * 0.75; // Posición objetivo (75% del ancho desde la izquierda)
+          const lastCandleIndex = candles.length - 1; // Índice de la última vela
+
+          // Calcular offsetX para que la última vela esté en targetPosition
+          // Fórmula: targetPosition = margin.left + lastCandleIndex * totalCandleWidth + offsetX
+          // Despejando: offsetX = targetPosition - margin.left - lastCandleIndex * totalCandleWidth
+          const newOffsetX = targetPosition - lastCandleIndex * totalCandleWidth;
+
+          setOffsetX(newOffsetX);
+          console.log('[BacktestingChart] 📍 Auto-scroll durante reproducción:', {
+            totalCandles: candles.length,
+            maxVisible: maxVisibleCandles,
+            lastCandleIndex,
+            targetPosition: targetPosition.toFixed(1),
+            offsetX: newOffsetX.toFixed(1),
+            chartWidth
+          });
+        }
+      } else {
+        // Si hay pocas velas, centrarlas
+        const centerOffset = (chartDimensions.width - (candles.length * totalCandleWidth)) / 2;
+        setOffsetX(Math.max(0, centerOffset));
+      }
+    }
+  }, [currentTime, marketData, timeframe, chartDimensions.width, isPlaying, manualPan, scaleX]);
+
+  /**
+   * Renderizar velas en el canvas
+   */
+  useEffect(() => {
+    if (!chartCanvasRef.current || !visibleCandles.main || chartDimensions.width === 0) return;
+
+    const canvas = chartCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const { width, height } = chartDimensions;
+
+    // Limpiar canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Dibujar fondo claro
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Calcular dimensiones del área de chart
+    // Si Open Interest está visible, reservar espacio para él
+    const oiHeight = showOpenInterest ? 150 : 0;
+    const margin = { top: 20, right: 80, bottom: 40 + oiHeight + 10, left: 10 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+
+    if (visibleCandles.main.length === 0) {
+      // Mostrar mensaje si no hay datos
+      ctx.fillStyle = '#666';
+      ctx.font = '14px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('No hay datos para mostrar', width / 2, height / 2);
+      return;
+    }
+
+    // Calcular escala de precios con padding (5% arriba y abajo)
+    // ENFOQUE SIMPLE: Ajustar a las velas VISIBLES EN PANTALLA (no todas las disponibles)
+    // Esto muestra los precios a escala apropiada sin compresión
+
+    // Determinar qué velas están realmente visibles en el viewport horizontal
+    const totalCandleWidthCalc = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+
+    // Protección: Si el ancho de vela es muy pequeño, usar todas las velas disponibles
+    let visibleCandlesInViewport;
+
+    if (totalCandleWidthCalc < 0.1) {
+      // Zoom out extremo - usar todas las velas disponibles
+      visibleCandlesInViewport = visibleCandles.main;
+    } else {
+      const firstVisibleIndex = Math.max(0, Math.floor(-offsetX / totalCandleWidthCalc));
+      const maxVisibleCandles = Math.ceil(chartWidth / totalCandleWidthCalc) + 10; // +10 buffer
+      const lastVisibleIndex = Math.min(visibleCandles.main.length, firstVisibleIndex + maxVisibleCandles);
+
+      // Protección: asegurar que hay velas
+      if (firstVisibleIndex >= visibleCandles.main.length || lastVisibleIndex <= firstVisibleIndex) {
+        visibleCandlesInViewport = visibleCandles.main;
+      } else {
+        visibleCandlesInViewport = visibleCandles.main.slice(firstVisibleIndex, lastVisibleIndex);
+      }
+    }
+
+    if (visibleCandlesInViewport.length === 0) {
+      // Fallback: usar todas las velas
+      visibleCandlesInViewport = visibleCandles.main;
+    }
+
+    // Calcular min/max SOLO de las velas visibles en viewport
+    let minPriceRaw = visibleCandlesInViewport[0]?.low || 0;
+    let maxPriceRaw = visibleCandlesInViewport[0]?.high || 0;
+
+    visibleCandlesInViewport.forEach(c => {
+      if (c.high > maxPriceRaw) maxPriceRaw = c.high;
+      if (c.low < minPriceRaw) minPriceRaw = c.low;
+    });
+
+    // Si hay subdivisiones, incluirlas
+    if (visibleCandles.currentSubdivisions && visibleCandles.currentSubdivisions.length > 0) {
+      visibleCandles.currentSubdivisions.forEach(sub => {
+        if (sub.high > maxPriceRaw) maxPriceRaw = sub.high;
+        if (sub.low < minPriceRaw) minPriceRaw = sub.low;
+      });
+    }
+
+    const priceRange = maxPriceRaw - minPriceRaw;
+
+    // Protección: Si el rango es 0, usar un rango mínimo
+    const effectivePriceRange = priceRange > 0 ? priceRange : maxPriceRaw * 0.01;
+    const padding = effectivePriceRange * 0.05; // 5% padding arriba y abajo
+
+    // Calcular escala con padding
+    const minPrice = minPriceRaw - padding;
+    const maxPrice = maxPriceRaw + padding;
+    const totalRange = maxPrice - minPrice;
+
+    // Aplicar zoom vertical
+    const yScale = (chartHeight / totalRange) * scaleY;
+
+    // Función para convertir precio a coordenada Y
+    const priceToY = (price) => {
+      return margin.top + (maxPrice - price) * yScale + offsetY;
+    };
+
+    // Usar ancho de vela con zoom aplicado
+    const candleWidth = CANDLE_WIDTH * scaleX;
+    const wickWidth = Math.max(1, candleWidth / 5);
+
+    // Dibujar velas principales con espaciado con zoom aplicado
+    const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+    visibleCandles.main.forEach((candle, index) => {
+      const x = margin.left + index * totalCandleWidth + offsetX;
+      const yHigh = priceToY(candle.high);
+      const yLow = priceToY(candle.low);
+      const yOpen = priceToY(candle.open);
+      const yClose = priceToY(candle.close);
+
+      const isBullish = candle.close >= candle.open;
+      const color = isBullish ? '#26a69a' : '#ef5350';
+
+      // Dibujar mecha
+      ctx.strokeStyle = color;
+      ctx.lineWidth = wickWidth;
+      ctx.beginPath();
+      ctx.moveTo(x + candleWidth / 2, yHigh);
+      ctx.lineTo(x + candleWidth / 2, yLow);
+      ctx.stroke();
+
+      // Dibujar cuerpo
+      const bodyHeight = Math.abs(yClose - yOpen);
+      const bodyY = Math.min(yOpen, yClose);
+
+      if (bodyHeight < 1) {
+        // Doji - línea horizontal
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, yClose);
+        ctx.lineTo(x + candleWidth, yClose);
+        ctx.stroke();
+      } else {
+        // Vela normal
+        ctx.fillStyle = color;
+        ctx.fillRect(x, bodyY, candleWidth - 1, bodyHeight);
+      }
+    });
+
+    // Dibujar subdivisiones de la vela en formación (si existen)
+    if (visibleCandles.isFormingNewCandle && visibleCandles.currentSubdivisions.length > 0) {
+      const startX = margin.left + visibleCandles.main.length * totalCandleWidth + offsetX;
+      const subCandleWidth = candleWidth / visibleCandles.currentSubdivisions.length;
+
+      visibleCandles.currentSubdivisions.forEach((sub, index) => {
+        const x = startX + index * subCandleWidth;
+        const yHigh = priceToY(sub.high);
+        const yLow = priceToY(sub.low);
+        const yOpen = priceToY(sub.open);
+        const yClose = priceToY(sub.close);
+
+        const isBullish = sub.close >= sub.open;
+        const color = isBullish ? '#26a69a80' : '#ef535080'; // Semi-transparente
+
+        // Dibujar mecha
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(1, wickWidth / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + subCandleWidth / 2, yHigh);
+        ctx.lineTo(x + subCandleWidth / 2, yLow);
+        ctx.stroke();
+
+        // Dibujar cuerpo
+        const bodyHeight = Math.abs(yClose - yOpen);
+        const bodyY = Math.min(yOpen, yClose);
+
+        if (bodyHeight >= 1) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x, bodyY, subCandleWidth - 1, bodyHeight);
+        }
+      });
+    }
+
+    // Dibujar escala de precios (derecha)
+    ctx.fillStyle = '#666';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'left';
+
+    const priceSteps = 8;
+    for (let i = 0; i <= priceSteps; i++) {
+      const price = minPrice + (totalRange / priceSteps) * i;
+      const y = priceToY(price);
+
+      // Línea de guía (gris claro)
+      ctx.strokeStyle = '#e0e0e0';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin.left, y);
+      ctx.lineTo(width - margin.right, y);
+      ctx.stroke();
+
+      // Etiqueta de precio
+      ctx.fillText(price.toFixed(2), width - margin.right + 5, y + 4);
+    }
+
+    // Dibujar línea de precio actual
+    if (visibleCandles.main.length > 0) {
+      const lastCandle = visibleCandles.main[visibleCandles.main.length - 1];
+      const currentPriceY = priceToY(lastCandle.close);
+
+      ctx.strokeStyle = '#ffa726';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(margin.left, currentPriceY);
+      ctx.lineTo(width - margin.right, currentPriceY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Etiqueta de precio actual
+      ctx.fillStyle = '#ffa726';
+      ctx.fillRect(width - margin.right, currentPriceY - 10, margin.right - 5, 20);
+      ctx.fillStyle = '#000';
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        lastCandle.close.toFixed(2),
+        width - margin.right / 2,
+        currentPriceY + 4
+      );
+    }
+
+    // Dibujar órdenes (líneas de entrada, SL, TP)
+    if (orders && orders.length > 0) {
+      orders.forEach(order => {
+        // Con el nuevo sistema de zoom/paneo, priceToY maneja cualquier precio
+        // No necesitamos validar si está en rango visible
+
+        const isOpen = order.status === 'open';
+        const isClosed = order.status === 'closed';
+        const isLong = order.side === 'long';
+
+        // Línea de entrada
+        const entryY = priceToY(order.entryPrice);
+        ctx.strokeStyle = isOpen ? (isLong ? '#26a69a' : '#ef5350') : '#999';
+        ctx.lineWidth = isOpen ? 2 : 1;
+        ctx.setLineDash(isOpen ? [] : [3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, entryY);
+        ctx.lineTo(width - margin.right, entryY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Etiqueta de entrada
+        ctx.fillStyle = isOpen ? (isLong ? '#26a69a' : '#ef5350') : '#999';
+        ctx.fillRect(margin.left, entryY - 8, 30, 16);
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`#${order.id}`, margin.left + 2, entryY + 3);
+
+        // Dibujar Stop Loss si existe
+        if (order.stopLoss) {
+          const slY = priceToY(order.stopLoss);
+          ctx.strokeStyle = '#ef5350';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 4]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, slY);
+          ctx.lineTo(width - margin.right, slY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Etiqueta SL
+          ctx.fillStyle = '#ef5350';
+          ctx.fillRect(margin.left, slY - 8, 20, 16);
+          ctx.fillStyle = '#fff';
+          ctx.font = '9px monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText('SL', margin.left + 2, slY + 3);
+        }
+
+        // Dibujar Take Profit si existe
+        if (order.takeProfit) {
+          const tpY = priceToY(order.takeProfit);
+          ctx.strokeStyle = '#26a69a';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 4]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, tpY);
+          ctx.lineTo(width - margin.right, tpY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Etiqueta TP
+          ctx.fillStyle = '#26a69a';
+          ctx.fillRect(margin.left, tpY - 8, 20, 16);
+          ctx.fillStyle = '#fff';
+          ctx.font = '9px monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText('TP', margin.left + 2, tpY + 3);
+        }
+
+        // Dibujar precio de salida si la orden está cerrada
+        if (isClosed && order.exitPrice && order.exitPrice >= minPrice && order.exitPrice <= maxPrice) {
+          const exitY = priceToY(order.exitPrice);
+          const isProfitable = order.pnl > 0;
+
+          ctx.strokeStyle = isProfitable ? '#26a69a80' : '#ef535080';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([1, 2]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, exitY);
+          ctx.lineTo(width - margin.right, exitY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      });
+    }
+
+    // Dibujar indicador de fecha/tiempo actual (en la parte superior del gráfico)
+    if (visibleCandles.currentTimeMarker) {
+      const dateStr = new Date(visibleCandles.currentTimeMarker).toLocaleString('es-CO', {
+        timeZone: 'America/Bogota',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+
+      // Fondo semi-transparente
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillRect(margin.left + 10, margin.top + 10, 200, 30);
+
+      // Texto de fecha/hora
+      ctx.fillStyle = '#ffa726';
+      ctx.font = 'bold 13px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(dateStr, margin.left + 18, margin.top + 28);
+    }
+
+    // Dibujar rótulos de tiempo en el eje horizontal
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'center';
+
+    // Calcular cuántas etiquetas mostrar basado en el ancho disponible
+    const timeLabelsCount = Math.min(10, Math.floor(chartWidth / 100)); // Una etiqueta cada ~100px
+    const candleStep = Math.max(1, Math.floor(visibleCandles.main.length / timeLabelsCount));
+
+    for (let i = 0; i < visibleCandles.main.length; i += candleStep) {
+      const candle = visibleCandles.main[i];
+      const x = margin.left + i * totalCandleWidth + offsetX + candleWidth / 2;
+
+      // Solo dibujar si está visible en pantalla
+      if (x >= margin.left && x <= width - margin.right) {
+        const date = new Date(candle.timestamp);
+
+        // Formato más compacto: DD/MM HH:mm
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const timeStr = `${day}/${month} ${hours}:${minutes}`;
+
+        // Rotar texto para que quepa mejor
+        ctx.save();
+        ctx.translate(x, height - margin.bottom + 18);
+        ctx.rotate(-Math.PI / 4); // Rotar 45 grados
+        ctx.fillStyle = '#444';
+        ctx.fillText(timeStr, 0, 0);
+        ctx.restore();
+
+        // Línea de marca más visible
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, height - margin.bottom);
+        ctx.lineTo(x, height - margin.bottom + 8);
+        ctx.stroke();
+
+        // Línea vertical de guía (opcional, más sutil)
+        ctx.strokeStyle = '#f5f5f5';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, margin.top);
+        ctx.lineTo(x, height - margin.bottom);
+        ctx.stroke();
+      }
+    }
+
+    // 🎯 NUEVO: Renderizar Open Interest indicador (debajo del chart principal)
+    if (showOpenInterest && openInterestIndicatorRef.current && visibleCandles.main.length > 0) {
+      // Posicionar justo debajo del chart principal, arriba del eje horizontal
+      const oiIndicatorHeight = 150;
+      const oiY = height - 40 - oiIndicatorHeight - 10; // height - margen bottom original - altura OI - espaciado
+
+      const oiBounds = {
+        x: margin.left,
+        y: oiY,
+        width: chartWidth,
+        height: oiIndicatorHeight
+      };
+
+      console.log('[BacktestingChart] Rendering Open Interest:', {
+        hasIndicator: !!openInterestIndicatorRef.current,
+        hasData: openInterestIndicatorRef.current?.data?.length || 0,
+        bounds: oiBounds,
+        candlesCount: visibleCandles.main.length
+      });
+
+      try {
+        openInterestIndicatorRef.current.render(ctx, oiBounds, visibleCandles.main);
+      } catch (error) {
+        console.error('[BacktestingChart] ❌ Error rendering Open Interest:', error);
+      }
+    }
+
+  }, [visibleCandles, chartDimensions, offsetX, offsetY, scaleX, scaleY, orders, showOpenInterest]);
+
+  /**
+   * Herramientas de dibujo con Fabric.js
+   */
+  const handleDrawingToolChange = (tool) => {
+    setDrawingTool(tool);
+
+    if (!fabricCanvas) return;
+
+    // Resetear modo de dibujo
+    fabricCanvas.isDrawingMode = false;
+    fabricCanvas.selection = tool === 'none';
+
+    console.log(`[BacktestingChart] Herramienta de dibujo: ${tool}`);
+  };
+
+  /**
+   * Agregar línea
+   */
+  const addLine = () => {
+    if (!fabricCanvas) return;
+
+    const line = new fabric.Line([50, 100, 200, 100], {
+      stroke: '#ff6b6b',
+      strokeWidth: 2,
+      selectable: true,
+      evented: true
+    });
+
+    fabricCanvas.add(line);
+    fabricCanvas.setActiveObject(line);
+    fabricCanvas.renderAll();
+
+    saveDrawingsToLocalStorage();
+  };
+
+  /**
+   * Agregar rectángulo (caja de TP/SL)
+   */
+  const addRectangle = () => {
+    if (!fabricCanvas) return;
+
+    const rect = new fabric.Rect({
+      left: 100,
+      top: 100,
+      fill: 'rgba(76, 175, 80, 0.2)',
+      stroke: '#4caf50',
+      strokeWidth: 2,
+      width: 150,
+      height: 80,
+      selectable: true,
+      evented: true
+    });
+
+    fabricCanvas.add(rect);
+    fabricCanvas.setActiveObject(rect);
+    fabricCanvas.renderAll();
+
+    saveDrawingsToLocalStorage();
+  };
+
+  /**
+   * Agregar texto
+   */
+  const addText = () => {
+    if (!fabricCanvas) return;
+
+    const text = new fabric.IText('Texto', {
+      left: 100,
+      top: 100,
+      fontSize: 16,
+      fill: '#fff',
+      fontFamily: 'monospace',
+      selectable: true,
+      evented: true
+    });
+
+    fabricCanvas.add(text);
+    fabricCanvas.setActiveObject(text);
+    fabricCanvas.renderAll();
+
+    saveDrawingsToLocalStorage();
+  };
+
+  /**
+   * Borrar todos los dibujos
+   */
+  const clearAllDrawings = () => {
+    if (!fabricCanvas) return;
+
+    if (confirm('¿Seguro que quieres borrar todos los dibujos?')) {
+      fabricCanvas.clear();
+      fabricCanvas.renderAll();
+      saveDrawingsToLocalStorage();
+    }
+  };
+
+  /**
+   * Guardar dibujos en localStorage
+   */
+  const saveDrawingsToLocalStorage = () => {
+    if (!fabricCanvas) return;
+
+    const json = JSON.stringify(fabricCanvas.toJSON());
+    localStorage.setItem(`backtesting_drawings_${symbol}_${timeframe}`, json);
+
+    console.log('[BacktestingChart] Dibujos guardados en localStorage');
+  };
+
+  /**
+   * Cargar dibujos desde localStorage
+   */
+  const loadDrawingsFromLocalStorage = () => {
+    if (!fabricCanvas) return;
+
+    const savedData = localStorage.getItem(`backtesting_drawings_${symbol}_${timeframe}`);
+
+    if (savedData) {
+      fabricCanvas.loadFromJSON(savedData, () => {
+        fabricCanvas.renderAll();
+        console.log('[BacktestingChart] Dibujos cargados desde localStorage');
+      });
+    }
+  };
+
+  /**
+   * Cargar dibujos al montar
+   */
+  useEffect(() => {
+    if (fabricCanvas && symbol && timeframe) {
+      loadDrawingsFromLocalStorage();
+    }
+  }, [fabricCanvas, symbol, timeframe]);
+
+  /**
+   * Event handlers para paneo (drag) y zoom (wheel)
+   */
+  useEffect(() => {
+    const canvas = chartCanvasRef.current;
+    if (!canvas) return;
+
+    // Mouse down - iniciar drag
+    const handleMouseDown = (e) => {
+      console.log('[BacktestingChart] 🖱️ Mouse down detectado', {
+        isPlaying,
+        hasTimeController: !!timeController
+      });
+
+      // PAUSAR automáticamente si está reproduciéndose
+      if (isPlaying && timeController) {
+        console.log('[BacktestingChart] ⏸️ Pausando reproducción por drag del usuario');
+        try {
+          timeController.pause();
+          console.log('[BacktestingChart] ✅ Pausa ejecutada exitosamente');
+        } catch (error) {
+          console.error('[BacktestingChart] ❌ Error al pausar:', error);
+        }
+      } else {
+        console.log('[BacktestingChart] ℹ️ No se pausa:', { isPlaying, hasController: !!timeController });
+      }
+
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
+      setFollowMode(false); // Desactivar seguimiento cuando se hace drag
+    };
+
+    // Mouse move - arrastrar (horizontal y vertical con límites)
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+
+      let newOffsetX = e.clientX - dragStart.x;
+      let newOffsetY = e.clientY - dragStart.y;
+
+      // Limitar el paneo horizontal para mantener las velas dentro del canvas
+      const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+      const chartWidth = canvas.width - margin.left - margin.right;
+      const totalCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * scaleX;
+      const totalWidth = visibleCandles.main.length * totalCandleWidth;
+
+      // Límite derecho: no mover más allá del inicio
+      const maxOffsetX = 0;
+      // Límite izquierdo: mostrar al menos la última vela
+      const minOffsetX = Math.min(0, -(totalWidth - chartWidth));
+
+      // Aplicar límites horizontales
+      newOffsetX = Math.max(minOffsetX, Math.min(maxOffsetX, newOffsetX));
+
+      // Paneo vertical: permitir movimiento libre (el zoom maneja la escala)
+      // El paneo vertical mueve el viewport sin cambiar la escala de precios
+
+      setOffsetX(newOffsetX);
+      setOffsetY(newOffsetY);
+      setManualPan(true); // Marcar que el usuario hizo paneo manual
+      setFollowMode(false); // Desactivar seguimiento automático
+    };
+
+    // Mouse up - terminar drag
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    // Mouse wheel - zoom vertical o horizontal según teclas modificadoras
+    const handleWheel = (e) => {
+      e.preventDefault();
+
+      // Deshabilitar wheel durante drag
+      if (isDragging) return;
+
+      if (e.ctrlKey) {
+        // Ctrl + wheel: zoom horizontal centrado en el CENTRO del canvas
+        const canvas = chartCanvasRef.current;
+        if (!canvas || !visibleCandles.main || visibleCandles.main.length === 0) return;
+
+        const margin = { top: 20, right: 80, bottom: 40, left: 10 };
+        const chartWidth = canvas.width - margin.left - margin.right;
+
+        // Calcular el centro del canvas
+        const centerX = chartWidth / 2;
+
+        const oldScaleX = scaleX;
+        const oldOffsetX = offsetX;
+        const oldCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * oldScaleX;
+
+        // Calcular qué vela está en el centro ANTES del zoom
+        // centerX = candleIndexAtCenter * oldCandleWidth + oldOffsetX
+        const candleIndexAtCenter = (centerX - oldOffsetX) / oldCandleWidth;
+
+        // Aplicar zoom
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso para que sea más notorio
+        const newScaleX = Math.max(0.1, Math.min(10, oldScaleX * zoomFactor));
+        const newCandleWidth = (CANDLE_WIDTH + CANDLE_SPACING) * newScaleX;
+
+        // Calcular nuevo offsetX para mantener la misma vela en el centro
+        // Queremos: centerX = candleIndexAtCenter * newCandleWidth + newOffsetX
+        // Despejando: newOffsetX = centerX - candleIndexAtCenter * newCandleWidth
+        const newOffsetX = centerX - candleIndexAtCenter * newCandleWidth;
+
+        console.log('[BacktestingChart] Zoom horizontal (centro del canvas):', {
+          oldScaleX: oldScaleX.toFixed(3),
+          newScaleX: newScaleX.toFixed(3),
+          candleAtCenter: candleIndexAtCenter.toFixed(1),
+          oldOffsetX: oldOffsetX.toFixed(1),
+          newOffsetX: newOffsetX.toFixed(1),
+          delta: (newOffsetX - oldOffsetX).toFixed(1)
+        });
+
+        // CRÍTICO: Marcar que estamos haciendo zoom para evitar que useEffect recalcule offsetX
+        isZoomingRef.current = true;
+
+        // Actualizar AMBOS estados
+        setManualPan(true); // Primero marcar como manual
+        setScaleX(newScaleX);
+        setOffsetX(newOffsetX);
+      } else {
+        // Wheel normal: zoom vertical (precio) - simple y directo
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05; // 5% por paso
+        setScaleY(prev => Math.max(0.1, Math.min(6, prev * zoomFactor))); // Límite: 0.1x (muy zoom out) a 6x
+      }
+    };
+
+    // Doble click - fit screen en eje vertical (precios)
+    const handleDoubleClick = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const width = rect.width;
+
+      // Verificar si el click fue en el área del eje vertical (derecha)
+      // El eje de precios está en los últimos 80px a la derecha
+      if (x > width - 80) {
+        // Resetear zoom vertical y offset vertical
+        setScaleY(1);
+        setOffsetY(0);
+        console.log('[BacktestingChart] Fit screen - zoom y paneo vertical reseteados');
+      }
+    };
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    canvas.addEventListener('dblclick', handleDoubleClick);
+
+    return () => {
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseUp);
+      canvas.removeEventListener('wheel', handleWheel);
+      canvas.removeEventListener('dblclick', handleDoubleClick);
+    };
+  }, [isDragging, dragStart, offsetX, offsetY, visibleCandles.main.length, scaleX, isPlaying, timeController]);
+
+  /**
+   * Guardar dibujos automáticamente cuando cambian
+   */
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
+    const handleObjectModified = () => {
+      saveDrawingsToLocalStorage();
+    };
+
+    fabricCanvas.on('object:modified', handleObjectModified);
+    fabricCanvas.on('object:added', handleObjectModified);
+    fabricCanvas.on('object:removed', handleObjectModified);
+
+    return () => {
+      fabricCanvas.off('object:modified', handleObjectModified);
+      fabricCanvas.off('object:added', handleObjectModified);
+      fabricCanvas.off('object:removed', handleObjectModified);
+    };
+  }, [fabricCanvas, symbol, timeframe]);
+
+  return (
+    <div className="backtesting-chart-container">
+      {/* 🎯 Controles del chart: Última Vela, OI, Follow Mode */}
+      <div className="chart-controls" style={{
+        position: 'absolute',
+        top: '10px',
+        right: '100px',
+        zIndex: 10,
+        display: 'flex',
+        gap: '8px'
+      }}>
+        <button
+          onClick={goToLastCandle}
+          className="btn-go-to-last"
+          title="Ir a la última vela y resetear zoom"
+          style={{
+            padding: '8px 12px',
+            backgroundColor: '#2196F3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          ⏭️ Última Vela
+        </button>
+
+        <button
+          onClick={() => setShowOpenInterest(!showOpenInterest)}
+          className="btn-toggle-oi"
+          title={showOpenInterest ? "Ocultar Open Interest" : "Mostrar Open Interest"}
+          style={{
+            padding: '8px 12px',
+            backgroundColor: showOpenInterest ? '#4CAF50' : '#999',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          📊 OI
+        </button>
+
+        <button
+          onClick={() => setFollowMode(true)}
+          className="btn-follow"
+          title="Seguir precio actual automáticamente"
+          style={{
+            padding: '8px 12px',
+            backgroundColor: followMode ? '#4CAF50' : '#FF9800',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          {followMode ? '✅ Follow' : '⏸️ Follow'}
+        </button>
+      </div>
+
+      {/* DRAWING TOOLBAR TEMPORALMENTE DESHABILITADO
+      <div className="drawing-toolbar">
+        <button
+          className={drawingTool === 'none' ? 'active' : ''}
+          onClick={() => handleDrawingToolChange('none')}
+          title="Seleccionar"
+        >
+          ↖️ Seleccionar
+        </button>
+
+        <button onClick={addLine} title="Línea">
+          📏 Línea
+        </button>
+
+        <button onClick={addRectangle} title="Rectángulo (TP/SL)">
+          ⬜ Rectángulo
+        </button>
+
+        <button onClick={addText} title="Texto">
+          📝 Texto
+        </button>
+
+        <div className="toolbar-divider"></div>
+
+        <button onClick={clearAllDrawings} className="btn-danger" title="Borrar todo">
+          🗑️ Borrar Todo
+        </button>
+      </div>
+      */}
+
+      <div className="chart-wrapper" ref={containerRef}>
+        <canvas
+          ref={chartCanvasRef}
+          className={`chart-canvas ${isDragging ? 'dragging' : ''}`}
+        ></canvas>
+        {/* <canvas ref={drawingCanvasRef} className="drawing-canvas"></canvas> */}
+      </div>
+    </div>
+  );
+};
+
+export default BacktestingChart;

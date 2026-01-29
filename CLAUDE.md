@@ -27,19 +27,24 @@ Agente programador Python con experiencia en desarrollo de aplicaciones.
 
 ## VISION GENERAL DEL REPOSITORIO
 
-Este repositorio contiene **4 aplicaciones relacionadas** para trading de criptomonedas:
+Este repositorio contiene **8 aplicaciones relacionadas** para trading de criptomonedas:
 
 | Carpeta | Aplicacion | Puerto Backend | Puerto Frontend |
 |---------|------------|----------------|-----------------|
 | `1.Altagracia_Crypto_Backtester/` | Backtester de estrategias | 9000 | 5173 |
 | `2.WatchlistConIndicadores/` | Watchlist con indicadores en tiempo real | 8000 | 5173 |
 | `3.TradingBot_Python/` | Bot de trading automatizado | 5000 | 3000 |
-| `4.Analizador cripto/` | Analizador de un solo símbolo (optimizado) | 10000 | 10001 |
+| `4.Analizador cripto/` | Analizador de un solo simbolo (optimizado) | 10000 | 10001 |
+| `5.Order_flow/` | Analizador de Order Flow con Footprint | 11000 | 11001 |
+| `6.Trading_Journal/` | Diario de trading con metricas y screenshots | 12000 | 12001 |
+| `7.WatchlistDesktop/` | Watchlist version Electron (en desarrollo) | 8000 | Electron |
+| `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10000 | Electron |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
 - Backend: FastAPI + Uvicorn (Python 3.10+)
 - Data Source: Bybit Futures API (REST + WebSocket)
+- Desktop: Electron 33+ (Apps 7 y 8)
 
 ---
 
@@ -378,14 +383,14 @@ async def process_watchlist_alert(alert: dict):
 
 ## P0 - Critico
 
-1. **Codigo duplicado en indicadores**
+1. **Codigo duplicado en indicadores** ⏸️ DESCARTADO
    - Sistemas de alertas casi identicos en RejectionPatternIndicator y DoubleTopBottomIndicator
-   - Solucion: Crear `BaseIndicatorWithAlerts`
-   - **Estado:** Pendiente (indicadores deprecados, baja prioridad)
+   - **Estado:** Indicadores deprecados, no se usaran mas
 
 2. **Configuraciones duplicadas**
    - MAX_DAYS_BY_INTERVAL en backend Y frontend
    - Solucion: Endpoint API que retorne limites
+   - **Estado:** Pendiente (bajo impacto)
 
 3. **Archivos deprecated**
    - Multiples backups y versiones _1, _fixed, etc.
@@ -398,13 +403,14 @@ async def process_watchlist_alert(alert: dict):
    - Solucion: `StorageManager.js` creado con debounce y cache
    - **Implementado:** Enero 2026
 
-2. **Deteccion de patrones duplicada**
+2. **Deteccion de patrones duplicada** ⏸️ DESCARTADO
    - Frontend y backend tienen logica similar
-   - Solucion: Centralizar en backend
+   - **Estado:** DTB y Rejection estan deprecados, ya no aplica
 
 3. **Logging inconsistente**
    - Mezcla de console.log y Logger
    - Solucion: Usar siempre Logger
+   - **Estado:** Pendiente (bajo impacto)
 
 ## P2 - Medio
 
@@ -412,14 +418,22 @@ async def process_watchlist_alert(alert: dict):
    - Precarga deshabilitada, re-renders frecuentes
    - Solucion: React.memo, PollingScheduler, cache de calculos
    - **Implementado:** Enero 2026 (ver seccion OPTIMIZACIONES DE RENDIMIENTO)
+   - **Resultado:** 90% idle, JS Heap estable 32-37 MB, sin memory leaks
 
-2. **Base de datos**
+2. **Web Workers** ⏸️ DESCARTADO
+   - Calculos pesados en frontend
+   - **Estado:** No necesario - DTB/Rejection deprecados, VWAP/Swing en backend, CVD con cache
+   - **Justificacion:** 90% idle en pruebas confirma que no hay cuellos de botella
+
+3. **Base de datos**
    - Todo en JSON, no hay DB real
    - Solucion: SQLite o PostgreSQL
+   - **Estado:** Pendiente (fuera de scope actual)
 
-3. **Tests**
+4. **Tests**
    - Tests abandonados, no CI/CD
    - Solucion: Integrar en pipeline
+   - **Estado:** Pendiente (fuera de scope actual)
 
 ---
 
@@ -719,6 +733,64 @@ Para verificar el impacto:
 2. Comparar CPU y memoria antes/despues
 3. Network → verificar reutilizacion de conexiones
 4. Console → logs de `[StorageManager]` y `[PollingScheduler]`
+
+## Resultados de Pruebas (Enero 2026)
+
+### Mejoras en Sistema Operativo
+Ademas de las optimizaciones de la app, se desactivaron servicios innecesarios de Windows:
+
+| Servicio Desactivado | RAM Liberada |
+|---------------------|--------------|
+| Omen Command Center | ~833 MB |
+| Widgets de Windows | ~50-100 MB |
+| SysMain/SuperFetch | ~200-500 MB |
+| HP Telemetria | ~130 MB |
+| Windows Search (opcional) | ~100-150 MB |
+
+**Resultado:** RAM del sistema bajo de 80% a 40%, PC dejo de recalentarse.
+
+### Performance Test de la Aplicacion
+
+Prueba de 26 segundos con interacciones (dibujo, mover grafico, cambiar settings):
+
+| Metrica | Valor | Estado |
+|---------|-------|--------|
+| **Idle time** | 90% | ✅ Excelente |
+| **JS Heap** | 32.5 - 37.3 MB | ✅ Estable |
+| **DOM Nodes** | 1,373 - 1,591 | ✅ Sin crecimiento |
+| **Scripting** | 1,732 ms (6.7%) | ✅ Bajo |
+| **Rendering** | 178 ms (0.7%) | ✅ Muy bajo |
+| **CLS** | 0.02 | ✅ Excelente |
+| **INP** | 55 ms | ✅ Responsivo |
+
+### Conclusion
+
+- **90% idle** confirma que la app no consume CPU innecesariamente
+- **JS Heap estable** indica ausencia de memory leaks
+- **Respuesta UI mejorada** segun feedback del usuario
+
+## Decisiones de Arquitectura
+
+### Web Workers - NO Implementado
+
+Se evaluo implementar Web Workers para calculos pesados pero se descarto porque:
+
+1. **DTB y Rejection Patterns** estan deprecados (eran los mas pesados)
+2. **VWAP y Swing Detector** ya calculan en backend
+3. **CVD** ya tiene cache optimizado
+4. **Volume Profile** no es suficientemente pesado para justificar el esfuerzo
+
+**Conclusion:** El 90% de idle en las pruebas confirma que no hay necesidad de Web Workers.
+
+## Items Pendientes (Bajo Impacto)
+
+| Item | Impacto | Estado |
+|------|---------|--------|
+| VolumeProfile throttle en mousemove | Bajo | Pendiente |
+| Unificar logging (console.log vs Logger) | Bajo | Pendiente |
+| MAX_DAYS_BY_INTERVAL en endpoint API | Bajo | Pendiente |
+
+Estos items se pueden implementar si surge necesidad, pero no son criticos para el rendimiento actual.
 
 ---
 
@@ -2039,6 +2111,219 @@ else:
 
 ---
 
+# ZONE DETECTOR 2.0 / STRATEGY TESTER (Enero 2026)
+
+Sistema para detectar zonas de consolidación y crear estrategias de trading basadas en ellas.
+
+**Plan completo:** Ver `1.Altagracia_Crypto_Backtester/STRATEGY_TESTER_PLAN.md`
+
+## Estado Actual
+
+### Completado - Phase 1: Zone Detector
+- **Zone Detector 2.0**: 4 métodos de detección (pivot_cluster, atr_based, volume_profile, price_action)
+- **Zone Evaluator**: Métricas de calidad de zonas
+- **Zone Optimizer**: Grid search y walk-forward
+- **UI ZoneDetectorTester**: Modal con tabs Detectar/Evaluar/Comparar/Optimizar
+- **Visualización**: Zonas se renderizan en el gráfico
+- **Anti-bias**: Zonas se calculan solo con datos anteriores a fecha de playback
+
+### Completado - Phase 2: Strategy Builder (Enero 2026)
+- **Strategy Model** (`strategy_model.py`): Dataclasses para Strategy, EntryRules, Conditions, RiskManagement
+- **Strategy Store** (`strategy_store.py`): Persistencia JSON con CRUD completo
+- **Strategy Executor** (`strategy_executor.py`): Motor de backtesting con detección de zonas
+- **StrategyBuilder.jsx**: UI completa con 4 secciones (Básico, Entrada, Riesgo, Filtros)
+- **ConditionEditor.jsx**: Editor dinámico de condiciones de entrada
+- **StrategyList.jsx**: Lista de estrategias con filtro, duplicar, eliminar
+- **BacktestResults.jsx**: Visualización de resultados con métricas, trades y equity curve
+- **Templates**: 3 estrategias predefinidas (range_bounce, breakout, aggressive_scalp)
+- **Endpoints API**: CRUD + backtest + quick-backtest
+
+### En Refinamiento
+- **Zone Detector**: Las zonas detectadas son algorítmicamente correctas pero pueden no coincidir con las expectativas visuales del trader. Ajuste continuo de parámetros.
+
+## Archivos del Sistema
+
+### Backend (`1.Altagracia_Crypto_Backtester/Backtester/backend/`)
+
+| Archivo | Descripción |
+|---------|-------------|
+| `zone_detector.py` | 4 métodos de detección de zonas |
+| `zone_evaluator.py` | Evaluación de calidad de zonas |
+| `zone_optimizer.py` | Optimización de parámetros |
+| `strategy_model.py` | Dataclasses: Strategy, EntryRules, Conditions, RiskManagement |
+| `strategy_store.py` | Persistencia JSON de estrategias (CRUD) |
+| `strategy_executor.py` | Motor de backtesting con Trade, Signal, BacktestResult |
+| `main.py` (líneas 2690-3100) | Endpoints API de zonas |
+| `main.py` (líneas 3120-3490) | Endpoints API de estrategias |
+| `strategies/` | Directorio con estrategias guardadas en JSON |
+
+### Frontend (`1.Altagracia_Crypto_Backtester/Backtester/frontend/src/components/`)
+
+| Archivo | Descripción |
+|---------|-------------|
+| `ZoneDetectorTester.jsx` | Modal de testing de zonas |
+| `ZoneDetectorTester.css` | Estilos del modal |
+| `indicators/ZoneVisualizerIndicator.js` | Renderiza zonas en el gráfico |
+| `strategy/StrategyBuilder.jsx` | UI para crear/editar estrategias |
+| `strategy/StrategyList.jsx` | Lista de estrategias guardadas |
+| `strategy/ConditionEditor.jsx` | Editor de condiciones de entrada |
+| `strategy/BacktestResults.jsx` | Visualización de resultados del backtest |
+| `strategy/StrategyBuilder.css` | Estilos del Strategy Builder |
+| `strategy/BacktestResults.css` | Estilos del panel de resultados |
+| `strategy/index.js` | Exports del módulo strategy |
+
+## Endpoints API
+
+### Zone Detector
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/zones/methods` | GET | Lista métodos disponibles |
+| `/api/zones/detect` | POST | Detecta zonas con método especificado |
+| `/api/zones/evaluate` | POST | Evalúa calidad de zonas detectadas |
+| `/api/zones/compare-methods` | POST | Compara todos los métodos |
+| `/api/zones/optimize` | POST | Optimiza parámetros (grid search) |
+
+### Strategy Builder
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/strategies` | GET | Lista todas las estrategias guardadas |
+| `/api/strategies/templates` | GET | Lista templates disponibles |
+| `/api/strategies/{id}` | GET | Obtiene una estrategia por ID |
+| `/api/strategies` | POST | Crea nueva estrategia (o desde template) |
+| `/api/strategies/{id}` | PUT | Actualiza estrategia existente |
+| `/api/strategies/{id}` | DELETE | Elimina una estrategia |
+| `/api/strategies/{id}/duplicate` | POST | Duplica una estrategia |
+| `/api/strategies/validate` | POST | Valida sintaxis de estrategia |
+| `/api/strategies/{id}/backtest` | POST | Ejecuta backtest de estrategia guardada |
+| `/api/strategies/quick-backtest` | POST | Backtest sin guardar (inline strategy) |
+
+### Parámetros Comunes
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "interval": "60",
+  "days": 365,
+  "method": "pivot_cluster",
+  "end_timestamp": 1704067200000,  // Opcional: fecha límite (playback)
+  "params": {
+    "max_price_range_pct": 5.0,
+    "pivot_tolerance_pct": 0.3,
+    "pivot_min_touches": 3
+  }
+}
+```
+
+## Métodos de Detección
+
+| Método | Descripción | Mejor para |
+|--------|-------------|------------|
+| `pivot_cluster` | Agrupa pivots cercanos | Zonas de S/R tradicionales |
+| `atr_based` | Detecta baja volatilidad | Consolidaciones/rangos |
+| `volume_profile` | Identifica alto volumen | POC, VAH, VAL |
+| `price_action` | Cuenta toques a niveles | Niveles psicológicos |
+
+## Estructura de Estrategia
+
+```python
+Strategy:
+  id: str
+  name: str
+  description: str
+  zone_config:              # Config del detector de zonas
+    method: str             # pivot_cluster, atr_based, etc
+    params: dict            # Parámetros del método
+  entry:
+    trigger: str            # price_touches_zone, price_breaks_zone, etc
+    direction: str          # LONG, SHORT, BOTH
+    conditions: List[Condition]  # Condiciones adicionales
+    require_all_conditions: bool
+    confirmation_candles: int
+  risk_management:
+    sizing:
+      method: str           # fixed_risk, fixed_amount, percent_equity
+      risk_percent: float
+    stop_loss:
+      type: str             # below_zone, atr_multiple, fixed_percent
+      buffer_percent: float
+      use_trailing: bool
+    take_profit:
+      type: str             # risk_reward, opposite_zone, fixed_percent
+      risk_reward_ratio: float
+  filters:
+    max_open_trades: int
+    max_daily_trades: int
+    min_time_between_trades: int  # minutos
+    max_daily_loss_percent: float
+    min_zone_score: int
+```
+
+## Flujo de Backtest
+
+```
+1. Frontend: StrategyBuilder → handleRunBacktest()
+   ↓
+2. POST /api/strategies/quick-backtest o /{id}/backtest
+   Body: { symbol, strategy, current_time }
+   ↓
+3. Backend: Fetch candles históricos
+   ↓
+4. Zone Detector: Detectar zonas (usando zone_config de estrategia)
+   ↓
+5. Strategy Executor: Procesar velas una por una
+   - Por cada vela:
+     a) Actualizar zonas activas
+     b) Gestionar trades abiertos (SL/TP)
+     c) Verificar condiciones de entrada
+     d) Ejecutar entrada si aplica
+     e) Registrar equity
+   ↓
+6. Generar BacktestResult:
+   - trades: Lista de trades ejecutados
+   - signals: Señales de entrada/salida
+   - metrics: win_rate, profit_factor, max_drawdown, etc
+   - equity_curve: [{timestamp, equity}]
+   ↓
+7. Frontend: BacktestResults muestra resultados
+```
+
+## Integración con Playback
+
+El parámetro `end_timestamp` evita survival bias:
+
+```javascript
+// ZoneDetectorTester.jsx
+if (playbackStartTime) {
+  requestBody.end_timestamp = playbackStartTime;
+}
+```
+
+```python
+# main.py - /api/zones/detect
+if end_timestamp:
+    candles = [c for c in candles if c['timestamp'] < end_timestamp]
+```
+
+## Troubleshooting
+
+**Zonas no aparecen en el gráfico:**
+- Verificar que ZoneVisualizerIndicator está habilitado
+- Verificar que el callback `onZonesDetected` llama a `miniChart.setZones()`
+- Revisar consola por errores de `priceToY`
+
+**Zonas demasiado grandes:**
+- Reducir `max_price_range_pct` (default 5%)
+- Aumentar `pivot_min_touches` para zonas más validadas
+
+**Detección no coincide con expectativas del trader:**
+- El detector actual es algorítmico, puede no capturar contexto de mercado
+- Considerar usar método `pivot_cluster` con parámetros más estrictos
+- El refinamiento del detector es un trabajo en progreso
+
+---
+
 # DRAWING SYSTEM (MiniChart.jsx)
 
 ## Arquitectura de Dibujos
@@ -2162,3 +2447,529 @@ useEffect(() => {
 - PollingScheduler debe mostrar "Started" y callbacks registrados
 - DevTools Performance: CPU debe bajar ~50% comparado con version anterior
 - Network: Conexiones HTTP deben reutilizarse (ver Connection: keep-alive)
+
+---
+
+# APP 6: TRADING JOURNAL
+
+**Ubicacion:** `6.Trading_Journal/`
+
+Sistema de registro automatico de trades con analisis de rendimiento, screenshots y metricas avanzadas.
+
+## Estructura
+
+```
+6.Trading_Journal/
+├── backend/
+│   ├── main.py                      # Servidor FastAPI (puerto 12000)
+│   ├── requirements.txt             # Dependencias Python
+│   ├── models/
+│   │   └── journal_entry.py         # Modelos de datos (JournalEntry, etc.)
+│   ├── store/
+│   │   └── journal_store.py         # Persistencia SQLite
+│   ├── api/
+│   │   └── routes.py                # Endpoints REST
+│   ├── services/
+│   │   ├── position_monitor.py      # Monitor de posiciones (polling TradingBot)
+│   │   ├── screenshot_service.py    # Capturas Playwright + mplfinance
+│   │   └── metrics_service.py       # Calculos de metricas avanzadas
+│   ├── data/                        # Base de datos SQLite
+│   └── screenshots/                 # Screenshots capturados
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx                  # Componente raiz con navegacion
+│   │   ├── components/
+│   │   │   ├── Dashboard.jsx        # Resumen y metricas principales
+│   │   │   ├── TradeList.jsx        # Lista de trades con filtros
+│   │   │   ├── TradeDetail.jsx      # Detalle con screenshots y reflexion
+│   │   │   └── Settings.jsx         # Configuracion del monitor
+│   │   └── styles/                  # CSS
+│   ├── package.json
+│   └── vite.config.js
+│
+└── 1_START.bat                      # Inicio automatico
+```
+
+## Comandos
+
+```bash
+# Inicio rapido (Windows)
+cd 6.Trading_Journal
+1_START.bat
+
+# Manual - Backend
+cd backend
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+python main.py  # Puerto 12000
+
+# Manual - Frontend
+cd frontend
+npm install
+npm run dev  # Puerto 12001
+```
+
+## Funcionalidades
+
+- **Registro automatico** de trades desde TradingBot
+- **Screenshots** automaticos al abrir/cerrar posiciones
+- **Metricas avanzadas**: Win rate, Profit Factor, Sharpe, Sortino, Max Drawdown
+- **R-Multiple** calculado automaticamente
+- **Reflexiones** y lecciones aprendidas por trade
+- **Analisis por**: periodo, simbolo, fuente, direccion, dia, hora
+- **Curva de equity** visualizada
+- **Export/Import** JSON para backup
+
+## Modelos de Datos
+
+### JournalEntry
+
+```python
+@dataclass
+class JournalEntry:
+    id: str                      # UUID unico
+    symbol: str                  # Ej: BTCUSDT
+    direction: TradeDirection    # LONG o SHORT
+    status: TradeStatus          # OPEN, CLOSED, CANCELLED
+    source: TradeSource          # watchlist, analizador, manual, etc.
+    entry_time: str              # ISO datetime
+    exit_time: Optional[str]
+    entry_price: float
+    exit_price: Optional[float]
+    quantity: Optional[float]
+    pnl_usd: float               # Ganancia/perdida en USD
+    pnl_percent: float           # Porcentaje
+    r_multiple: float            # Multiplo de riesgo
+    screenshot_entry: Optional[str]
+    screenshot_exit: Optional[str]
+    market_context: MarketContext
+    setup: TradeSetup
+    execution: ExecutionQuality
+    reflection: TradeReflection
+```
+
+### TradeSource (Enum)
+
+| Valor | Descripcion |
+|-------|-------------|
+| `watchlist` | Alerta desde Watchlist (App 2) |
+| `analizador` | Alerta desde Analizador (App 4) |
+| `order_flow` | Alerta desde Order Flow (App 5) |
+| `backtester` | Trade desde Backtester (App 1) |
+| `manual` | Trade ejecutado manualmente |
+
+## Endpoints API
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/entries` | GET | Lista todos los trades |
+| `/api/entries` | POST | Crear nuevo trade |
+| `/api/entries/{id}` | GET | Obtener trade por ID |
+| `/api/entries/{id}` | PUT | Actualizar trade |
+| `/api/entries/{id}` | DELETE | Eliminar trade |
+| `/api/entries/statistics` | GET | Estadisticas generales |
+| `/api/entries/export` | GET | Exportar todos los trades |
+| `/api/entries/import` | POST | Importar trades desde JSON |
+| `/api/metrics/summary` | GET | Metricas avanzadas |
+| `/api/metrics/equity-curve` | GET | Datos para curva de equity |
+| `/api/metrics/by-symbol` | GET | Analisis por simbolo |
+| `/api/metrics/by-source` | GET | Analisis por fuente |
+| `/api/monitor/status` | GET | Estado del monitor |
+| `/api/monitor/start` | POST | Iniciar monitor |
+| `/api/monitor/stop` | POST | Detener monitor |
+| `/api/screenshots/{path}` | GET | Servir screenshot |
+
+## Arquitectura de Servicios
+
+### Position Monitor
+
+El monitor hace polling al TradingBot cada 5 segundos:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    POSITION MONITOR                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌─────────────┐     ┌─────────────────┐                    │
+│  │ TRADING BOT │────▶│ GET /api/positions                   │
+│  │  (5000)     │     │ GET /api/alerts/recent               │
+│  └─────────────┘     └─────────────────┘                    │
+│         │                     │                              │
+│         │                     ▼                              │
+│         │            ┌─────────────────┐                    │
+│         │            │ Detectar cambios│                    │
+│         │            │ - Nueva posicion│                    │
+│         │            │ - Posicion cerrada                   │
+│         │            └────────┬────────┘                    │
+│         │                     │                              │
+│         │    ┌────────────────┼────────────────┐            │
+│         │    │                │                │            │
+│         ▼    ▼                ▼                ▼            │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
+│  │ Match Alert │    │Create Entry │    │Close Entry  │     │
+│  │ → Source    │    │+ Screenshot │    │+ Screenshot │     │
+│  └─────────────┘    └─────────────┘    └─────────────┘     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Screenshot Service
+
+Sistema hibrido con dos metodos:
+
+1. **Playwright (primario)**: Captura del chart real del Analizador/Watchlist
+2. **mplfinance (fallback)**: Genera chart estatico si Playwright falla
+
+```python
+# Ruta de screenshots
+screenshots/{symbol}/{entry_id}_{event}_{timestamp}.png
+
+# Ejemplo
+screenshots/BTCUSDT/abc123_entry_20260128_153000.png
+```
+
+### Metrics Service
+
+Calcula metricas avanzadas:
+
+```python
+@dataclass
+class MetricsSummary:
+    total_trades: int
+    winning_trades: int
+    losing_trades: int
+    win_rate: float
+    profit_factor: float
+    avg_r: float
+    total_r: float
+    sharpe_ratio: float
+    sortino_ratio: float
+    max_drawdown: float
+    avg_winner: float
+    avg_loser: float
+    best_trade: float
+    worst_trade: float
+    expectancy: float
+```
+
+## Integracion con TradingBot
+
+El Journal se integra con el TradingBot mediante endpoints agregados:
+
+### Endpoints agregados al TradingBot (puerto 5000)
+
+```python
+# GET /api/positions
+# Retorna todas las posiciones abiertas
+{
+    "BTCUSDT": {
+        "hasPosition": true,
+        "size": 0.001,
+        "side": "Buy",
+        "entryPrice": 95000.0,
+        "unrealizedPnl": 50.25
+    },
+    ...
+}
+
+# GET /api/alerts/recent?minutes=30
+# Retorna alertas recientes para matching de source
+[
+    {
+        "timestamp": "2026-01-28T15:30:00",
+        "symbol": "BTCUSDT",
+        "source": "SWING_DETECTOR",
+        "direction": "LONG"
+    },
+    ...
+]
+
+# GET /api/position-history/{symbol}?limit=10
+# Retorna historial de posiciones cerradas
+```
+
+## Flujo Completo
+
+```
+1. Usuario ejecuta trade via TradingBot (manual o alerta)
+      ↓
+2. Position Monitor detecta nueva posicion
+      ↓
+3. Match con alerta reciente → determina source
+      ↓
+4. Crea JournalEntry con estado OPEN
+      ↓
+5. Screenshot Service captura chart de entrada
+      ↓
+6. ... tiempo pasa ...
+      ↓
+7. Position Monitor detecta posicion cerrada
+      ↓
+8. Actualiza JournalEntry: exit_price, pnl, status=CLOSED
+      ↓
+9. Screenshot Service captura chart de salida
+      ↓
+10. Calcular R-multiple si hay SL definido
+      ↓
+11. Metrics Service recalcula estadisticas
+```
+
+## Frontend Components
+
+### Dashboard
+- Cards de metricas principales (Total P&L, Win Rate, Profit Factor, etc.)
+- Curva de equity (SVG chart)
+- Gauge de win rate
+- Lista de trades recientes
+
+### TradeList
+- Tabla con todos los trades
+- Filtros: estado, simbolo, direccion, fuente
+- Ordenamiento por columnas
+- Click para ver detalle
+
+### TradeDetail
+- Resumen de P&L (USD, %, R)
+- Screenshots de entrada y salida
+- Detalles del trade (precios, tiempos)
+- Seccion de reflexion editable
+- Calidad del setup (slider 1-10)
+- Emociones antes/despues
+- Notas y lecciones
+
+### Settings
+- Control del monitor (start/stop)
+- Estado de conexiones
+- Export/Import de datos
+- Limpieza de screenshots
+
+## Troubleshooting
+
+**Monitor no detecta posiciones:**
+- Verificar que TradingBot esta corriendo en puerto 5000
+- Verificar endpoint `/api/positions` responde
+- Revisar logs del backend Journal
+
+**Screenshots no se capturan:**
+- Verificar que Analizador o Watchlist esta abierto
+- Playwright puede fallar si el browser no esta disponible
+- El fallback mplfinance genera charts estaticos
+
+**Source siempre es "manual":**
+- El matching requiere alerta reciente (30 min window)
+- Verificar que el sistema de alertas esta funcionando
+- Revisar `/api/alerts/recent` en TradingBot
+
+**Metricas no se actualizan:**
+- Las metricas se recalculan al consultar
+- Verificar que hay trades cerrados (no solo abiertos)
+
+---
+
+# APP 8: ANALIZADOR DESKTOP (Electron)
+
+**Ubicacion:** `8.AnalizadorDesktop/`
+
+Version de escritorio del Analizador Cripto (App 4) empaquetada con Electron. Resuelve el problema de throttling del navegador que causa gaps en los graficos cuando el tab esta en segundo plano.
+
+## Por que Electron?
+
+Los navegadores (Chrome, Firefox, Edge) aplican **throttling** a tabs en segundo plano:
+- Timers (setInterval, setTimeout) se ejecutan cada 1000ms minimo
+- requestAnimationFrame se pausa completamente
+- WebSockets pueden desconectarse por inactividad
+
+Esto causa **gaps en los graficos** cuando el usuario cambia de tab. Electron desactiva estas restricciones.
+
+## Estructura
+
+```
+8.AnalizadorDesktop/
+├── electron/
+│   ├── main.js              # Proceso principal (anti-throttling, tray, power blocker)
+│   └── preload.js           # Bridge seguro renderer<->main
+│
+├── src/
+│   ├── components/
+│   │   ├── SingleSymbolAnalyzer.jsx  # Componente raiz
+│   │   ├── MiniChart.jsx             # Grafico con indicadores (MODIFICADO)
+│   │   ├── SymbolList.jsx            # Lista lateral de monedas
+│   │   ├── SymbolSelector.jsx        # Selector de simbolo
+│   │   ├── trading/                  # Panel de trading
+│   │   ├── indicators/               # 13 indicadores
+│   │   ├── drawing/                  # Herramientas de dibujo
+│   │   └── *Settings.jsx             # Modales de configuracion
+│   ├── utils/
+│   │   ├── CandleCache.js            # Cache IndexedDB con validacion
+│   │   ├── IndicatorCache.js
+│   │   └── Logger.js
+│   ├── hooks/
+│   │   └── useGlobalAlerts.js
+│   ├── config.js                     # API_BASE_URL = localhost:10000
+│   └── main.jsx
+│
+├── assets/
+│   └── icon.ico                      # Icono de la aplicacion
+│
+├── package.json                      # Scripts y config electron-builder
+├── vite.config.js                    # Puerto 5174, proxy a backend
+└── start_fast.bat                    # Inicio rapido (modo fast)
+```
+
+## Comandos
+
+```bash
+# Desarrollo (Vite + Electron con hot reload)
+npm run dev:electron
+
+# Produccion local (build + ejecutar)
+npm run start
+
+# Build instalador Windows
+npm run build:electron
+
+# Build portable (sin instalacion)
+npm run build:portable
+```
+
+## Configuracion Anti-Throttling
+
+En `electron/main.js`:
+
+```javascript
+// ANTES de app.whenReady()
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
+// En BrowserWindow
+webPreferences: {
+  backgroundThrottling: false,
+  // ...
+}
+```
+
+## Optimizaciones de Rendimiento
+
+```javascript
+// GPU
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+
+// V8 (JavaScript)
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+```
+
+## System Tray
+
+La aplicacion se minimiza al tray en lugar de cerrarse:
+- Doble-click en icono: Mostrar ventana
+- Click derecho: Menu (Abrir, Reiniciar, Cerrar)
+- Notificacion al minimizar por primera vez
+
+## Power Save Blocker
+
+Previene que el sistema entre en suspension mientras la app esta corriendo:
+
+```javascript
+powerSaveBlocker.start('prevent-app-suspension');
+```
+
+## Diferencias con App 4 (Browser)
+
+| Caracteristica | App 4 (Browser) | App 8 (Electron) |
+|----------------|-----------------|------------------|
+| Throttling | Si (gaps en graficos) | No (sin gaps) |
+| System Tray | No | Si |
+| Power Blocker | No | Si |
+| Instalable | No | Si (.exe) |
+| DevTools | F12 en browser | F12 manual |
+| Puerto frontend | 10001 | 5174 (dev) / file:// (prod) |
+
+## Problemas Resueltos (Enero 2026)
+
+### 1. Bug de 95 velas
+
+**Sintoma:** Solo se mostraban 95 velas en lugar de 1440+
+
+**Causa raiz:** Conflicto de nombres en React. El estado `setInterval` sobrescribia la funcion nativa de JavaScript:
+
+```javascript
+// INCORRECTO - sobrescribe window.setInterval
+const [interval, setInterval] = useState("60");
+
+// Cuando se llamaba:
+setInterval(updatePrice, 5000);
+// Esto llamaba al SETTER de React, retornando un Promise
+// El interval se guardaba como "[object Promise]"
+```
+
+**Fix:** Renombrar el setter a `setIntervalState`:
+
+```javascript
+// CORRECTO
+const [interval, setIntervalState] = useState("60");
+```
+
+### 2. Config corrupta en backend
+
+**Sintoma:** `swing_config.json` tenia `"interval": "[object Promise]"`
+
+**Fix:** Agregar validacion en `swing_service.py`:
+
+```python
+VALID_INTERVALS = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"]
+
+# En _load_config():
+if interval_value not in VALID_INTERVALS:
+    logger.warning(f"CONFIG CORRUPTED: resetting to '1'")
+    data['interval'] = "1"
+
+# En update_config():
+if 'interval' in new_config:
+    if str(new_config['interval']) not in VALID_INTERVALS:
+        del new_config['interval']  # Rechazar valor invalido
+```
+
+### 3. Zoom no se ajustaba
+
+**Fix:** Auto-correccion agresiva en `MiniChart.jsx`:
+
+```javascript
+// Si mostramos menos del 20% de las velas disponibles, corregir zoom
+const showingTooFew = (displayCandles.length > 200 && preliminaryCandlesPerScreen < 200) ||
+                      (displayCandles.length > 0 && preliminaryCandlesPerScreen < displayCandles.length * 0.2);
+
+if (showingTooFew && !viewStateRef.current.userZoomed) {
+  // Recalcular zoom automaticamente
+  const targetCandles = Math.min(displayCandles.length * 0.6, 800);
+  viewStateRef.current.zoom = chartWidth / (targetCandles * 8);
+}
+```
+
+### 4. Atajo para forzar recarga
+
+**Ctrl+Shift+R:** Limpia cache de IndexedDB, resetea zoom y recarga datos.
+
+## Troubleshooting
+
+**Graficos con gaps:**
+- Verificar que Electron esta corriendo (no el browser)
+- Verificar flags anti-throttling en main.js
+- Revisar que PowerSaveBlocker esta activo
+
+**Solo 95 velas:**
+- Presionar Ctrl+Shift+R para forzar recarga
+- Verificar consola por logs de zoom
+- Verificar que `swing_config.json` tiene interval valido
+
+**Backend no conecta:**
+- Verificar que backend corre en puerto 10000
+- Verificar proxy en vite.config.js
+- En produccion, verificar API_BASE_URL en config.js
+
+**Icono no aparece en tray:**
+- Verificar que existe `assets/icon.ico`
+- Formato debe ser .ico (no .png)

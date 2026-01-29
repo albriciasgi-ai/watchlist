@@ -18,7 +18,19 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat(backtester): Add S&R v2 indicator based on Swing Points\n\n- New SupportResistance2Indicator.js with Swing Point detection\n- More accurate than original S&R using confirmed local extremes\n- Price range filtering (±10% of current price by default)\n- Clustering algorithm to group nearby levels\n- Strength calculation based on touches + volume + recency\n- Active/Broken level classification\n- IndexedDB caching for performance\n- New SupportResistance2Settings.jsx modal for configuration\n- Labels positioned on left side without background box\n- Updated CLAUDE.md with full documentation\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
       "Bash(npm install:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebSearch",
+      "Bash(npm run dev:*)",
+      "Bash(npm run electron:*)",
+      "Bash(mkdir:*)",
+      "Bash(timeout /t 8 /nobreak)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(uvicorn main:app:*)",
+      "Bash(cmd //c \".venv\\Scripts\\activate && uvicorn main:app --reload --port 11000\")",
+      "Bash(npm run dev:electron:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(ping:*)",
+      "Bash(.venvScriptspython.exe -c \"import json; f=open(''footprint_cache/BTCUSDT_1.json''); d=json.load(f); keys=sorted(d.keys(), reverse=True)[:20]; print(''Last 20 BTCUSDT timestamps:'', keys)\")"
     ],
     "deny": [],
     "ask": []

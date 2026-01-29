@@ -15,8 +15,8 @@
     "BNBUSDT",
     "POLUSDT"
   ],
-  "interval": "[object Promise]",
-  "days": 15,
+  "interval": "1",
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -24,7 +24,7 @@
         "minZScore": 1,
         "lookbackBars": 10
       },
-      "days": 1,
+      "days": 5,
       "vwapFilter": {
         "enabled": false,
         "deviations": [
@@ -43,7 +43,7 @@
         "lookbackBars": 10
       },
       "swingBars": 5,
-      "days": 15,
+      "days": 1,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },
@@ -71,7 +71,7 @@
         "minZScore": 1,
         "lookbackBars": 10
       },
-      "days": 1,
+      "days": 5,
       "alertsEnabled": true
     },
     "SUIUSDT": {

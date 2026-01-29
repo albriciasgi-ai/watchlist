@@ -1,0 +1,184 @@
+// @version=6
+indicator("Volume Profile con Clusters_PRECISO_FUNCIONA_RESURRECTION_11/07/2025", overlay=true, max_bars_back=5000, max_lines_count=500, max_labels_count=500)
+
+// === Inputs ===
+mode             = input.string("Bars", "Mode", options=["Bars","Offset Range"])
+lengthRaw        = input.int(5000, "Lookback Bars", minval=1, maxval=10000)
+startOffset      = input.int(500, "Start Bars Ago", minval=1, maxval=5000)
+endOffset        = input.int(0, "End Bars Ago", minval=0, maxval=5000)
+rows             = input.int(200, "Rows", minval=1, maxval=500)
+valAreaPerc      = input.float(70, "Value Area (%)", minval=1, maxval=100) / 100
+histWidth        = input.int(50, "Histogram Width (%)", minval=1, maxval=100)
+barWidth         = input.int(2, "Bar Width", minval=1)
+flipHisto        = input.bool(false, "Flip Histogram")
+useGradient      = input.bool(true, "Use Gradient")
+baseColor        = input.color(color.new(color.blue, 0), "Histogram Color")
+areaColor        = input.color(color.new(color.orange, 0), "Value Area Color")
+pocColor         = input.color(color.new(color.red, 0), "POC Color")
+labelColor       = input.color(color.new(color.white, 0), "Label Color")
+vaLineColor      = input.color(color.blue, "VAH/VAL Line Color")
+showLabels       = input.bool(true, "Show Volume Labels")
+
+// === Cluster inputs ===
+clusterPerc      = input.float(20, "Cluster Threshold (%)", minval=0, maxval=100) / 100
+clusterMinBins   = input.int(3, "Min Contiguous Bins", minval=1, maxval=100)
+clusterColor     = input.color(color.new(color.green, 0), "Cluster Color")
+
+// === Helpers ===
+formatVol(v) =>
+    v >= 1e6 ? str.tostring(v/1e6, "#.0") + "M" : v >= 1e3 ? str.tostring(v/1e3, "#.0") + "K" : str.tostring(v)
+
+// === Range offsets ===
+startOff  = mode == "Bars" ? lengthRaw - 1 : startOffset
+endOff    = mode == "Bars" ? 0          : endOffset
+maxOffset = math.max(startOff, endOff)
+
+isInRange(i) => mode == "Bars" ? i < lengthRaw : (i >= endOff and i <= startOffset)
+
+// === Compute high/low ===
+var float hh = na
+var float ll = na
+hh := na
+ll := na
+for i = 0 to maxOffset
+    if isInRange(i)
+        hh := na(hh) ? high[i] : math.max(hh, high[i])
+        ll := na(ll) ? low[i]  : math.min(ll, low[i])
+step = (hh - ll) / rows
+
+// === Arrays & lines ===
+var float[] levels       = array.new_float(rows, na)
+var float[] volumes      = array.new_float(rows, 0.0)
+var bool[]  isValueArea  = array.new_bool(rows, false)
+var bool[]  isCluster    = array.new_bool(rows, false)
+var line[]  profileLines = array.new_line()
+var label[] volLabels    = array.new_label()
+var line    pocLine      = na
+var line    vahLine      = na
+var line    valLine      = na
+var float   pocLevel     = na
+
+if barstate.isfirst
+    for _ = 0 to rows - 1
+        array.push(profileLines, line.new(na, na, na, na, width=barWidth))
+        array.push(volLabels,  label.new(na, na, "", xloc.bar_index, yloc.price, color=color.new(color.black,100), textcolor=labelColor, style=label.style_label_left, size=size.large))
+    pocLine := line.new(na, na, na, na, width=barWidth, style=line.style_dotted, color=pocColor)
+    vahLine := line.new(na, na, na, na, width=1, style=line.style_solid,  color=vaLineColor)
+    valLine := line.new(na, na, na, na, width=1, style=line.style_solid,  color=vaLineColor)
+
+// === Build profile ===
+if barstate.islastconfirmedhistory
+    // reset arrays
+    for i = 0 to rows - 1
+        array.set(volumes,      i, 0.0)
+        array.set(isValueArea,  i, false)
+        array.set(isCluster,    i, false)
+    
+    // accumulate volumes proportional to price-overlap
+    for i = 0 to rows - 1
+        lvlLow  = ll + step * i
+        lvlHigh = lvlLow + step
+        volAcc  = 0.0
+        for j = 0 to maxOffset
+            if isInRange(j)
+                // calcular solapamiento
+                p1 = math.max(low[j], lvlLow)
+                p2 = math.min(high[j], lvlHigh)
+                overlap = p2 - p1
+                sizeBar = high[j] - low[j]
+                if overlap > 0 and sizeBar > 0
+                    volAcc += volume[j] * (overlap / sizeBar)
+        array.set(levels,  i, ll + step * i + step * 0.5)
+        array.set(volumes, i, volAcc)
+
+    // total & POC
+    totVol = 0.0
+    for i = 0 to rows - 1
+        totVol += array.get(volumes, i)
+    pocIdx = 0
+    maxVol = array.get(volumes, 0)
+    for i = 1 to rows - 1
+        if array.get(volumes, i) > maxVol
+            pocIdx := i
+            maxVol := array.get(volumes, i)
+    pocLevel := array.get(levels, pocIdx)
+
+    // Value Area
+    threshVA = totVol * valAreaPerc
+    lowIdx   = pocIdx
+    highIdx  = pocIdx
+    cumVA    = maxVol
+    while cumVA < threshVA and (lowIdx > 0 or highIdx < rows - 1)
+        lowerV = lowIdx > 0       ? array.get(volumes, lowIdx - 1) : 0.0
+        upperV = highIdx < rows-1 ? array.get(volumes, highIdx + 1): 0.0
+        if lowerV > upperV
+            lowIdx -= 1
+            cumVA  += lowerV
+        else
+            highIdx += 1
+            cumVA  += upperV
+    for i = lowIdx to highIdx
+        array.set(isValueArea, i, true)
+
+       // === Cluster Detection (extendido a contiguos) ===
+    thresholdVol = maxVol * clusterPerc
+    // Reiniciamos isCluster
+    for i = 0 to rows - 1
+        array.set(isCluster, i, false)
+    // Recorremos con un while para detectar secuencias
+    idx = 0
+    while idx < rows
+        if array.get(volumes, idx) > thresholdVol
+            startIdx = idx
+            // avanzamos idx mientras siga sobre el umbral
+            while idx < rows and array.get(volumes, idx) > thresholdVol
+                idx += 1
+            seqLen = idx - startIdx
+            // si la secuencia es suficientemente larga, marcamos todo el segmento
+            if seqLen >= clusterMinBins
+                for k = startIdx to idx - 1
+                    array.set(isCluster, k, true)
+        else
+            idx += 1
+
+
+    // draw profile
+    xStart = flipHisto ? bar_index - endOff : bar_index - startOff
+    xEnd   = flipHisto ? bar_index - startOff : bar_index - endOff
+    for i = 0 to rows - 1
+        y     = array.get(levels, i)
+        volI  = array.get(volumes, i)
+        frac  = maxVol > 0 ? volI / maxVol : 0.0
+        w     = math.round(histWidth * frac)
+        lineI = array.get(profileLines, i)
+        isVA  = array.get(isValueArea, i)
+        isCl  = array.get(isCluster, i)
+        col   = isCl ? clusterColor : isVA ? areaColor : (useGradient ? color.new(baseColor, 100 - math.round(frac * 100)) : baseColor)
+        lnw   = isCl ? (barWidth * 2) : barWidth
+        line.set_xy1(lineI, xStart, y)
+        line.set_xy2(lineI, xStart + (flipHisto ? -w : w), y)
+        line.set_color(lineI, col)
+        line.set_width(lineI, lnw)
+        
+        // labels
+        lbl = array.get(volLabels, i)
+        if showLabels
+            label.set_xy(lbl, xStart, y)
+            label.set_text(lbl, formatVol(volI))
+            label.set_color(lbl, col)
+            label.set_textcolor(lbl, labelColor)
+        else
+            label.set_text(lbl, "")
+
+    // POC, VAH, VAL lines
+    vahL = array.get(levels, highIdx)
+    valL = array.get(levels, lowIdx)
+    line.set_xy1(pocLine, xStart, pocLevel)
+    line.set_xy2(pocLine, xEnd,   pocLevel)
+    line.set_xy1(vahLine, xStart, vahL)
+    line.set_xy2(vahLine, xEnd,   vahL)
+    line.set_xy1(valLine, xStart, valL)
+    line.set_xy2(valLine, xEnd,   valL)
+
+// extra POC plot
+plot(barstate.islastconfirmedhistory ? pocLevel : na, title="POC", color=pocColor)

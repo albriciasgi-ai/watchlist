@@ -16,6 +16,10 @@ import SupportResistance2Settings from '../SupportResistance2Settings';
 import VWAPSettings from '../VWAPSettings';
 import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
 import SwingDetectorSettings from '../SwingDetectorSettings';
+import ZoneDetectorTester from '../ZoneDetectorTester';
+import { StrategyBuilder, StrategyList, BacktestResults } from '../strategy';
+import '../strategy/StrategyBuilder.css';
+import '../strategy/BacktestResults.css';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
@@ -150,6 +154,15 @@ const BacktestingApp = () => {
   const [showVWAPSettings, setShowVWAPSettings] = useState(false);
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
+  const [showZoneDetectorTester, setShowZoneDetectorTester] = useState(false);
+  const [detectedZones, setDetectedZones] = useState([]);
+
+  // 🎯 NUEVO: Estado para Strategy Builder
+  const [selectedStrategyId, setSelectedStrategyId] = useState(null);
+  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
+  const [activeStrategy, setActiveStrategy] = useState(null);
+  const [backtestResult, setBacktestResult] = useState(null);
+  const [showBacktestResults, setShowBacktestResults] = useState(false);
 
   // 🎯 Configuraciones de indicadores
   const [vpConfig, setVpConfig] = useState({
@@ -1879,6 +1892,18 @@ const BacktestingApp = () => {
             >
               📊 Dashboard
             </button>
+            <button
+              className={`tab-btn ${activePanel === 'zones' ? 'active' : ''}`}
+              onClick={() => setActivePanel('zones')}
+            >
+              🎯 Zonas
+            </button>
+            <button
+              className={`tab-btn ${activePanel === 'strategy' ? 'active' : ''}`}
+              onClick={() => setActivePanel('strategy')}
+            >
+              🧠 Estrategia
+            </button>
           </div>
 
           {/* Panel Content */}
@@ -1932,6 +1957,92 @@ const BacktestingApp = () => {
                 orderManager={orderManagerRef.current}
                 symbol={symbol}
               />
+            )}
+
+            {activePanel === 'zones' && (
+              <ZoneDetectorTester
+                symbol={symbol}
+                interval={activeTimeframe}
+                playbackStartTime={simulationStartTime}
+                onZonesDetected={(zones) => {
+                  setDetectedZones(zones);
+                  console.log(`[BacktestingApp] 🎯 ${zones.length} zonas detectadas, activeTimeframe=${activeTimeframe}`);
+                  console.log(`[BacktestingApp] 🎯 Zonas:`, zones.slice(0, 2)); // Log primeras 2 zonas
+
+                  // Las zonas se renderizarán en el chart
+                  const miniChart = miniChartRefs.current[activeTimeframe];
+                  console.log(`[BacktestingApp] 🎯 miniChart ref:`, !!miniChart, `setZones:`, !!miniChart?.setZones);
+
+                  if (miniChart && miniChart.setZones) {
+                    miniChart.setZones(zones);
+                    // Forzar redibujado después de establecer zonas
+                    if (miniChart.forceRedraw) {
+                      setTimeout(() => miniChart.forceRedraw(), 100);
+                    }
+                  } else {
+                    console.error(`[BacktestingApp] ❌ No se pudo establecer zonas - miniChart o setZones no disponible`);
+                  }
+                }}
+              />
+            )}
+
+            {activePanel === 'strategy' && (
+              <div className="strategy-panel">
+                {showBacktestResults && backtestResult ? (
+                  <BacktestResults
+                    result={backtestResult}
+                    onClose={() => setShowBacktestResults(false)}
+                    onViewTrade={(trade) => {
+                      // Navegar al timestamp del trade en el chart
+                      if (trade.entry_time && timeControllerRef.current) {
+                        timeControllerRef.current.seekToTime(trade.entry_time);
+                        console.log('[BacktestingApp] Navegando al trade:', trade.id);
+                      }
+                    }}
+                  />
+                ) : showStrategyBuilder ? (
+                  <StrategyBuilder
+                    strategyId={selectedStrategyId}
+                    symbol={symbol}
+                    currentTime={currentTime}
+                    candles={marketData?.timeframes?.[activeTimeframe]?.main || []}
+                    onSave={(strategy) => {
+                      setActiveStrategy(strategy);
+                      setShowStrategyBuilder(false);
+                      console.log('[BacktestingApp] Estrategia guardada:', strategy.name);
+                    }}
+                    onClose={() => setShowStrategyBuilder(false)}
+                    onRunBacktest={(result) => {
+                      setBacktestResult(result);
+                      setShowBacktestResults(true);
+                      console.log('[BacktestingApp] Backtest completado:', result.metrics);
+                    }}
+                  />
+                ) : (
+                  <div className="strategy-list-container">
+                    {backtestResult && (
+                      <button
+                        className="view-results-btn"
+                        onClick={() => setShowBacktestResults(true)}
+                      >
+                        Ver últimos resultados ({backtestResult.metrics?.total_trades || 0} trades)
+                      </button>
+                    )}
+                    <StrategyList
+                      selectedId={selectedStrategyId}
+                      onSelect={(id) => setSelectedStrategyId(id)}
+                      onEdit={(id) => {
+                        setSelectedStrategyId(id);
+                        setShowStrategyBuilder(true);
+                      }}
+                      onNew={() => {
+                        setSelectedStrategyId(null);
+                        setShowStrategyBuilder(true);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

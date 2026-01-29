@@ -1,0 +1,311 @@
+/* Estilos adicionales para Volume Profile - Agregar al final de styles.css */
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Content */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: #f5f5f5;
+  color: #222;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+/* Volume Profile Settings */
+.volume-profile-settings {
+  width: 100%;
+}
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.settings-section h5 {
+  margin: 16px 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-row label {
+  font-size: 14px;
+  color: #555;
+  flex: 1;
+}
+
+.setting-row input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.setting-row input[type="range"] {
+  flex: 1;
+  margin-left: 12px;
+  max-width: 200px;
+}
+
+.setting-row select,
+.setting-row input[type="datetime-local"],
+.setting-row input[type="color"] {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: white;
+}
+
+.setting-row select:focus,
+.setting-row input[type="datetime-local"]:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+.setting-row input[type="color"] {
+  width: 50px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.setting-hint {
+  font-size: 12px;
+  color: #999;
+  margin-left: 12px;
+}
+
+.setting-row.indent {
+  padding-left: 20px;
+  background: #f9f9f9;
+}
+
+/* Fixed Range Controls */
+.fixed-range-controls {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border: 1px solid #e0e0e0;
+}
+
+.apply-range-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.apply-range-btn:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.apply-range-btn:active {
+  transform: translateY(0);
+}
+
+/* Advanced Settings Toggle */
+.advanced-toggle {
+  margin: 16px 0;
+}
+
+.toggle-advanced-btn {
+  background: none;
+  border: none;
+  color: #2196F3;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-advanced-btn:hover {
+  background: #E3F2FD;
+}
+
+.advanced-settings {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #e0e0e0;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.color-settings {
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+/* VP Settings Button in Controls */
+.vp-settings-btn {
+  margin-left: 12px;
+  padding: 6px 12px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vp-settings-btn:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+}
+
+/* VP Settings Button on Chart */
+.vp-chart-settings-btn {
+  position: absolute;
+  top: 8px;
+  right: 40px;
+  background: rgba(33, 150, 243, 0.9);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s;
+  opacity: 0.7;
+}
+
+.vp-chart-settings-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .setting-row input[type="range"] {
+    max-width: 100%;
+    margin-left: 0;
+  }
+}

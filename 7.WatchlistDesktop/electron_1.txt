@@ -1,0 +1,4110 @@
+ [Preload] Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Watchlist Desktop - Renderer
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: BTCUSDT (60) - isFullscreen: false
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [BTCUSDT] Creando Swing Detector porque está habilitado
+ [BTCUSDT] SwingDetectorIndicator initialized
+ [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: ETHUSDT (60) - isFullscreen: false
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [ETHUSDT] VWAPIndicator initialized (backend native, type=session)
+ [ETHUSDT] Creando Swing Detector porque está habilitado
+ [ETHUSDT] SwingDetectorIndicator initialized
+ [MiniChart XRPUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: XRPUSDT (60) - isFullscreen: false
+ [XRPUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [XRPUSDT] VWAPIndicator initialized (backend native, type=session)
+ [XRPUSDT] Creando Swing Detector porque está habilitado
+ [XRPUSDT] SwingDetectorIndicator initialized
+ [MiniChart TRXUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: TRXUSDT (60) - isFullscreen: false
+ [TRXUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [TRXUSDT] VWAPIndicator initialized (backend native, type=session)
+ [TRXUSDT] Creando Swing Detector porque está habilitado
+ [TRXUSDT] SwingDetectorIndicator initialized
+ [MiniChart GALAUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: GALAUSDT (60) - isFullscreen: false
+ [GALAUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [GALAUSDT] VWAPIndicator initialized (backend native, type=session)
+ [GALAUSDT] Creando Swing Detector porque está habilitado
+ [GALAUSDT] SwingDetectorIndicator initialized
+ [MiniChart SUIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: SUIUSDT (60) - isFullscreen: false
+ [SUIUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [SUIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [SUIUSDT] Creando Swing Detector porque está habilitado
+ [SUIUSDT] SwingDetectorIndicator initialized
+ [MiniChart TRBUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: TRBUSDT (60) - isFullscreen: false
+ [TRBUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [TRBUSDT] VWAPIndicator initialized (backend native, type=session)
+ [TRBUSDT] Creando Swing Detector porque está habilitado
+ [TRBUSDT] SwingDetectorIndicator initialized
+ [MiniChart SOLUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: SOLUSDT (60) - isFullscreen: false
+ [SOLUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [SOLUSDT] VWAPIndicator initialized (backend native, type=session)
+ [SOLUSDT] Creando Swing Detector porque está habilitado
+ [SOLUSDT] SwingDetectorIndicator initialized
+ [MiniChart ADAUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: ADAUSDT (60) - isFullscreen: false
+ [ADAUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [ADAUSDT] VWAPIndicator initialized (backend native, type=session)
+ [ADAUSDT] Creando Swing Detector porque está habilitado
+ [ADAUSDT] SwingDetectorIndicator initialized
+ [MiniChart DOGEUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [Watchlist] 🖥️ Fullscreen change: DOGEUSDT (60) - isFullscreen: false
+ [DOGEUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [DOGEUSDT] VWAPIndicator initialized (backend native, type=session)
+ [DOGEUSDT] Creando Swing Detector porque está habilitado
+ [DOGEUSDT] SwingDetectorIndicator initialized
+ [BackgroundPreloader] ⚙️ Configurado: interval=60, days=1, 10 símbolos
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+ [Registry] ✅ Registrado manager para XRPUSDT (total: 3)
+ [Registry] ✅ Registrado manager para TRXUSDT (total: 4)
+ [Registry] ✅ Registrado manager para GALAUSDT (total: 5)
+ [Registry] ✅ Registrado manager para SUIUSDT (total: 6)
+ [Registry] ✅ Registrado manager para TRBUSDT (total: 7)
+ [Registry] ✅ Registrado manager para SOLUSDT (total: 8)
+ [Registry] ✅ Registrado manager para ADAUSDT (total: 9)
+ [Registry] ✅ Registrado manager para DOGEUSDT (total: 10)
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 9)
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 8)
+ [Registry] 🗑️ Desregistrado manager para XRPUSDT (total: 7)
+ [Registry] 🗑️ Desregistrado manager para TRXUSDT (total: 6)
+ [Registry] 🗑️ Desregistrado manager para GALAUSDT (total: 5)
+ [Registry] 🗑️ Desregistrado manager para SUIUSDT (total: 4)
+ [Registry] 🗑️ Desregistrado manager para TRBUSDT (total: 3)
+ [Registry] 🗑️ Desregistrado manager para SOLUSDT (total: 2)
+ [Registry] 🗑️ Desregistrado manager para ADAUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para DOGEUSDT (total: 0)
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [BTCUSDT] Creando Swing Detector porque está habilitado
+ [BTCUSDT] SwingDetectorIndicator initialized
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [SupportResistanceIndicator] VERSION 1.0 LOADED
+ ✅ [1:40:55 p. m.] [VWAP] [ETHUSDT] VWAPIndicator initialized (backend native, type=session)
+ [ETHUSDT] Creando Swing Detector porque está habilitado
+ [ETHUSDT] SwingDetectorIndicator initialized
+ [XRPUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:55 p. m.] [VWAP] [XRPUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [XRPUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [XRPUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [TRXUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:55 p. m.] [VWAP] [TRXUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [TRXUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [TRXUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [GALAUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:55 p. m.] [VWAP] [GALAUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [GALAUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [GALAUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [SUIUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:55 p. m.] [VWAP] [SUIUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [SUIUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [SUIUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [TRBUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:56 p. m.] [VWAP] [TRBUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [TRBUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [TRBUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [SOLUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:56 p. m.] [VWAP] [SOLUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [SOLUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [SOLUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [ADAUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:56 p. m.] [VWAP] [ADAUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [ADAUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [ADAUSDT] SwingDetectorIndicator initialized
+MiniChart.jsx:1920 [DOGEUSDT] 🚀 Componente montado, iniciando...
+OpenInterestIndicator.js:19 [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+SupportResistanceIndicator.js:15 [SupportResistanceIndicator] VERSION 1.0 LOADED
+Logger.js:100 ✅ [1:40:56 p. m.] [VWAP] [DOGEUSDT] VWAPIndicator initialized (backend native, type=session)
+IndicatorManager.js:122 [DOGEUSDT] Creando Swing Detector porque está habilitado
+SwingDetectorIndicator.js:41 [DOGEUSDT] SwingDetectorIndicator initialized
+BackgroundPreloader.js:34 [BackgroundPreloader] ⚙️ Configurado: interval=60, days=90, 10 símbolos
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ETHUSDT (total: 2)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para XRPUSDT (total: 3)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para TRXUSDT (total: 4)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para GALAUSDT (total: 5)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para SUIUSDT (total: 6)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para TRBUSDT (total: 7)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para SOLUSDT (total: 8)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para ADAUSDT (total: 9)
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para DOGEUSDT (total: 10)
+WebSocketManager.js:61 WebSocket Manager conectado [60]
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+:8000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/ETHUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/XRPUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/TRXUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/GALAUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/SUIUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:40:58 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+WebSocketManager.js:79 ✓ Suscrito: 
+:8000/api/drawings/TRBUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:00 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/SOLUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:00 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/ADAUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:00 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/drawings/DOGEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:00 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2148:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+:8000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+:8000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+BackgroundPreloader.js:74 [BackgroundPreloader] 🚀 Iniciando precarga de 10 símbolos
+localforage.js?v=ba294fb4:1335 unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js?v=ba294fb4:1335
+_initStorage$1 @ localforage.js?v=ba294fb4:1333
+extendSelfWithDriver @ localforage.js?v=ba294fb4:2074
+Promise.then
+driverPromiseLoop @ localforage.js?v=ba294fb4:2086
+Show 4 more frames
+Show less
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+CandleCache.js:67 [CandleCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ CandleCache.js:67
+await in get
+preloadSymbol @ BackgroundPreloader.js:124
+(anonymous) @ BackgroundPreloader.js:105
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+startPreloading @ BackgroundPreloader.js:75
+(anonymous) @ Watchlist.jsx:474
+BackgroundPreloader.js:138 [BackgroundPreloader] 📥 BTCUSDT carga completa (90 días)
+MiniChart.jsx:1066 [BTCUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [ETHUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [XRPUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [TRXUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [GALAUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [SUIUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [TRBUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [SOLUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [ADAUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [DOGEUSDT] 📥 Carga COMPLETA: 90 días @ 60
+MiniChart.jsx:1066 [BTCUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [ETHUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [XRPUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [TRXUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [GALAUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [SUIUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [TRBUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [SOLUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [ADAUSDT] 📥 Carga COMPLETA: 1 días @ 60
+MiniChart.jsx:1066 [DOGEUSDT] 📥 Carga COMPLETA: 1 días @ 60
+localforage.js?v=ba294fb4:1335 unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js?v=ba294fb4:1335
+_initStorage$1 @ localforage.js?v=ba294fb4:1333
+extendSelfWithDriver @ localforage.js?v=ba294fb4:2074
+Promise.then
+driverPromiseLoop @ localforage.js?v=ba294fb4:2086
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 8 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+IndicatorCache.js:89 [IndicatorCache] Error leyendo IndexedDB: UnknownError: Internal error.
+get @ IndicatorCache.js:89
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [BTCUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [ETHUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/config:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:02 p. m.] [Watchlist] [Watchlist] ❌ Error sincronizando Swing Detector: TypeError: Failed to fetch
+    at syncSwingDetector (Watchlist.jsx:396:32)
+    at Watchlist.jsx:415:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+syncSwingDetector @ Watchlist.jsx:411
+:8000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [XRPUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [TRXUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [GALAUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [SUIUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [TRBUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [SOLUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [ADAUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [DOGEUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [BTCUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [ETHUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/config:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:41:07 p. m.] [Watchlist] [Watchlist] ❌ Error sincronizando Swing Detector: TypeError: Failed to fetch
+    at syncSwingDetector (Watchlist.jsx:396:32)
+    at Watchlist.jsx:415:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=5a1c70ce:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=5a1c70ce:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=5a1c70ce:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=5a1c70ce:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=5a1c70ce:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=5a1c70ce:19447:22)
+    at chunk-ZFBEYDM4.js?v=5a1c70ce:19328:17
+error @ Logger.js:88
+syncSwingDetector @ Watchlist.jsx:411
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [XRPUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [TRXUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [GALAUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [SUIUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [TRBUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [SOLUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [ADAUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+:8000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:191 [DOGEUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:180:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:80:12)
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:346:23)
+    at MiniChart.jsx:1988:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:1987:41)
+fetchStatus @ SwingDetectorIndicator.js:191
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:10 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:12 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:14 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:14 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:14 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+BackgroundPreloader.js:141 
+        
+        
+       GET http://localhost:8000/api/historical/BTCUSDT?interval=60&days=90 net::ERR_CONNECTION_REFUSED
+preloadSymbol @ BackgroundPreloader.js:141
+await in preloadSymbol
+(anonymous) @ BackgroundPreloader.js:105
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+startPreloading @ BackgroundPreloader.js:75
+(anonymous) @ Watchlist.jsx:474
+BackgroundPreloader.js:178 [BackgroundPreloader] ⚠️ Error precargando BTCUSDT: Failed to fetch
+preloadSymbol @ BackgroundPreloader.js:178
+await in preloadSymbol
+(anonymous) @ BackgroundPreloader.js:105
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+startPreloading @ BackgroundPreloader.js:75
+(anonymous) @ Watchlist.jsx:474
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/BTCUSDT?interval=60&days=90&t=1769625655996 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/ETHUSDT?interval=60&days=90&t=1769625655997 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [ETHUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+BackgroundPreloader.js:138 [BackgroundPreloader] 📥 ETHUSDT carga completa (90 días)
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/XRPUSDT?interval=60&days=90&t=1769625655997 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [XRPUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/TRXUSDT?interval=60&days=90&t=1769625655998 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [TRXUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/GALAUSDT?interval=60&days=90&t=1769625655998 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [GALAUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/SUIUSDT?interval=60&days=90&t=1769625655999 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [SUIUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/TRBUSDT?interval=60&days=90&t=1769625655999 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [TRBUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/SOLUSDT?interval=60&days=90&t=1769625656000 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [SOLUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/ADAUSDT?interval=60&days=90&t=1769625656001 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [ADAUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/DOGEUSDT?interval=60&days=90&t=1769625656001 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [DOGEUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/BTCUSDT?interval=60&days=1&t=1769625655880 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/ETHUSDT?interval=60&days=1&t=1769625655924 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [ETHUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/XRPUSDT?interval=60&days=1&t=1769625655925 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [XRPUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/TRXUSDT?interval=60&days=1&t=1769625655926 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [TRXUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/GALAUSDT?interval=60&days=1&t=1769625655929 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [GALAUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/SUIUSDT?interval=60&days=1&t=1769625655931 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [SUIUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/TRBUSDT?interval=60&days=1&t=1769625655933 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [TRBUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/SOLUSDT?interval=60&days=1&t=1769625655934 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [SOLUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/ADAUSDT?interval=60&days=1&t=1769625655936 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [ADAUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+MiniChart.jsx:1069 
+        
+        
+       GET http://localhost:8000/api/historical/DOGEUSDT?interval=60&days=1&t=1769625655937 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1069
+MiniChart.jsx:1204 [DOGEUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1069:25)
+loadHistoricalData @ MiniChart.jsx:1204
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/BTCUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:24 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/BTCUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:24 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ETHUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:24 p. m.] [VWAP] [ETHUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ETHUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:24 p. m.] [VWAP] [ETHUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/ETHUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [ETHUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/XRPUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:26 p. m.] [VWAP] [XRPUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/XRPUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:26 p. m.] [VWAP] [XRPUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/XRPUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [XRPUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRXUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:26 p. m.] [VWAP] [TRXUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRXUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:26 p. m.] [VWAP] [TRXUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/TRXUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [TRXUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/GALAUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:28 p. m.] [VWAP] [GALAUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/GALAUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:28 p. m.] [VWAP] [GALAUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/GALAUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [GALAUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SUIUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:28 p. m.] [VWAP] [SUIUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SUIUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:28 p. m.] [VWAP] [SUIUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/SUIUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [SUIUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRBUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:31 p. m.] [VWAP] [TRBUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRBUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:31 p. m.] [VWAP] [TRBUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/TRBUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [TRBUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SOLUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:31 p. m.] [VWAP] [SOLUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SOLUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:31 p. m.] [VWAP] [SOLUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/SOLUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [SOLUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ADAUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:33 p. m.] [VWAP] [ADAUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ADAUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:33 p. m.] [VWAP] [ADAUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/ADAUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [ADAUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/DOGEUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:33 p. m.] [VWAP] [DOGEUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/DOGEUSDT?days=90&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+Logger.js:88 ❌ [1:41:33 p. m.] [VWAP] [DOGEUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:131:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/DOGEUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [DOGEUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ETHUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ETHUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/ETHUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [ETHUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/XRPUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/XRPUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/XRPUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [XRPUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRXUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRXUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/TRXUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [TRXUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/GALAUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/GALAUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/GALAUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [GALAUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SUIUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SUIUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/SUIUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [SUIUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRBUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/TRBUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/TRBUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [TRBUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SOLUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/SOLUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/SOLUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [SOLUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ADAUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/ADAUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/ADAUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [ADAUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/DOGEUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+VWAPIndicator.js:131 
+        
+        
+       GET http://localhost:8000/api/vwap-service/data/DOGEUSDT?days=1&interval=60&vwapType=session&rollingPeriod=200 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:131
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:149 
+        
+        
+       GET http://localhost:8000/api/swing/signals/DOGEUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:149
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+SwingDetectorIndicator.js:167 [DOGEUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:149:30)
+    at async Promise.all (:5173/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:78:5)
+fetchSignals @ SwingDetectorIndicator.js:167
+error
+(anonymous) @ localforage.js?v=ba294fb4:553
+_getConnection @ localforage.js?v=ba294fb4:521
+_getOriginalConnection @ localforage.js?v=ba294fb4:568
+(anonymous) @ localforage.js?v=ba294fb4:728
+Show 4 more frames
+Show less
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:47 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:50 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:52 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+ ❌ [1:41:54 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:41:57 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:41:59 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:01 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:04 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:04 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+BackgroundPreloader.js:141 
+        
+        
+       GET http://localhost:8000/api/historical/ETHUSDT?interval=60&days=90 net::ERR_CONNECTION_REFUSED
+preloadSymbol @ BackgroundPreloader.js:141
+await in preloadSymbol
+(anonymous) @ BackgroundPreloader.js:105
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+startPreloading @ BackgroundPreloader.js:75
+(anonymous) @ Watchlist.jsx:474
+BackgroundPreloader.js:178 [BackgroundPreloader] ⚠️ Error precargando ETHUSDT: Failed to fetch
+preloadSymbol @ BackgroundPreloader.js:178
+await in preloadSymbol
+(anonymous) @ BackgroundPreloader.js:105
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+(anonymous) @ BackgroundPreloader.js:112
+requestIdleCallback
+scheduleNext @ BackgroundPreloader.js:93
+processQueue @ BackgroundPreloader.js:99
+startPreloading @ BackgroundPreloader.js:75
+(anonymous) @ Watchlist.jsx:474
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:04 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:04 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:04 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+BackgroundPreloader.js:138 [BackgroundPreloader] 📥 XRPUSDT carga completa (90 días)
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:06 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:08 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:11 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:13 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:15 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:15 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:15 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:15 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:15 p. m.] [MiniChart] Error loading drawings for ETHUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:16 p. m.] [MiniChart] Error loading drawings for XRPUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for TRXUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for GALAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for SUIUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for TRBUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for SOLUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+MiniChart.jsx:454 
+        
+        
+       GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:454
+(anonymous) @ MiniChart.jsx:2153
+Logger.js:88 ❌ [1:42:18 p. m.] [MiniChart] Error loading drawings for ADAUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:454:30)
+    at MiniChart.jsx:2153:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:476
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2153
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:20 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+  GET http://localhost:8000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:20 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:20 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:20 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for TRBUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for SOLUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:22 p. m.] [MiniChart] Error loading drawings for ADAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:25 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for TRBUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for SOLUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for ADAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:27 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:30 p. m.] [MiniChart] Error loading drawings for TRBUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for SOLUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for ADAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:32 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for TRBUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for SOLUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:34 p. m.] [MiniChart] Error loading drawings for ADAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ETHUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for ETHUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/XRPUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for XRPUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRXUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for TRXUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/GALAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:37 p. m.] [MiniChart] Error loading drawings for GALAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SUIUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for SUIUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/TRBUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for TRBUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/SOLUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for SOLUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/ADAUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for ADAUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/DOGEUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for DOGEUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573
+  GET http://localhost:8000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:387
+(anonymous) @ MiniChart.jsx:1573
+ ❌ [1:42:39 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:400
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1573

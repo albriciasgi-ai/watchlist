@@ -99,7 +99,8 @@
       "Bash(del add_analyze_gaps.js add_gap_logging.js analyze_gaps.js temp_candles.json 2)",
       "Bash(node fix_cache_gaps.js:*)",
       "Bash(node:*)",
-      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\5.Order_flow\\backend\\footprint_cache\\BTCUSDT_1.json\")"
+      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\5.Order_flow\\backend\\footprint_cache\\BTCUSDT_1.json\")",
+      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\5.Order_flow\\fix_orderflow_config.js\" 2)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,244 @@
+Plan Actualizado: Zone Detector 2.0 con Validación Histórica
+
+     Enfoque: Validar Primero, Integrar Después
+
+     Antes de construir todo el Strategy Tester, vamos a:
+     1. Crear el Zone Detector 2.0
+     2. Probarlo con 3 años de datos históricos
+     3. Iterar parámetros automáticamente
+     4. Visualizar resultados en el gráfico
+     5. El usuario valida visualmente si funciona
+     6. Si funciona → continuar con Strategy Tester
+     7. Si no → ajustar algoritmo
+
+     ---
+     Fase 0: Validación del Zone Detector (NUEVA - PRIORITARIA)
+
+     Paso 1: Crear Zone Detector con múltiples algoritmos
+
+     Archivo: backend/zone_detector.py
+
+     class ZoneDetector:
+         """
+         Detecta zonas de consolidación (rangos) usando múltiples métodos.
+         Permite comparar cuál funciona mejor.
+         """
+
+         def detect_zones(self, candles, method, params) -> List[Zone]:
+             if method == "pivot_cluster":
+                 return self._pivot_cluster_method(candles, params)
+             elif method == "atr_based":
+                 return self._atr_based_method(candles, params)
+             elif method == "volume_profile":
+                 return self._volume_profile_method(candles, params)
+             elif method == "price_action":
+                 return self._price_action_method(candles, params)
+
+     Métodos a implementar y comparar:
+
+     | Método         | Descripción                          | Parámetros                               |
+     |----------------|--------------------------------------|------------------------------------------|
+     | pivot_cluster  | Agrupa swing H/L por precio          | tolerance_pct, min_touches, min_duration |
+     | atr_based      | Detecta períodos de baja volatilidad | atr_period, atr_threshold, min_bars      |
+     | volume_profile | Zonas con alto volumen acumulado     | value_area_pct, min_volume_ratio         |
+     | price_action   | Múltiples toques en niveles          | touch_tolerance, min_touches, lookback   |
+
+     Paso 2: Auto-optimización de parámetros
+
+     Archivo: backend/zone_optimizer.py
+
+     class ZoneOptimizer:
+         """
+         Prueba combinaciones de parámetros y evalúa calidad de detección.
+         """
+
+         def optimize(self, candles, method, param_grid) -> OptimizationResult:
+             results = []
+             for params in param_grid.combinations():
+                 zones = detector.detect_zones(candles, method, params)
+                 score = self._evaluate_zones(zones, candles)
+                 results.append({params, zones, score})
+             return sorted(results, by=score)
+
+         def _evaluate_zones(self, zones, candles) -> float:
+             """
+             Evalúa qué tan "buenos" son los rangos detectados:
+             - ¿El precio realmente rebotó en los extremos?
+             - ¿Cuántos toques reales tuvo después de detectarse?
+             - ¿El breakout fue limpio o hubo muchos fakeouts?
+             """
+             score = 0
+             for zone in zones:
+                 score += self._count_valid_bounces(zone, candles)
+                 score += self._evaluate_breakout_quality(zone, candles)
+                 score -= self._count_fakeouts(zone, candles)
+             return score / len(zones)
+
+     Paso 3: Endpoint para testing visual
+
+     Endpoint: POST /api/zones/test
+
+     @app.post("/api/zones/test")
+     async def test_zone_detection(request: ZoneTestRequest):
+         """
+         Permite probar detección de zonas con diferentes métodos y parámetros.
+         Retorna zonas detectadas para visualización.
+         """
+         candles = await load_historical(request.symbol, request.interval, request.days)
+
+         if request.optimize:
+             # Auto-optimizar y retornar mejor configuración
+             results = optimizer.optimize(candles, request.method, request.param_grid)
+             return {
+                 "best_params": results[0].params,
+                 "best_score": results[0].score,
+                 "zones": results[0].zones,
+                 "all_results": results[:10]  # Top 10
+             }
+         else:
+             # Usar parámetros específicos
+             zones = detector.detect_zones(candles, request.method, request.params)
+             score = optimizer._evaluate_zones(zones, candles)
+             return {"zones": zones, "score": score}
+
+     Paso 4: UI para visualización y validación
+
+     Archivo: frontend/src/components/backtesting/ZoneDetectorTester.jsx
+
+     ┌─────────────────────────────────────────────────────────────────────────┐
+     │ ZONE DETECTOR - Modo Testing                                             │
+     ├─────────────────────────────────────────────────────────────────────────┤
+     │                                                                          │
+     │  CONFIGURACIÓN                    │  RESULTADOS                          │
+     │  ┌─────────────────────────────┐  │  ┌─────────────────────────────────┐│
+     │  │ Símbolo: [BTCUSDT ▼]        │  │  │ Zonas detectadas: 12            ││
+     │  │ Período: [3 años]           │  │  │ Score promedio: 78/100          ││
+     │  │ Timeframe: [1H ▼]           │  │  │                                 ││
+     │  │                             │  │  │ Mejor config encontrada:        ││
+     │  │ Método: [Pivot Cluster ▼]   │  │  │ - tolerance: 0.4%               ││
+     │  │                             │  │  │ - min_touches: 4                ││
+     │  │ ☑ Auto-optimizar params     │  │  │ - min_duration: 6h              ││
+     │  │                             │  │  │                                 ││
+     │  │ Parámetros manuales:        │  │  │ Métricas:                       ││
+     │  │ - tolerance: [0.3%]         │  │  │ - Rebotes válidos: 89%          ││
+     │  │ - min_touches: [3]          │  │  │ - Fakeouts: 12%                 ││
+     │  │ - min_duration: [4h]        │  │  │ - Breakouts limpios: 76%        ││
+     │  │                             │  │  │                                 ││
+     │  │ [🔍 DETECTAR ZONAS]         │  │  └─────────────────────────────────┘│
+     │  │ [⚙ AUTO-OPTIMIZAR]          │  │                                     │
+     │  └─────────────────────────────┘  │                                     │
+     │                                    │                                     │
+     ├────────────────────────────────────┴─────────────────────────────────────┤
+     │                                                                          │
+     │  GRÁFICO CON ZONAS DETECTADAS                                            │
+     │  ┌─────────────────────────────────────────────────────────────────────┐│
+     │  │                                                                      ││
+     │  │      ════════════════════════════════  ← Zona 1 ($96.5K-$97.1K)     ││
+     │  │         ╱╲    ╱╲        ╱╲                                          ││
+     │  │        ╱  ╲  ╱  ╲  ╱╲  ╱  ╲                                         ││
+     │  │       ╱    ╲╱    ╲╱  ╲╱    ╲                                        ││
+     │  │      ════════════════════════════════  ← Zona 2 ($94.8K-$95.2K)     ││
+     │  │                                                                      ││
+     │  │  [Las zonas se dibujan como rectángulos semi-transparentes]         ││
+     │  │  [Color verde = score alto, amarillo = medio, rojo = bajo]          ││
+     │  │                                                                      ││
+     │  └─────────────────────────────────────────────────────────────────────┘│
+     │                                                                          │
+     │  LISTA DE ZONAS                                                          │
+     │  ┌─────────────────────────────────────────────────────────────────────┐│
+     │  │ # │ Rango           │ Toques │ Duración │ Score │ Acciones         ││
+     │  │ 1 │ $96.5K - $97.1K │ 7      │ 18h      │ 85%   │ [👁 Ver] [✗]     ││
+     │  │ 2 │ $94.8K - $95.2K │ 5      │ 12h      │ 72%   │ [👁 Ver] [✗]     ││
+     │  │ 3 │ $93.0K - $93.4K │ 3      │ 6h       │ 45%   │ [👁 Ver] [✗]     ││
+     │  └─────────────────────────────────────────────────────────────────────┘│
+     │                                                                          │
+     │  [✓ Aprobar estas zonas] [↻ Probar otro método] [💾 Guardar config]     │
+     │                                                                          │
+     └─────────────────────────────────────────────────────────────────────────┘
+
+     ---
+     Criterios de Evaluación de Zonas
+
+     Para que el auto-optimizador sepa qué es "bueno":
+
+     1. Rebotes Válidos (positivo)
+
+     Después de que se forma la zona, ¿el precio rebotó en los extremos?
+     - Toca soporte → sube → +1 punto
+     - Toca resistencia → baja → +1 punto
+
+     2. Fakeouts (negativo)
+
+     ¿El precio rompió brevemente y volvió?
+     - Rompe resistencia → vuelve dentro → -0.5 puntos
+     - Esto indica que la zona no está bien definida
+
+     3. Breakout Limpio (positivo)
+
+     Cuando finalmente rompe, ¿fue decisivo?
+     - Rompe con volumen alto → no vuelve → +2 puntos
+     - Indica que la zona era real y el breakout es tradeable
+
+     4. Duración de la Zona (neutral/positivo)
+
+     Zonas más largas = más confiables
+     - > 24 horas → bonus +1
+     - < 4 horas → posible ruido
+
+     ---
+     Flujo de Trabajo del Usuario
+
+     1. Abre "Zone Detector Tester" en Backtester
+        ↓
+     2. Selecciona símbolo y período (ej: BTCUSDT, 3 años, 1H)
+        ↓
+     3. Click "Auto-optimizar"
+        ↓
+     4. Sistema prueba ~500 combinaciones de parámetros
+        ↓
+     5. Muestra mejores resultados + zonas en el gráfico
+        ↓
+     6. Usuario revisa visualmente:
+        - ¿Las zonas tienen sentido?
+        - ¿Coinciden con lo que él identificaría manualmente?
+        ↓
+     7a. SI funciona → Guardar config → Usar en Strategy Tester
+     7b. NO funciona → Probar otro método o ajustar criterios
+
+     ---
+     Archivos a Crear (Fase 0)
+
+     backend/
+     ├── zone_detector.py          # Algoritmos de detección
+     ├── zone_optimizer.py         # Auto-optimización
+     └── zone_evaluator.py         # Métricas de calidad
+
+     frontend/src/components/backtesting/
+     ├── ZoneDetectorTester.jsx    # UI principal
+     ├── ZoneList.jsx              # Lista de zonas
+     └── ZoneVisualization.js      # Renderizado en chart
+
+     ---
+     Después de Validación Exitosa
+
+     Una vez que el Zone Detector funcione bien:
+
+     1. ✅ Integrar al Strategy Tester
+     2. ✅ Permitir modo automático con confianza
+     3. ✅ Continuar con el resto del plan original
+
+     ---
+     Resumen del Plan
+
+     | Orden | Tarea                         | Propósito                    |
+     |-------|-------------------------------|------------------------------|
+     | 1     | Zone Detector 2.0 (4 métodos) | Detectar rangos              |
+     | 2     | Zone Evaluator                | Medir calidad de detección   |
+     | 3     | Zone Optimizer                | Encontrar mejores parámetros |
+     | 4     | UI de Testing                 | Visualizar y validar         |
+     | 5     | CHECKPOINT: Usuario valida    | Decidir si continuar         |
+     | 6     | Strategy Tester (si OK)       | Backtesting automático       |
+
+     ¿Apruebas este enfoque de validar primero el detector antes de construir todo el Strategy Tester?
+
+● Perfecto, plan aprobado. Voy a actualizar el todo list y comenzar la implementación:

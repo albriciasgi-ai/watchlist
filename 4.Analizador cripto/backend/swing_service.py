@@ -282,12 +282,21 @@ class SwingService:
 
     def _load_config(self):
         """Load config from file if exists"""
+        VALID_INTERVALS = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"]
         try:
             if CONFIG_FILE.exists():
                 with open(CONFIG_FILE, 'r') as f:
                     data = json.load(f)
+
+                    # VALIDACION: Corregir interval si esta corrupto
+                    if 'interval' in data:
+                        interval_value = str(data['interval'])
+                        if interval_value not in VALID_INTERVALS:
+                            logger.warning(f"[SWING_SERVICE] CONFIG CORRUPTED: interval='{interval_value}' is invalid, resetting to '1'")
+                            data['interval'] = "1"
+
                     self.config = SwingServiceConfig(**data)
-                    logger.info(f"[SWING_SERVICE] Loaded config: {len(self.config.symbols)} symbols")
+                    logger.info(f"[SWING_SERVICE] Loaded config: {len(self.config.symbols)} symbols, interval={self.config.interval}")
         except Exception as e:
             logger.warning(f"[SWING_SERVICE] Could not load config: {e}")
 
@@ -826,6 +835,14 @@ class SwingService:
             # Detectar si cambiaron interval o days para re-analizar
             old_interval = self.config.interval
             old_days = self.config.days
+
+            # VALIDACION: Rechazar valores invalidos de interval
+            VALID_INTERVALS = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"]
+            if 'interval' in new_config:
+                interval_value = str(new_config['interval'])
+                if interval_value not in VALID_INTERVALS:
+                    logger.warning(f"[SWING_SERVICE] REJECTED invalid interval: '{interval_value}' - keeping current: {self.config.interval}")
+                    del new_config['interval']  # No actualizar con valor invalido
 
             # Update config fields
             for key, value in new_config.items():

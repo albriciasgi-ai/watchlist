@@ -1,0 +1,61 @@
+{
+  "name": "watchlist-desktop",
+  "version": "1.0.0",
+  "description": "Watchlist de Criptomonedas - Aplicacion de Escritorio",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "dev:electron": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "vite build",
+    "build:electron": "vite build && electron-builder --win",
+    "build:portable": "vite build && electron-builder --win portable",
+    "preview": "vite preview",
+    "electron": "electron ."
+  },
+  "dependencies": {
+    "localforage": "^1.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uplot": "^1.6.21"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "concurrently": "^8.2.2",
+    "electron": "^33.2.0",
+    "electron-builder": "^24.13.3",
+    "vite": "^5.4.0",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.watchlist.desktop",
+    "productName": "Watchlist Desktop",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        "portable"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Watchlist Desktop"
+    },
+    "portable": {
+      "artifactName": "WatchlistDesktop-Portable.exe"
+    }
+  }
+}

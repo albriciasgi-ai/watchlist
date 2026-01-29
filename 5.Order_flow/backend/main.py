@@ -2483,15 +2483,13 @@ async def startup_event():
     # except Exception as e:
     #     print(f"[STARTUP] Warning: Could not start real-time service: {e}")
 
-    # # Start swing detector service
-    # if swing_service:
-    #     try:
-    #         await swing_service.start()
-    #         print(f"[STARTUP] Swing detector service started")
-    #     except Exception as e:
-    #         print(f"[STARTUP] Warning: Could not start swing service: {e}")
-
-    print("[STARTUP] Swing/DTB/Rejection services DISABLED (enable in main.py if needed)")
+    # Start swing detector service
+    if swing_service:
+        try:
+            await swing_service.start()
+            print(f"[STARTUP] Swing detector service started")
+        except Exception as e:
+            print(f"[STARTUP] Warning: Could not start swing service: {e}")
 
     # Start WebSocket Manager FIRST (required for all real-time services)
     try:

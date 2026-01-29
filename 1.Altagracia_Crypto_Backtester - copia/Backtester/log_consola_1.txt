@@ -1,0 +1,580 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [IndexedDB] Datos encontrados para BTCUSDT
+ [BacktestingApp] Datos encontrados en IndexedDB, guardados hace 0.15 horas
+ [BacktestingApp] Última vela del caché: 2026-01-21T20:00:00.000Z
+ [BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)
+ [BacktestingApp] 🔄 Verificando actualizaciones para BTCUSDT...
+ [BacktestingApp] DEBUG - startDate: 2023-01-31
+ [BacktestingApp] DEBUG - firstCandle.timestamp: 1670715000000 2022-12-10T23:30:00.000Z
+ [BacktestingApp] DEBUG - lastCandle.timestamp: 1769025600000 2026-01-21T20:00:00.000Z
+ [BacktestingApp] DEBUG - startDate input: 2023-01-31
+ [BacktestingApp] DEBUG - startTimestamp calculado: 1675141200000 2023-01-31T05:00:00.000Z
+ [BacktestingApp] ✅ Usando fecha de inicio seleccionada:
+   - Fecha ingresada: 2023-01-31
+   - Timestamp: 1675141200000
+   - Fecha real: 2023-01-31T05:00:00.000Z
+   - Índice de vela: 4918 de 109235
+   - Velas disponibles para simular: 104317
+ [TimeController] Inicializado:
+   - Historial: 2022-12-10T23:30:00.000Z → 2026-01-21T20:00:00.000Z
+   - Simulación inicia: 2023-01-31T05:00:00.000Z
+   - CurrentTime: 2023-01-31T05:00:00.000Z
+ [OrderManager] Inicializado con balance: 10000
+ [BacktestingApp] OrderManager creado
+ [BacktestingApp] ✅ Precio inicial establecido:
+   - Precio: 22860.5
+   - Fecha de la vela: 2023-01-31T04:45:00.000Z
+   - SimulationStartTime: 2023-01-31T05:00:00.000Z
+   - Índice de vela: 4917 de 109235
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1675141200000 (2023-01-31T05:00:00.000Z)
+ [BacktestingApp] CHECK1: marketData=false, timeframes=false, activeTimeframe=15m, hasData=false
+ [BacktestingApp] 🚀 Iniciando precálculo de indicadores para todos los timeframes...
+ [BacktestingApp] 📅 simulationStartTime: 2023-01-31T05:00:00.000Z
+ [BacktestingApp] ✅ PRECÁLCULO GLOBAL COMPLETADO en 0.00s
+ [BacktestingApp] 🎬 Sistema listo para playback rápido
+ [BacktestingApp] ✅ Inicializado
+   - Mostrando historial desde: 2022-12-10T23:30:00.000Z
+   - Simulación inicia en: 2023-01-31T05:00:00.000Z
+ [MiniChart BTCUSDT 15m] 📊 Cargando 109235 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=15m, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 4919
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=15m, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [MiniChart BTCUSDT 1h] 📊 Cargando 27309 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=1h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=1h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 1230
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=1h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=1h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6828 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=4h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=4h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 308
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=4h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=4h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [TradingControls] Precio actualizado automáticamente: 22860.50
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] 🧹 IndicatorManager destruido
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 15m] 📊 Cargando 109235 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=15m, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 4919
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=15m, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 1h] 📊 Cargando 27309 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=1h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=1h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 1230
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=1h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=1h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 4h] 📊 Cargando 6828 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 1095 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: Object
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Volume Delta (backtesting mode)
+ [BTCUSDT] Skipping fetchData for CVD (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Open Interest (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Rejection Patterns (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Double Top/Bottom (backtesting mode)
+ [BTCUSDT] Fetching data for Support & Resistance (backtesting mode)
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=4h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=4h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] Skipping fetchData for VWAP (backtesting mode)
+ [BTCUSDT] Skipping fetchData for Swing Detector (backtesting mode)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 308
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Delta
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=4h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=4h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [TradingControls] Precio actualizado automáticamente: 22860.50
+ [TradingControls] Precio actualizado automáticamente: 22860.00
+ [TimeController] Rol de master reclamado
+ [BTCUSDT] 🎯 renderOverlays - Indicadores con overlay: Volume Profile(enabled=true), Rejection Patterns(enabled=false), Double Top/Bottom(enabled=false), Support & Resistance(enabled=true), VWAP(enabled=false), Swing Detector(enabled=false)
+ [BTCUSDT] 📊 S&R Status: enabled=true, resistances=0, supports=0
+ [BTCUSDT] 🎯 S&R renderOverlay ENTRY: allCandles=109235, visibleCandles=139, playbackTime=null
+ [BTCUSDT] 🔄 S&R: Recalculando (valid=false, dataLen=109235/109235, playbackTime=null)
+ [BTCUSDT] 📊 S&R: Calculando localmente con 109235 velas...
+ [BTCUSDT] 📊 S&R PARAMS: leftBars=12, rightBars=12, minTouches=2, clusterDistance=0.5, maxLevels=20
+ [BTCUSDT] S&R: Encontrados 3127 pivot highs, 3053 pivot lows
+ [BTCUSDT] S&R: Clusters creados: 296 resistances, 301 supports
+ [BTCUSDT] S&R: Después de filtro minTouches=2: 277/296 resistances, 281/301 supports
+ [BTCUSDT] S&R: Niveles activos - Resistencias por encima: 60, Soportes por debajo: 223, Precio actual: $89919.00
+ [BTCUSDT] S&R: Niveles finales (más cercanos al precio $89919.00): 20 R, 20 S
+ [BTCUSDT] S&R: Resistencias más cercanas: $90459.76, $90941.67, $91512.90
+ [BTCUSDT] S&R: Soportes más cercanos: $89912.39, $89365.29, $89002.86
+ [BTCUSDT] ✅ S&R Local: 20 R, 20 S (109235 velas analizadas)
+ [BTCUSDT] 🎨 S&R renderOverlay: Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 3 resistances, 5 supports, 1 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=40
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 6 resistances, 10 supports, 3 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=1h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=1h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=0
+ [BTCUSDT] 🔄 Support & Resistance habilitado pero sin datos, recargando...
+ [BTCUSDT] 📊 S/R fetchData CALLED
+ [BTCUSDT] S/R config: interval=4h, days=1095, enabled=true
+ [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=4h&days=1095&volume_method=zscore&z_score_threshold=1&z_score_period=50&left_bars=12&right_bars=12&min_touches=2&cluster_distance=0.5&max_levels=20
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 3 resistances, 5 supports, 1 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 4919 velas
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 6 resistances, 10 supports, 3 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 1230 velas
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 308 velas
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 3 resistances, 5 supports, 1 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=8
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 6 resistances, 10 supports, 3 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=16
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":true,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=5
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 3 resistances, 5 supports, 1 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 4919 velas
+ [OI RENDER] BTCUSDT Object
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 6 resistances, 10 supports, 3 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 1230 velas
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 308 velas
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 6 resistances, 10 supports, 3 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [BTCUSDT] S/R response status: 200
+ [BTCUSDT] S/R response: Object
+ [BTCUSDT] ✅ S/R loaded: 2 resistances, 3 supports, 0 zones
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [OI RENDER] BTCUSDT Object
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 4919
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":true,"Open Interest":false,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Open Interest
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=8
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 4919 velas
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 4919
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":true,"CVD":false,"Open Interest":false,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando CVD
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=8
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 4919 velas
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 4919
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":false,"CVD":false,"Open Interest":false,"VWAP":false,"Range Detection":true,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":true,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Profile
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=true, wasEnabled=true, hasData=8
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 4919 velas
+ [BacktestingApp] ✅ Actualización completada: Object
+ [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+ [Settings] Abriendo config para Support & Resistance: Object
+ [Settings] Manager obtenido: true
+SupportResistanceIndicator.js:579 [BTCUSDT] S&R updateConfig called with: Object
+SupportResistanceIndicator.js:580 [BTCUSDT] S&R BEFORE: leftBars=12, rightBars=12, minTouches=2, clusterDistance=0.5
+SupportResistanceIndicator.js:601 [BTCUSDT] S&R AFTER: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5
+SupportResistanceIndicator.js:613 [BTCUSDT] S&R: Config changed, invalidating cache for recalculation. _calculationValid = false
+SupportResistanceIndicator.js:60 [BTCUSDT] 📊 S/R fetchData CALLED
+SupportResistanceIndicator.js:61 [BTCUSDT] S/R config: interval=15m, days=20, enabled=true
+SupportResistanceIndicator.js:78 [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=20&volume_method=zscore&z_score_threshold=1.4&z_score_period=50&left_bars=6&right_bars=6&min_touches=3&cluster_distance=0.5&max_levels=5
+SupportResistanceIndicator.js:81 [BTCUSDT] S/R response status: 200
+SupportResistanceIndicator.js:83 [BTCUSDT] S/R response: Object
+SupportResistanceIndicator.js:91 [BTCUSDT] ✅ S/R loaded: 2 resistances, 4 supports, 1 zones
+MiniChart.jsx:1761 [BTCUSDT] 🔄 Redraw requested by indicator
+SupportResistanceIndicator.js:311 [BTCUSDT] 🔄 S&R: Recalculando (valid=false, dataLen=109235/109235, playbackTime=null)
+SupportResistanceIndicator.js:145 [BTCUSDT] 📊 S&R: Calculando localmente con 109235 velas...
+SupportResistanceIndicator.js:146 [BTCUSDT] 📊 S&R PARAMS: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5, maxLevels=5
+SupportResistanceIndicator.js:190 [BTCUSDT] S&R: Encontrados 5808 pivot highs, 5792 pivot lows
+SupportResistanceIndicator.js:232 [BTCUSDT] S&R: Clusters creados: 329 resistances, 330 supports
+SupportResistanceIndicator.js:239 [BTCUSDT] S&R: Después de filtro minTouches=3: 295/329 resistances, 300/330 supports
+SupportResistanceIndicator.js:250 [BTCUSDT] S&R: Niveles activos - Resistencias por encima: 63, Soportes por debajo: 238, Precio actual: $89919.00
+SupportResistanceIndicator.js:266 [BTCUSDT] S&R: Niveles finales (más cercanos al precio $89919.00): 5 R, 5 S
+SupportResistanceIndicator.js:268 [BTCUSDT] S&R: Resistencias más cercanas: $90077.48, $90563.92, $90993.96
+SupportResistanceIndicator.js:271 [BTCUSDT] S&R: Soportes más cercanos: $89859.25, $89356.44, $88916.34
+SupportResistanceIndicator.js:282 [BTCUSDT] ✅ S&R Local: 5 R, 5 S (109235 velas analizadas)
+SupportResistanceIndicator.js:338 [BTCUSDT] 🎨 S&R renderOverlay: Object
+BacktestingApp.jsx:385 [BacktestingApp] Datos cargados: Object
+MiniChart.jsx:1639 [MiniChart BTCUSDT 15m] 📊 Cargando 109236 velas en allCandlesRef
+MiniChart.jsx:1639 [MiniChart BTCUSDT 1h] 📊 Cargando 27309 velas en allCandlesRef
+MiniChart.jsx:1639 [MiniChart BTCUSDT 4h] 📊 Cargando 6828 velas en allCandlesRef
+BacktestingApp.jsx:454 [IndexedDB] Datos guardados para BTCUSDT
+BacktestingApp.jsx:454 [IndexedDB] Datos guardados para BTCUSDT
+BacktestingApp.jsx:596 [BacktestingApp] 🔄 1 velas nuevas disponibles
+BacktestingApp.jsx:375 [BacktestingApp] Cargando datos para BTCUSDT... (force_refresh: false)
+SupportResistanceIndicator.js:311 [BTCUSDT] 🔄 S&R: Recalculando (valid=true, dataLen=109236/109236, playbackTime=null)
+SupportResistanceIndicator.js:145 [BTCUSDT] 📊 S&R: Calculando localmente con 109236 velas...
+SupportResistanceIndicator.js:146 [BTCUSDT] 📊 S&R PARAMS: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5, maxLevels=5
+SupportResistanceIndicator.js:190 [BTCUSDT] S&R: Encontrados 5808 pivot highs, 5792 pivot lows
+SupportResistanceIndicator.js:232 [BTCUSDT] S&R: Clusters creados: 329 resistances, 330 supports
+SupportResistanceIndicator.js:239 [BTCUSDT] S&R: Después de filtro minTouches=3: 295/329 resistances, 300/330 supports
+SupportResistanceIndicator.js:250 [BTCUSDT] S&R: Niveles activos - Resistencias por encima: 63, Soportes por debajo: 237, Precio actual: $89815.50
+SupportResistanceIndicator.js:266 [BTCUSDT] S&R: Niveles finales (más cercanos al precio $89815.50): 5 R, 5 S
+SupportResistanceIndicator.js:268 [BTCUSDT] S&R: Resistencias más cercanas: $90077.48, $90563.92, $90993.96
+SupportResistanceIndicator.js:271 [BTCUSDT] S&R: Soportes más cercanos: $89356.44, $88916.34, $88393.74
+SupportResistanceIndicator.js:282 [BTCUSDT] ✅ S&R Local: 5 R, 5 S (109236 velas analizadas)
+SupportResistanceIndicator.js:338 [BTCUSDT] 🎨 S&R renderOverlay: Object
+BacktestingApp.jsx:385 [BacktestingApp] Datos cargados: Object
+MiniChart.jsx:1639 [MiniChart BTCUSDT 15m] 📊 Cargando 109236 velas en allCandlesRef
+MiniChart.jsx:1639 [MiniChart BTCUSDT 1h] 📊 Cargando 27309 velas en allCandlesRef
+MiniChart.jsx:1639 [MiniChart BTCUSDT 4h] 📊 Cargando 6828 velas en allCandlesRef
+BacktestingApp.jsx:454 [IndexedDB] Datos guardados para BTCUSDT
+SupportResistanceIndicator.js:579 [BTCUSDT] S&R updateConfig called with: Object
+SupportResistanceIndicator.js:580 [BTCUSDT] S&R BEFORE: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5
+SupportResistanceIndicator.js:601 [BTCUSDT] S&R AFTER: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5
+SupportResistanceIndicator.js:613 [BTCUSDT] S&R: Config changed, invalidating cache for recalculation. _calculationValid = false
+SupportResistanceIndicator.js:60 [BTCUSDT] 📊 S/R fetchData CALLED
+SupportResistanceIndicator.js:61 [BTCUSDT] S/R config: interval=15m, days=20, enabled=true
+SupportResistanceIndicator.js:78 [BTCUSDT] 📊 S/R: Fetching from http://localhost:9000/api/support-resistance/BTCUSDT?interval=15m&days=20&volume_method=zscore&z_score_threshold=1.4&z_score_period=50&left_bars=6&right_bars=6&min_touches=3&cluster_distance=0.5&max_levels=5
+SupportResistanceIndicator.js:81 [BTCUSDT] S/R response status: 200
+SupportResistanceIndicator.js:83 [BTCUSDT] S/R response: Object
+SupportResistanceIndicator.js:91 [BTCUSDT] ✅ S/R loaded: 2 resistances, 4 supports, 1 zones
+MiniChart.jsx:1761 [BTCUSDT] 🔄 Redraw requested by indicator
+SupportResistanceIndicator.js:311 [BTCUSDT] 🔄 S&R: Recalculando (valid=false, dataLen=109236/109236, playbackTime=null)
+SupportResistanceIndicator.js:145 [BTCUSDT] 📊 S&R: Calculando localmente con 109236 velas...
+SupportResistanceIndicator.js:146 [BTCUSDT] 📊 S&R PARAMS: leftBars=6, rightBars=6, minTouches=3, clusterDistance=0.5, maxLevels=5
+SupportResistanceIndicator.js:190 [BTCUSDT] S&R: Encontrados 5808 pivot highs, 5792 pivot lows
+SupportResistanceIndicator.js:232 [BTCUSDT] S&R: Clusters creados: 329 resistances, 330 supports
+SupportResistanceIndicator.js:239 [BTCUSDT] S&R: Después de filtro minTouches=3: 295/329 resistances, 300/330 supports
+SupportResistanceIndicator.js:250 [BTCUSDT] S&R: Niveles activos - Resistencias por encima: 63, Soportes por debajo: 237, Precio actual: $89815.50
+SupportResistanceIndicator.js:266 [BTCUSDT] S&R: Niveles finales (más cercanos al precio $89815.50): 5 R, 5 S
+SupportResistanceIndicator.js:268 [BTCUSDT] S&R: Resistencias más cercanas: $90077.48, $90563.92, $90993.96
+SupportResistanceIndicator.js:271 [BTCUSDT] S&R: Soportes más cercanos: $89356.44, $88916.34, $88393.74
+SupportResistanceIndicator.js:282 [BTCUSDT] ✅ S&R Local: 5 R, 5 S (109236 velas analizadas)
+SupportResistanceIndicator.js:338 [BTCUSDT] 🎨 S&R renderOverlay: Object

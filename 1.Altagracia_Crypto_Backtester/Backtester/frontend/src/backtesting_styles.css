@@ -961,3 +961,40 @@
     padding: 6px 4px;
   }
 }
+
+/* ==================== STRATEGY PANEL ==================== */
+
+.strategy-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.strategy-list-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.view-results-btn {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 12px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #4a6fa5 0%, #5a7fb5 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-results-btn:hover {
+  background: linear-gradient(135deg, #5a7fb5 0%, #6a8fc5 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(74, 111, 165, 0.4);
+}

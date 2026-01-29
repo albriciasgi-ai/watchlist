@@ -1,4 +1,4 @@
-"""
+﻿"""
 Trading Bot Backend - Main Application
 FastAPI server with WebSocket support for real-time updates
 """
@@ -777,19 +777,39 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             pattern = f"{pattern_type} ({direction})"
         else:
             # Original Watchlist format: {pattern, symbol, price, confidence}
-            pattern = request.get("pattern", "").upper()
+            # Or backend_realtime format: {pattern: {patternType, direction, ...}, symbol, ...}
+            pattern_raw = request.get("pattern", "")
             symbol = request.get("symbol", "").upper()
-            price = request.get("price", 0)
-            confidence = request.get("confidence", 0)
 
-            # Determine side from pattern
-            if any(word in pattern for word in ["LONG", "BUY", "COMPRA", "ABRIR LONG", "OPEN LONG"]):
-                side = "Buy"
-            elif any(word in pattern for word in ["SHORT", "SELL", "VENTA", "ABRIR SHORT", "OPEN SHORT"]):
-                side = "Sell"
+            # Handle pattern as dict (from backend_realtime) or string (original)
+            if isinstance(pattern_raw, dict):
+                pattern_type = pattern_raw.get("patternType", "UNKNOWN")
+                direction = pattern_raw.get("direction", "").upper()
+                price = pattern_raw.get("price", request.get("price", 0))
+                confidence = pattern_raw.get("confidence", request.get("confidence", 0))
+                pattern = f"{pattern_type} ({direction})"
+
+                # Determine side from direction in pattern dict
+                if direction == "LONG" or direction == "BULLISH":
+                    side = "Buy"
+                elif direction == "SHORT" or direction == "BEARISH":
+                    side = "Sell"
+                else:
+                    state.log("error", f"Could not determine direction from pattern dict: {pattern_raw}")
+                    raise HTTPException(status_code=400, detail=f"Invalid direction in pattern: {direction}")
             else:
-                state.log("error", f"Could not determine direction from pattern: {pattern}")
-                raise HTTPException(status_code=400, detail=f"Could not determine direction from pattern: {pattern}")
+                pattern = str(pattern_raw).upper()
+                price = request.get("price", 0)
+                confidence = request.get("confidence", 0)
+
+                # Determine side from pattern string
+                if any(word in pattern for word in ["LONG", "BUY", "COMPRA", "ABRIR LONG", "OPEN LONG"]):
+                    side = "Buy"
+                elif any(word in pattern for word in ["SHORT", "SELL", "VENTA", "ABRIR SHORT", "OPEN SHORT"]):
+                    side = "Sell"
+                else:
+                    state.log("error", f"Could not determine direction from pattern: {pattern}")
+                    raise HTTPException(status_code=400, detail=f"Could not determine direction from pattern: {pattern}")
 
         price = Decimal(str(price))
 
@@ -1061,6 +1081,175 @@ async def clear_order_history():
 
 
 # ==========================
+# Journal Integration Endpoints
+# ==========================
+
+@app.get("/api/positions")
+async def get_all_positions():
+    """
+    Get all open positions - Used by Trading Journal for position monitoring.
+    Returns list of positions with details needed for journal entries.
+    """
+    try:
+        if not state.bybit_client:
+            return {
+                "success": False,
+                "error": "Credentials not configured",
+                "positions": []
+            }
+
+        positions = []
+        for symbol in state.trading_config.keys():
+            try:
+                position = await state.bybit_client.get_position(symbol)
+                if position.get("success") and position.get("hasPosition"):
+                    positions.append({
+                        "symbol": symbol,
+                        "side": position.get("side"),
+                        "size": position.get("size"),
+                        "entryPrice": position.get("entryPrice"),
+                        "markPrice": position.get("markPrice"),
+                        "unrealizedPnl": position.get("unrealizedPnl"),
+                        "leverage": position.get("leverage"),
+                        "positionValue": position.get("positionValue"),
+                        "takeProfit": position.get("takeProfit"),
+                        "stopLoss": position.get("stopLoss"),
+                        "createdTime": position.get("createdTime"),
+                        "updatedTime": position.get("updatedTime")
+                    })
+            except Exception as e:
+                state.log("warning", f"Failed to get position for {symbol}: {e}")
+
+        return {
+            "success": True,
+            "positions": positions,
+            "count": len(positions),
+            "timestamp": datetime.now().isoformat()
+        }
+
+    except Exception as e:
+        state.log("error", f"Error getting all positions: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "positions": []
+        }
+
+
+@app.get("/api/alerts/recent")
+async def get_recent_alerts(minutes: int = 30):
+    """
+    Get recent alerts received - Used by Trading Journal for source tracking.
+    Reads from the alerts_received.log file.
+    """
+    try:
+        alerts = []
+
+        if ALERT_RECEIVED_LOG.exists():
+            from datetime import timedelta
+
+            cutoff_time = datetime.now() - timedelta(minutes=minutes)
+
+            with open(ALERT_RECEIVED_LOG, "r", encoding="utf-8") as f:
+                for line in f:
+                    try:
+                        parts = [p.strip() for p in line.strip().split("|")]
+                        if len(parts) >= 7:
+                            timestamp_str = parts[0]
+                            timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+
+                            if timestamp >= cutoff_time:
+                                alerts.append({
+                                    "timestamp": timestamp.isoformat(),
+                                    "result": parts[1],
+                                    "source": parts[2],
+                                    "symbol": parts[3],
+                                    "side": parts[4],
+                                    "pattern": parts[5],
+                                    "price": parts[6].replace("$", ""),
+                                    "confidence": parts[7] if len(parts) > 7 else None
+                                })
+                    except Exception:
+                        continue
+
+        alerts.sort(key=lambda x: x["timestamp"], reverse=True)
+
+        return {
+            "success": True,
+            "alerts": alerts,
+            "count": len(alerts),
+            "minutes": minutes
+        }
+
+    except Exception as e:
+        state.log("error", f"Error getting recent alerts: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "alerts": []
+        }
+
+
+@app.get("/api/position-history/{symbol}")
+async def get_position_history(symbol: str, limit: int = 10):
+    """
+    Get closed position history for a symbol from Bybit.
+    Used by Trading Journal to detect position closes and calculate PnL.
+    """
+    try:
+        if not state.bybit_client:
+            raise HTTPException(status_code=400, detail="Credentials not configured")
+
+        result = await state.bybit_client._make_request(
+            "GET",
+            "/v5/position/closed-pnl",
+            params={
+                "category": "linear",
+                "symbol": symbol.upper(),
+                "limit": limit
+            }
+        )
+
+        if result.get("retCode") != 0:
+            return {
+                "success": False,
+                "error": result.get("retMsg", "Unknown error"),
+                "history": []
+            }
+
+        history = result.get("result", {}).get("list", [])
+
+        formatted = []
+        for h in history:
+            formatted.append({
+                "symbol": h.get("symbol"),
+                "side": h.get("side"),
+                "qty": h.get("qty"),
+                "entryPrice": h.get("avgEntryPrice"),
+                "exitPrice": h.get("avgExitPrice"),
+                "closedPnl": h.get("closedPnl"),
+                "createdTime": h.get("createdTime"),
+                "updatedTime": h.get("updatedTime"),
+                "orderId": h.get("orderId"),
+                "orderType": h.get("orderType"),
+                "execType": h.get("execType"),
+                "leverage": h.get("leverage")
+            })
+
+        return {
+            "success": True,
+            "history": formatted,
+            "count": len(formatted)
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        state.log("error", f"Error getting position history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==========================
 # WebSocket Endpoint
 # ==========================
 
@@ -1099,3 +1288,4 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5000, log_level="info")
+

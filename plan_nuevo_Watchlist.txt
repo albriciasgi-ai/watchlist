@@ -1,0 +1,163 @@
+Tienes razón, es un punto importante. Déjame ajustar el plan teniendo en cuenta que:
+
+  - Backend: Hace TODOS los cálculos (indicadores, detección de patrones, alertas)
+  - Frontend: Solo renderiza/visualiza datos del backend
+
+  Esto simplifica la migración porque el frontend en Electron solo necesita:
+  1. Recibir datos del backend via HTTP/WebSocket
+  2. Renderizar gráficos con uPlot
+  3. Mostrar UI (sin lógica de cálculo)
+
+  El problema de throttling del navegador afecta principalmente al renderizado visual (gaps en gráficos cuando
+  vuelve de inactividad), no a las alertas (que ya están en backend).
+
+● User approved Claude's plan
+  ⎿  Plan de Desarrollo: WatchlistDesktop (Electron)
+
+     Ubicación: 7.WatchlistDesktop/
+
+     Arquitectura
+
+     ┌─────────────────────────────────────────────────────────┐
+     │                    ELECTRON APP                          │
+     │  ┌───────────────────────────────────────────────────┐  │
+     │  │              RENDERER (React)                      │  │
+     │  │  - Solo visualización de datos                    │  │
+     │  │  - uPlot para gráficos                            │  │
+     │  │  - Sin cálculos de indicadores                    │  │
+     │  │  - Sin throttling (disable-renderer-backgrounding)│  │
+     │  └───────────────────────────────────────────────────┘  │
+     │                         ↕ HTTP/WS                        │
+     └─────────────────────────────────────────────────────────┘
+                               ↕
+     ┌─────────────────────────────────────────────────────────┐
+     │              BACKEND (FastAPI - Puerto 8000)             │
+     │  - TODOS los cálculos de indicadores                    │
+     │  - Detección de patrones (Swing, VWAP, etc)             │
+     │  - Envío de alertas al Trading Bot                      │
+     │  - WebSocket para datos en tiempo real                  │
+     │  (SIN CAMBIOS - ya funciona correctamente)              │
+     └─────────────────────────────────────────────────────────┘
+
+     ---
+     FASE 1: Estructura Base (Día 1)
+
+     1.1 Crear estructura
+
+     7.WatchlistDesktop/
+     ├── electron/
+     │   ├── main.js              # Proceso principal + anti-throttling
+     │   └── preload.js           # Bridge seguro
+     ├── src/                     # Copiar de App 2 (solo display)
+     │   ├── components/
+     │   ├── hooks/
+     │   ├── utils/
+     │   └── ...
+     ├── assets/icon.ico
+     ├── electron.vite.config.js
+     └── package.json
+
+     1.2 Dependencias
+
+     {
+       "dependencies": {
+         "react": "^18.2.0",
+         "react-dom": "^18.2.0",
+         "uplot": "^1.6.21",
+         "localforage": "^1.10.0"
+       },
+       "devDependencies": {
+         "electron": "^33.2.0",
+         "electron-vite": "^2.0.0",
+         "electron-builder": "^24.13.3",
+         "@vitejs/plugin-react": "^4.3.3",
+         "vite": "^5.4.0"
+       }
+     }
+
+     ---
+     FASE 2: Anti-Throttling (Día 1)
+
+     2.1 Main Process
+
+     // electron/main.js
+     const { app, BrowserWindow, powerSaveBlocker } = require('electron');
+
+     // CRÍTICO: Desactivar throttling de Chromium
+     app.commandLine.appendSwitch('disable-renderer-backgrounding');
+     app.commandLine.appendSwitch('disable-background-timer-throttling');
+
+     app.whenReady().then(() => {
+       // Prevenir suspensión del sistema
+       powerSaveBlocker.start('prevent-app-suspension');
+
+       const win = new BrowserWindow({
+         width: 1400,
+         height: 900,
+         webPreferences: {
+           backgroundThrottling: false,  // CLAVE
+           preload: path.join(__dirname, 'preload.js')
+         }
+       });
+
+       // Dev: localhost:5173 | Prod: archivo local
+       win.loadURL(process.env.VITE_DEV_SERVER_URL ||
+         `file://${path.join(__dirname, '../dist/index.html')}`);
+     });
+
+     Esto resuelve: Gráficos sin gaps al minimizar/inactividad
+
+     ---
+     FASE 3: Migrar Frontend (Día 2-3)
+
+     Copiar de 2.WatchlistConIndicadores/frontend/src/:
+
+     | Carpeta/Archivo          | Cambios                              |
+     |--------------------------|--------------------------------------|
+     | components/Watchlist.jsx | Ninguno                              |
+     | components/MiniChart.jsx | Ninguno                              |
+     | components/indicators/*  | Ninguno (solo renderizan)            |
+     | components/drawing/*     | Ninguno                              |
+     | components/*Settings.jsx | Ninguno                              |
+     | hooks/useGlobalAlerts.js | Ninguno                              |
+     | utils/*                  | Ninguno                              |
+     | config.js                | Mantener API_BASE_URL=localhost:8000 |
+     | *.css                    | Ninguno                              |
+
+     Total: ~70 archivos, ~0 cambios de lógica
+
+     ---
+     FASE 4: System Tray (Día 3)
+
+     - Minimizar a tray (no cerrar)
+     - Menú: Abrir | Cerrar
+     - Notificaciones nativas del OS
+
+     ---
+     FASE 5: Build Windows (Día 4)
+
+     npm run build:win  # Genera .exe instalable
+
+     Output: dist/WatchlistDesktop Setup.exe (~150MB)
+
+     ---
+     LO QUE NO CAMBIA
+
+     | Componente             | Estado               |
+     |------------------------|----------------------|
+     | Backend FastAPI        | ✅ Sin cambios        |
+     | Cálculo de indicadores | ✅ Ya está en backend |
+     | Detección de patrones  | ✅ Ya está en backend |
+     | Alertas al Trading Bot | ✅ Ya está en backend |
+     | WebSocket Bybit        | ✅ Ya está en backend |
+
+     ---
+     RESULTADO
+
+     - ✅ Gráficos sin gaps al minimizar/pantalla apagada
+     - ✅ Renderizado fluido siempre activo
+     - ✅ Visualmente idéntico a la app actual
+     - ✅ Backend sin modificaciones
+     - ✅ ~4 días de desarrollo
+
+● Perfecto, el plan está aprobado. Voy a comenzar la implementación.

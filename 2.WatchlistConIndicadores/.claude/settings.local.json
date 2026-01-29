@@ -70,7 +70,14 @@
       "Bash(cmd /c \"tasklist /FI \"\"MEMUSAGE gt 100000\"\" /FO TABLE\")",
       "Bash(wmic OS get:*)",
       "Bash(systeminfo:*)",
-      "Bash(sc query:*)"
+      "Bash(sc query:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(.venvScriptspip.exe install requests --quiet)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\.venv\\Scripts\\pip.exe\" install requests --quiet)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\.venv\\Scripts\\python.exe\":*)",
+      "Bash(timeout /t 10)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\.venv\\Scripts\\pip.exe\" install:*)"
     ],
     "deny": [],
     "ask": []

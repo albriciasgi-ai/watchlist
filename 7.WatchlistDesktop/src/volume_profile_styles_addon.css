@@ -1,0 +1,116 @@
+/* Estilos adicionales para botones de configuración en Fixed Range Profiles */
+
+.profile-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.profile-item:hover {
+  background: #f9f9f9;
+}
+
+.profile-name {
+  font-weight: 500;
+  color: #333;
+  min-width: 80px;
+}
+
+.profile-dates {
+  flex: 1;
+  font-size: 13px;
+  color: #666;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.configure-profile-btn {
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.configure-profile-btn:hover {
+  background: #1976D2;
+  transform: scale(1.1);
+}
+
+.delete-profile-btn {
+  background: #F44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.delete-profile-btn:hover {
+  background: #D32F2F;
+  transform: scale(1.1);
+}
+
+.profiles-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 16px 0;
+}
+
+.no-profiles-message {
+  text-align: center;
+  color: #999;
+  padding: 32px;
+  font-size: 14px;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.manager-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.create-profile-btn {
+  background: #34C759;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-profile-btn:hover {
+  background: #2FA74E;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+}

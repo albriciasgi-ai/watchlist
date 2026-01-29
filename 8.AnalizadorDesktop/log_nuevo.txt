@@ -1,0 +1,84 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:56 [Preload] Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:57 [Preload] Plataforma: win32
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:58 [Preload] Electron: 33.4.11
+VM111 renderer_init:2 Electron Security Warning (enableBlinkFeatures) This renderer process has additional "enableBlinkFeatures"
+  enabled. This exposes users of this app to some security risk. If you do not
+  need this feature, you should disable it.
+
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+(anonymous) @ VM111 renderer_init:2
+localhost:10000/api/swing/config:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/swing/config/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/historical/BTCUSDT?interval=1&since_timestamp=1769651880000&t=1769656638843:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/sr2/BTCUSDT?interval=1&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/swing/signals/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+localhost:10000/api/sr2/BTCUSDT?interval=1&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED

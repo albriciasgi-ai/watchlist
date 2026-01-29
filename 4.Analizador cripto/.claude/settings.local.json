@@ -71,7 +71,8 @@
       "Bash(echo:*)",
       "Bash(touch:*)",
       "Bash(xargs:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(xcopy:*)"
     ],
     "deny": [],
     "ask": []

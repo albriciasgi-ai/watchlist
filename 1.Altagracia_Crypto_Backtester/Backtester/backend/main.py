@@ -324,9 +324,17 @@ def get_interval_minutes(interval: str) -> int:
     else:
         return int(interval)
 
-@app.get("/api/historical/{symbol}")
-@limiter.limit("60/minute")
-async def get_historical(request: Request, symbol: str, interval: str = "15", days: int = 30):
+async def _fetch_historical_internal(symbol: str, interval: str = "15", days: int = 30, skip_day_limit: bool = False):
+    """
+    Función interna para obtener datos históricos SIN rate limiting.
+    Usada por otros endpoints internamente.
+
+    Args:
+        symbol: Par de trading (ej: BTCUSDT)
+        interval: Timeframe (1, 5, 15, 60, D, etc)
+        days: Días de datos a obtener
+        skip_day_limit: Si True, no aplica MAX_DAYS_BY_INTERVAL (para backtesting)
+    """
     try:
         interval_clean = (
             interval.replace("m", "")
@@ -334,25 +342,28 @@ async def get_historical(request: Request, symbol: str, interval: str = "15", da
             .replace("d", "D")
             .replace("w", "W")
         )
-        
+
         if "h" in interval.lower() and interval_clean.isdigit():
             interval_clean = str(int(interval_clean) * 60)
-        
+
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
 
-        # CRÍTICO: Aplicar límite máximo por timeframe
+        # Aplicar límite máximo por timeframe (opcional para backtesting)
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        if skip_day_limit:
+            # Para backtesting, permitir hasta 1095 días (3 años)
+            max_days_allowed = max(max_days_allowed, 1095)
         days_to_fetch = min(days, max_days_allowed)
-        
+
         print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
         interval_minutes = get_interval_minutes(interval_final)
         minutes_in_period = days_to_fetch * 24 * 60
         total_candles_needed = int(minutes_in_period / interval_minutes)
-        
+
         # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
         limit_per_request = min(1000, total_candles_needed)
-        
+
         now_ms = int(time.time() * 1000)
         # Buffer de 10 minutos al futuro
         end_ms = now_ms + (10 * 60 * 1000)
@@ -360,22 +371,24 @@ async def get_historical(request: Request, symbol: str, interval: str = "15", da
 
         all_candles = []
         current_start = start_ms
-        
+
+        # Para backtesting con muchos días, permitir más requests
+        max_requests = 50 if skip_day_limit else 10
+
         async with httpx.AsyncClient(timeout=30) as client:
             request_count = 0
-            max_requests = 10
-            
+
             while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
                 candles_remaining = total_candles_needed - len(all_candles)
                 fetch_limit = min(limit_per_request, candles_remaining)
-                
+
                 url = (
                     "https://api.bybit.com/v5/market/kline?"
                     f"category=linear&symbol={symbol}&interval={interval_final}"
                     f"&start={current_start}&limit={fetch_limit}"
                 )
-                
+
                 r = await client.get(url)
                 data = r.json()
 
@@ -386,41 +399,41 @@ async def get_historical(request: Request, symbol: str, interval: str = "15", da
                 batch_candles = data["result"]["list"]
                 if not batch_candles:
                     break
-                
+
                 batch_candles.reverse()
                 all_candles.extend(batch_candles)
-                
+
                 last_candle_ts = int(batch_candles[-1][0])
                 current_start = last_candle_ts + (interval_minutes * 60 * 1000)
-                
+
                 if current_start >= end_ms:
                     break
-                
+
                 # Si ya tenemos suficientes velas, salir
                 if len(all_candles) >= total_candles_needed:
                     break
-                
+
                 await asyncio.sleep(0.1)
 
         candles = []
         current_time_utc = int(time.time() * 1000)
-        
+
         for c in all_candles:
             ts_ms = int(c[0])
-            
+
             open_ = float(c[1])
             high = float(c[2])
             low = float(c[3])
             close = float(c[4])
             volume = float(c[5])
-            
+
             ts_seconds = ts_ms / 1000
             dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
             dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
-            
+
             time_diff_minutes = (current_time_utc - ts_ms) / (1000 * 60)
             is_in_progress = time_diff_minutes < interval_minutes
-            
+
             candles.append({
                 "timestamp": ts_ms,
                 "open": open_,
@@ -437,9 +450,9 @@ async def get_historical(request: Request, symbol: str, interval: str = "15", da
             candles = candles[-total_candles_needed:]
 
         now_colombia = datetime.now(COLOMBIA_TZ)
-        
+
         print(f"[{symbol}] Historical: OK Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
-        
+
         return {
             "symbol": symbol,
             "interval": interval_final,
@@ -464,6 +477,13 @@ async def get_historical(request: Request, symbol: str, interval: str = "15", da
             "error": str(e),
             "success": False
         }
+
+
+@app.get("/api/historical/{symbol}")
+@limiter.limit("60/minute")
+async def get_historical(request: Request, symbol: str, interval: str = "15", days: int = 30):
+    """Endpoint HTTP para obtener datos históricos (con rate limiting)."""
+    return await _fetch_historical_internal(symbol, interval, days)
 
 @app.get("/api/volume-delta/{symbol}")
 @limiter.limit("60/minute")
@@ -536,8 +556,8 @@ async def get_volume_delta(request: Request, symbol: str, interval: str = "15", 
         
         # Recalcular - USAR days_to_fetch (limitado)
         print(f"[CALCULATING] {symbol} {interval_final} Volume Delta con {days_to_fetch} días")
-        
-        historical = await get_historical(symbol, interval_final, days_to_fetch)
+
+        historical = await _fetch_historical_internal(symbol, interval_final, days_to_fetch)
         
         if not historical.get('success') or not historical.get('data'):
             print(f"[ERROR] No se pudieron obtener datos históricos para {symbol}")
@@ -1347,7 +1367,7 @@ async def get_support_resistance(
             }
 
         # Obtener datos históricos
-        historical = await get_historical(symbol, interval_final, days)
+        historical = await _fetch_historical_internal(symbol, interval_final, days)
 
         if not historical.get('success') or not historical.get('data'):
             return {
@@ -1576,7 +1596,7 @@ async def detect_rejection_patterns(request: Request):
         print(f"  - Active contexts: {len([c for c in reference_contexts if c.get('enabled', False)])}")
 
         # Get historical candles
-        historical = await get_historical(symbol, interval, days)
+        historical = await _fetch_historical_internal(symbol, interval, days)
 
         if not historical.get('success') or not historical.get('data'):
             return {
@@ -2341,7 +2361,7 @@ async def detect_double_topbottom(request: Request):
         else:
             # Fetch desde Bybit API (modo normal)
             print(f"[DOUBLE TOP/BOTTOM] Fetching candles from Bybit API...")
-            historical = await get_historical(symbol, interval, days)
+            historical = await _fetch_historical_internal(symbol, interval, days)
 
             if not historical.get('success') or not historical.get('data'):
                 return {
@@ -2567,7 +2587,7 @@ async def get_vwap(
             }
 
         # Get historical data
-        historical = await get_historical(symbol, interval_final, days_to_fetch)
+        historical = await _fetch_historical_internal(symbol, interval_final, days_to_fetch)
 
         if not historical.get('success') or not historical.get('data'):
             return {
@@ -2668,6 +2688,807 @@ async def get_vwap(
         }
 
 
+# =============================================================================
+# ZONE DETECTOR 2.0 - Strategy Tester
+# =============================================================================
+
+# Imports movidos aquí para evitar problemas de orden
+try:
+    from zone_detector import ZoneDetector, ZoneDetectionParams, zone_detector
+    from zone_evaluator import ZoneEvaluator, EvaluationParams, zone_evaluator
+    from zone_optimizer import ZoneOptimizer, OptimizationConfig, zone_optimizer
+    print("[STARTUP] Zone Detector 2.0 modules loaded successfully")
+except ImportError as e:
+    print(f"[STARTUP] Warning: Could not load Zone Detector modules: {e}")
+    zone_detector = None
+    zone_evaluator = None
+    zone_optimizer = None
+
+
+@app.post("/api/zones/detect")
+@limiter.limit("30/minute")
+async def detect_zones(request: Request):
+    """
+    Detecta zonas de consolidación usando el método especificado.
+
+    Parámetros opcionales:
+    - end_timestamp: Timestamp (ms) de la fecha límite para los datos.
+                     Si se proporciona, solo se usan velas ANTES de esta fecha.
+                     Esto es útil para backtesting donde queremos detectar zonas
+                     solo con datos anteriores a la fecha de inicio de la simulación.
+    """
+    try:
+        if zone_detector is None:
+            return {"success": False, "error": "Zone Detector module not loaded"}
+
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 365)
+        method = body.get('method', 'pivot_cluster')
+        params_dict = body.get('params', {})
+        end_timestamp = body.get('end_timestamp')  # 🎯 NUEVO: Fecha límite para los datos
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Obtener velas históricas (skip_day_limit=True para backtesting con años de datos)
+        print(f"[ZONE_DETECTOR] Fetching {days} days of {interval}m candles for {symbol}...")
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[ZONE_DETECTOR] Got {len(candles)} candles total")
+
+        # 🎯 NUEVO: Filtrar velas si se proporciona end_timestamp
+        # Solo usar velas ANTERIORES a la fecha de inicio de playback
+        if end_timestamp:
+            original_count = len(candles)
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+            print(f"[ZONE_DETECTOR] Filtered to {len(candles)} candles (before playback start: {end_timestamp})")
+            print(f"[ZONE_DETECTOR] Playback start date: {datetime.fromtimestamp(end_timestamp/1000).isoformat()}")
+
+            if len(candles) == 0:
+                return {"success": False, "error": f"No candles found before playback start date ({datetime.fromtimestamp(end_timestamp/1000).isoformat()})"}
+
+        print(f"[ZONE_DETECTOR] Using {len(candles)} candles for detection")
+
+        # Configurar parámetros
+        params = ZoneDetectionParams()
+        for key, value in params_dict.items():
+            if hasattr(params, key):
+                setattr(params, key, value)
+
+        # Detectar zonas
+        if method == "all":
+            # Ejecutar todos los métodos
+            all_results = zone_detector.detect_all_methods(candles, params)
+            zones_by_method = {
+                m: [z.to_dict() for z in zones]
+                for m, zones in all_results.items()
+            }
+            total_zones = sum(len(zones) for zones in all_results.values())
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "interval": interval,
+                "days": days,
+                "candles_count": len(candles),
+                "method": "all",
+                "zones_by_method": zones_by_method,
+                "total_zones": total_zones
+            }
+        else:
+            zones = zone_detector.detect_zones(candles, method, params)
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "interval": interval,
+                "days": days,
+                "candles_count": len(candles),
+                "method": method,
+                "zones": [z.to_dict() for z in zones],
+                "total_zones": len(zones)
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Zone detection: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/evaluate")
+@limiter.limit("30/minute")
+async def evaluate_zones(request: Request):
+    """
+    Detecta y evalúa zonas usando datos históricos.
+    """
+    try:
+        if zone_evaluator is None:
+            return {"success": False, "error": "Zone Evaluator module not loaded"}
+
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 365)
+        method = body.get('method', 'pivot_cluster')
+        detection_params_dict = body.get('detection_params', {})
+        eval_params_dict = body.get('eval_params', {})
+        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Obtener velas históricas (skip_day_limit=True para backtesting con años de datos)
+        print(f"[ZONE_EVALUATOR] Fetching {days} days of {interval}m candles for {symbol}...")
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[ZONE_EVALUATOR] Got {len(candles)} candles total")
+
+        # 🎯 Filtrar velas si se proporciona end_timestamp
+        if end_timestamp:
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+            print(f"[ZONE_EVALUATOR] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
+
+        # Configurar parámetros de detección
+        detection_params = ZoneDetectionParams()
+        for key, value in detection_params_dict.items():
+            if hasattr(detection_params, key):
+                setattr(detection_params, key, value)
+
+        # Configurar parámetros de evaluación
+        eval_params = EvaluationParams()
+        for key, value in eval_params_dict.items():
+            if hasattr(eval_params, key):
+                setattr(eval_params, key, value)
+
+        # Dividir datos: 70% para detección, 30% para evaluación
+        split_idx = int(len(candles) * 0.7)
+        detection_candles = candles[:split_idx]
+
+        print(f"[ZONE_EVALUATOR] Detection: {len(detection_candles)} candles, Evaluation: {len(candles) - split_idx} candles")
+
+        # Detectar zonas
+        zones = zone_detector.detect_zones(detection_candles, method, detection_params)
+        print(f"[ZONE_EVALUATOR] Detected {len(zones)} zones with method '{method}'")
+
+        # Evaluar zonas
+        evaluations = zone_evaluator.evaluate_zones_batch(zones, candles, eval_params)
+
+        # Calcular métricas agregadas
+        tradeable = [e for e in evaluations if e.tradeable]
+        total_bounces = sum(e.total_bounces for e in evaluations)
+        successful_bounces = sum(e.successful_bounces for e in evaluations)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "method": method,
+            "candles_total": len(candles),
+            "candles_detection": len(detection_candles),
+            "zones_detected": len(zones),
+            "zones_tradeable": len(tradeable),
+            "tradeable_rate": len(tradeable) / len(zones) if zones else 0,
+            "total_bounces": total_bounces,
+            "successful_bounces": successful_bounces,
+            "overall_win_rate": successful_bounces / total_bounces if total_bounces > 0 else 0,
+            "evaluations": [e.to_dict() for e in evaluations[:20]],  # Limitar a 20 para no sobrecargar
+            "summary": {
+                "avg_score": sum(e.overall_score for e in evaluations) / len(evaluations) if evaluations else 0,
+                "avg_fakeout_rate": sum(e.fakeout_rate for e in evaluations) / len(evaluations) if evaluations else 0,
+                "strategies": {
+                    "range_trade_aggressive": sum(1 for e in evaluations if "aggressive" in e.recommended_strategy),
+                    "range_trade_conservative": sum(1 for e in evaluations if "conservative" in e.recommended_strategy),
+                    "breakout_trade": sum(1 for e in evaluations if "breakout" in e.recommended_strategy),
+                    "avoid": sum(1 for e in evaluations if "avoid" in e.recommended_strategy)
+                }
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Zone evaluation: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/compare-methods")
+@limiter.limit("10/minute")
+async def compare_zone_methods(request: Request):
+    """
+    Compara todos los métodos de detección de zonas.
+    """
+    try:
+        if zone_evaluator is None:
+            return {"success": False, "error": "Zone modules not loaded"}
+
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 365)
+        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Obtener velas históricas (skip_day_limit=True para backtesting)
+        print(f"[ZONE_COMPARE] Fetching {days} days of {interval}m candles for {symbol}...")
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[ZONE_COMPARE] Got {len(candles)} candles total")
+
+        # 🎯 Filtrar velas si se proporciona end_timestamp
+        if end_timestamp:
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+            print(f"[ZONE_COMPARE] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
+
+        print(f"[ZONE_COMPARE] Comparing methods with {len(candles)} candles...")
+
+        # Comparar métodos
+        results = zone_evaluator.compare_methods(candles)
+
+        # Encontrar mejor método
+        best_method = max(
+            results.keys(),
+            key=lambda m: results[m].get('overall_win_rate', 0) * results[m].get('tradeable_rate', 0)
+        )
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "candles_count": len(candles),
+            "best_method": best_method,
+            "methods": results,
+            "recommendation": f"Use '{best_method}' for best results on {symbol} {interval}m"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Zone comparison: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/optimize")
+@limiter.limit("5/minute")
+async def optimize_zone_params(request: Request):
+    """
+    Optimiza parámetros de detección de zonas usando grid search.
+    """
+    try:
+        if zone_optimizer is None:
+            return {"success": False, "error": "Zone Optimizer module not loaded"}
+
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 1095)  # Default: 3 años
+        method = body.get('method', 'pivot_cluster')
+        walk_forward = body.get('walk_forward', False)
+        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Obtener velas históricas (skip_day_limit=True para backtesting con 3 años)
+        print(f"[ZONE_OPTIMIZER] Fetching {days} days of {interval}m candles for {symbol}...")
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[ZONE_OPTIMIZER] Got {len(candles)} candles total")
+
+        # 🎯 Filtrar velas si se proporciona end_timestamp
+        if end_timestamp:
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+            print(f"[ZONE_OPTIMIZER] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
+
+        print(f"[ZONE_OPTIMIZER] Optimizing with {len(candles)} candles...")
+
+        config = OptimizationConfig()
+
+        if walk_forward:
+            if method == "all":
+                # Walk-forward para todos los métodos
+                results = {}
+                for m in ZoneDetector.METHODS:
+                    print(f"[ZONE_OPTIMIZER] Walk-forward optimizing: {m}")
+                    results[m] = zone_optimizer.walk_forward_optimize(candles, m, config)
+
+                # Encontrar mejor método robusto
+                robust_methods = [
+                    m for m in results
+                    if 'error' not in results[m] and results[m].get('degradation', {}).get('is_robust', False)
+                ]
+
+                if robust_methods:
+                    best_method = max(
+                        robust_methods,
+                        key=lambda m: results[m]['out_of_sample']['avg_fitness']
+                    )
+                else:
+                    valid_methods = [m for m in results if 'error' not in results[m]]
+                    best_method = max(
+                        valid_methods,
+                        key=lambda m: results[m].get('out_of_sample', {}).get('avg_fitness', 0)
+                    ) if valid_methods else None
+
+                return {
+                    "success": True,
+                    "symbol": symbol,
+                    "interval": interval,
+                    "days": days,
+                    "candles_count": len(candles),
+                    "optimization_type": "walk_forward_all",
+                    "best_method": best_method,
+                    "best_params": results[best_method]['recommended_params'] if best_method else None,
+                    "methods": results
+                }
+            else:
+                # Walk-forward para un método específico
+                result = zone_optimizer.walk_forward_optimize(candles, method, config)
+                return {
+                    "success": True,
+                    "symbol": symbol,
+                    "interval": interval,
+                    "days": days,
+                    "candles_count": len(candles),
+                    "optimization_type": "walk_forward",
+                    "method": method,
+                    **result
+                }
+        else:
+            # Optimización simple (grid search)
+            if method == "all":
+                result = zone_optimizer.optimize_all_methods(candles, config)
+            else:
+                result = zone_optimizer.optimize(candles, method, config)
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "interval": interval,
+                "days": days,
+                "candles_count": len(candles),
+                "optimization_type": "grid_search",
+                **result
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Zone optimization: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/methods")
+async def get_zone_methods():
+    """Retorna lista de métodos disponibles y sus parámetros"""
+    if zone_detector is None:
+        return {"success": False, "error": "Zone Detector not loaded", "methods": []}
+
+    return {
+        "success": True,
+        "methods": ZoneDetector.METHODS,
+        "parameters": {
+            "pivot_cluster": {
+                "pivot_tolerance_pct": {"default": 0.3, "range": [0.1, 1.0], "description": "% de distancia para agrupar pivots"},
+                "pivot_min_touches": {"default": 3, "range": [2, 10], "description": "Mínimo de toques para zona válida"},
+                "pivot_min_duration_hours": {"default": 4.0, "range": [1, 48], "description": "Duración mínima de zona en horas"},
+                "pivot_swing_bars": {"default": 5, "range": [2, 15], "description": "Velas a cada lado para confirmar pivot"}
+            },
+            "atr_based": {
+                "atr_period": {"default": 14, "range": [5, 30], "description": "Período para calcular ATR"},
+                "atr_threshold": {"default": 0.7, "range": [0.3, 1.0], "description": "Multiplicador de ATR para baja volatilidad"},
+                "atr_min_bars": {"default": 10, "range": [5, 30], "description": "Mínimo de velas en zona"}
+            },
+            "volume_profile": {
+                "vp_value_area_pct": {"default": 70, "range": [50, 90], "description": "% de volumen para Value Area"},
+                "vp_min_volume_ratio": {"default": 1.5, "range": [1.0, 3.0], "description": "Ratio mínimo de volumen vs promedio"},
+                "vp_price_bins": {"default": 50, "range": [20, 100], "description": "Número de bins de precio"}
+            },
+            "price_action": {
+                "pa_touch_tolerance_pct": {"default": 0.2, "range": [0.1, 0.5], "description": "Tolerancia para contar toques"},
+                "pa_min_touches": {"default": 3, "range": [2, 10], "description": "Mínimo de toques en nivel"},
+                "pa_lookback_bars": {"default": 100, "range": [50, 500], "description": "Velas de lookback"},
+                "pa_min_separation_bars": {"default": 5, "range": [2, 20], "description": "Separación mínima entre toques"}
+            }
+        }
+    }
+
+
+# =============================================================================
+# STRATEGY BUILDER - CRUD de Estrategias
+# =============================================================================
+
+try:
+    from strategy_model import Strategy, get_template, list_templates
+    from strategy_store import strategy_store
+    print("[STARTUP] Strategy Builder modules loaded successfully")
+except ImportError as e:
+    print(f"[STARTUP] Warning: Could not load Strategy Builder modules: {e}")
+    strategy_store = None
+
+
+@app.get("/api/strategies")
+async def list_strategies():
+    """Lista todas las estrategias guardadas"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    strategies = strategy_store.list_all()
+    return {
+        "success": True,
+        "strategies": strategies,
+        "count": len(strategies)
+    }
+
+
+@app.get("/api/strategies/templates")
+async def get_strategy_templates():
+    """Lista templates de estrategias disponibles"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    templates = strategy_store.get_templates()
+    return {
+        "success": True,
+        "templates": templates
+    }
+
+
+@app.get("/api/strategies/{strategy_id}")
+async def get_strategy(strategy_id: str):
+    """Obtiene una estrategia por ID"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    strategy = strategy_store.load(strategy_id)
+    if strategy:
+        return {
+            "success": True,
+            "strategy": strategy.to_dict()
+        }
+    return {"success": False, "error": "Strategy not found"}
+
+
+@app.post("/api/strategies")
+async def create_strategy(request: Request):
+    """Crea una nueva estrategia"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    try:
+        body = await request.json()
+
+        # Si se especifica un template, crear desde template
+        template_name = body.get("template")
+        if template_name:
+            strategy = strategy_store.create_from_template(template_name)
+            if strategy:
+                return {
+                    "success": True,
+                    "strategy": strategy.to_dict(),
+                    "message": f"Strategy created from template '{template_name}'"
+                }
+            return {"success": False, "error": f"Template '{template_name}' not found"}
+
+        # Crear estrategia desde datos
+        strategy = Strategy.from_dict(body)
+        if strategy_store.save(strategy):
+            return {
+                "success": True,
+                "strategy": strategy.to_dict(),
+                "message": "Strategy created successfully"
+            }
+        return {"success": False, "error": "Failed to save strategy"}
+
+    except Exception as e:
+        print(f"[ERROR] Create strategy: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.put("/api/strategies/{strategy_id}")
+async def update_strategy(strategy_id: str, request: Request):
+    """Actualiza una estrategia existente"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    try:
+        if not strategy_store.exists(strategy_id):
+            return {"success": False, "error": "Strategy not found"}
+
+        body = await request.json()
+        body["id"] = strategy_id  # Asegurar que el ID no cambie
+
+        strategy = Strategy.from_dict(body)
+        if strategy_store.save(strategy):
+            return {
+                "success": True,
+                "strategy": strategy.to_dict(),
+                "message": "Strategy updated successfully"
+            }
+        return {"success": False, "error": "Failed to update strategy"}
+
+    except Exception as e:
+        print(f"[ERROR] Update strategy: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/strategies/{strategy_id}")
+async def delete_strategy(strategy_id: str):
+    """Elimina una estrategia"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    if strategy_store.delete(strategy_id):
+        return {
+            "success": True,
+            "message": "Strategy deleted successfully"
+        }
+    return {"success": False, "error": "Strategy not found or failed to delete"}
+
+
+@app.post("/api/strategies/{strategy_id}/duplicate")
+async def duplicate_strategy(strategy_id: str, request: Request):
+    """Duplica una estrategia existente"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    try:
+        body = await request.json()
+        new_name = body.get("name")
+
+        new_strategy = strategy_store.duplicate(strategy_id, new_name)
+        if new_strategy:
+            return {
+                "success": True,
+                "strategy": new_strategy.to_dict(),
+                "message": "Strategy duplicated successfully"
+            }
+        return {"success": False, "error": "Failed to duplicate strategy"}
+
+    except Exception as e:
+        print(f"[ERROR] Duplicate strategy: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategies/validate")
+async def validate_strategy(request: Request):
+    """Valida la sintaxis de una estrategia sin guardarla"""
+    if strategy_store is None:
+        return {"success": False, "error": "Strategy module not loaded"}
+
+    try:
+        body = await request.json()
+        strategy = Strategy.from_dict(body)
+
+        # Validaciones básicas
+        errors = []
+        warnings = []
+
+        if not strategy.name or len(strategy.name) < 3:
+            errors.append("El nombre debe tener al menos 3 caracteres")
+
+        if not strategy.entry.conditions:
+            warnings.append("No hay condiciones de entrada definidas")
+
+        if strategy.risk_management.sizing.risk_percent > 5:
+            warnings.append("Riesgo por trade mayor a 5% es muy agresivo")
+
+        if strategy.risk_management.take_profit.risk_reward_ratio < 1:
+            warnings.append("Risk/Reward menor a 1:1 no es recomendado")
+
+        if strategy.filters.max_daily_loss_percent > 10:
+            warnings.append("Pérdida diaria máxima mayor a 10% es muy alta")
+
+        return {
+            "success": len(errors) == 0,
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings,
+            "strategy_preview": strategy.to_dict()
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "valid": False,
+            "errors": [f"Error de sintaxis: {str(e)}"],
+            "warnings": []
+        }
+
+
+# =============================================================================
+# STRATEGY EXECUTOR - Backtesting de estrategias
+# =============================================================================
+
+try:
+    from strategy_executor import StrategyExecutor, create_executor
+    print("[STARTUP] Strategy Executor module loaded successfully")
+except ImportError as e:
+    print(f"[STARTUP] Warning: Could not load Strategy Executor module: {e}")
+    StrategyExecutor = None
+
+
+@app.post("/api/strategies/{strategy_id}/backtest")
+@limiter.limit("10/minute")
+async def run_strategy_backtest(strategy_id: str, request: Request):
+    """
+    Ejecuta backtesting de una estrategia.
+
+    Body:
+    - symbol: Par de trading (ej: BTCUSDT)
+    - interval: Timeframe (ej: 60 para 1h)
+    - days: Días de datos históricos
+    - start_timestamp: (opcional) Timestamp de inicio
+    - end_timestamp: (opcional) Timestamp de fin
+    - initial_capital: (opcional) Capital inicial (default 10000)
+    """
+    if strategy_store is None or StrategyExecutor is None:
+        return {"success": False, "error": "Strategy modules not loaded"}
+
+    try:
+        body = await request.json()
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 365)
+        start_timestamp = body.get('start_timestamp')
+        end_timestamp = body.get('end_timestamp')
+        initial_capital = body.get('initial_capital', 10000)
+
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Cargar estrategia
+        strategy = strategy_store.load(strategy_id)
+        if not strategy:
+            return {"success": False, "error": "Strategy not found"}
+
+        print(f"[BACKTEST] Running strategy '{strategy.name}' on {symbol} {interval}m, {days} days")
+
+        # Obtener datos históricos
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[BACKTEST] Got {len(candles)} candles")
+
+        # Filtrar por timestamps si se proporcionan
+        if end_timestamp:
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+
+        # Detectar zonas para la estrategia
+        if zone_detector is None:
+            return {"success": False, "error": "Zone Detector not loaded"}
+
+        zone_params = ZoneDetectionParams()
+        zone_config = strategy.zone_config
+        for key, value in zone_config.params.items():
+            if hasattr(zone_params, key):
+                setattr(zone_params, key, value)
+
+        zones = zone_detector.detect_zones(candles, zone_config.method, zone_params)
+        zones_dict = [z.to_dict() for z in zones]
+        print(f"[BACKTEST] Detected {len(zones)} zones using method '{zone_config.method}'")
+
+        # Crear executor y correr backtest
+        executor = StrategyExecutor(strategy, zones_dict, initial_capital)
+        result = executor.run(candles, start_timestamp, end_timestamp)
+
+        # Agregar info del símbolo
+        result.symbol = symbol
+        result.interval = interval
+
+        return {
+            "success": True,
+            "result": result.to_dict(),
+            "zones_used": len(zones_dict)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Strategy backtest: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategies/quick-backtest")
+@limiter.limit("10/minute")
+async def quick_backtest(request: Request):
+    """
+    Backtest rápido sin guardar estrategia.
+    Recibe la estrategia completa en el body.
+    """
+    if StrategyExecutor is None:
+        return {"success": False, "error": "Strategy Executor not loaded"}
+
+    try:
+        body = await request.json()
+        strategy_data = body.get('strategy')
+        symbol = body.get('symbol')
+        interval = body.get('interval', '60')
+        days = body.get('days', 365)
+        end_timestamp = body.get('end_timestamp')
+        initial_capital = body.get('initial_capital', 10000)
+
+        if not strategy_data:
+            return {"success": False, "error": "Strategy data is required"}
+        if not symbol:
+            return {"success": False, "error": "Symbol is required"}
+
+        # Crear estrategia desde datos
+        strategy = Strategy.from_dict(strategy_data)
+
+        print(f"[QUICK_BACKTEST] Running on {symbol} {interval}m, {days} days")
+
+        # Obtener datos históricos
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+
+        # Filtrar por timestamp
+        if end_timestamp:
+            candles = [c for c in candles if c['timestamp'] < end_timestamp]
+
+        print(f"[QUICK_BACKTEST] Using {len(candles)} candles")
+
+        # Detectar zonas
+        if zone_detector is None:
+            return {"success": False, "error": "Zone Detector not loaded"}
+
+        zone_params = ZoneDetectionParams()
+        zone_config = strategy.zone_config
+        for key, value in zone_config.params.items():
+            if hasattr(zone_params, key):
+                setattr(zone_params, key, value)
+
+        zones = zone_detector.detect_zones(candles, zone_config.method, zone_params)
+        zones_dict = [z.to_dict() for z in zones]
+        print(f"[QUICK_BACKTEST] Detected {len(zones)} zones")
+
+        # Ejecutar
+        executor = StrategyExecutor(strategy, zones_dict, initial_capital)
+        result = executor.run(candles)
+
+        result.symbol = symbol
+        result.interval = interval
+
+        return {
+            "success": True,
+            "result": result.to_dict(),
+            "zones_used": len(zones_dict)
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Quick backtest: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 # ==================== MAIN ====================
 
 if __name__ == "__main__":
@@ -2675,6 +3496,6 @@ if __name__ == "__main__":
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=8000,
+        port=9000,
         log_level="info"
     )
