@@ -29,6 +29,7 @@ import Logger from '../utils/Logger.js';
 import RenderManager from '../utils/RenderManager.js';
 import CandleCache from '../utils/CandleCache.js';
 import IndicatorCache from '../utils/IndicatorCache.js';
+import { fetchWithRetry } from '../utils/robustness';
 
 // Logger instance
 const log = new Logger('MiniChart', { level: 'info' });
@@ -1054,39 +1055,40 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // 🎯 NUEVO: Mostrar fecha/hora interpolada en el eje X (abajo)
-        // Calcular posición exacta del mouse en relación a las velas
-        const mousePositionInChart = (mouseX - marginLeft) / barWidth;
-        const candleIdx = Math.floor(mousePositionInChart);
+        // 🎯 Mostrar fecha/hora de la VELA ACTUAL en el eje X (sin interpolacion)
+        // La etiqueta sigue al mouse horizontalmente pero muestra el tiempo de la vela
+        if (visibleCandles.length > 0) {
+          const mousePositionInChart = (mouseX - marginLeft) / barWidth;
+          let candleIdx = Math.floor(mousePositionInChart);
 
-        if (visibleCandles.length > 0 && candleIdx >= -1 && candleIdx <= visibleCandles.length) {
-          let interpolatedTimestamp;
+          // Clamp al rango de velas visibles
+          if (candleIdx < 0) candleIdx = 0;
+          if (candleIdx >= visibleCandles.length) candleIdx = visibleCandles.length - 1;
 
-          if (candleIdx < 0) {
-            // Mouse a la izquierda de la primera vela
-            interpolatedTimestamp = visibleCandles[0].timestamp;
-          } else if (candleIdx >= visibleCandles.length - 1) {
-            // Mouse a la derecha de la última vela
-            interpolatedTimestamp = visibleCandles[visibleCandles.length - 1].timestamp;
-          } else {
-            // Mouse entre velas - interpolar
-            const candle1 = visibleCandles[candleIdx];
-            const candle2 = visibleCandles[candleIdx + 1];
-            const fraction = mousePositionInChart - candleIdx;
+          // Obtener el timestamp de la vela actual (sin interpolar)
+          const candleTimestamp = visibleCandles[candleIdx].timestamp;
 
-            // Interpolar timestamp linealmente
-            interpolatedTimestamp = candle1.timestamp + (candle2.timestamp - candle1.timestamp) * fraction;
-          }
-
-          // Formatear fecha sin año: "DD MMM HH:mm"
-          const date = new Date(interpolatedTimestamp);
+          // Formatear fecha segun el timeframe
+          const date = new Date(candleTimestamp);
           const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
           const day = date.getDate();
           const month = months[date.getMonth()];
           const hours = String(date.getHours()).padStart(2, '0');
           const minutes = String(date.getMinutes()).padStart(2, '0');
-          const dateText = `${day} ${month} ${hours}:${minutes}`;
 
+          // Para timeframes >= 1 hora, mostrar solo la hora (sin minutos si es hora exacta)
+          let dateText;
+          const intervalNum = parseInt(interval) || 1;
+          if (intervalNum >= 60 && date.getMinutes() === 0) {
+            // Timeframe horario o mayor con hora exacta: "29 Ene 14:00"
+            dateText = `${day} ${month} ${hours}:00`;
+          } else {
+            // Timeframe menor o hora no exacta: "29 Ene 14:35"
+            dateText = `${day} ${month} ${hours}:${minutes}`;
+          }
+
+          // La etiqueta sigue al mouse pero muestra el tiempo de la vela
+          // Esto garantiza que siempre este visible mientras el mouse este en el grafico
           const textWidth = ctx.measureText(dateText).width;
           const labelX = mouseX - textWidth / 2;
           const labelY = height - timeAxisHeight / 2;
@@ -1160,11 +1162,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         console.log(`[${symbol}] Carga COMPLETA: ${days} dias @ ${interval}`);
       }
 
-      const res = await fetch(url, {
+      const res = await fetchWithRetry(url, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
+        }
+      }, {
+        maxRetries: 3,
+        initialDelayMs: 1000,
+        context: `historical-${symbol}`,
+        onRetry: (attempt, error, delay) => {
+          console.warn(`[${symbol}] Retry ${attempt}: ${error.message}, waiting ${delay}ms`);
         }
       });
       const json = await res.json();

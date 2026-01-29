@@ -178,6 +178,7 @@ Resuelve el problema critico de throttling del navegador que causaba gaps en los
 ├── 1_INSTALL.bat                  # Script: npm install
 ├── 2_START_DEV.bat                # Script: npm run dev:electron
 ├── 3_BUILD.bat                    # Script: npm run build:electron
+├── START_ALL.bat                  # Script: Inicia backend, espera, luego Electron
 │
 └── CLAUDE.md                      # Este archivo
 ```
@@ -199,6 +200,15 @@ npm install
 ### Desarrollo
 
 ```batch
+# OPCION RECOMENDADA: Inicio automatico (backend + frontend)
+cd 9.OrderFlowDesktop
+START_ALL.bat
+# Este script:
+# 1. Inicia el backend si no esta corriendo
+# 2. Espera a que responda (max 2 min)
+# 3. Inicia Electron cuando el backend esta listo
+
+# OPCION MANUAL: Dos terminales separadas
 # Terminal 1 - Backend (REQUERIDO)
 cd 5.Order_flow/backend
 .venv\Scripts\activate
@@ -638,6 +648,230 @@ curl http://localhost:11000/api/orderflow/status
 - `9.OrderFlowDesktop/index.html` - Cambiar titulo
 - `9.OrderFlowDesktop/electron/main.js` - Cambiar titulo ventana y notificacion
 - `9.OrderFlowDesktop/src/components/SingleSymbolAnalyzer.jsx` - Cambiar titulo h2
+
+### 29 Enero 2026 - Optimizaciones de Rendimiento y Robustez
+
+**Problemas reportados**:
+1. Gaps de 5 minutos en las velas al iniciar
+2. Indicadores tardaban ~10 minutos en aparecer
+3. Cientos de errores `ERR_CONNECTION_REFUSED` en consola
+
+**Diagnostico**:
+1. El frontend (Electron) iniciaba antes de que el backend estuviera listo
+2. El backend tarda ~1 minuto en cargar 29,000+ footprints del disco
+3. Los gaps estaban en el cache de IndexedDB de sesiones anteriores
+4. La carga incremental no rellena gaps historicos
+
+**Soluciones implementadas**:
+
+#### 1. Cache en Backend con TTL (5.Order_flow/backend/main.py)
+```python
+HISTORICAL_CACHE = {}
+HISTORICAL_CACHE_TTL = 300  # 5 minutos
+
+# Endpoints agregados:
+# POST /api/cache/clear - Limpiar cache manualmente
+# GET /api/cache/status - Ver estado del cache
+```
+
+#### 2. Deteccion de Gaps en Cache (CandleCache.js)
+```javascript
+// En getValidated(): detecta gaps y limpia cache si hay gaps >2 minutos
+const gapAnalysis = this.analyzeGaps(cached.candles, interval, context);
+if (gapAnalysis.gapCount > 0) {
+  const significantGaps = gapAnalysis.gaps.filter(g => parseFloat(g.gapMinutes) > 2);
+  if (significantGaps.length > 0) {
+    await this.clear(symbol, interval);  // Forzar recarga completa
+    return null;
+  }
+}
+```
+
+#### 3. MIN_CACHE_RATIO aumentado (CandleCache.js)
+- Antes: 0.1 (10%) - aceptaba cache casi vacio
+- Ahora: 0.7 (70%) - requiere al menos 70% de velas esperadas
+
+#### 4. Carga Secuencial de Indicadores (IndicatorManager.js)
+```javascript
+// Prioridad 1 (criticos): VWAP, Order Flow
+// Prioridad 2 (secundarios): Swing Detector, S&R v2
+// Prioridad 3 (opcionales): Volume Profile, DTB, Rejection
+// 100ms de delay entre batches
+```
+
+#### 5. Prefetch Deshabilitado Inicialmente (SymbolList.jsx)
+- Prefetch de simbolos deshabilitado los primeros 10 segundos
+- Debounce aumentado de 300ms a 1000ms
+
+#### 6. Spinner de Carga (MiniChart.jsx)
+- Indicador visual mientras `!isInitialized`
+
+#### 7. Boton Reset para Indicadores (SingleSymbolAnalyzer.jsx)
+- Constante `DEFAULT_INDICATORS` con valores por defecto
+- Boton "Reset" para restaurar indicadores a valores iniciales
+
+#### 8. Script de Inicio Coordinado (START_ALL.bat)
+```batch
+# Flujo:
+# 1. Verifica si backend ya esta corriendo
+# 2. Si no, inicia backend en ventana separada
+# 3. Espera hasta que /api/status responda (max 2 min)
+# 4. Inicia Electron solo cuando backend esta listo
+```
+
+**Archivos modificados**:
+- `5.Order_flow/backend/main.py` - Cache con TTL, endpoints de cache
+- `9.OrderFlowDesktop/src/utils/CandleCache.js` - Deteccion de gaps, MIN_CACHE_RATIO 70%
+- `9.OrderFlowDesktop/src/components/indicators/IndicatorManager.js` - Carga secuencial
+- `9.OrderFlowDesktop/src/components/SymbolList.jsx` - Prefetch diferido
+- `9.OrderFlowDesktop/src/components/MiniChart.jsx` - Spinner de carga
+- `9.OrderFlowDesktop/src/components/SingleSymbolAnalyzer.jsx` - Reset indicadores
+
+**Archivos creados**:
+- `9.OrderFlowDesktop/START_ALL.bat` - Inicio coordinado backend + frontend
+
+**Resultado**:
+- ✅ Sin gaps en graficos (cache corrupto se detecta y limpia automaticamente)
+- ✅ Sin errores ERR_CONNECTION_REFUSED (Electron espera al backend)
+- ✅ Carga percibida mucho mas rapida
+- ✅ Indicadores aparecen en orden de prioridad
+
+### 29 Enero 2026 - Mejoras de Robustez
+
+**Objetivo**: Hacer la aplicacion mas resistente a fallos de red y datos corruptos.
+
+**Soluciones implementadas**:
+
+#### 1. Sistema de Robustez Centralizado (src/utils/robustness.js)
+
+**Validacion de datos de velas:**
+```javascript
+import { validateCandles } from './robustness';
+
+// Antes de guardar en cache, validar datos
+const { validCandles, invalidCount } = validateCandles(candles, context);
+// Descarta velas con campos faltantes, valores NaN, o OHLC invalido
+```
+
+**Health check periodico:**
+```javascript
+import { initRobustness, onConnectionChange } from './robustness';
+
+// Se inicia automaticamente cada 30 segundos
+initRobustness();
+
+// Suscribirse a cambios de conexion
+onConnectionChange((isConnected) => {
+  // Actualizar UI
+});
+```
+
+**Retry con backoff exponencial:**
+```javascript
+import { fetchWithRetry } from './robustness';
+
+// Reintenta 3 veces con backoff 1s -> 2s -> 4s
+const response = await fetchWithRetry(url, options, {
+  maxRetries: 3,
+  initialDelayMs: 1000,
+  context: 'historical-BTCUSDT'
+});
+```
+
+**Limpieza automatica de cache:**
+```javascript
+import { cleanupOldCache, getCacheStats } from './robustness';
+
+// Se ejecuta automaticamente al iniciar (elimina >7 dias)
+await cleanupOldCache(7);
+
+// Ver estadisticas del cache
+const stats = await getCacheStats();
+```
+
+#### 2. Indicador Visual de Conexion (ConnectionStatus.jsx)
+
+- Punto verde/rojo en el header
+- Tooltip con detalles (ultimo check, errores, intentos fallidos)
+- Click para reintentar conexion manual
+- Se actualiza automaticamente cada 30 segundos
+
+#### 3. Integracion en Componentes
+
+**CandleCache.js:**
+- Valida velas antes de guardar en cache
+- Descarta velas con datos invalidos
+
+**MiniChart.jsx:**
+- Usa `fetchWithRetry` para cargar datos historicos
+- Reintenta automaticamente si falla la conexion
+
+**SingleSymbolAnalyzer.jsx:**
+- Inicializa sistema de robustez al montar
+- Muestra ConnectionStatus en el header
+
+**Archivos creados:**
+- `src/utils/robustness.js` - Utilidades centralizadas
+- `src/components/ConnectionStatus.jsx` - Indicador visual
+
+**Archivos modificados:**
+- `src/utils/CandleCache.js` - Validacion de velas
+- `src/components/MiniChart.jsx` - fetchWithRetry
+- `src/components/SingleSymbolAnalyzer.jsx` - Integracion
+
+**Beneficios:**
+- ✅ Reconexion automatica cuando backend vuelve
+- ✅ Datos corruptos se detectan y descartan
+- ✅ Reintentos automaticos reducen fallos por red inestable
+- ✅ Cache viejo se limpia automaticamente
+- ✅ Usuario ve estado de conexion en tiempo real
+
+### 29 Enero 2026 - Mejora del Crosshair (Etiqueta de Tiempo)
+
+**Problema reportado:**
+- El crosshair mostraba tiempo interpolado al mover el mouse entre velas
+- Ejemplo: entre las 10:00 y 11:00 mostraba 10:32, 10:45, etc.
+- Esto confundia al usuario sobre el timeframe actual
+- Ademas, la etiqueta parpadeaba al cambiar de vela
+
+**Solucion implementada:**
+
+1. **Tiempo sin interpolacion**: La etiqueta muestra el timestamp exacto de la vela actual
+   - Ya no calcula fracciones de tiempo entre velas
+   - El tiempo "salta" de vela en vela (ej: 10:00 → 11:00 en timeframe 1h)
+
+2. **Etiqueta siempre visible**: La etiqueta sigue la posicion horizontal del mouse
+   - Garantiza visibilidad continua mientras el mouse este en el grafico
+   - Elimina el parpadeo al cambiar de vela
+
+3. **Clamp a bordes**: Si el mouse esta fuera del rango de velas visibles
+   - A la izquierda: muestra tiempo de la primera vela
+   - A la derecha: muestra tiempo de la ultima vela
+
+**Archivo modificado:**
+- `src/components/MiniChart.jsx` - Seccion del crosshair (lineas ~1058-1098)
+
+**Codigo clave:**
+```javascript
+// Calcular indice de vela (sin interpolacion)
+const mousePositionInChart = (mouseX - marginLeft) / barWidth;
+let candleIdx = Math.floor(mousePositionInChart);
+
+// Clamp al rango de velas visibles
+if (candleIdx < 0) candleIdx = 0;
+if (candleIdx >= visibleCandles.length) candleIdx = visibleCandles.length - 1;
+
+// Obtener timestamp de la vela (no interpolar)
+const candleTimestamp = visibleCandles[candleIdx].timestamp;
+
+// La etiqueta sigue al mouse pero muestra el tiempo de la vela
+const labelX = mouseX - textWidth / 2;
+```
+
+**Resultado:**
+- ✅ Tiempo muestra valores discretos del timeframe (10:00, 11:00, 12:00)
+- ✅ Sin parpadeo al moverse entre velas
+- ✅ Etiqueta siempre visible en el area del grafico
 
 ---
 

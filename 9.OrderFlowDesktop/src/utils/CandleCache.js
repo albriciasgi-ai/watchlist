@@ -8,6 +8,7 @@
  */
 
 import localforage from 'localforage';
+import { validateCandles } from './robustness';
 
 // Configurar store específico para velas
 const candleStore = localforage.createInstance({
@@ -131,8 +132,21 @@ class CandleCache {
 
     const key = this.getCacheKey(symbol, interval);
 
+    // Validar datos de velas antes de guardar
+    const validation = validateCandles(candles, `${symbol}@${interval}`);
+    const validCandles = validation.validCandles;
+
+    if (validation.invalidCount > 0) {
+      console.warn(`[CandleCache] ${symbol}@${interval}: ${validation.invalidCount} velas invalidas descartadas`);
+    }
+
+    if (validCandles.length === 0) {
+      console.error(`[CandleCache] ${symbol}@${interval}: No hay velas validas para guardar`);
+      return;
+    }
+
     // Ordenar por timestamp ascendente
-    const sortedCandles = [...candles].sort((a, b) => a.timestamp - b.timestamp);
+    const sortedCandles = [...validCandles].sort((a, b) => a.timestamp - b.timestamp);
 
     // Remover vela en progreso (la última si está marcada como in_progress)
     const closedCandles = sortedCandles.filter(c => !c.in_progress);

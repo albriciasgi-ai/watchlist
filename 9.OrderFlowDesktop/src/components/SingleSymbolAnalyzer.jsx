@@ -14,12 +14,14 @@ import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import OrderFlowSettings from "./OrderFlowSettings";
+import ConnectionStatus from "./ConnectionStatus";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
 import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
+import { initRobustness, stopRobustness } from '../utils/robustness';
 import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
 
@@ -195,6 +197,12 @@ const SingleSymbolAnalyzer = () => {
 
   // Ref para el chart key (forzar remount al cambiar simbolo)
   const chartKeyRef = useRef(0);
+
+  // Inicializar utilidades de robustez
+  useEffect(() => {
+    initRobustness();
+    return () => stopRobustness();
+  }, []);
 
   // Guardar preferencias en localStorage
   useEffect(() => {
@@ -657,6 +665,7 @@ const SingleSymbolAnalyzer = () => {
             onChange={handleSymbolChange}
             symbols={AVAILABLE_SYMBOLS}
           />
+          <ConnectionStatus />
         </div>
 
         <div className="controls">

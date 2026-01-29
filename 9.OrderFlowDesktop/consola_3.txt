@@ -1,0 +1,246 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:59 [Preload] Order Flow Desktop - Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:60 [Preload] Electron: 33.4.11
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:61 [Preload] Chrome: 130.0.6723.191
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:270 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2048 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [2:17:00 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:41 [BTCUSDT] SwingDetectorIndicator initialized
+SupportResistance2Indicator.js:15 [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+SupportResistance2Indicator.js:60 [BTCUSDT] S&R v2 destroyed
+MiniChart.jsx:2048 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [2:17:00 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:41 [BTCUSDT] SwingDetectorIndicator initialized
+SupportResistance2Indicator.js:15 [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+MiniChart.jsx:1161 [BTCUSDT] Carga COMPLETA: 300 dias @ 240
+MiniChart.jsx:1161 [BTCUSDT] Carga COMPLETA: 360 dias @ 240
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+robustness.js:415 [CacheCleanup] Complete: 0/1 candles, 0/1 indicators removed
+WebSocketManager.js:61 WebSocket Manager conectado [240]
+WebSocketManager.js:79 ✓ Suscrito: 
+SymbolList.jsx:78 [Prefetch] Activado (10s despues de carga)
+SymbolList.jsx:224 Error fetching tickers: 
+(anonymous) @ SymbolList.jsx:224
+await in (anonymous)
+(anonymous) @ SymbolList.jsx:252
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:1224 [BTCUSDT] Completa: 1799 velas
+CandleCache.js:391 [CandleCache] OK BACKEND-COMPLETO BTCUSDT: 1799 velas sin gaps
+MiniChart.jsx:1246 [BTCUSDT] ✅ Histórico final: 1799 velas
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@240 - guardado (1799 velas, memoria: 1/4)
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 1R, 2S
+SupportResistance2Indicator.js:208 [BTCUSDT] S&R v2 renderOverlay: {resistances: 1, supports: 2, currentPrice: '83778.10'}
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 1R, 2S
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 1R, 2S
+MiniChart.jsx:1224 [BTCUSDT] Completa: 2159 velas
+CandleCache.js:391 [CandleCache] OK BACKEND-COMPLETO BTCUSDT: 2159 velas sin gaps
+MiniChart.jsx:1246 [BTCUSDT] ✅ Histórico final: 2159 velas
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@240 - guardado (2159 velas, memoria: 1/4)
+IndicatorCache.js:71 [IndicatorCache] 💾 sr2@BTCUSDT desde memoria
+SupportResistance2Indicator.js:111 [BTCUSDT] S&R v2 from cache: 1R, 2S
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 300 days
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 300/300 signals for interval 240 (cached)
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 300 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [2:17:33 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=false, enabled=true, destroyed=false
+Logger.js:100 ✅ [2:17:33 p. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 60000ms)
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+SwingDetectorIndicator.js:169 [BTCUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+SupportResistance2Indicator.js:78 [BTCUSDT] S&R v2 polling started (interval: 60000ms)
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [2:17:33 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 300 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [2:17:35 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [2:17:35 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 360 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:17:35 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1800 points (session, 300 days)
+Logger.js:100 ✅ [2:17:36 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1800 points (session, 300 days)
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:18:33 p. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1800 points
+Logger.js:100 ✅ [2:18:33 p. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+SupportResistance2Indicator.js:153 [BTCUSDT] S&R v2 updated (polling): 1R, 2S
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+Logger.js:100 ✅ [2:19:23 p. m.] [VWAP] [BTCUSDT] VWAP polling stopped
+SwingDetectorIndicator.js:179 [BTCUSDT] SwingDetector signal polling stopped
+SwingDetectorIndicator.js:184 [BTCUSDT] SwingDetector status polling stopped
+SupportResistance2Indicator.js:53 [BTCUSDT] S&R v2 polling stopped
+SupportResistance2Indicator.js:60 [BTCUSDT] S&R v2 destroyed
+MiniChart.jsx:270 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2048 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [2:19:23 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:41 [BTCUSDT] SwingDetectorIndicator initialized
+SupportResistance2Indicator.js:15 [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+CandleCache.js:80 [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (1494 velas)
+ [CandleCache] BTCUSDT@1 - Cache corrupto: 1494 velas (esperadas: ~432000, ratio: 0.3%)
+getValidated @ CandleCache.js:244
+await in getValidated
+loadHistoricalData @ MiniChart.jsx:875
+(anonymous) @ MiniChart.jsx:1609
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+commitRootImpl @ chunk-ZFBEYDM4.js:19416
+commitRoot @ chunk-ZFBEYDM4.js:19277
+performSyncWorkOnRoot @ chunk-ZFBEYDM4.js:18895
+flushSyncCallbacks @ chunk-ZFBEYDM4.js:9119
+flushSync @ chunk-ZFBEYDM4.js:18959
+finishEventHandler @ chunk-ZFBEYDM4.js:3569
+batchedUpdates @ chunk-ZFBEYDM4.js:3582
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js:5478
+dispatchEvent @ chunk-ZFBEYDM4.js:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js:5449
+handleMouseUp_ @ unknown
+CandleCache.js:245 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+SupportResistance2Indicator.js:60 [BTCUSDT] S&R v2 destroyed
+MiniChart.jsx:2048 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [2:19:23 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:41 [BTCUSDT] SwingDetectorIndicator initialized
+SupportResistance2Indicator.js:15 [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+SupportResistance2Indicator.js:130 [BTCUSDT] S&R v2: Fetching from backend...
+CandleCache.js:293 [CandleCache] 🗑️ BTCUSDT@1 - cache limpiado
+MiniChart.jsx:1161 [BTCUSDT] Carga COMPLETA: 300 dias @ 1
+MiniChart.jsx:1161 [BTCUSDT] Carga COMPLETA: 1 dias @ 1
+WebSocketManager.js:120 WebSocket Manager cerrado
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+robustness.js:195 [HealthCheck] Backend disconnected: signal is aborted without reason
+checkBackendHealth @ robustness.js:195
+await in checkBackendHealth
+(anonymous) @ robustness.js:227
+setInterval
+startHealthCheck @ robustness.js:226
+initRobustness @ robustness.js:487
+(anonymous) @ SingleSymbolAnalyzer.jsx:203
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+robustness.js:180 [HealthCheck] Backend reconnected
+SwingDetectorIndicator.js:230 [BTCUSDT] SwingDetector: Backend returned 0 signals
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 3R, 1S
+SupportResistance2Indicator.js:155 [BTCUSDT] S&R v2 loaded: 3R, 1S
+SupportResistance2Indicator.js:208 [BTCUSDT] S&R v2 renderOverlay: {resistances: 3, supports: 1, currentPrice: '83777.80'}
+MiniChart.jsx:1224 [BTCUSDT] Completa: 1439 velas
+CandleCache.js:391 [CandleCache] OK BACKEND-COMPLETO BTCUSDT: 1439 velas sin gaps
+MiniChart.jsx:1246 [BTCUSDT] ✅ Histórico final: 1439 velas
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@1 - guardado (1439 velas, memoria: 2/4)
+IndicatorCache.js:71 [IndicatorCache] 💾 sr2@BTCUSDT desde memoria
+SupportResistance2Indicator.js:111 [BTCUSDT] S&R v2 from cache: 3R, 1S
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 1 days
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+Logger.js:100 ✅ [2:20:32 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (session, 1 days)
+Logger.js:100 ✅ [2:20:36 p. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1224 [BTCUSDT] Completa: 7199 velas
+CandleCache.js:391 [CandleCache] OK BACKEND-COMPLETO BTCUSDT: 7199 velas sin gaps
+MiniChart.jsx:1246 [BTCUSDT] ✅ Histórico final: 7199 velas
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 2/4)
+IndicatorCache.js:71 [IndicatorCache] 💾 sr2@BTCUSDT desde memoria
+SupportResistance2Indicator.js:111 [BTCUSDT] S&R v2 from cache: 3R, 1S
+Logger.js:100 ✅ [2:20:49 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (session, 1 days)
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [2:20:54 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=false, enabled=true, destroyed=false
+Logger.js:100 ✅ [2:20:54 p. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 60000ms)
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+SwingDetectorIndicator.js:169 [BTCUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+SupportResistance2Indicator.js:78 [BTCUSDT] S&R v2 polling started (interval: 60000ms)
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [2:20:54 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: interval=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:120 [BTCUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para S&R v2
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [2:20:54 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 2/4)
+SwingDetectorIndicator.js:226 [BTCUSDT] SwingDetector: 156/156 signals for interval 1 (cached)
+Logger.js:100 ✅ [2:20:58 p. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+SwingDetectorIndicator.js:138 [BTCUSDT] SwingDetector initialized with 300 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [HealthCheck] Backend disconnected: signal is aborted without reason
+checkBackendHealth @ robustness.js:195
+await in checkBackendHealth
+(anonymous) @ robustness.js:227
+setInterval
+startHealthCheck @ robustness.js:226
+initRobustness @ robustness.js:487
+(anonymous) @ SingleSymbolAnalyzer.jsx:205
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
