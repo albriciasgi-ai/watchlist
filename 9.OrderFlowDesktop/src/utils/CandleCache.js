@@ -35,8 +35,9 @@ class CandleCache {
     "W": 0.14    // 1 semana
   };
 
-  // Umbral mínimo: si cache tiene menos del 10% de lo esperado, se considera corrupto
-  static MIN_CACHE_RATIO = 0.1;
+  // Umbral minimo: si cache tiene menos del 70% de lo esperado, se considera corrupto
+  // Aumentado de 0.1 a 0.7 para evitar descartar cache valido innecesariamente
+  static MIN_CACHE_RATIO = 0.7;
 
   // Cache en memoria para acceso rápido (LRU order: más reciente al final)
   static memoryCache = new Map();
@@ -207,7 +208,7 @@ class CandleCache {
 
   /**
    * Verifica si el cache tiene suficientes velas para los dias solicitados
-   * Si tiene menos del MIN_CACHE_RATIO, se considera corrupto y se limpia
+   * Si tiene menos del MIN_CACHE_RATIO o tiene GAPS, se considera corrupto y se limpia
    * @param {string} symbol
    * @param {string} interval
    * @param {number} days - Dias solicitados
@@ -224,16 +225,32 @@ class CandleCache {
     const actualCandles = cached.candles.length;
     const ratio = actualCandles / expectedCandles;
 
-    // Si el cache tiene menos del 10% de lo esperado, es corrupto
+    // Si el cache tiene menos del 70% de lo esperado, es corrupto
     if (ratio < this.MIN_CACHE_RATIO) {
-      console.warn(`[CandleCache] ⚠️ ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
-      console.log(`[CandleCache] 🗑️ Limpiando cache corrupto para forzar recarga completa...`);
+      console.warn(`[CandleCache] ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+      console.log(`[CandleCache] Limpiando cache corrupto para forzar recarga completa...`);
       await this.clear(symbol, interval);
       return null;
     }
 
+    // NUEVO: Detectar gaps en el cache - si hay gaps, limpiar y forzar recarga
+    const gapAnalysis = this.analyzeGaps(cached.candles, interval, `VALIDATION ${symbol}@${interval}`);
+    if (gapAnalysis.gapCount > 0) {
+      // Si hay gaps de mas de 2 minutos (para timeframe 1m), limpiar cache
+      const significantGaps = gapAnalysis.gaps.filter(g => parseFloat(g.gapMinutes) > 2);
+      if (significantGaps.length > 0) {
+        console.warn(`[CandleCache] ${symbol}@${interval} - Cache tiene ${significantGaps.length} gaps significativos`);
+        significantGaps.forEach((g, i) => {
+          console.warn(`  Gap #${i + 1}: ${g.from} -> ${g.to} (${g.gapMinutes} min)`);
+        });
+        console.log(`[CandleCache] Limpiando cache con gaps para forzar recarga completa...`);
+        await this.clear(symbol, interval);
+        return null;
+      }
+    }
+
     // Cache valido
-    console.log(`[CandleCache] ✓ ${symbol}@${interval} - Cache valido: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+    console.log(`[CandleCache] ${symbol}@${interval} - Cache valido: ${actualCandles} velas, sin gaps significativos`);
     return cached;
   }
 

@@ -88,6 +88,59 @@ CACHE_DIR.mkdir(exist_ok=True)
 # Cache reducido a 30 minutos para datos más frescos
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
+# ==================== CACHE EN MEMORIA PARA HISTORICAL ====================
+# Estructura: { "BTCUSDT_1_1": { "data": [...], "timestamp": 1234567890, "params": {...} } }
+HISTORICAL_CACHE = {}
+HISTORICAL_CACHE_TTL = 300  # 5 minutos en segundos
+
+def get_cache_key(symbol: str, interval: str, days: int) -> str:
+    """Genera clave unica para el cache"""
+    return f"{symbol}_{interval}_{days}"
+
+def get_cached_historical(symbol: str, interval: str, days: int):
+    """
+    Obtiene datos del cache si existen y no han expirado.
+    Retorna None si no hay cache valido.
+    """
+    cache_key = get_cache_key(symbol, interval, days)
+
+    if cache_key not in HISTORICAL_CACHE:
+        return None
+
+    cached = HISTORICAL_CACHE[cache_key]
+    age = time.time() - cached["timestamp"]
+
+    if age > HISTORICAL_CACHE_TTL:
+        # Cache expirado - retornar datos viejos pero marcar para refresh
+        print(f"[CACHE] {symbol}@{interval} - Cache expirado ({age:.0f}s > {HISTORICAL_CACHE_TTL}s), usando datos viejos")
+        return {"data": cached["data"], "expired": True}
+
+    print(f"[CACHE] {symbol}@{interval} - HIT! (edad: {age:.0f}s)")
+    return {"data": cached["data"], "expired": False}
+
+def set_cached_historical(symbol: str, interval: str, days: int, data: dict):
+    """Guarda datos en cache"""
+    cache_key = get_cache_key(symbol, interval, days)
+    HISTORICAL_CACHE[cache_key] = {
+        "data": data,
+        "timestamp": time.time(),
+        "params": {"symbol": symbol, "interval": interval, "days": days}
+    }
+    print(f"[CACHE] {symbol}@{interval} - Guardado ({len(data.get('data', []))} velas)")
+
+def clear_historical_cache(symbol: str = None):
+    """Limpia cache (todo o por simbolo)"""
+    global HISTORICAL_CACHE
+    if symbol:
+        keys_to_delete = [k for k in HISTORICAL_CACHE if k.startswith(f"{symbol}_")]
+        for k in keys_to_delete:
+            del HISTORICAL_CACHE[k]
+        print(f"[CACHE] Limpiado cache de {symbol} ({len(keys_to_delete)} entradas)")
+    else:
+        HISTORICAL_CACHE = {}
+        print(f"[CACHE] Todo el cache limpiado")
+# ==================== FIN CACHE ====================
+
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
     "1": 5,       # 1 min -> máx 5 días (aumentado para mejor detección DTB)
@@ -146,6 +199,38 @@ def _on_websocket_trade(symbol: str, ws_trade):
 
 
 # ==================== END ORDER FLOW ====================
+
+# ==================== ENDPOINTS DE CACHE ====================
+@app.post("/api/cache/clear")
+async def clear_cache_endpoint(symbol: str = None):
+    """Limpia el cache de historical (todo o por simbolo)"""
+    clear_historical_cache(symbol)
+    return {
+        "success": True,
+        "message": f"Cache cleared for {symbol}" if symbol else "All cache cleared"
+    }
+
+@app.get("/api/cache/status")
+async def get_cache_status():
+    """Retorna estado del cache de historical"""
+    cache_entries = []
+    for key, value in HISTORICAL_CACHE.items():
+        age = time.time() - value["timestamp"]
+        cache_entries.append({
+            "key": key,
+            "params": value["params"],
+            "candles": len(value["data"].get("data", [])),
+            "age_seconds": round(age, 1),
+            "expired": age > HISTORICAL_CACHE_TTL
+        })
+
+    return {
+        "success": True,
+        "total_entries": len(HISTORICAL_CACHE),
+        "ttl_seconds": HISTORICAL_CACHE_TTL,
+        "entries": cache_entries
+    }
+# ==================== FIN ENDPOINTS DE CACHE ====================
 
 def load_cache(symbol: str, interval: str, indicator: str):
     """Carga datos del cache si existen y son recientes"""
@@ -300,15 +385,15 @@ def get_interval_minutes(interval: str) -> int:
 @app.get("/api/historical/{symbol}")
 async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None):
     """
-    Obtiene datos históricos de velas.
+    Obtiene datos historicos de velas.
 
-    Parámetros:
+    Parametros:
     - symbol: Par de trading (ej: BTCUSDT)
     - interval: Timeframe (1, 5, 15, 60, 240, D, W)
-    - days: Días de histórico a obtener (si no se usa since_timestamp)
+    - days: Dias de historico a obtener (si no se usa since_timestamp)
     - since_timestamp: (OPCIONAL) Timestamp en ms desde el cual obtener velas.
                        Si se provee, ignora 'days' y obtiene velas desde ese timestamp hasta ahora.
-                       Útil para carga incremental (solo pedir datos nuevos).
+                       Util para carga incremental (solo pedir datos nuevos).
     """
     try:
         interval_clean = (
@@ -328,7 +413,26 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         # Buffer de 10 minutos al futuro
         end_ms = now_ms + (10 * 60 * 1000)
 
-        # 🔄 CARGA INCREMENTAL: Si se provee since_timestamp, usar ese como inicio
+        # ==================== CACHE CHECK ====================
+        # Solo usar cache para requests normales (no incrementales)
+        if since_timestamp is None:
+            cached = get_cached_historical(symbol, interval_final, days)
+            if cached and not cached.get("expired", False):
+                # Cache valido - retornar inmediatamente
+                cached_data = cached["data"].copy()
+                cached_data["from_cache"] = True
+                return cached_data
+            elif cached and cached.get("expired", False):
+                # Cache expirado - retornar datos viejos y refrescar en background
+                # Por ahora retornamos datos viejos (lazy refresh simplificado)
+                cached_data = cached["data"].copy()
+                cached_data["from_cache"] = True
+                cached_data["cache_expired"] = True
+                # Nota: El proximo request sin cache traera datos frescos
+                return cached_data
+        # ==================== FIN CACHE CHECK ====================
+
+        # CARGA INCREMENTAL: Si se provee since_timestamp, usar ese como inicio
         if since_timestamp is not None:
             start_ms = since_timestamp
             # Calcular cuántas velas necesitamos desde since_timestamp hasta ahora
@@ -346,27 +450,27 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
             print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
-        # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
+        # CRITICO: Limitar a 1000 velas por request (maximo de Bybit)
         limit_per_request = min(1000, total_candles_needed)
 
         all_candles = []
         current_start = start_ms
-        
+
         async with httpx.AsyncClient(timeout=30) as client:
             request_count = 0
             max_requests = 10
-            
+
             while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
                 candles_remaining = total_candles_needed - len(all_candles)
                 fetch_limit = min(limit_per_request, candles_remaining)
-                
+
                 url = (
                     "https://api.bybit.com/v5/market/kline?"
                     f"category=linear&symbol={symbol}&interval={interval_final}"
                     f"&start={current_start}&limit={fetch_limit}"
                 )
-                
+
                 r = await client.get(url)
                 data = r.json()
 
@@ -377,20 +481,20 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                 batch_candles = data["result"]["list"]
                 if not batch_candles:
                     break
-                
+
                 batch_candles.reverse()
                 all_candles.extend(batch_candles)
-                
+
                 last_candle_ts = int(batch_candles[-1][0])
                 current_start = last_candle_ts + (interval_minutes * 60 * 1000)
-                
+
                 if current_start >= end_ms:
                     break
-                
+
                 # Si ya tenemos suficientes velas, salir
                 if len(all_candles) >= total_candles_needed:
                     break
-                
+
                 await asyncio.sleep(0.1)
 
         candles = []
@@ -409,8 +513,13 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
             dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
             
-            time_diff_minutes = (current_time_utc - ts_ms) / (1000 * 60)
-            is_in_progress = time_diff_minutes < interval_minutes
+            # FIX: Solo la vela del intervalo ACTUAL esta en progreso
+            # Calcular el inicio del intervalo actual (redondeado hacia abajo)
+            interval_ms = interval_minutes * 60 * 1000
+            current_interval_start = (current_time_utc // interval_ms) * interval_ms
+
+            # Una vela esta en progreso SOLO si su timestamp coincide con el intervalo actual
+            is_in_progress = (ts_ms == current_interval_start)
             
             candles.append({
                 "timestamp": ts_ms,
@@ -435,7 +544,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
         print(f"[{symbol}] Historical: [OK] Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
 
-        return {
+        response_data = {
             "symbol": symbol,
             "interval": interval_final,
             "data": candles,
@@ -448,12 +557,20 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             "days_requested": days if since_timestamp is None else None,
             "days_fetched": days_to_fetch,
             "max_days_allowed": max_days_allowed,
-            # 🔄 Info para carga incremental
+            # Info para carga incremental
             "incremental": since_timestamp is not None,
             "since_timestamp": since_timestamp,
             "first_candle_timestamp": first_candle_ts,
             "last_candle_timestamp": last_candle_ts
         }
+
+        # ==================== GUARDAR EN CACHE ====================
+        # Solo cachear requests normales (no incrementales)
+        if since_timestamp is None and len(candles) > 0:
+            set_cached_historical(symbol, interval_final, days, response_data)
+        # ==================== FIN GUARDAR CACHE ====================
+
+        return response_data
 
     except Exception as e:
         print(f"[ERROR {symbol}] {str(e)}")

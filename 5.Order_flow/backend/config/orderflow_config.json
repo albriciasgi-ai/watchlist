@@ -35,6 +35,7 @@
   "max_history_hours": 12.0,
   "log_trades": false,
   "symbol_step_sizes": {
-    "BTCUSDT": 5.0
+    "BTCUSDT": 10.0,
+    "ETHUSDT": 1.0
   }
 }

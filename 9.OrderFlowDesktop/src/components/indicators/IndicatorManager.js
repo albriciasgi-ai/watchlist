@@ -263,33 +263,24 @@ class IndicatorManager {
   }
 
 
-  // ✅ OPTIMIZADO: refresh en PARALELO para todos los indicadores
+  // ✅ OPTIMIZADO: refresh SECUENCIAL con prioridades para evitar saturar la red
+  // Prioridad 1 (criticos): VWAP, Order Flow - Se cargan primero
+  // Prioridad 2 (secundarios): Swing Detector, S&R v2 - Se cargan despues
+  // Prioridad 3 (opcionales): Volume Profile, etc - Se cargan al final
   async refresh() {
     const startTime = Date.now();
-    log.debug(`[${this.symbol}] 🔄 Refrescando indicadores en PARALELO...`);
+    log.debug(`[${this.symbol}] Refrescando indicadores SECUENCIAL (priorizado)...`);
 
     try {
-      // 🚀 Recolectar todas las promesas de fetch
-      const fetchPromises = [];
+      // Separar indicadores por prioridad
+      const priority1 = []; // Criticos - cargan primero
+      const priority2 = []; // Secundarios
+      const priority3 = []; // Opcionales
 
       this.indicators.forEach((indicator) => {
         if (!indicator.enabled) return;
 
-        // Volume Profile, Open Interest, Support & Resistance
-        if (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance") {
-          if (indicator.days !== this.days) {
-            indicator.days = this.days;
-          }
-          if (indicator.fetchData) {
-            fetchPromises.push(
-              indicator.fetchData().catch(err => {
-                log.error(`[${this.symbol}] ❌ Error fetching ${indicator.name}:`, err);
-              })
-            );
-          }
-        }
-
-        // VWAP
+        // VWAP - Prioridad 1
         if (indicator.name === "VWAP") {
           let needsRefetch = false;
 
@@ -314,73 +305,83 @@ class IndicatorManager {
           }
 
           if (needsRefetch && indicator.fetchData) {
-            fetchPromises.push(
-              indicator.fetchData().catch(err => {
-                log.error(`[${this.symbol}] ❌ Error fetching VWAP:`, err);
-              })
-            );
+            priority1.push({ indicator, name: "VWAP" });
           }
         }
 
-        // Swing Detector
-        if (indicator.name === "Swing Detector" && indicator.fetchData) {
-          fetchPromises.push(
-            indicator.fetchData().catch(err => {
-              log.error(`[${this.symbol}] ❌ Error fetching Swing Detector:`, err);
-            })
-          );
-        }
-
-        // S&R v2 (Swing-based)
-        if (indicator.name === "S&R v2" && indicator.fetchData) {
-          fetchPromises.push(
-            indicator.fetchData().catch(err => {
-              log.error(`[${this.symbol}] ❌ Error fetching S&R v2:`, err);
-            })
-          );
-        }
-
-        // Order Flow
+        // Order Flow - Prioridad 1
         if (indicator.name === "Order Flow" && indicator.fetchData) {
-          // Sync interval if changed
           if (indicator.interval !== this.interval && indicator.setInterval) {
             indicator.setInterval(this.interval);
           }
-          fetchPromises.push(
-            indicator.fetchData().catch(err => {
-              log.error(`[${this.symbol}] ❌ Error fetching Order Flow:`, err);
-            })
-          );
+          priority1.push({ indicator, name: "Order Flow" });
         }
 
-        // Double Top/Bottom - usar velas si están disponibles (solo si está habilitado)
+        // Swing Detector - Prioridad 2
+        if (indicator.name === "Swing Detector" && indicator.fetchData) {
+          priority2.push({ indicator, name: "Swing Detector" });
+        }
+
+        // S&R v2 - Prioridad 2
+        if (indicator.name === "S&R v2" && indicator.fetchData) {
+          priority2.push({ indicator, name: "S&R v2" });
+        }
+
+        // Volume Profile, Open Interest, Support & Resistance - Prioridad 3
+        if (indicator.name === "Volume Profile" || indicator.name === "Open Interest" || indicator.name === "Support & Resistance") {
+          if (indicator.days !== this.days) {
+            indicator.days = this.days;
+          }
+          if (indicator.fetchData) {
+            priority3.push({ indicator, name: indicator.name });
+          }
+        }
+
+        // Double Top/Bottom - Prioridad 3
         if (indicator.name === "Double Top/Bottom" && indicator.enabled && indicator.fetchData) {
-          fetchPromises.push(
-            indicator.fetchData(this.allCandles).catch(err => {
-              log.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom:`, err);
-            })
-          );
+          priority3.push({ indicator, name: "Double Top/Bottom", candles: this.allCandles });
         }
 
-        // Rejection Patterns - usar velas si están disponibles (solo si está habilitado)
+        // Rejection Patterns - Prioridad 3
         if (indicator.name === "Rejection Patterns" && indicator.enabled && indicator.fetchData) {
-          fetchPromises.push(
-            indicator.fetchData(this.allCandles).catch(err => {
-              log.error(`[${this.symbol}] ❌ Error fetching Rejection Patterns:`, err);
-            })
-          );
+          priority3.push({ indicator, name: "Rejection Patterns", candles: this.allCandles });
         }
       });
 
-      // 🚀 Ejecutar TODOS en paralelo
-      if (fetchPromises.length > 0) {
-        await Promise.all(fetchPromises);
+      // Funcion helper para ejecutar un batch con delay
+      const executeBatch = async (batch, batchName) => {
+        if (batch.length === 0) return;
+
+        log.debug(`[${this.symbol}] Cargando ${batchName}: ${batch.map(b => b.name).join(', ')}`);
+
+        const promises = batch.map(item => {
+          const fetchArg = item.candles || undefined;
+          return item.indicator.fetchData(fetchArg).catch(err => {
+            log.error(`[${this.symbol}] Error fetching ${item.name}:`, err);
+          });
+        });
+
+        await Promise.all(promises);
+      };
+
+      // Ejecutar en orden de prioridad con pequeno delay entre batches
+      await executeBatch(priority1, "Prioridad 1 (criticos)");
+
+      if (priority2.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+        await executeBatch(priority2, "Prioridad 2 (secundarios)");
+      }
+
+      if (priority3.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+        await executeBatch(priority3, "Prioridad 3 (opcionales)");
       }
 
       const duration = Date.now() - startTime;
-      log.debug(`[${this.symbol}] ✅ IndicatorManager: Refresh completado en ${duration}ms (${fetchPromises.length} fetches en paralelo)`);
+      const totalIndicators = priority1.length + priority2.length + priority3.length;
+      log.debug(`[${this.symbol}] Refresh completado en ${duration}ms (${totalIndicators} indicadores en 3 batches)`);
     } catch (error) {
-      log.error(`[${this.symbol}] ❌ Error en refresh:`, error);
+      log.error(`[${this.symbol}] Error en refresh:`, error);
     }
   }
 

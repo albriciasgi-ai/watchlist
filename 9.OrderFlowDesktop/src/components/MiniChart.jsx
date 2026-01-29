@@ -2381,7 +2381,42 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   return (
     <>
       <div className="mini-chart" ref={containerRef}>
-        {/* 🎯 VIRTUALIZACIÓN: Placeholder cuando el chart no es visible */}
+        {/* INDICADOR DE CARGA: Visible mientras se cargan datos iniciales */}
+        {!isInitialized && !isFullscreenChild && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(26, 26, 46, 0.95)',
+            color: '#4a9eff',
+            fontSize: '14px',
+            zIndex: 200,
+            gap: '12px'
+          }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: '3px solid #333',
+              borderTop: '3px solid #4a9eff',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }} />
+            <span style={{ color: '#888' }}>Cargando {symbol}...</span>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        )}
+        {/* VIRTUALIZACION: Placeholder cuando el chart no es visible */}
         {!isVisible && !isFullscreen && !isFullscreenChild && (
           <div style={{
             position: 'absolute',

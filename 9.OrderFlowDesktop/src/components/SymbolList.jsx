@@ -68,9 +68,24 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
   const prefetchTimeoutRef = useRef(null);
   const prefetchedSymbolsRef = useRef(new Set());
 
-  // 🚀 Prefetch: precarga velas históricas cuando el usuario hace hover
+  // Flag para desactivar prefetch durante carga inicial (primeros 10 segundos)
+  const [prefetchEnabled, setPrefetchEnabled] = useState(false);
+
+  // Activar prefetch despues de 10 segundos para no saturar durante carga inicial
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPrefetchEnabled(true);
+      console.log('[Prefetch] Activado (10s despues de carga)');
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Prefetch: precarga velas historicas cuando el usuario hace hover
   const prefetchSymbolData = useCallback(async (sym) => {
-    // Skip si ya está en cache o es el símbolo actual
+    // Skip si prefetch esta desactivado
+    if (!prefetchEnabled) return;
+
+    // Skip si ya esta en cache o es el simbolo actual
     if (sym === currentSymbol) return;
     if (prefetchedSymbolsRef.current.has(`${sym}_${interval}`)) return;
 
@@ -89,28 +104,31 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
       );
       const data = await response.json();
 
-      if (data.success && data.candles && data.candles.length > 0) {
-        await CandleCache.set(sym, interval, data.candles);
+      if (data.success && data.data && data.data.length > 0) {
+        await CandleCache.set(sym, interval, data.data);
         prefetchedSymbolsRef.current.add(`${sym}_${interval}`);
-        console.log(`[Prefetch] ${sym}@${interval} - precargado (${data.candles.length} velas)`);
+        console.log(`[Prefetch] ${sym}@${interval} - precargado (${data.data.length} velas)`);
       }
     } catch (error) {
       console.warn(`[Prefetch] ${sym}@${interval} - error:`, error);
     }
-  }, [currentSymbol, interval, days]);
+  }, [currentSymbol, interval, days, prefetchEnabled]);
 
-  // Handler para hover con debounce de 300ms
+  // Handler para hover con debounce de 1000ms (aumentado de 300ms)
   const handleSymbolHover = useCallback((sym) => {
+    // Skip si prefetch esta desactivado
+    if (!prefetchEnabled) return;
+
     // Cancelar prefetch anterior
     if (prefetchTimeoutRef.current) {
       clearTimeout(prefetchTimeoutRef.current);
     }
 
-    // Iniciar nuevo prefetch con delay
+    // Iniciar nuevo prefetch con delay de 1 segundo
     prefetchTimeoutRef.current = setTimeout(() => {
       prefetchSymbolData(sym);
-    }, 300);
-  }, [prefetchSymbolData]);
+    }, 1000);
+  }, [prefetchSymbolData, prefetchEnabled]);
 
   // Cancelar prefetch al salir
   const handleSymbolLeave = useCallback(() => {

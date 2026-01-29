@@ -1,0 +1,3017 @@
+SupportResistance2Indicator.js:133 
+        
+        
+       GET http://localhost:11000/api/sr2/BTCUSDT?interval=1&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0 net::ERR_CONNECTION_REFUSED
+fetchData @ SupportResistance2Indicator.js:133
+await in fetchData
+setEnabled @ SupportResistance2Indicator.js:370
+toggleIndicator @ IndicatorManager.js:423
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SupportResistance2Indicator.js:166 [BTCUSDT] S&R v2 fetch error: TypeError: Failed to fetch
+    at SupportResistance2Indicator.fetchData (SupportResistance2Indicator.js:133:30)
+fetchData @ SupportResistance2Indicator.js:166
+await in fetchData
+setEnabled @ SupportResistance2Indicator.js:370
+toggleIndicator @ IndicatorManager.js:423
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SupportResistance2Indicator.js:133 
+        
+        
+       GET http://localhost:11000/api/sr2/BTCUSDT?interval=1&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0 net::ERR_CONNECTION_REFUSED
+fetchData @ SupportResistance2Indicator.js:133
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SupportResistance2Indicator.js:166 [BTCUSDT] S&R v2 fetch error: TypeError: Failed to fetch
+    at SupportResistance2Indicator.fetchData (SupportResistance2Indicator.js:133:30)
+fetchData @ SupportResistance2Indicator.js:166
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+VWAPIndicator.js:161 
+        
+        
+       GET http://localhost:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:161
+await in fetchData
+setEnabled @ VWAPIndicator.js:292
+toggleIndicator @ IndicatorManager.js:423
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:05:58 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+await in fetchData
+setEnabled @ VWAPIndicator.js:292
+toggleIndicator @ IndicatorManager.js:423
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SymbolList.jsx:200 
+        
+        
+       GET http://localhost:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:200
+(anonymous) @ SymbolList.jsx:234
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SymbolList.jsx:226 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:200:30
+    at SymbolList.jsx:234:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=9c8daa37:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=9c8daa37:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=9c8daa37:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=9c8daa37:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=9c8daa37:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=9c8daa37:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=9c8daa37:19447:22)
+    at chunk-ZFBEYDM4.js?v=9c8daa37:19328:17
+(anonymous) @ SymbolList.jsx:226
+await in (anonymous)
+(anonymous) @ SymbolList.jsx:234
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+VWAPIndicator.js:161 
+        
+        
+       GET http://localhost:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:161
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:05:58 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+OrderFlowIndicator.js:205 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+(anonymous) @ useGlobalAlerts.js:380
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=9c8daa37:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=9c8daa37:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=9c8daa37:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=9c8daa37:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=9c8daa37:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=9c8daa37:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=9c8daa37:19447:22)
+    at chunk-ZFBEYDM4.js?v=9c8daa37:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+await in (anonymous)
+(anonymous) @ useGlobalAlerts.js:380
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2272
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:05:58 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2272:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=9c8daa37:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=9c8daa37:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=9c8daa37:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=9c8daa37:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=9c8daa37:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=9c8daa37:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=9c8daa37:19447:22)
+    at chunk-ZFBEYDM4.js?v=9c8daa37:19328:17
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2272
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+(anonymous) @ useGlobalAlerts.js:380
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=9c8daa37:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=9c8daa37:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=9c8daa37:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=9c8daa37:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=9c8daa37:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=9c8daa37:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=9c8daa37:19447:22)
+    at chunk-ZFBEYDM4.js?v=9c8daa37:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+await in (anonymous)
+(anonymous) @ useGlobalAlerts.js:380
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SingleSymbolAnalyzer.jsx:240 
+        
+        
+       POST http://localhost:11000/api/swing/config net::ERR_CONNECTION_REFUSED
+syncSwingDetector @ SingleSymbolAnalyzer.jsx:240
+(anonymous) @ SingleSymbolAnalyzer.jsx:257
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:05:58 a. m.] [SingleSymbolAnalyzer] Error sincronizando Swing Detector: TypeError: Failed to fetch
+    at syncSwingDetector (SingleSymbolAnalyzer.jsx:240:32)
+    at SingleSymbolAnalyzer.jsx:257:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=9c8daa37:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=9c8daa37:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=9c8daa37:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=9c8daa37:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=9c8daa37:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=9c8daa37:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=9c8daa37:19447:22)
+    at chunk-ZFBEYDM4.js?v=9c8daa37:19328:17
+error @ Logger.js:88
+syncSwingDetector @ SingleSymbolAnalyzer.jsx:253
+await in syncSwingDetector
+(anonymous) @ SingleSymbolAnalyzer.jsx:257
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SingleSymbolAnalyzer.jsx:264 
+        
+        
+       POST http://localhost:11000/api/realtime/set-interval net::ERR_CONNECTION_REFUSED
+notifyBackendTimeframe @ SingleSymbolAnalyzer.jsx:264
+(anonymous) @ SingleSymbolAnalyzer.jsx:281
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+OrderFlowIndicator.js:205 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:00 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:131 
+        
+        
+       POST http://localhost:11000/api/swing/config/BTCUSDT net::ERR_CONNECTION_REFUSED
+_syncDaysOnInit @ SwingDetectorIndicator.js:131
+fetchData @ SwingDetectorIndicator.js:104
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:02 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:209 
+        
+        
+       GET http://localhost:11000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:209
+await in fetchSignals
+fetchData @ SwingDetectorIndicator.js:108
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at async Promise.all (:11001/index 0)
+    at async SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:107:5)
+fetchSignals @ SwingDetectorIndicator.js:234
+await in fetchSignals
+fetchData @ SwingDetectorIndicator.js:108
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:248 
+        
+        
+       GET http://localhost:11000/api/swing/status net::ERR_CONNECTION_REFUSED
+fetchStatus @ SwingDetectorIndicator.js:248
+fetchData @ SwingDetectorIndicator.js:109
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:259 [BTCUSDT] SwingDetector status error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchStatus (SwingDetectorIndicator.js:248:30)
+    at SwingDetectorIndicator.fetchData (SwingDetectorIndicator.js:109:12)
+fetchStatus @ SwingDetectorIndicator.js:259
+await in fetchStatus
+fetchData @ SwingDetectorIndicator.js:109
+await in fetchData
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:1163 
+        
+        
+       GET http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1&t=1769702756165 net::ERR_CONNECTION_REFUSED
+loadHistoricalData @ MiniChart.jsx:1163
+await in loadHistoricalData
+(anonymous) @ MiniChart.jsx:2155
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:1327 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at loadHistoricalData (MiniChart.jsx:1163:25)
+loadHistoricalData @ MiniChart.jsx:1327
+await in loadHistoricalData
+(anonymous) @ MiniChart.jsx:2155
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:07 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+OrderFlowIndicator.js:205 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:10 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:13 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+OrderFlowIndicator.js:205 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:16 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:17 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:22 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:25 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:28 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:30 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+  GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:1566
+initIndicators @ MiniChart.jsx:1565
+await in initIndicators
+(anonymous) @ MiniChart.jsx:1602
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:34 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:37 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:40 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:43 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:46 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:49 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:52 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/historical/ETHUSDT?interval=1&days=1 net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:93
+await in (anonymous)
+(anonymous) @ SymbolList.jsx:111
+setTimeout
+(anonymous) @ SymbolList.jsx:110
+onMouseEnter @ SymbolList.jsx:482
+callCallback2 @ chunk-ZFBEYDM4.js:3674
+invokeGuardedCallbackDev @ chunk-ZFBEYDM4.js:3699
+invokeGuardedCallback @ chunk-ZFBEYDM4.js:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-ZFBEYDM4.js:3736
+executeDispatch @ chunk-ZFBEYDM4.js:7014
+processDispatchQueueItemsInOrder @ chunk-ZFBEYDM4.js:7034
+processDispatchQueue @ chunk-ZFBEYDM4.js:7043
+dispatchEventsForPlugins @ chunk-ZFBEYDM4.js:7051
+(anonymous) @ chunk-ZFBEYDM4.js:7174
+batchedUpdates$1 @ chunk-ZFBEYDM4.js:18913
+batchedUpdates @ chunk-ZFBEYDM4.js:3579
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js:5478
+dispatchEvent @ chunk-ZFBEYDM4.js:5472
+dispatchContinuousEvent @ chunk-ZFBEYDM4.js:5461
+  GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:412
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ ❌ [11:06:55 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:1659
+setInterval
+(anonymous) @ MiniChart.jsx:1657
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+  GET http://localhost:11000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:209
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1093
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+ [BTCUSDT] SwingDetector fetch error: 
+fetchSignals @ SwingDetectorIndicator.js:234
+await in fetchSignals
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1093
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+  GET http://localhost:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:161
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1093
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+ ❌ [11:06:58 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+fetchData @ VWAPIndicator.js:199
+await in fetchData
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1093
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+  GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js:19447
+(anonymous) @ chunk-ZFBEYDM4.js:19328
+workLoop @ chunk-ZFBEYDM4.js:197
+flushWork @ chunk-ZFBEYDM4.js:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js:384
+SymbolList.jsx:200 
+        
+        
+       GET http://localhost:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:200
+setInterval
+(anonymous) @ SymbolList.jsx:235
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SymbolList.jsx:226 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:200:30
+(anonymous) @ SymbolList.jsx:226
+setInterval
+(anonymous) @ SymbolList.jsx:235
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:06:59 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:00 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:04 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+OrderFlowIndicator.js:205 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:205
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:220
+setTimeout
+fetchFootprints @ OrderFlowIndicator.js:217
+await in fetchFootprints
+fetchData @ OrderFlowIndicator.js:134
+toggleIndicator @ IndicatorManager.js:429
+(anonymous) @ MiniChart.jsx:2108
+initIndicators @ MiniChart.jsx:2107
+await in initIndicators
+(anonymous) @ MiniChart.jsx:2158
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:07 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:08 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:13 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:16 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:19 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:22 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:25 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:28 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:30 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:34 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:37 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:40 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:43 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:46 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:49 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:52 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:55 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SwingDetectorIndicator.js:209 
+        
+        
+       GET http://localhost:11000/api/swing/signals/BTCUSDT net::ERR_CONNECTION_REFUSED
+fetchSignals @ SwingDetectorIndicator.js:209
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1465
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1393:22)
+    at handleWebSocketMessage (MiniChart.jsx:1465:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+fetchSignals @ SwingDetectorIndicator.js:234
+await in fetchSignals
+onCandleClose @ IndicatorManager.js:1393
+handleWebSocketMessage @ MiniChart.jsx:1465
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+VWAPIndicator.js:161 
+        
+        
+       GET http://localhost:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20 net::ERR_CONNECTION_REFUSED
+fetchData @ VWAPIndicator.js:161
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1465
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+Logger.js:88 ❌ [11:07:58 a. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1387:21)
+    at handleWebSocketMessage (MiniChart.jsx:1465:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+error @ Logger.js:88
+fetchData @ VWAPIndicator.js:199
+await in fetchData
+onCandleClose @ IndicatorManager.js:1387
+handleWebSocketMessage @ MiniChart.jsx:1465
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+setInterval
+_startThrottleTimer @ WebSocketManager.js:137
+ws.onopen @ WebSocketManager.js:65
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:35 
+        
+        
+       GET http://localhost:11000/api/realtime/alerts/history?limit=100 net::ERR_CONNECTION_REFUSED
+(anonymous) @ useGlobalAlerts.js:35
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+setInterval
+(anonymous) @ useGlobalAlerts.js:383
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SymbolList.jsx:200 
+        
+        
+       GET http://localhost:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:200
+setInterval
+(anonymous) @ SymbolList.jsx:235
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+SymbolList.jsx:226 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:200:30
+(anonymous) @ SymbolList.jsx:226
+setInterval
+(anonymous) @ SymbolList.jsx:235
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:07:59 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+MiniChart.jsx:492 
+        
+        
+       GET http://localhost:11000/api/drawings/BTCUSDT net::ERR_CONNECTION_REFUSED
+loadDrawings @ MiniChart.jsx:492
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less
+Logger.js:88 ❌ [11:08:00 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+await in loadDrawings
+(anonymous) @ MiniChart.jsx:2277
+setInterval
+(anonymous) @ MiniChart.jsx:2275
+commitHookEffectListMount @ chunk-ZFBEYDM4.js?v=9c8daa37:16915
+commitPassiveMountOnFiber @ chunk-ZFBEYDM4.js?v=9c8daa37:18156
+commitPassiveMountEffects_complete @ chunk-ZFBEYDM4.js?v=9c8daa37:18129
+commitPassiveMountEffects_begin @ chunk-ZFBEYDM4.js?v=9c8daa37:18119
+commitPassiveMountEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:18109
+flushPassiveEffectsImpl @ chunk-ZFBEYDM4.js?v=9c8daa37:19490
+flushPassiveEffects @ chunk-ZFBEYDM4.js?v=9c8daa37:19447
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:19328
+workLoop @ chunk-ZFBEYDM4.js?v=9c8daa37:197
+flushWork @ chunk-ZFBEYDM4.js?v=9c8daa37:176
+performWorkUntilDeadline @ chunk-ZFBEYDM4.js?v=9c8daa37:384
+Show 11 more frames
+Show less

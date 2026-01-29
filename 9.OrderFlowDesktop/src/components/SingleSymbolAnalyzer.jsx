@@ -97,35 +97,43 @@ const SingleSymbolAnalyzer = () => {
     return saved || "1";
   });
 
-  const [indicatorStates, setIndicatorStates] = useState(() => {
-    const defaults = {
-      "Volume Delta": false,
-      "CVD": false,
-      "Volume Profile": false,
-      "Open Interest": false,
-      "VWAP": true,
-      "Fibonacci": false,
-      "Continuation Patterns": false,
-      "Rejection Patterns": false,
-      "Double Top/Bottom": false,
-      "Support & Resistance": false,
-      "S&R v2": true,
-      "Swing Detector": true,
-      "Order Flow": true  // Enabled by default for this project
-    };
+  // Defaults de indicadores - extraidos para poder resetear
+  const DEFAULT_INDICATORS = {
+    "Volume Delta": false,
+    "CVD": false,
+    "Volume Profile": false,
+    "Open Interest": false,
+    "VWAP": true,
+    "Fibonacci": false,
+    "Continuation Patterns": false,
+    "Rejection Patterns": false,
+    "Double Top/Bottom": false,
+    "Support & Resistance": false,
+    "S&R v2": true,
+    "Swing Detector": true,
+    "Order Flow": true  // Enabled by default for this project
+  };
 
+  const [indicatorStates, setIndicatorStates] = useState(() => {
     const saved = localStorage.getItem('analyzer_indicators');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         // Merge con defaults para agregar nuevos indicadores que no existan en el guardado
-        return { ...defaults, ...parsed };
+        return { ...DEFAULT_INDICATORS, ...parsed };
       } catch (e) {
         log.error('Error parsing saved indicators:', e);
       }
     }
-    return defaults;
+    return DEFAULT_INDICATORS;
   });
+
+  // Funcion para resetear indicadores a defaults
+  const resetIndicatorsToDefaults = () => {
+    setIndicatorStates(DEFAULT_INDICATORS);
+    localStorage.removeItem('analyzer_indicators');
+    log.info('Indicators reset to defaults');
+  };
 
   // Panel de alertas
   const [isAlertPanelOpen, setIsAlertPanelOpen] = useState(false);
@@ -733,6 +741,25 @@ const SingleSymbolAnalyzer = () => {
             Order Flow Config
           </button>
         )}
+
+        {/* Boton para resetear indicadores a valores por defecto */}
+        <button
+          onClick={resetIndicatorsToDefaults}
+          className="reset-indicators-btn"
+          title="Resetear indicadores a valores por defecto"
+          style={{
+            marginLeft: '10px',
+            padding: '4px 8px',
+            background: '#666',
+            color: 'white',
+            border: 'none',
+            borderRadius: '3px',
+            cursor: 'pointer',
+            fontSize: '11px'
+          }}
+        >
+          Reset
+        </button>
       </div>
 
       {/* Contenedor principal: Chart + Lista de simbolos */}

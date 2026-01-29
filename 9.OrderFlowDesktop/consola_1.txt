@@ -1,0 +1,502 @@
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:24 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+fetchData @ VWAPIndicator.js:199
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:24 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+fetchData @ VWAPIndicator.js:199
+tickers:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:208
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:24 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+:11000/api/swing/config:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:24 p. m.] [SingleSymbolAnalyzer] Error sincronizando Swing Detector: 
+error @ Logger.js:63
+syncSwingDetector @ SingleSymbolAnalyzer.jsx:250
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:26 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+:11000/api/realtime/set-interval:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/swing/config/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/swing/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [BTCUSDT] SwingDetector status error: 
+fetchStatus @ SwingDetectorIndicator.js:259
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:28 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx:425
+:11000/api/historical/BTCUSDT?interval=1&since_timestamp=1769710140000&t=1769710281629:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [BTCUSDT] Error cargando histórico 
+loadHistoricalData @ MiniChart.jsx:999
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:32 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:36 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:39 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:42 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:43 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:48 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:51 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:54 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:56 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:11:59 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+:11000/api/swing/signals/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [BTCUSDT] SwingDetector fetch error: 
+fetchSignals @ SwingDetectorIndicator.js:234
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:00 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:03 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:06 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:09 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:12 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:15 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:18 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:21 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+tickers:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:208
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:24 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:26 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:30 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:33 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:33 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:39 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:42 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:45 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:48 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:51 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:54 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:56 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:59 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+:11000/api/swing/signals/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [BTCUSDT] SwingDetector fetch error: 
+fetchSignals @ SwingDetectorIndicator.js:234
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:12:59 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:03 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:06 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:09 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:12 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:15 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:17 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:21 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+history:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+tickers:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:208
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:24 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [1:13:26 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:30 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:33 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:36 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:39 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:42 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:45 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:48 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:51 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:54 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:56 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:59 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+:11000/api/swing/signals/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SwingDetectorIndicator.js:234 [BTCUSDT] SwingDetector fetch error: TypeError: Failed to fetch
+    at SwingDetectorIndicator.fetchSignals (SwingDetectorIndicator.js:209:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1394:22)
+    at handleWebSocketMessage (MiniChart.jsx:1465:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+fetchSignals @ SwingDetectorIndicator.js:234
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=session&rollingPeriod=20:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:13:59 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: TypeError: Failed to fetch
+    at VWAPIndicator.fetchData (VWAPIndicator.js:161:30)
+    at IndicatorManager.onCandleClose (IndicatorManager.js:1388:21)
+    at handleWebSocketMessage (MiniChart.jsx:1465:41)
+    at WebSocketManager.js:184:9
+    at Set.forEach (<anonymous>)
+    at WebSocketManager._dispatchToSubscribers (WebSocketManager.js:182:15)
+    at WebSocketManager.js:167:14
+    at Map.forEach (<anonymous>)
+    at WebSocketManager._processBuffer (WebSocketManager.js:159:24)
+    at WebSocketManager.js:138:12
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:03 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:06 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:09 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:12 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:15 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:18 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:21 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:244 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:218:30
+(anonymous) @ SymbolList.jsx:244
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:24 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:26 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:30 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [1:14:33 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:492:30)
+    at MiniChart.jsx:2277:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:514
+CandleCache.js:351 [CandleCache] === GAPS en CACHE-ANTES-MERGE BTCUSDT ===
+analyzeGaps @ CandleCache.js:351
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:352   Total velas: 1539
+analyzeGaps @ CandleCache.js:352
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:353   Primera: 28/1/2026, 11:31:00 a. m.
+analyzeGaps @ CandleCache.js:353
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:354   Ultima: 29/1/2026, 1:15:00 p. m.
+analyzeGaps @ CandleCache.js:354
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:355   Gaps encontrados: 1
+analyzeGaps @ CandleCache.js:355
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:357     Gap #1: 29/1/2026, 12:47:00 p. m. -> 29/1/2026, 12:52:00 p. m. (5.0 min = 0.08 hrs)
+(anonymous) @ CandleCache.js:357
+analyzeGaps @ CandleCache.js:356
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:359   Tiempo total perdido: 5.0 min (0.08 hrs)
+analyzeGaps @ CandleCache.js:359
+loadHistoricalData @ MiniChart.jsx:1203
+CandleCache.js:351 [CandleCache] === GAPS en MERGED BTCUSDT ===
+analyzeGaps @ CandleCache.js:351
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:352   Total velas: 1539
+analyzeGaps @ CandleCache.js:352
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:353   Primera: 28/1/2026, 11:31:00 a. m.
+analyzeGaps @ CandleCache.js:353
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:354   Ultima: 29/1/2026, 1:15:00 p. m.
+analyzeGaps @ CandleCache.js:354
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:355   Gaps encontrados: 1
+analyzeGaps @ CandleCache.js:355
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:357     Gap #1: 29/1/2026, 12:47:00 p. m. -> 29/1/2026, 12:52:00 p. m. (5.0 min = 0.08 hrs)
+(anonymous) @ CandleCache.js:357
+analyzeGaps @ CandleCache.js:356
+loadHistoricalData @ MiniChart.jsx:1211
+CandleCache.js:359   Tiempo total perdido: 5.0 min (0.08 hrs)
+analyzeGaps @ CandleCache.js:359
+loadHistoricalData @ MiniChart.jsx:1211

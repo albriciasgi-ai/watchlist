@@ -24,7 +24,7 @@
         "minZScore": 1,
         "lookbackBars": 10
       },
-      "days": 5,
+      "days": 1,
       "vwapFilter": {
         "enabled": false,
         "deviations": [
