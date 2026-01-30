@@ -289,8 +289,8 @@ useEffect(() => {
 ## CHECKLIST DE IMPLEMENTACION PARA OTRAS APPS
 
 ### Aplicaciones Objetivo
-- [ ] **App 7: WatchlistDesktop** (`7.WatchlistDesktop/`)
-- [ ] **App 8: AnalizadorDesktop** (`8.AnalizadorDesktop/`)
+- [x] **App 7: WatchlistDesktop** (`7.WatchlistDesktop/`) - Completada 29 Enero 2026
+- [x] **App 8: AnalizadorDesktop** (`8.AnalizadorDesktop/`) - Completada 29 Enero 2026
 
 ### Para Cada Aplicacion:
 

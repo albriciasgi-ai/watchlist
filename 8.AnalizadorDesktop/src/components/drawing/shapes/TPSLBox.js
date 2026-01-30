@@ -10,13 +10,14 @@ class TPSLBox {
     this.time = time; // Tiempo de creación
 
     // Por defecto: risk/reward 1:2 (TP es el doble que SL)
-    // Si entry es 100, SL podría ser 98 (-2%), TP sería 104 (+4%)
-    const defaultRiskPercent = 0.02; // 2% de riesgo
+    // Si entry es 100, SL seria 99.5 (-0.5%), TP seria 101 (+1%)
+    const defaultRiskPercent = 0.005; // 0.5% de riesgo (mas pequeno para mejor visualizacion)
     this.slPrice = entryPrice * (1 - defaultRiskPercent); // SL abajo
-    this.tpPrice = entryPrice * (1 + defaultRiskPercent * 2); // TP arriba (doble)
+    this.tpPrice = entryPrice * (1 + defaultRiskPercent * 2); // TP arriba (2:1 ratio)
 
-    // Ancho en tiempo (milisegundos) - por defecto 100 velas de 15 min = 90,000,000 ms
-    this.widthTime = 100 * 15 * 60 * 1000; // 90 minutos
+    // Ancho en tiempo (milisegundos) - por defecto 20 velas del timeframe actual
+    // Asumiendo 1 minuto por vela como base, 20 velas = 20 minutos
+    this.widthTime = 20 * 60 * 1000; // 20 minutos (mas compacto)
 
     this.style = {
       entryColor: '#3B82F6', // Azul para entrada

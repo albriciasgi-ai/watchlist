@@ -20,6 +20,8 @@ import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
 import backgroundPreloader from '../utils/BackgroundPreloader.js';
 import { API_BASE_URL } from "../config";
+import ConnectionStatus from "./ConnectionStatus";
+import { initRobustness, stopRobustness } from '../utils/robustness';
 
 // Logger instance
 const log = new Logger('Watchlist', { level: 'info' });
@@ -178,11 +180,17 @@ const Watchlist = () => {
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [selectedSymbolForSD, setSelectedSymbolForSD] = useState(null);
 
-  // 🖥️ NUEVO: Estado para tracking del símbolo en fullscreen
+  // 🖥️ NUEVO: Estado para tracking del simbolo en fullscreen
   const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
   const [fullscreenInterval, setFullscreenInterval] = useState(null);
 
-  // ⏱️ CRONÓMETRO: Estados para medir tiempo de carga
+  // 🛡️ ROBUSTNESS: Inicializar sistema de robustez al montar
+  useEffect(() => {
+    initRobustness();
+    return () => stopRobustness();
+  }, []);
+
+  // ⏱️ CRONOMETRO: Estados para medir tiempo de carga
   const [loadStartTime, setLoadStartTime] = useState(Date.now());
   const [loadedCharts, setLoadedCharts] = useState(new Set());
   const [showLoadTimePopup, setShowLoadTimePopup] = useState(false);
@@ -1078,6 +1086,8 @@ const Watchlist = () => {
         <h2>Watchlist PoC - Phase 3: Volume Profile + UI Controls</h2>
 
         <div className="controls">
+          {/* Indicador de estado de conexion */}
+          <ConnectionStatus />
           <label>
             Timeframe:
             <select value={interval} onChange={(e) => setInterval(e.target.value)}>

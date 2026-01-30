@@ -2294,3 +2294,21 @@
 2026-01-28 21:21:06 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=88624.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
 2026-01-28 21:21:08 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2993.18 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
 2026-01-28 21:22:02 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=88654.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:07:13 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2823.45 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:07:35 | ERROR | ALERT_TIMEOUT | ETHUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert
+2026-01-29 17:08:12 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84565.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:10:06 | ERROR | ALERT_TIMEOUT | BTCUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert
+2026-01-29 17:16:44 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2809.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 17:17:04 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84306.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 17:17:41 | ERROR | ALERT_TIMEOUT | ETHUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert
+2026-01-29 17:17:43 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 17:25:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84388.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:26:01 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 17:26:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84401.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 17:26:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2812.42 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 17:27:01 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 17:27:01 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 17:32:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2815.99 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:33:01 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 17:34:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84428.40 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:35:01 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed

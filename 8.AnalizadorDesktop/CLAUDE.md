@@ -65,10 +65,11 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab.
 │
 ├── src/
 │   ├── components/
-│   │   ├── SingleSymbolAnalyzer.jsx  # Componente raiz
+│   │   ├── SingleSymbolAnalyzer.jsx  # Componente raiz + robustness init
 │   │   ├── MiniChart.jsx             # Grafico principal (~2500 lineas)
 │   │   ├── SymbolList.jsx            # Lista lateral de monedas
 │   │   ├── SymbolSelector.jsx        # Selector de simbolo
+│   │   ├── ConnectionStatus.jsx      # Indicador visual de conexion (NUEVO)
 │   │   ├── trading/
 │   │   │   ├── TradingPanel.jsx      # Panel de trading
 │   │   │   ├── OrderForm.jsx         # Formulario de orden
@@ -86,6 +87,7 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab.
 │   │   ├── ProximityAlerts/
 │   │   └── *Settings.jsx             # Modales de configuracion
 │   ├── utils/
+│   │   ├── robustness.js             # Sistema centralizado de robustez (NUEVO)
 │   │   ├── CandleCache.js            # Cache IndexedDB con validacion
 │   │   ├── IndicatorCache.js
 │   │   ├── Logger.js
@@ -101,6 +103,7 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab.
 │
 ├── package.json                      # Scripts y config electron-builder
 ├── vite.config.js                    # Puerto 5174, proxy a backend
+├── START_ALL.bat                     # Inicio coordinado Backend + Electron (NUEVO)
 ├── start_fast.bat                    # Inicio rapido
 └── CLAUDE.md                         # Este archivo
 ```
@@ -286,7 +289,7 @@ await CandleCache.clearAll();
 ```
 
 **Validacion automatica:**
-Si el cache tiene menos del 10% de las velas esperadas, se limpia automaticamente.
+Si el cache tiene menos del 70% de las velas esperadas, se limpia automaticamente.
 
 ---
 
@@ -482,6 +485,86 @@ Archivos que NO deben modificarse sin cuidado:
         - Via Trading Panel
         - POST /api/trade/manual
 ```
+
+---
+
+## MEJORAS DE ROBUSTEZ (Enero 2026)
+
+Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia de usuario:
+
+### Archivos nuevos creados
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `src/utils/robustness.js` | Sistema centralizado de robustez |
+| `src/components/ConnectionStatus.jsx` | Indicador visual de conexion |
+| `START_ALL.bat` | Script de inicio coordinado |
+
+### Archivos modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `src/utils/CandleCache.js` | Validacion de velas + MIN_CACHE_RATIO=0.7 + analyzeGaps() |
+| `src/components/MiniChart.jsx` | fetchWithRetry para datos historicos |
+| `src/components/SymbolList.jsx` | fetchWithRetry en prefetch |
+| `src/components/SingleSymbolAnalyzer.jsx` | initRobustness + ConnectionStatus |
+
+### Funcionalidades implementadas
+
+1. **Health Check del Backend**
+   - Verificacion automatica cada 30 segundos
+   - Indicador visual verde/rojo en el header
+   - Click para reintentar conexion manual
+
+2. **Validacion de Datos de Velas**
+   - Valida campos requeridos (timestamp, OHLC)
+   - Verifica logica OHLC (high >= low, etc.)
+   - Descarta velas invalidas antes de guardar en cache
+
+3. **Deteccion de Gaps en Cache**
+   - MIN_CACHE_RATIO = 0.7 (70% minimo de velas esperadas)
+   - Detecta gaps >2 minutos entre velas
+   - Limpia cache corrupto automaticamente
+
+4. **Retry con Backoff Exponencial**
+   - 3 reintentos con delays de 1s, 2s, 4s
+   - Solo reintenta en errores de red o 5xx
+   - Log de reintentos para diagnostico
+
+5. **Limpieza Automatica de Cache**
+   - Elimina entradas >7 dias al iniciar
+   - Previene crecimiento ilimitado de IndexedDB
+
+6. **Inicio Coordinado (START_ALL.bat)**
+   - Verifica si backend esta corriendo en puerto 10000
+   - Inicia backend si es necesario
+   - Espera hasta que responda (max 2 min)
+   - Luego inicia Electron
+
+### Verificacion
+
+```bash
+# Buscar en consola del frontend:
+[Robustness] Initialized
+[HealthCheck] Started (interval: 30000ms)
+[CacheCleanup] Complete: X/Y candles, X/Y indicators removed
+```
+
+### Troubleshooting de robustez
+
+**ConnectionStatus muestra "Offline" permanentemente:**
+1. Verificar que el backend esta corriendo en puerto 10000
+2. Click en el indicador rojo para forzar reconexion
+3. Revisar consola por errores de health check
+
+**Cache no se limpia / datos corruptos:**
+1. Abrir DevTools (F12)
+2. Application > IndexedDB > WatchlistCache
+3. Borrar la base de datos
+4. Recargar la aplicacion
+
+**Error "uvicorn no se reconoce" en START_ALL.bat:**
+- El script usa `python -m uvicorn` para compatibilidad
 
 ---
 

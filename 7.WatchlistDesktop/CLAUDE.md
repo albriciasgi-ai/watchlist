@@ -59,8 +59,9 @@ Solucionar el problema de gaps en graficos cuando la aplicacion esta en segundo 
 │   ├── main.jsx             # Entry point React
 │   ├── App.jsx              # Componente raiz
 │   ├── components/
-│   │   ├── Watchlist.jsx    # Lista de simbolos
+│   │   ├── Watchlist.jsx    # Lista de simbolos + robustness init
 │   │   ├── MiniChart.jsx    # Grafico principal con indicadores
+│   │   ├── ConnectionStatus.jsx  # Indicador visual de conexion (NUEVO)
 │   │   ├── indicators/      # Indicadores tecnicos
 │   │   │   ├── IndicatorManager.js
 │   │   │   ├── VWAPIndicator.js
@@ -72,6 +73,8 @@ Solucionar el problema de gaps en graficos cuando la aplicacion esta en segundo 
 │   │   └── *Settings.jsx    # Modales de configuracion
 │   ├── hooks/
 │   └── utils/
+│       ├── robustness.js    # Sistema centralizado de robustez (NUEVO)
+│       ├── CandleCache.js   # Cache IndexedDB con validacion
 │       ├── PollingScheduler.js
 │       ├── StorageManager.js
 │       └── IndicatorCache.js
@@ -83,6 +86,7 @@ Solucionar el problema de gaps en graficos cuando la aplicacion esta en segundo 
 ├── vite.config.js           # Config de Vite con proxy al backend
 ├── package.json             # Dependencias y scripts
 │
+├── START_ALL.bat            # Inicio coordinado Backend + Electron (NUEVO)
 ├── 1_INSTALL.bat            # Instalar dependencias
 ├── 2_START_DEV.bat          # Iniciar en modo desarrollo
 └── 3_BUILD.bat              # Crear ejecutable
@@ -273,6 +277,85 @@ this.dataMap = newMap;
 - Si el usuario esta viendo el precio actual (offset = 0) → el grafico sigue las nuevas velas
 - Si el usuario hizo scroll hacia atras → el grafico respeta esa posicion
 
+### 4. Mejoras de Robustez (29 Enero 2026)
+
+Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia de usuario:
+
+**Archivos nuevos creados:**
+- `src/utils/robustness.js` - Sistema centralizado de robustez
+- `src/components/ConnectionStatus.jsx` - Indicador visual de conexion
+- `START_ALL.bat` - Script de inicio coordinado
+
+**Archivos modificados:**
+- `src/utils/CandleCache.js` - Validacion de velas + deteccion de gaps
+- `src/components/MiniChart.jsx` - fetchWithRetry para datos historicos
+- `src/components/Watchlist.jsx` - Integracion de robustness + ConnectionStatus
+
+**Funcionalidades implementadas:**
+
+1. **Health Check del Backend**
+   - Verificacion automatica cada 30 segundos
+   - Indicador visual verde/rojo en el header
+   - Click para reintentar conexion manual
+
+2. **Validacion de Datos de Velas**
+   - Valida campos requeridos (timestamp, OHLC)
+   - Verifica logica OHLC (high >= low, etc.)
+   - Descarta velas invalidas antes de guardar en cache
+
+3. **Deteccion de Gaps en Cache**
+   - MIN_CACHE_RATIO = 0.7 (70% minimo de velas esperadas)
+   - Detecta gaps >2 minutos entre velas
+   - Limpia cache corrupto automaticamente
+
+4. **Retry con Backoff Exponencial**
+   - 3 reintentos con delays de 1s, 2s, 4s
+   - Solo reintenta en errores de red o 5xx
+   - Log de reintentos para diagnostico
+
+5. **Limpieza Automatica de Cache**
+   - Elimina entradas >7 dias al iniciar
+   - Previene crecimiento ilimitado de IndexedDB
+
+6. **Inicio Coordinado (START_ALL.bat)**
+   - Verifica si backend esta corriendo
+   - Inicia backend si es necesario
+   - Espera hasta que responda (max 2 min)
+   - Luego inicia Electron
+
+**Verificacion:**
+```bash
+# Buscar en consola del frontend:
+[Robustness] Initialized
+[HealthCheck] Started (interval: 30000ms)
+[CacheCleanup] Complete: X/Y candles, X/Y indicators removed
+```
+
+**Detalles tecnicos de robustness.js:**
+
+```javascript
+// Validacion de velas individuales
+validateCandle(candle) {
+  // Campos requeridos: timestamp, open, high, low, close
+  // Logica OHLC: high >= max(open,close), low <= min(open,close)
+  // Valores positivos y finitos
+}
+
+// Deteccion de gaps en datos
+analyzeGaps(candles, interval) {
+  // MIN_CACHE_RATIO = 0.7 (70% minimo de velas esperadas)
+  // Detecta gaps > 2 intervalos entre velas consecutivas
+  // Retorna { hasGaps, gapCount, ratio }
+}
+
+// Retry con backoff exponencial
+fetchWithRetry(url, options, retryConfig) {
+  // maxRetries: 3
+  // initialDelayMs: 1000 (luego 2000, 4000)
+  // Solo reintenta en errores de red o HTTP 5xx
+}
+```
+
 ---
 
 ## TROUBLESHOOTING
@@ -327,6 +410,31 @@ El fix de auto-scroll ya fue aplicado. Si persiste:
 2. Hacer doble-click en el eje de precios para resetear la vista
 3. Usar el boton ">>|" en la barra de herramientas para ir a la ultima vela
 
+### Error "uvicorn no se reconoce" en START_ALL.bat
+El script usa `python -m uvicorn` para garantizar compatibilidad:
+```batch
+python -m uvicorn main:app --reload --port 8000
+```
+Si persiste, verificar que el entorno virtual existe en `2.WatchlistConIndicadores/backend/.venv`
+
+### ConnectionStatus muestra "Offline" permanentemente
+1. Verificar que el backend esta corriendo en puerto 8000
+2. Click en el indicador rojo para forzar reconexion
+3. Revisar consola por errores de health check
+4. Verificar que `/api/status` responde correctamente
+
+### Cache no se limpia / datos corruptos
+El sistema de robustez limpia automaticamente:
+- Entradas de cache >7 dias
+- Datos que fallan validacion OHLC
+- Gaps >70% de velas faltantes
+
+Para forzar limpieza manual:
+1. Abrir DevTools (F12)
+2. Application > IndexedDB > localforage
+3. Borrar la base de datos
+4. Recargar la aplicacion
+
 ---
 
 ## INDICADORES DISPONIBLES
@@ -367,3 +475,42 @@ Despues de 1+ hora de pruebas con la aplicacion en segundo plano:
 - **PowerSaveBlocker** previene suspension del sistema
 
 **Objetivo cumplido**: La aplicacion desktop resuelve el problema de throttling del navegador.
+
+---
+
+## INICIO RAPIDO
+
+### Opcion 1: START_ALL.bat (Recomendado)
+```batch
+# Doble-click en START_ALL.bat
+# - Verifica si backend esta corriendo
+# - Inicia backend automaticamente si es necesario
+# - Espera hasta que responda (max 2 min)
+# - Inicia Electron + Vite
+```
+
+### Opcion 2: Manual
+```batch
+# Terminal 1 - Backend
+cd 2.WatchlistConIndicadores/backend
+.venv\Scripts\activate
+python -m uvicorn main:app --reload --port 8000
+
+# Terminal 2 - Electron
+cd 7.WatchlistDesktop
+npm run dev:electron
+```
+
+---
+
+## RESUMEN DE MEJORAS DE ROBUSTEZ
+
+| Funcionalidad | Archivo | Descripcion |
+|---------------|---------|-------------|
+| Health Check | `robustness.js` | Ping al backend cada 30s |
+| ConnectionStatus | `ConnectionStatus.jsx` | Indicador visual verde/rojo |
+| Validacion OHLC | `robustness.js` | Valida integridad de velas |
+| Gap Detection | `CandleCache.js` | Detecta datos faltantes (>30%) |
+| Retry con Backoff | `robustness.js` | 3 reintentos: 1s, 2s, 4s |
+| Cache Cleanup | `robustness.js` | Elimina entradas >7 dias |
+| Inicio Coordinado | `START_ALL.bat` | Backend + Electron secuencial |

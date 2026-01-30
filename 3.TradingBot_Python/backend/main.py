@@ -169,10 +169,30 @@ class AppState:
                             demo=demo
                         )
                         self.order_manager = OrderManager(self.bybit_client)
+
+                        # Set callback for critical alerts (SL/TP failures)
+                        self.order_manager.set_critical_alert_callback(self._handle_critical_alert)
+
                         mode_str = "Demo Trading" if demo else "Real Trading"
                         self.log("success", f"Loaded credentials from file ({mode_str})")
             except Exception as e:
                 self.log("error", f"Failed to load credentials: {str(e)}")
+
+    async def _handle_critical_alert(self, alert: Dict[str, Any]):
+        """Handle critical alerts from OrderManager (e.g., SL/TP failures)"""
+        alert_type = alert.get("type", "UNKNOWN")
+        symbol = alert.get("symbol", "UNKNOWN")
+        message = alert.get("message", "")
+        severity = alert.get("severity", "WARNING")
+
+        # Log with emphasis
+        if severity == "CRITICAL":
+            self.log("error", f"[CRITICAL] {alert_type}: {symbol} - {message}")
+        else:
+            self.log("warning", f"[ALERT] {alert_type}: {symbol} - {message}")
+
+        # Broadcast to WebSocket clients immediately
+        await self.broadcast_event("critical_alert", alert)
 
     def save_credentials(self, api_key: str, api_secret: str, demo: bool = False):
         """Save API credentials to JSON"""
@@ -310,6 +330,14 @@ async def startup():
 async def shutdown():
     state.log("info", "Trading Bot Backend shutting down...")
 
+    # Close HTTP client gracefully to release connection pool
+    if state.bybit_client:
+        try:
+            await state.bybit_client.close()
+            state.log("info", "Bybit client closed successfully")
+        except Exception as e:
+            state.log("warning", f"Error closing Bybit client: {e}")
+
 
 # ==========================
 # REST API Endpoints
@@ -317,13 +345,31 @@ async def shutdown():
 
 @app.get("/api/status")
 async def get_status():
-    """Get system status"""
+    """Get system status with detailed statistics"""
+    # Get statistics from components if available
+    bybit_stats = None
+    order_manager_stats = None
+
+    if state.bybit_client:
+        try:
+            bybit_stats = state.bybit_client.get_statistics()
+        except Exception:
+            pass
+
+    if state.order_manager:
+        try:
+            order_manager_stats = state.order_manager.get_statistics()
+        except Exception:
+            pass
+
     return {
         "status": "online",
         "timestamp": datetime.now().isoformat(),
         "credentials_configured": state.bybit_client is not None,
         "symbols_configured": len(state.trading_config),
-        "active_connections": len(state.ws_connections)
+        "active_connections": len(state.ws_connections),
+        "bybit_client": bybit_stats,
+        "order_manager": order_manager_stats
     }
 
 
@@ -343,6 +389,13 @@ async def check_credentials():
 async def set_credentials(req: CredentialsRequest):
     """Set Bybit API credentials"""
     try:
+        # Close existing client if any
+        if state.bybit_client:
+            try:
+                await state.bybit_client.close()
+            except Exception:
+                pass
+
         state.bybit_client = BybitClient(
             api_key=req.api_key,
             api_secret=req.api_secret,
@@ -351,6 +404,8 @@ async def set_credentials(req: CredentialsRequest):
         )
 
         state.order_manager = OrderManager(state.bybit_client)
+        # Set callback for critical alerts (SL/TP failures)
+        state.order_manager.set_critical_alert_callback(state._handle_critical_alert)
 
         # Save credentials to file
         state.save_credentials(req.api_key, req.api_secret, req.demo)

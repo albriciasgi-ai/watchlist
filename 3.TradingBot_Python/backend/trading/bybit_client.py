@@ -1,21 +1,36 @@
 """
 Bybit API Client
 Handles all interactions with Bybit API including signing, timestamp sync, and order execution
+
+Optimizations (January 2026):
+- Global HTTP client with connection pooling
+- Integrated rate limiter with token bucket
+- Granular timeouts per operation type
+- Detailed logging of request/response times
 """
 
 import hmac
 import hashlib
 import time
+import json
 import httpx
 import asyncio
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone
+
+from .rate_limiter import get_rate_limiter, RateLimiter
 
 
 class BybitClient:
     """
     Client for interacting with Bybit API v5
     Implements HMAC-SHA256 signing and automatic timestamp synchronization
+
+    Features:
+    - Connection pooling for HTTP requests
+    - Integrated rate limiting with token bucket
+    - Automatic time synchronization
+    - Detailed logging for debugging
     """
 
     def __init__(self, api_key: str, api_secret: str, testnet: bool = True, demo: bool = False):
@@ -36,22 +51,74 @@ class BybitClient:
         self.recv_window = 5000
         self.time_offset = 0
         self.last_sync = 0
-        self.sync_interval = 300  # Sync every 5 minutes
+        self.sync_interval = 60  # Sync every 1 minute (improved from 5 minutes)
+
+        # Global HTTP client with connection pooling
+        self._http_client: Optional[httpx.AsyncClient] = None
+
+        # Rate limiter
+        self._rate_limiter = get_rate_limiter()
+
+        # Position index cache
+        self._position_idx_cache: Dict[str, Optional[int]] = {}
+
+        # Statistics
+        self._request_count = 0
+        self._total_request_time_ms = 0.0
 
         print(f"[BYBIT] Client initialized: {self.base_url} (mode: {self.mode})")
+
+    async def _get_client(self) -> httpx.AsyncClient:
+        """Get or create the HTTP client with connection pooling"""
+        if self._http_client is None or self._http_client.is_closed:
+            # Granular timeouts
+            timeout = httpx.Timeout(
+                connect=5.0,    # Connection timeout
+                read=10.0,      # Read timeout
+                write=5.0,      # Write timeout
+                pool=5.0        # Pool timeout
+            )
+
+            # Connection limits for pooling
+            limits = httpx.Limits(
+                max_connections=20,
+                max_keepalive_connections=10,
+                keepalive_expiry=30.0
+            )
+
+            self._http_client = httpx.AsyncClient(
+                timeout=timeout,
+                limits=limits,
+                http2=False  # HTTP/1.1 is more reliable for trading APIs
+            )
+            print(f"[BYBIT] HTTP client created with connection pooling")
+
+        return self._http_client
+
+    async def close(self) -> None:
+        """Close the HTTP client gracefully"""
+        if self._http_client and not self._http_client.is_closed:
+            await self._http_client.aclose()
+            self._http_client = None
+            print(f"[BYBIT] HTTP client closed")
 
     async def _get_server_time(self, client: httpx.AsyncClient) -> int:
         """Get server time from Bybit"""
         try:
+            start_time = time.monotonic()
             response = await client.get(f"{self.base_url}/v5/market/time")
+            elapsed_ms = (time.monotonic() - start_time) * 1000
+
             data = response.json()
             if data.get("retCode") == 0:
-                return int(data["result"]["timeNano"]) // 1000000  # Convert to ms
+                server_time = int(data["result"]["timeNano"]) // 1000000  # Convert to ms
+                print(f"[SYNC] Server time fetched in {elapsed_ms:.0f}ms")
+                return server_time
         except Exception as e:
             print(f"[ERROR] Error getting server time: {e}")
         return int(time.time() * 1000)
 
-    async def _sync_time(self, client: httpx.AsyncClient):
+    async def _sync_time(self, client: httpx.AsyncClient) -> None:
         """Synchronize local time with Bybit server"""
         current_time = time.time()
         if current_time - self.last_sync > self.sync_interval:
@@ -92,67 +159,109 @@ class BybitClient:
         params: Optional[Dict[str, Any]] = None,
         max_retries: int = 3
     ) -> Dict[str, Any]:
-        """Make authenticated request to Bybit API with retries"""
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            # Sync time if needed
-            await self._sync_time(client)
+        """Make authenticated request to Bybit API with retries and rate limiting"""
+        client = await self._get_client()
 
-            for attempt in range(max_retries):
-                try:
-                    timestamp = self._get_timestamp()
+        # Sync time if needed (only once per sync_interval)
+        await self._sync_time(client)
 
-                    if method.upper() == "GET":
-                        # For GET requests, params go in query string
-                        query_string = "&".join([f"{k}={v}" for k, v in (params or {}).items()])
-                        signature = self._generate_signature(timestamp, query_string)
-                        headers = self._get_headers(timestamp, signature)
+        for attempt in range(max_retries):
+            try:
+                # Acquire rate limit token
+                wait_time = await self._rate_limiter.acquire()
+                if wait_time > 0:
+                    print(f"[RATE] Waited {wait_time*1000:.0f}ms for rate limit")
 
-                        url = f"{self.base_url}{endpoint}"
-                        if query_string:
-                            url += f"?{query_string}"
+                timestamp = self._get_timestamp()
+                start_time = time.monotonic()
 
-                        response = await client.get(url, headers=headers)
-                    else:
-                        # For POST requests, params go in body
-                        import json
-                        body = json.dumps(params or {})
-                        signature = self._generate_signature(timestamp, body)
-                        headers = self._get_headers(timestamp, signature)
+                if method.upper() == "GET":
+                    # For GET requests, params go in query string
+                    query_string = "&".join([f"{k}={v}" for k, v in (params or {}).items()])
+                    signature = self._generate_signature(timestamp, query_string)
+                    headers = self._get_headers(timestamp, signature)
 
-                        response = await client.post(
-                            f"{self.base_url}{endpoint}",
-                            headers=headers,
-                            content=body
-                        )
+                    url = f"{self.base_url}{endpoint}"
+                    if query_string:
+                        url += f"?{query_string}"
 
-                    data = response.json()
+                    response = await client.get(url, headers=headers)
+                else:
+                    # For POST requests, params go in body
+                    body = json.dumps(params or {})
+                    signature = self._generate_signature(timestamp, body)
+                    headers = self._get_headers(timestamp, signature)
 
-                    # Log API errors for debugging
-                    if data.get("retCode") != 0:
-                        error_code = data.get("retCode")
-                        error_msg = data.get("retMsg", "Unknown error")
-                        print(f"[ERROR] Bybit API Error {error_code}: {error_msg}")
-                        print(f"   Endpoint: {method} {endpoint}")
-                        print(f"   Using: {self.base_url}")
+                    response = await client.post(
+                        f"{self.base_url}{endpoint}",
+                        headers=headers,
+                        content=body
+                    )
 
-                    # Check for timestamp errors and resync
-                    if data.get("retCode") == 10002:  # Timestamp error
-                        print(f"[WARNING] Timestamp error, resyncing... (attempt {attempt + 1})")
-                        self.last_sync = 0  # Force resync
-                        await self._sync_time(client)
-                        await asyncio.sleep(1)
-                        continue
+                # Calculate request time
+                elapsed_ms = (time.monotonic() - start_time) * 1000
+                self._request_count += 1
+                self._total_request_time_ms += elapsed_ms
 
-                    return data
+                # Parse response
+                data = response.json()
 
-                except Exception as e:
-                    print(f"[ERROR] Request error (attempt {attempt + 1}/{max_retries}): {e}")
-                    if attempt < max_retries - 1:
-                        await asyncio.sleep(2 ** attempt)  # Exponential backoff
-                    else:
-                        raise
+                # Update rate limiter with Bybit headers
+                self._rate_limiter.update_from_headers(dict(response.headers))
 
-            return {"retCode": -1, "retMsg": "Max retries exceeded"}
+                # Log request details
+                ret_code = data.get("retCode", -1)
+                status_symbol = "OK" if ret_code == 0 else "ERR"
+                print(f"[{status_symbol}] {method} {endpoint} -> {ret_code} ({elapsed_ms:.0f}ms)")
+
+                # Log API errors for debugging
+                if ret_code != 0:
+                    error_msg = data.get("retMsg", "Unknown error")
+                    print(f"   Error: {error_msg}")
+
+                    # Report error to rate limiter
+                    self._rate_limiter.report_error(ret_code)
+
+                    # Handle rate limit error
+                    if ret_code == 10006:  # Too many visits
+                        print(f"[RATE] Rate limit hit! Backing off...")
+                        await self._rate_limiter.wait_for_backoff()
+                        continue  # Retry
+                else:
+                    self._rate_limiter.report_success()
+
+                # Check for timestamp errors and resync
+                if ret_code == 10002:  # Timestamp error
+                    print(f"[WARNING] Timestamp error, resyncing... (attempt {attempt + 1})")
+                    self.last_sync = 0  # Force resync
+                    await self._sync_time(client)
+                    await asyncio.sleep(0.5)
+                    continue
+
+                return data
+
+            except httpx.TimeoutException as e:
+                print(f"[TIMEOUT] {method} {endpoint} timed out (attempt {attempt + 1}/{max_retries})")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(1.0 * (attempt + 1))
+                else:
+                    return {"retCode": -2, "retMsg": f"Timeout after {max_retries} attempts"}
+
+            except httpx.ConnectError as e:
+                print(f"[CONNECT] Connection error to {endpoint} (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(2.0 * (attempt + 1))
+                else:
+                    return {"retCode": -3, "retMsg": f"Connection error: {str(e)}"}
+
+            except Exception as e:
+                print(f"[ERROR] Request error (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(1.0 * (attempt + 1))
+                else:
+                    return {"retCode": -1, "retMsg": f"Error: {str(e)}"}
+
+        return {"retCode": -1, "retMsg": "Max retries exceeded"}
 
     async def place_market_order(
         self,
@@ -206,8 +315,6 @@ class BybitClient:
                 order_id = result["result"]["orderId"]
                 print(f"[OK] Market Order placed: {order_id} (positionIdx: {pos_idx})")
                 # Store successful config for this symbol
-                if not hasattr(self, '_position_idx_cache'):
-                    self._position_idx_cache = {}
                 self._position_idx_cache[f"{symbol}_{side}"] = pos_idx
                 return result
             else:
@@ -252,7 +359,7 @@ class BybitClient:
 
         # Get cached position index or default to 0
         pos_idx = 0
-        if hasattr(self, '_position_idx_cache') and cache_key in self._position_idx_cache:
+        if cache_key in self._position_idx_cache:
             cached = self._position_idx_cache[cache_key]
             if cached is not None:
                 pos_idx = cached
@@ -309,7 +416,7 @@ class BybitClient:
 
         # Get cached position index or default to 0
         pos_idx = 0
-        if hasattr(self, '_position_idx_cache') and cache_key in self._position_idx_cache:
+        if cache_key in self._position_idx_cache:
             cached = self._position_idx_cache[cache_key]
             if cached is not None:
                 pos_idx = cached
@@ -424,3 +531,19 @@ class BybitClient:
 
         result = await self._make_request("GET", "/v5/order/history", params)
         return result
+
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get client statistics"""
+        avg_request_time = (
+            self._total_request_time_ms / self._request_count
+            if self._request_count > 0 else 0
+        )
+
+        return {
+            "request_count": self._request_count,
+            "total_request_time_ms": round(self._total_request_time_ms, 2),
+            "avg_request_time_ms": round(avg_request_time, 2),
+            "rate_limiter": self._rate_limiter.get_statistics(),
+            "mode": self.mode,
+            "time_offset_ms": self.time_offset
+        }

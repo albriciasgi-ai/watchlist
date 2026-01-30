@@ -29,6 +29,7 @@ import Logger from '../utils/Logger.js';
 import RenderManager from '../utils/RenderManager.js';
 import CandleCache from '../utils/CandleCache.js';
 import IndicatorCache from '../utils/IndicatorCache.js';
+import { fetchWithRetry } from '../utils/robustness';
 
 // Logger instance
 const log = new Logger('MiniChart', { level: 'info' });
@@ -1048,9 +1049,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     try {
       const timestamp = Date.now();
 
-      // 🔄 CARGA INCREMENTAL: Verificar si hay cache disponible Y suficiente
-      const hasSufficientCache = await CandleCache.hasSufficientData(symbol, interval, days);
-      const cached = hasSufficientCache ? await CandleCache.get(symbol, interval) : null;
+      // 🔄 CARGA INCREMENTAL: Verificar si hay cache valido (suficiente y sin gaps)
+      // getValidated() limpia automaticamente cache corrupto
+      const cached = await CandleCache.getValidated(symbol, interval, parseInt(days));
       let url;
       let isIncremental = false;
 
@@ -1066,11 +1067,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         console.log(`[${symbol}] 📥 Carga COMPLETA: ${days} días @ ${interval}`);
       }
 
-      const res = await fetch(url, {
+      const res = await fetchWithRetry(url, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
+        }
+      }, {
+        maxRetries: 3,
+        initialDelayMs: 1000,
+        context: `historical-${symbol}`,
+        onRetry: (attempt, error, delay) => {
+          console.warn(`[${symbol}] Retry ${attempt}: ${error.message}, waiting ${delay}ms`);
         }
       });
       const json = await res.json();

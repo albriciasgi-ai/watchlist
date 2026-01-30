@@ -2423,3 +2423,452 @@
 2026-01-29 09:21:59 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=87992.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
 2026-01-29 09:22:55 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.35 | direction=LONG | volume_zscore=0.00 | interval=1
 2026-01-29 09:23:02 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.35 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 17:55:56 | INFO | BLOCKED_HISTORICAL | TRXUSDT | SWING_HIGH | price=0.29 | signal_ts=1769727180 | service_start=1769727314
+2026-01-29 17:56:58 | INFO | BLOCKED_HISTORICAL | PAXGUSDT | SWING_HIGH | price=5417.70 | signal_ts=1769727240 | service_start=1769727314
+2026-01-29 17:58:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2819.95 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:58:02 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.72 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:58:02 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.32 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:58:05 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 17:58:05 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 17:58:05 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 17:58:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.34 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:58:57 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:58:59 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.16 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 17:59:01 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 17:59:01 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 17:59:01 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 17:59:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84526.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:00:03 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 18:01:01 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5416.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:01:04 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 18:03:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2816.46 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:03:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.81 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:03:03 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:03:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.31 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:03:04 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=866.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:03:06 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 18:03:06 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 18:03:06 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 18:03:06 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 18:03:06 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 18:04:01 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=18.13 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:04:04 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 18:04:58 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2819.98 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:05:01 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.81 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:05:01 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.55 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:05:04 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 18:05:04 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 18:05:04 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 18:06:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:06:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84500.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:06:59 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:06:59 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2815.72 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:07:01 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:07:01 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:07:01 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.31 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:07:03 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 18:07:03 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 18:07:04 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 18:07:04 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 18:07:04 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 18:07:04 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 18:07:04 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 18:08:04 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:08:07 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 18:08:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84427.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:09:04 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 18:09:58 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:10:01 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.31 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:10:01 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:10:03 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 18:10:04 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 18:10:04 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 18:12:01 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:12:04 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 18:13:04 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=18.09 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:13:07 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 18:13:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:13:58 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:13:59 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2812.28 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:02 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:02 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.31 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:02 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.31 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:02 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=865.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:02 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 18:14:04 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 18:15:01 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:15:04 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 18:15:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84405.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 18:16:04 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 18:18:04 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.35 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 18:18:06 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 18:19:58 | INFO | BLOCKED_HISTORICAL | ADAUSDT | SWING_HIGH | price=0.33 | signal_ts=1769728620 | service_start=1769728737
+2026-01-29 18:19:59 | INFO | BLOCKED_HISTORICAL | DOGEUSDT | SWING_HIGH | price=0.12 | signal_ts=1769728620 | service_start=1769728737
+2026-01-29 18:20:01 | INFO | BLOCKED_HISTORICAL | XRPUSDT | SWING_HIGH | price=1.80 | signal_ts=1769728620 | service_start=1769728737
+2026-01-29 18:20:01 | INFO | BLOCKED_HISTORICAL | TRBUSDT | SWING_HIGH | price=18.14 | signal_ts=1769728620 | service_start=1769728737
+2026-01-29 18:20:01 | INFO | BLOCKED_HISTORICAL | PAXGUSDT | SWING_LOW | price=5437.90 | signal_ts=1769728620 | service_start=1769728737
+2026-01-29 18:29:57 | INFO | BLOCKED_HISTORICAL | SOLUSDT | SWING_HIGH | price=117.51 | signal_ts=1769726700 | service_start=1769729193
+2026-01-29 18:44:56 | INFO | BLOCKED_HISTORICAL | ADAUSDT | SWING_LOW | price=0.33 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:56 | INFO | BLOCKED_HISTORICAL | DOGEUSDT | SWING_LOW | price=0.12 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:57 | INFO | BLOCKED_HISTORICAL | TRXUSDT | SWING_HIGH | price=0.29 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:57 | INFO | BLOCKED_HISTORICAL | SOLUSDT | SWING_LOW | price=117.33 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:57 | INFO | BLOCKED_HISTORICAL | SUIUSDT | SWING_LOW | price=1.31 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:57 | INFO | BLOCKED_HISTORICAL | PAXGUSDT | SWING_HIGH | price=5461.60 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:44:57 | INFO | BLOCKED_HISTORICAL | POLUSDT | SWING_LOW | price=0.11 | signal_ts=1769727600 | service_start=1769729193
+2026-01-29 18:59:57 | INFO | BLOCKED_HISTORICAL | XRPUSDT | SWING_LOW | price=1.80 | signal_ts=1769728500 | service_start=1769730529
+2026-01-29 18:59:57 | INFO | BLOCKED_HISTORICAL | TRBUSDT | SWING_LOW | price=18.10 | signal_ts=1769728500 | service_start=1769730529
+2026-01-29 19:41:58 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84362.70 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:41:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.32 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:42:01 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 19:42:01 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 19:42:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:42:57 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=865.40 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:42:59 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 19:42:59 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 19:43:57 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:43:59 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 19:44:57 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5449.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:45:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 19:46:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:46:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2811.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:46:57 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:46:57 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.67 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:46:57 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:46:59 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 19:47:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 19:47:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 19:47:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 19:47:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 19:48:57 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.81 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:48:57 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5445.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:49:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 19:49:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 19:49:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2813.87 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:49:57 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:49:57 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5433.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:50:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 19:50:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 19:50:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 19:51:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.31 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:51:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=866.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:52:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 19:52:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 19:52:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84454.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:52:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:53:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 19:53:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 19:54:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2803.44 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:54:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=18.22 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:55:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 19:55:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 19:55:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:55:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=864.70 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:55:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:56:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 19:56:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 19:56:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 19:56:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:56:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.68 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:57:01 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 19:57:01 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 19:57:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84125.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:57:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5445.70 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 19:58:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 19:58:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 19:58:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 19:59:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:00:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2805.35 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.72 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=865.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:00:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:01:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:01:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:02:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:03:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2801.46 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:03:57 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:03:57 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:03:57 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:04:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:04:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:04:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:04:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:04:57 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5425.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:05:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:06:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2803.28 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=18.24 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.35 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=862.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:06:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:07:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:08:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84045.60 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:09:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:11:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84135.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:11:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:11:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2809.52 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:12:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:12:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:12:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:12:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:12:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:13:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 20:13:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:13:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:13:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2807.16 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:13:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:13:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.54 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:13:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5363.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:14:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:14:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:14:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:14:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:14:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:15:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=84075.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:16:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:17:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:17:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5356.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:17:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:18:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:18:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:18:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2811.34 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.77 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:18:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=863.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:19:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:19:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5373.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:20:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=84133.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.32 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.57 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=861.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:20:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:21:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:24:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:24:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:24:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:25:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:25:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:25:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2792.55 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:57 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.79 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:57 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=18.23 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:25:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=859.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:26:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:27:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=83565.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2804.26 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.39 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=861.20 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:27:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | TRXUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:28:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:29:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5394.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:30:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:32:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2797.02 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=117.05 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=859.50 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5381.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:32:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | DOGEUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | ADAUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | SUIUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:33:00 | ERROR | ALERT_ERROR | PAXGUSDT | All connection attempts failed
+2026-01-29 20:33:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=117.43 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:33:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:34:00 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-01-29 20:34:00 | ERROR | ALERT_ERROR | SOLUSDT | All connection attempts failed
+2026-01-29 20:34:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=83640.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:34:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:35:00 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-01-29 20:35:00 | ERROR | ALERT_ERROR | XRPUSDT | All connection attempts failed
+2026-01-29 20:36:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=83772.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:36:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2802.72 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:36:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:36:59 | INFO | ALERT_SENT | TRBUSDT | SWING_HIGH | price=18.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:37:01 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=83772.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:37:02 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2802.72 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:37:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5398.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:37:58 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5398.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:41:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5386.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:41:58 | INFO | ALERT_SENT | PAXGUSDT | SWING_LOW | price=5386.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:43:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.31 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:43:58 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.31 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:45:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2715.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.74 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=17.73 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=113.89 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=1.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=842.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5390.90 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.32 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:58 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:45:59 | INFO | ALERT_SENT | BNBUSDT | SWING_LOW | price=842.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:45:59 | INFO | ALERT_SENT | TRBUSDT | SWING_LOW | price=17.73 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5390.90 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | SOLUSDT | SWING_LOW | price=113.89 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | SUIUSDT | SWING_LOW | price=1.29 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2715.40 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.74 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:03 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.32 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:46:05 | INFO | ALERT_SENT | DOGEUSDT | SWING_LOW | price=0.11 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:47:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=81895.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:47:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=81895.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:48:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.32 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2721.91 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=17.82 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=113.61 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:48:58 | INFO | ALERT_SENT | TRBUSDT | SWING_HIGH | price=17.82 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:48:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2721.91 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:48:59 | INFO | ALERT_SENT | ADAUSDT | SWING_HIGH | price=0.32 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:49:00 | INFO | ALERT_SENT | SOLUSDT | SWING_HIGH | price=113.61 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:49:00 | INFO | ALERT_SENT | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:49:00 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:49:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:49:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=842.60 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:49:58 | INFO | BLOCKED_COOLDOWN | BNBUSDT | SWING_LOW | remaining=60s
+2026-01-29 20:49:59 | INFO | ALERT_SENT | DOGEUSDT | SWING_HIGH | price=0.11 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:50:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5356.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:50:59 | INFO | ALERT_SENT | PAXGUSDT | SWING_LOW | price=5356.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:51:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.32 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:51:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.74 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:51:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=17.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:51:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:51:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:51:58 | INFO | ALERT_SENT | TRBUSDT | SWING_LOW | price=17.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:51:58 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.32 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:51:59 | INFO | ALERT_SENT | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:51:59 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.74 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:51:59 | INFO | ALERT_SENT | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:53:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.32 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:53:56 | INFO | BLOCKED_COOLDOWN | ADAUSDT | SWING_HIGH | remaining=0s
+2026-01-29 20:53:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:53:56 | INFO | BLOCKED_COOLDOWN | DOGEUSDT | SWING_HIGH | remaining=60s
+2026-01-29 20:53:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.74 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:53:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5374.40 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:53:59 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5374.40 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:54:02 | INFO | ALERT_SENT | XRPUSDT | SWING_HIGH | price=1.74 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:55:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.74 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:55:58 | INFO | BLOCKED_COOLDOWN | XRPUSDT | SWING_LOW | remaining=60s
+2026-01-29 20:55:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 20:55:58 | INFO | BLOCKED_COOLDOWN | TRXUSDT | SWING_LOW | remaining=60s
+2026-01-29 20:55:58 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:55:59 | INFO | ALERT_SENT | POLUSDT | SWING_HIGH | price=0.11 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:58:56 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2746.46 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.76 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:58 | INFO | BLOCKED_COOLDOWN | XRPUSDT | SWING_HIGH | remaining=0s
+2026-01-29 20:58:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:58 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=848.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 20:58:58 | INFO | ALERT_SENT | BNBUSDT | SWING_HIGH | price=848.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:58:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2746.46 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:58:59 | INFO | ALERT_SENT | DOGEUSDT | SWING_HIGH | price=0.12 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:58:59 | INFO | ALERT_SENT | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 20:59:03 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.30 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:00:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:00:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=82402.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:00:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=18.04 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:00:58 | INFO | ALERT_SENT | TRBUSDT | SWING_HIGH | price=18.04 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:00:59 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=82402.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:00:59 | INFO | ALERT_SENT | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:01:58 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=115.13 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:02:00 | INFO | ALERT_SENT | SOLUSDT | SWING_HIGH | price=115.13 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:02:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.76 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 21:02:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 21:02:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5335.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 21:02:59 | INFO | ALERT_SENT | PAXGUSDT | SWING_LOW | price=5335.90 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:02:59 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.76 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:03:00 | INFO | ALERT_SENT | TRXUSDT | SWING_LOW | price=0.29 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:04:56 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 21:04:58 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=17.91 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 21:04:58 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5348.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:04:58 | INFO | ALERT_SENT | TRBUSDT | SWING_LOW | price=17.91 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:04:59 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.33 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:04:59 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5348.80 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:05:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2742.45 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:05:58 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.75 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:05:58 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:05:58 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 21:05:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2742.45 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:05:59 | INFO | ALERT_SENT | XRPUSDT | SWING_HIGH | price=1.75 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:05:59 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.30 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 21:05:59 | INFO | ALERT_SENT | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert

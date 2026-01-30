@@ -8,6 +8,7 @@
  */
 
 import localforage from 'localforage';
+import { validateCandles } from './robustness';
 
 // Configurar store específico para velas
 const candleStore = localforage.createInstance({
@@ -35,8 +36,8 @@ class CandleCache {
     "W": 0.14    // 1 semana
   };
 
-  // Umbral mínimo: si cache tiene menos del 10% de lo esperado, se considera corrupto
-  static MIN_CACHE_RATIO = 0.1;
+  // Umbral mínimo: si cache tiene menos del 70% de lo esperado, se considera corrupto
+  static MIN_CACHE_RATIO = 0.7;
 
   // Cache en memoria para acceso rápido (LRU order: más reciente al final)
   static memoryCache = new Map();
@@ -130,8 +131,17 @@ class CandleCache {
 
     const key = this.getCacheKey(symbol, interval);
 
+    // Validar velas antes de guardar
+    const validation = validateCandles(candles, `${symbol}@${interval}`);
+    const validCandles = validation.validCandles;
+
+    if (validCandles.length === 0) {
+      console.warn(`[CandleCache] ⚠️ ${symbol}@${interval} - No hay velas validas para guardar`);
+      return;
+    }
+
     // Ordenar por timestamp ascendente
-    const sortedCandles = [...candles].sort((a, b) => a.timestamp - b.timestamp);
+    const sortedCandles = [...validCandles].sort((a, b) => a.timestamp - b.timestamp);
 
     // Remover vela en progreso (la última si está marcada como in_progress)
     const closedCandles = sortedCandles.filter(c => !c.in_progress);
@@ -304,6 +314,65 @@ class CandleCache {
     }
 
     return stats;
+  }
+
+  /**
+   * Analiza gaps en las velas del cache
+   * @param {Array} candles - Array de velas ordenadas por timestamp
+   * @param {string} interval - Timeframe
+   * @param {string} context - Contexto para logging
+   * @returns {Object} - { hasGaps, gapCount, gaps, ratio }
+   */
+  static analyzeGaps(candles, interval, context = 'unknown') {
+    if (!candles || candles.length < 2) {
+      return { hasGaps: false, gapCount: 0, gaps: [], ratio: 1 };
+    }
+
+    // Intervalo esperado en milisegundos
+    const intervalMs = {
+      "1": 60 * 1000,
+      "5": 5 * 60 * 1000,
+      "15": 15 * 60 * 1000,
+      "30": 30 * 60 * 1000,
+      "60": 60 * 60 * 1000,
+      "240": 4 * 60 * 60 * 1000,
+      "D": 24 * 60 * 60 * 1000,
+      "W": 7 * 24 * 60 * 60 * 1000
+    };
+
+    const expectedInterval = intervalMs[interval] || 60 * 1000;
+    const gaps = [];
+    let totalExpectedCandles = 0;
+
+    for (let i = 1; i < candles.length; i++) {
+      const timeDiff = candles[i].timestamp - candles[i - 1].timestamp;
+      const expectedCandles = Math.round(timeDiff / expectedInterval);
+      totalExpectedCandles += expectedCandles;
+
+      // Si hay mas de 2 intervalos de diferencia, es un gap significativo
+      if (timeDiff > expectedInterval * 2) {
+        const gapMinutes = (timeDiff / 60000).toFixed(1);
+        gaps.push({
+          from: candles[i - 1].timestamp,
+          to: candles[i].timestamp,
+          gapMinutes,
+          missedCandles: expectedCandles - 1
+        });
+      }
+    }
+
+    const ratio = candles.length / Math.max(totalExpectedCandles, candles.length);
+
+    if (gaps.length > 0) {
+      console.warn(`[CandleCache] ${context}: Detected ${gaps.length} gaps (ratio: ${(ratio * 100).toFixed(1)}%)`);
+    }
+
+    return {
+      hasGaps: gaps.length > 0,
+      gapCount: gaps.length,
+      gaps,
+      ratio
+    };
   }
 }
 

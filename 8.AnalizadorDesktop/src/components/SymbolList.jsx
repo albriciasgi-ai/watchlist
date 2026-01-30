@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { API_BASE_URL } from '../config';
 import CandleCache from '../utils/CandleCache';
+import { fetchWithRetry } from '../utils/robustness';
 
 // Monedas por defecto
 const DEFAULT_SYMBOLS = [
@@ -60,14 +61,26 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
   const [newSymbol, setNewSymbol] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
+  const [prefetchEnabled, setPrefetchEnabled] = useState(false); // Prefetch diferido
 
   const listRef = useRef(null);
   const inputRef = useRef(null);
   const prefetchTimeoutRef = useRef(null);
   const prefetchedSymbolsRef = useRef(new Set());
 
+  // Habilitar prefetch 10 segundos despues de montar (no competir con carga inicial)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPrefetchEnabled(true);
+      console.log('[Prefetch] Activado (10s despues de carga)');
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // 🚀 Prefetch: precarga velas históricas cuando el usuario hace hover
   const prefetchSymbolData = useCallback(async (sym) => {
+    // Skip si prefetch no esta habilitado aun
+    if (!prefetchEnabled) return;
     // Skip si ya está en cache o es el símbolo actual
     if (sym === currentSymbol) return;
     if (prefetchedSymbolsRef.current.has(`${sym}_${interval}`)) return;
@@ -82,8 +95,10 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
 
     try {
       console.log(`[Prefetch] ${sym}@${interval} - precargando...`);
-      const response = await fetch(
-        `${API_BASE_URL}/api/historical/${sym}?interval=${interval}&days=${days}`
+      const response = await fetchWithRetry(
+        `${API_BASE_URL}/api/historical/${sym}?interval=${interval}&days=${days}`,
+        {},
+        { maxRetries: 2, initialDelayMs: 500, context: `prefetch-${sym}` }
       );
       const data = await response.json();
 
@@ -95,7 +110,7 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
     } catch (error) {
       console.warn(`[Prefetch] ${sym}@${interval} - error:`, error);
     }
-  }, [currentSymbol, interval, days]);
+  }, [prefetchEnabled, currentSymbol, interval, days]);
 
   // Handler para hover con debounce de 300ms
   const handleSymbolHover = useCallback((sym) => {

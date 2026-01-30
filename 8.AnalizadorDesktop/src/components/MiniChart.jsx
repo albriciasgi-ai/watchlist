@@ -29,6 +29,7 @@ import Logger from '../utils/Logger.js';
 import RenderManager from '../utils/RenderManager.js';
 import CandleCache from '../utils/CandleCache.js';
 import IndicatorCache from '../utils/IndicatorCache.js';
+import { fetchWithRetry } from '../utils/robustness';
 
 // Logger instance
 const log = new Logger('MiniChart', { level: 'info' });
@@ -669,11 +670,16 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
-    // 🔧 DEBUG: Log detallado para diagnosticar problema de 95 velas
+    // 🔧 DEBUG: Log detallado para diagnosticar problema de 95 velas (throttled)
     const preliminaryBarWidth = Math.max(minCandleWidth, Math.min(maxCandleWidth, 8 * viewStateRef.current.zoom));
     const preliminaryCandlesPerScreen = Math.floor(chartWidth / preliminaryBarWidth);
 
-    console.log(`[${symbol}] drawChart: ${displayCandles.length} velas disponibles, zoom=${viewStateRef.current.zoom.toFixed(3)}, chartWidth=${chartWidth}, mostrando=${preliminaryCandlesPerScreen}, userZoomed=${viewStateRef.current.userZoomed}`);
+    // Throttle log to once every 30 seconds to reduce console spam
+    const now = Date.now();
+    if (!window._lastDrawChartLog || now - window._lastDrawChartLog > 30000) {
+      console.log(`[${symbol}] drawChart: ${displayCandles.length} velas disponibles, zoom=${viewStateRef.current.zoom.toFixed(3)}, chartWidth=${chartWidth}, mostrando=${preliminaryCandlesPerScreen}, userZoomed=${viewStateRef.current.userZoomed}`);
+      window._lastDrawChartLog = now;
+    }
 
     // 🔧 FIX AGRESIVO: Auto-recalcular zoom si mostramos pocas velas
     // Condicion: Si mostramos menos de 200 velas Y tenemos mas de 200 disponibles
@@ -1157,11 +1163,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         console.log(`[${symbol}] Carga COMPLETA: ${days} dias @ ${interval}`);
       }
 
-      const res = await fetch(url, {
+      const res = await fetchWithRetry(url, {
         cache: 'no-cache',
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
+        }
+      }, {
+        maxRetries: 3,
+        initialDelayMs: 1000,
+        context: `historical-${symbol}`,
+        onRetry: (attempt, error, delay) => {
+          console.warn(`[${symbol}] Retry ${attempt}: ${error.message}, waiting ${delay}ms`);
         }
       });
       const json = await res.json();
@@ -2406,6 +2419,35 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   return (
     <>
       <div className="mini-chart" ref={containerRef}>
+        {/* INDICADOR DE CARGA: Visible mientras se cargan datos iniciales */}
+        {!isInitialized && !isFullscreenChild && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(26, 26, 46, 0.95)',
+            color: '#4a9eff',
+            fontSize: '14px',
+            zIndex: 200,
+            gap: '12px'
+          }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: '3px solid #333',
+              borderTop: '3px solid #4a9eff',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }} />
+            <span style={{ color: '#888' }}>Cargando {symbol}...</span>
+          </div>
+        )}
         {/* 🎯 VIRTUALIZACIÓN: Placeholder cuando el chart no es visible */}
         {!isVisible && !isFullscreen && !isFullscreenChild && (
           <div style={{
