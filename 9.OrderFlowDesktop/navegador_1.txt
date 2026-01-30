@@ -1,0 +1,675 @@
+ [Preload] Script cargado correctamente
+ [Preload] Plataforma: win32
+ [Preload] Electron: 33.4.11
+ [Config] API_BASE_URL: http://localhost:10000
+ [Config] Electron: Si
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Analizador Desktop - Frontend
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [Electron] Plataforma: win32
+ [App] Backend esperado en: http://localhost:10000
+ [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [ETHUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 1)
+ [CandleCache] 💾 ETHUSDT@1 - desde IndexedDB (1453 velas)
+ [CandleCache] ✓ ETHUSDT@1 - Cache valido: 1453 velas (esperadas: ~1440, ratio: 100.9%)
+ [ETHUSDT] Carga INCREMENTAL: desde 29/1/2026, 9:57:00 p.m. (1453 velas en cache)
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [CacheCleanup] Complete: 0/12 candles, 0/23 indicators removed
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [Prefetch] Activado (10s despues de carga)
+ [ETHUSDT] drawChart: 2 velas disponibles, zoom=1.000, chartWidth=989, mostrando=123, userZoomed=false
+ [ETHUSDT] drawChart: 2 velas disponibles, zoom=1.000, chartWidth=989, mostrando=123, userZoomed=false
+ [ETHUSDT] S&R v2 loaded: 3R, 1S
+ [ETHUSDT] drawChart: 2 velas disponibles, zoom=1.000, chartWidth=989, mostrando=123, userZoomed=false
+ [ETHUSDT] S&R v2 renderOverlay: Object
+ [ETHUSDT] SwingDetector: 249/249 signals for interval 1 (cached)
+ [CandleCache] 🔄 Merge: 1453 cached + 105 new = 1557 total
+ [ETHUSDT] ✅ Incremental: +105 velas nuevas = 1557 total
+ [ETHUSDT] ✅ Histórico final: 1557 velas
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=1.000, chartWidth=989, mostrando=123, userZoomed=false
+ [ETHUSDT] 🔧 Auto-corregido zoom: 1.000 -> 0.155 (mostraba 123 velas, ahora ~800 de 1558)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (1557 velas, memoria: 1/4)
+ [IndicatorCache] 💾 sr2@ETHUSDT desde memoria
+ [ETHUSDT] S&R v2 from cache: 3R, 1S
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] S&R v2 loaded: 3R, 1S
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+ [ETHUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [ETHUSDT] S&R v2 polling started (interval: 60000ms)
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [HealthCheck] Backend reconnected
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1558 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [CandleCache] ✅ ETHUSDT@1 - guardado (1558 velas, memoria: 1/4)
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] SwingDetector: 250/250 signals for interval 1 (cached)
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] S&R v2 updated (polling): 3R, 1S
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1559 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [CandleCache] ✅ ETHUSDT@1 - guardado (1559 velas, memoria: 1/4)
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] SwingDetector: 250/250 signals for interval 1 (cached)
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] S&R v2 updated (polling): 3R, 1S
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.170, chartWidth=989, mostrando=727, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.187, chartWidth=989, mostrando=661, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.206, chartWidth=989, mostrando=601, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.226, chartWidth=989, mostrando=546, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.249, chartWidth=989, mostrando=496, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.274, chartWidth=989, mostrando=451, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.301, chartWidth=989, mostrando=410, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.331, chartWidth=989, mostrando=373, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.364, chartWidth=989, mostrando=339, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.401, chartWidth=989, mostrando=308, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.441, chartWidth=989, mostrando=280, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.485, chartWidth=989, mostrando=254, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.533, chartWidth=989, mostrando=231, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.587, chartWidth=989, mostrando=210, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.646, chartWidth=989, mostrando=191, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.710, chartWidth=989, mostrando=174, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.781, chartWidth=989, mostrando=158, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.859, chartWidth=989, mostrando=143, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.945, chartWidth=989, mostrando=130, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.040, chartWidth=989, mostrando=118, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.144, chartWidth=989, mostrando=108, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.258, chartWidth=989, mostrando=98, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.384, chartWidth=989, mostrando=89, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.522, chartWidth=989, mostrando=81, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.674, chartWidth=989, mostrando=73, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.842, chartWidth=989, mostrando=67, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.026, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.228, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.228, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.451, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.696, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.966, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=3.263, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=3.589, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=3.948, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=4.343, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=4.777, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=5.000, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=4.500, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=4.050, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=3.645, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=3.280, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.952, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.657, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.391, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=2.152, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.937, chartWidth=989, mostrando=65, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.743, chartWidth=989, mostrando=70, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.569, chartWidth=989, mostrando=78, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.412, chartWidth=989, mostrando=87, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.271, chartWidth=989, mostrando=97, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.398, chartWidth=989, mostrando=88, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.258, chartWidth=989, mostrando=98, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.132, chartWidth=989, mostrando=109, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=1.019, chartWidth=989, mostrando=121, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.917, chartWidth=989, mostrando=134, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.826, chartWidth=989, mostrando=149, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [ETHUSDT] drawChart: 1560 velas disponibles, zoom=0.743, chartWidth=989, mostrando=166, userZoomed=true
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [ETHUSDT] SwingDetector signal polling stopped
+ [ETHUSDT] SwingDetector status polling stopped
+ [ETHUSDT] S&R v2 polling stopped
+ [ETHUSDT] S&R v2 destroyed
+ [MiniChart ETHUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [ETHUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 1)
+ [CandleCache] 💾 ETHUSDT@5 - desde IndexedDB (1439 velas)
+ [CandleCache] ✓ ETHUSDT@5 - Cache valido: 1439 velas (esperadas: ~288, ratio: 499.7%)
+ [ETHUSDT] Cache tiene 1439 velas pero solo necesitamos ~388 para 1 dias - forzando carga completa
+ [Registry] 🗑️ Desregistrado manager para ETHUSDT (total: 0)
+ [ETHUSDT] S&R v2 destroyed
+ [ETHUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ETHUSDT@5 - desde memoria (1439 velas)
+ [ETHUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [CandleCache] ✓ ETHUSDT@5 - Cache valido: 1439 velas (esperadas: ~1440, ratio: 99.9%)
+ [Registry] ✅ Registrado manager para ETHUSDT (total: 1)
+ [ETHUSDT] Carga INCREMENTAL: desde 28/1/2026, 11:50:00 p.m. (1439 velas en cache)
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [ETHUSDT] S&R v2: Fetching from backend...
+ WebSocket Manager cerrado
+ WebSocket Manager conectado [5]
+ ✓ Suscrito: 
+ [ETHUSDT] ✅ Completa: 287 velas
+ [ETHUSDT] ✅ Histórico final: 287 velas
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [CandleCache] ✅ ETHUSDT@5 - guardado (287 velas, memoria: 2/4)
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] S&R v2: Fetching from backend...
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] SwingDetector initialized with 1 days
+ [ETHUSDT] SwingDetector initialized with 5 days
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [ETHUSDT] drawChart: 288 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [CandleCache] 🔄 Merge: 1439 cached + 287 new = 1725 total
+ [ETHUSDT] ✅ Incremental: +287 velas nuevas = 1725 total
+ [ETHUSDT] ✅ Histórico final: 1725 velas
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+ [CandleCache] ✅ ETHUSDT@5 - guardado (1725 velas, memoria: 2/4)
+ [ETHUSDT] S&R v2: Fetching from backend...
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:53 [ETHUSDT] S&R v2 loaded: 1R, 0S
+index.js:53 [ETHUSDT] S&R v2 loaded: 1R, 0S
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:53 [ETHUSDT] S&R v2 renderOverlay: Object
+index.js:53 [ETHUSDT] SwingDetector: Backend returned 0 signals
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:53 [ETHUSDT] S&R v2 loaded: 1R, 0S
+index.js:53 [ETHUSDT] SwingDetector: 289/289 signals for interval 5 (cached)
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:53 [ETHUSDT] SwingDetector initialized with 5 days
+index.js:25 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+index.js:53 [ETHUSDT] S&R v2 loaded: 1R, 0S
+index.js:53 [ETHUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+index.js:53 [ETHUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+index.js:53 [ETHUSDT] S&R v2 polling started (interval: 60000ms)
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:53 [ETHUSDT] SwingDetector initialized with 5 days
+index.js:25 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+index.js:53 [ETHUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.155, chartWidth=989, mostrando=800, userZoomed=false
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.139, chartWidth=989, mostrando=888, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.139, chartWidth=989, mostrando=888, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.125, chartWidth=989, mostrando=987, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.113, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.101, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.100, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.110, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.121, chartWidth=989, mostrando=989, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.133, chartWidth=989, mostrando=928, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.146, chartWidth=989, mostrando=844, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.161, chartWidth=989, mostrando=767, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.177, chartWidth=989, mostrando=697, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.195, chartWidth=989, mostrando=634, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.214, chartWidth=989, mostrando=576, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.236, chartWidth=989, mostrando=524, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.259, chartWidth=989, mostrando=476, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.285, chartWidth=989, mostrando=433, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.314, chartWidth=989, mostrando=393, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.345, chartWidth=989, mostrando=358, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.380, chartWidth=989, mostrando=325, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.418, chartWidth=989, mostrando=295, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.459, chartWidth=989, mostrando=269, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.505, chartWidth=989, mostrando=244, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.556, chartWidth=989, mostrando=222, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.612, chartWidth=989, mostrando=202, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.673, chartWidth=989, mostrando=183, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.740, chartWidth=989, mostrando=167, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.814, chartWidth=989, mostrando=151, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.895, chartWidth=989, mostrando=138, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=0.985, chartWidth=989, mostrando=125, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.083, chartWidth=989, mostrando=114, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.192, chartWidth=989, mostrando=103, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.192, chartWidth=989, mostrando=103, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.311, chartWidth=989, mostrando=94, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.442, chartWidth=989, mostrando=85, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.586, chartWidth=989, mostrando=77, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.745, chartWidth=989, mostrando=70, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=1.919, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.111, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [HealthCheck] Backend reconnected
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:25 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=989, mostrando=65, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+index.js:57 [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true
+ [ETHUSDT] drawChart: 1726 velas disponibles, zoom=2.323, chartWidth=697, mostrando=46, userZoomed=true

@@ -1,0 +1,404 @@
+INFO:     Started server process [14596]
+INFO:     Waiting for application startup.
+2026-01-29 23:16:05 - alert_sender - WARNING - [WARN] Alert service returned status 404
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 21 symbols
+2026-01-29 23:16:22 - websocket_manager - ERROR - WebSocket error: timed out during opening handshake
+[STARTUP] Swing detector service started
+2026-01-29 23:16:27 - websocket_manager - WARNING - WebSocketManager already running
+[STARTUP] WebSocket Manager started - connected to Bybit
+[STARTUP] VWAP service started
+[STARTUP] Trade Aggregator initialized (interval=1)
+[STARTUP] Trade callback registered with WebSocket manager
+[STARTUP] Subscribed to trades for 21 symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-29 23:16:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Config cargada: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\config\orderflow_config.json
+2026-01-29 23:16:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Inicializado
+2026-01-29 23:16:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Iniciando con symbols=['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT'], intervals=['1', '5']
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para BTCUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para BTCUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para ETHUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para ETHUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SOLUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para SOLUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para XRPUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para XRPUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para ADAUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para ADAUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 711 footprints historicos para TRXUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 701 footprints historicos para TRXUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para PAXGUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para PAXGUSDT_5
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para GALAUSDT_1
+2026-01-29 23:16:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para GALAUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SUIUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para SUIUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 703 footprints historicos para TRBUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 694 footprints historicos para TRBUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para DOGEUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para DOGEUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para AAVEUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para AAVEUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para AVAXUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para AVAXUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para ARBUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para ARBUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para BNBUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para BNBUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 716 footprints historicos para INJUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para INJUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 709 footprints historicos para KASUSDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 701 footprints historicos para KASUSDT_5
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 716 footprints historicos para SHIB1000USDT_1
+2026-01-29 23:16:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 708 footprints historicos para SHIB1000USDT_5
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 711 footprints historicos para TONUSDT_1
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 703 footprints historicos para TONUSDT_5
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para UNIUSDT_1
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 710 footprints historicos para UNIUSDT_5
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 694 footprints historicos para LPTUSDT_1
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 686 footprints historicos para LPTUSDT_5
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Total footprints cargados desde disco: 29823
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Reconstruccion de estimados DESACTIVADA - solo datos reales
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Suscrito a trades de ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-29 23:16:30 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Servicio iniciado correctamente
+[STARTUP] OrderFlow Service started - 21 symbols, intervals: ['1', '5']
+2026-01-29 23:16:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746560000 | trades=147 | delta=1910.6000 | poc=0
+2026-01-29 23:16:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746560000 | trades=299 | delta=3.6190 | poc=0
+2026-01-29 23:16:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746560000 | trades=452 | delta=5017.1000 | poc=0
+2026-01-29 23:16:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746560000 | trades=2 | delta=89.0000 | poc=0
+2026-01-29 23:16:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746560000 | trades=77 | delta=4980.0000 | poc=7
+2026-01-29 23:16:59 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:16:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746560000 | trades=448 | delta=13.0100 | poc=1
+2026-01-29 23:16:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746560000 | trades=63 | delta=68.7000 | poc=0
+2026-01-29 23:16:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746560000 | trades=10 | delta=-33.3000 | poc=3
+2026-01-29 23:17:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746560000 | trades=45 | delta=18704.0000 | poc=0
+2026-01-29 23:17:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746560000 | trades=80 | delta=-1.7140 | poc=4
+2026-01-29 23:17:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746560000 | trades=38 | delta=1954.6000 | poc=2
+2026-01-29 23:17:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746560000 | trades=17 | delta=-4.3600 | poc=0
+2026-01-29 23:17:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746560000 | trades=26 | delta=2483.0000 | poc=0
+2026-01-29 23:17:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746560000 | trades=36 | delta=-3.1400 | poc=5
+2026-01-29 23:17:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746560000 | trades=91 | delta=96122.0000 | poc=0
+2026-01-29 23:17:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746560000 | trades=32 | delta=-821470.0000 | poc=0
+2026-01-29 23:17:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746560000 | trades=13 | delta=-16.3000 | poc=0
+2026-01-29 23:17:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746560000 | trades=4 | delta=-2.9500 | poc=1
+2026-01-29 23:17:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746560000 | trades=2 | delta=-430.0000 | poc=0
+2026-01-29 23:17:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746560000 | trades=16 | delta=-125.2000 | poc=6
+2026-01-29 23:17:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746560000 | trades=11 | delta=28791.0000 | poc=0
+2026-01-29 23:17:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746620000 | trades=1200 | delta=-0.7540 | poc=1
+2026-01-29 23:17:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746620000 | trades=677 | delta=107.7900 | poc=1
+2026-01-29 23:17:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746620000 | trades=347 | delta=44102.7000 | poc=0
+2026-01-29 23:17:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746620000 | trades=352 | delta=30.0000 | poc=0
+2026-01-29 23:17:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746620000 | trades=19 | delta=7037.0000 | poc=0
+2026-01-29 23:17:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746620000 | trades=41 | delta=-728.4000 | poc=0
+2026-01-29 23:17:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746620000 | trades=33 | delta=2.8800 | poc=0
+2026-01-29 23:17:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746620000 | trades=8 | delta=-0.7000 | poc=0
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746620000 | trades=12 | delta=-164.0000 | poc=2
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746620000 | trades=186 | delta=18840.0000 | poc=10
+2026-01-29 23:17:59 - swing_alerts - INFO - BLOCKED_HISTORICAL | AVAXUSDT | SWING_LOW | price=10.94 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:17:59 - swing_alerts - INFO - BLOCKED_HISTORICAL | TRBUSDT | SWING_LOW | price=17.87 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:17:59 - swing_alerts - INFO - BLOCKED_HISTORICAL | TRXUSDT | SWING_HIGH | price=0.29 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746620000 | trades=193 | delta=2.1260 | poc=5
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746620000 | trades=83 | delta=286062.0000 | poc=0
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746620000 | trades=142 | delta=-59805.0000 | poc=0
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746620000 | trades=23 | delta=31672.0000 | poc=0
+2026-01-29 23:17:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746620000 | trades=5 | delta=-0.0500 | poc=4
+2026-01-29 23:18:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746620000 | trades=45 | delta=-11.8000 | poc=2
+2026-01-29 23:18:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746620000 | trades=59 | delta=-266.5000 | poc=0
+2026-01-29 23:18:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746620000 | trades=10 | delta=520.0000 | poc=0
+2026-01-29 23:18:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746620000 | trades=70 | delta=7883.1000 | poc=0
+2026-01-29 23:18:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746620000 | trades=20 | delta=115100.0000 | poc=0
+2026-01-29 23:18:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | BNBUSDT | SWING_HIGH | price=848.10 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:18:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | PAXGUSDT | SWING_LOW | price=5252.80 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:18:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746620000 | trades=38 | delta=-783.9000 | poc=2
+2026-01-29 23:18:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746680000 | trades=55 | delta=144572.0000 | poc=0
+2026-01-29 23:18:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746680000 | trades=1431 | delta=73502.1000 | poc=0
+2026-01-29 23:18:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746680000 | trades=1512 | delta=-88.2900 | poc=0
+2026-01-29 23:18:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746680000 | trades=224 | delta=51957.4000 | poc=0
+2026-01-29 23:18:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746680000 | trades=34 | delta=-14.0000 | poc=15
+2026-01-29 23:18:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746680000 | trades=14 | delta=-106.9000 | poc=0
+2026-01-29 23:18:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746680000 | trades=3992 | delta=133.6960 | poc=14
+2026-01-29 23:18:59 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:18:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746680000 | trades=310 | delta=584952.0000 | poc=0
+2026-01-29 23:19:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746680000 | trades=914 | delta=2806.5000 | poc=0
+2026-01-29 23:19:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746680000 | trades=122 | delta=5.6300 | poc=1
+2026-01-29 23:19:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746680000 | trades=146 | delta=-23.3400 | poc=3
+2026-01-29 23:19:01 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:19:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746680000 | trades=291 | delta=6770.0000 | poc=24
+2026-01-29 23:19:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746680000 | trades=47 | delta=389430.0000 | poc=0
+2026-01-29 23:19:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746680000 | trades=155 | delta=70474.0000 | poc=0
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746680000 | trades=6 | delta=-2.2100 | poc=17
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746680000 | trades=51 | delta=828.4000 | poc=10
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746680000 | trades=133 | delta=-0.4670 | poc=8
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746680000 | trades=33 | delta=17002.0000 | poc=0
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746680000 | trades=148 | delta=-491.3000 | poc=0
+2026-01-29 23:19:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746680000 | trades=40 | delta=112770.0000 | poc=0
+2026-01-29 23:19:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746680000 | trades=67 | delta=1477.4000 | poc=6
+2026-01-29 23:19:04 - swing_alerts - INFO - SIGNAL_DETECTED | INJUSDT | SWING_LOW | price=3.99 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:19:04 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | INJUSDT | SWING_LOW | price=3.99
+2026-01-29 23:19:04 - swing_alerts - INFO - SIGNAL_DETECTED | UNIUSDT | SWING_LOW | price=4.27 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:19:04 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | UNIUSDT | SWING_LOW | price=4.27
+[STARTUP] Loaded 262 footprints from Cloud Collector
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1769745600000 (~29 velas esperadas) @ 1
+2026-01-29 23:19:27 - realtime_pattern_service - WARNING - [REALTIME] Cannot update intervals: service not running
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+[TICKERS ERROR]
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] BTCUSDT@1 - Guardado (1440 velas)
+[BTCUSDT] [SR2] Analizando 1440 velas
+[BTCUSDT] [SR2] Resultado: 3 R, 2 S
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 1 SR2 desde cache (age: 0s)
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+[BTCUSDT] Historical: [OK] Devolviendo 20 velas (esperadas: 29)
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+2026-01-29 23:20:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746740000 | trades=1043 | delta=11493.8000 | poc=1
+2026-01-29 23:20:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746500000 | trades=2761 | delta=19347.4000 | poc=1
+2026-01-29 23:20:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746740000 | trades=2751 | delta=533.6100 | poc=3
+2026-01-29 23:20:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746500000 | trades=5388 | delta=566.1200 | poc=1
+2026-01-29 23:20:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746740000 | trades=121 | delta=-1.1230 | poc=2
+2026-01-29 23:20:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746500000 | trades=527 | delta=-1.1780 | poc=4
+2026-01-29 23:20:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746740000 | trades=2985 | delta=104.7800 | poc=6
+2026-01-29 23:20:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746500000 | trades=8476 | delta=241.3410 | poc=15
+2026-01-29 23:20:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746740000 | trades=150 | delta=54.6100 | poc=7
+2026-01-29 23:20:07 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746500000 | trades=377 | delta=16.3300 | poc=3
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746740000 | trades=1598 | delta=365476.7000 | poc=0
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746500000 | trades=3523 | delta=484992.1000 | poc=1
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746740000 | trades=590 | delta=664970.0000 | poc=0
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746500000 | trades=1133 | delta=1286239.0000 | poc=0
+2026-01-29 23:20:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746740000 | trades=309 | delta=45595.4000 | poc=0
+2026-01-29 23:20:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746500000 | trades=648 | delta=124139.9000 | poc=0
+2026-01-29 23:20:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746740000 | trades=436 | delta=7190.0000 | poc=13
+2026-01-29 23:20:10 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:20:10 - footprint_calculator - WARNING - Max levels reached for candle 1.2916-1.297 with step 0.0001
+2026-01-29 23:20:10 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746500000 | trades=990 | delta=37780.0000 | poc=10
+2026-01-29 23:20:10 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746740000 | trades=19 | delta=103.6000 | poc=9
+2026-01-29 23:20:10 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746500000 | trades=51 | delta=-37.3000 | poc=19
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746740000 | trades=179 | delta=21.8400 | poc=0
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746500000 | trades=351 | delta=25.9900 | poc=1
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746740000 | trades=95 | delta=994800.0000 | poc=0
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746500000 | trades=194 | delta=677860.0000 | poc=0
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746740000 | trades=195 | delta=206.6000 | poc=0
+2026-01-29 23:20:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746500000 | trades=465 | delta=-482.5000 | poc=0
+2026-01-29 23:20:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746740000 | trades=97 | delta=466.5000 | poc=13
+2026-01-29 23:20:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746500000 | trades=243 | delta=3170.1000 | poc=2
+2026-01-29 23:20:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746740000 | trades=220 | delta=149763.0000 | poc=0
+2026-01-29 23:20:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746500000 | trades=484 | delta=508782.0000 | poc=0
+2026-01-29 23:20:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746740000 | trades=70 | delta=457.1000 | poc=15
+2026-01-29 23:20:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746500000 | trades=146 | delta=1105.2000 | poc=20
+2026-01-29 23:20:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746740000 | trades=78 | delta=423045.0000 | poc=0
+2026-01-29 23:20:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746500000 | trades=167 | delta=628080.0000 | poc=0
+2026-01-29 23:20:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746740000 | trades=67 | delta=-16504.0000 | poc=0
+2026-01-29 23:20:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746500000 | trades=121 | delta=7624.0000 | poc=0
+2026-01-29 23:20:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746740000 | trades=20 | delta=34.2900 | poc=5
+2026-01-29 23:20:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746500000 | trades=35 | delta=29.0800 | poc=26
+2026-01-29 23:20:14 - swing_alerts - INFO - SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5255.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:20:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746740000 | trades=84 | delta=1587.3000 | poc=12
+2026-01-29 23:20:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746500000 | trades=172 | delta=664.2000 | poc=3
+2026-01-29 23:20:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746740000 | trades=38 | delta=27980.0000 | poc=0
+2026-01-29 23:20:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746500000 | trades=90 | delta=140840.0000 | poc=0
+2026-01-29 23:20:20 - swing_alerts - INFO - ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5255.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:20:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746800000 | trades=3794 | delta=-7.2300 | poc=12
+2026-01-29 23:20:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746800000 | trades=1580 | delta=114500.2000 | poc=0
+2026-01-29 23:20:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746800000 | trades=620 | delta=272417.0000 | poc=0
+2026-01-29 23:20:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746800000 | trades=235 | delta=14.6200 | poc=4
+2026-01-29 23:20:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746800000 | trades=2447 | delta=221.6700 | poc=4
+2026-01-29 23:20:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746800000 | trades=378 | delta=3114.0000 | poc=0
+2026-01-29 23:20:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746800000 | trades=171 | delta=11.1100 | poc=0
+2026-01-29 23:20:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746800000 | trades=972 | delta=5948.1000 | poc=0
+2026-01-29 23:20:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746800000 | trades=53 | delta=-10156.0000 | poc=0
+2026-01-29 23:21:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746800000 | trades=208 | delta=-0.2520 | poc=15
+2026-01-29 23:21:04 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:21:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746800000 | trades=791 | delta=8990.0000 | poc=21
+2026-01-29 23:21:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746800000 | trades=44 | delta=748.7000 | poc=20
+2026-01-29 23:21:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746800000 | trades=233 | delta=-111.4000 | poc=0
+2026-01-29 23:21:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746800000 | trades=287 | delta=53287.3000 | poc=0
+2026-01-29 23:21:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746800000 | trades=74 | delta=24.4000 | poc=10
+2026-01-29 23:21:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746800000 | trades=117 | delta=4467110.0000 | poc=0
+2026-01-29 23:21:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746800000 | trades=122 | delta=95049.0000 | poc=0
+2026-01-29 23:21:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746800000 | trades=30 | delta=4.9500 | poc=2
+2026-01-29 23:21:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746800000 | trades=112 | delta=-61.5000 | poc=12
+2026-01-29 23:21:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746800000 | trades=68 | delta=356.0000 | poc=1
+2026-01-29 23:21:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746800000 | trades=23 | delta=-3580.0000 | poc=0
+2026-01-29 23:21:07 - swing_alerts - INFO - SIGNAL_DETECTED | AAVEUSDT | SWING_LOW | price=143.21 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:21:07 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | AAVEUSDT | SWING_LOW | price=143.21
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 1 SR2 desde cache (age: 92s)
+2026-01-29 23:21:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746860000 | trades=215 | delta=131764.0000 | poc=0
+2026-01-29 23:21:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746860000 | trades=737 | delta=9510.8000 | poc=0
+2026-01-29 23:21:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746860000 | trades=207 | delta=405189.0000 | poc=0
+2026-01-29 23:21:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746860000 | trades=1026 | delta=11.8450 | poc=2
+2026-01-29 23:21:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746860000 | trades=1404 | delta=34.4000 | poc=1
+2026-01-29 23:21:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746860000 | trades=161 | delta=-121.2300 | poc=2
+2026-01-29 23:21:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746860000 | trades=58 | delta=270.3000 | poc=8
+2026-01-29 23:21:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746860000 | trades=361 | delta=3.2400 | poc=0
+2026-01-29 23:22:04 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:22:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746860000 | trades=20 | delta=2548.0000 | poc=0
+2026-01-29 23:22:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746860000 | trades=652 | delta=2806.4000 | poc=0
+2026-01-29 23:22:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746860000 | trades=41 | delta=904.8000 | poc=14
+2026-01-29 23:22:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746860000 | trades=267 | delta=34910.0000 | poc=31
+2026-01-29 23:22:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746860000 | trades=188 | delta=99823.1000 | poc=0
+2026-01-29 23:22:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746860000 | trades=64 | delta=-137749.0000 | poc=0
+2026-01-29 23:22:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746860000 | trades=233 | delta=277.0800 | poc=1
+2026-01-29 23:22:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746860000 | trades=14 | delta=-7.4400 | poc=26
+2026-01-29 23:22:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746860000 | trades=29 | delta=630.6000 | poc=28
+2026-01-29 23:22:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746860000 | trades=11 | delta=16030.0000 | poc=0
+2026-01-29 23:22:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746860000 | trades=121 | delta=422.7000 | poc=0
+2026-01-29 23:22:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746860000 | trades=92 | delta=1232650.0000 | poc=0
+2026-01-29 23:22:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746860000 | trades=20 | delta=58.8000 | poc=13
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 1 SR2 desde cache (age: 152s)
+2026-01-29 23:23:10 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746920000 | trades=5003 | delta=68.9280 | poc=14
+2026-01-29 23:23:10 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746920000 | trades=10007 | delta=3172.4400 | poc=11
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=session
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE EXPIRED] BTCUSDT 5 sr2_5_3_0.5_2_3.0_0.0 - 2479s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 30) @ 5
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+2026-01-29 23:23:29 - realtime_pattern_service - WARNING - [REALTIME] Cannot update intervals: service not running
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE EXPIRED] BTCUSDT 5 sr2_5_3_0.5_2_3.0_0.0 - 2497s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 30) @ 5
+2026-01-29 23:23:30 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta:
+2026-01-29 23:23:30 - footprint_calculator - WARNING - Max levels reached for candle 1.2992-1.3062 with step 0.0001
+2026-01-29 23:23:31 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746920000 | trades=1008 | delta=48170.0000 | poc=49
+2026-01-29 23:23:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746920000 | trades=839 | delta=-35.2550 | poc=6
+2026-01-29 23:23:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746920000 | trades=1217 | delta=26833.5000 | poc=1
+2026-01-29 23:23:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746920000 | trades=2979 | delta=114813.2000 | poc=1
+2026-01-29 23:23:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746920000 | trades=3029 | delta=-4066.3000 | poc=0
+2026-01-29 23:23:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746920000 | trades=2030 | delta=4910046.0000 | poc=1
+2026-01-29 23:23:32 - footprint_calculator - WARNING - Max levels reached for candle 4.286-4.31 with step 0.0004
+2026-01-29 23:23:33 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746920000 | trades=313 | delta=6762.5000 | poc=49
+2026-01-29 23:23:33 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746920000 | trades=336 | delta=3278254.0000 | poc=0
+2026-01-29 23:23:33 - footprint_calculator - WARNING - Max levels reached for candle 4.008-4.031 with step 0.0004
+2026-01-29 23:23:33 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746920000 | trades=235 | delta=4242.9000 | poc=49
+2026-01-29 23:23:33 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746920000 | trades=118 | delta=4743.0000 | poc=0
+2026-01-29 23:23:34 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746920000 | trades=876 | delta=291791.5000 | poc=0
+2026-01-29 23:23:34 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746920000 | trades=597 | delta=486.6000 | poc=1
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1769744100000 (~19 velas esperadas) @ 5
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=session
+2026-01-29 23:23:40 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:23:40 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746920000 | trades=762 | delta=537272.0000 | poc=0
+2026-01-29 23:23:40 - footprint_calculator - WARNING - Max levels reached for candle 143.55-144.4 with step 0.014
+2026-01-29 23:23:41 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746920000 | trades=737 | delta=123.8400 | poc=49
+2026-01-29 23:23:41 - footprint_calculator - WARNING - Max levels reached for candle 1.4299-1.4357 with step 0.0001
+2026-01-29 23:23:42 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746920000 | trades=266 | delta=7663.7000 | poc=32
+2026-01-29 23:23:42 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746920000 | trades=302 | delta=8030070.0000 | poc=0
+2026-01-29 23:23:42 - footprint_calculator - WARNING - Max levels reached for candle 2.973-2.989 with step 0.0003
+2026-01-29 23:23:42 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746920000 | trades=110 | delta=3232.6000 | poc=29
+2026-01-29 23:23:42 - footprint_calculator - WARNING - Max levels reached for candle 17.98-18.082 with step 0.0018
+2026-01-29 23:23:43 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746920000 | trades=128 | delta=100.6600 | poc=25
+2026-01-29 23:23:43 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746920000 | trades=82 | delta=59300.0000 | poc=0
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] BTCUSDT@5 - Guardado (1440 velas)
+[BTCUSDT] [SR2] Analizando 1440 velas
+[BTCUSDT] [SR2] Resultado: 1 R, 1 S
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] BTCUSDT@5 - Guardado (1440 velas)
+[BTCUSDT] [SR2] Analizando 1440 velas
+[BTCUSDT] [SR2] Resultado: 1 R, 1 S
+[BTCUSDT] Historical: [OK] Devolviendo 10 velas (esperadas: 19)
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+2026-01-29 23:23:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746980000 | trades=2853 | delta=-191.3900 | poc=2
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746980000 | trades=2790 | delta=-15.3730 | poc=5
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746980000 | trades=102 | delta=-158760.0000 | poc=0
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746980000 | trades=839 | delta=-11333.6000 | poc=0
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746980000 | trades=649 | delta=-763.3000 | poc=1
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746980000 | trades=277 | delta=-1063.5000 | poc=0
+2026-01-29 23:23:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746980000 | trades=163 | delta=-6230.3000 | poc=4
+2026-01-29 23:23:58 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746980000 | trades=32 | delta=45240.0000 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746980000 | trades=720 | delta=-0.1170 | poc=21
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746980000 | trades=466 | delta=10400.0000 | poc=23
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746980000 | trades=161 | delta=287552.0000 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746980000 | trades=195 | delta=-33.2500 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746980000 | trades=446 | delta=-174.3600 | poc=6
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746980000 | trades=339 | delta=13822.0000 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746980000 | trades=523 | delta=-310633.0000 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746980000 | trades=358 | delta=20522.0000 | poc=0
+2026-01-29 23:23:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746980000 | trades=164 | delta=-6357.8000 | poc=2
+2026-01-29 23:24:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746980000 | trades=49 | delta=-5656.0000 | poc=0
+2026-01-29 23:24:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746980000 | trades=28 | delta=-12.5100 | poc=16
+2026-01-29 23:24:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746980000 | trades=52 | delta=-1026.3000 | poc=2
+2026-01-29 23:24:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746980000 | trades=34 | delta=-258.7000 | poc=6
+2026-01-29 23:24:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769747040000 | trades=448 | delta=6545.7000 | poc=0
+2026-01-29 23:24:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769746800000 | trades=2296 | delta=32627.0000 | poc=0
+2026-01-29 23:24:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769747040000 | trades=1292 | delta=-0.9820 | poc=2
+2026-01-29 23:24:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769746800000 | trades=13905 | delta=57.1880 | poc=12
+2026-01-29 23:24:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769747040000 | trades=132 | delta=9.2200 | poc=0
+2026-01-29 23:24:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769746800000 | trades=1328 | delta=750.7600 | poc=2
+2026-01-29 23:24:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769747040000 | trades=199 | delta=25330.0000 | poc=0
+2026-01-29 23:24:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769746800000 | trades=1912 | delta=718002.0000 | poc=0
+2026-01-29 23:24:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769747040000 | trades=2206 | delta=-129.7000 | poc=4
+2026-01-29 23:24:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769746800000 | trades=18917 | delta=3107.4200 | poc=9
+2026-01-29 23:25:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769747040000 | trades=455 | delta=-6.3020 | poc=12
+2026-01-29 23:25:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769746800000 | trades=2583 | delta=-38.6860 | poc=19
+2026-01-29 23:25:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769747040000 | trades=964 | delta=-2493.8000 | poc=0
+2026-01-29 23:25:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769746800000 | trades=7099 | delta=224996.8000 | poc=1
+2026-01-29 23:25:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769747040000 | trades=450 | delta=35164.0000 | poc=0
+2026-01-29 23:25:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769746800000 | trades=3830 | delta=5312183.0000 | poc=1
+2026-01-29 23:25:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769747040000 | trades=1479 | delta=-11934.7000 | poc=1
+2026-01-29 23:25:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769746800000 | trades=6781 | delta=-8009.8000 | poc=1
+2026-01-29 23:25:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769747040000 | trades=122 | delta=-487.6000 | poc=20
+2026-01-29 23:25:02 - footprint_calculator - WARNING - Max levels reached for candle 4.278-4.31 with step 0.0004
+2026-01-29 23:25:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769746800000 | trades=769 | delta=125.9000 | poc=49
+2026-01-29 23:25:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769747040000 | trades=92 | delta=-37678.0000 | poc=0
+2026-01-29 23:25:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769746800000 | trades=332 | delta=-46199.0000 | poc=0
+2026-01-29 23:25:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769747040000 | trades=57 | delta=-175590.0000 | poc=0
+2026-01-29 23:25:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769746800000 | trades=205 | delta=-58600.0000 | poc=0
+2026-01-29 23:25:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769747040000 | trades=365 | delta=18300.0000 | poc=30
+2026-01-29 23:25:03 - footprint_calculator - WARNING - Max levels reached for candle 1.2964-1.3062 with step 0.0001
+2026-01-29 23:25:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769746800000 | trades=2897 | delta=120770.0000 | poc=49
+2026-01-29 23:25:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769747040000 | trades=75 | delta=1368.6000 | poc=18
+2026-01-29 23:25:04 - footprint_calculator - WARNING - Max levels reached for candle 3.996-4.031 with step 0.0004
+2026-01-29 23:25:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769746800000 | trades=465 | delta=5240.2000 | poc=49
+2026-01-29 23:25:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769747040000 | trades=93 | delta=427460.0000 | poc=0
+2026-01-29 23:25:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769746800000 | trades=706 | delta=13998530.0000 | poc=0
+2026-01-29 23:25:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769747040000 | trades=143 | delta=1412756.0000 | poc=0
+2026-01-29 23:25:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769746800000 | trades=826 | delta=4935862.0000 | poc=0
+2026-01-29 23:25:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769747040000 | trades=246 | delta=51166.1000 | poc=0
+2026-01-29 23:25:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769746800000 | trades=1936 | delta=509890.0000 | poc=0
+2026-01-29 23:25:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769747040000 | trades=30 | delta=-9.2200 | poc=25
+2026-01-29 23:25:06 - footprint_calculator - WARNING - Max levels reached for candle 17.95-18.082 with step 0.0018
+2026-01-29 23:25:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769746800000 | trades=230 | delta=76.4400 | poc=49
+2026-01-29 23:25:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769747040000 | trades=56 | delta=397.4000 | poc=8
+2026-01-29 23:25:07 - footprint_calculator - WARNING - Max levels reached for candle 1.4283-1.4357 with step 0.0001
+2026-01-29 23:25:07 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769746800000 | trades=594 | delta=3091.6000 | poc=49
+2026-01-29 23:25:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769747040000 | trades=205 | delta=67.5600 | poc=10
+2026-01-29 23:25:08 - footprint_calculator - WARNING - Max levels reached for candle 143.26-144.4 with step 0.014
+2026-01-29 23:25:08 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769746800000 | trades=1784 | delta=-89.5700 | poc=49
+2026-01-29 23:25:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769747040000 | trades=29 | delta=278.6000 | poc=17
+2026-01-29 23:25:09 - footprint_calculator - WARNING - Max levels reached for candle 2.966-2.989 with step 0.0003
+2026-01-29 23:25:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769746800000 | trades=237 | delta=4060.0000 | poc=49
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 82s)
+2026-01-29 23:25:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769747100000 | trades=585 | delta=-407335.0000 | poc=1
+2026-01-29 23:25:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769747100000 | trades=350 | delta=-1.4270 | poc=0
+2026-01-29 23:25:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769747100000 | trades=342 | delta=2190.0000 | poc=8
+2026-01-29 23:25:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769747100000 | trades=5072 | delta=-122.7040 | poc=7
+2026-01-29 23:26:00 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 23:26:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769747100000 | trades=230 | delta=-13.9300 | poc=4
+2026-01-29 23:26:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769747100000 | trades=1215 | delta=145376.4000 | poc=0
+2026-01-29 23:26:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769747100000 | trades=96 | delta=-125600.0000 | poc=0
+2026-01-29 23:26:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769747100000 | trades=2397 | delta=592.6000 | poc=3
+2026-01-29 23:26:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769747100000 | trades=224 | delta=1313.0000 | poc=0
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769747100000 | trades=61 | delta=830.3000 | poc=15
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769747100000 | trades=296 | delta=93535.5000 | poc=0
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769747100000 | trades=1013 | delta=2580.5000 | poc=0
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769747100000 | trades=26 | delta=11200.0000 | poc=0
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769747100000 | trades=179 | delta=14.3000 | poc=0
+2026-01-29 23:26:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769747100000 | trades=54 | delta=-19344.0000 | poc=0
+2026-01-29 23:26:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769747100000 | trades=318 | delta=-4828.0000 | poc=0
+2026-01-29 23:26:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769747100000 | trades=72 | delta=-303.0000 | poc=8
+2026-01-29 23:26:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769747100000 | trades=133 | delta=-266826.0000 | poc=0
+2026-01-29 23:26:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769747100000 | trades=51 | delta=-512.6000 | poc=6
+2026-01-29 23:26:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769747100000 | trades=187 | delta=3239.6000 | poc=18
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 139s)
+2026-01-29 23:26:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769747100000 | trades=30 | delta=6.8500 | poc=9

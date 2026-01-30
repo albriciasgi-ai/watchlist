@@ -897,7 +897,7 @@ class RealtimePatternService:
     def _get_default_dbt_config(self) -> Dict:
         """Get default DBT config (mirrors frontend defaults)"""
         return {
-            'alertsEnabled': True,  # Habilitado por defecto para enviar al trading bot
+            'alertsEnabled': False,  # DESHABILITADO - DTB esta deprecado, usar Swing Detector
             'filters': {
                 'minConfidence': 20  # Match detector default (20%)
             },
@@ -916,7 +916,7 @@ class RealtimePatternService:
     def _get_default_rejection_config(self) -> Dict:
         """Get default Rejection config (mirrors frontend defaults)"""
         return {
-            'alertsEnabled': True,  # Habilitado por defecto para enviar al trading bot
+            'alertsEnabled': False,  # DESHABILITADO - Rejection Patterns esta deprecado
             'filters': {
                 'minConfidence': 50,
                 'requireNearLevel': False

@@ -207,19 +207,28 @@ const SingleSymbolAnalyzer = () => {
     localStorage.setItem('analyzer_indicators', JSON.stringify(indicatorStates));
   }, [indicatorStates]);
 
-  // Ajustar dias al cambiar timeframe
-  useEffect(() => {
-    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[interval];
-    const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
+  // ✅ FIX: Handler unificado para cambiar interval Y days al mismo tiempo
+  // Esto evita doble render del MiniChart (antes: interval cambiaba, luego days cambiaba)
+  const handleIntervalChange = useCallback((newInterval) => {
+    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[newInterval];
+    const maxDays = MAX_DAYS_BY_INTERVAL[newInterval] || 30;
     const currentDays = parseInt(days);
 
+    let newDays;
     if (defaultDays) {
-      setDays(defaultDays.toString());
-      log.debug(`Dias ajustados a ${defaultDays} para timeframe ${interval}`);
+      newDays = defaultDays.toString();
     } else if (currentDays > maxDays) {
-      setDays(maxDays.toString());
+      newDays = maxDays.toString();
+    } else {
+      newDays = days;
     }
-  }, [interval]);
+
+    log.debug(`Cambiando timeframe: ${interval} -> ${newInterval}, dias: ${days} -> ${newDays}`);
+
+    // CRITICO: Cambiar ambos valores en un solo batch de React
+    setIntervalState(newInterval);
+    setDays(newDays);
+  }, [interval, days]);
 
   // Cambiar intervalo en WebSocket manager
   useEffect(() => {
@@ -639,7 +648,7 @@ const SingleSymbolAnalyzer = () => {
         <div className="controls">
           <label>
             Timeframe:
-            <select value={interval} onChange={(e) => setIntervalState(e.target.value)}>
+            <select value={interval} onChange={(e) => handleIntervalChange(e.target.value)}>
               <option value="1">1m</option>
               <option value="5">5m</option>
               <option value="15">15m</option>

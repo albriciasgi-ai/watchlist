@@ -2400,3 +2400,48 @@
 2026-01-29 23:12:07 | INFO | ALERT_SENT | TRXUSDT | SWING_HIGH | price=0.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
 2026-01-29 23:13:02 | INFO | SIGNAL_DETECTED | AAVEUSDT | SWING_LOW | price=143.18 | direction=LONG | volume_zscore=0.00 | interval=1
 2026-01-29 23:13:02 | INFO | BLOCKED_ALERTS_DISABLED | AAVEUSDT | SWING_LOW | price=143.18
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.11 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | ARBUSDT | SWING_HIGH | price=0.15 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | BLOCKED_ALERTS_DISABLED | ARBUSDT | SWING_HIGH | price=0.15
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | SHIB1000USDT | SWING_HIGH | price=0.01 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | BLOCKED_ALERTS_DISABLED | SHIB1000USDT | SWING_HIGH | price=0.01
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2756.42 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | INJUSDT | SWING_HIGH | price=4.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | BLOCKED_ALERTS_DISABLED | INJUSDT | SWING_HIGH | price=4.00
+2026-01-29 23:15:04 | INFO | SIGNAL_DETECTED | TONUSDT | SWING_HIGH | price=1.43 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:04 | INFO | BLOCKED_ALERTS_DISABLED | TONUSDT | SWING_HIGH | price=1.43
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.76 | direction=SHORT | volume_zscore=1.05 | interval=1
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=17.90 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | UNIUSDT | SWING_HIGH | price=4.28 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | BLOCKED_ALERTS_DISABLED | UNIUSDT | SWING_HIGH | price=4.28
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=114.86 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=1.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5252.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | AAVEUSDT | SWING_HIGH | price=143.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | BLOCKED_ALERTS_DISABLED | AAVEUSDT | SWING_HIGH | price=143.30
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | KASUSDT | SWING_HIGH | price=0.04 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | BLOCKED_ALERTS_DISABLED | KASUSDT | SWING_HIGH | price=0.04
+2026-01-29 23:15:07 | INFO | SIGNAL_DETECTED | AVAXUSDT | SWING_HIGH | price=10.95 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:15:07 | INFO | BLOCKED_ALERTS_DISABLED | AVAXUSDT | SWING_HIGH | price=10.95
+2026-01-29 23:15:08 | INFO | ALERT_SENT | TRBUSDT | SWING_HIGH | price=17.90 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:09 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=1.29 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:09 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2756.42 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:09 | INFO | ALERT_SENT | SOLUSDT | SWING_HIGH | price=114.86 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:09 | INFO | ALERT_SENT | ADAUSDT | SWING_HIGH | price=0.33 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:10 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5252.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:11 | INFO | ALERT_SENT | DOGEUSDT | SWING_HIGH | price=0.11 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:15:12 | INFO | ALERT_SENT | XRPUSDT | SWING_HIGH | price=1.76 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:17:59 | INFO | BLOCKED_HISTORICAL | AVAXUSDT | SWING_LOW | price=10.94 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:17:59 | INFO | BLOCKED_HISTORICAL | TRBUSDT | SWING_LOW | price=17.87 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:17:59 | INFO | BLOCKED_HISTORICAL | TRXUSDT | SWING_HIGH | price=0.29 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:18:00 | INFO | BLOCKED_HISTORICAL | BNBUSDT | SWING_HIGH | price=848.10 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:18:00 | INFO | BLOCKED_HISTORICAL | PAXGUSDT | SWING_LOW | price=5252.80 | signal_ts=1769746500 | service_start=1769746565
+2026-01-29 23:19:04 | INFO | SIGNAL_DETECTED | INJUSDT | SWING_LOW | price=3.99 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:19:04 | INFO | BLOCKED_ALERTS_DISABLED | INJUSDT | SWING_LOW | price=3.99
+2026-01-29 23:19:04 | INFO | SIGNAL_DETECTED | UNIUSDT | SWING_LOW | price=4.27 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:19:04 | INFO | BLOCKED_ALERTS_DISABLED | UNIUSDT | SWING_LOW | price=4.27
+2026-01-29 23:20:14 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5255.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-01-29 23:20:20 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5255.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-01-29 23:21:07 | INFO | SIGNAL_DETECTED | AAVEUSDT | SWING_LOW | price=143.21 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-01-29 23:21:07 | INFO | BLOCKED_ALERTS_DISABLED | AAVEUSDT | SWING_LOW | price=143.21

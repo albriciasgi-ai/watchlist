@@ -23,8 +23,8 @@
     "UNIUSDT",
     "LPTUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "5",
+  "days": 5,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -51,7 +51,7 @@
         "lookbackBars": 45
       },
       "swingBars": 5,
-      "days": 1,
+      "days": 5,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },

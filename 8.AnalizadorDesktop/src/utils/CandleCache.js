@@ -217,7 +217,8 @@ class CandleCache {
 
   /**
    * Verifica si el cache tiene suficientes velas para los dias solicitados
-   * Si tiene menos del MIN_CACHE_RATIO, se considera corrupto y se limpia
+   * ✅ FIX: No limpia cache incompleto - permite carga incremental
+   * Solo limpia si hay GAPS significativos (>2 minutos entre velas)
    * @param {string} symbol
    * @param {string} interval
    * @param {number} days - Dias solicitados
@@ -234,16 +235,33 @@ class CandleCache {
     const actualCandles = cached.candles.length;
     const ratio = actualCandles / expectedCandles;
 
-    // Si el cache tiene menos del 10% de lo esperado, es corrupto
+    // ✅ FIX: Si el cache tiene pocas velas pero es valido (sin gaps), NO limpiarlo
+    // Esto permite carga INCREMENTAL en lugar de carga completa
     if (ratio < this.MIN_CACHE_RATIO) {
-      console.warn(`[CandleCache] ⚠️ ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
-      console.log(`[CandleCache] 🗑️ Limpiando cache corrupto para forzar recarga completa...`);
-      await this.clear(symbol, interval);
-      return null;
+      console.log(`[CandleCache] ${symbol}@${interval} - Cache incompleto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+      console.log(`[CandleCache] Se usara carga incremental para complementar el cache`);
+      // NO limpiar - retornar el cache incompleto para que MiniChart haga carga incremental
+      // Solo verificar que no tenga gaps antes de retornarlo
     }
 
-    // Cache valido
-    console.log(`[CandleCache] ✓ ${symbol}@${interval} - Cache valido: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+    // NUEVO: Detectar gaps en el cache - si hay gaps significativos, limpiar y forzar recarga
+    const gapAnalysis = this.analyzeGaps(cached.candles, interval, `VALIDATION ${symbol}`);
+    if (gapAnalysis.gapCount > 0) {
+      // Si hay gaps de mas de 2 minutos (para timeframe 1m), limpiar cache
+      const significantGaps = gapAnalysis.gaps.filter(g => parseFloat(g.gapMinutes) > 2);
+      if (significantGaps.length > 0) {
+        console.warn(`[CandleCache] ${symbol}@${interval} - Cache tiene ${significantGaps.length} gaps significativos`);
+        significantGaps.forEach((g, i) => {
+          console.warn(`  Gap #${i + 1}: ${new Date(g.from).toLocaleString()} -> ${new Date(g.to).toLocaleString()} (${g.gapMinutes} min)`);
+        });
+        console.log(`[CandleCache] Limpiando cache con gaps para forzar recarga completa...`);
+        await this.clear(symbol, interval);
+        return null;
+      }
+    }
+
+    // Cache valido (con o sin pocas velas, pero sin gaps)
+    console.log(`[CandleCache] OK VALIDATION ${symbol}@${interval}: ${actualCandles} velas sin gaps`);
     return cached;
   }
 
