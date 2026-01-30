@@ -2,6 +2,7 @@
 
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+import pollingCoordinator from '../../utils/PollingCoordinator.js';
 
 /**
  * OrderFlowIndicator - Professional Footprint Chart Visualization
@@ -26,7 +27,7 @@ class OrderFlowIndicator extends IndicatorBase {
     this.lastFetchTime = 0;
     this.fetchIntervalMs = 5000;
     this.isFetching = false;
-    this._pollingInterval = null;
+    this._pollingId = null; // ✅ OPTIMIZADO: Usa PollingCoordinator en lugar de setInterval
     this._destroyed = false;
 
     // Retry settings for initial fetch
@@ -142,29 +143,33 @@ class OrderFlowIndicator extends IndicatorBase {
     }
   }
 
+  // ✅ OPTIMIZADO: Usa PollingCoordinator centralizado (ahorra ~50MB/24h)
   _startPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-    }
+    if (this._pollingId) return; // Ya registrado
 
-    this._pollingInterval = setInterval(async () => {
-      if (this._destroyed) {
-        this.stopPolling();
-        return;
-      }
-      if (this.enabled && this.config.enabled) {
-        const updated = await this.fetchFootprints();
-        if (updated && this.indicatorManager?.requestRedraw) {
-          this.indicatorManager.requestRedraw();
+    this._pollingId = pollingCoordinator.register(
+      `OrderFlow_${this.symbol}`,
+      async () => {
+        if (this._destroyed) {
+          this.stopPolling();
+          return;
         }
-      }
-    }, this.fetchIntervalMs);
+        if (this.enabled && this.config.enabled) {
+          const updated = await this.fetchFootprints();
+          if (updated && this.indicatorManager?.requestRedraw) {
+            this.indicatorManager.requestRedraw();
+          }
+        }
+      },
+      this.fetchIntervalMs,
+      1 // Alta prioridad (Order Flow es critico)
+    );
   }
 
   stopPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
+    if (this._pollingId) {
+      pollingCoordinator.unregister(this._pollingId);
+      this._pollingId = null;
     }
   }
 

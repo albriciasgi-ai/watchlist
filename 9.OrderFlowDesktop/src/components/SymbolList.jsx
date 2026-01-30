@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { API_BASE_URL } from '../config';
 import CandleCache from '../utils/CandleCache';
+import pollingCoordinator from '../utils/PollingCoordinator';
 
 // Monedas por defecto (sincronizadas con Cloud Footprint Collector)
 const DEFAULT_SYMBOLS = [
@@ -247,11 +248,19 @@ const SymbolList = ({ currentSymbol, onSymbolSelect, interval = "60", days = 1 }
     }
   }, [symbols]);
 
+  // ✅ OPTIMIZADO: Usa PollingCoordinator en lugar de setInterval
   // Fetch inicial y cada 60 segundos
   useEffect(() => {
     fetchPriceChanges();
-    const interval = setInterval(fetchPriceChanges, 60000);
-    return () => clearInterval(interval);
+
+    const pollingId = pollingCoordinator.register(
+      'SymbolList_PriceChanges',
+      fetchPriceChanges,
+      60000,
+      10 // Baja prioridad
+    );
+
+    return () => pollingCoordinator.unregister(pollingId);
   }, [fetchPriceChanges]);
 
   // Navegacion con teclado

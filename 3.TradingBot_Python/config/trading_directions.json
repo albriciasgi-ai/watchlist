@@ -18,7 +18,9 @@
     "ARBUSDT": "BOTH",
     "DOGEUSDT": "BOTH",
     "PAXGUSDT": "BOTH",
-    "SUIUSDT": "BOTH"
+    "SUIUSDT": "BOTH",
+    "ATOMUSDT": "DISABLED",
+    "RUNEUSDT": "DISABLED"
   },
-  "last_updated": "2026-01-29T20:45:34.125626"
+  "last_updated": "2026-01-29T21:45:47.630012"
 }

@@ -8,9 +8,13 @@ const CredentialsPanel = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [hasCredentials, setHasCredentials] = useState(false);
+  // Execution method setting
+  const [useIntegratedTpsl, setUseIntegratedTpsl] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   useEffect(() => {
     checkCredentials();
+    fetchBotSettings();
   }, []);
 
   const checkCredentials = async () => {
@@ -22,6 +26,44 @@ const CredentialsPanel = () => {
       }
     } catch (error) {
       console.error('Error checking credentials:', error);
+    }
+  };
+
+  const fetchBotSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const data = await response.json();
+        setUseIntegratedTpsl(data.use_integrated_tpsl || false);
+      }
+    } catch (error) {
+      console.error('Error fetching bot settings:', error);
+    }
+  };
+
+  const handleExecutionMethodChange = async (e) => {
+    const newValue = e.target.checked;
+    setSettingsLoading(true);
+    try {
+      const response = await fetch(`/api/settings/execution-method?use_integrated=${newValue}`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUseIntegratedTpsl(data.use_integrated_tpsl);
+        setMessage({
+          type: 'success',
+          text: `Execution method changed to: ${data.execution_method}`
+        });
+        setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      } else {
+        const error = await response.json();
+        setMessage({ type: 'error', text: error.detail || 'Failed to change execution method' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error: ' + error.message });
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -160,6 +202,41 @@ const CredentialsPanel = () => {
           <li>Enable IP restrictions on Bybit for added security</li>
           <li><strong>Demo vs Real:</strong> Demo uses separate API keys from your Bybit demo account</li>
         </ul>
+      </div>
+
+      {/* Execution Method Settings */}
+      <div className="settings-section" style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #334155' }}>
+        <div className="panel-header">
+          <h3>Execution Method</h3>
+        </div>
+
+        <div className="form-group">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={useIntegratedTpsl}
+              onChange={handleExecutionMethodChange}
+              disabled={settingsLoading}
+            />
+            <span className="checkbox-text">
+              Integrated TP/SL (1 API call)
+              <small style={{ display: 'block', marginTop: '4px', color: '#94a3b8' }}>
+                {useIntegratedTpsl
+                  ? '⚡ Fast mode: Market/Limit + TP + SL in single API call'
+                  : '🔒 Safe mode: 3 separate API calls (Market → SL → TP)'}
+              </small>
+            </span>
+          </label>
+        </div>
+
+        <div className="credentials-info" style={{ marginTop: '12px' }}>
+          <h4 style={{ marginBottom: '8px', fontSize: '14px' }}>Method Comparison:</h4>
+          <ul style={{ fontSize: '13px' }}>
+            <li><strong>Sequential (3 calls):</strong> More reliable, confirms each step before next</li>
+            <li><strong>Integrated (1 call):</strong> Faster execution, all orders sent together</li>
+            <li>Integrated also supports <strong>Limit orders</strong> with TP/SL</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

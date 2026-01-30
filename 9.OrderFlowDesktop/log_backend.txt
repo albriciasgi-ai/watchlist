@@ -1,0 +1,860 @@
+INFO:     Started server process [17736]
+INFO:     Waiting for application startup.
+2026-01-29 21:57:45 - alert_sender - WARNING - [WARN] Alert service returned status 404
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 21 symbols
+[STARTUP] Swing detector service started
+2026-01-29 21:57:57 - websocket_manager - WARNING - WebSocketManager already running
+[STARTUP] WebSocket Manager started - connected to Bybit
+[STARTUP] VWAP service started
+[STARTUP] Trade Aggregator initialized (interval=1)
+[STARTUP] Trade callback registered with WebSocket manager
+[STARTUP] Subscribed to trades for 21 symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Config cargada: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\config\orderflow_config.json
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Inicializado
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Iniciando con symbols=['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT'], intervals=['1', '5']
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para BTCUSDT_1
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para BTCUSDT_5
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para ETHUSDT_1
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para ETHUSDT_5
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para SOLUSDT_1
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para SOLUSDT_5
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para XRPUSDT_1
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para XRPUSDT_5
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para ADAUSDT_1
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para ADAUSDT_5
+2026-01-29 21:57:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para TRXUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para TRXUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para PAXGUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para PAXGUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para GALAUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para GALAUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para SUIUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para SUIUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 329 footprints historicos para TRBUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 299 footprints historicos para TRBUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para DOGEUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para DOGEUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para AAVEUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para AAVEUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para AVAXUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para AVAXUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para ARBUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para ARBUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para BNBUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para BNBUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para INJUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para INJUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 329 footprints historicos para KASUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para KASUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 329 footprints historicos para SHIB1000USDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para SHIB1000USDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 329 footprints historicos para TONUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para TONUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 330 footprints historicos para UNIUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 300 footprints historicos para UNIUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 329 footprints historicos para LPTUSDT_1
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 301 footprints historicos para LPTUSDT_5
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Total footprints cargados desde disco: 13216
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Reconstruccion de estimados DESACTIVADA - solo datos reales
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Suscrito a trades de ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-01-29 21:57:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Servicio iniciado correctamente
+[STARTUP] OrderFlow Service started - 21 symbols, intervals: ['1', '5']
+2026-01-29 21:58:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769741880000 | trades=85 | delta=-31925.0000 | poc=0
+2026-01-29 21:58:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769741880000 | trades=571 | delta=-32841.5000 | poc=0
+2026-01-29 21:58:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769741880000 | trades=175 | delta=3620.4000 | poc=0
+2026-01-29 21:58:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769741880000 | trades=176 | delta=-651.8000 | poc=0
+2026-01-29 21:58:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769741880000 | trades=533 | delta=-10.3560 | poc=21
+2026-01-29 21:58:57 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 21:58:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769741880000 | trades=157 | delta=-4221.8000 | poc=4
+2026-01-29 21:58:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769741880000 | trades=542 | delta=-42.4000 | poc=0
+2026-01-29 21:58:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769741880000 | trades=2221 | delta=-18.9170 | poc=3
+2026-01-29 21:58:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769741880000 | trades=116 | delta=-38.8100 | poc=1
+2026-01-29 21:58:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769741880000 | trades=1905 | delta=-379.6500 | poc=1
+2026-01-29 21:58:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769741880000 | trades=61 | delta=-349.4000 | poc=5
+2026-01-29 21:58:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769741880000 | trades=167 | delta=-280.1800 | poc=7
+2026-01-29 21:58:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769741880000 | trades=9 | delta=-1.7200 | poc=22
+2026-01-29 21:58:59 - footprint_calculator - WARNING - Max levels reached for candle 1.2818-1.2867 with step 0.0001
+2026-01-29 21:58:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769741880000 | trades=333 | delta=-21730.0000 | poc=49
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769741880000 | trades=41 | delta=31.9000 | poc=0
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769741880000 | trades=57 | delta=-568407.0000 | poc=0
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769741880000 | trades=56 | delta=-214310.0000 | poc=0
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769741880000 | trades=11 | delta=16.4000 | poc=0
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769741880000 | trades=282 | delta=-251647.0000 | poc=0
+2026-01-29 21:59:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769741880000 | trades=146 | delta=-16806.0000 | poc=0
+2026-01-29 21:59:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769741880000 | trades=18 | delta=-31460.0000 | poc=0
+2026-01-29 21:59:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769741940000 | trades=318 | delta=-612.4000 | poc=0
+2026-01-29 21:59:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769741700000 | trades=860 | delta=-654.8000 | poc=0
+2026-01-29 21:59:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769741940000 | trades=105 | delta=-27.9300 | poc=8
+2026-01-29 21:59:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769741700000 | trades=272 | delta=-308.1100 | poc=7
+2026-01-29 21:59:58 - swing_alerts - INFO - BLOCKED_HISTORICAL | ADAUSDT | SWING_HIGH | price=0.32 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 21:59:58 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 21:59:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769741940000 | trades=72 | delta=-67891.0000 | poc=0
+2026-01-29 21:59:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769741700000 | trades=218 | delta=-84697.0000 | poc=0
+2026-01-29 21:59:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769741940000 | trades=169 | delta=9730.0000 | poc=6
+2026-01-29 21:59:59 - swing_alerts - INFO - BLOCKED_HISTORICAL | AVAXUSDT | SWING_HIGH | price=10.90 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 21:59:59 - swing_alerts - INFO - BLOCKED_HISTORICAL | DOGEUSDT | SWING_HIGH | price=0.11 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 21:59:59 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 21:59:59 - footprint_calculator - WARNING - Max levels reached for candle 1.2818-1.2867 with step 0.0001
+2026-01-29 21:59:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769741700000 | trades=502 | delta=-12000.0000 | poc=49
+2026-01-29 21:59:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769741940000 | trades=62 | delta=1893.3000 | poc=6
+2026-01-29 22:00:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769741700000 | trades=219 | delta=-2328.5000 | poc=4
+2026-01-29 22:00:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769741940000 | trades=1571 | delta=34.1750 | poc=3
+2026-01-29 22:00:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | ARBUSDT | SWING_HIGH | price=0.15 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | SHIB1000USDT | SWING_HIGH | price=0.01 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:01 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769741700000 | trades=3792 | delta=15.2580 | poc=3
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769741940000 | trades=17 | delta=2480.0000 | poc=0
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769741700000 | trades=35 | delta=-28980.0000 | poc=0
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769741940000 | trades=48 | delta=-6.5600 | poc=0
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769741700000 | trades=164 | delta=-45.3700 | poc=1
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769741940000 | trades=62 | delta=-21305.0000 | poc=0
+2026-01-29 22:00:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769741700000 | trades=147 | delta=-53230.0000 | poc=0
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769741940000 | trades=370 | delta=0.1170 | poc=6
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769741700000 | trades=903 | delta=-10.2390 | poc=21
+2026-01-29 22:00:02 - swing_alerts - INFO - BLOCKED_HISTORICAL | LPTUSDT | SWING_HIGH | price=2.93 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:02 - swing_alerts - INFO - BLOCKED_HISTORICAL | INJUSDT | SWING_HIGH | price=4.02 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:02 - swing_alerts - INFO - BLOCKED_HISTORICAL | TONUSDT | SWING_HIGH | price=1.42 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:02 - swing_alerts - INFO - BLOCKED_HISTORICAL | TRBUSDT | SWING_HIGH | price=17.69 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769741940000 | trades=833 | delta=61.7100 | poc=2
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769741700000 | trades=2738 | delta=-317.9400 | poc=1
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769741940000 | trades=447 | delta=16718.1000 | poc=1
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769741700000 | trades=1018 | delta=-16123.4000 | poc=0
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769741940000 | trades=40 | delta=-297.6000 | poc=3
+2026-01-29 22:00:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769741700000 | trades=101 | delta=-647.0000 | poc=8
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769741940000 | trades=38 | delta=417880.0000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769741700000 | trades=95 | delta=-150527.0000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769741940000 | trades=105 | delta=-39749.0000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769741700000 | trades=387 | delta=-291396.0000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769741940000 | trades=303 | delta=619472.4000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769741700000 | trades=478 | delta=623092.8000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769741940000 | trades=39 | delta=298.0000 | poc=8
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769741700000 | trades=80 | delta=329.9000 | poc=12
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769741940000 | trades=146 | delta=62.5000 | poc=0
+2026-01-29 22:00:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769741700000 | trades=322 | delta=-589.3000 | poc=0
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769741940000 | trades=16 | delta=69.8000 | poc=3
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769741700000 | trades=27 | delta=86.2000 | poc=6
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769741940000 | trades=43 | delta=182660.0000 | poc=0
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769741700000 | trades=99 | delta=-31650.0000 | poc=0
+2026-01-29 22:00:04 - swing_alerts - INFO - BLOCKED_HISTORICAL | SOLUSDT | SWING_HIGH | price=113.75 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:04 - swing_alerts - INFO - BLOCKED_HISTORICAL | SUIUSDT | SWING_HIGH | price=1.28 | signal_ts=1769741100 | service_start=1769741865
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769741940000 | trades=11 | delta=-2.7200 | poc=7
+2026-01-29 22:00:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769741700000 | trades=20 | delta=-4.4400 | poc=18
+[STARTUP] Loaded 16895 footprints from Cloud Collector
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=session
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE EXPIRED] BTCUSDT 5 sr2_5_3_0.5_2_3.0_0.0 - 23719s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 30) @ 5
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+2026-01-29 22:00:33 - realtime_pattern_service - WARNING - [REALTIME] Cannot update intervals: service not running
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1769718000000 (~90 velas esperadas) @ 5
+[BTCUSDT] Historical: [OK] Devolviendo 81 velas (esperadas: 90)
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] BTCUSDT@5 - Guardado (1440 velas)
+[BTCUSDT] [SR2] Analizando 1440 velas
+[BTCUSDT] [SR2] Resultado: 1 R, 1 S
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 0s)
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 0s)
+2026-01-29 22:00:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742000000 | trades=2866 | delta=211.2900 | poc=4
+2026-01-29 22:00:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742000000 | trades=599 | delta=-1024043.0000 | poc=0
+2026-01-29 22:00:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742000000 | trades=2262 | delta=-12617.7000 | poc=1
+2026-01-29 22:00:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742000000 | trades=255 | delta=-690.0000 | poc=0
+2026-01-29 22:00:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742000000 | trades=143 | delta=5893.5000 | poc=20
+2026-01-29 22:00:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742000000 | trades=457 | delta=4.3800 | poc=15
+2026-01-29 22:00:58 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 22:01:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742000000 | trades=275 | delta=6.8700 | poc=23
+2026-01-29 22:01:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742000000 | trades=286 | delta=-31473.1000 | poc=0
+2026-01-29 22:01:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742000000 | trades=507 | delta=4210.0000 | poc=33
+2026-01-29 22:01:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742000000 | trades=102 | delta=-224648.0000 | poc=0
+2026-01-29 22:01:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742000000 | trades=98 | delta=-913800.0000 | poc=0
+2026-01-29 22:01:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742000000 | trades=899 | delta=-63307.0000 | poc=0
+2026-01-29 22:01:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742000000 | trades=102 | delta=-1842.1000 | poc=4
+2026-01-29 22:01:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742000000 | trades=3059 | delta=-36.3970 | poc=11
+2026-01-29 22:01:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742000000 | trades=187 | delta=5.3300 | poc=1
+2026-01-29 22:01:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742000000 | trades=23 | delta=-1840.0000 | poc=0
+2026-01-29 22:01:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742000000 | trades=30 | delta=736.8000 | poc=0
+2026-01-29 22:01:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742000000 | trades=202 | delta=-15386.0000 | poc=0
+2026-01-29 22:01:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742000000 | trades=391 | delta=11078.5000 | poc=18
+2026-01-29 22:01:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742000000 | trades=55 | delta=5418.0000 | poc=0
+2026-01-29 22:01:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742000000 | trades=11 | delta=1.0900 | poc=5
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 62s)
+2026-01-29 22:01:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742060000 | trades=676 | delta=8005.3000 | poc=0
+2026-01-29 22:01:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742060000 | trades=281 | delta=-5.5690 | poc=2
+2026-01-29 22:01:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742060000 | trades=3390 | delta=731.6900 | poc=7
+2026-01-29 22:01:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742060000 | trades=1740 | delta=19.0370 | poc=6
+2026-01-29 22:01:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742060000 | trades=1214 | delta=50404.0000 | poc=1
+2026-01-29 22:01:58 - footprint_calculator - WARNING - Max levels reached for candle 1.2819-1.2895 with step 0.0001
+2026-01-29 22:01:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742060000 | trades=1398 | delta=124770.0000 | poc=49
+2026-01-29 22:01:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742060000 | trades=19 | delta=13510.0000 | poc=0
+2026-01-29 22:01:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742060000 | trades=212 | delta=20109.0000 | poc=0
+2026-01-29 22:01:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742060000 | trades=216 | delta=163.1000 | poc=0
+2026-01-29 22:02:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742060000 | trades=121 | delta=1015.2000 | poc=15
+2026-01-29 22:02:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742060000 | trades=57 | delta=364.5000 | poc=11
+2026-01-29 22:02:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742060000 | trades=193 | delta=0.3600 | poc=2
+2026-01-29 22:02:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742060000 | trades=848 | delta=5467.7000 | poc=0
+2026-01-29 22:02:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742060000 | trades=113 | delta=10.0900 | poc=0
+2026-01-29 22:02:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742060000 | trades=14 | delta=147.4000 | poc=0
+2026-01-29 22:02:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742060000 | trades=25 | delta=4072.0000 | poc=0
+2026-01-29 22:02:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742060000 | trades=78 | delta=442520.0000 | poc=0
+2026-01-29 22:02:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742060000 | trades=174 | delta=77203.0000 | poc=0
+2026-01-29 22:02:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742060000 | trades=85 | delta=-64620.0000 | poc=0
+2026-01-29 22:02:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742060000 | trades=27 | delta=4.5100 | poc=12
+2026-01-29 22:02:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742060000 | trades=73 | delta=200.5000 | poc=3
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 122s)
+2026-01-29 22:02:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742120000 | trades=1785 | delta=6.8400 | poc=2
+2026-01-29 22:02:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742120000 | trades=120 | delta=6220.0000 | poc=1
+2026-01-29 22:02:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742120000 | trades=9 | delta=-4.2200 | poc=25
+2026-01-29 22:02:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742120000 | trades=482 | delta=-2.8610 | poc=4
+2026-01-29 22:02:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742120000 | trades=2359 | delta=3.6960 | poc=5
+2026-01-29 22:02:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742120000 | trades=496 | delta=414.6000 | poc=0
+2026-01-29 22:02:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742120000 | trades=150 | delta=16.6800 | poc=1
+2026-01-29 22:02:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742120000 | trades=321 | delta=242.2000 | poc=25
+2026-01-29 22:03:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742120000 | trades=202 | delta=22292.5000 | poc=0
+2026-01-29 22:03:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742120000 | trades=10 | delta=1385.0000 | poc=0
+2026-01-29 22:03:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742120000 | trades=321 | delta=20430.0000 | poc=3
+2026-01-29 22:03:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742120000 | trades=879 | delta=83324.3000 | poc=0
+2026-01-29 22:03:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742120000 | trades=506 | delta=529953.0000 | poc=0
+2026-01-29 22:03:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742120000 | trades=221 | delta=601.7000 | poc=0
+2026-01-29 22:03:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742120000 | trades=95 | delta=-283263.0000 | poc=0
+2026-01-29 22:03:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742120000 | trades=33 | delta=1007.6000 | poc=15
+2026-01-29 22:03:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742120000 | trades=57 | delta=251.2000 | poc=12
+2026-01-29 22:03:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742120000 | trades=9 | delta=5020.0000 | poc=0
+2026-01-29 22:03:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742120000 | trades=52 | delta=545500.0000 | poc=0
+2026-01-29 22:03:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742120000 | trades=84 | delta=1428.3000 | poc=16
+2026-01-29 22:03:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742120000 | trades=32 | delta=598.9000 | poc=26
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 183s)
+2026-01-29 22:03:57 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742180000 | trades=464 | delta=17940.0000 | poc=16
+2026-01-29 22:03:58 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 22:03:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742180000 | trades=67 | delta=335390.0000 | poc=0
+2026-01-29 22:03:58 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742180000 | trades=193 | delta=819.1000 | poc=0
+2026-01-29 22:03:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742180000 | trades=3617 | delta=30.0490 | poc=6
+2026-01-29 22:03:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742180000 | trades=805 | delta=43578.9000 | poc=0
+2026-01-29 22:03:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742180000 | trades=161 | delta=30606.3000 | poc=0
+2026-01-29 22:03:59 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742180000 | trades=759 | delta=2655.6000 | poc=0
+2026-01-29 22:04:00 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742180000 | trades=241 | delta=42.5000 | poc=9
+2026-01-29 22:04:01 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 22:04:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742180000 | trades=19 | delta=3890.0000 | poc=0
+2026-01-29 22:04:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742180000 | trades=164 | delta=3.0600 | poc=1
+2026-01-29 22:04:01 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742180000 | trades=397 | delta=413395.0000 | poc=0
+2026-01-29 22:04:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742180000 | trades=40 | delta=410.2000 | poc=10
+2026-01-29 22:04:02 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742180000 | trades=90 | delta=91.6000 | poc=2
+2026-01-29 22:04:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742180000 | trades=2134 | delta=-322.3500 | poc=1
+2026-01-29 22:04:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742180000 | trades=137 | delta=38992.0000 | poc=0
+2026-01-29 22:04:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742180000 | trades=533 | delta=3.4080 | poc=0
+2026-01-29 22:04:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742180000 | trades=55 | delta=-8891.0000 | poc=0
+2026-01-29 22:04:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742180000 | trades=80 | delta=333.5000 | poc=2
+2026-01-29 22:04:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742180000 | trades=109 | delta=740277.0000 | poc=0
+2026-01-29 22:04:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742180000 | trades=65 | delta=139.1800 | poc=20
+2026-01-29 22:04:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742180000 | trades=12 | delta=-55.7000 | poc=3
+[ADAUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 30) @ 5
+[ADAUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] ADAUSDT@5 - Guardado (1440 velas)
+[BTCUSDT] [SR2] interval=5, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 5 SR2 desde cache (age: 242s)
+2026-01-29 22:05:11 - realtime_pattern_service - WARNING - [REALTIME] Cannot update intervals: service not running
+2026-01-29 22:05:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742240000 | trades=269 | delta=338.4000 | poc=0
+2026-01-29 22:05:11 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742000000 | trades=1154 | delta=1232.3000 | poc=0
+2026-01-29 22:05:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742240000 | trades=1771 | delta=2.3480 | poc=2
+2026-01-29 22:05:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742000000 | trades=12546 | delta=18.7330 | poc=16
+2026-01-29 22:05:12 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742240000 | trades=988 | delta=359258.0000 | poc=0
+2026-01-29 22:05:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742000000 | trades=3704 | delta=328967.0000 | poc=1
+2026-01-29 22:05:13 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742240000 | trades=366 | delta=4.2220 | poc=5
+2026-01-29 22:05:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742000000 | trades=2119 | delta=3.5800 | poc=18
+2026-01-29 22:05:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742240000 | trades=667 | delta=3984.1000 | poc=0
+2026-01-29 22:05:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742000000 | trades=5032 | delta=-95.7000 | poc=1
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742240000 | trades=2357 | delta=394.2700 | poc=8
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742000000 | trades=12532 | delta=1021.7400 | poc=7
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742240000 | trades=54 | delta=-16245.0000 | poc=0
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742000000 | trades=199 | delta=-14261.0000 | poc=0
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742240000 | trades=173 | delta=-3.6500 | poc=1
+2026-01-29 22:05:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742000000 | trades=787 | delta=31.5100 | poc=1
+2026-01-29 22:05:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742240000 | trades=620 | delta=28790.0000 | poc=27
+2026-01-29 22:05:16 - footprint_calculator - WARNING - Max levels reached for candle 1.2808-1.2919 with step 0.0001
+2026-01-29 22:05:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742000000 | trades=3310 | delta=196140.0000 | poc=49
+2026-01-29 22:05:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742240000 | trades=229 | delta=-7894.9000 | poc=0
+2026-01-29 22:05:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742000000 | trades=1090 | delta=33639.8000 | poc=0
+2026-01-29 22:05:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742240000 | trades=188 | delta=19.3200 | poc=20
+2026-01-29 22:05:17 - footprint_calculator - WARNING - Max levels reached for candle 141.92-142.73 with step 0.014
+2026-01-29 22:05:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742000000 | trades=1218 | delta=311.2500 | poc=49
+2026-01-29 22:05:18 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742240000 | trades=61 | delta=-55.5000 | poc=8
+2026-01-29 22:05:18 - footprint_calculator - WARNING - Max levels reached for candle 3.998-4.02 with step 0.0004
+2026-01-29 22:05:18 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742000000 | trades=334 | delta=7620.3000 | poc=20
+2026-01-29 22:05:19 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742240000 | trades=17 | delta=-22.6700 | poc=2
+2026-01-29 22:05:19 - footprint_calculator - WARNING - Max levels reached for candle 17.709-17.819 with step 0.0018
+2026-01-29 22:05:19 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742000000 | trades=129 | delta=117.8900 | poc=49
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742240000 | trades=92 | delta=3.6000 | poc=22
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742000000 | trades=751 | delta=12440.1000 | poc=15
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742240000 | trades=771 | delta=1236.2000 | poc=0
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742000000 | trades=4030 | delta=72837.7000 | poc=0
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742240000 | trades=97 | delta=400340.0000 | poc=0
+2026-01-29 22:05:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742000000 | trades=399 | delta=302810.0000 | poc=0
+2026-01-29 22:05:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742240000 | trades=95 | delta=465668.0000 | poc=0
+2026-01-29 22:05:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742000000 | trades=479 | delta=1140554.0000 | poc=0
+2026-01-29 22:05:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742240000 | trades=64 | delta=460.2000 | poc=9
+2026-01-29 22:05:21 - footprint_calculator - WARNING - Max levels reached for candle 1.4169-1.4237 with step 0.0001
+2026-01-29 22:05:22 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742000000 | trades=403 | delta=580.4000 | poc=49
+2026-01-29 22:05:22 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Pocos footprints para BTCUSDT_1 (337/1440), intentando cargar del Cloud Collector...
+2026-01-29 22:05:32 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Agregados 1102 footprints del Cloud para BTCUSDT_1
+2026-01-29 22:05:34 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742240000 | trades=145 | delta=20684.0000 | poc=0
+2026-01-29 22:05:34 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742000000 | trades=778 | delta=127713.0000 | poc=1
+2026-01-29 22:05:34 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742240000 | trades=23 | delta=113.4000 | poc=3
+2026-01-29 22:05:34 - footprint_calculator - WARNING - Max levels reached for candle 2.919-2.939 with step 0.0003
+2026-01-29 22:05:35 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742000000 | trades=111 | delta=1540.8000 | poc=0
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE EXPIRED] BTCUSDT 1 sr2_1_3_0.5_2_3.0_0.0 - 24788s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[BTCUSDT] [SR2] interval=1, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[VWAP] BTCUSDT: Reloading - interval=1, days=5, vwapType=session
+2026-01-29 22:05:37 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742240000 | trades=23 | delta=-5500.0000 | poc=0
+2026-01-29 22:05:37 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742000000 | trades=93 | delta=15080.0000 | poc=0
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:25 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] ETHUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] SOLUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] XRPUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] ADAUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] TRXUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] PAXGUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] GALAUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] SUIUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] DOGEUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] TRBUSDT: Not enough historical candles (0)
+2026-01-29 22:06:26 - swing_service - WARNING - [SWING_SERVICE] BNBUSDT: Not enough historical candles (0)
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742300000 | trades=1695 | delta=-2.3250 | poc=3
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742300000 | trades=167 | delta=35132.1000 | poc=0
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742300000 | trades=328 | delta=853.7000 | poc=0
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742300000 | trades=79 | delta=270763.0000 | poc=0
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742300000 | trades=188 | delta=656.4000 | poc=0
+2026-01-29 22:06:27 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742300000 | trades=250 | delta=429.0000 | poc=0
+2026-01-29 22:06:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742300000 | trades=220 | delta=93.7400 | poc=10
+2026-01-29 22:06:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742300000 | trades=392 | delta=20750.0000 | poc=15
+2026-01-29 22:06:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742300000 | trades=51 | delta=447.3000 | poc=3
+2026-01-29 22:06:29 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742300000 | trades=1349 | delta=541.6900 | poc=2
+[ERROR BTCUSDT]
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 377, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\main.py", line 474, in get_historical
+    r = await client.get(url)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1814, in get
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1585, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1674, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1702, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1739, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1776, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 376, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+[ERROR BTCUSDT]
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 377, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\main.py", line 474, in get_historical
+    r = await client.get(url)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1814, in get
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1585, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1674, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1702, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1739, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1776, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 376, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:30 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+[ERROR BTCUSDT]
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 377, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\main.py", line 474, in get_historical
+    r = await client.get(url)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1814, in get
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1585, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1674, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1702, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1739, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1776, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 376, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE EXPIRED] BTCUSDT 1 sr2_1_3_0.5_2_3.0_0.0 - 24844s old
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[BTCUSDT] [SR2] interval=1, days=5, swing_bars=3, min_touches=2, min_vol_z=0.0
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=5, aplicando límite -> days_to_fetch=5 (máx: 5) @ 1
+[VWAP] BTCUSDT: Reloading - interval=1, days=5, vwapType=session
+[ETHUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 5) @ 1
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=session
+2026-01-29 22:06:36 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta: status=400
+2026-01-29 22:06:37 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742300000 | trades=3 | delta=3910.0000 | poc=0
+2026-01-29 22:06:37 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742300000 | trades=18 | delta=46.6000 | poc=20
+2026-01-29 22:06:37 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742300000 | trades=790 | delta=-18052.0000 | poc=1
+2026-01-29 22:06:38 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742300000 | trades=733 | delta=-7.1650 | poc=5
+2026-01-29 22:06:38 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742300000 | trades=29 | delta=-155.0000 | poc=0
+2026-01-29 22:06:38 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742300000 | trades=114 | delta=11833.0000 | poc=0
+2026-01-29 22:06:39 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742300000 | trades=10 | delta=-3.0500 | poc=2
+2026-01-29 22:06:39 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742300000 | trades=96 | delta=6.3400 | poc=1
+2026-01-29 22:06:40 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742300000 | trades=60 | delta=1405.3000 | poc=3
+2026-01-29 22:06:40 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742300000 | trades=84 | delta=2119490.0000 | poc=0
+2026-01-29 22:06:40 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742300000 | trades=36 | delta=677.0000 | poc=13
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] BTCUSDT@1 - Guardado (1440 velas)
+[BTCUSDT] [SR2] Analizando 1440 velas
+[BTCUSDT] [SR2] Resultado: 2 R, 2 S
+[ETHUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[CACHE] ETHUSDT@1 - Guardado (1440 velas)
+2026-01-29 22:06:56 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch:
+2026-01-29 22:06:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742360000 | trades=280 | delta=-1249.0000 | poc=0
+2026-01-29 22:06:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742360000 | trades=526 | delta=-7.9030 | poc=5
+2026-01-29 22:06:56 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742360000 | trades=4420 | delta=-138.1560 | poc=4
+2026-01-29 22:07:03 - orderflow_service - WARNING - [ORDERFLOW_SERVICE] Error enviando alerta:
+2026-01-29 22:07:03 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742360000 | trades=942 | delta=-40197.6000 | poc=0
+2026-01-29 22:07:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742360000 | trades=1829 | delta=-374.5300 | poc=2
+2026-01-29 22:07:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742360000 | trades=203 | delta=-110837.9000 | poc=0
+2026-01-29 22:07:04 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742360000 | trades=517 | delta=1720.0000 | poc=17
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742360000 | trades=662 | delta=-2196.8000 | poc=0
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742360000 | trades=51 | delta=-14644.0000 | poc=0
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742360000 | trades=57 | delta=-1844.5000 | poc=8
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742360000 | trades=278 | delta=-189.4900 | poc=9
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742360000 | trades=124 | delta=12.6500 | poc=0
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742360000 | trades=158 | delta=-27111.0000 | poc=0
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742360000 | trades=85 | delta=-1938.0000 | poc=14
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742360000 | trades=370 | delta=-581480.0000 | poc=0
+2026-01-29 22:07:05 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742360000 | trades=22 | delta=-17.1800 | poc=7
+2026-01-29 22:07:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742360000 | trades=100 | delta=-804523.0000 | poc=0
+2026-01-29 22:07:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742360000 | trades=69 | delta=-1835.1000 | poc=4
+2026-01-29 22:07:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742360000 | trades=80 | delta=-1039160.0000 | poc=0
+2026-01-29 22:07:06 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742360000 | trades=16 | delta=73.9000 | poc=0
+[BTCUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+[CACHE] BTCUSDT@1 - Guardado (7200 velas)
+[BTCUSDT] [SR2] Analizando 7200 velas
+[BTCUSDT] [SR2] Resultado: 2 R, 2 S
+[BTCUSDT] Historical: [OK] Devolviendo 7200 velas (esperadas: 7200)
+[CACHE] BTCUSDT@1 - Guardado (7200 velas)
+[SWING] Symbol config updated for BTCUSDT - Re-analyzing...
+[BTCUSDT] [SR2] interval=1, days=1, swing_bars=3, min_touches=2, min_vol_z=0.0
+[CACHE HIT] [OK] BTCUSDT 1 SR2 desde cache (age: 27s)
+2026-01-29 22:07:28 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742360000 | trades=25 | delta=-63180.0000 | poc=0
+2026-01-29 22:08:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ETHUSDT | time=1769742420000 | trades=917 | delta=45.9900 | poc=0
+2026-01-29 22:08:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: XRPUSDT | time=1769742420000 | trades=390 | delta=17194.2000 | poc=0
+2026-01-29 22:08:14 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BTCUSDT | time=1769742420000 | trades=1110 | delta=-1.8670 | poc=1
+2026-01-29 22:08:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: BNBUSDT | time=1769742420000 | trades=118 | delta=-346.9100 | poc=1
+2026-01-29 22:08:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: PAXGUSDT | time=1769742420000 | trades=280 | delta=4.3580 | poc=15
+2026-01-29 22:08:15 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: DOGEUSDT | time=1769742420000 | trades=146 | delta=116143.0000 | poc=0
+2026-01-29 22:08:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AVAXUSDT | time=1769742420000 | trades=189 | delta=720.0000 | poc=0
+2026-01-29 22:08:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SOLUSDT | time=1769742420000 | trades=1319 | delta=-27371.2000 | poc=0
+2026-01-29 22:08:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRXUSDT | time=1769742420000 | trades=8 | delta=-41.0000 | poc=0
+2026-01-29 22:08:16 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: AAVEUSDT | time=1769742420000 | trades=77 | delta=2.7300 | poc=0
+2026-01-29 22:08:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: UNIUSDT | time=1769742420000 | trades=27 | delta=-183.7000 | poc=0
+2026-01-29 22:08:17 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SHIB1000USDT | time=1769742420000 | trades=63 | delta=-216640.0000 | poc=0
+2026-01-29 22:08:18 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: SUIUSDT | time=1769742420000 | trades=463 | delta=-120210.0000 | poc=14
+2026-01-29 22:08:18 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ADAUSDT | time=1769742420000 | trades=66 | delta=4499.0000 | poc=0
+2026-01-29 22:08:18 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: GALAUSDT | time=1769742420000 | trades=80 | delta=-64466.0000 | poc=0
+2026-01-29 22:08:19 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TRBUSDT | time=1769742420000 | trades=2 | delta=0.9200 | poc=0
+2026-01-29 22:08:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: TONUSDT | time=1769742420000 | trades=40 | delta=-581.6000 | poc=6
+2026-01-29 22:08:20 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: ARBUSDT | time=1769742420000 | trades=97 | delta=7556.1000 | poc=0
+2026-01-29 22:08:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: INJUSDT | time=1769742420000 | trades=45 | delta=-449.6000 | poc=9
+2026-01-29 22:08:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: LPTUSDT | time=1769742420000 | trades=11 | delta=4.6000 | poc=3
+2026-01-29 22:08:21 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Footprint completado: KASUSDT | time=1769742420000 | trades=4 | delta=-3990.0000 | poc=0

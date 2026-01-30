@@ -518,6 +518,149 @@ class OrderManager:
                     result["success"] = False
                 return result
 
+    async def execute_integrated_sequence(
+        self,
+        symbol: str,
+        side: str,
+        quantity: Decimal,
+        config: Dict[str, Any],
+        order_type: str = "Market",
+        limit_price: Optional[Decimal] = None
+    ) -> Dict[str, Any]:
+        """
+        Execute trading with integrated TP/SL in a single API call.
+        Much faster than execute_complete_sequence (1 call vs 3).
+
+        Args:
+            symbol: Trading pair
+            side: "Buy" or "Sell"
+            quantity: Quantity to trade
+            config: Coin configuration with SL%, TP%, TickSize, etc.
+            order_type: "Market" or "Limit"
+            limit_price: Required if order_type is "Limit"
+
+        Returns:
+            Dict with execution results
+        """
+        symbol_lock = self._get_symbol_lock(symbol)
+
+        async with symbol_lock:
+            sequence_start = time.monotonic()
+            self._total_executions += 1
+
+            order_type_display = order_type.upper()
+            print(f"\n{'='*60}")
+            print(f"[EXECUTE-INTEGRATED] {order_type_display} + TP/SL: {side} {symbol}")
+            print(f"{'='*60}")
+
+            result = {
+                "symbol": symbol,
+                "side": side,
+                "order_type": order_type,
+                "integrated_order": None,
+                "success": False,
+                "timing": {},
+                "method": "integrated"
+            }
+
+            try:
+                # Step 1: Format quantity
+                step_size = self._get_step_size(symbol)
+                adjusted_qty = self._adjust_to_step_size(quantity, step_size)
+                formatted_qty = self._format_quantity(adjusted_qty, step_size)
+
+                print(f"[QTY] Quantity: {quantity} -> {adjusted_qty} -> '{formatted_qty}' (step={step_size})")
+
+                # Step 2: Calculate prices
+                tick_size = Decimal(str(config.get("tick_size", "0.01")))
+
+                # Determine entry price for TP/SL calculation
+                if order_type.upper() == "LIMIT" and limit_price:
+                    entry_price = limit_price
+                    formatted_limit = self._format_price(
+                        self._adjust_price_to_tick_size(entry_price, tick_size),
+                        tick_size
+                    )
+                    print(f"[LIMIT] Entry Price: ${formatted_limit}")
+                else:
+                    # For market orders, use current price from config
+                    entry_price = Decimal(str(config.get("current_price", 0)))
+                    formatted_limit = None
+                    print(f"[MARKET] Using alert price for TP/SL calc: ${entry_price}")
+
+                if entry_price == 0:
+                    print(f"[ERROR] No valid price for TP/SL calculation")
+                    return result
+
+                # Calculate SL price
+                if config.get("custom_stop_loss"):
+                    sl_price = Decimal(str(config["custom_stop_loss"]))
+                    sl_source = "custom"
+                else:
+                    sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
+                    sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
+                    sl_source = f"{sl_percent*100:.1f}%"
+
+                # Calculate TP price
+                if config.get("custom_take_profit"):
+                    tp_price = Decimal(str(config["custom_take_profit"]))
+                    tp_source = "custom"
+                else:
+                    tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
+                    tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
+                    tp_source = f"{tp_percent*100:.1f}%"
+
+                sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
+                tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
+
+                formatted_sl = self._format_price(sl_price, tick_size)
+                formatted_tp = self._format_price(tp_price, tick_size)
+
+                print(f"[SL] Stop Loss: ${formatted_sl} ({sl_source})")
+                print(f"[TP] Take Profit: ${formatted_tp} ({tp_source})")
+
+                # Step 3: Execute single integrated order
+                order_start = time.monotonic()
+                order_result = await self.client.place_order_with_tpsl(
+                    symbol=symbol,
+                    side=side,
+                    qty=formatted_qty,
+                    order_type=order_type,
+                    limit_price=formatted_limit,
+                    take_profit=formatted_tp,
+                    stop_loss=formatted_sl,
+                    category=config.get("category", "linear")
+                )
+                result["timing"]["order_ms"] = (time.monotonic() - order_start) * 1000
+
+                result["integrated_order"] = order_result
+                result["success"] = order_result.get("retCode") == 0
+
+                if result["success"]:
+                    self._successful_executions += 1
+
+                # Calculate total time
+                total_time_ms = (time.monotonic() - sequence_start) * 1000
+                result["timing"]["total_ms"] = total_time_ms
+
+                print(f"\n{'='*60}")
+                if result["success"]:
+                    print(f"[SUCCESS] Integrated order completed in {total_time_ms:.0f}ms")
+                    print(f"   Single API call: {result['timing'].get('order_ms', 0):.0f}ms")
+                else:
+                    error_msg = order_result.get("retMsg", "Unknown error")
+                    print(f"[FAILED] Integrated order failed: {error_msg}")
+                print(f"{'='*60}\n")
+
+                return result
+
+            except Exception as e:
+                print(f"[ERROR] Critical error in integrated sequence: {e}")
+                import traceback
+                traceback.print_exc()
+                result["error"] = str(e)
+                return result
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get order manager statistics"""
         success_rate = (

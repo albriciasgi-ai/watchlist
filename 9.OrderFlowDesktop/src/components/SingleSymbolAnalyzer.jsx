@@ -22,6 +22,7 @@ import PresetManager from "../utils/PresetManager";
 import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
 import { initRobustness, stopRobustness } from '../utils/robustness';
+import pollingCoordinator from '../utils/PollingCoordinator';
 import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
 
@@ -198,10 +199,16 @@ const SingleSymbolAnalyzer = () => {
   // Ref para el chart key (forzar remount al cambiar simbolo)
   const chartKeyRef = useRef(0);
 
-  // Inicializar utilidades de robustez
+  // Inicializar utilidades de robustez y PollingCoordinator
   useEffect(() => {
     initRobustness();
-    return () => stopRobustness();
+    pollingCoordinator.start();
+    log.info('[PollingCoordinator] Started');
+
+    return () => {
+      stopRobustness();
+      pollingCoordinator.stop();
+    };
   }, []);
 
   // Guardar preferencias en localStorage
@@ -227,19 +234,30 @@ const SingleSymbolAnalyzer = () => {
     localStorage.setItem('analyzer_indicators', JSON.stringify(indicatorStates));
   }, [indicatorStates]);
 
-  // Ajustar dias al cambiar timeframe
-  useEffect(() => {
-    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[interval];
-    const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
+  // ✅ FIX: Handler unificado para cambiar interval Y days al mismo tiempo
+  // Evita doble render en MiniChart que causaba carga lenta (5+ minutos)
+  const handleIntervalChange = useCallback((newInterval) => {
+    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[newInterval];
+    const maxDays = MAX_DAYS_BY_INTERVAL[newInterval] || 30;
     const currentDays = parseInt(days);
 
+    // Calcular nuevos dias
+    let newDays;
     if (defaultDays) {
-      setDays(defaultDays.toString());
-      log.debug(`Dias ajustados a ${defaultDays} para timeframe ${interval}`);
+      newDays = defaultDays.toString();
     } else if (currentDays > maxDays) {
-      setDays(maxDays.toString());
+      newDays = maxDays.toString();
+    } else {
+      newDays = days; // Mantener el valor actual si es valido
     }
-  }, [interval]);
+
+    log.debug(`Cambiando timeframe: ${interval} -> ${newInterval}, dias: ${days} -> ${newDays}`);
+
+    // ✅ CRITICO: Cambiar ambos valores en un solo batch de React
+    // Esto evita que MiniChart useEffect se ejecute 2 veces
+    setInterval(newInterval);
+    setDays(newDays);
+  }, [interval, days]);
 
   // Cambiar intervalo en WebSocket manager
   useEffect(() => {
@@ -671,7 +689,7 @@ const SingleSymbolAnalyzer = () => {
         <div className="controls">
           <label>
             Timeframe:
-            <select value={interval} onChange={(e) => setInterval(e.target.value)}>
+            <select value={interval} onChange={(e) => handleIntervalChange(e.target.value)}>
               <option value="1">1m</option>
               <option value="5">5m</option>
               <option value="15">15m</option>

@@ -6,6 +6,7 @@ import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 import Logger from '../../utils/Logger.js';
 import IndicatorCache from '../../utils/IndicatorCache.js';
+import pollingCoordinator from '../../utils/PollingCoordinator.js';
 
 const log = new Logger('VWAP', { level: 'info' });
 
@@ -46,7 +47,7 @@ class VWAPIndicator extends IndicatorBase {
 
     // Lifecycle flag to prevent fetch after destroy
     this._destroyed = false;
-    this._pollingInterval = null;
+    this._pollingId = null; // ✅ OPTIMIZADO: Usa PollingCoordinator en lugar de setInterval
 
     log.info(`[${symbol}] VWAPIndicator initialized (backend native, type=${this.vwapType})`);
   }
@@ -58,28 +59,30 @@ class VWAPIndicator extends IndicatorBase {
     log.debug(`[${this.symbol}] VWAPIndicator destroyed`);
   }
 
+  // ✅ OPTIMIZADO: Usa PollingCoordinator centralizado (ahorra ~30MB/24h)
   _startPolling() {
-    // Clear any existing interval
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-    }
+    if (this._pollingId) return; // Ya registrado
 
-    // Poll at configured interval
-    this._pollingInterval = setInterval(async () => {
-      if (this.enabled && !this._destroyed) {
-        // Polling siempre fuerza fetch del backend (ignora cache)
-        const updated = await this.fetchData(true);
-        // Disparar redraw si hay datos nuevos y tenemos referencia al manager
-        if (updated) {
-          if (this.indicatorManager?.requestRedraw) {
-            this.indicatorManager.requestRedraw();
-            log.info(`[${this.symbol}] VWAP requestRedraw() called after polling`);
-          } else {
-            log.warn(`[${this.symbol}] VWAP polling: no indicatorManager.requestRedraw available`);
+    this._pollingId = pollingCoordinator.register(
+      `VWAP_${this.symbol}`,
+      async () => {
+        if (this.enabled && !this._destroyed) {
+          // Polling siempre fuerza fetch del backend (ignora cache)
+          const updated = await this.fetchData(true);
+          // Disparar redraw si hay datos nuevos y tenemos referencia al manager
+          if (updated) {
+            if (this.indicatorManager?.requestRedraw) {
+              this.indicatorManager.requestRedraw();
+              log.info(`[${this.symbol}] VWAP requestRedraw() called after polling`);
+            } else {
+              log.warn(`[${this.symbol}] VWAP polling: no indicatorManager.requestRedraw available`);
+            }
           }
         }
-      }
-    }, this.fetchIntervalMs);
+      },
+      this.fetchIntervalMs,
+      2 // Alta prioridad (VWAP es importante)
+    );
 
     log.info(`[${this.symbol}] VWAP polling started (interval: ${this.fetchIntervalMs}ms)`);
   }
@@ -88,8 +91,8 @@ class VWAPIndicator extends IndicatorBase {
    * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
    */
   startPollingIfReady() {
-    log.info(`[${this.symbol}] VWAP startPollingIfReady: interval=${!!this._pollingInterval}, enabled=${this.enabled}, destroyed=${this._destroyed}`);
-    if (!this._pollingInterval && this.enabled && !this._destroyed) {
+    log.info(`[${this.symbol}] VWAP startPollingIfReady: pollingId=${!!this._pollingId}, enabled=${this.enabled}, destroyed=${this._destroyed}`);
+    if (!this._pollingId && this.enabled && !this._destroyed) {
       this._startPolling();
     }
   }
@@ -98,9 +101,9 @@ class VWAPIndicator extends IndicatorBase {
    * 🛑 Detiene el polling (llamado cuando el chart no es visible)
    */
   stopPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
+    if (this._pollingId) {
+      pollingCoordinator.unregister(this._pollingId);
+      this._pollingId = null;
       log.info(`[${this.symbol}] VWAP polling stopped`);
     }
   }

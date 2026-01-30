@@ -3,6 +3,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import IndicatorCache from '../../utils/IndicatorCache.js';
+import pollingCoordinator from '../../utils/PollingCoordinator.js';
 
 /**
  * SwingDetectorIndicator - Simple swing high/low visualization
@@ -27,7 +28,9 @@ class SwingDetectorIndicator extends IndicatorBase {
     this.statusFetchIntervalMs = 60000; // Poll status/zones every 60 seconds (was 10s)
     this.isFetchingSignals = false; // Prevent concurrent fetches
     this.isFetchingStatus = false;
-    this._pollingInterval = null; // For proper cleanup
+    // ✅ OPTIMIZADO: Usa PollingCoordinator en lugar de setInterval
+    this._pollingId = null;
+    this._statusPollingId = null;
 
     // Colors
     this.colors = {
@@ -142,29 +145,37 @@ class SwingDetectorIndicator extends IndicatorBase {
     }
   }
 
+  // ✅ OPTIMIZADO: Usa PollingCoordinator centralizado (ahorra ~30MB/24h)
   _startPolling() {
-    // Clear any existing interval
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-    }
+    if (this._pollingId) return; // Ya registrado
 
     // Poll signals at configured interval
-    this._pollingInterval = setInterval(async () => {
-      if (this.enabled && this.config.enabled) {
-        const updated = await this.fetchSignals();
-        // Disparar redraw si hay datos nuevos y tenemos referencia al manager
-        if (updated && this.indicatorManager?.requestRedraw) {
-          this.indicatorManager.requestRedraw();
+    this._pollingId = pollingCoordinator.register(
+      `SwingDetector_Signals_${this.symbol}`,
+      async () => {
+        if (this.enabled && this.config.enabled) {
+          const updated = await this.fetchSignals();
+          // Disparar redraw si hay datos nuevos y tenemos referencia al manager
+          if (updated && this.indicatorManager?.requestRedraw) {
+            this.indicatorManager.requestRedraw();
+          }
         }
-      }
-    }, this.fetchIntervalMs);
+      },
+      this.fetchIntervalMs,
+      3 // Media prioridad
+    );
 
     // Poll status less frequently
-    this._statusPollingInterval = setInterval(() => {
-      if (this.enabled && this.config.enabled) {
-        this.fetchStatus();
-      }
-    }, this.statusFetchIntervalMs);
+    this._statusPollingId = pollingCoordinator.register(
+      `SwingDetector_Status_${this.symbol}`,
+      () => {
+        if (this.enabled && this.config.enabled) {
+          this.fetchStatus();
+        }
+      },
+      this.statusFetchIntervalMs,
+      8 // Baja prioridad (status no es critico)
+    );
 
     console.log(`[${this.symbol}] SwingDetector polling started (signals: ${this.fetchIntervalMs}ms, status: ${this.statusFetchIntervalMs}ms)`);
   }
@@ -173,14 +184,14 @@ class SwingDetectorIndicator extends IndicatorBase {
    * 🛑 Detiene el polling (llamado cuando el chart no es visible)
    */
   stopPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
+    if (this._pollingId) {
+      pollingCoordinator.unregister(this._pollingId);
+      this._pollingId = null;
       console.log(`[${this.symbol}] SwingDetector signal polling stopped`);
     }
-    if (this._statusPollingInterval) {
-      clearInterval(this._statusPollingInterval);
-      this._statusPollingInterval = null;
+    if (this._statusPollingId) {
+      pollingCoordinator.unregister(this._statusPollingId);
+      this._statusPollingId = null;
       console.log(`[${this.symbol}] SwingDetector status polling stopped`);
     }
   }

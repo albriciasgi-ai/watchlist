@@ -239,12 +239,14 @@ class CandleCache {
     const actualCandles = cached.candles.length;
     const ratio = actualCandles / expectedCandles;
 
-    // Si el cache tiene menos del 70% de lo esperado, es corrupto
+    // ✅ FIX: Si el cache tiene pocas velas pero es valido (sin gaps), NO limpiarlo
+    // Esto permite carga INCREMENTAL en lugar de carga completa
+    // La carga incremental es mucho mas rapida (segundos vs minutos)
     if (ratio < this.MIN_CACHE_RATIO) {
-      console.warn(`[CandleCache] ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
-      console.log(`[CandleCache] Limpiando cache corrupto para forzar recarga completa...`);
-      await this.clear(symbol, interval);
-      return null;
+      console.log(`[CandleCache] ${symbol}@${interval} - Cache incompleto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
+      console.log(`[CandleCache] Se usara carga incremental para complementar el cache`);
+      // NO limpiar - retornar el cache incompleto para que MiniChart haga carga incremental
+      // Solo verificar que no tenga gaps antes de retornarlo
     }
 
     // NUEVO: Detectar gaps en el cache - si hay gaps, limpiar y forzar recarga

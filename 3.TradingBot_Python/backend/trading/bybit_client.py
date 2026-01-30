@@ -263,6 +263,85 @@ class BybitClient:
 
         return {"retCode": -1, "retMsg": "Max retries exceeded"}
 
+    async def get_instrument_info(
+        self,
+        symbol: str,
+        category: str = "linear"
+    ) -> Dict[str, Any]:
+        """
+        Get instrument/symbol information from Bybit API
+        This includes tickSize, qtyStep (stepSize), minOrderQty, maxOrderQty, etc.
+
+        This is a PUBLIC endpoint - no authentication required
+
+        Args:
+            symbol: Trading pair (e.g., "BTCUSDT")
+            category: "linear" for USDT perpetual, "spot", "inverse", "option"
+
+        Returns:
+            Dict with instrument info or error
+        """
+        try:
+            client = await self._get_client()
+
+            url = f"{self.base_url}/v5/market/instruments-info"
+            params = {"category": category, "symbol": symbol}
+            query_string = "&".join([f"{k}={v}" for k, v in params.items()])
+
+            start_time = time.monotonic()
+            response = await client.get(f"{url}?{query_string}")
+            elapsed_ms = (time.monotonic() - start_time) * 1000
+
+            data = response.json()
+
+            if data.get("retCode") != 0:
+                print(f"[ERR] GET /v5/market/instruments-info -> {data.get('retCode')} ({elapsed_ms:.0f}ms)")
+                print(f"   Error: {data.get('retMsg')}")
+                return {"success": False, "error": data.get("retMsg", "Unknown error")}
+
+            # Extract the instrument info from response
+            result = data.get("result", {})
+            instruments = result.get("list", [])
+
+            if not instruments:
+                print(f"[WARNING] No instrument found for {symbol}")
+                return {"success": False, "error": f"Symbol {symbol} not found"}
+
+            instrument = instruments[0]
+
+            # Extract relevant fields for linear futures
+            lot_size = instrument.get("lotSizeFilter", {})
+            price_filter = instrument.get("priceFilter", {})
+            leverage_filter = instrument.get("leverageFilter", {})
+
+            info = {
+                "success": True,
+                "symbol": instrument.get("symbol"),
+                "status": instrument.get("status"),
+                # Quantity precision
+                "qtyStep": lot_size.get("qtyStep"),           # Step size for quantity
+                "minOrderQty": lot_size.get("minOrderQty"),   # Minimum order quantity
+                "maxOrderQty": lot_size.get("maxOrderQty"),   # Maximum order quantity (market)
+                "maxMktOrderQty": lot_size.get("maxMktOrderQty"),  # Max market order qty
+                # Price precision
+                "tickSize": price_filter.get("tickSize"),     # Step size for price
+                "minPrice": price_filter.get("minPrice"),
+                "maxPrice": price_filter.get("maxPrice"),
+                # Leverage
+                "minLeverage": leverage_filter.get("minLeverage"),
+                "maxLeverage": leverage_filter.get("maxLeverage"),
+            }
+
+            print(f"[OK] GET /v5/market/instruments-info -> {symbol} ({elapsed_ms:.0f}ms)")
+            print(f"   qtyStep={info['qtyStep']}, tickSize={info['tickSize']}, "
+                  f"minQty={info['minOrderQty']}, maxQty={info['maxMktOrderQty'] or info['maxOrderQty']}")
+
+            return info
+
+        except Exception as e:
+            print(f"[ERROR] Failed to get instrument info for {symbol}: {e}")
+            return {"success": False, "error": str(e)}
+
     async def place_market_order(
         self,
         symbol: str,
@@ -326,6 +405,115 @@ class BybitClient:
 
         # All attempts failed
         print(f"[ERROR] Market Order failed after all attempts: {last_error}")
+        return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
+
+    async def place_order_with_tpsl(
+        self,
+        symbol: str,
+        side: str,
+        qty: str,
+        order_type: str = "Market",
+        limit_price: Optional[str] = None,
+        take_profit: Optional[str] = None,
+        stop_loss: Optional[str] = None,
+        category: str = "linear"
+    ) -> Dict[str, Any]:
+        """
+        Place an order (Market or Limit) with integrated Take Profit and Stop Loss.
+        This sends a single API call instead of 3 separate calls.
+
+        Args:
+            symbol: Trading pair (e.g., "BTCUSDT")
+            side: "Buy" or "Sell"
+            qty: Quantity as string (formatted to StepSize)
+            order_type: "Market" or "Limit"
+            limit_price: Required if order_type is "Limit"
+            take_profit: Take profit trigger price (optional)
+            stop_loss: Stop loss trigger price (optional)
+            category: "linear" for USDT perpetual
+
+        Returns:
+            Dict with order result
+        """
+        order_type_display = order_type.upper()
+        print(f"[ORDER+TPSL] Placing {order_type_display} Order with TP/SL: {side} {symbol} qty={qty}")
+        if limit_price:
+            print(f"   Limit Price: {limit_price}")
+        if take_profit:
+            print(f"   Take Profit: {take_profit}")
+        if stop_loss:
+            print(f"   Stop Loss: {stop_loss}")
+
+        # Validate limit order has price
+        if order_type.upper() == "LIMIT" and not limit_price:
+            print(f"[ERROR] Limit order requires limit_price")
+            return {"retCode": -1, "retMsg": "Limit order requires limit_price"}
+
+        # List of position index configurations to try
+        position_configs = [
+            None,  # No positionIdx
+            0,     # One-way mode
+            1 if side == "Buy" else 2,  # Hedge mode
+        ]
+
+        last_error = None
+        order_link_id = f"tpsl_{int(time.time() * 1000)}"
+
+        for pos_idx in position_configs:
+            params = {
+                "category": category,
+                "symbol": symbol,
+                "side": side,
+                "orderType": order_type.capitalize(),  # "Market" or "Limit"
+                "qty": qty,
+                "orderLinkId": order_link_id,
+                "timeInForce": "GTC" if order_type.upper() == "LIMIT" else "IOC",
+            }
+
+            # Add limit price if Limit order
+            if order_type.upper() == "LIMIT" and limit_price:
+                params["price"] = limit_price
+
+            # Add positionIdx if not None
+            if pos_idx is not None:
+                params["positionIdx"] = pos_idx
+                print(f"[DEBUG] Trying with positionIdx: {pos_idx}")
+            else:
+                print(f"[DEBUG] Trying without positionIdx")
+
+            # Add Take Profit if provided
+            if take_profit:
+                params["takeProfit"] = take_profit
+                params["tpTriggerBy"] = "LastPrice"
+                params["tpOrderType"] = "Market"  # TP executes as market order
+
+            # Add Stop Loss if provided
+            if stop_loss:
+                params["stopLoss"] = stop_loss
+                params["slTriggerBy"] = "LastPrice"
+                params["slOrderType"] = "Market"  # SL executes as market order
+
+            # Set tpslMode if either TP or SL is provided
+            if take_profit or stop_loss:
+                params["tpslMode"] = "Full"  # Apply to entire position
+
+            result = await self._make_request("POST", "/v5/order/create", params)
+
+            if result.get("retCode") == 0:
+                order_id = result["result"]["orderId"]
+                print(f"[OK] {order_type_display} Order with TP/SL placed: {order_id} (positionIdx: {pos_idx})")
+                # Store successful config for this symbol
+                self._position_idx_cache[f"{symbol}_{side}"] = pos_idx
+                return result
+            else:
+                last_error = result.get("retMsg")
+                if result.get("retCode") != 10001:  # If it's not position mode error, stop trying
+                    print(f"[ERROR] {order_type_display} Order with TP/SL failed: {last_error}")
+                    return result
+                # Continue trying other position index values
+
+        # All attempts failed
+        print(f"[ERROR] {order_type_display} Order with TP/SL failed after all attempts: {last_error}")
         return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
 
     async def place_stop_loss_order(

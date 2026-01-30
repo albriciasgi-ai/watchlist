@@ -11,16 +11,12 @@ const ConfigManager = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCoin, setNewCoin] = useState({
     symbol: '',
-    risk_amount: '3.0',
-    stop_loss_percent: '2.2',
-    take_profit_percent: '4.5',
-    leverage: '10',
-    step_size: '0.001',
-    tick_size: '0.10',
-    min_qty: '0.001',
-    max_qty: '100.0',
+    risk_amount: '1.0',
+    stop_loss_percent: '2.0',
+    take_profit_percent: '4.0',
   });
   const [addingCoin, setAddingCoin] = useState(false);
+  const [addingStatus, setAddingStatus] = useState(''); // Status message during add
 
   useEffect(() => {
     fetchConfigs();
@@ -53,10 +49,11 @@ const ConfigManager = () => {
 
   const startEditing = (symbol) => {
     setEditingSymbol(symbol);
+    // Convert decimals to percentages for display (0.022 -> 2.2)
     setEditValues({
       risk_amount: configs[symbol].risk_amount,
-      stop_loss_percent: configs[symbol].stop_loss_percent,
-      take_profit_percent: configs[symbol].take_profit_percent,
+      stop_loss_percent: (configs[symbol].stop_loss_percent * 100).toFixed(2),
+      take_profit_percent: (configs[symbol].take_profit_percent * 100).toFixed(2),
     });
     setMessage({ type: '', text: '' });
   };
@@ -85,6 +82,10 @@ const ConfigManager = () => {
     setMessage({ type: '', text: '' });
 
     try {
+      // Convert percentages to decimals for backend (2.2 -> 0.022)
+      const slDecimal = parseFloat(editValues.stop_loss_percent) / 100;
+      const tpDecimal = parseFloat(editValues.take_profit_percent) / 100;
+
       const response = await fetch('/api/config/update', {
         method: 'POST',
         headers: {
@@ -93,8 +94,8 @@ const ConfigManager = () => {
         body: JSON.stringify({
           symbol,
           risk_amount: parseFloat(editValues.risk_amount),
-          stop_loss_percent: parseFloat(editValues.stop_loss_percent),
-          take_profit_percent: parseFloat(editValues.take_profit_percent),
+          stop_loss_percent: slDecimal,
+          take_profit_percent: tpDecimal,
         }),
       });
 
@@ -106,8 +107,8 @@ const ConfigManager = () => {
           [symbol]: {
             ...prev[symbol],
             risk_amount: parseFloat(editValues.risk_amount),
-            stop_loss_percent: parseFloat(editValues.stop_loss_percent),
-            take_profit_percent: parseFloat(editValues.take_profit_percent),
+            stop_loss_percent: slDecimal,
+            take_profit_percent: tpDecimal,
           },
         }));
         setMessage({
@@ -143,16 +144,12 @@ const ConfigManager = () => {
 
   const closeAddModal = () => {
     setShowAddModal(false);
+    setAddingStatus('');
     setNewCoin({
       symbol: '',
-      risk_amount: '3.0',
-      stop_loss_percent: '2.2',
-      take_profit_percent: '4.5',
-      leverage: '10',
-      step_size: '0.001',
-      tick_size: '0.10',
-      min_qty: '0.001',
-      max_qty: '100.0',
+      risk_amount: '1.0',
+      stop_loss_percent: '2.0',
+      take_profit_percent: '4.0',
     });
   };
 
@@ -164,8 +161,10 @@ const ConfigManager = () => {
 
     setAddingCoin(true);
     setMessage({ type: '', text: '' });
+    setAddingStatus('Fetching precision data from Bybit...');
 
     try {
+      // Send only basic config - backend will auto-fetch precision from Bybit
       const response = await fetch('/api/config/add', {
         method: 'POST',
         headers: {
@@ -176,24 +175,23 @@ const ConfigManager = () => {
           risk_amount: parseFloat(newCoin.risk_amount),
           stop_loss_percent: parseFloat(newCoin.stop_loss_percent) / 100, // Convert to decimal
           take_profit_percent: parseFloat(newCoin.take_profit_percent) / 100,
-          leverage: parseInt(newCoin.leverage),
-          step_size: parseFloat(newCoin.step_size),
-          tick_size: parseFloat(newCoin.tick_size),
-          min_qty: parseFloat(newCoin.min_qty),
-          max_qty: parseFloat(newCoin.max_qty),
+          // precision values (step_size, tick_size, min_qty, max_qty) are auto-fetched from Bybit
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        const precisionMsg = data.auto_precision
+          ? ' (precision auto-detected from Bybit)'
+          : '';
         setMessage({
           type: 'success',
-          text: `Successfully added ${newCoin.symbol.toUpperCase()}`
+          text: `Successfully added ${newCoin.symbol.toUpperCase()}${precisionMsg}`
         });
         closeAddModal();
         fetchConfigs(); // Refresh list
-        setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        setTimeout(() => setMessage({ type: '', text: '' }), 5000);
       } else {
         setMessage({ type: 'error', text: data.detail || data.error || 'Failed to add coin' });
       }
@@ -201,6 +199,7 @@ const ConfigManager = () => {
       setMessage({ type: 'error', text: 'Network error: ' + error.message });
     } finally {
       setAddingCoin(false);
+      setAddingStatus('');
     }
   };
 
@@ -287,7 +286,7 @@ const ConfigManager = () => {
                           onChange={(e) => handleInputChange('stop_loss_percent', e.target.value)}
                         />
                       ) : (
-                        <span className="config-value">{config.stop_loss_percent}%</span>
+                        <span className="config-value">{(config.stop_loss_percent * 100).toFixed(2)}%</span>
                       )}
                     </td>
                     <td>
@@ -301,7 +300,7 @@ const ConfigManager = () => {
                           onChange={(e) => handleInputChange('take_profit_percent', e.target.value)}
                         />
                       ) : (
-                        <span className="config-value">{config.take_profit_percent}%</span>
+                        <span className="config-value">{(config.take_profit_percent * 100).toFixed(2)}%</span>
                       )}
                     </td>
                     <td>
@@ -360,24 +359,27 @@ const ConfigManager = () => {
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label htmlFor="newSymbol">Symbol (e.g., DOGEUSDT) *</label>
+                <label htmlFor="newSymbol">Symbol (e.g., SHIBUSDT) *</label>
                 <input
                   type="text"
                   id="newSymbol"
                   className="form-input"
                   value={newCoin.symbol}
                   onChange={(e) => setNewCoin({...newCoin, symbol: e.target.value.toUpperCase()})}
-                  placeholder="DOGEUSDT"
+                  placeholder="SHIBUSDT"
+                  disabled={addingCoin}
                 />
               </div>
               <div className="form-group">
                 <label>Risk Amount (USDT)</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="0.1"
+                  min="0.1"
                   className="form-input"
                   value={newCoin.risk_amount}
                   onChange={(e) => setNewCoin({...newCoin, risk_amount: e.target.value})}
+                  disabled={addingCoin}
                 />
               </div>
               <div className="form-group">
@@ -385,9 +387,11 @@ const ConfigManager = () => {
                 <input
                   type="number"
                   step="0.1"
+                  min="0.1"
                   className="form-input"
                   value={newCoin.stop_loss_percent}
                   onChange={(e) => setNewCoin({...newCoin, stop_loss_percent: e.target.value})}
+                  disabled={addingCoin}
                 />
               </div>
               <div className="form-group">
@@ -395,54 +399,21 @@ const ConfigManager = () => {
                 <input
                   type="number"
                   step="0.1"
+                  min="0.1"
                   className="form-input"
                   value={newCoin.take_profit_percent}
                   onChange={(e) => setNewCoin({...newCoin, take_profit_percent: e.target.value})}
+                  disabled={addingCoin}
                 />
               </div>
-              <div className="form-group">
-                <label>Step Size (min increment)</label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  className="form-input"
-                  value={newCoin.step_size}
-                  onChange={(e) => setNewCoin({...newCoin, step_size: e.target.value})}
-                />
+              <div className="alert alert-info" style={{fontSize: '13px', marginTop: '15px'}}>
+                <strong>Auto-precision:</strong> Step size, tick size, min/max quantities are automatically fetched from Bybit when you add the coin.
               </div>
-              <div className="form-group">
-                <label>Tick Size (price increment)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="form-input"
-                  value={newCoin.tick_size}
-                  onChange={(e) => setNewCoin({...newCoin, tick_size: e.target.value})}
-                />
-              </div>
-              <div className="form-group">
-                <label>Min Quantity</label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  className="form-input"
-                  value={newCoin.min_qty}
-                  onChange={(e) => setNewCoin({...newCoin, min_qty: e.target.value})}
-                />
-              </div>
-              <div className="form-group">
-                <label>Max Quantity</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  className="form-input"
-                  value={newCoin.max_qty}
-                  onChange={(e) => setNewCoin({...newCoin, max_qty: e.target.value})}
-                />
-              </div>
-              <div className="alert alert-info" style={{fontSize: '13px'}}>
-                <strong>Tip:</strong> Default values are based on BTCUSDT. Adjust StepSize and TickSize according to the specific coin's trading rules on Bybit.
-              </div>
+              {addingStatus && (
+                <div className="alert alert-warning" style={{fontSize: '13px', marginTop: '10px'}}>
+                  <span className="spinner-small"></span> {addingStatus}
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button

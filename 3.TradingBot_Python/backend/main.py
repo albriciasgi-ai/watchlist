@@ -70,10 +70,11 @@ class AddCoinRequest(BaseModel):
     stop_loss_percent: Decimal = Decimal("0.022")
     take_profit_percent: Decimal = Decimal("0.045")
     leverage: int = 10
-    step_size: Decimal = Decimal("0.001")
-    tick_size: Decimal = Decimal("0.10")
-    min_qty: Decimal = Decimal("0.001")
-    max_qty: Decimal = Decimal("100.0")
+    # Precision values - OPTIONAL, will be auto-fetched from Bybit if not provided
+    step_size: Optional[Decimal] = None
+    tick_size: Optional[Decimal] = None
+    min_qty: Optional[Decimal] = None
+    max_qty: Optional[Decimal] = None
 
 
 class DirectionUpdateRequest(BaseModel):
@@ -96,6 +97,9 @@ class WatchlistAlertRequest(BaseModel):
     # SwingDetector format fields
     source: Optional[str] = Field(None, description="Alert source (e.g., SWING_DETECTOR)")
     interval: Optional[str] = Field(None, description="Timeframe interval")
+    # Integrated TP/SL fields (optional)
+    order_type: Optional[str] = Field("Market", description="Order type: Market or Limit")
+    limit_price: Optional[float] = Field(None, description="Limit price (required if order_type is Limit)")
 
 
 # ==========================
@@ -135,8 +139,11 @@ class AppState:
         self.max_logs = 1000
         self.credentials_file = Path("../config/credentials.json")
         self.order_history_file = Path("../config/order_history.json")
+        self.bot_settings_file = Path("../config/bot_settings.json")
         self.symbol_locks: Dict[str, asyncio.Lock] = {}  # Lock per symbol to prevent race conditions
         self.order_history: List[Dict[str, Any]] = []  # Store order history (persistent)
+        # Bot settings - configurable execution method
+        self.use_integrated_tpsl: bool = False  # False = 3-call method (default), True = integrated method
 
     def load_config(self):
         """Load trading configuration from JSON"""
@@ -233,6 +240,33 @@ class AppState:
         else:
             self.order_history = []
 
+    def load_bot_settings(self):
+        """Load bot settings from JSON file"""
+        if self.bot_settings_file.exists():
+            try:
+                with open(self.bot_settings_file, 'r') as f:
+                    settings = json.load(f)
+                    self.use_integrated_tpsl = settings.get("use_integrated_tpsl", False)
+                    method = "Integrated (1 call)" if self.use_integrated_tpsl else "Sequential (3 calls)"
+                    self.log("info", f"Loaded bot settings: execution method = {method}")
+            except Exception as e:
+                self.log("error", f"Failed to load bot settings: {str(e)}")
+                self.use_integrated_tpsl = False
+        else:
+            self.use_integrated_tpsl = False
+
+    def save_bot_settings(self):
+        """Save bot settings to JSON file"""
+        try:
+            self.bot_settings_file.parent.mkdir(parents=True, exist_ok=True)
+            settings = {
+                "use_integrated_tpsl": self.use_integrated_tpsl
+            }
+            with open(self.bot_settings_file, 'w') as f:
+                json.dump(settings, f, indent=2)
+        except Exception as e:
+            self.log("error", f"Failed to save bot settings: {str(e)}")
+
     def save_order_history(self):
         """Save order history to JSON file"""
         try:
@@ -323,6 +357,7 @@ async def startup():
     state.load_config()
     state.load_credentials()
     state.load_order_history()
+    state.load_bot_settings()
     state.log("success", "Backend ready")
 
 
@@ -475,13 +510,48 @@ async def update_config(req: ConfigUpdateRequest):
 
 @app.post("/api/config/add")
 async def add_coin(req: AddCoinRequest):
-    """Add new coin configuration"""
+    """Add new coin configuration with auto-fetched precision from Bybit"""
     try:
         symbol = req.symbol.upper()
 
         # Check if already exists
         if symbol in state.trading_config:
             raise HTTPException(status_code=400, detail=f"Symbol {symbol} already exists")
+
+        # Get precision values from Bybit if not provided
+        step_size = req.step_size
+        tick_size = req.tick_size
+        min_qty = req.min_qty
+        max_qty = req.max_qty
+
+        # If any precision value is missing, fetch from Bybit
+        if step_size is None or tick_size is None or min_qty is None or max_qty is None:
+            state.log("info", f"Fetching precision info from Bybit for {symbol}...")
+
+            if state.bybit_client is None:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Bybit client not initialized. Configure credentials first or provide precision values manually."
+                )
+
+            instrument_info = await state.bybit_client.get_instrument_info(symbol, req.category)
+
+            if not instrument_info.get("success"):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Failed to get instrument info from Bybit: {instrument_info.get('error')}"
+                )
+
+            # Use fetched values, fallback to provided or defaults
+            step_size = step_size or Decimal(str(instrument_info.get("qtyStep", "0.001")))
+            tick_size = tick_size or Decimal(str(instrument_info.get("tickSize", "0.01")))
+            min_qty = min_qty or Decimal(str(instrument_info.get("minOrderQty", "0.001")))
+            # Prefer maxMktOrderQty for market orders
+            max_qty_value = instrument_info.get("maxMktOrderQty") or instrument_info.get("maxOrderQty", "100")
+            max_qty = max_qty or Decimal(str(max_qty_value))
+
+            state.log("success", f"Auto-detected precision for {symbol}: "
+                     f"step={step_size}, tick={tick_size}, min={min_qty}, max={max_qty}")
 
         # Create new config
         new_config = {
@@ -491,10 +561,10 @@ async def add_coin(req: AddCoinRequest):
             "stop_loss_percent": float(req.stop_loss_percent),
             "take_profit_percent": float(req.take_profit_percent),
             "leverage": req.leverage,
-            "step_size": float(req.step_size),
-            "tick_size": float(req.tick_size),
-            "min_qty": float(req.min_qty),
-            "max_qty": float(req.max_qty)
+            "step_size": float(step_size),
+            "tick_size": float(tick_size),
+            "min_qty": float(min_qty),
+            "max_qty": float(max_qty)
         }
 
         # Add to state
@@ -510,11 +580,193 @@ async def add_coin(req: AddCoinRequest):
 
         state.log("success", f"Added new coin: {symbol}")
 
-        return {"success": True, "config": new_config}
+        return {"success": True, "config": new_config, "auto_precision": step_size is None}
     except HTTPException:
         raise
     except Exception as e:
         state.log("error", f"Failed to add coin: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/config/sync-precision/{symbol}")
+async def sync_precision(symbol: str):
+    """
+    Sync precision values (step_size, tick_size, min_qty, max_qty) from Bybit API
+    for an existing symbol. Useful when Bybit updates their trading rules.
+    """
+    try:
+        symbol = symbol.upper()
+
+        if symbol not in state.trading_config:
+            raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found in configuration")
+
+        if state.bybit_client is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Bybit client not initialized. Configure credentials first."
+            )
+
+        config = state.trading_config[symbol]
+        category = config.get("category", "linear")
+
+        # Fetch from Bybit
+        state.log("info", f"Syncing precision from Bybit for {symbol}...")
+        instrument_info = await state.bybit_client.get_instrument_info(symbol, category)
+
+        if not instrument_info.get("success"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to get instrument info from Bybit: {instrument_info.get('error')}"
+            )
+
+        # Store old values for comparison
+        old_values = {
+            "step_size": config.get("step_size"),
+            "tick_size": config.get("tick_size"),
+            "min_qty": config.get("min_qty"),
+            "max_qty": config.get("max_qty")
+        }
+
+        # Update config with new values
+        config["step_size"] = float(instrument_info.get("qtyStep", config.get("step_size")))
+        config["tick_size"] = float(instrument_info.get("tickSize", config.get("tick_size")))
+        config["min_qty"] = float(instrument_info.get("minOrderQty", config.get("min_qty")))
+        max_qty_value = instrument_info.get("maxMktOrderQty") or instrument_info.get("maxOrderQty")
+        if max_qty_value:
+            config["max_qty"] = float(max_qty_value)
+
+        new_values = {
+            "step_size": config["step_size"],
+            "tick_size": config["tick_size"],
+            "min_qty": config["min_qty"],
+            "max_qty": config["max_qty"]
+        }
+
+        # Save to file
+        config_path = Path("../config/trading_config.json")
+        with open(config_path, 'w') as f:
+            json.dump({"coins": list(state.trading_config.values())}, f, indent=2)
+
+        state.log("success", f"Synced precision for {symbol}: "
+                 f"step={new_values['step_size']}, tick={new_values['tick_size']}, "
+                 f"min={new_values['min_qty']}, max={new_values['max_qty']}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "old_values": old_values,
+            "new_values": new_values
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        state.log("error", f"Failed to sync precision for {symbol}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/config/sync-all-precision")
+async def sync_all_precision():
+    """
+    Sync precision values for ALL configured symbols from Bybit API.
+    Useful for initial setup or after Bybit updates trading rules.
+    """
+    try:
+        if state.bybit_client is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Bybit client not initialized. Configure credentials first."
+            )
+
+        results = []
+        errors = []
+
+        for symbol, config in state.trading_config.items():
+            category = config.get("category", "linear")
+
+            try:
+                instrument_info = await state.bybit_client.get_instrument_info(symbol, category)
+
+                if instrument_info.get("success"):
+                    old_step = config.get("step_size")
+                    old_tick = config.get("tick_size")
+
+                    config["step_size"] = float(instrument_info.get("qtyStep", config.get("step_size")))
+                    config["tick_size"] = float(instrument_info.get("tickSize", config.get("tick_size")))
+                    config["min_qty"] = float(instrument_info.get("minOrderQty", config.get("min_qty")))
+                    max_qty_value = instrument_info.get("maxMktOrderQty") or instrument_info.get("maxOrderQty")
+                    if max_qty_value:
+                        config["max_qty"] = float(max_qty_value)
+
+                    results.append({
+                        "symbol": symbol,
+                        "step_size": config["step_size"],
+                        "tick_size": config["tick_size"],
+                        "changed": old_step != config["step_size"] or old_tick != config["tick_size"]
+                    })
+                else:
+                    errors.append({"symbol": symbol, "error": instrument_info.get("error")})
+            except Exception as e:
+                errors.append({"symbol": symbol, "error": str(e)})
+
+        # Save to file
+        config_path = Path("../config/trading_config.json")
+        with open(config_path, 'w') as f:
+            json.dump({"coins": list(state.trading_config.values())}, f, indent=2)
+
+        state.log("success", f"Synced precision for {len(results)} symbols, {len(errors)} errors")
+
+        return {
+            "success": True,
+            "synced": len(results),
+            "errors": len(errors),
+            "results": results,
+            "error_details": errors if errors else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        state.log("error", f"Failed to sync all precision: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/settings")
+async def get_bot_settings():
+    """Get bot settings including execution method"""
+    return {
+        "success": True,
+        "use_integrated_tpsl": state.use_integrated_tpsl,
+        "execution_method": "integrated" if state.use_integrated_tpsl else "sequential",
+        "description": "Integrated sends Market/Limit + TP/SL in 1 API call. Sequential sends 3 separate calls."
+    }
+
+
+@app.post("/api/settings/execution-method")
+async def set_execution_method(use_integrated: bool):
+    """
+    Set the execution method for orders.
+
+    - use_integrated=False (default): 3 separate API calls (Market + SL + TP)
+    - use_integrated=True: 1 API call with integrated TP/SL
+
+    The integrated method is faster but may have different behavior
+    during high volatility. Sequential is more reliable but slower.
+    """
+    try:
+        old_method = "integrated" if state.use_integrated_tpsl else "sequential"
+        state.use_integrated_tpsl = use_integrated
+        state.save_bot_settings()
+
+        new_method = "integrated" if use_integrated else "sequential"
+        state.log("success", f"Execution method changed: {old_method} -> {new_method}")
+
+        return {
+            "success": True,
+            "use_integrated_tpsl": state.use_integrated_tpsl,
+            "execution_method": new_method,
+            "message": f"Execution method set to {new_method}"
+        }
+    except Exception as e:
+        state.log("error", f"Failed to set execution method: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -930,15 +1182,38 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             quantity = risk_calc["quantity"]
             config["current_price"] = float(price)
 
-            # Execute order sequence
-            state.log("info", f"[TRADE] Executing trade: {side} {symbol} qty={quantity} @ {price}")
+            # Check for limit price in request
+            order_type = request.get("order_type", "Market")
+            limit_price_raw = request.get("limit_price")
+            limit_price = Decimal(str(limit_price_raw)) if limit_price_raw else None
 
-            result = await state.order_manager.execute_complete_sequence(
-                symbol=symbol,
-                side=side,
-                quantity=quantity,
-                config=config
-            )
+            # Validate limit order
+            if order_type.upper() == "LIMIT" and not limit_price:
+                raise HTTPException(status_code=400, detail="limit_price required for Limit orders")
+
+            # Execute order sequence - use configured method
+            execution_method = "integrated" if state.use_integrated_tpsl else "sequential"
+            order_type_str = f"{order_type.upper()} " if order_type.upper() == "LIMIT" else ""
+            state.log("info", f"[TRADE] Executing {order_type_str}trade ({execution_method}): {side} {symbol} qty={quantity} @ {price}")
+
+            if state.use_integrated_tpsl:
+                # Integrated method: 1 API call with TP/SL
+                result = await state.order_manager.execute_integrated_sequence(
+                    symbol=symbol,
+                    side=side,
+                    quantity=quantity,
+                    config=config,
+                    order_type=order_type,
+                    limit_price=limit_price
+                )
+            else:
+                # Sequential method: 3 separate API calls (original)
+                result = await state.order_manager.execute_complete_sequence(
+                    symbol=symbol,
+                    side=side,
+                    quantity=quantity,
+                    config=config
+                )
 
             # Broadcast trade event
             await state.broadcast_event("trade_executed", result)
@@ -1058,13 +1333,23 @@ async def manual_trade(req: ManualTradeRequest):
         if req.takeProfit:
             trade_config["custom_take_profit"] = float(req.takeProfit)
 
-        # Execute
-        result = await state.order_manager.execute_complete_sequence(
-            symbol=req.symbol,
-            side=req.side,
-            quantity=quantity,
-            config=trade_config
-        )
+        # Execute using configured method
+        if state.use_integrated_tpsl:
+            result = await state.order_manager.execute_integrated_sequence(
+                symbol=req.symbol,
+                side=req.side,
+                quantity=quantity,
+                config=trade_config,
+                order_type="Market",
+                limit_price=None
+            )
+        else:
+            result = await state.order_manager.execute_complete_sequence(
+                symbol=req.symbol,
+                side=req.side,
+                quantity=quantity,
+                config=trade_config
+            )
 
         await state.broadcast_event("trade_executed", result)
 

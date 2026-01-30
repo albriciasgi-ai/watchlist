@@ -8,7 +8,10 @@
       "Bash(test_watchlist.bat)",
       "WebSearch",
       "WebFetch(domain:bybit-exchange.github.io)",
-      "Bash(py --list:*)"
+      "Bash(py --list:*)",
+      "Bash(.venvScriptspython.exe -c \"from trading.bybit_client import BybitClient; print(''bybit_client OK'')\")",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(.venvScriptspython.exe -c \"from main import app; print(''Backend OK: main.py compiles successfully'')\")"
     ],
     "deny": [],
     "ask": []

@@ -1149,7 +1149,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           console.log(`[${symbol}] Cache tiene ${cached.candles.length} velas pero solo necesitamos ~${maxExpectedCandles} para ${days} dias - forzando carga completa`);
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
           isIncremental = false;
-        } else {
+        }
+        // ✅ FIX: Si el cache tiene MENOS del 70% de lo esperado, hacer carga completa
+        // porque la carga incremental solo agrega velas NUEVAS, no rellena el pasado
+        else if (cached.candles.length < maxExpectedCandles * 0.7) {
+          console.log(`[${symbol}] Cache incompleto: ${cached.candles.length} velas (esperadas: ~${maxExpectedCandles}) - cargando completo`);
+          url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
+          isIncremental = false;
+        }
+        else {
           // Cache es valido - pedir solo velas nuevas desde el ultimo timestamp
           const sinceTs = cached.lastTimestamp;
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&since_timestamp=${sinceTs}&t=${timestamp}`;
@@ -2176,10 +2184,28 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     log.debug(`[${symbol}] 📡 Suscrito a WebSocket @ ${bybitInterval}`);
 
-    // ✅ REDUCIDO: Recarga cada 5 minutos (el auto-refresh de indicadores se hace cada 1 min)
-    const reloadInterval = setInterval(() => {
-      log.debug(`[${symbol}] 🔄 Recarga periódica histórico (5 min)`);
-      loadHistoricalData();
+    // ✅ OPTIMIZADO: Recarga incremental cada 5 minutos (solo si tab visible y hay nuevas velas)
+    // Ahorra ~50MB/24h evitando recargas innecesarias
+    const reloadInterval = setInterval(async () => {
+      // ✅ Visibility check: no recargar si el tab esta oculto
+      if (document.visibilityState === 'hidden') {
+        log.debug(`[${symbol}] 🔄 Recarga periodica omitida (tab oculto)`);
+        return;
+      }
+
+      // ✅ Solo recargar si ha pasado suficiente tiempo para al menos 1 vela nueva
+      const intervalMs = getIntervalMilliseconds(interval);
+      const lastCandle = candlesRef.current[candlesRef.current.length - 1];
+      if (lastCandle && intervalMs) {
+        const timeSinceLastCandle = Date.now() - lastCandle.timestamp;
+        if (timeSinceLastCandle < intervalMs * 0.9) { // 90% del intervalo para margen
+          log.debug(`[${symbol}] 🔄 Recarga omitida (no ha pasado 1 vela completa)`);
+          return;
+        }
+      }
+
+      log.debug(`[${symbol}] 🔄 Recarga periodica incremental (5 min)`);
+      await loadHistoricalData(); // Ya usa carga incremental internamente
     }, 300000);
 
     // ✅ DESHABILITADO: gapCheckIntervalRef - checkAndRefreshIfNeeded ya no hace nada
@@ -2275,17 +2301,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
 
   // 🎨 FIX: Cargar dibujos SOLO cuando cambia el símbolo (evita parpadeo al toggle indicadores)
-  // 🔄 SYNC: Polling cada 3s para detectar cambios desde otras apps (Watchlist)
+  // 🔄 SYNC: Polling cada 30s para detectar cambios desde otras apps (Watchlist)
+  // ✅ OPTIMIZADO: Solo ejecuta si el tab esta visible (ahorra ~200MB/24h)
   useEffect(() => {
     // Carga inicial
     loadDrawings();
 
-    // Polling para sincronizar con otras apps (solo cuando NO estamos en modo dibujo)
+    // Polling para sincronizar con otras apps (solo cuando NO estamos en modo dibujo Y tab visible)
     const syncInterval = setInterval(() => {
+      // ✅ Visibility check: no hacer fetch si el tab esta oculto
+      if (document.visibilityState === 'hidden') return;
+
       if (!drawingMode) {
         loadDrawings(true); // checkTimestampOnly = true
       }
-    }, 3000);
+    }, 30000); // ✅ Aumentado de 3s a 30s
 
     return () => clearInterval(syncInterval);
   }, [symbol, drawingMode]);
