@@ -36,6 +36,7 @@
   "log_trades": false,
   "symbol_step_sizes": {
     "BTCUSDT": 40.0,
-    "ADAUSDT": 0.001
+    "ADAUSDT": 0.001,
+    "SOLUSDT": 1.0
   }
 }

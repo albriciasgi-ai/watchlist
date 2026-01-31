@@ -4383,6 +4383,56 @@ async def clear_cache_and_reload(request: Request):
         }
 
 
+@app.delete("/api/orderflow/cache/{symbol}")
+async def clear_symbol_cache(symbol: str, interval: str = "1"):
+    """
+    Clear cache for a specific symbol (used when step_size changes).
+    Simpler endpoint than /integrity/clear-cache for quick cache clearing.
+
+    This deletes the local JSON files for the symbol, allowing footprints
+    to be regenerated with the new step_size configuration.
+    """
+    try:
+        import os
+        from pathlib import Path
+
+        cache_dir = Path(__file__).parent / "footprint_cache"
+
+        if not cache_dir.exists():
+            return {
+                "success": True,
+                "message": f"No cache directory found",
+                "files_deleted": 0
+            }
+
+        # Find and delete files matching pattern: SYMBOL_INTERVAL.json
+        deleted_files = []
+        pattern = f"{symbol}_{interval}.json"
+
+        for file in cache_dir.glob(f"{symbol}_*.json"):
+            try:
+                file.unlink()
+                deleted_files.append(file.name)
+            except Exception as e:
+                print(f"[CACHE] Error deleting {file}: {e}")
+
+        print(f"[CACHE] Cleared {len(deleted_files)} files for {symbol}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "files_deleted": len(deleted_files),
+            "deleted": deleted_files
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Clear symbol cache: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.get("/api/orderflow/integrity/progress")
 async def get_repair_progress():
     """
