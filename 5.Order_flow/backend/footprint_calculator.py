@@ -365,8 +365,8 @@ class FootprintCalculator:
             current_price += step_size
             index += 1
 
-            # Safety: maximo 50 niveles por vela
-            if index >= 50:
+            # Safety: maximo 100 niveles por vela (permite $1000 de rango en BTC con step=10)
+            if index >= 100:
                 logger.warning(f"Max levels reached for candle {candle_low}-{candle_high} with step {step_size}")
                 break
 

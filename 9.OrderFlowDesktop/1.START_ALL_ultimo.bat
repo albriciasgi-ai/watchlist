@@ -11,7 +11,7 @@ echo.
 set BACKEND_DIR=..\5.Order_flow\backend
 set BACKEND_PORT=11000
 set MAX_WAIT_SECONDS=120
-set CHECK_INTERVAL=2
+set CHECK_INTERVAL=1
 
 :: Verificar que existe el directorio del backend
 if not exist "%BACKEND_DIR%" (
@@ -64,8 +64,8 @@ if %ERRORLEVEL% EQU 0 (
     goto :start_electron
 )
 
-:: Esperar intervalo
-timeout /t %CHECK_INTERVAL% /nobreak >nul
+:: Esperar intervalo (usando ping para delay mas corto)
+ping -n 2 127.0.0.1 >nul
 
 :: Incrementar tiempo esperado
 set /a WAITED+=%CHECK_INTERVAL%

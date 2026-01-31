@@ -2690,6 +2690,29 @@ async def startup_event():
         await orderflow_service.start(ws_manager, of_symbols, of_intervals)
         print(f"[STARTUP] OrderFlow Service started - {len(of_symbols)} symbols, intervals: {of_intervals}")
 
+        # INTEGRITY CHECK: Validate and repair cache before loading from cloud
+        try:
+            from cache_integrity_service import startup_integrity_check
+
+            integrity_config = {
+                "symbols": of_symbols,
+                "intervals": of_intervals,
+                "symbol_step_sizes": orderflow_service.config.symbol_step_sizes if orderflow_service.config else {},
+                "max_history_hours": orderflow_service.max_history_hours if hasattr(orderflow_service, 'max_history_hours') else 12
+            }
+
+            integrity_report = await startup_integrity_check(integrity_config)
+
+            if integrity_report.symbols_with_issues == 0:
+                print(f"[STARTUP] Cache integrity OK - {integrity_report.symbols_healthy} symbols healthy")
+            else:
+                print(f"[STARTUP] Cache repaired - {integrity_report.symbols_healthy} healthy, {integrity_report.symbols_with_issues} had issues")
+
+        except Exception as e:
+            print(f"[STARTUP] Cache integrity check skipped: {e}")
+            import traceback
+            traceback.print_exc()
+
         # Load historical footprints from Cloud Collector (Northflank)
         # This provides real trade data instead of estimations
         try:
@@ -4102,6 +4125,283 @@ async def update_symbol_step_size(symbol: str, request: Request):
 
     except Exception as e:
         print(f"[ERROR] Update step size for {symbol}: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+# =============================================================================
+# CACHE INTEGRITY ENDPOINTS
+# =============================================================================
+
+@app.get("/api/orderflow/integrity/status")
+async def get_integrity_status():
+    """
+    Get cache integrity status for all symbols.
+
+    Returns overall health status and details per symbol.
+    """
+    try:
+        from cache_integrity_service import get_integrity_service
+
+        # Get config from orderflow service
+        service = get_orderflow_service()
+        config = {
+            "symbols": service.config.symbols if service and service.config else [],
+            "intervals": service.config.intervals if service and service.config else ["1"],
+            "symbol_step_sizes": service.config.symbol_step_sizes if service and service.config else {},
+            "max_history_hours": service.config.max_history_hours if service and service.config else 12
+        }
+
+        integrity = get_integrity_service(config)
+        report = integrity.validate_all()
+
+        return {
+            "success": True,
+            "timestamp": report.timestamp,
+            "overall_status": report.overall_status,
+            "symbols_healthy": report.symbols_healthy,
+            "symbols_with_issues": report.symbols_with_issues,
+            "is_repairing": report.is_repairing,
+            "repair_progress": report.repair_progress,
+            "current_repair_symbol": report.current_repair_symbol,
+            "validations": [
+                {
+                    "symbol": v.symbol,
+                    "interval": v.interval,
+                    "status": v.status,
+                    "total_footprints": v.total_footprints,
+                    "valid_footprints": v.valid_footprints,
+                    "invalid_step_size": v.invalid_step_size,
+                    "gaps_detected": v.gaps_detected,
+                    "issues": v.issues
+                }
+                for v in report.validations
+            ]
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Get integrity status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/orderflow/integrity/validate")
+async def validate_integrity(request: Request):
+    """
+    Run manual validation on all symbols or a specific symbol.
+
+    Body example:
+    {
+        "symbol": "BTCUSDT",  // optional, null for all
+        "interval": "1"       // optional, default "1"
+    }
+    """
+    try:
+        from cache_integrity_service import get_integrity_service
+
+        body = await request.json()
+        symbol = body.get("symbol")
+        interval = body.get("interval", "1")
+
+        # Get config
+        service = get_orderflow_service()
+        config = {
+            "symbols": service.config.symbols if service and service.config else [],
+            "intervals": service.config.intervals if service and service.config else ["1"],
+            "symbol_step_sizes": service.config.symbol_step_sizes if service and service.config else {},
+            "max_history_hours": service.config.max_history_hours if service and service.config else 12
+        }
+
+        integrity = get_integrity_service(config)
+
+        if symbol:
+            result = integrity.validate_symbol(symbol, interval)
+            return {
+                "success": True,
+                "validation": {
+                    "symbol": result.symbol,
+                    "interval": result.interval,
+                    "status": result.status,
+                    "total_footprints": result.total_footprints,
+                    "valid_footprints": result.valid_footprints,
+                    "invalid_step_size": result.invalid_step_size,
+                    "gaps_detected": result.gaps_detected,
+                    "gaps_ranges": result.gaps_ranges,
+                    "issues": result.issues
+                }
+            }
+        else:
+            report = integrity.validate_all()
+            return {
+                "success": True,
+                "overall_status": report.overall_status,
+                "symbols_healthy": report.symbols_healthy,
+                "symbols_with_issues": report.symbols_with_issues
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Validate integrity: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/orderflow/integrity/repair")
+async def repair_integrity(request: Request):
+    """
+    Repair cache for a specific symbol or all symbols with issues.
+
+    Body example:
+    {
+        "symbol": "BTCUSDT",  // optional, null for all with issues
+        "interval": "1"       // optional, default "1"
+    }
+    """
+    try:
+        from cache_integrity_service import get_integrity_service
+
+        body = await request.json()
+        symbol = body.get("symbol")
+        interval = body.get("interval", "1")
+
+        # Get config
+        service = get_orderflow_service()
+        config = {
+            "symbols": service.config.symbols if service and service.config else [],
+            "intervals": service.config.intervals if service and service.config else ["1"],
+            "symbol_step_sizes": service.config.symbol_step_sizes if service and service.config else {},
+            "max_history_hours": service.config.max_history_hours if service and service.config else 12
+        }
+
+        integrity = get_integrity_service(config)
+
+        if symbol:
+            result = await integrity.repair_symbol(symbol, interval)
+            return {
+                "success": result.success,
+                "repair": {
+                    "symbol": result.symbol,
+                    "interval": result.interval,
+                    "footprints_removed": result.footprints_removed,
+                    "footprints_added_from_cloud": result.footprints_added_from_cloud,
+                    "gaps_filled": result.gaps_filled,
+                    "error": result.error
+                }
+            }
+        else:
+            results = await integrity.repair_all()
+            return {
+                "success": True,
+                "repairs": [
+                    {
+                        "symbol": r.symbol,
+                        "interval": r.interval,
+                        "success": r.success,
+                        "footprints_removed": r.footprints_removed,
+                        "footprints_added_from_cloud": r.footprints_added_from_cloud,
+                        "gaps_filled": r.gaps_filled,
+                        "error": r.error
+                    }
+                    for r in results
+                ],
+                "total_repaired": sum(1 for r in results if r.success),
+                "total_failed": sum(1 for r in results if not r.success)
+            }
+
+    except Exception as e:
+        print(f"[ERROR] Repair integrity: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/orderflow/integrity/clear-cache")
+async def clear_cache_and_reload(request: Request):
+    """
+    Clear cache and reload from cloud collector.
+
+    Body example:
+    {
+        "symbol": "BTCUSDT",  // optional, null for all
+        "interval": "1",      // optional, default "1"
+        "confirmed": true     // required for safety
+    }
+    """
+    try:
+        from cache_integrity_service import get_integrity_service
+
+        body = await request.json()
+        symbol = body.get("symbol")
+        interval = body.get("interval", "1")
+        confirmed = body.get("confirmed", False)
+
+        if not confirmed:
+            return {
+                "success": False,
+                "error": "Confirmation required. Set 'confirmed': true in request body."
+            }
+
+        # Get config
+        service = get_orderflow_service()
+        config = {
+            "symbols": service.config.symbols if service and service.config else [],
+            "intervals": service.config.intervals if service and service.config else ["1"],
+            "symbol_step_sizes": service.config.symbol_step_sizes if service and service.config else {},
+            "max_history_hours": service.config.max_history_hours if service and service.config else 12
+        }
+
+        integrity = get_integrity_service(config)
+
+        results = await integrity.clear_and_reload(symbol, interval)
+
+        return {
+            "success": True,
+            "message": f"Cache cleared and reloaded for {symbol or 'all symbols'}",
+            "results": [
+                {
+                    "symbol": r.symbol,
+                    "interval": r.interval,
+                    "success": r.success,
+                    "footprints_loaded": r.footprints_added_from_cloud,
+                    "error": r.error
+                }
+                for r in results
+            ]
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Clear cache: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/orderflow/integrity/progress")
+async def get_repair_progress():
+    """
+    Get current repair progress (for polling during repair operations).
+    """
+    try:
+        from cache_integrity_service import get_integrity_service
+
+        integrity = get_integrity_service()
+        status = integrity.get_status()
+
+        return {
+            "success": True,
+            "is_repairing": status["is_repairing"],
+            "repair_progress": status["repair_progress"],
+            "current_repair_symbol": status["current_repair_symbol"]
+        }
+
+    except Exception as e:
         return {
             "success": False,
             "error": str(e)

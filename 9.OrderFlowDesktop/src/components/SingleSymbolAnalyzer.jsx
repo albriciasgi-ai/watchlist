@@ -15,6 +15,7 @@ import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import OrderFlowSettings from "./OrderFlowSettings";
 import ConnectionStatus from "./ConnectionStatus";
+import IntegrityStatus from "./IntegrityStatus";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
@@ -684,6 +685,7 @@ const SingleSymbolAnalyzer = () => {
             symbols={AVAILABLE_SYMBOLS}
           />
           <ConnectionStatus />
+          <IntegrityStatus />
         </div>
 
         <div className="controls">

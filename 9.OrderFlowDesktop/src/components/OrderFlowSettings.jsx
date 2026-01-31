@@ -1,6 +1,7 @@
 // src/components/OrderFlowSettings.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { API_BASE_URL } from '../config.js';
+import IntegrityPanel from './IntegrityPanel';
 
 /**
  * OrderFlowSettings - Configuration panel for Order Flow Indicator
@@ -888,6 +889,9 @@ const OrderFlowSettings = ({
           <li><strong>Delta</strong>: ask_volume - bid_volume (positivo = compradores dominan)</li>
         </ul>
       </div>
+
+      {/* Integrity Panel - Cache validation and repair */}
+      <IntegrityPanel />
     </div>
   );
 };

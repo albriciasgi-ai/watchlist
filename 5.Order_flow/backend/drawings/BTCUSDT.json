@@ -1,25 +1,6 @@
 {
   "symbol": "BTCUSDT",
-  "shapes": [
-    {
-      "type": "tpsl",
-      "id": "tpsl_1769006255694_0.6121818630747058",
-      "entryPrice": 89181.08701907989,
-      "tpPrice": 93125.64185778957,
-      "slPrice": 87636.1363739186,
-      "time": 1768932000000,
-      "widthTime": 86400000
-    },
-    {
-      "type": "tpsl-short",
-      "id": "tpsl_short_1769694911384_0.4463272478199556",
-      "entryPrice": 87943.33770491804,
-      "tpPrice": 86198.9685,
-      "slPrice": 88105.07596953798,
-      "time": 1769694540000,
-      "widthTime": 21240000
-    }
-  ],
-  "updated_at": "2026-01-31T04:11:13.523255+00:00",
-  "total_shapes": 2
+  "shapes": [],
+  "updated_at": "2026-01-31T18:12:27.162444+00:00",
+  "total_shapes": 0
 }
