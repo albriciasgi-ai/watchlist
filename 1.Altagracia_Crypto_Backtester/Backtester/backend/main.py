@@ -187,15 +187,16 @@ app.add_middleware(
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
 # Límites máximos de días por timeframe
+# NOTA: 1m y 5m tienen límites extendidos para backtesting
 MAX_DAYS_BY_INTERVAL = {
-    "1": 5,      # 5 min -> máx 5 días
+    "1": 365,    # 1 minuto -> máx 1 año (525,600 velas) - BACKTESTING
     "3": 10,     # 3 min -> máx 10 días
-    "5": 5,      # 5 min -> máx 5 días
-    "15": 15,    # 15 min -> máx 15 días
-    "30": 30,    # 30 min -> máx 30 días
-    "60": 120,   # 1 hora -> máx 120 días
-    "120": 180,  # 2 horas -> máx 180 días
-    "240": 300,  # 4 horas -> máx 300 días
+    "5": 1095,   # 5 minutos -> máx 3 años (315,360 velas) - BACKTESTING
+    "15": 730,   # 15 min -> máx 2 años (para backtesting)
+    "30": 730,   # 30 min -> máx 2 años
+    "60": 730,   # 1 hora -> máx 2 años
+    "120": 730,  # 2 horas -> máx 2 años
+    "240": 730,  # 4 horas -> máx 2 años
     "D": 730,    # 1 día -> máx 730 días
     "W": 730,    # 1 semana -> máx 730 días
 }
@@ -373,9 +374,11 @@ async def _fetch_historical_internal(symbol: str, interval: str = "15", days: in
         current_start = start_ms
 
         # Para backtesting con muchos días, permitir más requests
-        max_requests = 50 if skip_day_limit else 10
+        # 1m x 365 días = 525,600 velas = ~526 requests
+        # 5m x 1095 días = 315,360 velas = ~316 requests
+        max_requests = 600 if skip_day_limit else 10
 
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=120) as client:  # Timeout aumentado para cargas grandes
             request_count = 0
 
             while len(all_candles) < total_candles_needed and request_count < max_requests:
@@ -1677,10 +1680,107 @@ async def get_available_contexts(symbol: str, interval: str = "4h"):
 
 # ==================== BACKTESTING ENGINE ENDPOINTS ====================
 
+@app.get("/api/backtesting/test-metadata")
+async def test_backtesting_metadata():
+    """
+    Endpoint de diagnóstico para probar la generación de metadata
+    sin tener que esperar la carga completa de datos
+    """
+    try:
+        print("[TEST-METADATA] Iniciando prueba...")
+
+        # Simular timeframes_data con datos mínimos
+        timeframes_data = {
+            "1m": {"main": [{"timestamp": 1704067200000}], "subdivisions": [], "open_interest": []},
+            "5m": {"main": [{"timestamp": 1704067200000}], "subdivisions": [], "open_interest": []},
+            "15m": {"main": [{"timestamp": 1704067200000}], "subdivisions": [], "open_interest": []},
+            "1h": {"main": [{"timestamp": 1704067200000}], "subdivisions": [], "open_interest": []},
+            "4h": {"main": [{"timestamp": 1704067200000}], "subdivisions": [], "open_interest": []}
+        }
+
+        print("[TEST-METADATA] PASO 1: Calculando timestamps...")
+        all_timestamps = []
+        for tf_data in timeframes_data.values():
+            all_timestamps.extend([c["timestamp"] for c in tf_data["main"]])
+
+        print(f"[TEST-METADATA] PASO 2: Total timestamps: {len(all_timestamps)}")
+
+        if all_timestamps:
+            min_ts = min(all_timestamps)
+            max_ts = max(all_timestamps)
+            print(f"[TEST-METADATA] PASO 3: min_ts={min_ts}, max_ts={max_ts}")
+
+            start_date = datetime.fromtimestamp(min_ts / 1000, tz=COLOMBIA_TZ)
+            end_date = datetime.fromtimestamp(max_ts / 1000, tz=COLOMBIA_TZ)
+            print(f"[TEST-METADATA] PASO 4: Fechas calculadas OK")
+        else:
+            start_date = end_date = datetime.now(COLOMBIA_TZ)
+
+        print("[TEST-METADATA] PASO 5: Construyendo days_info...")
+        days_info = {tf: cfg.get("days", 730) for tf, cfg in BACKTESTING_CONFIG.items()}
+        print(f"[TEST-METADATA] days_info = {days_info}")
+
+        print("[TEST-METADATA] PASO 6: Construyendo metadata...")
+        metadata = {
+            "cached_at": int(time.time() * 1000),
+            "cached_at_colombia": datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_range": {
+                "start": start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "end": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "days_by_timeframe": days_info
+            }
+        }
+
+        print("[TEST-METADATA] PASO 7: TODO OK!")
+        return {
+            "success": True,
+            "message": "Metadata generado correctamente",
+            "metadata": metadata,
+            "days_info": days_info
+        }
+
+    except Exception as e:
+        import traceback
+        import sys
+        print(f"\n[TEST-METADATA ERROR] {type(e).__name__}: {str(e)}")
+        traceback.print_exc()
+
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        if exc_tb:
+            while exc_tb.tb_next:
+                exc_tb = exc_tb.tb_next
+            print(f"  Linea: {exc_tb.tb_lineno}")
+            print(f"  Funcion: {exc_tb.tb_frame.f_code.co_name}")
+
+        return {
+            "success": False,
+            "error": str(e),
+            "error_type": type(e).__name__
+        }
+
+
 # Configuración de timeframes y subdivisiones para backtesting
+# NOTA: 1m y 5m tienen configuración especial con menos días pero más velas
 BACKTESTING_CONFIG = {
+    "1m": {
+        "interval": "1",
+        "days": 365,  # 1 año = 525,600 velas
+        "subdivisions": {
+            "interval": "1",  # Sin subdivisiones (avanza vela completa)
+            "count": 1
+        }
+    },
+    "5m": {
+        "interval": "5",
+        "days": 1095,  # 3 años = 315,360 velas
+        "subdivisions": {
+            "interval": "1",
+            "count": 5  # 5 velas de 1 minuto forman 1 vela de 5 minutos
+        }
+    },
     "15m": {
         "interval": "15",
+        "days": 730,  # 2 años
         "subdivisions": {
             "interval": "5",
             "count": 3  # 3 velas de 5 minutos forman 1 vela de 15 minutos
@@ -1688,6 +1788,7 @@ BACKTESTING_CONFIG = {
     },
     "1h": {
         "interval": "60",
+        "days": 730,  # 2 años
         "subdivisions": {
             "interval": "15",
             "count": 4  # 4 velas de 15 minutos forman 1 vela de 1 hora
@@ -1695,6 +1796,7 @@ BACKTESTING_CONFIG = {
     },
     "4h": {
         "interval": "240",
+        "days": 730,  # 2 años
         "subdivisions": {
             "interval": "60",
             "count": 4  # 4 velas de 1 hora forman 1 vela de 4 horas
@@ -1755,11 +1857,13 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
         all_candles = []
         current_start = start_ms
 
-        async with httpx.AsyncClient(timeout=60) as client:
+        async with httpx.AsyncClient(timeout=180) as client:  # Timeout 3 min para cargas grandes
             request_count = 0
             # Calcular max_requests basado en las velas necesarias
             # Cada request trae máximo 1000 velas
-            max_requests = min(200, (total_candles_needed // 1000) + 10)
+            # 1m x 365 días = 525,600 velas = ~526 requests
+            # 5m x 1095 días = 315,360 velas = ~316 requests
+            max_requests = min(600, (total_candles_needed // 1000) + 10)
             print(f"[BACKTESTING] Permitiendo hasta {max_requests} requests para descargar todas las velas")
 
             while len(all_candles) < total_candles_needed and request_count < max_requests:
@@ -1881,23 +1985,24 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
         print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
 
         timeframes_data = {}
-        days = 1095  # 3 años
 
         # Descargar datos para cada timeframe
         for tf_name, config in BACKTESTING_CONFIG.items():
-            print(f"\n[BACKTESTING] ===== Procesando {tf_name} =====")
+            # Usar días específicos por timeframe (1m=365, 5m=1095, otros=730)
+            tf_days = config.get("days", 730)
+            print(f"\n[BACKTESTING] ===== Procesando {tf_name} ({tf_days} días) =====")
 
             # Descargar velas principales
             main_interval = config["interval"]
-            main_candles = await fetch_backtesting_timeframe(symbol, main_interval, days)
+            main_candles = await fetch_backtesting_timeframe(symbol, main_interval, tf_days)
 
             if not main_candles:
                 print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
                 continue
 
-            # Descargar subdivisiones
+            # Descargar subdivisiones (usar mismos días que el timeframe principal)
             subdivision_interval = config["subdivisions"]["interval"]
-            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, days)
+            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, tf_days)
 
             if not subdivision_candles:
                 print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
@@ -1908,18 +2013,23 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
 
-            print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
-            print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
+            # Para 1m y 5m, saltar Open Interest (demasiados datos y no es crítico)
+            oi_data = []
+            if tf_name not in ["1m", "5m"]:
+                print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
+                print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
 
-            # >> CORREGIDO: Pasar timestamps exactos del rango de velas
-            oi_response = await get_open_interest(
-                symbol,
-                str(main_interval),
-                days,
-                start_timestamp_ms=min_candle_ts,
-                end_timestamp_ms=max_candle_ts
-            )
-            oi_data = oi_response.get("data", []) if oi_response.get("success") else []
+                # >> CORREGIDO: Pasar timestamps exactos del rango de velas
+                oi_response = await get_open_interest(
+                    symbol,
+                    str(main_interval),
+                    tf_days,
+                    start_timestamp_ms=min_candle_ts,
+                    end_timestamp_ms=max_candle_ts
+                )
+                oi_data = oi_response.get("data", []) if oi_response.get("success") else []
+            else:
+                print(f"\n[BACKTESTING] Saltando Open Interest para {tf_name} (demasiados datos)")
 
             timeframes_data[tf_name] = {
                 "main": main_candles,
@@ -1934,38 +2044,55 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
             print(f"  - Open Interest: {len(oi_data)} puntos")
 
         # Calcular metadata
+        print(f"\n[BACKTESTING] PASO 1: Calculando metadata...")
         all_timestamps = []
         for tf_data in timeframes_data.values():
             all_timestamps.extend([c["timestamp"] for c in tf_data["main"]])
 
+        print(f"[BACKTESTING] PASO 2: Total timestamps: {len(all_timestamps)}")
+
         if all_timestamps:
             min_ts = min(all_timestamps)
             max_ts = max(all_timestamps)
+            print(f"[BACKTESTING] PASO 3: min_ts={min_ts}, max_ts={max_ts}")
 
             start_date = datetime.fromtimestamp(min_ts / 1000, tz=COLOMBIA_TZ)
             end_date = datetime.fromtimestamp(max_ts / 1000, tz=COLOMBIA_TZ)
+            print(f"[BACKTESTING] PASO 4: start_date={start_date}, end_date={end_date}")
         else:
             start_date = end_date = datetime.now(COLOMBIA_TZ)
+            print(f"[BACKTESTING] PASO 4: Sin timestamps, usando fecha actual")
 
+        # Construir info de días por timeframe
+        print(f"[BACKTESTING] PASO 5: Construyendo days_info...")
+        days_info = {tf: cfg.get("days", 730) for tf, cfg in BACKTESTING_CONFIG.items()}
+        print(f"[BACKTESTING] PASO 5: days_info = {days_info}")
+
+        print(f"[BACKTESTING] PASO 6: Construyendo metadata dict...")
         metadata = {
             "cached_at": int(time.time() * 1000),
             "cached_at_colombia": datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
             "date_range": {
                 "start": start_date.strftime("%Y-%m-%d %H:%M:%S"),
                 "end": end_date.strftime("%Y-%m-%d %H:%M:%S"),
-                "days": days
+                "days_by_timeframe": days_info  # 1m=365, 5m=1095, otros=730
             }
         }
+        print(f"[BACKTESTING] PASO 6: metadata construido OK")
 
         # Preparar respuesta
+        print(f"[BACKTESTING] PASO 7: Preparando response_data...")
         response_data = {
             "symbol": symbol,
             "timeframes": timeframes_data,
             "metadata": metadata
         }
+        print(f"[BACKTESTING] PASO 7: response_data listo, timeframes={list(timeframes_data.keys())}")
 
         # Guardar en caché
+        print(f"[BACKTESTING] PASO 8: Guardando en caché...")
         save_backtesting_cache(symbol, response_data)
+        print(f"[BACKTESTING] PASO 8: Caché guardado OK")
 
         print(f"\n[BACKTESTING] OK Datos completos para {symbol} listos")
         print(f"  - Timeframes: {list(timeframes_data.keys())}")
@@ -1978,9 +2105,28 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
         }
 
     except Exception as e:
-        print(f"[ERROR] Backtesting bulk data {symbol}: {str(e)}")
         import traceback
+        import sys
+        print(f"\n{'='*60}")
+        print(f"[ERROR CRÍTICO] Backtesting bulk data {symbol}")
+        print(f"[ERROR] Tipo: {type(e).__name__}")
+        print(f"[ERROR] Mensaje: {str(e)}")
+        print(f"[ERROR] Traceback completo:")
+        print(f"{'='*60}")
         traceback.print_exc()
+
+        # También imprimir info de la excepción con más detalle
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        if exc_tb:
+            print(f"\n[ERROR] Línea exacta del error:")
+            while exc_tb.tb_next:
+                exc_tb = exc_tb.tb_next
+            print(f"  - Archivo: {exc_tb.tb_frame.f_code.co_filename}")
+            print(f"  - Línea: {exc_tb.tb_lineno}")
+            print(f"  - Función: {exc_tb.tb_frame.f_code.co_name}")
+            print(f"  - Variables locales: {list(exc_tb.tb_frame.f_locals.keys())}")
+        print(f"{'='*60}\n")
+
         return {
             "success": False,
             "error": str(e)
@@ -2044,7 +2190,6 @@ async def update_backtesting_data(symbol: str):
         print(f"\n[BACKTESTING UPDATE] [UPDATE] Actualizando datos para {symbol}...")
 
         total_new_candles = 0
-        days = 1095  # 3 años por defecto
 
         # Actualizar cada timeframe
         for tf_name, tf_data in cached_data.get("timeframes", {}).items():

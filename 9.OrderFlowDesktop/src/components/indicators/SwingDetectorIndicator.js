@@ -120,8 +120,9 @@ class SwingDetectorIndicator extends IndicatorBase {
    * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
    */
   startPollingIfReady() {
-    console.log(`[${this.symbol}] SwingDetector startPollingIfReady: interval=${!!this._pollingInterval}, enabled=${this.enabled}, config.enabled=${this.config?.enabled}`);
-    if (!this._pollingInterval && this.enabled && this.config.enabled) {
+    console.log(`[${this.symbol}] SwingDetector startPollingIfReady: pollingId=${!!this._pollingId}, enabled=${this.enabled}, config.enabled=${this.config?.enabled}`);
+    // FIX: Corregido _pollingInterval -> _pollingId (variable correcta definida en linea 32)
+    if (!this._pollingId && this.enabled && this.config.enabled) {
       this._startPolling();
     }
   }

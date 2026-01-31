@@ -13149,3 +13149,677 @@ httpx.ReadTimeout
 2026-01-29 09:24:10,814 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
 2026-01-29 09:24:32,756 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
 2026-01-29 09:24:57,474 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 11:18:30,714 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-01-30 11:18:32,563 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-01-30 11:18:32,678 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-01-30 11:18:32,695 | INFO | main | ============================================================
+2026-01-30 11:18:32,695 | INFO | main | Trading Journal Backend starting...
+2026-01-30 11:18:32,695 | INFO | main | Database: data/journal.db
+2026-01-30 11:18:32,695 | INFO | main | Screenshots: screenshots/
+2026-01-30 11:18:32,695 | INFO | main | ============================================================
+2026-01-30 11:18:32,696 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-01-30 11:18:33,111 | INFO | services.position_monitor | Loaded 10 existing open entries from database
+2026-01-30 11:18:33,111 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-01-30 11:18:33,111 | INFO | main | Position monitor ENABLED
+2026-01-30 11:18:33,112 | INFO | main | All services started successfully
+2026-01-30 11:18:45,744 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-01-30 11:19:19,050 | INFO | services.position_monitor | Fetched 1 positions from TradingBot
+2026-01-30 11:19:19,051 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 82927.8
+2026-01-30 11:19:19,110 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:19:19,112 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 11:19:19,115 | INFO | store.journal_store | Created journal entry: fc759271-6fa3-4401-b9c6-09cbb75cbae2 - BTCUSDT short
+2026-01-30 11:19:19,119 | INFO | services.position_monitor | Created journal entry fc759271-6fa3-4401-b9c6-09cbb75cbae2 for BTCUSDT
+2026-01-30 11:19:26,303 | ERROR | services.screenshot_service | All screenshot methods failed for BTCUSDT
+2026-01-30 11:19:43,186 | INFO | services.position_monitor | Fetched 1 positions from TradingBot
+2026-01-30 11:19:59,235 | INFO | services.position_monitor | Fetched 1 positions from TradingBot
+2026-01-30 11:20:15,761 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:20:15,762 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 116.94
+2026-01-30 11:20:15,808 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:20:15,814 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:20:15,818 | INFO | store.journal_store | Created journal entry: cbc3315f-40b0-4f89-8fce-88640a96d5f5 - SOLUSDT long
+2026-01-30 11:20:15,821 | INFO | services.position_monitor | Created journal entry cbc3315f-40b0-4f89-8fce-88640a96d5f5 for SOLUSDT
+2026-01-30 11:20:23,025 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-01-30 11:20:39,916 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:20:56,050 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:21:12,777 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:21:29,293 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:21:46,203 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:22:02,134 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:22:17,781 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:22:32,163 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:22:48,301 | INFO | services.position_monitor | Fetched 2 positions from TradingBot
+2026-01-30 11:23:04,386 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 11:23:04,387 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 1.2795
+2026-01-30 11:23:04,429 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:23:04,432 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 11:23:04,435 | INFO | store.journal_store | Created journal entry: a1e0a563-d02f-450c-a925-105ec484e4e1 - SUIUSDT short
+2026-01-30 11:23:04,439 | INFO | services.position_monitor | Created journal entry a1e0a563-d02f-450c-a925-105ec484e4e1 for SUIUSDT
+2026-01-30 11:23:11,620 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-01-30 11:23:11,621 | INFO | services.position_monitor | New position detected: DOGEUSDT Sell @ 0.11592
+2026-01-30 11:23:11,640 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:23:11,642 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 11:23:11,645 | INFO | store.journal_store | Created journal entry: 977cffa3-99e6-4b0d-983a-1d2fbf82e8dc - DOGEUSDT short
+2026-01-30 11:23:11,649 | INFO | services.position_monitor | Created journal entry 977cffa3-99e6-4b0d-983a-1d2fbf82e8dc for DOGEUSDT
+2026-01-30 11:23:18,829 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-01-30 11:23:18,830 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.29205
+2026-01-30 11:23:18,850 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:23:18,852 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:23:18,854 | INFO | store.journal_store | Created journal entry: ca108542-c4a8-43af-95d3-94ee49526b3b - TRXUSDT long
+2026-01-30 11:23:18,857 | INFO | services.position_monitor | Created journal entry ca108542-c4a8-43af-95d3-94ee49526b3b for TRXUSDT
+2026-01-30 11:23:26,046 | ERROR | services.screenshot_service | All screenshot methods failed for TRXUSDT
+2026-01-30 11:23:40,844 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 11:23:57,747 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 11:24:14,936 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:24:14,937 | INFO | services.position_monitor | New position detected: PAXGUSDT Sell @ 5035.1
+2026-01-30 11:24:14,982 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:24:14,989 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 11:24:14,992 | INFO | store.journal_store | Created journal entry: 689f1fee-b651-424a-a1b7-a269898d1528 - PAXGUSDT short
+2026-01-30 11:24:14,995 | INFO | services.position_monitor | Created journal entry 689f1fee-b651-424a-a1b7-a269898d1528 for PAXGUSDT
+2026-01-30 11:24:22,189 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 11:24:37,496 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:24:55,928 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:25:11,320 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:25:30,785 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:25:53,533 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:26:13,389 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:26:28,246 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:26:28,260 | INFO | store.journal_store | Updated journal entry: 689f1fee-b651-424a-a1b7-a269898d1528
+2026-01-30 11:26:49,894 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:27:09,571 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:27:26,706 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:27:43,295 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:28:00,644 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:28:17,714 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:28:17,715 | INFO | services.position_monitor | New position detected: ADAUSDT Buy @ 0.326
+2026-01-30 11:28:17,764 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:28:17,766 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:28:17,769 | INFO | store.journal_store | Created journal entry: fb7c8654-5187-4591-9ce1-4697c886519b - ADAUSDT long
+2026-01-30 11:28:17,773 | INFO | services.position_monitor | Created journal entry fb7c8654-5187-4591-9ce1-4697c886519b for ADAUSDT
+2026-01-30 11:28:24,951 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-01-30 11:28:24,952 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.7596
+2026-01-30 11:28:24,975 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:28:24,977 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:28:24,981 | INFO | store.journal_store | Created journal entry: bd8498f4-e5e2-40d1-b670-6ba010105fc2 - XRPUSDT long
+2026-01-30 11:28:24,985 | INFO | services.position_monitor | Created journal entry bd8498f4-e5e2-40d1-b670-6ba010105fc2 for XRPUSDT
+2026-01-30 11:28:32,166 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-01-30 11:28:32,166 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2728.98
+2026-01-30 11:28:32,188 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:28:32,191 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:28:32,194 | INFO | store.journal_store | Created journal entry: 1c38f77f-8f96-4d7f-a368-d08c19c1129f - ETHUSDT long
+2026-01-30 11:28:32,199 | INFO | services.position_monitor | Created journal entry 1c38f77f-8f96-4d7f-a368-d08c19c1129f for ETHUSDT
+2026-01-30 11:28:39,384 | ERROR | services.screenshot_service | All screenshot methods failed for ETHUSDT
+2026-01-30 11:28:55,643 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:29:09,423 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:29:27,228 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:29:44,329 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:30:03,895 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:30:20,269 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:30:38,910 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:30:58,312 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:31:15,761 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:31:39,386 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:31:56,936 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:32:14,558 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:32:34,688 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:32:51,081 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:33:07,200 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:33:29,166 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:33:52,761 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:34:11,635 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:34:27,440 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:34:46,965 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:35:07,025 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:35:26,528 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:35:46,094 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:36:04,574 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:36:22,389 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:36:41,402 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:36:58,798 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:37:16,574 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:37:35,225 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:37:54,377 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:38:13,301 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:38:29,326 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:38:49,082 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:39:08,031 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:39:26,353 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:39:44,992 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:40:03,790 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:40:24,504 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:40:43,712 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:41:00,449 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:41:17,658 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:41:34,930 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:41:55,963 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:42:13,212 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:42:29,402 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:42:50,179 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:43:08,364 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:43:28,444 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:43:47,550 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:44:05,950 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:44:25,931 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:44:50,187 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:45:11,964 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:45:36,002 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:45:55,140 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:46:14,174 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:46:30,826 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:46:49,441 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:47:06,629 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:47:24,283 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:47:41,926 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:47:59,363 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:48:16,638 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:48:34,273 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:48:52,765 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:49:09,956 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:49:25,982 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:49:44,281 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:50:05,244 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:50:24,135 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:50:40,773 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:50:58,199 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:51:17,438 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:51:35,080 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:51:56,147 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 11:52:10,805 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-01-30 11:52:11,731 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:11,740 | INFO | store.journal_store | Updated journal entry: 1c38f77f-8f96-4d7f-a368-d08c19c1129f
+2026-01-30 11:52:18,951 | ERROR | services.screenshot_service | All screenshot methods failed for ETHUSDT
+2026-01-30 11:52:18,951 | INFO | services.position_monitor | Closed journal entry 1c38f77f-8f96-4d7f-a368-d08c19c1129f: PnL $-0.29 (-0.24%)
+2026-01-30 11:52:18,952 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-01-30 11:52:19,825 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:19,831 | INFO | store.journal_store | Updated journal entry: fb7c8654-5187-4591-9ce1-4697c886519b
+2026-01-30 11:52:27,052 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-01-30 11:52:27,053 | INFO | services.position_monitor | Closed journal entry fb7c8654-5187-4591-9ce1-4697c886519b: PnL $-0.33 (-0.21%)
+2026-01-30 11:52:27,053 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-01-30 11:52:27,947 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:27,951 | INFO | store.journal_store | Updated journal entry: fc759271-6fa3-4401-b9c6-09cbb75cbae2
+2026-01-30 11:52:35,169 | ERROR | services.screenshot_service | All screenshot methods failed for BTCUSDT
+2026-01-30 11:52:35,170 | INFO | services.position_monitor | Closed journal entry fc759271-6fa3-4401-b9c6-09cbb75cbae2: PnL $-0.16 (-0.09%)
+2026-01-30 11:52:35,170 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-01-30 11:52:35,498 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:35,502 | INFO | store.journal_store | Updated journal entry: 689f1fee-b651-424a-a1b7-a269898d1528
+2026-01-30 11:52:42,669 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 11:52:42,670 | INFO | services.position_monitor | Closed journal entry 689f1fee-b651-424a-a1b7-a269898d1528: PnL $0.58 (0.69%)
+2026-01-30 11:52:42,670 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-01-30 11:52:43,551 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:43,557 | INFO | store.journal_store | Updated journal entry: a1e0a563-d02f-450c-a925-105ec484e4e1
+2026-01-30 11:52:50,780 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-01-30 11:52:50,780 | INFO | services.position_monitor | Closed journal entry a1e0a563-d02f-450c-a925-105ec484e4e1: PnL $-0.79 (-0.51%)
+2026-01-30 11:52:50,780 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-01-30 11:52:51,977 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:52:51,983 | INFO | store.journal_store | Updated journal entry: bd8498f4-e5e2-40d1-b670-6ba010105fc2
+2026-01-30 11:52:59,239 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-01-30 11:52:59,239 | INFO | services.position_monitor | Closed journal entry bd8498f4-e5e2-40d1-b670-6ba010105fc2: PnL $-0.17 (-0.06%)
+2026-01-30 11:52:59,239 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-01-30 11:53:00,135 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:53:00,140 | INFO | store.journal_store | Updated journal entry: cbc3315f-40b0-4f89-8fce-88640a96d5f5
+2026-01-30 11:53:07,372 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-01-30 11:53:07,372 | INFO | services.position_monitor | Closed journal entry cbc3315f-40b0-4f89-8fce-88640a96d5f5: PnL $-0.39 (-0.09%)
+2026-01-30 11:53:07,372 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-01-30 11:53:07,688 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/TRXUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:53:07,693 | INFO | store.journal_store | Updated journal entry: ca108542-c4a8-43af-95d3-94ee49526b3b
+2026-01-30 11:53:14,918 | ERROR | services.screenshot_service | All screenshot methods failed for TRXUSDT
+2026-01-30 11:53:14,918 | INFO | services.position_monitor | Closed journal entry ca108542-c4a8-43af-95d3-94ee49526b3b: PnL $0.02 (0.13%)
+2026-01-30 11:53:14,919 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-01-30 11:53:15,240 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 11:53:15,245 | INFO | store.journal_store | Updated journal entry: 977cffa3-99e6-4b0d-983a-1d2fbf82e8dc
+2026-01-30 11:53:22,459 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-01-30 11:53:22,459 | INFO | services.position_monitor | Closed journal entry 977cffa3-99e6-4b0d-983a-1d2fbf82e8dc: PnL $-0.26 (-0.08%)
+2026-01-30 11:55:08,585 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 11:55:08,585 | INFO | services.position_monitor | New position detected: PAXGUSDT Buy @ 5016.0
+2026-01-30 11:55:08,625 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:55:08,627 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:55:08,630 | INFO | store.journal_store | Created journal entry: cbb7abd6-48cb-4b31-9ee8-fbd49c1954c3 - PAXGUSDT long
+2026-01-30 11:55:08,633 | INFO | services.position_monitor | Created journal entry cbb7abd6-48cb-4b31-9ee8-fbd49c1954c3 for PAXGUSDT
+2026-01-30 11:55:15,793 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 11:55:15,793 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 117.01
+2026-01-30 11:55:15,814 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:55:15,816 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:55:15,819 | INFO | store.journal_store | Created journal entry: 962813a5-d8cb-4f47-99ed-bd7484c60017 - SOLUSDT long
+2026-01-30 11:55:15,823 | INFO | services.position_monitor | Created journal entry 962813a5-d8cb-4f47-99ed-bd7484c60017 for SOLUSDT
+2026-01-30 11:55:23,038 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-01-30 11:55:23,038 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.11608
+2026-01-30 11:55:23,059 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:55:23,061 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:55:23,065 | INFO | store.journal_store | Created journal entry: 8d92d93f-4723-4dd0-aabf-63a03ff0e269 - DOGEUSDT long
+2026-01-30 11:55:23,083 | INFO | services.position_monitor | Created journal entry 8d92d93f-4723-4dd0-aabf-63a03ff0e269 for DOGEUSDT
+2026-01-30 11:55:30,263 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-01-30 11:55:30,264 | INFO | services.position_monitor | New position detected: ADAUSDT Buy @ 0.3258
+2026-01-30 11:55:30,284 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:55:30,286 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:55:30,290 | INFO | store.journal_store | Created journal entry: d1c535db-dba0-4cd7-ad13-a1ab2af687ea - ADAUSDT long
+2026-01-30 11:55:30,294 | INFO | services.position_monitor | Created journal entry d1c535db-dba0-4cd7-ad13-a1ab2af687ea for ADAUSDT
+2026-01-30 11:55:37,464 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-01-30 11:55:37,465 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.2866
+2026-01-30 11:55:37,485 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:55:37,488 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:55:37,491 | INFO | store.journal_store | Created journal entry: f4c2afe0-d687-4d59-8bd0-5bc6102a8711 - SUIUSDT long
+2026-01-30 11:55:37,496 | INFO | services.position_monitor | Created journal entry f4c2afe0-d687-4d59-8bd0-5bc6102a8711 for SUIUSDT
+2026-01-30 11:55:44,662 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-01-30 11:56:04,504 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 11:56:22,471 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:56:22,472 | INFO | services.position_monitor | New position detected: ETHUSDT Sell @ 2726.94
+2026-01-30 11:56:22,524 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:56:22,526 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 11:56:22,530 | INFO | store.journal_store | Created journal entry: c06a58d2-cc18-4c67-9592-d03c49e166e8 - ETHUSDT short
+2026-01-30 11:56:22,534 | INFO | services.position_monitor | Created journal entry c06a58d2-cc18-4c67-9592-d03c49e166e8 for ETHUSDT
+2026-01-30 11:56:29,733 | ERROR | services.screenshot_service | All screenshot methods failed for ETHUSDT
+2026-01-30 11:56:48,098 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:57:09,005 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 11:57:27,904 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:57:27,905 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 83081.5
+2026-01-30 11:57:27,967 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 11:57:27,970 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 11:57:27,973 | INFO | store.journal_store | Created journal entry: 173b9762-2155-497a-9653-9993866f85c8 - BTCUSDT long
+2026-01-30 11:57:27,977 | INFO | services.position_monitor | Created journal entry 173b9762-2155-497a-9653-9993866f85c8 for BTCUSDT
+2026-01-30 11:57:35,194 | ERROR | services.screenshot_service | All screenshot methods failed for BTCUSDT
+2026-01-30 11:57:49,104 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:58:07,514 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:58:28,001 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:58:45,192 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:59:02,215 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:59:22,191 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:59:38,883 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 11:59:58,106 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 12:00:16,401 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 12:00:35,660 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 12:00:55,213 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 12:01:15,124 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:01:15,124 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.2925
+2026-01-30 12:01:15,171 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 12:01:15,173 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 12:01:15,177 | INFO | store.journal_store | Created journal entry: 6b7d7513-5077-4d3c-9390-60179a88c4d4 - TRXUSDT long
+2026-01-30 12:01:15,180 | INFO | services.position_monitor | Created journal entry 6b7d7513-5077-4d3c-9390-60179a88c4d4 for TRXUSDT
+2026-01-30 12:01:22,386 | ERROR | services.screenshot_service | All screenshot methods failed for TRXUSDT
+2026-01-30 12:01:38,266 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:01:54,953 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:02:14,787 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:02:32,536 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:02:53,143 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:03:11,255 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:03:11,255 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.7539
+2026-01-30 12:03:11,314 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 12:03:11,316 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 12:03:11,319 | INFO | store.journal_store | Created journal entry: 68529b90-8e76-41d8-b959-aeec0b83bb3e - XRPUSDT short
+2026-01-30 12:03:11,322 | INFO | services.position_monitor | Created journal entry 68529b90-8e76-41d8-b959-aeec0b83bb3e for XRPUSDT
+2026-01-30 12:03:18,533 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-01-30 12:03:36,977 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:03:54,694 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:04:12,789 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:04:27,789 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:04:46,675 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:05:06,474 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:05:23,140 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:05:41,031 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:05:54,954 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:06:13,590 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:06:31,461 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:06:52,241 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:07:10,450 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:07:29,274 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:07:48,749 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:08:08,443 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:08:24,612 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:08:39,639 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:08:59,864 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:09:18,636 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:09:36,520 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:09:56,235 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:10:15,993 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:10:35,029 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:10:53,366 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:11:10,944 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:11:29,797 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:11:48,229 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:12:05,389 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:12:24,092 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:12:43,118 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:12:59,870 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:13:20,935 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:13:38,342 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:13:56,715 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:14:15,599 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:14:35,719 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:14:54,789 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:15:15,640 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:15:34,669 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:15:53,115 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:16:12,150 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:16:31,982 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:16:48,929 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:17:07,288 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:17:26,004 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:17:44,361 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:18:02,195 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:18:19,821 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:18:38,972 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:18:58,117 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:19:16,603 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:19:32,722 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:19:51,685 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:20:10,876 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:20:29,343 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:20:48,286 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:21:07,877 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:21:26,625 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:21:45,175 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:22:03,012 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:22:21,085 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:22:40,937 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:22:58,805 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:23:17,327 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:23:34,401 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:23:53,534 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:24:12,034 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:24:32,673 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:24:48,767 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:25:08,235 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:25:25,566 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:25:44,899 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:26:03,248 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:26:21,620 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:26:41,313 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:26:59,719 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:27:17,621 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:27:34,670 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:27:54,834 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:28:13,776 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:28:33,945 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:28:49,040 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:29:09,164 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:29:28,679 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:29:47,796 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:30:05,556 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:30:24,038 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:30:44,674 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:31:04,800 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:31:21,515 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:31:39,809 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:31:58,203 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:32:15,137 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:32:34,381 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:32:49,681 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:33:10,243 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:33:28,163 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:33:49,241 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:34:07,651 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:34:25,425 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:34:44,337 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:35:02,300 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:35:19,684 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:35:37,587 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:35:55,714 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:36:15,203 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:36:33,668 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:36:49,980 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:37:07,357 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:37:25,371 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:37:40,993 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:37:55,946 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:38:12,073 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:38:28,274 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:38:46,799 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:39:02,444 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:39:15,894 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:39:33,188 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:39:50,328 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:40:08,500 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:40:25,453 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:40:42,323 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:41:00,084 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:41:16,977 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:41:33,417 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:41:50,360 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:42:05,967 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:42:22,128 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:42:39,924 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:42:57,566 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:43:12,815 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:43:30,033 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:43:46,278 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:44:04,005 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:44:04,005 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-01-30 12:44:04,341 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 12:44:04,347 | INFO | store.journal_store | Updated journal entry: cbb7abd6-48cb-4b31-9ee8-fbd49c1954c3
+2026-01-30 12:44:11,548 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 12:44:11,549 | INFO | services.position_monitor | Closed journal entry cbb7abd6-48cb-4b31-9ee8-fbd49c1954c3: PnL $-2.61 (-2.49%)
+2026-01-30 12:44:28,839 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:44:42,726 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:45:00,910 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:45:17,608 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:45:33,363 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:45:50,146 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:46:07,940 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:46:24,672 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:46:41,900 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 12:47:01,736 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:47:01,737 | INFO | services.position_monitor | New position detected: PAXGUSDT Buy @ 4906.2
+2026-01-30 12:47:01,788 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 12:47:01,790 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 12:47:01,795 | INFO | store.journal_store | Created journal entry: ad31e88f-ce21-4e5e-8c1c-686e20ffac18 - PAXGUSDT long
+2026-01-30 12:47:01,799 | INFO | services.position_monitor | Created journal entry ad31e88f-ce21-4e5e-8c1c-686e20ffac18 for PAXGUSDT
+2026-01-30 12:47:08,995 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 12:47:25,716 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:47:46,463 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:48:05,692 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:48:24,161 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:48:39,895 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:48:59,183 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:49:19,466 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:49:36,325 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:49:53,633 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:50:12,762 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:50:31,281 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:50:50,188 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:51:06,711 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:51:24,638 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:51:43,164 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:52:02,494 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:52:20,909 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:52:37,309 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:52:55,658 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:53:15,596 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:53:32,813 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:53:50,042 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:54:06,561 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:54:25,418 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:54:44,554 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:55:04,535 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:55:21,776 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:55:41,929 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:55:59,992 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:56:20,082 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:56:37,832 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:56:56,821 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:57:16,732 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:57:37,128 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:57:54,182 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:58:12,433 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:58:32,408 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:58:52,642 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:59:11,350 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:59:28,086 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 12:59:46,480 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:00:05,400 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:00:24,191 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:00:39,778 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:00:57,042 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:01:16,873 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:01:35,503 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:01:54,204 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:02:10,437 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:02:27,350 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:02:45,279 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:03:02,518 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:03:20,179 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:03:39,178 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:03:58,056 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:04:17,404 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:04:35,225 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:04:54,793 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:05:12,862 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:05:33,321 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:05:51,471 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:06:09,798 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:06:30,652 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:06:49,937 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:07:09,891 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:07:30,629 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:07:48,513 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:08:06,420 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:08:22,144 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:08:40,068 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:08:56,877 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:09:14,911 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:09:31,556 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:09:50,771 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:10:07,729 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:10:23,850 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:10:41,419 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:10:56,953 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:10:56,953 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-01-30 13:10:57,357 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:10:57,362 | INFO | store.journal_store | Updated journal entry: 962813a5-d8cb-4f47-99ed-bd7484c60017
+2026-01-30 13:11:04,561 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-01-30 13:11:04,562 | INFO | services.position_monitor | Closed journal entry 962813a5-d8cb-4f47-99ed-bd7484c60017: PnL $-2.33 (-1.06%)
+2026-01-30 13:11:19,694 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:11:38,151 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:11:56,097 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:12:13,136 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:12:28,361 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:12:45,635 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:13:00,473 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:13:17,073 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:13:32,883 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:13:49,880 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:14:06,336 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:14:21,150 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:14:39,589 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:14:57,151 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:15:14,624 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:15:31,686 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:15:50,056 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:15:50,057 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-01-30 13:15:51,012 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:15:51,017 | INFO | store.journal_store | Updated journal entry: d1c535db-dba0-4cd7-ad13-a1ab2af687ea
+2026-01-30 13:15:58,249 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-01-30 13:15:58,249 | INFO | services.position_monitor | Closed journal entry d1c535db-dba0-4cd7-ad13-a1ab2af687ea: PnL $-1.18 (-1.07%)
+2026-01-30 13:16:13,867 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:16:30,622 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:16:48,921 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:17:06,429 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:17:24,217 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:17:40,358 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:17:59,658 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 13:17:59,659 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-01-30 13:18:00,641 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:18:00,646 | INFO | store.journal_store | Updated journal entry: f4c2afe0-d687-4d59-8bd0-5bc6102a8711
+2026-01-30 13:18:07,891 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-01-30 13:18:07,892 | INFO | services.position_monitor | Closed journal entry f4c2afe0-d687-4d59-8bd0-5bc6102a8711: PnL $-0.79 (-0.05%)
+2026-01-30 13:18:24,562 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:18:24,563 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 115.31
+2026-01-30 13:18:24,614 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:18:24,617 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT)
+2026-01-30 13:18:24,620 | INFO | store.journal_store | Created journal entry: b6af53b1-6aed-44d0-b071-6959c796a91f - SOLUSDT short
+2026-01-30 13:18:24,623 | INFO | services.position_monitor | Created journal entry b6af53b1-6aed-44d0-b071-6959c796a91f for SOLUSDT
+2026-01-30 13:18:31,833 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-01-30 13:18:48,666 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:19:03,581 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:19:18,399 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:19:34,780 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:19:52,155 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:20:10,999 | INFO | services.position_monitor | Fetched 7 positions from TradingBot
+2026-01-30 13:20:27,986 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 13:20:27,987 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-01-30 13:20:28,396 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:20:28,401 | INFO | store.journal_store | Updated journal entry: 68529b90-8e76-41d8-b959-aeec0b83bb3e
+2026-01-30 13:20:35,620 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-01-30 13:20:35,621 | INFO | services.position_monitor | Closed journal entry 68529b90-8e76-41d8-b959-aeec0b83bb3e: PnL $1.53 (1.65%)
+2026-01-30 13:20:53,326 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:20:53,327 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-01-30 13:20:53,685 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:20:53,690 | INFO | store.journal_store | Updated journal entry: ad31e88f-ce21-4e5e-8c1c-686e20ffac18
+2026-01-30 13:21:00,955 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 13:21:00,955 | INFO | services.position_monitor | Closed journal entry ad31e88f-ce21-4e5e-8c1c-686e20ffac18: PnL $-2.61 (-0.31%)
+2026-01-30 13:21:17,247 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:21:34,879 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:21:52,009 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:22:11,759 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:22:30,697 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:22:50,847 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:23:08,993 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:23:27,114 | INFO | services.position_monitor | Fetched 4 positions from TradingBot
+2026-01-30 13:23:27,115 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-01-30 13:23:28,036 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-01-30 13:23:28,043 | INFO | store.journal_store | Updated journal entry: 8d92d93f-4723-4dd0-aabf-63a03ff0e269
+2026-01-30 13:23:35,267 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-01-30 13:23:35,267 | INFO | services.position_monitor | Closed journal entry 8d92d93f-4723-4dd0-aabf-63a03ff0e269: PnL $-3.14 (-2.20%)
+2026-01-30 13:23:52,797 | INFO | services.position_monitor | Fetched 4 positions from TradingBot
+2026-01-30 13:24:10,315 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:24:10,316 | INFO | services.position_monitor | New position detected: PAXGUSDT Buy @ 4795.7
+2026-01-30 13:24:10,383 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:24:10,385 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 13:24:10,387 | INFO | store.journal_store | Created journal entry: c59d6742-aca6-4ca4-845d-5e6a1af861b3 - PAXGUSDT long
+2026-01-30 13:24:10,391 | INFO | services.position_monitor | Created journal entry c59d6742-aca6-4ca4-845d-5e6a1af861b3 for PAXGUSDT
+2026-01-30 13:24:17,644 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-01-30 13:24:35,049 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:24:51,868 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:25:10,129 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:25:27,895 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:25:45,396 | INFO | services.position_monitor | Fetched 5 positions from TradingBot
+2026-01-30 13:26:01,217 | INFO | services.position_monitor | Fetched 6 positions from TradingBot
+2026-01-30 13:26:01,217 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.2468
+2026-01-30 13:26:01,267 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:26:01,269 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 13:26:01,272 | INFO | store.journal_store | Created journal entry: 85e3033f-5d3b-43ec-9013-3848d953953b - SUIUSDT long
+2026-01-30 13:26:01,277 | INFO | services.position_monitor | Created journal entry 85e3033f-5d3b-43ec-9013-3848d953953b for SUIUSDT
+2026-01-30 13:26:08,478 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-01-30 13:26:26,485 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:26:26,486 | INFO | services.position_monitor | New position detected: ADAUSDT Buy @ 0.3187
+2026-01-30 13:26:26,529 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:26:26,531 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 13:26:26,534 | INFO | store.journal_store | Created journal entry: 90377080-9a65-4966-b5cc-ebeb0df5781d - ADAUSDT long
+2026-01-30 13:26:26,538 | INFO | services.position_monitor | Created journal entry 90377080-9a65-4966-b5cc-ebeb0df5781d for ADAUSDT
+2026-01-30 13:26:33,764 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-01-30 13:26:33,765 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.7206
+2026-01-30 13:26:33,786 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:26:33,789 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 13:26:33,792 | INFO | store.journal_store | Created journal entry: 7d6f77ba-5e9e-40dd-9aa2-c44ac202f400 - XRPUSDT long
+2026-01-30 13:26:33,795 | INFO | services.position_monitor | Created journal entry 7d6f77ba-5e9e-40dd-9aa2-c44ac202f400 for XRPUSDT
+2026-01-30 13:26:41,003 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-01-30 13:26:58,880 | INFO | services.position_monitor | Fetched 8 positions from TradingBot
+2026-01-30 13:27:16,502 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:27:16,503 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.11462
+2026-01-30 13:27:16,552 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-01-30 13:27:16,555 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG)
+2026-01-30 13:27:16,558 | INFO | store.journal_store | Created journal entry: 37c7f391-11c5-48d0-8f8f-71ba867ba34a - DOGEUSDT long
+2026-01-30 13:27:16,563 | INFO | services.position_monitor | Created journal entry 37c7f391-11c5-48d0-8f8f-71ba867ba34a for DOGEUSDT
+2026-01-30 13:27:23,797 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-01-30 13:27:41,407 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:28:00,338 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:28:18,082 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:28:37,844 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:28:56,240 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:29:13,463 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:29:32,280 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:29:51,279 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:30:12,514 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:30:31,428 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:30:50,689 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:31:09,312 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:31:28,114 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:31:45,938 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:32:04,549 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:32:23,922 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:32:43,507 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:33:02,839 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:33:22,877 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:33:40,632 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:34:01,511 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:34:19,622 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:34:38,311 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:34:57,228 | INFO | services.position_monitor | Fetched 9 positions from TradingBot
+2026-01-30 13:35:15,049 | INFO | services.position_monitor | Fetched 9 positions from TradingBot

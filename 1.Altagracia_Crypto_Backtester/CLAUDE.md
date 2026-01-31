@@ -4,6 +4,62 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ---
 
+## 🚨 TRABAJO EN PROGRESO (Enero 2026)
+
+### Tarea Actual: Expansión de Timeframes (1m y 5m)
+
+**Objetivo:** Expandir de 3 timeframes (15m, 1h, 4h) a 5 timeframes añadiendo 1m y 5m.
+
+**Configuración de días por timeframe:**
+- 1m: 365 días (1 año = 525,600 velas)
+- 5m: 1095 días (3 años = 315,360 velas)
+- 15m/1h/4h: 730 días (2 años)
+
+### Estado de la Implementación
+
+**✅ COMPLETADO:**
+1. Backend `main.py`:
+   - `MAX_DAYS_BY_INTERVAL` actualizado (1m=365, 5m=1095)
+   - `BACKTESTING_CONFIG` con 5 timeframes
+   - Variable `days` corregida a `tf_days` en endpoint bulk-data
+   - Metadata usa `days_by_timeframe` en vez de `days`
+   - Open Interest deshabilitado para 1m y 5m (demasiados datos)
+
+2. Frontend:
+   - `TimeframeTabs.jsx`: 5 tabs (1m, 5m, 15m, 1h, 4h)
+   - `TimeController.js`: Subdivisiones para 1m y 5m
+   - `BacktestingApp.jsx`: Estados para 5 timeframes
+
+**❌ PROBLEMA ACTUAL:**
+- Error: "name 'days' is not defined" aparece después de 30+ min de carga
+- El error NO aparece en la consola del backend
+- El código fuente está correcto (verificado con scripts de prueba)
+- El servidor parece ejecutar código viejo a pesar de reinicios
+
+**🔧 DIAGNÓSTICO REALIZADO:**
+1. Script `test_days_bug.py` confirma que el código Python es correcto
+2. Script `check_days_error.py` no encuentra errores en main.py
+3. Endpoint `/api/backtesting/test-metadata` creado pero no se carga en el servidor
+4. Múltiples procesos zombie en puerto 9000 detectados
+5. **Solución pendiente:** Reiniciar PC para liberar puerto 9000
+
+### Próximos Pasos (después del reinicio)
+
+1. Verificar que puerto 9000 está libre: `netstat -ano | findstr :9000`
+2. Iniciar backend: `python -m uvicorn main:app --port 9000`
+3. Probar endpoint: `http://localhost:9000/api/backtesting/test-metadata`
+4. Si funciona, probar carga completa de datos
+5. Si el error persiste, revisar dónde exactamente aparece (navegador F12, terminal, UI)
+
+### Archivos de Diagnóstico Creados
+
+- `backend/limpiar_cache.bat` - Limpia caché de Python y backtesting
+- `backend/reiniciar_backend.bat` - Mata procesos y reinicia servidor
+- `backend/test_days_bug.py` - Prueba aislada del código de metadata
+- `backend/check_days_error.py` - Analiza main.py buscando usos de 'days'
+
+---
+
 ## COMANDOS DE INICIO
 
 ```bash
@@ -70,7 +126,10 @@ npm install && npm run dev
 - **Zoom dinámico v3.0** similar a TradingView
 - **Exportación**: Excel, CSV, PNG
 - **Persistencia de sesiones**
-- **Timeframes**: 15m, 1h, 4h (tabs independientes)
+- **Timeframes**: 1m, 5m, 15m, 1h, 4h (5 tabs independientes)
+  - 1m: 1 año de datos (525,600 velas)
+  - 5m: 3 años de datos (315,360 velas)
+  - 15m/1h/4h: 2 años de datos
 
 ---
 
@@ -95,18 +154,32 @@ npm install && npm run dev
 
 ```python
 MAX_DAYS_BY_INTERVAL = {
-    "1": 5,      # 1 minuto: máx 5 días
+    "1": 365,    # 1 minuto: 1 año (525,600 velas) - BACKTESTING
     "3": 10,     # 3 minutos: máx 10 días
-    "5": 5,      # 5 minutos: máx 5 días
-    "15": 15,    # 15 minutos: máx 15 días
-    "30": 30,    # 30 minutos: máx 30 días
-    "60": 120,   # 1 hora: máx 120 días
-    "120": 180,  # 2 horas: máx 180 días
-    "240": 300,  # 4 horas: máx 300 días
+    "5": 1095,   # 5 minutos: 3 años (315,360 velas) - BACKTESTING
+    "15": 730,   # 15 minutos: máx 2 años
+    "30": 730,   # 30 minutos: máx 2 años
+    "60": 730,   # 1 hora: máx 2 años
+    "120": 730,  # 2 horas: máx 2 años
+    "240": 730,  # 4 horas: máx 2 años
     "D": 730,    # Diario: máx 730 días
     "W": 730     # Semanal: máx 730 días
 }
 ```
+
+### Configuración de Backtesting (BACKTESTING_CONFIG)
+
+```python
+BACKTESTING_CONFIG = {
+    "1m": { "interval": "1", "days": 365, "subdivisions": { "interval": "1", "count": 1 } },
+    "5m": { "interval": "5", "days": 1095, "subdivisions": { "interval": "1", "count": 5 } },
+    "15m": { "interval": "15", "days": 730, "subdivisions": { "interval": "5", "count": 3 } },
+    "1h": { "interval": "60", "days": 730, "subdivisions": { "interval": "15", "count": 4 } },
+    "4h": { "interval": "240", "days": 730, "subdivisions": { "interval": "60", "count": 4 } }
+}
+```
+
+**Nota:** Open Interest se omite para 1m y 5m (demasiados datos).
 
 ---
 

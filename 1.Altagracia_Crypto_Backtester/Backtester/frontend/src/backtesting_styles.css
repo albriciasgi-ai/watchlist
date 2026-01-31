@@ -153,6 +153,32 @@
   color: #666 !important;
 }
 
+.loading-progress-message {
+  font-weight: 600;
+  color: #667eea !important;
+}
+
+.progress-bar-container {
+  width: 100%;
+  max-width: 300px;
+  height: 8px;
+  background: #3a3a3a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.loading-timeframes-info {
+  text-align: left;
+  line-height: 1.6;
+}
+
 /* ==================== MAIN BACKTESTING VIEW ==================== */
 
 .backtesting-header {

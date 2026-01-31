@@ -274,6 +274,7 @@ class SwingService:
         # Service start time for filtering historical signals (prevents alerts on load)
         self._service_start_time: float = 0
         self._grace_period_seconds: int = 60  # Ignore signals older than this after service start
+        self._warmup_period_seconds: int = 120  # Block ALL alerts for this many seconds after start
 
         # Load saved config
         self._load_config()
@@ -326,6 +327,11 @@ class SwingService:
         self.running = True
         self.stats['start_time'] = time.time()
         self._service_start_time = time.time()  # For filtering historical signals
+
+        logger.info(
+            f"[SWING_SERVICE] Started with {self._warmup_period_seconds}s warmup period "
+            f"(alerts blocked until warmup completes)"
+        )
 
         # Create HTTP client
         self._http_client = httpx.AsyncClient(timeout=15.0)
@@ -673,6 +679,23 @@ class SwingService:
         """Process a detected signal - check cooldown and send alert"""
         # Use symbol + direction for cooldown (separate cooldowns for LONG and SHORT)
         cooldown_key = f"{signal.symbol}_{signal.direction}"
+        now = time.time()
+
+        # Check 0: Warmup period - block ALL alerts for N seconds after service start
+        # This prevents any alerts during initial historical analysis
+        time_since_start = now - self._service_start_time
+        if time_since_start < self._warmup_period_seconds:
+            remaining = self._warmup_period_seconds - time_since_start
+            logger.debug(
+                f"[SWING_SERVICE] {signal.symbol}: Signal blocked - warmup period "
+                f"({remaining:.0f}s remaining)"
+            )
+            alert_logger.info(
+                f"BLOCKED_WARMUP | {signal.symbol} | {signal.signal_type} | "
+                f"price={signal.price:.2f} | warmup_remaining={remaining:.0f}s"
+            )
+            self.stats['alerts_blocked_historical'] += 1
+            return
 
         # Check 1: Skip historical signals (grace period after service start)
         # This prevents alerts from being sent for signals detected in historical analysis
@@ -700,7 +723,7 @@ class SwingService:
         # Check 2: Cooldown
         last_alert = self._cooldowns.get(cooldown_key, 0)
         cooldown_seconds = self.config.cooldownMinutes * 60
-        now = time.time()
+        # 'now' already defined at start of method
 
         if now - last_alert < cooldown_seconds:
             remaining = cooldown_seconds - (now - last_alert)

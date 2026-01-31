@@ -456,7 +456,15 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         all_candles = []
         current_start = start_ms
 
-        async with httpx.AsyncClient(timeout=30) as client:
+        # Timeout con valores especificos para connect y read
+        timeout_config = httpx.Timeout(
+            connect=10.0,    # 10 segundos para establecer conexion
+            read=30.0,       # 30 segundos para leer respuesta
+            write=10.0,
+            pool=10.0        # 10 segundos esperando conexion del pool
+        )
+
+        async with httpx.AsyncClient(timeout=timeout_config) as client:
             request_count = 0
             max_requests = 10
 
@@ -471,8 +479,21 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                     f"&start={current_start}&limit={fetch_limit}"
                 )
 
-                r = await client.get(url)
-                data = r.json()
+                # Reintentos con backoff exponencial
+                max_retries = 3
+                for retry in range(max_retries):
+                    try:
+                        r = await client.get(url)
+                        data = r.json()
+                        break  # Exito, salir del loop de reintentos
+                    except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ConnectError) as e:
+                        if retry < max_retries - 1:
+                            wait_time = (retry + 1) * 2  # 2s, 4s, 6s
+                            print(f"[{symbol}] Retry {retry + 1}/{max_retries} after {type(e).__name__}, waiting {wait_time}s...")
+                            await asyncio.sleep(wait_time)
+                        else:
+                            print(f"[{symbol}] All retries failed: {type(e).__name__}")
+                            raise  # Re-lanzar si todos los reintentos fallan
 
                 if data.get("retCode") != 0:
                     print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
@@ -4546,6 +4567,15 @@ async def get_vwap_service_data(
 
             print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
             await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
+            current_data = vwap_service.get_vwap_data(symbol)
+        else:
+            # SIEMPRE recalcular para incorporar velas nuevas del API
+            # Esto es necesario porque el polling del frontend espera datos actualizados
+            # Asegurar que el config tenga el intervalo correcto antes de recalcular
+            if vwap_service.config.interval != interval:
+                vwap_service.config.interval = interval
+
+            await vwap_service._calculate_symbol(symbol)
             current_data = vwap_service.get_vwap_data(symbol)
 
         return {

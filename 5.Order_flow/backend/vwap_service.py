@@ -709,6 +709,56 @@ class VWAPService:
         logger.info(f"[VWAP_SERVICE] {symbol}: Total {len(all_candles)} candles loaded")
         return all_candles
 
+    async def _fetch_recent_candles(self, symbol: str, limit: int = 10) -> List[Dict]:
+        """
+        Fetch the most recent candles from Bybit API.
+        Used to ensure VWAP data is always up-to-date, even if WebSocket
+        is subscribed to a different interval.
+        """
+        try:
+            url = (
+                f"{BYBIT_API_URL}?"
+                f"category=linear&symbol={symbol}&interval={self.config.interval}"
+                f"&limit={limit}"
+            )
+
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=5) as response:
+                    if response.status != 200:
+                        logger.warning(f"[VWAP_SERVICE] {symbol}: Recent candles API error {response.status}")
+                        return []
+
+                    data = await response.json()
+
+                    if data.get('retCode') != 0:
+                        logger.warning(f"[VWAP_SERVICE] {symbol}: Recent candles API returned error")
+                        return []
+
+                    klines = data.get('result', {}).get('list', [])
+                    candles = []
+                    for kline in klines:
+                        candle = {
+                            'timestamp': int(kline[0]),
+                            'open': float(kline[1]),
+                            'high': float(kline[2]),
+                            'low': float(kline[3]),
+                            'close': float(kline[4]),
+                            'volume': float(kline[5]),
+                            'turnover': float(kline[6]) if len(kline) > 6 else 0
+                        }
+                        candles.append(candle)
+
+                    # Sort ascending (Bybit returns descending)
+                    candles.sort(key=lambda x: x['timestamp'])
+                    return candles
+
+        except asyncio.TimeoutError:
+            logger.warning(f"[VWAP_SERVICE] {symbol}: Recent candles fetch timeout")
+            return []
+        except Exception as e:
+            logger.warning(f"[VWAP_SERVICE] {symbol}: Recent candles fetch error: {e}")
+            return []
+
     def _interval_to_minutes(self, interval: str) -> int:
         """Convert interval string to minutes"""
         mapping = {
@@ -763,7 +813,11 @@ class VWAPService:
         # Start with historical candles
         historical = self._historical_candles.get(symbol, [])
 
-        # Get recent candles from WebSocket buffer (if available)
+        # Fetch recent candles from Bybit API (last 10 candles to cover any gaps)
+        # This ensures we always have the latest data regardless of WebSocket subscription
+        recent_candles = await self._fetch_recent_candles(symbol, 10)
+
+        # Get recent candles from WebSocket buffer (if available and matches interval)
         ws_candles = []
         if self.ws_manager:
             ws_data = self.ws_manager.get_candles(symbol, self.config.interval)
@@ -781,7 +835,7 @@ class VWAPService:
                     else:
                         ws_candles.append(c)
 
-        # Merge historical + websocket candles
+        # Merge historical + websocket + recent API candles
         # Use a dict to avoid duplicates (by timestamp)
         candle_map = {}
 
@@ -791,6 +845,10 @@ class VWAPService:
 
         # WebSocket candles override historical (they may have updated data)
         for c in ws_candles:
+            candle_map[c['timestamp']] = c
+
+        # Recent API candles override everything (most up-to-date)
+        for c in recent_candles:
             candle_map[c['timestamp']] = c
 
         # Sort by timestamp and convert back to list

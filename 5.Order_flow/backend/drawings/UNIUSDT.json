@@ -1,0 +1,21 @@
+{
+  "symbol": "UNIUSDT",
+  "shapes": [
+    {
+      "type": "vertical",
+      "id": "vertical_1769826167506_0.9410450611886874",
+      "price": 4.275837378640777,
+      "time": 1769826120000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-01-31T02:22:49.367582+00:00",
+  "total_shapes": 1
+}

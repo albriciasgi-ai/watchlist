@@ -679,16 +679,52 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const zoomChanged = Math.abs(currentZoom - priceScaleRef.current.lastZoom) > 0.001;
 
     if (zoomChanged || priceScaleRef.current.minPrice === null) {
-      // Zoom cambió o primera carga: recalcular escala basándose en velas visibles
+      // Zoom cambio o primera carga: recalcular escala basandose en velas visibles
       minPrice = Math.min(...visibleCandles.map(d => d.low));
       maxPrice = Math.max(...visibleCandles.map(d => d.high));
+
+      // FIX: Si Order Flow esta activo, extender el rango para incluir todos los niveles de footprints
+      // Esto evita que los niveles se dibujen con alturas inconsistentes o fuera del area visible
+      try {
+        const orderFlowIndicator = indicatorManagerRef.current?.indicators?.find(
+          ind => ind.name === "Order Flow"
+        );
+        if (orderFlowIndicator && orderFlowIndicator.enabled && orderFlowIndicator.footprints?.length > 0) {
+          // Obtener timestamps de velas visibles para filtrar footprints relevantes
+          const visibleTimestamps = new Set(visibleCandles.map(c => c.timestamp));
+          const toleranceMs = 30000; // 30 segundos de tolerancia
+
+          for (const fp of orderFlowIndicator.footprints) {
+            // Solo considerar footprints que correspondan a velas visibles (con tolerancia)
+            let isRelevant = visibleTimestamps.has(fp.candle_timestamp);
+            if (!isRelevant) {
+              for (const vts of visibleTimestamps) {
+                if (Math.abs(fp.candle_timestamp - vts) <= toleranceMs) {
+                  isRelevant = true;
+                  break;
+                }
+              }
+            }
+
+            if (isRelevant && fp.levels) {
+              for (const level of fp.levels) {
+                if (level.price_min < minPrice) minPrice = level.price_min;
+                if (level.price_max > maxPrice) maxPrice = level.price_max;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Si hay error, usar solo el rango de velas (comportamiento original)
+        console.warn('[MiniChart] Error extending price range for footprints:', e);
+      }
 
       // Guardar para mantener durante paneo
       priceScaleRef.current.minPrice = minPrice;
       priceScaleRef.current.maxPrice = maxPrice;
       priceScaleRef.current.lastZoom = currentZoom;
     } else {
-      // Zoom no cambió (solo paneo): usar escala guardada
+      // Zoom no cambio (solo paneo): usar escala guardada
       minPrice = priceScaleRef.current.minPrice;
       maxPrice = priceScaleRef.current.maxPrice;
     }

@@ -34,86 +34,68 @@ const BacktestingApp = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('15m'); // Tab activo
   const [marketData, setMarketData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(null); // {message, percent, timeframe}
   const [error, setError] = useState(null);
   const [initialized, setInitialized] = useState(false);
 
+  // 🎯 Configuración base de indicadores por timeframe
+  // Para 1m y 5m deshabilitamos indicadores pesados por defecto (DTB, Rejection)
+  const getDefaultIndicatorStates = (timeframe) => {
+    const isSmallTimeframe = timeframe === '1m' || timeframe === '5m';
+    return {
+      "Volume": true,
+      "Volume Profile": true,
+      "CVD": true,
+      "Open Interest": !isSmallTimeframe, // Deshabilitado en 1m/5m (muchos datos)
+      "VWAP": false,
+      "Range Detection": true,
+      "Rejection Patterns": false,        // Siempre deshabilitado por defecto
+      "Double Top/Bottom": false,         // Siempre deshabilitado por defecto
+      "Support & Resistance": false,
+      "S&R v2": true,
+      "Swing Detector": false
+    };
+  };
+
+  const defaultVpConfig = {
+    mode: 'dynamic',
+    rowCount: 100,
+    valueAreaPercent: 70,
+    hideWhenFixedRanges: false,
+    showPOC: true,
+    showVAH: true,
+    showVAL: true
+  };
+
   // 🎯 NUEVO: Estado de cada tab (dibujos y configs independientes)
   const [tabStates, setTabStates] = useState({
+    '1m': {
+      indicatorStates: getDefaultIndicatorStates('1m'),
+      vpConfig: { ...defaultVpConfig },
+      vpFixedRange: null,
+      rejectionPatternConfig: null
+    },
+    '5m': {
+      indicatorStates: getDefaultIndicatorStates('5m'),
+      vpConfig: { ...defaultVpConfig },
+      vpFixedRange: null,
+      rejectionPatternConfig: null
+    },
     '15m': {
-      indicatorStates: {
-        "Volume": true,
-        "Volume Profile": true,
-        "CVD": true,
-        "Open Interest": true,
-        "VWAP": false,
-        "Range Detection": true,
-        "Rejection Patterns": false,
-        "Double Top/Bottom": false,
-        "Support & Resistance": false,
-        "S&R v2": true,
-        "Swing Detector": false
-      },
-      vpConfig: {
-        mode: 'dynamic',
-        rowCount: 100,
-        valueAreaPercent: 70,
-        hideWhenFixedRanges: false,
-        showPOC: true,
-        showVAH: true,
-        showVAL: true
-      },
+      indicatorStates: getDefaultIndicatorStates('15m'),
+      vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
       rejectionPatternConfig: null
     },
     '1h': {
-      indicatorStates: {
-        "Volume": true,
-        "Volume Profile": true,
-        "CVD": true,
-        "Open Interest": true,
-        "VWAP": false,
-        "Range Detection": true,
-        "Rejection Patterns": false,
-        "Double Top/Bottom": false,
-        "Support & Resistance": false,
-        "S&R v2": true,
-        "Swing Detector": false
-      },
-      vpConfig: {
-        mode: 'dynamic',
-        rowCount: 100,
-        valueAreaPercent: 70,
-        hideWhenFixedRanges: false,
-        showPOC: true,
-        showVAH: true,
-        showVAL: true
-      },
+      indicatorStates: getDefaultIndicatorStates('1h'),
+      vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
       rejectionPatternConfig: null
     },
     '4h': {
-      indicatorStates: {
-        "Volume": true,
-        "Volume Profile": true,
-        "CVD": true,
-        "Open Interest": true,
-        "VWAP": false,
-        "Range Detection": true,
-        "Rejection Patterns": false,
-        "Double Top/Bottom": false,
-        "Support & Resistance": false,
-        "S&R v2": true,
-        "Swing Detector": false
-      },
-      vpConfig: {
-        mode: 'dynamic',
-        rowCount: 100,
-        valueAreaPercent: 70,
-        hideWhenFixedRanges: false,
-        showPOC: true,
-        showVAH: true,
-        showVAL: true
-      },
+      indicatorStates: getDefaultIndicatorStates('4h'),
+      vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
       rejectionPatternConfig: null
     }
@@ -209,13 +191,20 @@ const BacktestingApp = () => {
   const indicatorPanelRef = useRef(null);
   const indicatorManagerRef = useRef(null); // Ref para IndicatorManager del tab activo
 
+  // 🎯 Lista de timeframes disponibles (centralizada)
+  const AVAILABLE_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
+
   // 🎯 NUEVO: Referencias múltiples para cada timeframe
   const indicatorManagerRefs = useRef({
+    '1m': null,
+    '5m': null,
     '15m': null,
     '1h': null,
     '4h': null
   });
   const miniChartRefs = useRef({
+    '1m': null,
+    '5m': null,
     '15m': null,
     '1h': null,
     '4h': null
@@ -223,6 +212,8 @@ const BacktestingApp = () => {
 
   // 🎯 NUEVO: Guardar posiciones de scroll por tab
   const tabScrollPositions = useRef({
+    '1m': 0,
+    '5m': 0,
     '15m': 0,
     '1h': 0,
     '4h': 0
@@ -785,7 +776,7 @@ const BacktestingApp = () => {
         const precalculateTasks = [];
 
         // Precalcular para cada timeframe
-        for (const tf of ['15m', '1h', '4h']) {
+        for (const tf of AVAILABLE_TIMEFRAMES) {
           const miniChart = miniChartRefs.current[tf];
           const tfData = data.timeframes[tf];
 
@@ -1044,7 +1035,7 @@ const BacktestingApp = () => {
       console.log(`[BacktestingApp] Sincronizando ${drawings.length} dibujos a todos los tabs`);
 
       // Cargar los mismos dibujos en todos los tabs (skipSync = true para evitar loop)
-      ['15m', '1h', '4h'].forEach(tf => {
+      AVAILABLE_TIMEFRAMES.forEach(tf => {
         if (tf !== activeTimeframe) {
           const miniChart = miniChartRefs.current[tf];
           if (miniChart && miniChart.loadDrawings) {
@@ -1075,7 +1066,7 @@ const BacktestingApp = () => {
 
     // Cargar los mismos dibujos en todos los tabs (excepto el origen)
     // skipSync = true para evitar loop infinito
-    ['15m', '1h', '4h'].forEach(tf => {
+    AVAILABLE_TIMEFRAMES.forEach(tf => {
       if (tf !== sourceInterval) {
         const miniChart = miniChartRefs.current[tf];
         if (miniChart && miniChart.loadDrawings) {
@@ -1103,7 +1094,7 @@ const BacktestingApp = () => {
    */
   const getOrderCountsByTimeframe = () => {
     if (!orderManagerRef.current) {
-      return { '15m': 0, '1h': 0, '4h': 0 };
+      return { '1m': 0, '5m': 0, '15m': 0, '1h': 0, '4h': 0 };
     }
 
     // Por ahora, mostrar todas las órdenes abiertas en todos los tabs
@@ -1111,6 +1102,8 @@ const BacktestingApp = () => {
     const openCount = orderManagerRef.current.getOpenOrders().length;
 
     return {
+      '1m': openCount,
+      '5m': openCount,
       '15m': openCount,
       '1h': openCount,
       '4h': openCount
@@ -1156,7 +1149,7 @@ const BacktestingApp = () => {
     const tabsState = {};
     let totalDrawings = 0;
 
-    ['15m', '1h', '4h'].forEach(tf => {
+    AVAILABLE_TIMEFRAMES.forEach(tf => {
       const miniChart = miniChartRefs.current[tf];
       const drawings = miniChart?.getDrawings?.() || [];
       totalDrawings += drawings.length;
@@ -1291,7 +1284,7 @@ const BacktestingApp = () => {
         }
 
         // Restaurar configuraciones de todos los tabs
-        ['15m', '1h', '4h'].forEach(tf => {
+        AVAILABLE_TIMEFRAMES.forEach(tf => {
           const tabData = session.tabs[tf];
           if (tabData) {
             setTabStates(prev => ({
@@ -1395,8 +1388,26 @@ const BacktestingApp = () => {
             {loading && (
               <div className="loading-indicator">
                 <div className="spinner"></div>
-                <p>Descargando 3 años de datos históricos...</p>
-                <p className="small-text">Esto puede tomar 30-60 segundos</p>
+                <p>Descargando datos históricos para 5 timeframes...</p>
+                {loadingProgress ? (
+                  <>
+                    <p className="loading-progress-message">{loadingProgress.message}</p>
+                    <div className="progress-bar-container">
+                      <div
+                        className="progress-bar-fill"
+                        style={{ width: `${loadingProgress.percent || 0}%` }}
+                      />
+                    </div>
+                    <p className="small-text">{loadingProgress.percent || 0}% completado</p>
+                  </>
+                ) : (
+                  <p className="small-text">Esto puede tomar 1-2 minutos (1m y 5m tienen muchos datos)</p>
+                )}
+                <div className="loading-timeframes-info" style={{ marginTop: '10px', fontSize: '11px', color: '#888' }}>
+                  <div>⚡ 1m: 525,600 velas (1 año)</div>
+                  <div>🔥 5m: 315,360 velas (3 años)</div>
+                  <div>📊 15m/1h/4h: ~17,500 velas c/u (2 años)</div>
+                </div>
               </div>
             )}
           </div>
@@ -1821,9 +1832,21 @@ const BacktestingApp = () => {
             onClearAll={handleClearAll}
           />
 
-          {/* 🎯 NUEVO: Contenedor de tabs - 3 MiniCharts (uno por timeframe) */}
+          {/* 🎯 NUEVO: Contenedor de tabs - 5 MiniCharts (uno por timeframe) */}
+          {/* Días por timeframe: 1m=365, 5m=1095, 15m/1h/4h=730 */}
           <div className="timeframes-container">
-            {['15m', '1h', '4h'].map(tf => (
+            {['1m', '5m', '15m', '1h', '4h'].map(tf => {
+              // Mapeo de días por timeframe
+              const daysMap = {
+                '1m': 365,    // 1 año de datos (525,600 velas)
+                '5m': 1095,   // 3 años de datos (315,360 velas)
+                '15m': 730,   // 2 años de datos
+                '1h': 730,    // 2 años de datos
+                '4h': 730     // 2 años de datos
+              };
+              const tfDays = daysMap[tf] || 730;
+
+              return (
               <div
                 key={tf}
                 className="timeframe-panel"
@@ -1833,7 +1856,7 @@ const BacktestingApp = () => {
                   ref={el => miniChartRefs.current[tf] = el}
                   symbol={symbol}
                   interval={tf}
-                  days={1095}
+                  days={tfDays}
                   indicatorStates={tabStates[tf]?.indicatorStates}
                   backtestingMode={true}
                   backtestingData={marketData}
@@ -1854,7 +1877,8 @@ const BacktestingApp = () => {
                   onDrawingsChange={handleDrawingsChange}
                 />
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
 

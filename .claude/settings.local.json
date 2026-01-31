@@ -8,7 +8,10 @@
       "Bash(powershell -Command \"(Invoke-WebRequest -Uri ''''http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1'''' -UseBasicParsing).Content\")",
       "Bash(findstr:*)",
       "Bash(powershell -Command \"$r = Invoke-WebRequest -Uri ''http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1'' -UseBasicParsing; $r.Content | Out-File -Encoding utf8 ''C:\\temp\\btc_hist.json''\")",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

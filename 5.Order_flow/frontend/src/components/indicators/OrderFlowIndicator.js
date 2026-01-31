@@ -315,6 +315,37 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
+   * FIX: Busca el footprint que corresponde a una vela con tolerancia de timestamp.
+   * Los timestamps de velas (REST API) y footprints (WebSocket) pueden diferir ligeramente.
+   *
+   * @param {number} candleTimestamp - Timestamp de la vela en ms
+   * @param {Map} footprintMap - Map de timestamp -> footprint
+   * @param {number} toleranceMs - Tolerancia en ms (default: 30000 = 30 segundos)
+   * @returns {Object|null} - Footprint encontrado o null
+   */
+  _findFootprintForCandle(candleTimestamp, footprintMap, toleranceMs = 30000) {
+    // Primero intentar match exacto (mas eficiente)
+    if (footprintMap.has(candleTimestamp)) {
+      return footprintMap.get(candleTimestamp);
+    }
+
+    // Si no hay match exacto, buscar dentro de la tolerancia
+    // Usar el footprint mas cercano en tiempo
+    let bestMatch = null;
+    let bestDiff = Infinity;
+
+    for (const [fpTs, fp] of footprintMap) {
+      const diff = Math.abs(fpTs - candleTimestamp);
+      if (diff <= toleranceMs && diff < bestDiff) {
+        bestDiff = diff;
+        bestMatch = fp;
+      }
+    }
+
+    return bestMatch;
+  }
+
+  /**
    * Main render method - draws the complete Order Flow unit for each candle
    */
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
@@ -372,7 +403,9 @@ class OrderFlowIndicator extends IndicatorBase {
     // Render each visible candle
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
-      const footprint = footprintMap.get(candle.timestamp);
+
+      // FIX: Usar matching tolerante en lugar de exacto
+      const footprint = this._findFootprintForCandle(candle.timestamp, footprintMap);
 
       if (!footprint || !footprint.levels || footprint.levels.length === 0) {
         // No footprint data - draw simple candle

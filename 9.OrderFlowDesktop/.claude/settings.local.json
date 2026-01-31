@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(taskkill:*)",
+      "Bash(start cmd:*)",
+      "Bash(timeout /t 15 /nobreak)",
+      "WebFetch(domain:p01--altagracia--rxv8nrbhxln9.code.run)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

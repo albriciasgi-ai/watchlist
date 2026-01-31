@@ -22,16 +22,21 @@ class TimeController {
 
     // Configuración de timeframes (en minutos)
     this.timeframeMinutes = {
+      "1m": 1,      // 1 minuto - NUEVO
+      "5m": 5,      // 5 minutos - NUEVO
       "15m": 15,
       "1h": 60,
       "4h": 240
     };
 
     // Configuración de subdivisiones intravela (estados internos)
+    // Para timeframes pequeños, avanzamos vela completa para evitar lentitud extrema
     this.subdivisionConfig = {
-      "15m": { interval: 5, count: 3 }, // 3 estados de 5min cada uno
-      "1h": { interval: 15, count: 4 }, // 4 estados de 15min cada uno
-      "4h": { interval: 60, count: 4 }  // 4 estados de 1h cada uno
+      "1m": { interval: 1, count: 1 },    // 1 estado de 1min (vela completa) - NUEVO
+      "5m": { interval: 1, count: 5 },    // 5 estados de 1min cada uno - NUEVO
+      "15m": { interval: 5, count: 3 },   // 3 estados de 5min cada uno
+      "1h": { interval: 15, count: 4 },   // 4 estados de 15min cada uno
+      "4h": { interval: 60, count: 4 }    // 4 estados de 1h cada uno
     };
 
     // Estado actual de la subdivisión

@@ -94,6 +94,8 @@ class VWAPIndicator extends IndicatorBase {
     log.info(`[${this.symbol}] VWAP startPollingIfReady: pollingId=${!!this._pollingId}, enabled=${this.enabled}, destroyed=${this._destroyed}`);
     if (!this._pollingId && this.enabled && !this._destroyed) {
       this._startPolling();
+    } else {
+      log.warn(`[${this.symbol}] VWAP startPollingIfReady SKIPPED: pollingId=${!!this._pollingId}, enabled=${this.enabled}, destroyed=${this._destroyed}`);
     }
   }
 
@@ -191,6 +193,12 @@ class VWAPIndicator extends IndicatorBase {
           log.info(`[${this.symbol}] VWAP updated (polling): ${json.data.length} points`);
         } else {
           log.info(`[${this.symbol}] VWAP loaded: ${json.data.length} points (${this.vwapType}, ${this.days} days)`);
+
+          // 🔧 FIX: Forzar redraw después de carga inicial para que el VWAP aparezca
+          if (this.indicatorManager?.requestRedraw) {
+            log.info(`[${this.symbol}] VWAP requestRedraw() after initial load`);
+            this.indicatorManager.requestRedraw();
+          }
         }
         return true;
       } else {
@@ -297,16 +305,29 @@ class VWAPIndicator extends IndicatorBase {
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) return;
+    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) {
+      return;
+    }
 
-    // 🚀 OPTIMIZADO: Polling se hace via setInterval en _startPolling()
-    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
+    // Verificar que ctx es valido
+    if (!ctx || typeof ctx.beginPath !== 'function') {
+      console.error(`[${this.symbol}] VWAP: ctx is invalid!`, ctx);
+      return;
+    }
 
     // Need data from backend
-    if (this.dataMap.size === 0) return;
+    if (this.dataMap.size === 0) {
+      return;
+    }
 
     const { x, y, width, height } = bounds;
     const viewport = priceContext || {};
+
+    // Guardar estado del canvas y resetear transformaciones
+    ctx.save();
+    ctx.setLineDash([]);  // Asegurar linea solida
+    ctx.globalAlpha = 1;  // Asegurar opacidad completa
+    ctx.globalCompositeOperation = 'source-over';  // Modo de composicion normal
 
     // Draw bands first (behind VWAP line)
     if (this.showBands) {
@@ -315,19 +336,20 @@ class VWAPIndicator extends IndicatorBase {
 
     // Draw VWAP line
     this._drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height);
+
+    ctx.restore();
   }
 
   _drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height) {
-    ctx.strokeStyle = this.vwapColor;
-    ctx.lineWidth = this.vwapLineWidth;
-    ctx.beginPath();
-
-    let firstPoint = true;
     const candleWidth = width / visibleCandles.length;
 
-    visibleCandles.forEach((candle, i) => {
+    // Collect all VWAP points
+    const points = [];
+
+    for (let i = 0; i < visibleCandles.length; i++) {
+      const candle = visibleCandles[i];
       const vwapPoint = this.dataMap.get(candle.timestamp);
-      if (!vwapPoint) return;
+      if (!vwapPoint) continue;
 
       const candleX = x + (i * candleWidth) + (candleWidth / 2);
       const vwapPrice = vwapPoint.vwap;
@@ -339,15 +361,24 @@ class VWAPIndicator extends IndicatorBase {
         candleY = y + ((viewport.maxPrice - vwapPrice) / (viewport.maxPrice - viewport.minPrice)) * height;
       }
 
-      if (firstPoint) {
-        ctx.moveTo(candleX, candleY);
-        firstPoint = false;
-      } else {
-        ctx.lineTo(candleX, candleY);
-      }
-    });
+      points.push({ x: candleX, y: candleY });
+    }
 
-    ctx.stroke();
+    // Draw VWAP line as individual segments (more reliable rendering)
+    if (points.length >= 2) {
+      ctx.strokeStyle = this.vwapColor;
+      ctx.lineWidth = this.vwapLineWidth;
+      ctx.setLineDash([]);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (let i = 0; i < points.length - 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[i + 1].x, points[i + 1].y);
+        ctx.stroke();
+      }
+    }
   }
 
   _drawBands(ctx, visibleCandles, viewport, x, y, width, height) {

@@ -1,0 +1,579 @@
+ [Preload] Order Flow Desktop - Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ ✅ [8:49:42 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [8:49:43 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [8:49:43 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [CandleCache] 💾 UNIUSDT@1 - desde IndexedDB (1488 velas)
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1488 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1488 velas, sin gaps significativos
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 8:35:00 p.m. (1488 velas en cache)
+ [CacheCleanup] Complete: 0/8 candles, 0/9 indicators removed
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [Prefetch] Activado (10s despues de carga)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1488 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 14 velas sin gaps
+ [CandleCache] 🔄 Merge: 1488 cached + 14 new = 1501 total
+ [UNIUSDT] Incremental: +14 velas nuevas = 1501 total
+ [CandleCache] OK MERGED UNIUSDT: 1501 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1501 velas
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 1)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:49:57 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1501 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1501)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [8:50:00 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [8:50:00 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1501)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1228, matched=1228, missed=0
+ [UNIUSDT] 🎨 Segment 0: (10.5, 200.1) -> (11.5, 200.5) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 200.5) -> (12.5, 201.2) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 201.2) -> (13.5, 201.8) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 201.8) -> (14.5, 202.1) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 202.1) -> (15.5, 202.8) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1227 segments from (10.5, 200.1) to (1237.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 200.1)
+ [UNIUSDT] 🔵 VWAP Last point: (1237.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1228, missed=0 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2713, Y=170.3, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1502 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:50:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [UNIUSDT] SwingDetector: 196/196 signals for interval 1 (cached)
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:50:35 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [8:50:35 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [8:50:35 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [8:50:35 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [8:50:35 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [8:50:35 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [HealthCheck] Backend reconnected
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 61)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:50:52 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1227, matched=1227, missed=1
+ [UNIUSDT] 🎨 Segment 0: (10.5, 200.5) -> (11.5, 201.2) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 201.2) -> (12.5, 201.8) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 201.8) -> (13.5, 202.1) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 202.1) -> (14.5, 202.8) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 202.8) -> (15.5, 203.5) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1226 segments from (10.5, 200.5) to (1236.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 200.5)
+ [UNIUSDT] 🔵 VWAP Last point: (1236.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1227, missed=1 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2713, Y=170.2, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750580000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1502)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1503 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [8:51:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:51:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:51:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 121)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:51:16 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1226, matched=1226, missed=2
+ [UNIUSDT] 🎨 Segment 0: (10.5, 201.2) -> (11.5, 201.8) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 201.8) -> (12.5, 202.1) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 202.1) -> (13.5, 202.8) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 202.8) -> (14.5, 203.5) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 203.5) -> (15.5, 203.7) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1225 segments from (10.5, 201.2) to (1235.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 201.2)
+ [UNIUSDT] 🔵 VWAP Last point: (1235.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1226, missed=2 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2712, Y=170.4, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750640000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [UNIUSDT] 🖱️ handleDoubleClick llamado, shiftKey=false, drawingMode=false
+ [UNIUSDT] 🖱️ x=85, width=1303, isInPriceAxis=false, isInPriceChartArea=true
+ [UNIUSDT] 🖱️ Toggle drawingMode: false -> true
+ [UNIUSDT] 🖱️ handleDoubleClick IGNORADO por debounce (25ms)
+ ✅ [8:51:17 p. m.] [MiniChart] [MiniChart] 🎨 Loaded 0 drawings into DrawingToolManager
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 181)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:51:22 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1226, matched=1226, missed=2
+ [UNIUSDT] 🎨 Segment 0: (10.5, 201.2) -> (11.5, 201.8) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 201.8) -> (12.5, 202.1) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 202.1) -> (13.5, 202.8) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 202.8) -> (14.5, 203.5) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 203.5) -> (15.5, 203.7) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1225 segments from (10.5, 201.2) to (1235.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 201.2)
+ [UNIUSDT] 🔵 VWAP Last point: (1235.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1226, missed=2 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2712, Y=170.4, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750640000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 241)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:51:46 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1226, matched=1226, missed=2
+ [UNIUSDT] 🎨 Segment 0: (10.5, 201.2) -> (11.5, 201.8) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 201.8) -> (12.5, 202.1) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 202.1) -> (13.5, 202.8) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 202.8) -> (14.5, 203.5) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 203.5) -> (15.5, 203.7) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1225 segments from (10.5, 201.2) to (1235.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 201.2)
+ [UNIUSDT] 🔵 VWAP Last point: (1235.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1226, missed=2 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2712, Y=170.4, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750640000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1503)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1504 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [8:52:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:52:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:52:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [8:52:25 p. m.] [MiniChart] [MiniChart] 🔄 Exiting drawing mode - saving shapes
+ ✅ [8:52:25 p. m.] [MiniChart] [MiniChart] 💾 Saved 0 inline drawings for UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 301)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:52:26 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1225, matched=1225, missed=3
+ [UNIUSDT] 🎨 Segment 0: (10.5, 201.8) -> (11.5, 202.1) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 202.1) -> (12.5, 202.8) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 202.8) -> (13.5, 203.5) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 203.5) -> (14.5, 203.7) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 203.7) -> (15.5, 205.0) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1224 segments from (10.5, 201.8) to (1234.5, 165.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 201.8)
+ [UNIUSDT] 🔵 VWAP Last point: (1234.5, 165.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1225, missed=3 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2712, Y=170.5, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750700000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 361)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=-32
+ ✅ [8:52:29 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1228, matched=1228, missed=0
+ [UNIUSDT] 🎨 Segment 0: (10.5, 166.1) -> (11.5, 167.1) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 167.1) -> (12.5, 167.5) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 167.5) -> (13.5, 168.2) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 168.2) -> (14.5, 168.8) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 168.8) -> (15.5, 169.1) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1227 segments from (10.5, 166.1) to (1237.5, 132.5)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 166.1)
+ [UNIUSDT] 🔵 VWAP Last point: (1237.5, 132.5)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1228, missed=0 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2714, Y=137.2, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 421)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=-5
+ ✅ [8:52:32 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1225, matched=1225, missed=3
+ [UNIUSDT] 🎨 Segment 0: (10.5, 196.8) -> (11.5, 197.1) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 197.1) -> (12.5, 197.8) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 197.8) -> (13.5, 198.5) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 198.5) -> (14.5, 198.7) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 198.7) -> (15.5, 200.0) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1224 segments from (10.5, 196.8) to (1234.5, 160.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 196.8)
+ [UNIUSDT] 🔵 VWAP Last point: (1234.5, 160.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1225, missed=3 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2712, Y=165.5, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750700000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1504)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1505 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:53:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [8:53:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:53:05 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 481)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=-5
+ ✅ [8:53:20 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1224, matched=1224, missed=4
+ [UNIUSDT] 🎨 Segment 0: (10.5, 197.1) -> (11.5, 197.8) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 197.8) -> (12.5, 198.5) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 198.5) -> (13.5, 198.7) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 198.7) -> (14.5, 200.0) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 200.0) -> (15.5, 200.1) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1223 segments from (10.5, 197.1) to (1233.5, 160.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 197.1)
+ [UNIUSDT] 🔵 VWAP Last point: (1233.5, 160.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1224, missed=4 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2714, Y=165.1, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750760000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 541)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=55
+ ✅ [8:53:24 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=1228
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 📊 VWAP points collected: 1224, matched=1224, missed=4
+ [UNIUSDT] 🎨 Segment 0: (10.5, 275.1) -> (11.5, 275.8) color=#FF0000
+ [UNIUSDT] 🎨 Segment 1: (11.5, 275.8) -> (12.5, 276.5) color=#FF6600
+ [UNIUSDT] 🎨 Segment 2: (12.5, 276.5) -> (13.5, 276.7) color=#FFFF00
+ [UNIUSDT] 🎨 Segment 3: (13.5, 276.7) -> (14.5, 278.0) color=#00FF00
+ [UNIUSDT] 🎨 Segment 4: (14.5, 278.0) -> (15.5, 278.1) color=#00FFFF
+ [UNIUSDT] ✅ VWAP LINE DRAWN: 1223 segments from (10.5, 275.1) to (1233.5, 238.1)
+ [UNIUSDT] 🟢 VWAP First point: (10.5, 275.1)
+ [UNIUSDT] 🔵 VWAP Last point: (1233.5, 238.1)
+ [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=1224, missed=4 of 1228 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2714, Y=243.1, bounds={y:25, height:412}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769750760000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 601)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1980, maxPrice=4.3450, verticalOffset=-7
+ ✅ [8:53:27 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=434
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1980, max=4.3450, hasPriceToY=true
+VWAPIndicator.js:396 [UNIUSDT] 📊 VWAP points collected: 430, matched=430, missed=4
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 0: (11.4, 353.5) -> (14.2, 354.4) color=#FF0000
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 1: (14.2, 354.4) -> (17.1, 354.8) color=#FF6600
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 2: (17.1, 354.8) -> (19.9, 354.3) color=#FFFF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 3: (19.9, 354.3) -> (22.7, 351.4) color=#00FF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 4: (22.7, 351.4) -> (25.6, 349.5) color=#00FFFF
+VWAPIndicator.js:436 [UNIUSDT] ✅ VWAP LINE DRAWN: 429 segments from (11.4, 353.5) to (1225.3, 208.2)
+VWAPIndicator.js:457 [UNIUSDT] 🟢 VWAP First point: (11.4, 353.5)
+VWAPIndicator.js:458 [UNIUSDT] 🔵 VWAP Last point: (1225.3, 208.2)
+VWAPIndicator.js:459 [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+VWAPIndicator.js:465 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=430, missed=4 of 434 candles
+VWAPIndicator.js:477 [UNIUSDT] 🎨 VWAP sample: vwap=4.2842, Y=179.4, bounds={y:25, height:412}, viewport={min:4.1980, max:4.3450}
+VWAPIndicator.js:483 [UNIUSDT] 🔍 Sample candle.timestamp=1769798400000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+MiniChart.jsx:957 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 661)
+MiniChart.jsx:958 [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.2600, maxPrice=4.3050, verticalOffset=-75
+Logger.js:100 ✅ [8:53:30 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=222
+VWAPIndicator.js:360 [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+VWAPIndicator.js:361 [UNIUSDT] 🔴 VWAP viewport: min=4.2600, max=4.3050, hasPriceToY=true
+VWAPIndicator.js:396 [UNIUSDT] 📊 VWAP points collected: 218, matched=218, missed=4
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 0: (12.8, 123.3) -> (18.3, 124.3) color=#FF0000
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 1: (18.3, 124.3) -> (23.8, 127.5) color=#FF6600
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 2: (23.8, 127.5) -> (29.4, 128.6) color=#FFFF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 3: (29.4, 128.6) -> (34.9, 137.1) color=#00FF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 4: (34.9, 137.1) -> (40.4, 140.3) color=#00FFFF
+VWAPIndicator.js:436 [UNIUSDT] ✅ VWAP LINE DRAWN: 217 segments from (12.8, 123.3) to (1213.1, 234.6)
+VWAPIndicator.js:457 [UNIUSDT] 🟢 VWAP First point: (12.8, 123.3)
+VWAPIndicator.js:458 [UNIUSDT] 🔵 VWAP Last point: (1213.1, 234.6)
+VWAPIndicator.js:459 [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+VWAPIndicator.js:465 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=218, missed=4 of 222 candles
+VWAPIndicator.js:477 [UNIUSDT] 🎨 VWAP sample: vwap=4.2636, Y=329.4, bounds={y:25, height:412}, viewport={min:4.2600, max:4.3050}
+VWAPIndicator.js:483 [UNIUSDT] 🔍 Sample candle.timestamp=1769811120000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2130 [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+MiniChart.jsx:2132 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+MiniChart.jsx:957 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 721)
+MiniChart.jsx:958 [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.2600, maxPrice=4.3050, verticalOffset=-75
+Logger.js:100 ✅ [8:53:34 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=195
+VWAPIndicator.js:360 [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:1228,h:412}
+VWAPIndicator.js:361 [UNIUSDT] 🔴 VWAP viewport: min=4.2600, max=4.3050, hasPriceToY=true
+VWAPIndicator.js:396 [UNIUSDT] 📊 VWAP points collected: 191, matched=191, missed=4
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 0: (13.1, 191.6) -> (19.4, 193.9) color=#FF0000
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 1: (19.4, 193.9) -> (25.7, 204.5) color=#FF6600
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 2: (25.7, 204.5) -> (32.0, 219.0) color=#FFFF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 3: (32.0, 219.0) -> (38.3, 225.5) color=#00FF00
+VWAPIndicator.js:430 [UNIUSDT] 🎨 Segment 4: (38.3, 225.5) -> (44.6, 236.5) color=#00FFFF
+VWAPIndicator.js:436 [UNIUSDT] ✅ VWAP LINE DRAWN: 190 segments from (13.1, 191.6) to (1209.7, 234.6)
+VWAPIndicator.js:457 [UNIUSDT] 🟢 VWAP First point: (13.1, 191.6)
+VWAPIndicator.js:458 [UNIUSDT] 🔵 VWAP Last point: (1209.7, 234.6)
+VWAPIndicator.js:459 [UNIUSDT] 📐 VWAP Visible area: y=25 to y=437
+VWAPIndicator.js:465 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=191, missed=4 of 195 candles
+VWAPIndicator.js:477 [UNIUSDT] 🎨 VWAP sample: vwap=4.2654, Y=312.6, bounds={y:25, height:412}, viewport={min:4.2600, max:4.3050}
+VWAPIndicator.js:483 [UNIUSDT] 🔍 Sample candle.timestamp=1769812740000, dataMap first keys=[1769737800000,1769737860000,1769737920000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2130 [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+MiniChart.jsx:2132 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2130 [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+MiniChart.jsx:2132 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1505)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT

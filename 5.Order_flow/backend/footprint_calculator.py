@@ -17,20 +17,38 @@ logger = logging.getLogger(__name__)
 
 # Step sizes por defecto para diferentes simbolos (en USD)
 # Este es el tamano de cada nivel de precio en el footprint
+# IMPORTANTE: Agregar TODOS los simbolos usados para evitar calculo dinamico
+# que puede causar inconsistencias entre footprints historicos y tiempo real
 DEFAULT_STEP_SIZES = {
-    "BTCUSDT": 10.0,     # $10 por nivel para BTC
-    "ETHUSDT": 2.0,      # $2 por nivel para ETH
-    "SOLUSDT": 0.5,      # $0.50 por nivel para SOL
-    "BNBUSDT": 1.0,      # $1 por nivel para BNB
-    "XRPUSDT": 0.005,    # $0.005 por nivel para XRP
-    "ADAUSDT": 0.005,    # $0.005 por nivel para ADA
-    "DOGEUSDT": 0.001,   # $0.001 por nivel para DOGE
-    "TRXUSDT": 0.001,    # $0.001 por nivel para TRX
-    "LINKUSDT": 0.1,     # $0.10 por nivel para LINK
-    "AVAXUSDT": 0.2,     # $0.20 por nivel para AVAX
-    "MATICUSDT": 0.005,  # $0.005 por nivel para MATIC
-    "DOTUSDT": 0.05,     # $0.05 por nivel para DOT
-    "LTCUSDT": 0.5,      # $0.50 por nivel para LTC
+    # Principales
+    "BTCUSDT": 10.0,     # $10 por nivel para BTC (~$100k)
+    "ETHUSDT": 2.0,      # $2 por nivel para ETH (~$3k)
+    "SOLUSDT": 0.1,      # $0.10 por nivel para SOL (~$200) - reducido para mejor resolucion
+    "BNBUSDT": 0.2,      # $0.2 por nivel para BNB (~$600) - reducido para mejor resolucion
+    # Altcoins grandes
+    "XRPUSDT": 0.005,    # $0.005 por nivel para XRP (~$2)
+    "ADAUSDT": 0.005,    # $0.005 por nivel para ADA (~$0.8)
+    "DOGEUSDT": 0.001,   # $0.001 por nivel para DOGE (~$0.3)
+    "TRXUSDT": 0.001,    # $0.001 por nivel para TRX (~$0.2)
+    "LINKUSDT": 0.1,     # $0.10 por nivel para LINK (~$15)
+    "AVAXUSDT": 0.05,    # $0.05 por nivel para AVAX (~$30) - reducido para mejor resolucion
+    "MATICUSDT": 0.005,  # $0.005 por nivel para MATIC (~$0.5)
+    "DOTUSDT": 0.01,     # $0.01 por nivel para DOT (~$6) - reducido para mejor resolucion
+    "LTCUSDT": 0.1,      # $0.10 por nivel para LTC (~$100) - reducido para mejor resolucion
+    # Adicionales del Order Flow config
+    "PAXGUSDT": 1.0,     # $1 por nivel para PAXG (~$5000) - ORO
+    "GALAUSDT": 0.0005,  # $0.0005 por nivel para GALA (~$0.03)
+    "SUIUSDT": 0.002,    # $0.002 por nivel para SUI (~$3) - movimientos pequenos
+    "TRBUSDT": 0.1,      # $0.1 por nivel para TRB (~$50)
+    "AAVEUSDT": 0.1,     # $0.1 por nivel para AAVE (~$200) - reducido para mejor resolucion
+    "ARBUSDT": 0.002,    # $0.002 por nivel para ARB (~$0.5) - movimientos pequenos
+    "INJUSDT": 0.01,     # $0.01 por nivel para INJ (~$15) - reducido para mejor resolucion
+    "KASUSDT": 0.0005,   # $0.0005 por nivel para KAS (~$0.1) - movimientos muy pequenos
+    "SHIB1000USDT": 0.0001, # $0.0001 por nivel para SHIB1000 (~$0.02) - movimientos minimos
+    "TONUSDT": 0.002,    # $0.002 por nivel para TON (~$4) - movimientos pequenos
+    "UNIUSDT": 0.002,    # $0.002 por nivel para UNI (~$4) - movimientos pequenos
+    "LPTUSDT": 0.01,     # $0.01 por nivel para LPT (~$12) - reducido para mejor resolucion
+    # Default
     "DEFAULT": 1.0       # Default $1 por nivel
 }
 

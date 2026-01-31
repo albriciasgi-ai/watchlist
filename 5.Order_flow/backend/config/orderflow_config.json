@@ -36,6 +36,6 @@
   "log_trades": false,
   "symbol_step_sizes": {
     "BTCUSDT": 10.0,
-    "ETHUSDT": 1.0
+    "ADAUSDT": 0.001
   }
 }

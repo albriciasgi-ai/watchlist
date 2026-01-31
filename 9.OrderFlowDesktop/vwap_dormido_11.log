@@ -1,0 +1,666 @@
+ [Preload] Order Flow Desktop - Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ ✅ [9:02:28 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [9:02:28 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [9:02:28 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [CandleCache] 💾 UNIUSDT@1 - desde IndexedDB (1511 velas)
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1511 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1511 velas, sin gaps significativos
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 8:58:00 p.m. (1511 velas en cache)
+ [CacheCleanup] Complete: 0/8 candles, 0/9 indicators removed
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [Prefetch] Activado (10s despues de carga)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1511 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 4 velas sin gaps
+ [CandleCache] 🔄 Merge: 1511 cached + 4 new = 1514 total
+ [UNIUSDT] Incremental: +4 velas nuevas = 1514 total
+ [CandleCache] OK MERGED UNIUSDT: 1514 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1514 velas
+ ✅ [9:02:40 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1514 velas, memoria: 1/4)
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [9:02:44 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [9:02:45 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [9:02:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1514)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1515 velas, memoria: 1/4)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ ✅ [9:03:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:03:04 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [9:03:04 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [9:03:04 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [9:03:04 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [9:03:04 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [9:03:04 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [9:03:44 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:03:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1515)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1516 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+ ✅ [9:04:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:04:10 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:04:29 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ ✅ [9:04:37 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] VWAP DEBUG: Object
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+ [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+Logger.js:100 ✅ [9:04:40 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: Object
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [9:04:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+Logger.js:100 ✅ [9:04:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1516)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 125, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825040000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1517 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [9:05:06 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [9:05:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+Logger.js:100 ✅ [9:05:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1517)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+Logger.js:100 ✅ [9:05:59 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 124, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825100000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1518 velas, memoria: 1/4)
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [9:06:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2122 [UNIUSDT] 🔄 requestRedraw called (candles: 1518)
+MiniChart.jsx:2124 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+VWAPIndicator.js:380 [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}
+ [UNIUSDT] VWAP DEBUG: {points: 123, visibleCandles: 127, dataMapSize: 1440, lastCandleTs: 1769825160000, lastVwapTs: 1769824920000, …}

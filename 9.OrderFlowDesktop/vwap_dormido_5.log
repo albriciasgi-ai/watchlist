@@ -1,0 +1,1015 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:59 [Preload] Order Flow Desktop - Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:60 [Preload] Electron: 33.4.11
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:61 [Preload] Chrome: 130.0.6723.191
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:272 [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2074 [UNIUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [6:50:20 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:44 [UNIUSDT] SwingDetectorIndicator initialized
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [6:50:20 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+Logger.js:100 ✅ [6:50:20 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+CandleCache.js:80 [CandleCache] 💾 UNIUSDT@1 - desde IndexedDB (1483 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1483 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1483 velas, sin gaps significativos
+MiniChart.jsx:1182 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 6:46:00 p.m. (1483 velas en cache)
+robustness.js:415 [CacheCleanup] Complete: 0/8 candles, 0/9 indicators removed
+PollingCoordinator.js:102 [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1483 velas sin gaps
+CandleCache.js:393 [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 4 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1483 cached + 4 new = 1486 total
+MiniChart.jsx:1242 [UNIUSDT] Incremental: +4 velas nuevas = 1486 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1486 velas sin gaps
+MiniChart.jsx:1272 [UNIUSDT] ✅ Histórico final: 1486 velas
+Logger.js:100 ✅ [6:50:30 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1486 velas, memoria: 1/4)
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@UNIUSDT desde IndexedDB
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+SwingDetectorIndicator.js:181 [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=794
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=794, missed=0 of 794 candles
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [6:50:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:50:44 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [6:50:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [6:50:44 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [6:50:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [6:50:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [6:50:44 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1487 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:50:54 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:51:33 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:51:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1487)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1488 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:51:55 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:52:16 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=794
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=792, missed=2 of 794 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769769540000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+Logger.js:100 ✅ [6:52:20 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=98, missed=2 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811180000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:52:21 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=98, missed=2 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811180000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:52:29 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=98, missed=2 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811180000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:52:33 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:52:33 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1488)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1489 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:52:55 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:53:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:53:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1489)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1490 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:54:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:54:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:54:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1490)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1491 velas, memoria: 1/4)
+Logger.js:100 ✅ [6:55:04 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:55:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=95, missed=5 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811360000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:69 [CandleCache] 💾 UNIUSDT@1 - desde memoria (1491 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1491 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1491 velas, sin gaps significativos
+MiniChart.jsx:1182 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 6:54:00 p.m. (1491 velas en cache)
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1491 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1491 cached + 1 new = 1491 total
+MiniChart.jsx:1242 [UNIUSDT] Incremental: +1 velas nuevas = 1491 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1491 velas sin gaps
+MiniChart.jsx:1272 [UNIUSDT] ✅ Histórico final: 1491 velas
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1491 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:55:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:55:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1491)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1492 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:56:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:56:37 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [6:56:37 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [6:56:37 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [6:56:37 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [6:56:37 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [6:56:37 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:56:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:56:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1492)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1493 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:57:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:57:29 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=93, missed=7 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811480000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:57:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:57:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1493)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1494 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:58:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:58:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:58:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1494)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1495 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:59:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:59:26 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=91, missed=9 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811600000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:59:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [6:59:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1495)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1496 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [7:00:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:69 [CandleCache] 💾 UNIUSDT@1 - desde memoria (1496 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1496 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1496 velas, sin gaps significativos
+MiniChart.jsx:1182 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 6:59:00 p.m. (1496 velas en cache)
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1496 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1496 cached + 1 new = 1496 total
+MiniChart.jsx:1242 [UNIUSDT] Incremental: +1 velas nuevas = 1496 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1496 velas sin gaps
+MiniChart.jsx:1272 [UNIUSDT] ✅ Histórico final: 1496 velas
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1496 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:00:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:00:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:00:53 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [7:00:53 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [7:00:53 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [7:00:53 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [7:00:53 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [7:00:53 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1496)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1497 velas, memoria: 1/4)
+Logger.js:100 ✅ [7:01:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:01:40 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:01:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:01:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=100
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=89, missed=11 of 100 candles
+VWAPIndicator.js:386 [UNIUSDT] 🔍 Sample candle.timestamp=1769811720000, dataMap first keys=[1769730660000,1769730720000,1769730780000]
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1497)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1498 velas, memoria: 1/4)
+Logger.js:100 ✅ [7:02:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:02:42 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:02:42 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1498)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1499 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:03:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1499)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:2112 [UNIUSDT] 🔄 requestRedraw called (candles: 1499)
+MiniChart.jsx:2114 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT

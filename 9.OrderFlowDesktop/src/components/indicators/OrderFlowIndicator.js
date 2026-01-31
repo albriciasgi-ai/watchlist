@@ -271,6 +271,37 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
+   * FIX: Busca el footprint que corresponde a una vela con tolerancia de timestamp.
+   * Los timestamps de velas (REST API) y footprints (WebSocket) pueden diferir ligeramente.
+   *
+   * @param {number} candleTimestamp - Timestamp de la vela en ms
+   * @param {Map} footprintMap - Map de timestamp -> footprint
+   * @param {number} toleranceMs - Tolerancia en ms (default: 30000 = 30 segundos)
+   * @returns {Object|null} - Footprint encontrado o null
+   */
+  _findFootprintForCandle(candleTimestamp, footprintMap, toleranceMs = 30000) {
+    // Primero intentar match exacto (mas eficiente)
+    if (footprintMap.has(candleTimestamp)) {
+      return footprintMap.get(candleTimestamp);
+    }
+
+    // Si no hay match exacto, buscar dentro de la tolerancia
+    // Usar el footprint mas cercano en tiempo
+    let bestMatch = null;
+    let bestDiff = Infinity;
+
+    for (const [fpTs, fp] of footprintMap) {
+      const diff = Math.abs(fpTs - candleTimestamp);
+      if (diff <= toleranceMs && diff < bestDiff) {
+        bestDiff = diff;
+        bestMatch = fp;
+      }
+    }
+
+    return bestMatch;
+  }
+
+  /**
    * Main render method - draws the complete Order Flow unit for each candle
    */
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
@@ -284,6 +315,16 @@ class OrderFlowIndicator extends IndicatorBase {
     if (candleWidth < this.config.minCandleWidth) return;
 
     const fullMode = candleWidth >= this.config.minCandleWidthFull;
+
+    // DEBUG: Verificar priceContext
+    if (priceContext) {
+      const { minPrice, maxPrice } = priceContext;
+      const range = maxPrice - minPrice;
+      // Log solo si el rango parece anormal (muy grande o muy pequeno)
+      if (range > 10000 || range < 1) {
+        console.warn(`[OrderFlow] PRICE RANGE ANOMALY: min=${minPrice}, max=${maxPrice}, range=${range}`);
+      }
+    }
 
     // Price to Y conversion
     const priceToY = (price) => {
@@ -301,21 +342,34 @@ class OrderFlowIndicator extends IndicatorBase {
       footprintMap.set(fp.candle_timestamp, fp);
     }
 
+    // DEBUG: Contar matches para verificar el fix
+    let matchedCount = 0;
+    let unmatchedCount = 0;
+
     ctx.save();
 
     // Render each visible candle
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
-      const footprint = footprintMap.get(candle.timestamp);
+
+      // FIX: Usar matching tolerante en lugar de exacto
+      const footprint = this._findFootprintForCandle(candle.timestamp, footprintMap);
 
       if (!footprint || !footprint.levels || footprint.levels.length === 0) {
         // No footprint data - draw simple candle
         this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
+        unmatchedCount++;
         continue;
       }
 
+      matchedCount++;
       const unitX = bounds.x + i * candleWidth;
       this.renderOrderFlowUnit(ctx, candle, footprint, unitX, candleWidth, priceToY, fullMode);
+    }
+
+    // Log de debug (solo si hay problemas significativos)
+    if (unmatchedCount > visibleCandles.length * 0.3) {
+      console.warn(`[OrderFlow] Matching: ${matchedCount}/${visibleCandles.length} matched, ${unmatchedCount} unmatched (>${Math.round(unmatchedCount/visibleCandles.length*100)}%)`);
     }
 
     ctx.restore();
@@ -648,6 +702,109 @@ class OrderFlowIndicator extends IndicatorBase {
 
   hasFootprintData() {
     return this.footprints && this.footprints.length > 0;
+  }
+
+  /**
+   * DEBUG: Analiza los ultimos N footprints para detectar inconsistencias en niveles
+   * Llama desde consola: indicatorManager.indicators.find(i => i.name === "Order Flow").debugAnalyzeFootprints()
+   */
+  debugAnalyzeFootprints(limit = 500) {
+    if (!this.footprints || this.footprints.length === 0) {
+      console.log('[DEBUG FOOTPRINT] No hay footprints cargados');
+      return;
+    }
+
+    const fps = this.footprints.slice(-limit);
+    console.log(`\n[DEBUG FOOTPRINT] Analizando ultimos ${fps.length} footprints de ${this.symbol}...`);
+    console.log('='.repeat(100));
+
+    const analysis = [];
+
+    for (const fp of fps) {
+      const levels = fp.levels || [];
+      const numLevels = levels.length;
+
+      // Calcular rango de precio de la vela
+      const candleHigh = fp.candle_high || 0;
+      const candleLow = fp.candle_low || 0;
+      const candleRange = candleHigh - candleLow;
+      const candleRangePct = candleLow > 0 ? (candleRange / candleLow) * 100 : 0;
+
+      // Calcular tamaño de cada nivel
+      let levelSizes = [];
+      for (const level of levels) {
+        const levelSize = level.price_max - level.price_min;
+        levelSizes.push(levelSize);
+      }
+
+      const avgLevelSize = levelSizes.length > 0 ? levelSizes.reduce((a, b) => a + b, 0) / levelSizes.length : 0;
+      const minLevelSize = levelSizes.length > 0 ? Math.min(...levelSizes) : 0;
+      const maxLevelSize = levelSizes.length > 0 ? Math.max(...levelSizes) : 0;
+
+      // El step_size esperado
+      const stepSize = fp.step_size || 'N/A';
+
+      analysis.push({
+        timestamp: fp.candle_timestamp,
+        date: new Date(fp.candle_timestamp).toLocaleString(),
+        numLevels,
+        candleRange: candleRange.toFixed(2),
+        candleRangePct: candleRangePct.toFixed(4),
+        stepSize,
+        avgLevelSize: avgLevelSize.toFixed(4),
+        minLevelSize: minLevelSize.toFixed(4),
+        maxLevelSize: maxLevelSize.toFixed(4),
+        levelSizesConsistent: Math.abs(maxLevelSize - minLevelSize) < 0.01 ? 'OK' : 'INCONSISTENT'
+      });
+    }
+
+    // Mostrar tabla
+    console.table(analysis);
+
+    // Detectar anomalias
+    const anomalies = analysis.filter(a => a.levelSizesConsistent !== 'OK' || a.stepSize === 'N/A');
+    if (anomalies.length > 0) {
+      console.log(`\n[DEBUG FOOTPRINT] ANOMALIAS DETECTADAS: ${anomalies.length}`);
+      console.table(anomalies);
+    }
+
+    // Agrupar por step_size para ver si hay variacion
+    const stepSizeGroups = {};
+    for (const a of analysis) {
+      const key = String(a.stepSize);
+      if (!stepSizeGroups[key]) {
+        stepSizeGroups[key] = { count: 0, examples: [] };
+      }
+      stepSizeGroups[key].count++;
+      if (stepSizeGroups[key].examples.length < 3) {
+        stepSizeGroups[key].examples.push(a.date);
+      }
+    }
+    console.log('\n[DEBUG FOOTPRINT] Distribucion de step_size:');
+    console.table(stepSizeGroups);
+
+    // Comparar primeras 50 vs ultimas 50
+    if (analysis.length >= 100) {
+      const first50 = analysis.slice(0, 50);
+      const last50 = analysis.slice(-50);
+
+      const avgLevelsFirst = first50.reduce((sum, a) => sum + a.numLevels, 0) / 50;
+      const avgLevelsLast = last50.reduce((sum, a) => sum + a.numLevels, 0) / 50;
+
+      const avgRangeFirst = first50.reduce((sum, a) => sum + parseFloat(a.candleRangePct), 0) / 50;
+      const avgRangeLast = last50.reduce((sum, a) => sum + parseFloat(a.candleRangePct), 0) / 50;
+
+      console.log('\n[DEBUG FOOTPRINT] Comparacion ANTIGUAS vs RECIENTES:');
+      console.log(`  Primeras 50 velas: avgLevels=${avgLevelsFirst.toFixed(1)}, avgRangePct=${avgRangeFirst.toFixed(4)}%`);
+      console.log(`  Ultimas 50 velas:  avgLevels=${avgLevelsLast.toFixed(1)}, avgRangePct=${avgRangeLast.toFixed(4)}%`);
+
+      if (Math.abs(avgLevelsLast - avgLevelsFirst) > 2) {
+        console.log(`  ⚠️ DIFERENCIA SIGNIFICATIVA en numero de niveles!`);
+      }
+    }
+
+    console.log('\n[DEBUG FOOTPRINT] Analisis completado');
+    return analysis;
   }
 }
 

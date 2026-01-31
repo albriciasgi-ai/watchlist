@@ -201,17 +201,21 @@ class PollingCoordinator {
   async _executeCallback(id, entry) {
     // Verificar que aun existe y esta habilitado
     if (!this._callbacks.has(id) || !entry.enabled || this._isPaused) {
+      console.log(`[PollingCoordinator] Skipping ${entry.name}: exists=${this._callbacks.has(id)}, enabled=${entry.enabled}, paused=${this._isPaused}`);
       return;
     }
 
     // Evitar solapamiento - si ya esta corriendo, reprogramar
     if (entry.isRunning) {
+      console.log(`[PollingCoordinator] ${entry.name} already running, rescheduling`);
       this._scheduleNext(id, entry);
       return;
     }
 
     entry.isRunning = true;
     entry.timerId = null;
+
+    console.log(`[PollingCoordinator] Executing: ${entry.name}`);
 
     try {
       const result = entry.callback();
@@ -220,6 +224,7 @@ class PollingCoordinator {
       if (result instanceof Promise) {
         await result;
       }
+      console.log(`[PollingCoordinator] Completed: ${entry.name}`);
     } catch (err) {
       console.error(`[PollingCoordinator] Error in ${entry.name}:`, err);
     } finally {

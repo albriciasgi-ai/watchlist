@@ -27,7 +27,7 @@ Agente programador Python con experiencia en desarrollo de aplicaciones.
 
 ## VISION GENERAL DEL REPOSITORIO
 
-Este repositorio contiene **9 aplicaciones relacionadas** para trading de criptomonedas:
+Este repositorio contiene **11 aplicaciones relacionadas** para trading de criptomonedas:
 
 | Carpeta | Aplicacion | Puerto Backend | Puerto Frontend |
 |---------|------------|----------------|-----------------|
@@ -38,14 +38,16 @@ Este repositorio contiene **9 aplicaciones relacionadas** para trading de cripto
 | `5.Order_flow/` | Analizador de Order Flow con Footprint | 11000 | 11001 |
 | `6.Trading_Journal/` | Diario de trading con metricas y screenshots | 12000 | 12001 |
 | `7.WatchlistDesktop/` | Watchlist version Electron (en desarrollo) | 8000 | Electron |
-| `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10000 | Electron |
-| `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | Electron |
+| `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10000 | 5174 |
+| `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | 5175 |
+| `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
+| `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
 - Backend: FastAPI + Uvicorn (Python 3.10+)
 - Data Source: Bybit Futures API (REST + WebSocket)
-- Desktop: Electron 33+ (Apps 7 y 8)
+- Desktop: Electron 33+ (Apps 7-11)
 
 ---
 
@@ -2740,7 +2742,8 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab. Electron de
 │   │   ├── drawing/                  # Herramientas de dibujo
 │   │   └── *Settings.jsx             # Modales de configuracion
 │   ├── utils/
-│   │   ├── CandleCache.js            # Cache IndexedDB con validacion
+│   │   ├── CandleCache.js            # Cache IndexedDB con validacion y carga incremental
+│   │   ├── PollingCoordinator.js     # Coordinador de polling v2 (setTimeout individual)
 │   │   ├── IndicatorCache.js
 │   │   └── Logger.js
 │   ├── hooks/
@@ -2891,6 +2894,99 @@ if (showingTooFew && !viewStateRef.current.userZoomed) {
 ### 4. Atajo para forzar recarga
 
 **Ctrl+Shift+R:** Limpia cache de IndexedDB, resetea zoom y recarga datos.
+
+### 5. Optimizaciones de Carga (Enero 2026)
+
+Se aplicaron las mismas optimizaciones del OrderFlowDesktop (App 9) para mejorar tiempos de carga:
+
+#### 5.1 Handler Atomico para Cambio de Timeframe
+
+**Archivo:** `SingleSymbolAnalyzer.jsx`
+
+**Problema:** Al cambiar timeframe, se hacian dos actualizaciones separadas (interval y days), causando doble montaje de componentes.
+
+**Solucion:** Handler unificado que cambia ambos valores en un solo batch de React:
+
+```javascript
+const handleIntervalChange = useCallback((newInterval) => {
+  const defaultDays = DEFAULT_DAYS_BY_INTERVAL[newInterval];
+  const maxDays = MAX_DAYS_BY_INTERVAL[newInterval] || 30;
+
+  let newDays = defaultDays || (parseInt(days) > maxDays ? maxDays : days);
+
+  // CRITICO: Cambiar ambos valores en un solo batch
+  setIntervalState(newInterval);
+  setDays(newDays.toString());
+}, [days]);
+```
+
+#### 5.2 CandleCache con Carga Incremental
+
+**Archivo:** `CandleCache.js`
+
+**Problema:** Cache incompleto se limpiaba, forzando recarga completa de ~2 minutos.
+
+**Solucion:** Solo limpiar cache si tiene GAPS significativos (>2 min entre velas):
+
+```javascript
+static async getValidated(symbol, interval, days) {
+  // Si cache incompleto pero sin gaps, NO limpiarlo
+  if (ratio < this.MIN_CACHE_RATIO) {
+    console.log(`Cache incompleto, se usara carga incremental`);
+    // NO limpiar - retornar para carga incremental
+  }
+
+  // Solo limpiar si hay gaps significativos
+  const gapAnalysis = this.analyzeGaps(cached.candles, interval);
+  if (gapAnalysis.gaps.filter(g => parseFloat(g.gapMinutes) > 2).length > 0) {
+    await this.clear(symbol, interval);
+    return null;
+  }
+
+  return cached;
+}
+```
+
+#### 5.3 PollingCoordinator v2
+
+**Archivo:** `PollingCoordinator.js` (nuevo)
+
+**Problema:** PollingCoordinator v1 usaba tick global cada 1s, causando overhead.
+
+**Solucion:** v2 usa setTimeout individual por callback:
+
+- Sin tick global (0% CPU cuando idle)
+- Cada callback tiene su propio timer
+- Flag `isRunning` evita solapamiento de ejecuciones async
+- Respeta visibilidad del tab (pausa cuando oculto)
+
+**Resultado:** Cambio de timeframe mejorado de ~2:38 min a ~1:13s
+
+### 6. DTB y Rejection Deshabilitados por Defecto (Enero 2026)
+
+**Archivo:** `4.Analizador cripto/backend/realtime_pattern_service.py`
+
+**Problema:** El backend ejecutaba deteccion de DTB (Double Top/Bottom) y Rejection para TODOS los simbolos, aunque estan deprecados.
+
+**Causa:** Los defaults tenian `alertsEnabled: True`. Simbolos sin config guardada usaban defaults.
+
+**Solucion:** Cambiar defaults a `alertsEnabled: False`:
+
+```python
+def _get_default_dbt_config(self) -> Dict:
+    return {
+        'alertsEnabled': False,  # DESHABILITADO - DTB deprecado
+        # ...
+    }
+
+def _get_default_rejection_config(self) -> Dict:
+    return {
+        'alertsEnabled': False,  # DESHABILITADO - Rejection deprecado
+        # ...
+    }
+```
+
+**Resultado:** Solo el Swing Detector ejecuta deteccion de patrones, reduciendo carga de CPU y logging.
 
 ## Troubleshooting
 
@@ -3190,3 +3286,217 @@ if (cached && cached.candles.length > 0) {
 - **Backend:** Usa el mismo backend de App 5 (Order Flow) en puerto 11000
 - **Indicadores:** Comparte codigo con App 4, 5 y 8
 - **Cache:** Sistema propio de IndexedDB con validacion de gaps
+
+---
+
+# APP 10: TRADING BOT DESKTOP (Electron)
+
+**Ubicacion:** `10.TradingBotDesktop/`
+
+Version de escritorio del Trading Bot (App 3) empaquetada con Electron. Resuelve el problema de throttling del navegador que causa pausas en el monitoreo de alertas.
+
+## Estructura
+
+```
+10.TradingBotDesktop/
+├── electron/
+│   ├── main.js              # Proceso principal (anti-throttling, tray, power blocker)
+│   └── preload.js           # Bridge seguro renderer<->main
+│
+├── src/
+│   ├── components/
+│   │   ├── CredentialsPanel.jsx    # Config credenciales Bybit
+│   │   ├── ConfigManager.jsx       # Gestion de simbolos
+│   │   ├── DirectionManager.jsx    # Filtros LONG/SHORT
+│   │   ├── AlertPanel.jsx          # Historial de alertas
+│   │   ├── PositionsPanel.jsx      # Posiciones abiertas
+│   │   ├── OrdersPanel.jsx         # Historial de ordenes
+│   │   └── LogsPanel.jsx           # Logs del sistema
+│   ├── utils/
+│   │   └── robustness.js           # Validacion y health checks
+│   ├── config.js                   # API_BASE_URL = localhost:5000
+│   └── main.jsx
+│
+├── assets/
+│   └── README.txt                  # Instrucciones para icon.ico
+│
+├── package.json                    # Scripts y config electron-builder
+├── vite.config.js                  # Puerto 5001, proxy a backend
+├── 1.START_ALL.bat                 # Inicio coordinado backend + Electron
+├── 1_START.bat                     # Inicio con verificacion de backend
+└── start_fast.bat                  # Inicio rapido
+```
+
+## Puertos
+
+| Servicio | Puerto |
+|----------|--------|
+| Backend (TradingBot) | 5000 |
+| Frontend Electron (dev) | 5001 |
+
+## Comandos
+
+```bash
+# Inicio recomendado (backend + frontend)
+1.START_ALL.bat
+
+# Desarrollo manual
+npm run dev:electron
+
+# Build instalador Windows
+npm run build:electron
+```
+
+## Configuracion Anti-Throttling
+
+```javascript
+// electron/main.js - ANTES de app.whenReady()
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
+// BrowserWindow
+webPreferences: { backgroundThrottling: false }
+```
+
+## Funcionalidades
+
+- **Ejecucion de ordenes**: Market orders con SL/TP integrado
+- **Dos metodos de ejecucion**: Sequential (3 calls) o Integrated (1 call)
+- **Auto-precision**: Fetch automatico de step_size/tick_size desde Bybit
+- **Rate limiting**: Token Bucket para respetar limites de API
+- **21 simbolos** preconfigurados
+- **Filtros de direccion**: LONG/SHORT/BOTH/DISABLED por simbolo
+- **System Tray**: Minimiza a bandeja, corre en background
+- **PowerSaveBlocker**: Previene suspension del sistema
+
+## Diferencias con App 3 (Browser)
+
+| Caracteristica | App 3 (Browser) | App 10 (Electron) |
+|----------------|-----------------|-------------------|
+| Throttling | Si (alertas retrasadas) | No (monitoreo continuo) |
+| System Tray | No | Si |
+| Power Blocker | No | Si |
+| Puerto frontend | 3000 | 5001 (dev) |
+
+## Dependencias
+
+- **Backend:** Usa el mismo backend de App 3 en puerto 5000
+- **Bybit API:** Requiere credenciales configuradas
+
+---
+
+# APP 11: TRADING JOURNAL DESKTOP (Electron)
+
+**Ubicacion:** `11.TradingJournalDesktop/`
+
+Version de escritorio del Trading Journal (App 6) empaquetada con Electron. Resuelve el problema de throttling que pausaba el monitor de posiciones.
+
+## Estructura
+
+```
+11.TradingJournalDesktop/
+├── electron/
+│   ├── main.js              # Proceso principal (anti-throttling, tray, power blocker)
+│   └── preload.js           # Bridge seguro renderer<->main
+│
+├── src/
+│   ├── components/
+│   │   ├── Dashboard.jsx           # Metricas, equity curve, win rate
+│   │   ├── TradeList.jsx           # Lista filtrable de trades
+│   │   ├── TradeDetail.jsx         # Detalle con screenshots y reflexion
+│   │   └── Settings.jsx            # Control del monitor, export/import
+│   ├── styles/
+│   │   └── App.css                 # Estilos de la app
+│   ├── utils/
+│   │   └── robustness.js           # Validacion, health checks, formatters
+│   ├── config.js                   # API_BASE_URL = localhost:12000
+│   ├── App.jsx                     # Componente raiz con navegacion
+│   └── main.jsx
+│
+├── assets/
+│   └── README.txt                  # Instrucciones para icon.ico
+│
+├── package.json                    # Scripts y config electron-builder
+├── vite.config.js                  # Puerto 12002, proxy a backend
+├── 1.START_ALL.bat                 # Inicio coordinado backend + Electron
+├── 1_START.bat                     # Inicio con verificacion de backend
+└── start_fast.bat                  # Inicio rapido
+```
+
+## Puertos
+
+| Servicio | Puerto |
+|----------|--------|
+| Backend (Trading Journal) | 12000 |
+| Frontend Electron (dev) | 12002 |
+
+## Comandos
+
+```bash
+# Inicio recomendado (backend + frontend)
+1.START_ALL.bat
+
+# Desarrollo manual
+npm run dev:electron
+
+# Build instalador Windows
+npm run build:electron
+```
+
+## Configuracion Anti-Throttling
+
+```javascript
+// electron/main.js - ANTES de app.whenReady()
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
+// BrowserWindow
+webPreferences: { backgroundThrottling: false }
+```
+
+## Funcionalidades
+
+### Dashboard
+- Metricas: Total P&L, Win Rate, Profit Factor, Max Drawdown
+- Curva de equity visualizada
+- Gauge de win rate
+- Trades recientes
+
+### Trade List
+- Tabla filtrable por estado, simbolo, direccion, fuente
+- Ordenamiento por columnas
+- Badges de estado (OPEN, WIN, LOSS)
+
+### Trade Detail
+- P&L en USD, %, R-Multiple
+- Screenshots de entrada y salida
+- Reflexion editable con emociones y notas
+
+### Settings
+- Control del monitor (start/stop)
+- Estado de conexiones
+- Export/Import de datos
+
+## Monitor de Posiciones
+
+El backend hace polling al TradingBot cada 5 segundos:
+1. Detecta nuevas posiciones → Crea JournalEntry + Screenshot
+2. Detecta posiciones cerradas → Actualiza con exit_price, PnL + Screenshot
+3. Match con alertas recientes para determinar source
+
+## Diferencias con App 6 (Browser)
+
+| Caracteristica | App 6 (Browser) | App 11 (Electron) |
+|----------------|-----------------|-------------------|
+| Throttling | Si (monitor se pausa) | No (monitor continuo) |
+| System Tray | No | Si |
+| Power Blocker | No | Si |
+| Puerto frontend | 12001 | 12002 (dev) |
+
+## Dependencias
+
+- **Backend:** Usa el mismo backend de App 6 en puerto 12000
+- **TradingBot:** Requiere TradingBot corriendo en puerto 5000 para el monitor
+- **Screenshots:** Backend usa Playwright/mplfinance

@@ -13,9 +13,11 @@ const TimeframeTabs = ({
   orderCounts = {}
 }) => {
   const tabs = [
-    { id: '15m', label: '15m', color: '#2196F3', emoji: '⚡' },
-    { id: '1h', label: '1h', color: '#4CAF50', emoji: '📊' },
-    { id: '4h', label: '4h', color: '#FF9800', emoji: '📈' }
+    { id: '1m', label: '1m', color: '#E91E63', emoji: '⚡' },   // 1 año de datos
+    { id: '5m', label: '5m', color: '#9C27B0', emoji: '🔥' },   // 3 años de datos
+    { id: '15m', label: '15m', color: '#2196F3', emoji: '📊' },
+    { id: '1h', label: '1h', color: '#4CAF50', emoji: '📈' },
+    { id: '4h', label: '4h', color: '#FF9800', emoji: '🏆' }
   ];
 
   return (

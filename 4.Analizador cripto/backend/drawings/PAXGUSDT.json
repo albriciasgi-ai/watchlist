@@ -1,30 +1,6 @@
 {
   "symbol": "PAXGUSDT",
-  "shapes": [
-    {
-      "type": "tpsl",
-      "id": "tpsl_1768980723441_0.8728553757301044",
-      "entryPrice": 4874.39702391889,
-      "tpPrice": 5069.372904875646,
-      "slPrice": 4776.909083440512,
-      "time": 1768809600000,
-      "widthTime": 378000000
-    },
-    {
-      "type": "vertical",
-      "id": "vertical_1769115488890_0.5337927997909319",
-      "price": 4937.925248015873,
-      "time": 1769114820000,
-      "style": {
-        "color": "#F59E0B",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    }
-  ],
-  "updated_at": "2026-01-28T03:20:37.974096+00:00",
-  "total_shapes": 2
+  "shapes": [],
+  "updated_at": "2026-01-31T02:35:14.587465+00:00",
+  "total_shapes": 0
 }

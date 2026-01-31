@@ -1,0 +1,182 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:59 [Preload] Order Flow Desktop - Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:60 [Preload] Electron: 33.4.11
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:61 [Preload] Chrome: 130.0.6723.191
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:270 [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2057 [UNIUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [6:11:55 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:44 [UNIUSDT] SwingDetectorIndicator initialized
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [6:11:55 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+CandleCache.js:80 [CandleCache] 💾 UNIUSDT@1 - desde IndexedDB (1445 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1445 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1445 velas, sin gaps significativos
+MiniChart.jsx:1165 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 6:08:00 p.m. (1445 velas en cache)
+robustness.js:415 [CacheCleanup] Complete: 0/8 candles, 0/9 indicators removed
+PollingCoordinator.js:102 [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1445 velas sin gaps
+CandleCache.js:393 [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 4 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1445 cached + 4 new = 1448 total
+MiniChart.jsx:1225 [UNIUSDT] Incremental: +4 velas nuevas = 1448 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1448 velas sin gaps
+MiniChart.jsx:1255 [UNIUSDT] ✅ Histórico final: 1448 velas
+Logger.js:100 ✅ [6:12:05 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1448 velas, memoria: 1/4)
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@UNIUSDT desde IndexedDB
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+SwingDetectorIndicator.js:181 [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (session, 1 days)
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (session, 1 days)
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (session, 1 days)
+Logger.js:100 ✅ [6:12:09 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+Logger.js:100 ✅ [6:12:20 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [6:12:20 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [6:12:20 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [6:12:20 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [6:12:20 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [6:12:20 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:21 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:32 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:38 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+PresetManager.js:227 [PresetManager] ✅ Override guardado: UNIUSDT - VWAP
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:12:43 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [6:12:43 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+Logger.js:100 ✅ [6:12:47 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1449 velas, memoria: 1/4)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 201/201 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:12:55 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:13:09 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [6:13:09 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1450 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 201/201 signals for interval 1 (cached)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:13:54 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+Logger.js:100 ✅ [6:13:59 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [6:14:09 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [6:14:09 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1451 velas, memoria: 1/4)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 202/202 signals for interval 1 (cached)
+Logger.js:100 ✅ [6:14:56 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT

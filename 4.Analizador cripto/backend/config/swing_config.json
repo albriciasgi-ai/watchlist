@@ -15,14 +15,14 @@
     "BNBUSDT",
     "POLUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "240",
+  "days": 360,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "days": 1,
       "vwapFilter": {
@@ -34,13 +34,14 @@
         "marginPercent": 20,
         "skipVolumeInRectangle": false
       },
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "BTCUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "swingBars": 5,
       "days": 1,
@@ -49,102 +50,113 @@
     },
     "XRPUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "TRXUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "GALAUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "days": 5,
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "SUIUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "SOLUSDT": {
       "days": 1,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
       },
-      "alertsEnabled": true
+      "alertsEnabled": true,
+      "swingBars": 5
     },
     "PAXGUSDT": {
-      "days": 1,
+      "days": 360,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     },
     "TRBUSDT": {
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     },
     "ADAUSDT": {
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     },
     "DOGEUSDT": {
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     },
     "BNBUSDT": {
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     },
     "POLUSDT": {
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1,
-        "lookbackBars": 10
-      }
+        "enabled": true,
+        "minZScore": 1.5,
+        "lookbackBars": 50
+      },
+      "swingBars": 5
     }
   },
   "swingBars": 3,

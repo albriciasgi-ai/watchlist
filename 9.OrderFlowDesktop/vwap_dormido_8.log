@@ -1,0 +1,3211 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:59 [Preload] Order Flow Desktop - Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:60 [Preload] Electron: 33.4.11
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:61 [Preload] Chrome: 130.0.6723.191
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:222 [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:1551 [UNIUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [7:37:32 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+SwingDetectorIndicator.js:44 [UNIUSDT] SwingDetectorIndicator initialized
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [7:37:32 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+Logger.js:100 ✅ [7:37:32 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+CandleCache.js:80 [CandleCache] 💾 UNIUSDT@1 - desde IndexedDB (1530 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1530 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1530 velas, sin gaps significativos
+MiniChart.jsx:915 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:33:00 p.m. (1530 velas en cache)
+robustness.js:415 [CacheCleanup] Complete: 0/8 candles, 0/9 indicators removed
+PollingCoordinator.js:102 [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1530 velas sin gaps
+CandleCache.js:393 [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 4 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1530 cached + 4 new = 1533 total
+MiniChart.jsx:960 [UNIUSDT] Incremental: +4 velas nuevas = 1533 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1533 velas sin gaps
+MiniChart.jsx:978 [UNIUSDT] ✅ Histórico final: 1533 velas
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 1)
+Logger.js:100 ✅ [7:37:42 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1533 velas, memoria: 1/4)
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=794
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=794, missed=0 of 794 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2682, Y=172.1, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+Logger.js:100 ✅ [7:37:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@UNIUSDT desde IndexedDB
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+SwingDetectorIndicator.js:181 [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:37:56 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [7:37:56 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [7:37:56 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [7:37:56 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+SwingDetectorIndicator.js:123 [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+Logger.js:100 ✅ [7:37:56 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [7:37:56 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1533)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1534 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:38:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 61)
+Logger.js:100 ✅ [7:38:08 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=174
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=173, missed=1 of 174 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2624, Y=292.9, bounds={y:25, height:400}, viewport={min:4.2490, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769809500000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 121)
+Logger.js:100 ✅ [7:38:09 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=174
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=173, missed=1 of 174 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2624, Y=400.9, bounds={y:25, height:400}, viewport={min:4.2490, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769809500000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 181)
+Logger.js:100 ✅ [7:38:13 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=121
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=120, missed=1 of 121 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2601, Y=526.6, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769812680000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 241)
+Logger.js:100 ✅ [7:38:15 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=121
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=120, missed=1 of 121 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2601, Y=485.6, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769812680000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:38:44 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:38:44 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1534)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1535 velas, memoria: 1/4)
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:39:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 301)
+Logger.js:100 ✅ [7:39:22 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=123
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=121, missed=2 of 123 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2601, Y=485.6, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769812620000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:39:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:39:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1535)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1536 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:40:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:40:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:40:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1536)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1537 velas, memoria: 1/4)
+Logger.js:100 ✅ [7:41:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_UNIUSDT
+Logger.js:100 ✅ [7:41:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:41:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 361)
+Logger.js:100 ✅ [7:41:50 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=123
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=119, missed=4 of 123 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2600, Y=486.4, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2870}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769812740000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 421)
+Logger.js:100 ✅ [7:41:53 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=137
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=133, missed=4 of 137 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2602, Y=475.5, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2950}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769811900000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 481)
+Logger.js:100 ✅ [7:41:54 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=137
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=133, missed=4 of 137 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2602, Y=453.5, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2950}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769811900000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1537)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1538 velas, memoria: 1/4)
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:238 [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:42:17 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+MiniChart.jsx:735 [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 541)
+Logger.js:100 ✅ [7:42:32 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+CandleCache.js:69 [CandleCache] 💾 UNIUSDT@1 - desde memoria (1538 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION UNIUSDT@1: 1538 velas sin gaps
+CandleCache.js:269 [CandleCache] UNIUSDT@1 - Cache valido: 1538 velas, sin gaps significativos
+MiniChart.jsx:915 [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:41:00 p.m. (1538 velas en cache)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+robustness.js:180 [HealthCheck] Backend reconnected
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+VWAPIndicator.js:330 [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=137
+VWAPIndicator.js:382 [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=132, missed=5 of 137 candles
+VWAPIndicator.js:394 [UNIUSDT] 🎨 VWAP sample: vwap=4.2602, Y=453.6, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2950}
+VWAPIndicator.js:400 [UNIUSDT] 🔍 Sample candle.timestamp=1769811960000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1538 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1538 cached + 1 new = 1538 total
+MiniChart.jsx:960 [UNIUSDT] Incremental: +1 velas nuevas = 1538 total
+CandleCache.js:393 [CandleCache] OK MERGED UNIUSDT: 1538 velas sin gaps
+MiniChart.jsx:978 [UNIUSDT] ✅ Histórico final: 1538 velas
+CandleCache.js:169 [CandleCache] ✅ UNIUSDT@1 - guardado (1538 velas, memoria: 1/4)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+SwingDetectorIndicator.js:142 [UNIUSDT] SwingDetector initialized with 1 days
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+MiniChart.jsx:1575 [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+MiniChart.jsx:1577 [UNIUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:42:44 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [7:42:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:42:44 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:42:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:42:44 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:42:44 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ ✅ [7:42:45 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:42:45 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1538)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:42:53 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector signal polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Status_UNIUSDT
+ [UNIUSDT] SwingDetector status polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1538 velas)
+ ✅ [7:42:53 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1538 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1538 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:42:53 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:41:00 p.m. (1538 velas en cache)
+ ✓ Suscrito: 
+ ✅ [7:43:01 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:43:01 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:43:04 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1538 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 2 velas sin gaps
+ [CandleCache] 🔄 Merge: 1538 cached + 2 new = 1539 total
+ [UNIUSDT] Incremental: +2 velas nuevas = 1539 total
+ [CandleCache] OK MERGED UNIUSDT: 1539 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1539 velas
+ ✅ [7:43:07 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=137
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=131, missed=6 of 137 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2602, Y=453.8, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769812020000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1539 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1539)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1540 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ ✅ [7:43:15 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:43:18 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:43:18 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:43:18 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:43:18 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:43:18 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:43:18 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 601)
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:43:53 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=86
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=79, missed=7 of 86 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2634, Y=417.4, bounds={y:25, height:400}, viewport={min:4.2600, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769815140000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1540)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1541 velas, memoria: 1/4)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ ✅ [7:44:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:44:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:44:04 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 661)
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1541)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:45:02 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=183
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=174, missed=9 of 183 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2615, Y=323.7, bounds={y:25, height:400}, viewport={min:4.2450, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769809440000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1542 velas, memoria: 1/4)
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [7:45:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:45:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:45:05 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1542)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1543 velas, memoria: 1/4)
+ ✅ [7:46:02 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:46:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:46:05 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 721)
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1543)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1544 velas, memoria: 1/4)
+ ✅ [7:47:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:47:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ ✅ [7:47:05 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [7:47:09 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=183
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=172, missed=11 of 183 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2613, Y=325.2, bounds={y:25, height:400}, viewport={min:4.2450, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769809560000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1544)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector signal polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Status_UNIUSDT
+ [UNIUSDT] SwingDetector status polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1544 velas)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1544 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1544 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [UNIUSDT] Cache tiene 1544 velas pero solo necesitamos ~1540 para 1 dias - forzando carga completa
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✓ Suscrito: 
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:47:20 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] Completa: 1439 velas
+ [CandleCache] OK BACKEND-COMPLETO UNIUSDT: 1439 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1439 velas
+ ✅ [7:47:30 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=60, y=75
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=790, missed=10 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2657, Y=207.8, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772480000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1439 velas, memoria: 1/4)
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:47:31 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1439 velas)
+ ✅ [7:47:31 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1439 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1439 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:47:31 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:46:00 p.m. (1439 velas en cache)
+ ✅ [7:47:31 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:47:31 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✓ Suscrito: 
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1439 velas sin gaps
+ [CandleCache] 🔄 Merge: 1439 cached + 1 new = 1439 total
+ [UNIUSDT] Incremental: +1 velas nuevas = 1439 total
+ [CandleCache] OK MERGED UNIUSDT: 1439 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1439 velas
+ ✅ [7:47:46 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=790, missed=10 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2657, Y=207.8, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772480000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1439 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:47:52 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1439 velas)
+ ✅ [7:47:52 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1439 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1439 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:47:52 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:46:00 p.m. (1439 velas en cache)
+ ✅ [7:47:52 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:47:52 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✓ Suscrito: 
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [HealthCheck] Backend reconnected
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ ✅ [7:48:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:48:05 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1439 velas)
+ ✅ [7:48:05 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1439 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1439 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:48:05 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:46:00 p.m. (1439 velas en cache)
+ ✓ Suscrito: 
+ [UNIUSDT] SwingDetector initialized with 1 days
+ ✅ [7:48:12 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:48:12 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:48:13 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1439 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 2 velas sin gaps
+ [CandleCache] 🔄 Merge: 1439 cached + 2 new = 1440 total
+ [UNIUSDT] Incremental: +2 velas nuevas = 1440 total
+ [CandleCache] OK MERGED UNIUSDT: 1440 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1440 velas
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1440 velas)
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1440 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector: Backend returned 0 signals
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:48:17 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=789, missed=11 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2656, Y=176.9, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772540000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1439 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 2 velas sin gaps
+ [CandleCache] 🔄 Merge: 1439 cached + 2 new = 1440 total
+ [UNIUSDT] Incremental: +2 velas nuevas = 1440 total
+ [CandleCache] OK MERGED UNIUSDT: 1440 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1440 velas
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1440 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:48:28 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1440 velas)
+ ✅ [7:48:28 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1440 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1440 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:48:28 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:47:00 p.m. (1440 velas en cache)
+ ✅ [7:48:28 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:48:28 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✓ Suscrito: 
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1440 velas sin gaps
+ [CandleCache] 🔄 Merge: 1440 cached + 1 new = 1440 total
+ [UNIUSDT] Incremental: +1 velas nuevas = 1440 total
+ [CandleCache] OK MERGED UNIUSDT: 1440 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1440 velas
+ ✅ [7:48:39 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=789, missed=11 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2656, Y=176.9, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772540000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1440 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ ✅ [7:48:51 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:48:51 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:48:51 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:48:51 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ ✅ [7:48:51 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:48:51 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1440)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔴 DEBUG: Drew red rectangle at x=30, y=45, bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 DEBUG: viewport={min:4.1360, max:4.3450, priceToY:function}
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:48:52 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector signal polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Status_UNIUSDT
+ [UNIUSDT] SwingDetector status polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1440 velas)
+ ✅ [7:48:52 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1440 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1440 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:48:52 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [IndicatorCache] 💾 vwap@UNIUSDT desde memoria
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:47:00 p.m. (1440 velas en cache)
+ ✅ [7:48:52 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:48:52 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ ✓ Suscrito: 
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:49:02 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:49:02 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:49:02 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:49:02 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ ✅ [7:49:02 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:49:02 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ ✅ [7:49:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 198/198 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:49:03 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=2
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=0, missed=2 of 2 candles
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769820480000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1440 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS UNIUSDT: 2 velas sin gaps
+ [CandleCache] 🔄 Merge: 1440 cached + 2 new = 1441 total
+ [UNIUSDT] Incremental: +2 velas nuevas = 1441 total
+ [CandleCache] OK MERGED UNIUSDT: 1441 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1441 velas
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1441 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:49:14 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:49:14 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:49:14 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:49:14 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:49:14 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:49:14 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [Registry] 🗑️ Desregistrado manager para UNIUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_UNIUSDT
+ ✅ [7:49:20 p. m.] [VWAP] [UNIUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] SwingDetector signal polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Status_UNIUSDT
+ [UNIUSDT] SwingDetector status polling stopped
+ [PollingCoordinator] Unregistered: OrderFlow_UNIUSDT
+ [MiniChart UNIUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [UNIUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1441 velas)
+ ✅ [7:49:20 p. m.] [VWAP] [UNIUSDT] VWAPIndicator initialized (backend native, type=session)
+ [UNIUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1441 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1441 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para UNIUSDT (total: 1)
+ ✅ [7:49:20 p. m.] [VWAP] [UNIUSDT] Config changed (vwapType=rolling), refetching...
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:48:00 p.m. (1441 velas en cache)
+ ✓ Suscrito: 
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Registered: OrderFlow_UNIUSDT (interval: 5000ms, priority: 1)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() after initial load
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_UNIUSDT (interval: 60000ms, priority: 2)
+ ✅ [7:49:28 p. m.] [VWAP] [UNIUSDT] VWAP polling started (interval: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1441 velas sin gaps
+ [CandleCache] 🔄 Merge: 1441 cached + 1 new = 1441 total
+ [UNIUSDT] Incremental: +1 velas nuevas = 1441 total
+ [CandleCache] OK MERGED UNIUSDT: 1441 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1441 velas
+ ✅ [7:49:30 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=788, missed=12 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2654, Y=177.3, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772600000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1441 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_UNIUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_UNIUSDT (interval: 60000ms, priority: 8)
+ [UNIUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:49:42 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:49:42 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:49:42 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:49:42 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:49:42 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:49:42 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1441)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1442 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [7:50:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:50:28 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:50:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 781)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1442)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1443 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [7:51:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:51:28 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:51:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1443)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1444 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [7:52:05 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:52:28 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:52:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:52:58 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=785, missed=15 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2649, Y=178.3, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769772780000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1444)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1445 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ ✅ [7:53:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:53:28 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:53:28 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1445)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1446 velas, memoria: 1/4)
+ ✅ [7:54:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 841)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1446 velas)
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1446 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1446 velas, sin gaps significativos
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:53:00 p.m. (1446 velas en cache)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1446 velas sin gaps
+ [CandleCache] 🔄 Merge: 1446 cached + 1 new = 1446 total
+ [UNIUSDT] Incremental: +1 velas nuevas = 1446 total
+ [CandleCache] OK MERGED UNIUSDT: 1446 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1446 velas
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1446 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [7:54:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:54:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:54:34 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:54:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:54:34 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:54:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:54:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:54:34 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1446)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1447 velas, memoria: 1/4)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+ ✅ [7:55:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:55:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:55:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1447)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1448 velas, memoria: 1/4)
+ ✅ [7:56:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:56:23 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=781, missed=19 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2634, Y=181.1, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769773020000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:56:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:56:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1448)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1449 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+ ✅ [7:57:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:57:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:57:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 901)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1449)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1450 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector: 199/199 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [7:58:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:58:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:58:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1450)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1451 velas, memoria: 1/4)
+ ✅ [7:59:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] 💾 UNIUSDT@1 - desde memoria (1451 velas)
+ [CandleCache] OK VALIDATION UNIUSDT@1: 1451 velas sin gaps
+ [CandleCache] UNIUSDT@1 - Cache valido: 1451 velas, sin gaps significativos
+ [UNIUSDT] Carga INCREMENTAL: desde 30/1/2026, 7:58:00 p.m. (1451 velas en cache)
+ [CandleCache] OK CACHE-ANTES-MERGE UNIUSDT: 1451 velas sin gaps
+ [CandleCache] 🔄 Merge: 1451 cached + 1 new = 1451 total
+ [UNIUSDT] Incremental: +1 velas nuevas = 1451 total
+ [CandleCache] OK MERGED UNIUSDT: 1451 velas sin gaps
+ [UNIUSDT] ✅ Histórico final: 1451 velas
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1451 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [7:59:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:59:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:59:34 p. m.] [Manager] [UNIUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:59:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:59:34 p. m.] [VWAP] [UNIUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:59:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [UNIUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:59:34 p. m.] [Manager] [UNIUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:59:34 p. m.] [Manager] [UNIUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:59:44 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=778, missed=22 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2450, Y=216.4, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769773200000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1451)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1452 velas, memoria: 1/4)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [8:00:04 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:00:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:00:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1452)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1453 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+ ✅ [8:01:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 961)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:01:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:01:29 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1453)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1454 velas, memoria: 1/4)
+ [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+ ✅ [8:02:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:02:29 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:02:30 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:02:56 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=800
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.1360, max=4.3450, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=775, missed=25 of 800 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2323, Y=240.7, bounds={y:25, height:400}, viewport={min:4.1360, max:4.3450}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769773380000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1454)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 1021)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.1360, maxPrice=4.3450, verticalOffset=0
+ ✅ [8:03:01 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=280
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.2200, max=4.2950, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=255, missed=25 of 280 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2749, Y=180.2, bounds={y:25, height:400}, viewport={min:4.2200, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769804580000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 1081)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.2200, maxPrice=4.2950, verticalOffset=78
+ [CandleCache] ✅ UNIUSDT@1 - guardado (1455 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ ✅ [8:03:03 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] SwingDetector: 200/200 signals for interval 1 (cached)
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ ✅ [8:03:06 p. m.] [Manager] [UNIUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [UNIUSDT] 🎨 VWAP renderOverlay EXECUTING: dataMap=1440, visibleCandles=280
+ [UNIUSDT] 🔴 VWAP DEBUG RECTANGLE at (30, 45), bounds={x:10,y:25,w:810,h:400}
+ [UNIUSDT] 🔴 VWAP viewport: min=4.2200, max=4.2950, hasPriceToY=true
+ [UNIUSDT] 🎨 VWAP _drawVWAPLine: matched=254, missed=26 of 280 candles
+ [UNIUSDT] 🎨 VWAP sample: vwap=4.2737, Y=220.5, bounds={y:25, height:400}, viewport={min:4.2200, max:4.2950}
+ [UNIUSDT] 🔍 Sample candle.timestamp=1769804640000, dataMap first keys=[1769733480000,1769733540000,1769733600000]
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [UNIUSDT] 🎨 Calling renderOverlays AFTER OrderFlow (frame 1141)
+ [UNIUSDT] 🎨 Fresh priceContext: minPrice=4.2200, maxPrice=4.2950, verticalOffset=82
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: VWAP_UNIUSDT
+ ✅ [8:03:30 p. m.] [VWAP] [UNIUSDT] VWAP updated (polling): 1440 points
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ ✅ [8:03:30 p. m.] [VWAP] [UNIUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_UNIUSDT
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: OrderFlow_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 1455)
+ [UNIUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_UNIUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_UNIUSDT
+ [IndicatorCache] 💾 swing@UNIUSDT desde memoria
+ [UNIUSDT] 🔄 requestRedraw called (candles: 0)
+ [PollingCoordinator] Completed: SwingDetector_Signals_UNIUSDT

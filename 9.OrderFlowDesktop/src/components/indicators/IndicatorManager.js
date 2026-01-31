@@ -58,6 +58,11 @@ class IndicatorManager {
     this.allCandles = null;
 
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
+
+    // 🔧 DEBUG: Exponer manager globalmente para debug desde consola
+    if (typeof window !== 'undefined') {
+      window._debugIndicatorManager = this;
+    }
   }
 
   async initialize(indicatorStates = {}) {
@@ -304,6 +309,12 @@ class IndicatorManager {
             needsRefetch = true;
           }
 
+          // 🔧 FIX: También refrescar si no tiene datos cargados (carga inicial)
+          if (!needsRefetch && indicator.dataMap && indicator.dataMap.size === 0) {
+            log.debug(`[${this.symbol}] VWAP sin datos, forzando refresh inicial`);
+            needsRefetch = true;
+          }
+
           if (needsRefetch && indicator.fetchData) {
             priority1.push({ indicator, name: "VWAP" });
           }
@@ -380,6 +391,12 @@ class IndicatorManager {
       const duration = Date.now() - startTime;
       const totalIndicators = priority1.length + priority2.length + priority3.length;
       log.debug(`[${this.symbol}] Refresh completado en ${duration}ms (${totalIndicators} indicadores en 3 batches)`);
+
+      // 🔧 FIX: Forzar redraw después de cargar todos los indicadores
+      if (this.requestRedraw) {
+        log.debug(`[${this.symbol}] 🔄 requestRedraw() después de refresh`);
+        this.requestRedraw();
+      }
     } catch (error) {
       log.error(`[${this.symbol}] Error en refresh:`, error);
     }
@@ -423,18 +440,33 @@ class IndicatorManager {
     if (indicator) {
       indicator.setEnabled(enabled);
 
-      // Cargar datos si se habilita
-      if (enabled && indicator.fetchData) {
-        log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+      if (enabled) {
+        // Cargar datos si se habilita
+        if (indicator.fetchData) {
+          log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
 
-        indicator.fetchData().then(() => {
-          log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
-          if (this.requestRedraw) {
-            this.requestRedraw();
-          }
-        }).catch(err => {
-          log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
-        });
+          indicator.fetchData().then(() => {
+            log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+
+            // 🔧 FIX: Iniciar polling después de cargar datos (para actualizaciones en tiempo real)
+            if (indicator.startPollingIfReady) {
+              log.debug(`[${this.symbol}] 🔄 Iniciando polling para ${name}`);
+              indicator.startPollingIfReady();
+            }
+
+            if (this.requestRedraw) {
+              this.requestRedraw();
+            }
+          }).catch(err => {
+            log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+          });
+        }
+      } else {
+        // 🔧 FIX: Detener polling cuando se deshabilita el indicador
+        if (indicator.stopPolling) {
+          log.debug(`[${this.symbol}] 🛑 Deteniendo polling para ${name}`);
+          indicator.stopPolling();
+        }
       }
     }
   }
@@ -469,6 +501,18 @@ class IndicatorManager {
   }
 
   renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null, manualLevels = []) {
+    // DEBUG: Verificar estado del VWAP (cada 60 frames)
+    if (!this._renderFrameCount) this._renderFrameCount = 0;
+    this._renderFrameCount++;
+    if (this._renderFrameCount % 60 === 1) {
+      const vwap = this.indicators.find(ind => ind.name === "VWAP");
+      if (vwap) {
+        log.info(`[${this.symbol}] renderOverlays: VWAP found, enabled=${vwap.enabled}, dataMap.size=${vwap.dataMap?.size || 0}`);
+      } else {
+        log.warn(`[${this.symbol}] renderOverlays: VWAP NOT FOUND in indicators (count=${this.indicators.length})`);
+      }
+    }
+
     // ✅ SOLUCIÓN 1: Verificar si hay Fixed Range Profiles activos para este símbolo
     const activeFixedRanges = this.fixedRangeIndicators.filter(
       ind => ind.enabled && ind.symbol === this.symbol
@@ -478,6 +522,12 @@ class IndicatorManager {
     // Renderizar indicadores normales (Volume Profile dinámico)
     this.indicators.forEach(indicator => {
       if (indicator.renderOverlay && indicator.enabled) {
+        // ✅ FIX: Order Flow se renderiza manualmente en MiniChart.jsx ANTES de renderOverlays
+        // No renderizarlo aqui para evitar que tape al VWAP y otros indicadores
+        if (indicator.name === "Order Flow") {
+          return; // Skip - ya se renderizo antes
+        }
+
         // ✅ SOLUCIÓN 1: Si es Volume Profile y debe ocultarse cuando hay Fixed Ranges activos
         if (indicator.name === "Volume Profile") {
           // Debug: mostrar estado del indicador
@@ -1371,6 +1421,7 @@ class IndicatorManager {
   /**
    * Handler llamado cuando una vela se cierra (WebSocket confirm=true)
    * Propaga el evento a los indicadores que necesitan actualizarse en tiempo real
+   * FIX: Ahora dispara requestRedraw() despues de actualizar cada indicador
    */
   onCandleClose(allCandles) {
     // Guardar referencia a las velas para fetchData()
@@ -1382,16 +1433,37 @@ class IndicatorManager {
       dbtIndicator.onCandleClose(allCandles);
     }
 
+    // FIX: Usar Promise.all para actualizar indicadores y luego hacer un solo redraw
+    const updatePromises = [];
+
     // VWAP - actualizar al cierre de vela para datos frescos
     const vwapIndicator = this.indicators.find(ind => ind.name === "VWAP");
     if (vwapIndicator && vwapIndicator.enabled && vwapIndicator.fetchData) {
-      vwapIndicator.fetchData(true); // true = skip cache, forzar fetch
+      updatePromises.push(
+        vwapIndicator.fetchData(true).catch(err => {
+          log.error(`[${this.symbol}] Error actualizando VWAP en onCandleClose:`, err);
+        })
+      );
     }
 
     // Swing Detector - actualizar al cierre de vela
     const swingIndicator = this.indicators.find(ind => ind.name === "Swing Detector");
     if (swingIndicator && swingIndicator.enabled && swingIndicator.fetchSignals) {
-      swingIndicator.fetchSignals(true); // true = forceRefresh
+      updatePromises.push(
+        swingIndicator.fetchSignals(true).catch(err => {
+          log.error(`[${this.symbol}] Error actualizando SwingDetector en onCandleClose:`, err);
+        })
+      );
+    }
+
+    // FIX: Disparar redraw despues de que todos los indicadores se actualicen
+    if (updatePromises.length > 0) {
+      Promise.all(updatePromises).then(() => {
+        if (this.requestRedraw) {
+          log.debug(`[${this.symbol}] onCandleClose: requestRedraw() after indicators update`);
+          this.requestRedraw();
+        }
+      });
     }
   }
 

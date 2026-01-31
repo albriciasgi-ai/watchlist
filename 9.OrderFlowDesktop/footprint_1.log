@@ -1,0 +1,594 @@
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1477)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1477 velas)
+ [CandleCache] OK VALIDATION SOLUSDT@1: 1477 velas sin gaps
+ [CandleCache] SOLUSDT@1 - Cache valido: 1477 velas, sin gaps significativos
+ [SOLUSDT] Carga INCREMENTAL: desde 30/1/2026, 10:20:00 p.m. (1477 velas en cache)
+ ✅ [10:21:49 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1450
+ [CandleCache] OK CACHE-ANTES-MERGE SOLUSDT: 1477 velas sin gaps
+ [CandleCache] 🔄 Merge: 1477 cached + 1 new = 1477 total
+ [SOLUSDT] Incremental: +1 velas nuevas = 1477 total
+ [CandleCache] OK MERGED SOLUSDT: 1477 velas sin gaps
+ [SOLUSDT] ✅ Histórico final: 1477 velas
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1477 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1477)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1478 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [SOLUSDT] SwingDetector: Backend returned 0 signals
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:22:05 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1451 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [SOLUSDT] SwingDetector initialized with 1 days
+ [SOLUSDT] SwingDetector: 223/223 signals for interval 1 (cached)
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:22:09 p. m.] [Manager] [SOLUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [10:22:09 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [10:22:09 p. m.] [VWAP] [SOLUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [10:22:09 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [SOLUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [10:22:09 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [10:22:09 p. m.] [Manager] [SOLUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ ✅ [10:22:32 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1451 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:22:32 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1478)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1479 velas, memoria: 1/4)
+ [SOLUSDT] SwingDetector: 224/224 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ ✅ [10:23:05 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1452 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:23:09 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1452
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ ✅ [10:23:34 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1452 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:23:34 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1479)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1480 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [SOLUSDT] SwingDetector: 224/224 signals for interval 1 (cached)
+ ✅ [10:24:05 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1453 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:24:29 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1453
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ ✅ [10:24:36 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1453 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:24:36 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1480)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1481 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [SOLUSDT] SwingDetector: 224/224 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:25:07 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1454 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ ✅ [10:25:37 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1454 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:25:37 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:25:48 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1454
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1481)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1482 velas, memoria: 1/4)
+ [SOLUSDT] SwingDetector: 224/224 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:26:05 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1455 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:26:30 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1455
+ ✅ [10:26:32 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1455
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ ✅ [10:26:38 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1455
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ ✅ [10:26:39 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1455 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:26:39 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (1482 velas)
+ [CandleCache] OK VALIDATION SOLUSDT@1: 1482 velas sin gaps
+ [CandleCache] SOLUSDT@1 - Cache valido: 1482 velas, sin gaps significativos
+ [SOLUSDT] Carga INCREMENTAL: desde 30/1/2026, 10:25:00 p.m. (1482 velas en cache)
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [CandleCache] OK CACHE-ANTES-MERGE SOLUSDT: 1482 velas sin gaps
+ [CandleCache] 🔄 Merge: 1482 cached + 1 new = 1482 total
+ [SOLUSDT] Incremental: +1 velas nuevas = 1482 total
+ [CandleCache] OK MERGED SOLUSDT: 1482 velas sin gaps
+ [SOLUSDT] ✅ Histórico final: 1482 velas
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1482 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1482)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [OrderFlow] Step size saved for SOLUSDT: 1
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1483 velas, memoria: 1/4)
+ [SOLUSDT] SwingDetector: 1/1 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:27:06 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1456 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:27:14 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [SOLUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:27:15 p. m.] [Manager] [SOLUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [10:27:15 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [10:27:15 p. m.] [VWAP] [SOLUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [10:27:15 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [SOLUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [10:27:15 p. m.] [Manager] [SOLUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [10:27:15 p. m.] [Manager] [SOLUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ ✅ [10:27:19 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:27:36 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [PollingCoordinator] Executing: VWAP_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ ✅ [10:27:39 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:27:41 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1456 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ ✅ [10:27:41 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_SOLUSDT
+ ✅ [10:27:43 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1483)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+ [CandleCache] ✅ SOLUSDT@1 - guardado (1484 velas, memoria: 1/4)
+ [SOLUSDT] SwingDetector: 225/225 signals for interval 1 (cached)
+ ✅ [10:28:05 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1456
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ ✅ [10:28:05 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1457 points
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ ✅ [10:28:09 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ ✅ [10:28:24 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+OrderFlowSettings.jsx:193 [OrderFlow] Step size saved for SOLUSDT: 0.001
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_SOLUSDT
+Logger.js:100 ✅ [10:28:43 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1457 points
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [10:28:43 p. m.] [VWAP] [SOLUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+Logger.js:100 ✅ [10:28:51 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+Logger.js:100 ✅ [10:28:56 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1484)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+Logger.js:100 ✅ [10:28:59 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+CandleCache.js:169 [CandleCache] ✅ SOLUSDT@1 - guardado (1485 velas, memoria: 1/4)
+Logger.js:100 ✅ [10:29:02 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT
+SwingDetectorIndicator.js:238 [SOLUSDT] SwingDetector: 225/225 signals for interval 1 (cached)
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+Logger.js:100 ✅ [10:29:05 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1457
+Logger.js:100 ✅ [10:29:06 p. m.] [VWAP] [SOLUSDT] VWAP updated (polling): 1458 points
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+Logger.js:100 ✅ [10:29:09 p. m.] [Manager] [SOLUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1458
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+MiniChart.jsx:2122 [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2124 [SOLUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_SOLUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_SOLUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_SOLUSDT
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [SOLUSDT] 🔄 requestRedraw called (candles: 1485)
+ [SOLUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_SOLUSDT

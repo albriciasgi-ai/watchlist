@@ -680,16 +680,52 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const zoomChanged = Math.abs(currentZoom - priceScaleRef.current.lastZoom) > 0.001;
 
     if (zoomChanged || priceScaleRef.current.minPrice === null) {
-      // Zoom cambió o primera carga: recalcular escala basándose en velas visibles
+      // Zoom cambio o primera carga: recalcular escala basandose en velas visibles
       minPrice = Math.min(...visibleCandles.map(d => d.low));
       maxPrice = Math.max(...visibleCandles.map(d => d.high));
+
+      // FIX: Si Order Flow esta activo, extender el rango para incluir todos los niveles de footprints
+      // Esto evita que los niveles se dibujen con alturas inconsistentes o fuera del area visible
+      try {
+        const orderFlowIndicator = indicatorManagerRef.current?.indicators?.find(
+          ind => ind.name === "Order Flow"
+        );
+        if (orderFlowIndicator && orderFlowIndicator.enabled && orderFlowIndicator.footprints?.length > 0) {
+          // Obtener timestamps de velas visibles para filtrar footprints relevantes
+          const visibleTimestamps = new Set(visibleCandles.map(c => c.timestamp));
+          const toleranceMs = 30000; // 30 segundos de tolerancia
+
+          for (const fp of orderFlowIndicator.footprints) {
+            // Solo considerar footprints que correspondan a velas visibles (con tolerancia)
+            let isRelevant = visibleTimestamps.has(fp.candle_timestamp);
+            if (!isRelevant) {
+              for (const vts of visibleTimestamps) {
+                if (Math.abs(fp.candle_timestamp - vts) <= toleranceMs) {
+                  isRelevant = true;
+                  break;
+                }
+              }
+            }
+
+            if (isRelevant && fp.levels) {
+              for (const level of fp.levels) {
+                if (level.price_min < minPrice) minPrice = level.price_min;
+                if (level.price_max > maxPrice) maxPrice = level.price_max;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Si hay error, usar solo el rango de velas (comportamiento original)
+        console.warn('[MiniChart] Error extending price range for footprints:', e);
+      }
 
       // Guardar para mantener durante paneo
       priceScaleRef.current.minPrice = minPrice;
       priceScaleRef.current.maxPrice = maxPrice;
       priceScaleRef.current.lastZoom = currentZoom;
     } else {
-      // Zoom no cambió (solo paneo): usar escala guardada
+      // Zoom no cambio (solo paneo): usar escala guardada
       minPrice = priceScaleRef.current.minPrice;
       maxPrice = priceScaleRef.current.maxPrice;
     }
@@ -768,8 +804,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         priceToY,  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
         timeToX    // ✅ FIX: Función para que los indicadores puedan convertir timestamps a coordenadas X
       };
-      // Pasar drawings como manualLevels para que RejectionPatternIndicator pueda usarlos
-      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, displayCandles, priceContext, drawingsRef.current);
+      // NOTA: Estos valores se usan en el priceContext que se pasa a los indicadores
+      // Ya no guardamos en refs - usamos valores frescos directamente en renderOverlays
     }
 
     // Render saved drawings (readonly, below candles) o crear scaleConverter para modo dibujo
@@ -931,6 +967,33 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         };
         orderFlowIndicator.renderOverlay(ctx, overlayBounds, visibleCandles, displayCandles, priceContext);
       }
+    }
+
+    // ✅ FIX: Render VWAP y otros overlays DESPUES del Order Flow para que sean visibles
+    // El Order Flow dibuja velas/footprints que cubririan el VWAP si se dibujara antes
+    // IMPORTANTE: Usar valores FRESCOS, no refs que podrian estar desactualizados
+    if (indicatorManagerRef.current) {
+      // Crear bounds y priceContext FRESCOS con los valores actuales del frame
+      const freshOverlayBounds = {
+        x: marginLeft,
+        y: marginTop,
+        width: chartWidth,
+        height: priceChartHeight
+      };
+      const freshPriceContext = {
+        minPrice,
+        maxPrice,
+        priceToY: (price) => marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset
+      };
+
+      indicatorManagerRef.current.renderOverlays(
+        ctx,
+        freshOverlayBounds,
+        visibleCandles,
+        displayCandles,
+        freshPriceContext,
+        drawingsRef.current
+      );
     }
 
     // ✅ NUEVO: Línea horizontal de precio actual
@@ -2087,15 +2150,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // ✅ Si no hay externo, crear nuevo (comportamiento normal)
       log.debug(`[${symbol}] 🔧 Creando nuevo IndicatorManager`);
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
-      await indicatorManagerRef.current.initialize(indicatorStates);
 
-      // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
+      // ✨ IMPORTANTE: Definir requestRedraw ANTES de initialize() para evitar race condition
+      // Los indicadores pueden empezar polling inmediatamente en initialize() y necesitan requestRedraw
       indicatorManagerRef.current.requestRedraw = () => {
+        const candleCount = candlesRef.current?.length || 0;
+        console.log(`[${symbol}] 🔄 requestRedraw called (candles: ${candleCount})`);
         if (candlesRef.current && candlesRef.current.length > 0) {
-          log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
+          console.log(`[${symbol}] 🔄 Redraw executing drawChart...`);
           drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        } else {
+          console.warn(`[${symbol}] 🔄 requestRedraw SKIPPED - no candles yet`);
         }
       };
+
+      await indicatorManagerRef.current.initialize(indicatorStates);
 
       // 📋 Registrar en el registro global
       IndicatorManagerRegistry.register(symbol, indicatorManagerRef.current);

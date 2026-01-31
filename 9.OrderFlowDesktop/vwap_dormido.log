@@ -1,0 +1,232 @@
+ [Preload] Order Flow Desktop - Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart PAXGUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ ✅ [5:57:44 p. m.] [VWAP] [PAXGUSDT] VWAPIndicator initialized (backend native, type=session)
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [5:57:44 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ ✅ [5:57:44 p. m.] [VWAP] [PAXGUSDT] Config changed (vwapType=rolling), refetching...
+ [CandleCache] 💾 PAXGUSDT@1 - desde IndexedDB (1448 velas)
+ [CandleCache] Limpiando cache con gaps para forzar recarga completa...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [CandleCache] 🗑️ PAXGUSDT@1 - cache limpiado
+ [PAXGUSDT] Carga COMPLETA: 1 dias @ 1
+ [CacheCleanup] Complete: 0/6 candles, 0/7 indicators removed
+ [PollingCoordinator] Registered: OrderFlow_PAXGUSDT (interval: 5000ms, priority: 1)
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PAXGUSDT] S&R v2 loaded: 3R, 2S
+ [Prefetch] Activado (10s despues de carga)
+ [PAXGUSDT] S&R v2 loaded: 3R, 2S
+ [PAXGUSDT] S&R v2 polling started (interval: 60000ms)
+ [PAXGUSDT] S&R v2 renderOverlay: Object
+ [PAXGUSDT] SwingDetector: Backend returned 0 signals
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [PAXGUSDT] SwingDetector: 263/263 signals for interval 1 (cached)
+ [PAXGUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_PAXGUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_PAXGUSDT (interval: 60000ms, priority: 8)
+ [PAXGUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [PAXGUSDT] Completa: 1439 velas
+ [CandleCache] OK BACKEND-COMPLETO PAXGUSDT: 1439 velas sin gaps
+ [PAXGUSDT] ✅ Histórico final: 1440 velas
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (1440 velas, memoria: 1/4)
+ ✅ [5:57:58 p. m.] [VWAP] [PAXGUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [5:57:58 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() after initial load
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() after initial load
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() after initial load
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_PAXGUSDT (interval: 60000ms, priority: 2)
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP polling started (interval: 60000ms)
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP loaded: 1440 points (rolling, 1 days)
+ ✅ [5:57:59 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() after initial load
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PAXGUSDT] S&R v2 loaded: 3R, 2S
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [5:58:10 p. m.] [VWAP] [PAXGUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [PAXGUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para S&R v2
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [5:58:10 p. m.] [Manager] [PAXGUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [HealthCheck] Backend reconnected
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_PAXGUSDT
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PollingCoordinator] Completed: SwingDetector_Signals_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [Registry] 🗑️ Desregistrado manager para PAXGUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_PAXGUSDT
+ ✅ [5:58:39 p. m.] [VWAP] [PAXGUSDT] VWAP polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Signals_PAXGUSDT
+ [PAXGUSDT] SwingDetector signal polling stopped
+ [PollingCoordinator] Unregistered: SwingDetector_Status_PAXGUSDT
+ [PAXGUSDT] SwingDetector status polling stopped
+ [PAXGUSDT] S&R v2 polling stopped
+ [PAXGUSDT] S&R v2 destroyed
+ [PollingCoordinator] Unregistered: OrderFlow_PAXGUSDT
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 PAXGUSDT@1 - desde memoria (1440 velas)
+ ✅ [5:58:39 p. m.] [VWAP] [PAXGUSDT] VWAPIndicator initialized (backend native, type=session)
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [CandleCache] OK VALIDATION PAXGUSDT@1: 1440 velas sin gaps
+ [CandleCache] PAXGUSDT@1 - Cache valido: 1440 velas, sin gaps significativos
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ ✅ [5:58:39 p. m.] [VWAP] [PAXGUSDT] Config changed (vwapType=rolling), refetching...
+ [IndicatorCache] 💾 vwap@PAXGUSDT desde memoria
+ [IndicatorCache] 💾 vwap@PAXGUSDT desde memoria
+ [IndicatorCache] 💾 vwap@PAXGUSDT desde memoria
+ [PAXGUSDT] Carga INCREMENTAL: desde 30/1/2026, 5:57:00 p.m. (1440 velas en cache)
+ ✅ [5:58:39 p. m.] [VWAP] [PAXGUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_PAXGUSDT (interval: 60000ms, priority: 2)
+ ✅ [5:58:39 p. m.] [VWAP] [PAXGUSDT] VWAP polling started (interval: 60000ms)
+ ✓ Suscrito: 
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Registered: OrderFlow_PAXGUSDT (interval: 5000ms, priority: 1)
+ [CandleCache] OK CACHE-ANTES-MERGE PAXGUSDT: 1440 velas sin gaps
+ [CandleCache] 🔄 Merge: 1440 cached + 1 new = 1440 total
+ [PAXGUSDT] Incremental: +1 velas nuevas = 1440 total
+ [CandleCache] OK MERGED PAXGUSDT: 1440 velas sin gaps
+ [PAXGUSDT] ✅ Histórico final: 1440 velas
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (1440 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (1441 velas, memoria: 1/4)
+ ✅ [5:58:57 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+ [PAXGUSDT] SwingDetector: 1/1 signals for interval 1 (cached)
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] SwingDetector startPollingIfReady: pollingId=false, enabled=true, config.enabled=true
+ [PollingCoordinator] Registered: SwingDetector_Signals_PAXGUSDT (interval: 30000ms, priority: 3)
+ [PollingCoordinator] Registered: SwingDetector_Status_PAXGUSDT (interval: 60000ms, priority: 8)
+ [PAXGUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ ✅ [5:59:02 p. m.] [Manager] [PAXGUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [5:59:02 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [5:59:02 p. m.] [VWAP] [PAXGUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [5:59:02 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [PAXGUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [5:59:02 p. m.] [Manager] [PAXGUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [5:59:02 p. m.] [Manager] [PAXGUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_PAXGUSDT
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PollingCoordinator] Completed: SwingDetector_Signals_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_PAXGUSDT
+Logger.js:100 ✅ [5:59:39 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [5:59:39 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+CandleCache.js:169 [CandleCache] ✅ PAXGUSDT@1 - guardado (1442 velas, memoria: 1/4)
+Logger.js:100 ✅ [5:59:54 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [PAXGUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_PAXGUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_PAXGUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_PAXGUSDT
+Logger.js:100 ✅ [6:00:39 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+Logger.js:100 ✅ [6:00:39 p. m.] [VWAP] [PAXGUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+CandleCache.js:169 [CandleCache] ✅ PAXGUSDT@1 - guardado (1443 velas, memoria: 1/4)
+Logger.js:100 ✅ [6:00:54 p. m.] [VWAP] [PAXGUSDT] VWAP updated (polling): 1440 points
+SwingDetectorIndicator.js:238 [PAXGUSDT] SwingDetector: 300/300 signals for interval 1 (cached)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_PAXGUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_PAXGUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_PAXGUSDT
+ [PollingCoordinator] Executing: OrderFlow_PAXGUSDT
