@@ -1,0 +1,21 @@
+{
+  "symbol": "ADAUSDT",
+  "shapes": [
+    {
+      "type": "horizontal",
+      "id": "horizontal_1769997392911_0.423797723334963",
+      "price": 0.2907835833333333,
+      "time": 1769997300000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-02-02T01:56:42.817452+00:00",
+  "total_shapes": 1
+}

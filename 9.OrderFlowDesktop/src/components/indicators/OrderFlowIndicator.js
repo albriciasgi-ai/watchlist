@@ -23,6 +23,9 @@ class OrderFlowIndicator extends IndicatorBase {
     this.config = this.loadConfig();
     this.height = 0; // Overlay on main chart
 
+    console.log(`[OrderFlow] [${symbol}] CONSTRUCTOR: interval=${interval}, days=${days}, historyHours=${this.config.historyHours}`);
+    this._instanceId = `${symbol}_${Date.now()}`; // ID unico para tracking
+
     // Polling settings
     this.lastFetchTime = 0;
     this.fetchIntervalMs = 5000;
@@ -126,8 +129,11 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   setInterval(newInterval) {
+    const oldInterval = this.interval;
+    const oldCount = this.footprints.length;
     this.interval = newInterval;
     this.footprints = [];
+    console.log(`[OrderFlow] [${this.symbol}] setInterval: ${oldInterval} -> ${newInterval} (footprints cleared: ${oldCount} -> 0)`);
   }
 
   async fetchData() {
@@ -174,6 +180,7 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   destroy() {
+    console.log(`[OrderFlow] [${this.symbol}] DESTROY: instanceId=${this._instanceId}, footprints=${this.footprints.length}`);
     this._destroyed = true;
     this.stopPolling();
     // Cancel any pending retry
@@ -194,6 +201,7 @@ class OrderFlowIndicator extends IndicatorBase {
       const supportedIntervals = ["1", "5"];
 
       if (!supportedIntervals.includes(this.interval)) {
+        console.log(`[OrderFlow] [${this.symbol}] fetchFootprints: interval ${this.interval} not supported (only 1, 5)`);
         this.footprints = [];
         return false;
       }
@@ -213,11 +221,13 @@ class OrderFlowIndicator extends IndicatorBase {
         this._retryCount = 0;
       } catch (fetchError) {
         clearTimeout(timeoutId);
+        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: fetch error - ${fetchError.message}`);
 
         // Schedule retry if we haven't exceeded max retries
         if (this._retryCount < this._maxRetries && !this._destroyed) {
           this._retryCount++;
           const delay = this._retryDelayMs * Math.pow(2, this._retryCount - 1); // Exponential backoff
+          console.log(`[OrderFlow] [${this.symbol}] fetchFootprints: scheduling retry ${this._retryCount}/${this._maxRetries} in ${delay}ms`);
 
           this._retryTimeoutId = setTimeout(async () => {
             if (!this._destroyed) {
@@ -236,21 +246,106 @@ class OrderFlowIndicator extends IndicatorBase {
       if (this._destroyed) return false;
 
       if (!response.ok) {
+        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: HTTP error ${response.status}`);
         return false;
       }
 
       const data = await response.json();
 
       if (!data.success) {
+        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: API returned success=false`);
         return false;
       }
 
+      const oldCount = this.footprints.length;
       this.footprints = data.footprints || [];
+      const newCount = this.footprints.length;
+
+      // Solo loguear cuando hay cambios significativos o es la primera carga
+      const isFirstLoad = oldCount === 0 && newCount > 0;
+      const hasNewFootprints = newCount > oldCount;
+      const significantChange = Math.abs(newCount - oldCount) > 10;
+
+      if (isFirstLoad) {
+        console.log(`[OrderFlow] [${this.symbol}] INITIAL LOAD: ${newCount} footprints`);
+        this._logFootprintRanges();
+      } else if (hasNewFootprints) {
+        console.log(`[OrderFlow] [${this.symbol}] +${newCount - oldCount} footprints (total: ${newCount})`);
+      } else if (significantChange) {
+        console.warn(`[OrderFlow] [${this.symbol}] footprints changed: ${oldCount} -> ${newCount}`);
+        this._logFootprintRanges();
+      } else if (newCount === 0 && oldCount > 0) {
+        console.warn(`[OrderFlow] [${this.symbol}] footprints LOST: ${oldCount} -> 0`);
+      }
+      // Si no hay cambios, no loguear nada
+
       return true;
     } catch (error) {
+      console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: exception - ${error.message}`);
       return false;
     } finally {
       this.isFetching = false;
+    }
+  }
+
+  /**
+   * Analiza y loguea los rangos de timestamps de footprints, identificando grupos contiguos y gaps
+   */
+  _logFootprintRanges() {
+    if (!this.footprints || this.footprints.length === 0) return;
+
+    const fps = this.footprints;
+    const timestamps = fps.map(fp => fp.candle_timestamp).sort((a, b) => a - b);
+
+    const firstTs = timestamps[0];
+    const lastTs = timestamps[timestamps.length - 1];
+    const firstDate = new Date(firstTs).toLocaleString();
+    const lastDate = new Date(lastTs).toLocaleString();
+
+    // Detectar el intervalo esperado (60000ms para 1m, 300000ms para 5m)
+    const expectedIntervalMs = this.interval === "1" ? 60000 : 300000;
+    const toleranceMs = expectedIntervalMs * 0.1; // 10% tolerance
+
+    // Encontrar grupos contiguos y gaps
+    const groups = [];
+    let currentGroup = { start: timestamps[0], end: timestamps[0], count: 1 };
+
+    for (let i = 1; i < timestamps.length; i++) {
+      const gap = timestamps[i] - timestamps[i - 1];
+
+      if (Math.abs(gap - expectedIntervalMs) <= toleranceMs) {
+        // Contiguo - extender grupo actual
+        currentGroup.end = timestamps[i];
+        currentGroup.count++;
+      } else {
+        // Gap detectado - cerrar grupo actual y empezar uno nuevo
+        groups.push({ ...currentGroup });
+        currentGroup = { start: timestamps[i], end: timestamps[i], count: 1 };
+      }
+    }
+    // Agregar el ultimo grupo
+    groups.push(currentGroup);
+
+    // Log resumen
+    console.log(`[OrderFlow] [${this.symbol}] FOOTPRINT RANGES:`);
+    console.log(`  Total: ${fps.length} footprints`);
+    console.log(`  Rango completo: ${firstDate} -> ${lastDate}`);
+    console.log(`  Grupos contiguos: ${groups.length}`);
+
+    // Log cada grupo
+    for (let i = 0; i < groups.length; i++) {
+      const g = groups[i];
+      const startDate = new Date(g.start).toLocaleString();
+      const endDate = new Date(g.end).toLocaleString();
+      const durationMinutes = Math.round((g.end - g.start) / 60000);
+      console.log(`    Grupo ${i + 1}: ${startDate} -> ${endDate} (${g.count} fps, ${durationMinutes} min)`);
+
+      // Si hay un grupo siguiente, mostrar el gap
+      if (i < groups.length - 1) {
+        const nextGroup = groups[i + 1];
+        const gapMinutes = Math.round((nextGroup.start - g.end) / 60000);
+        console.log(`    >>> GAP: ${gapMinutes} minutos <<<`);
+      }
     }
   }
 
@@ -305,13 +400,24 @@ class OrderFlowIndicator extends IndicatorBase {
    * Main render method - draws the complete Order Flow unit for each candle
    */
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    // Skip silently if disabled (normal behavior)
     if (!this.enabled || !this.config.enabled) return;
-    if (this.footprints.length === 0 || visibleCandles.length === 0) return;
+
+    // Log only when footprints become empty unexpectedly
+    if (this.footprints.length === 0) {
+      if (!this._loggedNoFootprints) {
+        console.warn(`[OrderFlow] [${this.symbol}] renderOverlay: no footprints available`);
+        this._loggedNoFootprints = true;
+      }
+      return;
+    }
+    this._loggedNoFootprints = false;
+
+    if (visibleCandles.length === 0) return;
 
     const candleWidth = bounds.width / visibleCandles.length;
 
     // Minimum width check - if too small, don't render Order Flow
-    // MiniChart will draw normal candles instead (shouldReplaceCandles returns false)
     if (candleWidth < this.config.minCandleWidth) return;
 
     const fullMode = candleWidth >= this.config.minCandleWidthFull;
@@ -345,6 +451,10 @@ class OrderFlowIndicator extends IndicatorBase {
     // DEBUG: Contar matches para verificar el fix
     let matchedCount = 0;
     let unmatchedCount = 0;
+    let firstMatchedTs = null;
+    let lastMatchedTs = null;
+    let firstUnmatchedTs = null;
+    let lastUnmatchedTs = null;
 
     ctx.save();
 
@@ -359,17 +469,41 @@ class OrderFlowIndicator extends IndicatorBase {
         // No footprint data - draw simple candle
         this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
         unmatchedCount++;
+        if (!firstUnmatchedTs) firstUnmatchedTs = candle.timestamp;
+        lastUnmatchedTs = candle.timestamp;
         continue;
       }
 
       matchedCount++;
+      if (!firstMatchedTs) firstMatchedTs = candle.timestamp;
+      lastMatchedTs = candle.timestamp;
       const unitX = bounds.x + i * candleWidth;
       this.renderOrderFlowUnit(ctx, candle, footprint, unitX, candleWidth, priceToY, fullMode);
     }
 
-    // Log de debug (solo si hay problemas significativos)
+    // Solo loguear matching cuando hay problemas significativos (>30% unmatched)
     if (unmatchedCount > visibleCandles.length * 0.3) {
-      console.warn(`[OrderFlow] Matching: ${matchedCount}/${visibleCandles.length} matched, ${unmatchedCount} unmatched (>${Math.round(unmatchedCount/visibleCandles.length*100)}%)`);
+      const matchPct = ((matchedCount / visibleCandles.length) * 100).toFixed(1);
+      console.warn(`[OrderFlow] [${this.symbol}] HIGH UNMATCHED: ${matchedCount}/${visibleCandles.length} (${matchPct}%)`);
+
+      // Log detallado solo cuando hay problema
+      if (visibleCandles.length > 0 && this.footprints.length > 0) {
+        const candleFirst = visibleCandles[0].timestamp;
+        const candleLast = visibleCandles[visibleCandles.length - 1].timestamp;
+        const fpTimestamps = this.footprints.map(fp => fp.candle_timestamp).sort((a, b) => a - b);
+        const fpFirst = fpTimestamps[0];
+        const fpLast = fpTimestamps[fpTimestamps.length - 1];
+
+        console.warn(`  Candle range: ${new Date(candleFirst).toLocaleString()} -> ${new Date(candleLast).toLocaleString()}`);
+        console.warn(`  Footprint range: ${new Date(fpFirst).toLocaleString()} -> ${new Date(fpLast).toLocaleString()}`);
+
+        if (candleLast < fpFirst) {
+          console.warn(`  !!! Velas terminan ANTES de que comiencen los footprints`);
+        }
+        if (candleFirst > fpLast) {
+          console.warn(`  !!! Velas comienzan DESPUES de que terminan los footprints`);
+        }
+      }
     }
 
     ctx.restore();

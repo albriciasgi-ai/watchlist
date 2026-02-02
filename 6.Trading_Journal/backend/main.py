@@ -321,6 +321,26 @@ async def update_monitor_config(
     }
 
 
+
+
+@app.post("/api/monitor/reconcile")
+async def reconcile_entries():
+    """
+    Reconcilia entries huerfanas:
+    - Cierra entries OPEN que no tienen posicion activa en TradingBot
+    - Crea entries para posiciones activas sin tracking
+    """
+    if not position_monitor:
+        return {"success": False, "error": "Monitor not initialized"}
+
+    result = await position_monitor.reconcile()
+    return {
+        "success": len(result.get("errors", [])) == 0,
+        "result": result,
+        "status": position_monitor.get_status()
+    }
+
+
 # ==================== Screenshot Endpoints ====================
 
 @app.get("/api/screenshots/status")

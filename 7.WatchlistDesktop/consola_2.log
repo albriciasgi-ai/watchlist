@@ -1,0 +1,1011 @@
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=25, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=25, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=25, ejecutando drawChart
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=25, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=25, ejecutando drawChart
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=26, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=25, ejecutando drawChart
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=25, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=25, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=26, ejecutando drawChart
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=26, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=26, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=26, ejecutando drawChart
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=26, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=26, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=27, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=26, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=26, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=26, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=27, ejecutando drawChart
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=27, ejecutando drawChart
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=27, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=27, ejecutando drawChart
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=27, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=27, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=28, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=27, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=27, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=27, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=28, ejecutando drawChart
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=28, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=28, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=28, ejecutando drawChart
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=28, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=28, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=29, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=28, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=28, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=28, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=29, ejecutando drawChart
+ [CandleCache] 💾 TRXUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION TRXUSDT@1: 7199 velas sin gaps
+ [CandleCache] TRXUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [TRXUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 💾 SUIUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION SUIUSDT@1: 7199 velas sin gaps
+ [CandleCache] SUIUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [SUIUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 💾 TRBUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION TRBUSDT@1: 7199 velas sin gaps
+ [CandleCache] TRBUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [TRBUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 💾 ADAUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION ADAUSDT@1: 7199 velas sin gaps
+ [CandleCache] ADAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ADAUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 GALAUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION GALAUSDT@1: 7199 velas sin gaps
+ [CandleCache] GALAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [GALAUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION BTCUSDT@1: 7199 velas sin gaps
+ [CandleCache] BTCUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [BTCUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 XRPUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION XRPUSDT@1: 7199 velas sin gaps
+ [CandleCache] XRPUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [XRPUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 ETHUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION ETHUSDT@1: 7199 velas sin gaps
+ [CandleCache] ETHUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ETHUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 SOLUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION SOLUSDT@1: 7199 velas sin gaps
+ [CandleCache] SOLUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [SOLUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 DOGEUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION DOGEUSDT@1: 7199 velas sin gaps
+ [CandleCache] DOGEUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [DOGEUSDT] 🔄 Carga INCREMENTAL: desde 2/2/2026, 11:18:00 a.m. (7199 velas en cache)
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=29, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=29, ejecutando drawChart
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=29, ejecutando drawChart
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRBUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [TRBUSDT] ✅ Histórico final: 7199 velas
+ [TRBUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [BTCUSDT] ✅ Histórico final: 7199 velas
+ [BTCUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SUIUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [SUIUSDT] ✅ Histórico final: 7199 velas
+ [SUIUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [GALAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [GALAUSDT] ✅ Histórico final: 7199 velas
+ [GALAUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ADAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [ADAUSDT] ✅ Histórico final: 7199 velas
+ [ADAUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SOLUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [SOLUSDT] ✅ Histórico final: 7199 velas
+ [SOLUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ETHUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [ETHUSDT] ✅ Histórico final: 7199 velas
+ [ETHUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [DOGEUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [DOGEUSDT] ✅ Histórico final: 7199 velas
+ [DOGEUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [XRPUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [XRPUSDT] ✅ Histórico final: 7199 velas
+ [XRPUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRXUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [TRXUSDT] ✅ Histórico final: 7199 velas
+ [TRXUSDT] IndicatorManager: startAllPolling() completado
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=29, ejecutando drawChart
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=29, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=30, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=29, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=29, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=29, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=30, ejecutando drawChart
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=30, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=30, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=30, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=30, ejecutando drawChart
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=30, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=31, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=30, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=30, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [BTCUSDT] requestRedraw via setRedrawTrigger
+ [BTCUSDT] VWAP requestRedraw() called
+ [BTCUSDT] redrawTrigger=30, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 2 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [DOGEUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [DOGEUSDT] requestRedraw via setRedrawTrigger
+ [DOGEUSDT] VWAP requestRedraw() called
+ [DOGEUSDT] redrawTrigger=31, ejecutando drawChart
+ [TRBUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRBUSDT] requestRedraw via setRedrawTrigger
+ [TRBUSDT] VWAP requestRedraw() called
+ [TRBUSDT] redrawTrigger=31, ejecutando drawChart
+ [SUIUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SUIUSDT] requestRedraw via setRedrawTrigger
+ [SUIUSDT] VWAP requestRedraw() called
+ [SUIUSDT] redrawTrigger=31, ejecutando drawChart
+ [SOLUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [SOLUSDT] requestRedraw via setRedrawTrigger
+ [SOLUSDT] VWAP requestRedraw() called
+ [SOLUSDT] redrawTrigger=31, ejecutando drawChart
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [XRPUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [XRPUSDT] requestRedraw via setRedrawTrigger
+ [XRPUSDT] VWAP requestRedraw() called
+ [XRPUSDT] redrawTrigger=31, ejecutando drawChart
+ [GALAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [GALAUSDT] requestRedraw via setRedrawTrigger
+ [GALAUSDT] VWAP requestRedraw() called
+ [GALAUSDT] redrawTrigger=31, ejecutando drawChart
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [ADAUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ADAUSDT] requestRedraw via setRedrawTrigger
+ [ADAUSDT] VWAP requestRedraw() called
+ [ADAUSDT] redrawTrigger=32, ejecutando drawChart
+ [TRXUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [TRXUSDT] requestRedraw via setRedrawTrigger
+ [TRXUSDT] VWAP requestRedraw() called
+ [TRXUSDT] redrawTrigger=31, ejecutando drawChart
+ [ETHUSDT] VWAP polling executed: updated=true, hasRedraw=true
+ [ETHUSDT] requestRedraw via setRedrawTrigger
+ [ETHUSDT] VWAP requestRedraw() called
+ [ETHUSDT] redrawTrigger=31, ejecutando drawChart
+ [BTCUSDT] VWAP polling executed: updated=true, hasRedraw=true
+MiniChart.jsx:1996 [BTCUSDT] requestRedraw via setRedrawTrigger
+VWAPIndicator.js:79 [BTCUSDT] VWAP requestRedraw() called
+MiniChart.jsx:1060 [BTCUSDT] redrawTrigger=31, ejecutando drawChart
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado ADAUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado XRPUSDT: 2 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado ETHUSDT: 2 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+SwingDetectorIndicator.js:160 [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [ADAUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [SUIUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [SOLUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [GALAUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [TRBUSDT] SwingDetector: 300 signals from BACKEND
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado TRXUSDT: 2 memoria, 2 IndexedDB
+SwingDetectorIndicator.js:160 [BTCUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [ETHUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [XRPUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [TRXUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [GALAUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [SUIUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [TRBUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [SOLUSDT] SwingDetector: 300 signals from BACKEND
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+SwingDetectorIndicator.js:160 [ADAUSDT] SwingDetector: 300 signals from BACKEND
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+SwingDetectorIndicator.js:160 [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+SwingDetectorIndicator.js:160 [BTCUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [ETHUSDT] SwingDetector: 300 signals from BACKEND
+SwingDetectorIndicator.js:160 [XRPUSDT] SwingDetector: 300 signals from BACKEND
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+SwingDetectorIndicator.js:160 [TRXUSDT] SwingDetector: 300 signals from BACKEND

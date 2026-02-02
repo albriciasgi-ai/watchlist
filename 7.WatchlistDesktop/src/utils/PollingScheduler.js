@@ -35,7 +35,10 @@ class PollingScheduler {
    * Inicia el scheduler
    */
   start() {
-    if (this._isRunning) return;
+    if (this._isRunning) {
+      console.log('[PollingScheduler] Already running, skipping start()');
+      return;
+    }
 
     this._isRunning = true;
     this._isPaused = document.visibilityState === 'hidden';
@@ -46,7 +49,7 @@ class PollingScheduler {
     // Iniciar timer principal
     this._startMainTimer();
 
-    console.log('[PollingScheduler] Started');
+    console.log(`[PollingScheduler] Started (isPaused: ${this._isPaused}, visibility: ${document.visibilityState})`);
   }
 
   /**
@@ -144,6 +147,8 @@ class PollingScheduler {
     this._mainTimer = setInterval(() => {
       this._tick();
     }, this._tickIntervalMs);
+
+    console.log(`[PollingScheduler] Main timer started (tick every ${this._tickIntervalMs}ms)`);
   }
 
   _tick() {

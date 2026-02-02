@@ -3281,6 +3281,86 @@ if (cached && cached.candles.length > 0) {
 | `MiniChart.jsx` | Detectar cache incompleto para carga inteligente |
 | `PollingCoordinator.js` | Reescritura completa a v2 |
 
+## Sistema de Integridad de Cache (31 Enero 2026)
+
+Sistema para validar, reparar y limpiar el cache de footprints.
+
+### Panel de Integridad
+
+Nuevo componente `IntegrityPanel.jsx` en el modal de OrderFlow Settings:
+- Badge de estado: verde (saludable), amarillo (reparando), rojo (problemas)
+- Conteo de simbolos OK vs con problemas
+- Botones: Validar, Reparar, Limpiar Cache Completo
+
+### Servicio Backend (cache_integrity_service.py)
+
+```python
+# Endpoints:
+GET  /api/orderflow/integrity/status     # Estado actual
+POST /api/orderflow/integrity/validate   # Validar todos los simbolos
+POST /api/orderflow/integrity/repair     # Reparar desde cloud
+POST /api/orderflow/integrity/clear-cache # Limpiar y recargar todo
+DELETE /api/orderflow/cache/{symbol}     # Limpiar cache de un simbolo
+```
+
+### Validacion Inteligente
+
+- **Gaps (velas faltantes)**: Marcan como "issues" - problema real
+- **Step_size diferente**: Solo informativo, NO marca como problema
+
+### Boton "Aplicar a historial"
+
+En la seccion Step Size del modal OrderFlow:
+1. Usuario cambia step_size → Click "Guardar"
+2. Click "Aplicar a historial" → Elimina cache del simbolo
+3. Footprints se regeneran con el nuevo step_size
+
+### Archivos Relacionados
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `5.Order_flow/backend/cache_integrity_service.py` | Servicio de validacion |
+| `5.Order_flow/backend/main.py` | Endpoints de integridad |
+| `9.OrderFlowDesktop/src/components/IntegrityPanel.jsx` | Panel UI |
+| `9.OrderFlowDesktop/src/components/OrderFlowSettings.jsx` | Boton "Aplicar a historial" |
+
+## Fix: Footprints Historicos No Se Graficaban (31 Enero 2026)
+
+**Problema**: Los footprints historicos no se mostraban en el grafico, solo las velas nuevas (tiempo real).
+
+**Causa**: Race condition en la inicializacion - los footprints se cargaban pero no se forzaba redraw del grafico.
+
+**Solucion**: Se agrego logging inteligente a `OrderFlowIndicator.js` que solo loguea cuando es relevante:
+
+```javascript
+// Solo al cargar por primera vez
+[OrderFlow] [SYMBOL] INITIAL LOAD: N footprints
+// + rangos detallados con metodo _logFootprintRanges()
+
+// Solo cuando hay nuevos footprints
+[OrderFlow] [SYMBOL] +N footprints (total: X)
+
+// Solo cuando hay problemas de matching (>30% sin match)
+[OrderFlow] [SYMBOL] HIGH UNMATCHED: X/Y (Z%)
+
+// Solo cuando se pierden footprints
+[OrderFlow] [SYMBOL] footprints LOST: X -> 0
+```
+
+**Metodo `_logFootprintRanges()`**: Detecta grupos contiguos y gaps:
+```
+[OrderFlow] [ETHUSDT] FOOTPRINT RANGES:
+  Total: 730 footprints
+  Rango completo: 8:25 a.m. -> 8:35 p.m.
+  Grupos contiguos: 2
+    Grupo 1: 8:25 a.m. -> 8:22 p.m. (718 fps, 717 min)
+    >>> GAP: 2 minutos <<<
+    Grupo 2: 8:24 p.m. -> 8:35 p.m. (12 fps, 11 min)
+```
+
+**Archivos modificados**:
+- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js`
+
 ## Dependencias con Otras Apps
 
 - **Backend:** Usa el mismo backend de App 5 (Order Flow) en puerto 11000

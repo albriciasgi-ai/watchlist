@@ -10,6 +10,8 @@ const ZoneDetectorTester = ({
   interval,
   playbackStartTime,  // 🎯 NUEVO: Timestamp de inicio de reproducción (para filtrar datos)
   onZonesDetected,  // Callback para enviar zonas al chart
+  onZoneClick,      // 🎯 NUEVO: Callback para navegar a una zona (centrar chart)
+  onClearZones,     // 🎯 NUEVO: Callback para limpiar zonas del chart
   onClose
 }) => {
   // Estado del componente
@@ -18,7 +20,7 @@ const ZoneDetectorTester = ({
   const [error, setError] = useState(null);
 
   // Parámetros de detección
-  const [method, setMethod] = useState('pivot_cluster');
+  const [method, setMethod] = useState('consolidation');  // 🎯 Método por defecto: consolidación
   const [days, setDays] = useState(365);
   const [params, setParams] = useState({
     max_price_range_pct: 5.0,  // Máximo rango de precio % para considerar zona válida
@@ -30,7 +32,14 @@ const ZoneDetectorTester = ({
     vp_value_area_pct: 70,
     vp_price_bins: 50,
     pa_touch_tolerance_pct: 0.2,
-    pa_min_touches: 3
+    pa_min_touches: 3,
+    // 🎯 NUEVO: Parámetros para método Consolidation
+    consol_min_bars: 8,         // Mínimo de velas en consolidación
+    consol_max_bars: 50,        // Máximo de velas
+    consol_max_range_pct: 3.0,  // Máximo % de rango de precio
+    consol_atr_ratio: 0.6,      // ATR local vs global (< 1 = baja volatilidad)
+    consol_body_ratio: 0.5,     // Ratio cuerpo/rango de velas
+    consol_max_outside_bars: 3  // Velas consecutivas fuera del rango antes de cerrar
   });
 
   // Resultados
@@ -90,13 +99,32 @@ const ZoneDetectorTester = ({
 
       if (data.success) {
         setDetectResult(data);
-        // Enviar zonas al chart para visualización
+
+        // 🔍 DEBUG: Verificar timestamps de las zonas
+        if (data.zones && data.zones.length > 0) {
+          console.log(`[ZoneDetectorTester] 📊 Zonas recibidas: ${data.zones.length}`);
+          data.zones.slice(0, 3).forEach((zone, idx) => {
+            console.log(`[ZoneDetectorTester] Zona #${idx + 1}:`, {
+              id: zone.id,
+              start_timestamp: zone.start_timestamp,
+              end_timestamp: zone.end_timestamp,
+              start_date: new Date(zone.start_timestamp).toISOString(),
+              end_date: new Date(zone.end_timestamp).toISOString(),
+              min_price: zone.min_price,
+              max_price: zone.max_price
+            });
+          });
+        }
+
+        // Enviar zonas al chart para visualización (ordenadas por timestamp)
         if (onZonesDetected && data.zones) {
-          onZonesDetected(data.zones);
+          const sortedZones = [...data.zones].sort((a, b) => a.start_timestamp - b.start_timestamp);
+          onZonesDetected(sortedZones);
         } else if (onZonesDetected && data.zones_by_method) {
-          // Si es "all", enviar todas las zonas
+          // Si es "all", enviar todas las zonas ordenadas
           const allZones = Object.values(data.zones_by_method).flat();
-          onZonesDetected(allZones);
+          const sortedZones = allZones.sort((a, b) => a.start_timestamp - b.start_timestamp);
+          onZonesDetected(sortedZones);
         }
       } else {
         setError(data.error);
@@ -257,6 +285,14 @@ const ZoneDetectorTester = ({
       methodParams.pa_touch_tolerance_pct = params.pa_touch_tolerance_pct;
       methodParams.pa_min_touches = params.pa_min_touches;
     }
+    if (method === 'consolidation' || method === 'all') {
+      methodParams.consol_min_bars = params.consol_min_bars;
+      methodParams.consol_max_bars = params.consol_max_bars;
+      methodParams.consol_max_range_pct = params.consol_max_range_pct;
+      methodParams.consol_atr_ratio = params.consol_atr_ratio;
+      methodParams.consol_body_ratio = params.consol_body_ratio;
+      methodParams.consol_max_outside_bars = params.consol_max_outside_bars;
+    }
     return methodParams;
   };
 
@@ -282,7 +318,7 @@ const ZoneDetectorTester = ({
                 ...prev,
                 [key]: parseFloat(e.target.value)
               }))}
-              step={key.includes('pct') ? 0.1 : 1}
+              step={key.includes('pct') || key.includes('ratio') ? 0.1 : 1}
               min={config.range[0]}
               max={config.range[1]}
             />
@@ -296,7 +332,9 @@ const ZoneDetectorTester = ({
   const renderDetectResults = () => {
     if (!detectResult) return null;
 
-    const zones = detectResult.zones || [];
+    // 🎯 FIX: Ordenar zonas por timestamp (cronológico) en lugar de por score
+    const rawZones = detectResult.zones || [];
+    const zones = [...rawZones].sort((a, b) => a.start_timestamp - b.start_timestamp);
     const zonesByMethod = detectResult.zones_by_method || {};
 
     return (
@@ -310,15 +348,29 @@ const ZoneDetectorTester = ({
 
         {zones.length > 0 && (
           <div className="zdt-zones-list">
-            {zones.slice(0, 10).map((zone, idx) => (
-              <div key={zone.id || idx} className="zdt-zone-card">
+            {zones.slice(0, 20).map((zone, idx) => (
+              <div
+                key={zone.id || idx}
+                className={`zdt-zone-card ${onZoneClick ? 'clickable' : ''}`}
+                onClick={() => handleZoneClick(zone)}
+                title={onZoneClick ? 'Click para centrar en esta zona' : ''}
+              >
                 <div className="zdt-zone-header">
+                  {/* 🎯 NUEVO: Número de zona */}
+                  <span className="zdt-zone-number">#{idx + 1}</span>
                   <span className="zdt-zone-score">Score: {zone.score?.toFixed(1)}</span>
                   <span className="zdt-zone-method">{zone.method}</span>
                 </div>
                 <div className="zdt-zone-prices">
                   <span>${zone.min_price?.toFixed(2)} - ${zone.max_price?.toFixed(2)}</span>
                   <span className="zdt-zone-range">({zone.price_range_pct?.toFixed(2)}%)</span>
+                </div>
+                {/* 🎯 NUEVO: Fechas de inicio y fin */}
+                <div className="zdt-zone-dates">
+                  <span className="zdt-zone-date-icon">📅</span>
+                  <span>{formatZoneDate(zone.start_timestamp)}</span>
+                  <span className="zdt-zone-date-arrow">→</span>
+                  <span>{formatZoneDate(zone.end_timestamp)}</span>
                 </div>
                 <div className="zdt-zone-stats">
                   <span>Toques: {zone.total_touches}</span>
@@ -327,8 +379,8 @@ const ZoneDetectorTester = ({
                 </div>
               </div>
             ))}
-            {zones.length > 10 && (
-              <div className="zdt-more">+ {zones.length - 10} zonas más</div>
+            {zones.length > 20 && (
+              <div className="zdt-more">+ {zones.length - 20} zonas más</div>
             )}
           </div>
         )}
@@ -536,6 +588,37 @@ const ZoneDetectorTester = ({
     });
   };
 
+  // 🎯 NUEVO: Formatear timestamp de zona a fecha legible
+  const formatZoneDate = (timestamp) => {
+    if (!timestamp) return '?';
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // 🎯 NUEVO: Handler para click en zona
+  const handleZoneClick = (zone) => {
+    // 🔍 DEBUG: Log del click
+    console.log(`[ZoneDetectorTester] 🖱️ Click en zona:`, {
+      id: zone.id,
+      start_timestamp: zone.start_timestamp,
+      end_timestamp: zone.end_timestamp,
+      start_date: new Date(zone.start_timestamp).toISOString(),
+      end_date: new Date(zone.end_timestamp).toISOString(),
+      midTimestamp: Math.floor((zone.start_timestamp + zone.end_timestamp) / 2),
+      midDate: new Date(Math.floor((zone.start_timestamp + zone.end_timestamp) / 2)).toISOString()
+    });
+
+    if (onZoneClick) {
+      onZoneClick(zone);
+    }
+  };
+
   return (
     <div className="zdt-container">
       <div className="zdt-header">
@@ -595,6 +678,7 @@ const ZoneDetectorTester = ({
             <label>
               Método:
               <select value={method} onChange={(e) => setMethod(e.target.value)}>
+                <option value="consolidation">🎯 Consolidación (Recomendado)</option>
                 <option value="pivot_cluster">Pivot Cluster</option>
                 <option value="atr_based">ATR Based</option>
                 <option value="volume_profile">Volume Profile</option>
@@ -639,13 +723,29 @@ const ZoneDetectorTester = ({
         {/* Acciones por tab */}
         <div className="zdt-actions">
           {activeTab === 'detect' && (
-            <button
-              className="zdt-btn primary"
-              onClick={handleDetect}
-              disabled={loading}
-            >
-              {loading ? 'Detectando...' : 'Detectar Zonas'}
-            </button>
+            <>
+              <button
+                className="zdt-btn primary"
+                onClick={handleDetect}
+                disabled={loading}
+              >
+                {loading ? 'Detectando...' : 'Detectar Zonas'}
+              </button>
+              {/* 🎯 NUEVO: Botón para limpiar zonas */}
+              {onClearZones && detectResult?.zones?.length > 0 && (
+                <button
+                  className="zdt-btn secondary"
+                  onClick={() => {
+                    onClearZones();
+                    setDetectResult(null);
+                  }}
+                  disabled={loading}
+                  style={{ marginLeft: '8px' }}
+                >
+                  Limpiar Zonas
+                </button>
+              )}
+            </>
           )}
 
           {activeTab === 'evaluate' && (

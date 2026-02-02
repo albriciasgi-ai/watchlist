@@ -1,0 +1,135 @@
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (7 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (8 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (9 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (10 velas, memoria: 4/4)
+CandleCache.js:68 [CandleCache] 💾 GALAUSDT@1 - desde memoria (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:79 [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:68 [CandleCache] 💾 SUIUSDT@1 - desde memoria (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:68 [CandleCache] 💾 TRBUSDT@1 - desde memoria (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:68 [CandleCache] 💾 SOLUSDT@1 - desde memoria (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:79 [CandleCache] 💾 ETHUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:79 [CandleCache] 💾 XRPUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:79 [CandleCache] 💾 TRXUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:284 [CandleCache] 🗑️ GALAUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [GALAUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ BTCUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [BTCUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ SUIUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [SUIUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ TRBUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [TRBUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ SOLUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [SOLUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:79 [CandleCache] 💾 ADAUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:79 [CandleCache] 💾 DOGEUSDT@1 - desde IndexedDB (10 velas)
+CandleCache.js:364 [CandleCache] Limpiando cache corrupto para forzar recarga completa...
+CandleCache.js:284 [CandleCache] 🗑️ ETHUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [ETHUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ XRPUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [XRPUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ TRXUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [TRXUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ ADAUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [ADAUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:284 [CandleCache] 🗑️ DOGEUSDT@1 - cache limpiado
+MiniChart.jsx:1067 [DOGEUSDT] 📥 Carga COMPLETA: 1 días @ 1
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (11 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (11 velas, memoria: 4/4)

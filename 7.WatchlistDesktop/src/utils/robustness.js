@@ -162,7 +162,7 @@ function notifyListeners() {
 export async function checkBackendHealth() {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout (aumentado de 5s)
 
     const response = await fetch(`${API_BASE_URL}/api/status`, {
       signal: controller.signal
@@ -188,11 +188,17 @@ export async function checkBackendHealth() {
     const wasConnected = healthCheckState.isConnected;
     healthCheckState.isConnected = false;
     healthCheckState.lastCheck = Date.now();
-    healthCheckState.lastError = error.message;
+
+    // Mejorar mensaje de error para AbortError
+    let errorMessage = error.message;
+    if (error.name === 'AbortError') {
+      errorMessage = 'Timeout - backend no responde en 10s';
+    }
+    healthCheckState.lastError = errorMessage;
     healthCheckState.consecutiveFailures++;
 
     if (wasConnected) {
-      console.error(`[HealthCheck] Backend disconnected: ${error.message}`);
+      console.error(`[HealthCheck] Backend disconnected: ${errorMessage}`);
       notifyListeners();
     }
     return false;

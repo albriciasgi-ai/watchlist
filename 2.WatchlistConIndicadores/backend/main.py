@@ -3905,7 +3905,8 @@ async def get_vwap_service_data(
     days: int = 1,
     interval: str = "60",
     vwapType: str = None,
-    rollingPeriod: int = None
+    rollingPeriod: int = None,
+    refresh: bool = False
 ):
     """
     Get VWAP data for a symbol.
@@ -3950,16 +3951,31 @@ async def get_vwap_service_data(
 
         needs_more_data = len(current_data) < candles_needed * 0.9
 
-        if config_changed or needs_more_data:
+        # DEBUG: Log decision making
+        print(f"[VWAP] {symbol}: Check - config_changed={config_changed} (curr={current_interval} vs req={interval}), "
+              f"needs_more={needs_more_data} (have={len(current_data)}, need={int(candles_needed * 0.9)}), refresh={refresh}")
+
+        if config_changed or needs_more_data or refresh:
             # Update config if params provided
             if vwapType:
                 vwap_service.config.vwapType = vwapType
             if rollingPeriod:
                 vwap_service.config.rollingPeriod = rollingPeriod
 
-            print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
-            await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
+            # Para refresh (polling), hacer carga incremental - solo las ultimas horas
+            # para evitar recargar 5 dias de datos cada minuto
+            if refresh and not config_changed and not needs_more_data:
+                # Solo necesitamos actualizar datos recientes - merge con existentes
+                incremental_days = 1  # Solo el ultimo dia para ser eficiente
+                print(f"[VWAP] {symbol}: Incremental refresh - last {incremental_days} day(s)")
+                await vwap_service.reload_symbol_data(symbol, incremental_days, interval, incremental=True)
+            else:
+                print(f"[VWAP] {symbol}: Full reload - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
+                await vwap_service.reload_symbol_data(symbol, days_to_load, interval, incremental=False)
+
             current_data = vwap_service.get_vwap_data(symbol)
+        else:
+            print(f"[VWAP] {symbol}: Using cache - {len(current_data)} points")
 
         return {
             "success": True,

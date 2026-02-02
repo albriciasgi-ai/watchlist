@@ -49,12 +49,12 @@ class ScreenshotService:
         self.screenshots_dir = Path(screenshots_dir)
         self.screenshots_dir.mkdir(parents=True, exist_ok=True)
 
-        # URLs de frontends por defecto
+        # URLs de frontends por defecto (versiones Desktop)
         self.frontend_urls = frontend_urls or {
-            "watchlist": "http://localhost:5173",      # App 2
-            "analizador": "http://localhost:10001",    # App 4
-            "order_flow": "http://localhost:11001",    # App 5
-            "backtester": "http://localhost:5173"      # App 1
+            "watchlist": "http://localhost:5173",      # App 2 (web)
+            "analizador": "http://localhost:5174",     # App 8 AnalizadorDesktop
+            "order_flow": "http://localhost:5175",     # App 9 OrderFlowDesktop
+            "backtester": "http://localhost:5173"      # App 1 (web)
         }
 
         # Estado de Playwright

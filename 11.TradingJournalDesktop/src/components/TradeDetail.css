@@ -409,3 +409,25 @@ textarea:focus {
     gap: var(--spacing-md);
   }
 }
+
+
+/* Detail Input (for editable SL/TP) */
+.detail-input {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.detail-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+
+.detail-input::placeholder {
+  color: var(--text-muted);
+}

@@ -5,7 +5,11 @@
       "Bash(taskkill:*)",
       "Bash(start cmd:*)",
       "Bash(timeout /t 15 /nobreak)",
-      "WebFetch(domain:p01--altagracia--rxv8nrbhxln9.code.run)"
+      "WebFetch(domain:p01--altagracia--rxv8nrbhxln9.code.run)",
+      "Bash(curl:*)",
+      "Bash(nul)",
+      "Bash(python:*)",
+      "Bash(C:UsersinvenOneDriveDocumentosGitHubwatchlist9.OrderFlowDesktopfootprint_response.json)"
     ],
     "deny": [],
     "ask": []

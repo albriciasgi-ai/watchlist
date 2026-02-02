@@ -642,7 +642,7 @@ class BybitClient:
         Get current position for a symbol
 
         Returns:
-            Dict with position info including size, side, entry price
+            Dict with position info including size, side, entry price, SL/TP
         """
         params = {
             "category": category,
@@ -663,6 +663,25 @@ class BybitClient:
                 leverage = pos.get("leverage", "0")
                 liq_price = pos.get("liqPrice", "0")
 
+                # Extraer SL/TP de la respuesta de Bybit
+                # Bybit devuelve "0" o "0.00" cuando no hay SL/TP configurado
+                stop_loss_raw = pos.get("stopLoss", "0")
+                take_profit_raw = pos.get("takeProfit", "0")
+                trailing_stop_raw = pos.get("trailingStop", "0")
+                tpsl_mode = pos.get("tpslMode", "")
+
+                # Convertir a float, None si es 0 o invalido
+                def parse_price(val):
+                    try:
+                        f = float(val) if val else 0
+                        return f if f > 0 else None
+                    except (ValueError, TypeError):
+                        return None
+
+                stop_loss = parse_price(stop_loss_raw)
+                take_profit = parse_price(take_profit_raw)
+                trailing_stop = parse_price(trailing_stop_raw)
+
                 has_position = size > 0 and side != ""
 
                 return {
@@ -675,6 +694,12 @@ class BybitClient:
                     "markPrice": mark_price,
                     "leverage": leverage,
                     "liqPrice": liq_price,
+                    "stopLoss": stop_loss,
+                    "takeProfit": take_profit,
+                    "trailingStop": trailing_stop,
+                    "tpslMode": tpsl_mode,
+                    "createdTime": pos.get("createdTime"),
+                    "updatedTime": pos.get("updatedTime"),
                     "data": pos
                 }
             else:
@@ -684,7 +709,9 @@ class BybitClient:
                     "size": 0,
                     "side": "",
                     "entryPrice": "0",
-                    "unrealizedPnl": "0"
+                    "unrealizedPnl": "0",
+                    "stopLoss": None,
+                    "takeProfit": None
                 }
         else:
             return {

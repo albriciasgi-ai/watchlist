@@ -1,11 +1,19 @@
 """
 Trading Journal - Position Monitor Service
-Monitorea posiciones en el TradingBot y crea/cierra entries automáticamente.
+Monitorea posiciones en el TradingBot y crea/cierra entries automaticamente.
+
+Mejoras v2.0 (Febrero 2026):
+- Captura robusta de SL/TP desde TradingBot
+- Calculo de R-Multiple incluso sin SL (usa DEFAULT_RISK_PERCENT)
+- Normalizacion de rutas de screenshots (Windows -> Unix)
+- Mejor matching de source para alertas
+- Deteccion de cambios de direccion en posiciones
+- Reconciliacion de entries huerfanas
 """
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 from datetime import datetime
 from dataclasses import dataclass
 import httpx
@@ -22,10 +30,13 @@ from store.journal_store import JournalStore
 
 logger = logging.getLogger(__name__)
 
+# Riesgo por defecto cuando no hay SL definido (2% del position_size_usd)
+DEFAULT_RISK_PERCENT = 2.0
+
 
 @dataclass
 class PositionSnapshot:
-    """Snapshot de una posición"""
+    """Snapshot de una posicion"""
     symbol: str
     side: str
     size: float
@@ -39,18 +50,45 @@ class PositionSnapshot:
 
     @classmethod
     def from_api_response(cls, data: Dict) -> 'PositionSnapshot':
+        """Parsea respuesta del TradingBot con manejo robusto de SL/TP"""
+        # Parseo robusto de SL - puede venir como string, float, None, 0, "0"
+        sl_raw = data.get('stopLoss') or data.get('stop_loss') or data.get('sl')
+        sl_value = None
+        if sl_raw is not None:
+            try:
+                sl_float = float(sl_raw)
+                if sl_float > 0:
+                    sl_value = sl_float
+            except (ValueError, TypeError):
+                pass
+
+        # Parseo robusto de TP - puede venir como string, float, None, 0, "0"
+        tp_raw = data.get('takeProfit') or data.get('take_profit') or data.get('tp')
+        tp_value = None
+        if tp_raw is not None:
+            try:
+                tp_float = float(tp_raw)
+                if tp_float > 0:
+                    tp_value = tp_float
+            except (ValueError, TypeError):
+                pass
+
         return cls(
             symbol=data.get('symbol', ''),
             side=data.get('side', ''),
             size=float(data.get('size', 0)),
-            entry_price=float(data.get('entryPrice', 0)),
-            mark_price=float(data.get('markPrice', 0)),
-            unrealized_pnl=float(data.get('unrealizedPnl', 0)),
-            stop_loss=float(data.get('stopLoss')) if data.get('stopLoss') else None,
-            take_profit=float(data.get('takeProfit')) if data.get('takeProfit') else None,
-            created_time=data.get('createdTime'),
-            updated_time=data.get('updatedTime')
+            entry_price=float(data.get('entryPrice') or data.get('entry_price', 0)),
+            mark_price=float(data.get('markPrice') or data.get('mark_price', 0)),
+            unrealized_pnl=float(data.get('unrealizedPnl') or data.get('unrealized_pnl', 0)),
+            stop_loss=sl_value,
+            take_profit=tp_value,
+            created_time=data.get('createdTime') or data.get('created_time'),
+            updated_time=data.get('updatedTime') or data.get('updated_time')
         )
+
+    def get_direction(self) -> TradeDirection:
+        """Retorna la direccion del trade basada en side"""
+        return TradeDirection.LONG if self.side.upper() in ("BUY", "LONG") else TradeDirection.SHORT
 
 
 class PositionMonitor:
@@ -60,8 +98,9 @@ class PositionMonitor:
     Flujo:
     1. Polling cada N segundos a GET /api/positions del TradingBot
     2. Compara con estado anterior para detectar cambios
-    3. Nueva posición → Crea JournalEntry + solicita screenshot de entrada
-    4. Posición cerrada → Finaliza JournalEntry + solicita screenshot de salida
+    3. Nueva posicion -> Crea JournalEntry + solicita screenshot de entrada
+    4. Posicion cerrada -> Finaliza JournalEntry + solicita screenshot de salida
+    5. Cambio de direccion -> Cierra entry anterior, crea nueva
     """
 
     def __init__(
@@ -74,16 +113,18 @@ class PositionMonitor:
         self.store = store
         self.trading_bot_url = trading_bot_url
         self.poll_interval = poll_interval
-        self.screenshot_callback = screenshot_callback  # async def callback(symbol, event_type)
+        self.screenshot_callback = screenshot_callback  # async def callback(symbol, event_type, entry_id)
 
         # Estado interno
         self._running = False
         self._task: Optional[asyncio.Task] = None
         self._previous_positions: Dict[str, PositionSnapshot] = {}
         self._tracked_entries: Dict[str, str] = {}  # symbol -> journal_entry_id
+        self._tracked_directions: Dict[str, TradeDirection] = {}  # symbol -> direction
         self._http_client: Optional[httpx.AsyncClient] = None
+        self._trading_bot_connected = False
 
-        # Configuración
+        # Configuracion
         self.alert_lookback_minutes = 30  # Minutos para buscar alertas que matcheen
 
     async def start(self):
@@ -100,11 +141,12 @@ class PositionMonitor:
             open_entries = self.store.get_open_entries()
             for entry in open_entries:
                 self._tracked_entries[entry.symbol] = entry.id
+                self._tracked_directions[entry.symbol] = entry.direction
             logger.info(f"Loaded {len(open_entries)} existing open entries from database")
         except Exception as e:
             logger.error(f"Failed to load open entries from database: {e}")
 
-        # Iniciar loop de polling - la sincronización inicial se hará en el primer ciclo
+        # Iniciar loop de polling - la sincronizacion inicial se hara en el primer ciclo
         self._task = asyncio.create_task(self._poll_loop())
         logger.info(f"Position monitor started (interval: {self.poll_interval}s)")
 
@@ -130,7 +172,8 @@ class PositionMonitor:
         """Sincroniza con posiciones actuales del TradingBot (llamado en primer ciclo)"""
         try:
             current_positions = await self._fetch_positions()
-            if current_positions:
+            if current_positions is not None:
+                self._trading_bot_connected = True
                 self._previous_positions = current_positions
                 logger.info(f"Synced {len(current_positions)} positions from TradingBot")
 
@@ -140,19 +183,21 @@ class PositionMonitor:
                         logger.info(f"Found untracked position: {symbol}, creating entry...")
                         await self._handle_new_position(position)
             else:
+                self._trading_bot_connected = False
                 logger.info("No positions found in TradingBot (or bot not running)")
         except Exception as e:
+            self._trading_bot_connected = False
             logger.error(f"Failed to sync with TradingBot: {e}")
 
     async def _poll_loop(self):
         """Loop principal de polling"""
-        # Sincronización inicial en el primer ciclo
+        # Sincronizacion inicial en el primer ciclo
         first_run = True
 
         while self._running:
             try:
                 if first_run:
-                    # Primera ejecución: sincronizar con TradingBot
+                    # Primera ejecucion: sincronizar con TradingBot
                     await self._sync_with_trading_bot()
                     first_run = False
                 else:
@@ -170,8 +215,10 @@ class PositionMonitor:
             current_positions = await self._fetch_positions()
 
             if current_positions is None:
-                return  # Error de conexión, skip este ciclo
+                self._trading_bot_connected = False
+                return  # Error de conexion, skip este ciclo
 
+            self._trading_bot_connected = True
             current_symbols = set(current_positions.keys())
             previous_symbols = set(self._previous_positions.keys())
 
@@ -185,6 +232,17 @@ class PositionMonitor:
             for symbol in closed_positions:
                 await self._handle_closed_position(symbol)
 
+            # Detectar cambios de direccion (posicion existente cambio de LONG a SHORT o viceversa)
+            for symbol in current_symbols & previous_symbols:
+                current_pos = current_positions[symbol]
+                prev_pos = self._previous_positions[symbol]
+                current_dir = current_pos.get_direction()
+                prev_dir = prev_pos.get_direction()
+
+                if current_dir != prev_dir:
+                    logger.info(f"Direction change detected for {symbol}: {prev_dir.value} -> {current_dir.value}")
+                    await self._handle_direction_change(symbol, prev_pos, current_pos)
+
             # Actualizar estado
             self._previous_positions = current_positions
 
@@ -192,10 +250,10 @@ class PositionMonitor:
             logger.error(f"Error checking positions: {e}")
 
     async def _fetch_positions(self) -> Optional[Dict[str, PositionSnapshot]]:
-        """Obtiene posiciones del TradingBot usando requests (más confiable en Windows)"""
+        """Obtiene posiciones del TradingBot usando requests (mas confiable en Windows)"""
         import requests
         try:
-            # Usar requests con timeout más largo para Bybit API
+            # Usar requests con timeout mas largo para Bybit API
             response = requests.get(
                 f"{self.trading_bot_url}/api/positions",
                 timeout=(5, 30)  # (connect_timeout, read_timeout) - Bybit puede tardar
@@ -216,8 +274,12 @@ class PositionMonitor:
                 snapshot = PositionSnapshot.from_api_response(pos_data)
                 positions[snapshot.symbol] = snapshot
 
+                # Log detallado de SL/TP capturados
+                if snapshot.stop_loss or snapshot.take_profit:
+                    logger.debug(f"Position {snapshot.symbol}: SL={snapshot.stop_loss}, TP={snapshot.take_profit}")
+
             if positions:
-                logger.info(f"Fetched {len(positions)} positions from TradingBot")
+                logger.debug(f"Fetched {len(positions)} positions from TradingBot")
             return positions
 
         except requests.exceptions.ConnectTimeout:
@@ -234,8 +296,9 @@ class PositionMonitor:
             return None
 
     async def _handle_new_position(self, position: PositionSnapshot):
-        """Maneja una nueva posición detectada"""
+        """Maneja una nueva posicion detectada"""
         logger.info(f"New position detected: {position.symbol} {position.side} @ {position.entry_price}")
+        logger.info(f"  SL: {position.stop_loss}, TP: {position.take_profit}")
 
         try:
             # Buscar alerta reciente que matchee
@@ -244,24 +307,36 @@ class PositionMonitor:
                 position.side
             )
 
-            # Determinar dirección
-            direction = TradeDirection.LONG if position.side.upper() == "BUY" else TradeDirection.SHORT
+            # Determinar direccion
+            direction = position.get_direction()
 
-            # Crear setup con información disponible
+            # Calcular position_size_usd
+            position_size_usd = position.size * position.entry_price
+
+            # Crear setup con informacion disponible
             setup = TradeSetup(
                 entry_price=position.entry_price,
                 stop_loss=position.stop_loss or 0,
                 take_profit=position.take_profit or 0,
                 position_size=position.size,
-                position_size_usd=position.size * position.entry_price
+                position_size_usd=position_size_usd
             )
 
-            # Calcular RR si tenemos SL y TP
-            if setup.stop_loss and setup.take_profit:
-                setup.risk_reward_ratio = setup.calculate_rr()
-                # Calcular risk amount
-                risk_per_unit = abs(setup.entry_price - setup.stop_loss)
+            # Calcular risk_amount_usd
+            if position.stop_loss and position.stop_loss > 0:
+                # Tenemos SL real - calcular riesgo exacto
+                risk_per_unit = abs(position.entry_price - position.stop_loss)
                 setup.risk_amount_usd = risk_per_unit * position.size
+                logger.info(f"  Risk calculated from SL: ${setup.risk_amount_usd:.2f}")
+            else:
+                # Sin SL - usar riesgo por defecto (2% del position size)
+                setup.risk_amount_usd = position_size_usd * (DEFAULT_RISK_PERCENT / 100)
+                logger.info(f"  Risk estimated (no SL): ${setup.risk_amount_usd:.2f} ({DEFAULT_RISK_PERCENT}% of position)")
+
+            # Calcular RR si tenemos SL y TP
+            if setup.stop_loss > 0 and setup.take_profit > 0:
+                setup.risk_reward_ratio = setup.calculate_rr()
+                logger.info(f"  R:R ratio: {setup.risk_reward_ratio:.2f}")
 
             # Crear entry
             entry = JournalEntry(
@@ -278,8 +353,9 @@ class PositionMonitor:
             # Guardar en store
             created = self.store.create(entry)
             self._tracked_entries[position.symbol] = created.id
+            self._tracked_directions[position.symbol] = direction
 
-            logger.info(f"Created journal entry {created.id} for {position.symbol}")
+            logger.info(f"Created journal entry {created.id} for {position.symbol} (source: {source.value})")
 
             # Solicitar screenshot de entrada
             if self.screenshot_callback:
@@ -290,6 +366,8 @@ class PositionMonitor:
                         entry_id=created.id
                     )
                     if screenshot_path:
+                        # Normalizar ruta (Windows backslash -> forward slash)
+                        screenshot_path = screenshot_path.replace('\\', '/')
                         created.screenshot_entry = screenshot_path
                         self.store.update(created)
                         logger.info(f"Entry screenshot saved: {screenshot_path}")
@@ -298,9 +376,11 @@ class PositionMonitor:
 
         except Exception as e:
             logger.error(f"Error handling new position: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
 
     async def _handle_closed_position(self, symbol: str):
-        """Maneja una posición cerrada"""
+        """Maneja una posicion cerrada"""
         logger.info(f"Position closed: {symbol}")
 
         try:
@@ -315,14 +395,16 @@ class PositionMonitor:
             if not entry:
                 logger.warning(f"Entry {entry_id} not found in store")
                 del self._tracked_entries[symbol]
+                if symbol in self._tracked_directions:
+                    del self._tracked_directions[symbol]
                 return
 
             # Obtener detalles del cierre desde Bybit (via TradingBot)
             close_details = await self._fetch_position_close_details(symbol)
 
             if close_details:
-                exit_price = float(close_details.get('exitPrice', 0) or 0)
-                pnl_usd = float(close_details.get('closedPnl', 0) or 0)
+                exit_price = float(close_details.get('exitPrice') or close_details.get('exit_price', 0) or 0)
+                pnl_usd = float(close_details.get('closedPnl') or close_details.get('closed_pnl', 0) or 0)
 
                 # Determinar status basado en PnL y SL/TP
                 tp = float(entry.setup.take_profit or 0)
@@ -334,7 +416,7 @@ class PositionMonitor:
                 else:
                     status = TradeStatus.CLOSED_MANUAL
             else:
-                # Usar último mark_price conocido
+                # Usar ultimo mark_price conocido
                 prev_pos = self._previous_positions.get(symbol)
                 exit_price = float(prev_pos.mark_price) if prev_pos else float(entry.entry_price)
                 pnl_usd = float(prev_pos.unrealized_pnl) if prev_pos else 0.0
@@ -348,6 +430,11 @@ class PositionMonitor:
                 pnl_usd=float(pnl_usd)
             )
 
+            # Calcular R-Multiple
+            if entry.setup.risk_amount_usd and entry.setup.risk_amount_usd > 0:
+                entry.r_multiple = pnl_usd / entry.setup.risk_amount_usd
+                logger.info(f"R-Multiple calculated: {entry.r_multiple:.2f}R")
+
             # Guardar
             self.store.update(entry)
 
@@ -360,6 +447,8 @@ class PositionMonitor:
                         entry_id=entry.id
                     )
                     if screenshot_path:
+                        # Normalizar ruta (Windows backslash -> forward slash)
+                        screenshot_path = screenshot_path.replace('\\', '/')
                         entry.screenshot_exit = screenshot_path
                         self.store.update(entry)
                         logger.info(f"Exit screenshot saved: {screenshot_path}")
@@ -368,18 +457,30 @@ class PositionMonitor:
 
             # Limpiar tracking
             del self._tracked_entries[symbol]
+            if symbol in self._tracked_directions:
+                del self._tracked_directions[symbol]
 
-            logger.info(f"Closed journal entry {entry.id}: PnL ${pnl_usd:.2f} ({entry.pnl_percent:.2f}%)")
+            logger.info(f"Closed journal entry {entry.id}: PnL ${pnl_usd:.2f} ({entry.pnl_percent:.2f}%) [{entry.r_multiple:.2f}R]")
 
         except Exception as e:
             logger.error(f"Error handling closed position: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+
+    async def _handle_direction_change(self, symbol: str, prev_pos: PositionSnapshot, new_pos: PositionSnapshot):
+        """Maneja un cambio de direccion (ej: LONG cerrado y SHORT abierto)"""
+        # Primero cerrar la posicion anterior
+        await self._handle_closed_position(symbol)
+
+        # Luego crear nueva entry para la nueva direccion
+        await self._handle_new_position(new_pos)
 
     async def _find_matching_alert(
         self,
         symbol: str,
         side: str
-    ) -> tuple[TradeSource, Optional[str], Optional[str]]:
-        """Busca una alerta reciente que matchee con la posición"""
+    ) -> Tuple[TradeSource, Optional[str], Optional[str]]:
+        """Busca una alerta reciente que matchee con la posicion"""
         try:
             response = await self._http_client.get(
                 f"{self.trading_bot_url}/api/alerts/recent",
@@ -387,32 +488,55 @@ class PositionMonitor:
             )
 
             if response.status_code != 200:
+                logger.debug(f"Alert lookup failed with status {response.status_code}")
                 return TradeSource.MANUAL, None, None
 
             data = response.json()
             alerts = data.get('alerts', [])
 
+            # Normalizar side para comparacion
+            side_normalized = side.upper()
+            if side_normalized == "BUY":
+                side_normalized = "LONG"
+            elif side_normalized == "SELL":
+                side_normalized = "SHORT"
+
             # Buscar match por symbol y side
             for alert in alerts:
-                if alert.get('symbol') == symbol and alert.get('side') == side:
-                    # Determinar source
+                alert_symbol = alert.get('symbol', '')
+                alert_side = alert.get('side', '').upper()
+
+                # Normalizar alert side
+                if alert_side == "BUY":
+                    alert_side = "LONG"
+                elif alert_side == "SELL":
+                    alert_side = "SHORT"
+
+                if alert_symbol == symbol and alert_side == side_normalized:
+                    # Determinar source con matching mejorado
                     source_str = alert.get('source', '').lower()
 
-                    if 'swing' in source_str:
+                    if 'swing' in source_str or 'swing_detector' in source_str:
                         source = TradeSource.ANALIZADOR
-                    elif 'watchlist' in source_str:
+                    elif 'watchlist' in source_str or 'backend_realtime' in source_str:
                         source = TradeSource.WATCHLIST
-                    elif 'order_flow' in source_str or 'orderflow' in source_str:
+                    elif 'order_flow' in source_str or 'orderflow' in source_str or 'footprint' in source_str:
                         source = TradeSource.ORDER_FLOW
+                    elif 'backtester' in source_str or 'backtest' in source_str:
+                        source = TradeSource.BACKTESTER
+                    elif 'manual' in source_str:
+                        source = TradeSource.MANUAL
                     else:
-                        source = TradeSource.UNKNOWN
+                        # Default a ANALIZADOR si viene de un sistema automatico
+                        source = TradeSource.ANALIZADOR if source_str else TradeSource.MANUAL
 
-                    pattern_type = alert.get('pattern', '')
+                    pattern_type = alert.get('pattern', '') or alert.get('patternType', '')
 
-                    logger.info(f"Matched alert: source={source.value}, pattern={pattern_type}")
+                    logger.info(f"Matched alert: source={source.value}, pattern={pattern_type}, raw_source={source_str}")
                     return source, alert.get('timestamp'), pattern_type
 
             # No match encontrado
+            logger.debug(f"No matching alert found for {symbol} {side}")
             return TradeSource.MANUAL, None, None
 
         except Exception as e:
@@ -420,7 +544,7 @@ class PositionMonitor:
             return TradeSource.MANUAL, None, None
 
     async def _fetch_position_close_details(self, symbol: str) -> Optional[Dict]:
-        """Obtiene detalles del cierre de posición desde Bybit"""
+        """Obtiene detalles del cierre de posicion desde Bybit"""
         try:
             response = await self._http_client.get(
                 f"{self.trading_bot_url}/api/position-history/{symbol}",
@@ -442,6 +566,72 @@ class PositionMonitor:
             logger.error(f"Error fetching close details: {e}")
             return None
 
+    async def reconcile(self) -> Dict:
+        """
+        Reconcilia entries huerfanas:
+        - Cierra entries OPEN que no tienen posicion activa en TradingBot
+        - Crea entries para posiciones sin tracking
+
+        Retorna resumen de acciones tomadas.
+        """
+        logger.info("Starting reconciliation...")
+        result = {
+            "orphan_entries_closed": 0,
+            "untracked_positions_created": 0,
+            "errors": []
+        }
+
+        try:
+            # Obtener posiciones actuales
+            current_positions = await self._fetch_positions()
+            if current_positions is None:
+                result["errors"].append("Could not fetch positions from TradingBot")
+                return result
+
+            current_symbols = set(current_positions.keys())
+
+            # Obtener entries abiertas del store
+            open_entries = self.store.get_open_entries()
+
+            # Cerrar entries huerfanas (OPEN pero sin posicion activa)
+            for entry in open_entries:
+                if entry.symbol not in current_symbols:
+                    logger.info(f"Closing orphan entry {entry.id} for {entry.symbol}")
+                    try:
+                        entry.status = TradeStatus.CLOSED_MANUAL
+                        entry.exit_time = datetime.utcnow().isoformat()
+                        entry.exit_price = entry.entry_price  # Sin datos reales
+                        entry.pnl_usd = 0.0
+                        entry.pnl_percent = 0.0
+                        self.store.update(entry)
+
+                        if entry.symbol in self._tracked_entries:
+                            del self._tracked_entries[entry.symbol]
+                        if entry.symbol in self._tracked_directions:
+                            del self._tracked_directions[entry.symbol]
+
+                        result["orphan_entries_closed"] += 1
+                    except Exception as e:
+                        result["errors"].append(f"Failed to close {entry.id}: {str(e)}")
+
+            # Crear entries para posiciones sin tracking
+            tracked_symbols = set(self._tracked_entries.keys())
+            for symbol in current_symbols - tracked_symbols:
+                logger.info(f"Creating entry for untracked position: {symbol}")
+                try:
+                    await self._handle_new_position(current_positions[symbol])
+                    result["untracked_positions_created"] += 1
+                except Exception as e:
+                    result["errors"].append(f"Failed to create entry for {symbol}: {str(e)}")
+
+            logger.info(f"Reconciliation complete: {result}")
+            return result
+
+        except Exception as e:
+            logger.error(f"Error during reconciliation: {e}")
+            result["errors"].append(str(e))
+            return result
+
     def get_status(self) -> Dict:
         """Retorna estado actual del monitor"""
         return {
@@ -449,10 +639,12 @@ class PositionMonitor:
             "poll_interval": self.poll_interval,
             "tracked_positions": len(self._tracked_entries),
             "tracked_symbols": list(self._tracked_entries.keys()),
-            "trading_bot_url": self.trading_bot_url
+            "tracked_directions": {k: v.value for k, v in self._tracked_directions.items()},
+            "trading_bot_url": self.trading_bot_url,
+            "trading_bot_connected": self._trading_bot_connected
         }
 
     async def force_sync(self):
-        """Fuerza una sincronización inmediata"""
+        """Fuerza una sincronizacion inmediata"""
         logger.info("Force sync requested")
         await self._check_positions()

@@ -2,38 +2,10 @@
   "symbol": "TRXUSDT",
   "shapes": [
     {
-      "type": "horizontal",
-      "id": "horizontal_1769562869872_0.026105743227295974",
-      "price": 0.29543858333333334,
-      "time": 1769511600000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    },
-    {
-      "type": "horizontal",
-      "id": "horizontal_1769562870328_0.36243935846099273",
-      "price": 0.29441901666666664,
-      "time": 1769540400000,
-      "style": {
-        "color": "#8B5CF6",
-        "lineWidth": 2,
-        "dash": [
-          5,
-          5
-        ]
-      }
-    },
-    {
       "type": "vertical",
-      "id": "vertical_1769562871703_0.7843128310574553",
-      "price": 0.29514528333333334,
-      "time": 1769515200000,
+      "id": "vertical_1769986335067_0.47384629400635925",
+      "price": 0.28530093749999996,
+      "time": 1769986260000,
       "style": {
         "color": "#F59E0B",
         "lineWidth": 2,
@@ -45,9 +17,9 @@
     },
     {
       "type": "vertical",
-      "id": "vertical_1769562871990_0.20506926593869046",
-      "price": 0.29482405,
-      "time": 1769554800000,
+      "id": "vertical_1769997354834_0.859760145755528",
+      "price": 0.28418686666666665,
+      "time": 1769997300000,
       "style": {
         "color": "#F59E0B",
         "lineWidth": 2,
@@ -55,105 +27,9 @@
           5,
           5
         ]
-      }
-    },
-    {
-      "type": "rectangle",
-      "id": "rectangle_1769562874174_0.001088845701615715",
-      "price1": 0.29337151666666667,
-      "time1": 1769486400000,
-      "price2": 0.29427935,
-      "time2": 1769533200000,
-      "label": "Zone",
-      "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
-      }
-    },
-    {
-      "type": "fibonacci",
-      "id": "fibonacci_1769562888785_0.15320407934285651",
-      "price1": 0.29840409160304715,
-      "time1": 1769349600000,
-      "price2": 0.29411580331475884,
-      "time2": 1769374800000
-    },
-    {
-      "type": "tpsl",
-      "id": "tpsl_1769562892911_0.3381954590678119",
-      "entryPrice": 0.29693562313457866,
-      "tpPrice": 0.30881304805996185,
-      "slPrice": 0.2909969106718871,
-      "time": 1769457600000,
-      "widthTime": 90000000
-    },
-    {
-      "type": "tpsl-short",
-      "id": "tpsl_short_1769562897077_0.10019311531226971",
-      "entryPrice": 0.2968635510625066,
-      "tpPrice": 0.28498900902000635,
-      "slPrice": 0.30280082208375675,
-      "time": 1769317200000,
-      "widthTime": 90000000
-    },
-    {
-      "type": "rectangle",
-      "id": "rectangle_1769562907340_0.6956336441870712",
-      "price1": 0.3015392267381823,
-      "time1": 1769032800000,
-      "price2": 0.30090859610755166,
-      "time2": 1769126400000,
-      "label": "Zone",
-      "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
-      }
-    },
-    {
-      "type": "rectangle",
-      "id": "rectangle_1769562910716_0.45258761235769585",
-      "price1": 0.3023320195309751,
-      "time1": 1768986000000,
-      "price2": 0.3020707582697138,
-      "time2": 1769061600000,
-      "label": "Zone",
-      "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
-      }
-    },
-    {
-      "type": "tpsl",
-      "id": "tpsl_1769562915489_0.46747186770075355",
-      "entryPrice": 0.30236805556701113,
-      "tpPrice": 0.31446277778969156,
-      "slPrice": 0.2963206944556709,
-      "time": 1768960800000,
-      "widthTime": 90000000
-    },
-    {
-      "type": "textbox",
-      "id": "textbox_1769562917531_0.09776896263466683",
-      "price": 0.3028275150264706,
-      "time": 1769036400000,
-      "text": "sdfsdf",
-      "customWidth": null,
-      "customHeight": null,
-      "style": {
-        "bgColor": "#FBBF24ff",
-        "textColor": "#78350F",
-        "borderColor": "#F59E0B",
-        "fontSize": 13,
-        "fontFamily": "Arial",
-        "padding": 8,
-        "minWidth": 120,
-        "minHeight": 30
       }
     }
   ],
-  "updated_at": "2026-01-28T01:15:21.853221+00:00",
-  "total_shapes": 12
+  "updated_at": "2026-02-02T01:56:10.568267+00:00",
+  "total_shapes": 2
 }

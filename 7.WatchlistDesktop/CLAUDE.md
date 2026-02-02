@@ -277,7 +277,102 @@ this.dataMap = newMap;
 - Si el usuario esta viendo el precio actual (offset = 0) → el grafico sigue las nuevas velas
 - Si el usuario hizo scroll hacia atras → el grafico respeta esa posicion
 
-### 4. Mejoras de Robustez (29 Enero 2026)
+### 4. VWAP no graficaba en tiempo real (Febrero 2026)
+
+**Problema**: El indicador VWAP cargaba correctamente al inicio pero no se actualizaba en tiempo real. Solo la carga inicial funcionaba, el polling posterior no ocurria.
+
+**Causa**: El `PollingScheduler` no estaba siendo iniciado. Era un singleton que se importaba pero nunca se llamaba `pollingScheduler.start()`.
+
+**Solucion en dos partes**:
+
+1. **Watchlist.jsx** - Iniciar el scheduler en el componente raiz:
+```javascript
+import pollingScheduler from '../utils/PollingScheduler';
+
+// En el useEffect de inicializacion:
+useEffect(() => {
+  initRobustness();
+  pollingScheduler.start();  // <-- NUEVO
+  log.info('[PollingScheduler] Started');
+
+  return () => {
+    stopRobustness();
+    pollingScheduler.stop();  // <-- NUEVO
+    log.info('[PollingScheduler] Stopped');
+  };
+}, []);
+```
+
+2. **VWAPIndicator.js** - Migrar de setInterval nativo a PollingScheduler:
+```javascript
+import pollingScheduler from '../../utils/PollingScheduler.js';
+
+// Reemplazo de _pollingInterval por _pollingId
+this._pollingId = null;
+
+// Nuevo metodo _startPolling usando el scheduler
+_startPolling() {
+  if (this._pollingId) return;
+  this._pollingId = pollingScheduler.register(
+    async () => {
+      if (this.enabled && !this._destroyed) {
+        const updated = await this.fetchData(true);
+        if (updated && this.indicatorManager?.requestRedraw) {
+          this.indicatorManager.requestRedraw();
+        }
+      }
+    },
+    this.fetchIntervalMs,
+    2  // Alta prioridad
+  );
+}
+
+// Agregar llamada a _startPolling() despues de carga exitosa en fetchData()
+if (!this._pollingId) {
+  this._startPolling();
+}
+```
+
+**Verificacion**:
+- Consola debe mostrar: `[PollingScheduler] Started`
+- Consola debe mostrar: `[PollingScheduler] Registered poll_N (interval: 60000ms)`
+- El VWAP debe actualizarse automaticamente cada minuto
+
+### 5. CandleCache entraba en ciclo infinito (Febrero 2026)
+
+**Problema**: Cuando el backend no estaba corriendo, el CandleCache entraba en un ciclo infinito de:
+1. Detectar cache como "corrupto" (pocas velas)
+2. Limpiar cache
+3. Intentar carga completa (falla porque backend esta caido)
+4. WebSocket trae algunas velas
+5. Guardar ~10 velas
+6. Volver al paso 1
+
+**Causa**: `getValidated()` limpiaba el cache cada vez que detectaba menos del 70% de velas esperadas, sin considerar que el problema era que el backend estaba caido.
+
+**Solucion**: Agregar cooldown de 1 minuto para evitar limpiezas repetidas del mismo simbolo:
+
+```javascript
+// En CandleCache.js
+static _lastCleanup = new Map();  // symbol@interval -> timestamp
+static CLEANUP_COOLDOWN_MS = 60000;  // 1 minuto
+
+// En getValidated(), antes de limpiar:
+const lastCleanupTime = this._lastCleanup.get(cacheKey) || 0;
+if (now - lastCleanupTime < this.CLEANUP_COOLDOWN_MS) {
+  // En cooldown - usar las velas disponibles en lugar de limpiar
+  return cached;
+}
+this._lastCleanup.set(cacheKey, now);
+await this.clear(symbol, interval);
+```
+
+**Comportamiento**:
+- Primera deteccion de cache corrupto: limpia y fuerza recarga
+- Detecciones subsecuentes dentro de 1 minuto: usa las velas disponibles
+- Esto previene el ciclo infinito cuando el backend esta caido
+
+### 6. Mejoras de Robustez (29 Enero 2026)
 
 Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia de usuario:
 
@@ -434,6 +529,24 @@ Para forzar limpieza manual:
 2. Application > IndexedDB > localforage
 3. Borrar la base de datos
 4. Recargar la aplicacion
+
+### Solo se ven 4-10 velas por grafico (backend caido)
+**Sintomas**:
+- Los graficos muestran muy pocas velas (4-10)
+- Consola muestra: `[CandleCache] Limpiando cache corrupto...` repetidamente
+- Consola de errores muestra: `ERR_CONNECTION_REFUSED` para puerto 8000
+
+**Causa**: El backend no esta corriendo. Las unicas velas disponibles vienen del WebSocket en tiempo real, no del endpoint de datos historicos.
+
+**Solucion**:
+1. Iniciar el backend:
+```bash
+cd 2.WatchlistConIndicadores/backend
+python -m uvicorn main:app --port 8000
+```
+2. O usar `START_ALL.bat` que inicia el backend automaticamente
+
+**Nota**: El fix de cooldown en CandleCache previene el ciclo infinito de limpieza, pero no soluciona el problema de raiz (falta de backend)
 
 ---
 

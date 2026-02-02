@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /s /b 6.Trading_Journal 2)",
+      "Bash(nul)",
+      "Bash(sqlite3:*)",
+      "Bash(python:*)",
+      "Bash(tasklist /FI 'IMAGENAME eq python.exe' 2)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(copy /Y \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\services\\position_monitor_v2.py\" \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\services\\position_monitor.py\")",
+      "Bash(powershell -Command:*)",
+      "WebSearch",
+      "WebFetch(domain:bybit-exchange.github.io)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

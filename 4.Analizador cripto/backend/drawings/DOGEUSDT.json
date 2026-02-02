@@ -1,0 +1,21 @@
+{
+  "symbol": "DOGEUSDT",
+  "shapes": [
+    {
+      "type": "vertical",
+      "id": "vertical_1769997379037_0.15704518142104873",
+      "price": 0.10524415208333333,
+      "time": 1769997360000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-02-02T01:56:26.529772+00:00",
+  "total_shapes": 1
+}

@@ -1874,6 +1874,15 @@ const BacktestingApp = () => {
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
                   onRequestPause={handlePause}
+                  onRequestTimeChange={(newTime) => {
+                    // 🎯 FIX: Permitir navegación a cualquier timestamp del playback
+                    console.log(`[BacktestingApp] 🕐 onRequestTimeChange: ${new Date(newTime).toISOString()}`);
+                    handlePause(); // Pausar primero
+                    if (timeControllerRef.current) {
+                      timeControllerRef.current.currentTime = newTime;
+                    }
+                    setCurrentTime(newTime);
+                  }}
                   onDrawingsChange={handleDrawingsChange}
                 />
               </div>
@@ -2005,6 +2014,28 @@ const BacktestingApp = () => {
                     }
                   } else {
                     console.error(`[BacktestingApp] ❌ No se pudo establecer zonas - miniChart o setZones no disponible`);
+                  }
+                }}
+                // 🎯 NUEVO: Callback para centrar el chart en una zona seleccionada
+                onZoneClick={(zone) => {
+                  console.log(`[BacktestingApp] 🎯 Navegando a zona #${detectedZones.indexOf(zone) + 1}:`, zone.id);
+                  const miniChart = miniChartRefs.current[activeTimeframe];
+                  if (miniChart && miniChart.centerOnTimestamp) {
+                    // Centrar en el punto medio de la zona
+                    const midTimestamp = Math.floor((zone.start_timestamp + zone.end_timestamp) / 2);
+                    miniChart.centerOnTimestamp(midTimestamp);
+                    console.log(`[BacktestingApp] 🎯 Centrando en timestamp: ${midTimestamp} (${new Date(midTimestamp).toISOString()})`);
+                  } else {
+                    console.warn(`[BacktestingApp] ⚠️ centerOnTimestamp no disponible en miniChart`);
+                  }
+                }}
+                // 🎯 NUEVO: Callback para limpiar zonas del chart
+                onClearZones={() => {
+                  console.log(`[BacktestingApp] 🧹 Limpiando zonas detectadas`);
+                  setDetectedZones([]);
+                  const miniChart = miniChartRefs.current[activeTimeframe];
+                  if (miniChart && miniChart.clearZones) {
+                    miniChart.clearZones();
                   }
                 }}
               />

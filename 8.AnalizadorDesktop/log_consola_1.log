@@ -1,0 +1,445 @@
+ [Preload] Script cargado correctamente
+ [Preload] Plataforma: win32
+ [Preload] Electron: 33.4.11
+ [Config] API_BASE_URL: http://localhost:10000
+ [Config] Electron: Si
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Analizador Desktop - Frontend
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [Electron] Plataforma: win32
+ [App] Backend esperado en: http://localhost:10000
+ [MiniChart PAXGUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [PAXGUSDT] ✅ Fixed Range range_1769826964781 cargado Object
+ [PAXGUSDT] ✅ Fixed Range range_1769827013615 cargado Object
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para PAXGUSDT (total: 0)
+ [PAXGUSDT] S&R v2 destroyed
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [PAXGUSDT] ✅ Fixed Range range_1769826964781 cargado Object
+ [PAXGUSDT] ✅ Fixed Range range_1769827013615 cargado Object
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] Carga COMPLETA: 360 dias @ 240
+ [PAXGUSDT] Carga COMPLETA: 300 dias @ 240
+ [CacheCleanup] Complete: 0/15 candles, 0/33 indicators removed
+ WebSocket Manager conectado [240]
+ ✓ Suscrito: 
+ [Registry] 🗑️ Desregistrado manager para PAXGUSDT (total: 0)
+ [PAXGUSDT] S&R v2 destroyed
+ [MiniChart PAXGUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [PAXGUSDT] ✅ Fixed Range range_1769826964781 cargado Object
+ [PAXGUSDT] ✅ Fixed Range range_1769827013615 cargado Object
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ [Registry] 🗑️ Desregistrado manager para PAXGUSDT (total: 0)
+ [PAXGUSDT] S&R v2 destroyed
+ [PAXGUSDT] 🚀 Componente montado, iniciando...
+ [PAXGUSDT] SwingDetectorIndicator initialized
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [PAXGUSDT] ✅ Fixed Range range_1769826964781 cargado Object
+ [PAXGUSDT] ✅ Fixed Range range_1769827013615 cargado Object
+ [Registry] ✅ Registrado manager para PAXGUSDT (total: 1)
+ [PAXGUSDT] Carga COMPLETA: 300 dias @ 1
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] Carga COMPLETA: 1 dias @ 1
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ WebSocket Manager cerrado
+ [PAXGUSDT] SwingDetector initialized with 360 days
+ [PAXGUSDT] SwingDetector initialized with 300 days
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [PAXGUSDT] ✅ Completa: 1799 velas
+ [PAXGUSDT] ✅ Histórico final: 1799 velas
+ [CandleCache] ✅ PAXGUSDT@240 - guardado (1799 velas, memoria: 1/4)
+ [Prefetch] Activado (10s despues de carga)
+ [PAXGUSDT] ✅ Completa: 2159 velas
+ [PAXGUSDT] ✅ Histórico final: 2159 velas
+ [CandleCache] ✅ PAXGUSDT@240 - guardado (2159 velas, memoria: 1/4)
+ [PAXGUSDT] ✅ Completa: 1439 velas
+ [PAXGUSDT] ✅ Histórico final: 1439 velas
+ [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (1439 velas, memoria: 2/4)
+ [PAXGUSDT] S&R v2: Fetching from backend...
+ [PAXGUSDT] SwingDetector initialized with 300 days
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [PAXGUSDT] SwingDetector: 148 signals exist but none match interval 240
+ [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 loaded: 2R, 0S
+ [PAXGUSDT] ✅ Completa: 7199 velas
+ [PAXGUSDT] ✅ Histórico final: 7199 velas
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 renderOverlay: Object
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+ [IndicatorCache] 💾 sr2@PAXGUSDT desde memoria
+ [PAXGUSDT] S&R v2 from cache: 2R, 0S
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 loaded: 2R, 0S
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] SwingDetector: 270 signals exist but none match interval 240
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] SwingDetector: Backend returned 0 signals
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 loaded: 2R, 0S
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] SwingDetector: Backend returned 0 signals
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [HealthCheck] Backend reconnected
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [PAXGUSDT] SwingDetector: 174/174 signals for interval 1 (cached)
+ [PAXGUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true, config.enabled=true
+ [PAXGUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ [PAXGUSDT] S&R v2 polling started (interval: 60000ms)
+ [PAXGUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+ [PAXGUSDT] SwingDetector: 174/174 signals for interval 1 (cached)
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 updated (polling): 2R, 0S
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+ [PAXGUSDT] SwingDetector: 174/174 signals for interval 1 (cached)
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] S&R v2 updated (polling): 2R, 0S
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+ [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+index.js:53 [PAXGUSDT] SwingDetector: 174/174 signals for interval 1 (cached)
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:53 [PAXGUSDT] S&R v2 updated (polling): 2R, 0S
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [CandleCache] ✅ PAXGUSDT@1 - guardado (7199 velas, memoria: 2/4)
+index.js:53 [PAXGUSDT] SwingDetector: 174/174 signals for interval 1 (cached)
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [CandleCache] 💾 PAXGUSDT@1 - desde memoria (7199 velas)
+index.js:57 [CandleCache] ✓ PAXGUSDT@1 - Cache valido: 7199 velas (esperadas: ~1440, ratio: 499.9%)
+index.js:57 [PAXGUSDT] Cache tiene 7199 velas pero solo necesitamos ~1540 para 1 dias - forzando carga completa
+index.js:57 [PAXGUSDT] drawChart: 7200 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] ✅ Completa: 1439 velas
+index.js:57 [PAXGUSDT] ✅ Histórico final: 1439 velas
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [CandleCache] ✅ PAXGUSDT@1 - guardado (1439 velas, memoria: 2/4)
+index.js:53 [PAXGUSDT] S&R v2: Fetching from backend...
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:53 [PAXGUSDT] S&R v2 loaded: 2R, 0S
+index.js:53 [PAXGUSDT] S&R v2 updated (polling): 2R, 0S
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:53 [PAXGUSDT] SwingDetector initialized with 1 days
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:53 [PAXGUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true, config.enabled=true
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1440 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [CandleCache] ✅ PAXGUSDT@1 - guardado (1440 velas, memoria: 2/4)
+index.js:53 [PAXGUSDT] SwingDetector: 26/26 signals for interval 1 (cached)
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:53 [PAXGUSDT] S&R v2 updated (polling): 2R, 0S
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.152, chartWidth=973, mostrando=800, userZoomed=false
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.167, chartWidth=973, mostrando=727, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.184, chartWidth=973, mostrando=661, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.202, chartWidth=973, mostrando=601, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.223, chartWidth=973, mostrando=546, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.245, chartWidth=973, mostrando=496, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.269, chartWidth=973, mostrando=451, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.269, chartWidth=973, mostrando=451, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.296, chartWidth=973, mostrando=410, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.326, chartWidth=973, mostrando=373, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.358, chartWidth=973, mostrando=339, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.394, chartWidth=973, mostrando=308, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.434, chartWidth=973, mostrando=280, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.434, chartWidth=973, mostrando=280, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.477, chartWidth=973, mostrando=254, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.477, chartWidth=973, mostrando=254, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.477, chartWidth=973, mostrando=254, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.525, chartWidth=973, mostrando=231, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.577, chartWidth=973, mostrando=210, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.635, chartWidth=973, mostrando=191, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.699, chartWidth=973, mostrando=174, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.768, chartWidth=973, mostrando=158, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:25 [IndicatorCache] 💾 swing@PAXGUSDT desde memoria
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=973, mostrando=143, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+index.js:57 [PAXGUSDT] drawChart: 1441 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [CandleCache] ✅ PAXGUSDT@1 - guardado (1441 velas, memoria: 2/4)
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true
+ [PAXGUSDT] drawChart: 1442 velas disponibles, zoom=0.845, chartWidth=681, mostrando=100, userZoomed=true

@@ -8,6 +8,7 @@ function Settings({ monitorStatus, onRefresh }) {
   const [saving, setSaving] = useState(false)
   const [exportLoading, setExportLoading] = useState(false)
   const [importFile, setImportFile] = useState(null)
+  const [reconciling, setReconciling] = useState(false)
 
   useEffect(() => {
     fetchConfig()
@@ -105,6 +106,33 @@ function Settings({ monitorStatus, onRefresh }) {
     }
   }
 
+  
+  const handleReconcile = async () => {
+    if (!confirm('Esto cerrara entries huerfanas y sincronizara con TradingBot. Continuar?')) {
+      return
+    }
+    try {
+      setReconciling(true)
+      const res = await fetch(`${API_BASE_URL}/api/monitor/reconcile`, { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        const closed = data.result?.closed_orphans || 0
+        const created = data.result?.created_entries || 0
+        alert(`Reconciliacion completada:
+- Entries cerradas: ${closed}
+- Entries creadas: ${created}`)
+        onRefresh()
+      } else {
+        alert('Error en reconciliacion')
+      }
+    } catch (err) {
+      console.error('Error reconciling:', err)
+      alert('Error de conexion')
+    } finally {
+      setReconciling(false)
+    }
+  }
+
   const handleClearScreenshots = async () => {
     if (!confirm('Estas seguro de eliminar todos los screenshots? Esta accion no se puede deshacer.')) {
       return
@@ -176,6 +204,14 @@ function Settings({ monitorStatus, onRefresh }) {
             </button>
             <button className="btn btn-secondary" onClick={onRefresh}>
               Actualizar Estado
+            </button>
+            <button 
+              className="btn btn-secondary" 
+              onClick={handleReconcile}
+              disabled={reconciling}
+              title="Cierra entries huerfanas y crea entries para posiciones sin tracking"
+            >
+              {reconciling ? 'Reconciliando...' : 'Reconciliar'}
             </button>
           </div>
         </div>

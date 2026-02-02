@@ -15,12 +15,12 @@
     "BNBUSDT",
     "POLUSDT"
   ],
-  "interval": "240",
+  "interval": "60",
   "days": 360,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -39,18 +39,18 @@
     },
     "BTCUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
       "swingBars": 5,
-      "days": 1,
+      "days": 360,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },
     "XRPUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -60,7 +60,7 @@
     },
     "TRXUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -70,7 +70,7 @@
     },
     "GALAUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -80,7 +80,7 @@
     },
     "SUIUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -91,7 +91,7 @@
     "SOLUSDT": {
       "days": 1,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -99,10 +99,10 @@
       "swingBars": 5
     },
     "PAXGUSDT": {
-      "days": 360,
+      "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -112,7 +112,7 @@
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -122,7 +122,7 @@
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -132,7 +132,7 @@
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -142,7 +142,7 @@
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },
@@ -152,7 +152,7 @@
       "days": 1,
       "alertsEnabled": true,
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       },

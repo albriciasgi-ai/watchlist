@@ -138,6 +138,7 @@ const MiniChart = forwardRef(({
   backtestingData = null,
   currentTime = null,
   onRequestPause = null,  // 🎯 NUEVO: Callback para pausar reproducción al hacer paneo
+  onRequestTimeChange = null,  // 🎯 NUEVO: Callback para cambiar el tiempo de playback (navegación a zonas)
   // 🎯 NUEVO: Props para drawing tools
   currentTool = 'select',
   onToolChange = null,
@@ -349,6 +350,72 @@ const MiniChart = forwardRef(({
         }
         console.log(`[MiniChart ${symbol} ${interval}] 🎯 Zonas limpiadas`);
       }
+    },
+    // 🎯 NUEVO: Centrar el chart en un timestamp específico
+    centerOnTimestamp: (timestamp) => {
+      // 🎯 FIX: En modo backtesting, usar allCandlesRef para buscar en TODAS las velas
+      const sourceCandles = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : candlesRef.current;
+
+      if (!sourceCandles || sourceCandles.length === 0) {
+        console.warn(`[MiniChart ${symbol}] ⚠️ No hay velas para centrar`);
+        return;
+      }
+
+      // 🔍 DEBUG: Log del rango de velas disponibles
+      const firstTs = sourceCandles[0].timestamp;
+      const lastTs = sourceCandles[sourceCandles.length - 1].timestamp;
+      console.log(`[MiniChart ${symbol}] 🔍 centerOnTimestamp: buscando ${timestamp} (${new Date(timestamp).toISOString()})`);
+      console.log(`[MiniChart ${symbol}] 🔍 Rango de velas (${backtestingMode ? 'allCandles' : 'candlesRef'}): ${new Date(firstTs).toISOString()} → ${new Date(lastTs).toISOString()}`);
+      console.log(`[MiniChart ${symbol}] 🔍 Total velas: ${sourceCandles.length}`);
+
+      // Encontrar índice de la vela más cercana al timestamp
+      let targetIndex = -1;
+      for (let i = 0; i < sourceCandles.length; i++) {
+        if (sourceCandles[i].timestamp >= timestamp) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      // Si no encontramos ninguna vela >= timestamp, ir a la última
+      if (targetIndex === -1) {
+        console.log(`[MiniChart ${symbol}] ⚠️ Timestamp después del rango, usando última vela`);
+        targetIndex = sourceCandles.length - 1;
+      }
+
+      // 🎯 FIX: En modo backtesting, también actualizar el currentTime del playback
+      if (backtestingMode && onRequestTimeChange) {
+        const targetCandle = sourceCandles[targetIndex];
+        if (targetCandle) {
+          console.log(`[MiniChart ${symbol}] 🎯 Actualizando currentTime a ${new Date(targetCandle.timestamp).toISOString()}`);
+          onRequestTimeChange(targetCandle.timestamp);
+          // El useEffect de currentTime se encargará de actualizar candlesRef y redibujar
+          return;
+        }
+      }
+
+      // Calcular cuántas velas caben en la pantalla con el zoom actual
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const chartWidth = canvas.width;
+      const candleWidth = 8;
+      const zoom = viewStateRef.current.zoom || 1;
+      const candlesPerScreen = Math.floor(chartWidth / (candleWidth * zoom));
+
+      // Posicionar el target en el centro de la pantalla
+      const newOffset = Math.max(0, targetIndex - Math.floor(candlesPerScreen / 2));
+
+      // Limitar para que no se pase del final
+      const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+      viewStateRef.current.offset = Math.min(newOffset, maxOffset);
+
+      // Forzar redibujado
+      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+
+      console.log(`[MiniChart ${symbol}] 🎯 Centrado en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
     }
   }), [symbol, interval]);
 
@@ -638,11 +705,32 @@ const MiniChart = forwardRef(({
 
       // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
       // 🎯 Función para convertir timestamp a coordenada X
+      // 🎯 FIX: Ahora también calcula posiciones para timestamps fuera del rango visible
       const timeToX = (timestamp) => {
-        // Buscar índice de la vela con este timestamp en visibleCandles
-        const index = visibleCandles.findIndex(c => c.timestamp === timestamp);
-        if (index === -1) return null; // Vela no visible
-        return marginLeft + (index * barWidth) + (barWidth / 2);
+        if (!visibleCandles || visibleCandles.length === 0) return null;
+
+        // Primero intentar búsqueda exacta
+        const exactIndex = visibleCandles.findIndex(c => c.timestamp === timestamp);
+        if (exactIndex !== -1) {
+          return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
+        }
+
+        // Si no está exactamente, calcular posición por interpolación
+        const firstTs = visibleCandles[0].timestamp;
+        const lastTs = visibleCandles[visibleCandles.length - 1].timestamp;
+
+        // Calcular el intervalo promedio entre velas
+        const avgInterval = (lastTs - firstTs) / Math.max(1, visibleCandles.length - 1);
+
+        if (avgInterval <= 0) return null;
+
+        // Calcular índice relativo (puede ser negativo o mayor que el rango visible)
+        const relativeIndex = (timestamp - firstTs) / avgInterval;
+
+        // Calcular coordenada X
+        const x = marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+
+        return x;
       };
 
       const priceContext = {

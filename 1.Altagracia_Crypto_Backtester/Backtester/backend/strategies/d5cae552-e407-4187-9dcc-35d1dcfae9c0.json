@@ -1,0 +1,85 @@
+{
+  "id": "d5cae552-e407-4187-9dcc-35d1dcfae9c0",
+  "name": "Zone Breakout",
+  "description": "Entra cuando el precio rompe una zona con volumen alto.",
+  "version": "1.0",
+  "created_at": "2026-01-31T22:23:56.283183",
+  "updated_at": "2026-01-31T22:23:56.283196",
+  "zone_config": {
+    "method": "pivot_cluster",
+    "params": {
+      "pivot_tolerance_pct": 0.3,
+      "pivot_min_touches": 3,
+      "pivot_swing_bars": 5,
+      "max_price_range_pct": 5.0
+    }
+  },
+  "entry": {
+    "trigger": "price_breaks_zone",
+    "direction": "BOTH",
+    "conditions": [
+      {
+        "type": "zone_quality",
+        "operator": "gte",
+        "value": 60,
+        "value2": null,
+        "enabled": true
+      },
+      {
+        "type": "volume",
+        "operator": "gte",
+        "value": "above_average",
+        "value2": null,
+        "enabled": true
+      },
+      {
+        "type": "zone_age",
+        "operator": "gte",
+        "value": 4,
+        "value2": null,
+        "enabled": true
+      }
+    ],
+    "require_all_conditions": true,
+    "confirmation_candles": 1
+  },
+  "risk_management": {
+    "sizing": {
+      "method": "fixed_risk",
+      "risk_percent": 1.5,
+      "fixed_amount": 100.0,
+      "equity_percent": 5.0
+    },
+    "stop_loss": {
+      "type": "below_zone",
+      "buffer_percent": 0.1,
+      "atr_multiple": 1.5,
+      "fixed_percent": 2.0,
+      "use_trailing": false,
+      "trailing_activation": 1.0,
+      "trailing_distance": 0.5
+    },
+    "take_profit": {
+      "type": "atr_multiple",
+      "risk_reward_ratio": 2.0,
+      "fixed_percent": 4.0,
+      "atr_multiple": 3.0,
+      "partial_exits": []
+    }
+  },
+  "filters": {
+    "max_open_trades": 2,
+    "min_time_between_trades": 30,
+    "max_daily_trades": 5,
+    "max_daily_loss_percent": 3.0,
+    "trading_hours_start": null,
+    "trading_hours_end": null,
+    "excluded_days": [],
+    "min_zone_score": 50.0
+  },
+  "tags": [
+    "breakout",
+    "momentum"
+  ],
+  "is_active": true
+}

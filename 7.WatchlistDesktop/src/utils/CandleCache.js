@@ -339,6 +339,10 @@ class CandleCache {
     return Math.floor(candlesPerDay * days);
   }
 
+  // Cooldown para evitar limpiar cache repetidamente cuando el backend esta caido
+  static _lastCleanup = new Map(); // symbol@interval -> timestamp
+  static CLEANUP_COOLDOWN_MS = 60000; // 1 minuto entre limpiezas del mismo simbolo
+
   /**
    * Verifica si el cache tiene suficientes velas para los dias solicitados
    * Si tiene menos del MIN_CACHE_RATIO o tiene GAPS, se considera corrupto y se limpia
@@ -360,8 +364,20 @@ class CandleCache {
 
     // Si el cache tiene menos del 70% de lo esperado, es corrupto
     if (ratio < this.MIN_CACHE_RATIO) {
+      const cacheKey = `${symbol}@${interval}`;
+      const lastCleanupTime = this._lastCleanup.get(cacheKey) || 0;
+      const now = Date.now();
+
+      // Evitar limpiar repetidamente (cooldown de 1 minuto)
+      // Esto previene ciclos infinitos cuando el backend esta caido
+      if (now - lastCleanupTime < this.CLEANUP_COOLDOWN_MS) {
+        console.warn(`[CandleCache] ${symbol}@${interval} - Cache insuficiente pero en cooldown, usando ${actualCandles} velas disponibles`);
+        return cached; // Retornar lo que tenemos en lugar de limpiar
+      }
+
       console.warn(`[CandleCache] ${symbol}@${interval} - Cache corrupto: ${actualCandles} velas (esperadas: ~${expectedCandles}, ratio: ${(ratio * 100).toFixed(1)}%)`);
       console.log(`[CandleCache] Limpiando cache corrupto para forzar recarga completa...`);
+      this._lastCleanup.set(cacheKey, now);
       await this.clear(symbol, interval);
       return null;
     }

@@ -60,6 +60,14 @@ class ZoneDetectionParams:
     pa_lookback_bars: int = 100
     pa_min_separation_bars: int = 5
 
+    # 🎯 NUEVO: Consolidation Method (detecta rangos laterales compactos)
+    consol_min_bars: int = 8           # Mínimo de velas en consolidación
+    consol_max_bars: int = 50          # Máximo de velas (evita rangos muy largos)
+    consol_max_range_pct: float = 3.0  # Máximo % de rango de precio
+    consol_atr_ratio: float = 0.6      # ATR de la zona vs ATR global (< 1 = baja volatilidad)
+    consol_body_ratio: float = 0.5     # Ratio cuerpo/rango de velas (velas pequeñas)
+    consol_max_outside_bars: int = 3   # Máximo velas consecutivas fuera del rango antes de cerrar
+
 
 class ZoneDetector:
     """
@@ -67,7 +75,7 @@ class ZoneDetector:
     Permite comparar cuál funciona mejor.
     """
 
-    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action"]
+    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action", "consolidation"]
 
     def __init__(self):
         self._zone_counter = 0
@@ -103,6 +111,8 @@ class ZoneDetector:
             zones = self._volume_profile_method(candles, params)
         elif method == "price_action":
             zones = self._price_action_method(candles, params)
+        elif method == "consolidation":
+            zones = self._consolidation_method(candles, params)
         else:
             raise ValueError(f"Método desconocido: {method}. Usar: {self.METHODS}")
 
@@ -114,8 +124,11 @@ class ZoneDetector:
             else:
                 print(f"[ZoneDetector] Descartando zona {zone.id} - rango={zone.price_range_pct:.2f}% > máx={params.max_price_range_pct}%")
 
+        # 🎯 NUEVO: Eliminar zonas duplicadas o muy similares
+        deduplicated_zones = self._deduplicate_zones(filtered_zones)
+
         # Ordenar por score descendente
-        return sorted(filtered_zones, key=lambda z: z.score, reverse=True)
+        return sorted(deduplicated_zones, key=lambda z: z.score, reverse=True)
 
     def detect_all_methods(
         self,
@@ -666,6 +679,217 @@ class ZoneDetector:
         return zones
 
     # =========================================================================
+    # MÉTODO 5: CONSOLIDATION (Rangos laterales compactos)
+    # Detecta períodos de baja volatilidad donde el precio se mueve lateralmente
+    # =========================================================================
+
+    def _consolidation_method(
+        self,
+        candles: List[Dict],
+        params: ZoneDetectionParams
+    ) -> List[Zone]:
+        """
+        Detecta consolidaciones laterales con detección dinámica de inicio y fin (breakout).
+
+        Algoritmo:
+        1. Escanea buscando inicio de consolidación (baja volatilidad)
+        2. Extiende la zona mientras el precio se mantenga en el rango
+        3. Cierra la zona cuando hay un breakout (vela que cierra fuera del rango)
+
+        Criterios de consolidación:
+        - Rango de precio estrecho (< max_range_pct%)
+        - ATR local bajo comparado con ATR global
+        - Velas con cuerpos pequeños (indecisión)
+
+        Criterios de breakout (fin de zona):
+        - Vela cierra fuera del rango (high > range_high O low < range_low)
+        - Vela tiene cuerpo grande (momentum)
+        """
+        if len(candles) < params.consol_min_bars + 20:
+            return []
+
+        zones = []
+
+        # Calcular ATR global para referencia
+        global_atr = self._calculate_atr(candles, min(14, len(candles) // 4))
+        if global_atr == 0:
+            return []
+
+        avg_price = np.mean([(c['high'] + c['low']) / 2 for c in candles])
+        print(f"[ZoneDetector] Consolidation v2: ATR global = {global_atr:.2f}, precio promedio = {avg_price:.2f}")
+
+        found_ranges = []
+        i = 0
+
+        while i < len(candles) - params.consol_min_bars:
+            # Intentar iniciar una consolidación desde la posición i
+            consol_start = i
+            consol_end = i + params.consol_min_bars
+
+            # Calcular rango inicial
+            window = candles[consol_start:consol_end]
+            range_high = max(c['high'] for c in window)
+            range_low = min(c['low'] for c in window)
+            range_mid = (range_high + range_low) / 2
+            range_pct = ((range_high - range_low) / range_mid) * 100 if range_mid > 0 else 100
+
+            # Verificar si cumple criterios iniciales de consolidación
+            local_atr = self._calculate_atr(window, min(5, len(window) // 2))
+            atr_ratio = local_atr / global_atr if global_atr > 0 else 1.0
+
+            avg_body_ratio = self._calculate_avg_body_ratio(window)
+
+            # Si no cumple criterios iniciales, avanzar
+            if (range_pct > params.consol_max_range_pct or
+                atr_ratio > params.consol_atr_ratio or
+                avg_body_ratio > params.consol_body_ratio):
+                i += 1
+                continue
+
+            # ✅ Encontramos inicio de consolidación, ahora extender horizontalmente hasta breakout
+            # 🎯 IMPORTANTE: El rango vertical (range_high, range_low) YA NO SE EXPANDE
+            # Solo se extiende la zona en el tiempo (horizontalmente)
+            consecutive_outside = 0  # Contador de velas consecutivas fuera del rango
+            last_valid_end = consol_end  # Última posición válida
+
+            while consol_end < len(candles) and (consol_end - consol_start) < params.consol_max_bars:
+                next_candle = candles[consol_end]
+
+                # 🎯 FIX v3: Una vela "toca" el rango si su high/low intersectan con él
+                # NO expandimos verticalmente - el rango está fijo desde las primeras velas
+                candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
+
+                if candle_touches_range:
+                    # La vela toca el rango - resetear contador y extender horizontalmente
+                    consecutive_outside = 0
+                    last_valid_end = consol_end + 1
+                else:
+                    # Vela completamente fuera del rango
+                    consecutive_outside += 1
+
+                    # 🎯 Solo cerrar después de N velas consecutivas fuera
+                    if consecutive_outside >= params.consol_max_outside_bars:
+                        # Cerrar zona en la última posición válida (antes de las velas fuera)
+                        consol_end = last_valid_end
+                        break
+
+                consol_end += 1
+
+            # Verificar que la consolidación tiene suficiente duración
+            consol_length = consol_end - consol_start
+            if consol_length >= params.consol_min_bars:
+                # Recalcular métricas finales
+                final_window = candles[consol_start:consol_end]
+                final_range_pct = ((range_high - range_low) / ((range_high + range_low) / 2)) * 100
+                final_atr = self._calculate_atr(final_window, min(5, len(final_window) // 2))
+                final_atr_ratio = final_atr / global_atr if global_atr > 0 else 1.0
+                final_body_ratio = self._calculate_avg_body_ratio(final_window)
+
+                # Calcular score
+                range_score = max(0, (params.consol_max_range_pct - final_range_pct) / params.consol_max_range_pct) * 25
+                atr_score = max(0, (params.consol_atr_ratio - final_atr_ratio) / params.consol_atr_ratio) * 25
+                size_score = min(consol_length / 30, 1) * 25  # Más velas = mejor
+                body_score = max(0, (params.consol_body_ratio - final_body_ratio) / params.consol_body_ratio) * 25
+
+                total_score = range_score + atr_score + size_score + body_score
+
+                found_ranges.append({
+                    'start_idx': consol_start,
+                    'end_idx': consol_end,
+                    'score': total_score,
+                    'range_pct': final_range_pct,
+                    'atr_ratio': final_atr_ratio,
+                    'consol_length': consol_length
+                })
+
+                # Saltar al final de esta consolidación para buscar la siguiente
+                i = consol_end
+            else:
+                i += 1
+
+        print(f"[ZoneDetector] Consolidation v2: Encontradas {len(found_ranges)} consolidaciones")
+
+        # Eliminar rangos que se solapan mucho (mantener el de mejor score)
+        found_ranges.sort(key=lambda x: x['score'], reverse=True)
+        selected_ranges = []
+
+        for r in found_ranges:
+            overlaps = False
+            for selected in selected_ranges:
+                overlap_start = max(r['start_idx'], selected['start_idx'])
+                overlap_end = min(r['end_idx'], selected['end_idx'])
+                if overlap_end > overlap_start:
+                    overlap_size = overlap_end - overlap_start
+                    min_size = min(r['end_idx'] - r['start_idx'], selected['end_idx'] - selected['start_idx'])
+                    if overlap_size / min_size > 0.3:  # Más del 30% overlap
+                        overlaps = True
+                        break
+
+            if not overlaps:
+                selected_ranges.append(r)
+
+        print(f"[ZoneDetector] Consolidation v2: Seleccionadas {len(selected_ranges)} después de deduplicación")
+
+        # Crear zonas a partir de los rangos seleccionados
+        for r in selected_ranges:
+            zone = self._create_zone_from_range(candles, r['start_idx'], r['end_idx'], "consolidation")
+            if zone:
+                zone = Zone(
+                    id=zone.id,
+                    min_price=zone.min_price,
+                    max_price=zone.max_price,
+                    start_timestamp=zone.start_timestamp,
+                    end_timestamp=zone.end_timestamp,
+                    touches_support=zone.touches_support,
+                    touches_resistance=zone.touches_resistance,
+                    total_touches=zone.total_touches,
+                    duration_hours=zone.duration_hours,
+                    avg_volume=zone.avg_volume,
+                    volume_score=zone.volume_score,
+                    method="consolidation",
+                    score=r['score'],
+                    candles_in_zone=zone.candles_in_zone,
+                    price_range_pct=zone.price_range_pct
+                )
+                zones.append(zone)
+
+        return zones
+
+    def _calculate_avg_body_ratio(self, candles: List[Dict]) -> float:
+        """Calcula el ratio promedio cuerpo/rango de las velas."""
+        body_ratios = []
+        for c in candles:
+            candle_range = c['high'] - c['low']
+            if candle_range > 0:
+                body = abs(c['close'] - c['open'])
+                body_ratios.append(body / candle_range)
+        return np.mean(body_ratios) if body_ratios else 0.5
+
+    def _calculate_atr(self, candles: List[Dict], period: int) -> float:
+        """Calcula el Average True Range."""
+        if len(candles) < period + 1:
+            return 0.0
+
+        true_ranges = []
+        for i in range(1, len(candles)):
+            high = candles[i]['high']
+            low = candles[i]['low']
+            prev_close = candles[i - 1]['close']
+
+            tr = max(
+                high - low,
+                abs(high - prev_close),
+                abs(low - prev_close)
+            )
+            true_ranges.append(tr)
+
+        if not true_ranges:
+            return 0.0
+
+        # ATR simple (promedio de los últimos 'period' TR)
+        return np.mean(true_ranges[-period:])
+
+    # =========================================================================
     # MÉTODOS AUXILIARES
     # =========================================================================
 
@@ -828,6 +1052,98 @@ class ZoneDetector:
         """Genera ID único para una zona."""
         self._zone_counter += 1
         return f"zone_{self._zone_counter}_{int(datetime.now().timestamp())}"
+
+    def _deduplicate_zones(
+        self,
+        zones: List[Zone],
+        price_tolerance_pct: float = 0.5,
+        time_overlap_pct: float = 0.5
+    ) -> List[Zone]:
+        """
+        Elimina zonas duplicadas o muy similares.
+
+        Dos zonas se consideran duplicadas si:
+        1. Sus rangos de precio se solapan significativamente (>50% de overlap)
+        2. Sus rangos de tiempo se solapan significativamente (>50% de overlap)
+
+        De dos zonas duplicadas, se conserva la de mayor score.
+
+        Args:
+            zones: Lista de zonas a deduplicar
+            price_tolerance_pct: % de tolerancia para considerar precios similares
+            time_overlap_pct: % mínimo de overlap temporal para considerar duplicado
+
+        Returns:
+            Lista de zonas sin duplicados
+        """
+        if len(zones) <= 1:
+            return zones
+
+        # Ordenar por score descendente (las mejores primero)
+        sorted_zones = sorted(zones, key=lambda z: z.score, reverse=True)
+
+        deduplicated = []
+
+        for zone in sorted_zones:
+            is_duplicate = False
+
+            for existing in deduplicated:
+                # Calcular overlap de precio
+                price_overlap = self._calculate_range_overlap(
+                    zone.min_price, zone.max_price,
+                    existing.min_price, existing.max_price
+                )
+
+                # Calcular overlap temporal
+                time_overlap = self._calculate_range_overlap(
+                    zone.start_timestamp, zone.end_timestamp,
+                    existing.start_timestamp, existing.end_timestamp
+                )
+
+                # Si hay suficiente overlap en ambas dimensiones, es duplicado
+                if price_overlap >= 0.5 and time_overlap >= 0.3:
+                    is_duplicate = True
+                    print(f"[ZoneDetector] Descartando zona duplicada {zone.id} "
+                          f"(precio_overlap={price_overlap:.1%}, tiempo_overlap={time_overlap:.1%})")
+                    break
+
+            if not is_duplicate:
+                deduplicated.append(zone)
+
+        print(f"[ZoneDetector] Deduplicación: {len(zones)} -> {len(deduplicated)} zonas")
+        return deduplicated
+
+    def _calculate_range_overlap(
+        self,
+        start1: float,
+        end1: float,
+        start2: float,
+        end2: float
+    ) -> float:
+        """
+        Calcula el porcentaje de overlap entre dos rangos.
+
+        Returns:
+            Valor entre 0 (sin overlap) y 1 (overlap completo)
+        """
+        # Calcular intersección
+        overlap_start = max(start1, start2)
+        overlap_end = min(end1, end2)
+
+        if overlap_start >= overlap_end:
+            return 0.0
+
+        overlap_size = overlap_end - overlap_start
+
+        # Usar el rango más pequeño como referencia
+        range1_size = end1 - start1
+        range2_size = end2 - start2
+        min_range_size = min(range1_size, range2_size)
+
+        if min_range_size <= 0:
+            return 0.0
+
+        return overlap_size / min_range_size
 
 
 # Singleton para uso global

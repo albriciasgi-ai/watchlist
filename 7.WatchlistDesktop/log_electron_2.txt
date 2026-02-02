@@ -1,0 +1,995 @@
+ [CandleCache] 💾 TRBUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION TRBUSDT@1: 7199 velas sin gaps
+ [CandleCache] TRBUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [TRBUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION SOLUSDT@1: 7199 velas sin gaps
+ [CandleCache] SOLUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [SOLUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 GALAUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION GALAUSDT@1: 7199 velas sin gaps
+ [CandleCache] GALAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [GALAUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 ADAUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION ADAUSDT@1: 7199 velas sin gaps
+ [CandleCache] ADAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ADAUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION BTCUSDT@1: 7199 velas sin gaps
+ [CandleCache] BTCUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [BTCUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 XRPUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION XRPUSDT@1: 7199 velas sin gaps
+ [CandleCache] XRPUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [XRPUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 ETHUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION ETHUSDT@1: 7199 velas sin gaps
+ [CandleCache] ETHUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ETHUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 DOGEUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION DOGEUSDT@1: 7199 velas sin gaps
+ [CandleCache] DOGEUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [DOGEUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:36:00 p.m. (7199 velas en cache)
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [BTCUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SUIUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [SUIUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [DOGEUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [DOGEUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRBUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [TRBUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ADAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [ADAUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [GALAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [GALAUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRXUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [TRXUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [XRPUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [XRPUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ETHUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [ETHUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SOLUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [SOLUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 💾 TRXUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION TRXUSDT@1: 7199 velas sin gaps
+ [CandleCache] TRXUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [TRXUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 💾 SUIUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION SUIUSDT@1: 7199 velas sin gaps
+ [CandleCache] SUIUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [SUIUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 💾 TRBUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION TRBUSDT@1: 7199 velas sin gaps
+ [CandleCache] TRBUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [TRBUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 💾 SOLUSDT@1 - desde memoria (7199 velas)
+ [CandleCache] OK VALIDATION SOLUSDT@1: 7199 velas sin gaps
+ [CandleCache] SOLUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [SOLUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 GALAUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION GALAUSDT@1: 7199 velas sin gaps
+ [CandleCache] GALAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [GALAUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 ADAUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION ADAUSDT@1: 7199 velas sin gaps
+ [CandleCache] ADAUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ADAUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION BTCUSDT@1: 7199 velas sin gaps
+ [CandleCache] BTCUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [BTCUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 XRPUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION XRPUSDT@1: 7199 velas sin gaps
+ [CandleCache] XRPUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [XRPUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 ETHUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION ETHUSDT@1: 7199 velas sin gaps
+ [CandleCache] ETHUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [ETHUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 💾 DOGEUSDT@1 - desde IndexedDB (7199 velas)
+ [CandleCache] OK VALIDATION DOGEUSDT@1: 7199 velas sin gaps
+ [CandleCache] DOGEUSDT@1 - Cache valido: 7199 velas, sin gaps significativos
+ [DOGEUSDT] 🔄 Carga INCREMENTAL: desde 1/2/2026, 8:41:00 p.m. (7199 velas en cache)
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRXUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [TRXUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SUIUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [SUIUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [DOGEUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [DOGEUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ADAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [ADAUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [TRBUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [TRBUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [GALAUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [GALAUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [BTCUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [ETHUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [ETHUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [SOLUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [SOLUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] 🔄 Merge: 7199 cached + 1 new = 7199 total
+ [XRPUSDT] ✅ Incremental: +1 velas nuevas = 7199 total
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [XRPUSDT] ✅ Histórico final: 7199 velas
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 2 memoria, 2 IndexedDB
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [HealthCheck] Backend reconnected
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+ [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+ [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+ [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+ [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+ [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+ [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+ [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ADAUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+ [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+ [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+ [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+ [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+ [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+ [TRBUSDT] SwingDetector: 300 signals from BACKEND
+ [GALAUSDT] SwingDetector: 300 signals from BACKEND
+ [ETHUSDT] SwingDetector: 300 signals from BACKEND
+ [BTCUSDT] SwingDetector: 300 signals from BACKEND
+ [ADAUSDT] SwingDetector: 300 signals from BACKEND
+ [SOLUSDT] SwingDetector: 300 signals from BACKEND
+ [DOGEUSDT] SwingDetector: 300 signals from BACKEND
+ [XRPUSDT] SwingDetector: 300 signals from BACKEND
+ [SUIUSDT] SwingDetector: 300 signals from BACKEND
+ [TRXUSDT] SwingDetector: 300 signals from BACKEND
+robustness.js:180 [HealthCheck] Backend reconnected
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@BTCUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ETHUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@XRPUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRXUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@GALAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SUIUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@TRBUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@SOLUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@ADAUSDT desde IndexedDB
+IndicatorCache.js:85 [IndicatorCache] 💾 swing@DOGEUSDT desde IndexedDB
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@BTCUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@XRPUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@TRXUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@GALAUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@SUIUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@TRBUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@SOLUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ADAUSDT desde memoria
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@DOGEUSDT desde memoria
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRBUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SUIUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_TRXUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ BTCUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ DOGEUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado BTCUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado DOGEUSDT: 2 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado ETHUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ ETHUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado GALAUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ GALAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_BTCUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_DOGEUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_ETHUSDT_1 (memoria: 3/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_GALAUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ XRPUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado XRPUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado SOLUSDT: 1 memoria, 2 IndexedDB
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado TRXUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ SOLUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado SUIUSDT: 1 memoria, 2 IndexedDB
+CandleCache.js:168 [CandleCache] ✅ TRXUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:168 [CandleCache] ✅ SUIUSDT@1 - guardado (7199 velas, memoria: 4/4)
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_XRPUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ ADAUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado ADAUSDT: 2 memoria, 2 IndexedDB
+CandleCache.js:115 [CandleCache] 🔄 LRU evict: candles_SOLUSDT_1 (memoria: 3/4)
+CandleCache.js:168 [CandleCache] ✅ TRBUSDT@1 - guardado (7199 velas, memoria: 4/4)
+IndicatorCache.js:211 [IndicatorCache] 🗑️ Invalidado TRBUSDT: 1 memoria, 2 IndexedDB

@@ -133,6 +133,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [isInitialized, setIsInitialized] = useState(false); // 🎯 VIRTUALIZACIÓN: Estado de inicialización
   const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
+  const [redrawTrigger, setRedrawTrigger] = useState(0); // Para forzar redraw desde indicadores
 
   // Estados para modo dibujo inline
   const [internalDrawingMode, setInternalDrawingMode] = useState(false);
@@ -158,6 +159,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   // Ref para drawingMode (para uso en drawChart sin depender del closure)
   const drawingModeRef = useRef(drawingMode);
   drawingModeRef.current = drawingMode;
+
+  // Ref para drawChart (para que requestRedraw siempre use la version mas reciente)
+  const drawChartRef = useRef(null);
+
+  // Ref para setRedrawTrigger (para que requestRedraw pueda forzar re-render)
+  const setRedrawTriggerRef = useRef(setRedrawTrigger);
+  setRedrawTriggerRef.current = setRedrawTrigger;
 
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
@@ -1043,6 +1051,17 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   };
 
+  // Mantener referencia estable a drawChart para que requestRedraw siempre use la version mas reciente
+  drawChartRef.current = drawChart;
+
+  // ✨ useEffect para manejar redrawTrigger - cuando indicadores piden redraw
+  useEffect(() => {
+    if (redrawTrigger > 0 && candlesRef.current && candlesRef.current.length > 0) {
+      console.log(`[${symbol}] redrawTrigger=${redrawTrigger}, ejecutando drawChart`);
+      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+    }
+  }, [redrawTrigger]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ==================== DATA LOADING ====================
   
   const loadHistoricalData = async () => {
@@ -1116,14 +1135,23 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           console.log(`[${symbol}] ✅ Completa: ${finalCandles.length} velas`);
         }
 
-        // Preservar velas del WebSocket que son más nuevas
+        // Preservar velas del WebSocket que son más nuevas - CON DEDUPLICACION
         const existingCandles = candlesRef.current;
         if (existingCandles && existingCandles.length > 0 && finalCandles.length > 0) {
+          // Usar Map para deduplicar por timestamp
+          const candleMap = new Map();
+          finalCandles.forEach(c => candleMap.set(c.timestamp, c));
+
+          // Agregar velas del WebSocket (sobrescriben si hay conflicto)
           const lastFinalTs = finalCandles[finalCandles.length - 1].timestamp;
-          const newerFromWs = existingCandles.filter(c => c.timestamp > lastFinalTs);
-          if (newerFromWs.length > 0) {
-            finalCandles = [...finalCandles, ...newerFromWs];
-          }
+          existingCandles.forEach(c => {
+            if (c.timestamp > lastFinalTs) {
+              candleMap.set(c.timestamp, c);
+            }
+          });
+
+          // Convertir a array ordenado
+          finalCandles = Array.from(candleMap.values()).sort((a, b) => a.timestamp - b.timestamp);
         }
 
         // Actualizar ref y cache
@@ -1197,6 +1225,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         if (onChartLoaded && indicatorManagerRef.current) {
           // Esperar a que el IndicatorManager refresque los indicadores
           indicatorManagerRef.current.refresh().then(() => {
+            // 🚀 Iniciar polling de indicadores despues del refresh inicial
+            indicatorManagerRef.current.startAllPolling();
             onChartLoaded();
           }).catch(() => {
             // Si falla el refresh, notificar de todas formas
@@ -1320,7 +1350,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           // offset = 0 significa que está viendo el precio más reciente
           const wasAtLatest = viewStateRef.current.offset <= 1;
 
-          candlesRef.current.push(currentInProgress);
+          // ✅ FIX: Evitar duplicados - solo agregar si no existe una vela con ese timestamp
+          const existingIndex = candlesRef.current.findIndex(c => c.timestamp === currentInProgress.timestamp);
+          if (existingIndex === -1) {
+            candlesRef.current.push(currentInProgress);
+          } else {
+            // Actualizar la vela existente con datos más recientes
+            candlesRef.current[existingIndex] = currentInProgress;
+          }
 
           if (candlesRef.current.length > 2000) {
             candlesRef.current.shift();
@@ -1903,6 +1940,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
       indicatorManagerRef.current.days = parseInt(days);
       indicatorManagerRef.current.refresh().then(() => {
+        // 🚀 Reiniciar polling despues de cambio de dias
+        indicatorManagerRef.current.startAllPolling();
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
       });
     }
@@ -1949,15 +1988,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         const profiles = externalIndicatorManager.getFixedRangeProfiles();
         setFixedRangeProfiles(profiles);
 
-        // Agregar requestRedraw si no existe
-        if (!externalIndicatorManager.requestRedraw) {
-          externalIndicatorManager.requestRedraw = () => {
-            if (candlesRef.current && candlesRef.current.length > 0) {
-              log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
-              drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-            }
-          };
-        }
+        // Agregar requestRedraw - usar setRedrawTrigger para forzar re-render de React
+        externalIndicatorManager.requestRedraw = () => {
+          console.log(`[${symbol}] requestRedraw via setRedrawTrigger`);
+          if (setRedrawTriggerRef.current) {
+            setRedrawTriggerRef.current(prev => prev + 1);
+          }
+        };
 
         log.debug(`[${symbol}] 📊 ✅ IndicatorManager externo conectado`);
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
@@ -1969,11 +2006,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       await indicatorManagerRef.current.initialize(indicatorStates);
 
-      // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
+      // ✨ NUEVO: Agregar requestRedraw para que los indicadores puedan forzar redibujado
+      // Usar setRedrawTrigger para forzar re-render de React (no llamar drawChart directamente)
       indicatorManagerRef.current.requestRedraw = () => {
-        if (candlesRef.current && candlesRef.current.length > 0) {
-          log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
-          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+        console.log(`[${symbol}] requestRedraw via setRedrawTrigger`);
+        if (setRedrawTriggerRef.current) {
+          setRedrawTriggerRef.current(prev => prev + 1);
         }
       };
 
@@ -2197,7 +2235,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // Refrescar indicadores (VWAP, etc.) para que tengan datos actualizados
       if (indicatorManagerRef.current) {
         // 🚀 OPTIMIZACIÓN: Restaurar indicadores desde cache o refetch
-        indicatorManagerRef.current.refresh();
+        indicatorManagerRef.current.refresh().then(() => {
+          // Reiniciar polling despues de que el chart se vuelva visible
+          indicatorManagerRef.current.startAllPolling();
+        });
       }
     } else if (!isVisible && wsSubscribedRef.current) {
       // Chart no visible - desuscribir de WebSocket para ahorrar recursos

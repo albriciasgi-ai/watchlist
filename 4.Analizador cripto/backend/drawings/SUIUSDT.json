@@ -1,0 +1,21 @@
+{
+  "symbol": "SUIUSDT",
+  "shapes": [
+    {
+      "type": "vertical",
+      "id": "vertical_1769997442502_0.20701643846857642",
+      "price": 1.1203940208333334,
+      "time": 1769997300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-02-02T01:57:40.927210+00:00",
+  "total_shapes": 1
+}

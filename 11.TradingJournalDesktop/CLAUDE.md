@@ -248,18 +248,19 @@ Esta aplicacion **NO tiene backend propio**. Reutiliza el backend de `6.Trading_
 
 | Endpoint | Descripcion |
 |----------|-------------|
-| `GET /api/monitor/status` | Estado del monitor |
-| `POST /api/monitor/start` | Iniciar monitor |
-| `POST /api/monitor/stop` | Detener monitor |
+| `GET /api/monitor/status` | Estado del monitor (running, tracked_positions, etc) |
+| `POST /api/monitor/start` | Iniciar monitor de posiciones |
+| `POST /api/monitor/stop` | Detener monitor de posiciones |
+| `POST /api/monitor/reconcile` | Reconciliar entries huerfanas con TradingBot |
 | `GET /api/entries` | Lista de trades |
 | `GET /api/entries/{id}` | Detalle de un trade |
-| `PUT /api/entries/{id}` | Actualizar trade (reflexion) |
+| `PUT /api/entries/{id}` | Actualizar trade (reflexion, SL, TP, etc) |
 | `GET /api/entries/statistics` | Estadisticas generales |
 | `GET /api/metrics/summary` | Metricas avanzadas |
 | `GET /api/metrics/equity-curve` | Curva de equity |
-| `GET /api/screenshots/{path}` | Servir screenshot |
-| `GET /api/entries/export` | Exportar trades |
-| `POST /api/entries/import` | Importar trades |
+| `GET /screenshots/{path}` | Servir screenshot (StaticFiles) |
+| `GET /api/entries/export` | Exportar trades a JSON |
+| `POST /api/entries/import` | Importar trades desde JSON |
 
 ---
 
@@ -279,16 +280,22 @@ Esta aplicacion **NO tiene backend propio**. Reutiliza el backend de `6.Trading_
 
 ### Trade Detail
 - **Resumen de P&L**: USD, porcentaje, R-Multiple
-- **Screenshots**: Imagen de entrada y salida
+- **Screenshots**: Imagen de entrada y salida (con manejo de errores)
 - **Detalles del trade**: Precios, tiempos, cantidad
+- **SL/TP editables**: Campos para editar Stop Loss y Take Profit manualmente
 - **Reflexion editable**: Notas y lecciones aprendidas
 - **Emociones**: Antes y despues del trade
 - **Calidad del setup**: Slider 1-10
+- **Seguir reglas**: Checkbox editable
 
 ### Settings
-- **Control del monitor**: Start/Stop
-- **Estado de conexiones**: Backend, TradingBot, Analizador
+- **Control del monitor**: Start/Stop con indicador visual de estado
+- **Posiciones rastreadas**: Cantidad de posiciones en seguimiento
+- **Intervalo de polling**: Frecuencia de verificacion (default 5s)
+- **Boton Reconciliar**: Sincroniza entries con TradingBot
+- **Estado de conexiones**: Backend, TradingBot
 - **Export/Import**: Backup de datos en JSON
+- **Limpiar screenshots**: Eliminar todos los screenshots
 - **Version**: Indicador de version de la app
 
 ---
@@ -441,6 +448,44 @@ class ConnectionTracker {
 2. Verificar que Vite inicia en puerto 12002
 3. Verificar version de Node.js (recomendado 18+)
 
+### Screenshots no se muestran (imagen rota)
+
+**Sintoma**: Icono de imagen rota en lugar del screenshot
+
+**Solucion**:
+1. El screenshot puede no existir (trade historico sin captura)
+2. Verificar que la ruta tiene formato correcto en la DB
+3. El frontend normaliza rutas Windows automaticamente
+4. Revisar consola del navegador por errores 404
+
+### R-Multiple muestra 0 o N/A
+
+**Sintoma**: R-Multiple no se calcula
+
+**Solucion**:
+1. R-Multiple requiere Stop Loss definido
+2. Editar el trade y agregar SL manualmente
+3. El calculo es: `(exit_price - entry_price) / (entry_price - stop_loss)`
+
+### Entries huerfanas (OPEN sin posicion real)
+
+**Sintoma**: Trades marcados como OPEN pero ya fueron cerrados
+
+**Solucion**:
+1. Ir a Settings → Click en "Reconciliar"
+2. Esto cierra automaticamente entries sin posicion activa
+3. Alternativa: Editar manualmente el trade y cambiar estado
+
+### Screenshots se capturan en blanco
+
+**Sintoma**: Screenshot existe pero muestra pagina en blanco
+
+**Solucion**:
+1. AnalizadorDesktop debe estar completamente cargado
+2. El simbolo del trade debe estar seleccionado en el Analizador
+3. Playwright espera 3 segundos, puede no ser suficiente
+4. Verificar que no hay errores en consola del Analizador
+
 ---
 
 ## HISTORIAL DE DESARROLLO
@@ -474,3 +519,169 @@ class ConnectionTracker {
 - ✅ Screenshots capturados correctamente
 - ✅ Metricas siempre actualizadas
 - ✅ App corre en segundo plano via System Tray
+
+---
+
+### Febrero 2026 - Mejoras de Screenshots, SL/TP y Reconciliacion
+
+**Problemas identificados**:
+1. Screenshots no se mostraban correctamente (rutas con backslashes)
+2. SL/TP no se capturaban del TradingBot
+3. R-Multiple no se calculaba
+4. Entries huerfanas quedaban abiertas indefinidamente
+5. No habia forma de editar SL/TP manualmente
+6. Puertos de screenshot apuntaban a versiones web en lugar de Desktop
+
+**Solucion implementada en 4 fases**:
+
+#### Fase 1: Screenshots
+- Normalizacion de rutas Windows (backslashes → forward slashes)
+- Funcion `getScreenshotUrl()` corregida en TradeDetail.jsx
+- Manejo de errores de carga con estado `screenshotErrors`
+- Placeholder visual cuando la imagen no carga
+
+#### Fase 2: Captura de SL/TP y R-Multiple
+- Backend captura SL/TP desde TradingBot al crear entry
+- Calculo automatico de R-Multiple cuando hay SL definido
+- Mejora en matching de source con alertas recientes (ventana 30 min)
+
+#### Fase 3: Reconciliacion de Entries
+- Deteccion de cambios de direccion (cierra entry anterior, crea nueva)
+- Endpoint `/api/monitor/reconcile` para limpiar entries huerfanas
+- Cierra entries OPEN que no tienen posicion activa en TradingBot
+
+#### Fase 4: UI Mejorada
+- Indicador visual de estado del monitor (activo/inactivo con badge)
+- Campos editables para SL/TP en TradeDetail
+- Boton "Reconciliar" en Settings para sincronizacion manual
+- Checkbox "Seguir reglas" editable
+
+**Archivos modificados**:
+
+| Archivo | Cambios |
+|---------|---------|
+| `src/components/TradeDetail.jsx` | `getScreenshotUrl()`, `screenshotErrors` state, `handleScreenshotError()`, campos editables SL/TP |
+| `src/components/TradeDetail.css` | Estilo `.detail-input` para campos editables |
+| `src/components/Settings.jsx` | Estado `reconciling`, funcion `handleReconcile()`, boton Reconciliar |
+| `6.Trading_Journal/backend/services/screenshot_service.py` | Puertos actualizados a versiones Desktop |
+
+**Cambio de puertos para Screenshots**:
+
+El screenshot service ahora usa las versiones Desktop:
+
+```python
+# ANTES (versiones web)
+"analizador": "http://localhost:10001"
+"order_flow": "http://localhost:11001"
+
+# DESPUES (versiones Desktop)
+"analizador": "http://localhost:5174"   # AnalizadorDesktop
+"order_flow": "http://localhost:5175"   # OrderFlowDesktop
+```
+
+**Resultado**:
+- ✅ Screenshots se muestran correctamente
+- ✅ SL/TP se capturan automaticamente
+- ✅ R-Multiple calculado cuando hay SL
+- ✅ Entries huerfanas se pueden reconciliar
+- ✅ SL/TP editables manualmente
+- ✅ Screenshots capturados desde apps Desktop
+
+---
+
+## SISTEMA DE SCREENSHOTS
+
+### Como Funciona
+
+El sistema de screenshots captura el grafico **en el momento** de abrir/cerrar una posicion:
+
+1. **Al abrir posicion**: El backend detecta nueva posicion via polling al TradingBot
+2. **Playwright navega** a la URL del AnalizadorDesktop (puerto 5174)
+3. **Espera renderizado** del grafico (3 segundos)
+4. **Captura screenshot** del elemento `.chart-container` o canvas
+5. **Guarda en** `screenshots/{symbol}/{entry_id}_{event}_{timestamp}.png`
+
+### Requisitos para Screenshots
+
+| Requisito | Puerto | Descripcion |
+|-----------|--------|-------------|
+| AnalizadorDesktop | 5174 | Debe estar corriendo y visible |
+| TradingBot | 5000 | Para detectar posiciones |
+| Backend Journal | 12000 | Orquesta la captura |
+
+### Limitaciones
+
+- **Solo trades nuevos**: No puede generar screenshots para trades historicos
+- **Requiere app abierta**: AnalizadorDesktop debe estar corriendo
+- **Fallback mplfinance**: Si Playwright falla, genera chart estatico basico
+
+### URLs de Frontend para Screenshots
+
+```python
+# En screenshot_service.py
+self.frontend_urls = {
+    "watchlist": "http://localhost:5173",      # App 2 (web)
+    "analizador": "http://localhost:5174",     # App 8 AnalizadorDesktop
+    "order_flow": "http://localhost:5175",     # App 9 OrderFlowDesktop
+    "backtester": "http://localhost:5173"      # App 1 (web)
+}
+```
+
+### Ruta de Screenshots
+
+```
+screenshots/
+├── BTCUSDT/
+│   ├── abc123_entry_20260201_153000.png
+│   └── abc123_exit_20260201_160000.png
+├── ETHUSDT/
+│   └── def456_entry_20260201_154500.png
+└── ...
+```
+
+### Normalizacion de Rutas
+
+El frontend normaliza rutas Windows para URLs HTTP:
+
+```javascript
+const getScreenshotUrl = (path) => {
+  if (!path) return null
+  // Convertir backslashes a forward slashes
+  let normalizedPath = path.replace(/\\/g, '/')
+  // Remover prefijo "screenshots/" si existe
+  normalizedPath = normalizedPath.replace(/^\/?screenshots\//, '')
+  return `${API_BASE_URL}/screenshots/${normalizedPath}`
+}
+```
+
+---
+
+## ENDPOINT DE RECONCILIACION
+
+### POST /api/monitor/reconcile
+
+Sincroniza el estado del Journal con las posiciones reales del TradingBot:
+
+```javascript
+// Desde Settings.jsx
+const handleReconcile = async () => {
+  const res = await fetch(`${API_BASE_URL}/api/monitor/reconcile`, {
+    method: 'POST'
+  })
+  const data = await res.json()
+  // data.result.closed_orphans = entries cerradas
+  // data.result.created_entries = entries creadas
+}
+```
+
+### Que hace:
+
+1. **Cierra entries huerfanas**: Entries con estado OPEN pero sin posicion activa en TradingBot
+2. **Crea entries faltantes**: Posiciones activas en TradingBot sin entry en Journal
+3. **Retorna resumen**: Cantidad de entries cerradas y creadas
+
+### Cuando usarlo:
+
+- Despues de reiniciar el backend
+- Si hay desincronizacion entre Journal y TradingBot
+- Para limpiar entries que quedaron "colgadas"

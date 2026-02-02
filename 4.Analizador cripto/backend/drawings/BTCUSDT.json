@@ -1,6 +1,35 @@
 {
   "symbol": "BTCUSDT",
-  "shapes": [],
-  "updated_at": "2026-01-29T04:57:44.197204+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "vertical",
+      "id": "vertical_1769986319810_0.5444792303939545",
+      "price": 77304.8426875,
+      "time": 1769986260000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1769997321133_0.8427105610920089",
+      "price": 77646.43985416667,
+      "time": 1769997300000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-02-02T01:55:35.952270+00:00",
+  "total_shapes": 2
 }

@@ -22,6 +22,7 @@ import backgroundPreloader from '../utils/BackgroundPreloader.js';
 import { API_BASE_URL } from "../config";
 import ConnectionStatus from "./ConnectionStatus";
 import { initRobustness, stopRobustness } from '../utils/robustness';
+import pollingScheduler from '../utils/PollingScheduler';
 
 // Logger instance
 const log = new Logger('Watchlist', { level: 'info' });
@@ -184,10 +185,17 @@ const Watchlist = () => {
   const [fullscreenSymbol, setFullscreenSymbol] = useState(null);
   const [fullscreenInterval, setFullscreenInterval] = useState(null);
 
-  // 🛡️ ROBUSTNESS: Inicializar sistema de robustez al montar
+  // 🛡️ ROBUSTNESS: Inicializar sistema de robustez y PollingScheduler al montar
   useEffect(() => {
     initRobustness();
-    return () => stopRobustness();
+    pollingScheduler.start();
+    log.info('[PollingScheduler] Started');
+
+    return () => {
+      stopRobustness();
+      pollingScheduler.stop();
+      log.info('[PollingScheduler] Stopped');
+    };
   }, []);
 
   // ⏱️ CRONOMETRO: Estados para medir tiempo de carga

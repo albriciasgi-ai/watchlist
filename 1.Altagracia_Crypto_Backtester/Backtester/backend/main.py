@@ -8,6 +8,7 @@ import asyncio
 import time
 import json
 import sys
+import numpy as np
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -2842,7 +2843,9 @@ try:
     from zone_detector import ZoneDetector, ZoneDetectionParams, zone_detector
     from zone_evaluator import ZoneEvaluator, EvaluationParams, zone_evaluator
     from zone_optimizer import ZoneOptimizer, OptimizationConfig, zone_optimizer
+    from zone_quality_analyzer import ZoneQualityAnalyzer, ZoneParameterOptimizer, BreakoutAnalysis
     print("[STARTUP] Zone Detector 2.0 modules loaded successfully")
+    print("[STARTUP] Zone Quality Analyzer loaded successfully")
 except ImportError as e:
     print(f"[STARTUP] Warning: Could not load Zone Detector modules: {e}")
     zone_detector = None
@@ -3256,6 +3259,14 @@ async def get_zone_methods():
                 "pa_min_touches": {"default": 3, "range": [2, 10], "description": "Mínimo de toques en nivel"},
                 "pa_lookback_bars": {"default": 100, "range": [50, 500], "description": "Velas de lookback"},
                 "pa_min_separation_bars": {"default": 5, "range": [2, 20], "description": "Separación mínima entre toques"}
+            },
+            "consolidation": {
+                "consol_min_bars": {"default": 8, "range": [5, 30], "description": "Mínimo de velas en consolidación"},
+                "consol_max_bars": {"default": 50, "range": [20, 300], "description": "Máximo de velas en consolidación"},
+                "consol_max_range_pct": {"default": 3.0, "range": [1.0, 10.0], "description": "Máximo % de rango de precio"},
+                "consol_atr_ratio": {"default": 0.6, "range": [0.3, 2.0], "description": "ATR local/global (menor = menos volátil)"},
+                "consol_body_ratio": {"default": 0.5, "range": [0.3, 0.8], "description": "Ratio cuerpo/rango de velas (menor = más indecisión)"},
+                "consol_max_outside_bars": {"default": 3, "range": [1, 10], "description": "Velas fuera del rango antes de cerrar zona"}
             }
         }
     }
@@ -3632,6 +3643,336 @@ async def quick_backtest(request: Request):
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e)}
+
+
+# =============================================================================
+# ZONE QUALITY ANALYSIS - Optimización de parámetros
+# =============================================================================
+
+@app.post("/api/zones/quality-simulation")
+@limiter.limit("2/minute")
+async def run_zone_quality_simulation(request: Request):
+    """
+    Ejecuta simulación completa para encontrar parámetros óptimos de zonas de consolidación.
+
+    Analiza zonas detectadas con diferentes parámetros y evalúa la calidad del breakout
+    basándose en:
+    - R-Multiple (distancia del movimiento vs altura de zona)
+    - Momentum (fuerza y persistencia del breakout)
+    - Volumen (acumulación pre-breakout y confirmación post-breakout)
+
+    Retorna métricas detalladas y recomendaciones de parámetros.
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol', 'BTCUSDT')
+        interval = body.get('interval', '5')  # Default 5 minutos
+        days = body.get('days', 1095)  # Default 3 años
+        quality_threshold = body.get('quality_threshold', 60.0)
+        lookforward_bars = body.get('lookforward_bars', 100)
+
+        # Modo de ejecución: "simultaneous" (múltiples trades) o "sequential" (un trade a la vez)
+        trade_mode = body.get('trade_mode', 'simultaneous')
+
+        # Grid de parámetros a probar
+        param_grid = body.get('param_grid', {
+            "consol_min_bars": [5, 8, 12, 15],
+            "consol_max_bars": [30, 50, 80, 120],
+            "consol_max_range_pct": [1.5, 2.0, 3.0, 4.0],
+            "consol_atr_ratio": [0.4, 0.6, 0.8, 1.0],
+            "consol_body_ratio": [0.4, 0.5, 0.6],
+            "consol_max_outside_bars": [2, 3, 5, 8]
+        })
+
+        print(f"[QUALITY_SIM] Starting simulation for {symbol} {interval}m with {days} days...")
+
+        # Obtener velas históricas
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+        print(f"[QUALITY_SIM] Loaded {len(candles)} candles")
+        print(f"[QUALITY_SIM] Date range: {datetime.fromtimestamp(candles[0]['timestamp']/1000)} to {datetime.fromtimestamp(candles[-1]['timestamp']/1000)}")
+
+        # Crear optimizador
+        optimizer = ZoneParameterOptimizer(candles)
+
+        # Ejecutar grid search
+        from itertools import product
+
+        param_names = list(param_grid.keys())
+        param_values = list(param_grid.values())
+        combinations = list(product(*param_values))
+
+        print(f"[QUALITY_SIM] Testing {len(combinations)} parameter combinations...")
+
+        results = []
+        progress_interval = max(1, len(combinations) // 10)
+
+        for i, combo in enumerate(combinations):
+            params_dict = dict(zip(param_names, combo))
+
+            try:
+                # Crear parámetros
+                params = ZoneDetectionParams(**params_dict)
+
+                # Detectar zonas
+                zones = zone_detector.detect_zones(candles, method="consolidation", params=params)
+
+                if len(zones) < 3:
+                    continue
+
+                # Convertir a diccionarios
+                zones_dict = [z.to_dict() for z in zones]
+
+                # Analizar calidad según el modo de ejecución
+                sequential_stats = None
+                if trade_mode == "sequential":
+                    analyses, sequential_stats = optimizer.quality_analyzer.analyze_zones_sequential(zones_dict, lookforward_bars)
+                else:
+                    analyses = optimizer.quality_analyzer.analyze_multiple_zones(zones_dict, lookforward_bars)
+
+                if len(analyses) < 3:
+                    continue
+
+                # Generar estadísticas
+                stats = optimizer.quality_analyzer.generate_statistics(analyses, quality_threshold)
+
+                result = {
+                    "params": params_dict,
+                    "total_zones": stats['total_zones'],
+                    "quality_zones": stats['quality_zones'],
+                    "avg_r_multiple": round(stats['avg_r_multiple'], 2),
+                    "median_r_multiple": round(stats['median_r_multiple'], 2),
+                    "pct_reached_2r": round(stats['pct_reached_2r'], 1),
+                    "pct_reached_3r": round(stats['pct_reached_3r'], 1),
+                    "avg_quality_score": round(stats['avg_quality_score'], 1),
+                    "avg_bars_to_2r": round(stats['avg_bars_to_2r'], 0) if stats['avg_bars_to_2r'] else None,
+                    "score_distribution": stats['score_distribution'],
+                    # MÉTRICAS DE TRADING REAL (TP vs SL)
+                    "real_win_rate": round(stats['real_win_rate'], 1),  # % donde TP(2R) hit antes que SL(1R)
+                    "total_wins": stats['total_wins'],
+                    "total_losses": stats['total_losses'],
+                    "total_still_open": stats['total_still_open'],  # Trades sin cerrar aún
+                    "total_pnl_r": round(stats['total_pnl_r'], 1),  # P&L total en R
+                    "expectancy_r": round(stats['expectancy_r'], 3),  # Expectancy por trade
+                    "is_profitable": stats['is_profitable'],  # True si expectancy > 0
+                    # DURACIÓN DE TRADES
+                    "avg_bars_to_close": round(stats['avg_bars_to_close'], 1) if stats.get('avg_bars_to_close') else None,
+                    "avg_win_duration": round(stats['avg_win_duration'], 1) if stats.get('avg_win_duration') else None,
+                    "avg_loss_duration": round(stats['avg_loss_duration'], 1) if stats.get('avg_loss_duration') else None,
+                    # SECUENCIALIDAD (solo si trade_mode == "sequential")
+                    "sequential_stats": sequential_stats
+                }
+
+                results.append(result)
+
+            except Exception as e:
+                print(f"[QUALITY_SIM] Error with params {params_dict}: {e}")
+                continue
+
+            if (i + 1) % progress_interval == 0:
+                print(f"[QUALITY_SIM] Progress: {i + 1}/{len(combinations)} ({((i+1)/len(combinations)*100):.0f}%)")
+
+        # Ordenar por mejor rendimiento de TRADING REAL
+        # Priorizar: 1) Expectancy (E>0 = rentable), 2) Real Win Rate, 3) Avg quality score
+        results.sort(key=lambda x: (x['expectancy_r'], x['real_win_rate'], x['avg_quality_score']), reverse=True)
+
+        # Analizar parámetros de los mejores resultados
+        top_results = results[:10] if len(results) >= 10 else results
+
+        param_recommendations = {}
+        if top_results:
+            for param in param_names:
+                values = [r['params'][param] for r in top_results]
+                param_recommendations[param] = {
+                    "recommended": float(np.median(values)),
+                    "range": [float(min(values)), float(max(values))],
+                    "values_in_top_10": values
+                }
+
+        print(f"[QUALITY_SIM] Completed. {len(results)} valid combinations found.")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "trade_mode": trade_mode,
+            "candles_analyzed": len(candles),
+            "combinations_tested": len(combinations),
+            "valid_results": len(results),
+            "quality_threshold": quality_threshold,
+            "best_result": results[0] if results else None,
+            "top_10_results": top_results,
+            "all_results": results,
+            "parameter_recommendations": param_recommendations,
+            "summary": {
+                # MÉTRICAS DE TRADING REAL
+                "best_real_win_rate": max(r['real_win_rate'] for r in results) if results else 0,
+                "best_expectancy_r": max(r['expectancy_r'] for r in results) if results else 0,
+                "profitable_combinations": len([r for r in results if r['is_profitable']]),
+                "unprofitable_combinations": len([r for r in results if not r['is_profitable']]),
+                # DURACIÓN DE TRADES
+                "avg_trade_duration_bars": np.mean([r['avg_bars_to_close'] for r in results if r.get('avg_bars_to_close')]) if results else None,
+                "avg_win_duration_bars": np.mean([r['avg_win_duration'] for r in results if r.get('avg_win_duration')]) if results else None,
+                "avg_loss_duration_bars": np.mean([r['avg_loss_duration'] for r in results if r.get('avg_loss_duration')]) if results else None,
+                # Métricas auxiliares
+                "best_pct_2r": max(r['pct_reached_2r'] for r in results) if results else 0,
+                "best_avg_r": max(r['avg_r_multiple'] for r in results) if results else 0,
+                "avg_zones_per_config": np.mean([r['total_zones'] for r in results]) if results else 0
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Zone quality simulation: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/analyze-quality")
+@limiter.limit("10/minute")
+async def analyze_zones_quality(request: Request):
+    """
+    Analiza la calidad de zonas ya detectadas.
+
+    Recibe zonas específicas y retorna métricas detalladas de cada breakout.
+    Útil para visualizar zonas individuales en el gráfico.
+    """
+    try:
+        body = await request.json()
+        symbol = body.get('symbol', 'BTCUSDT')
+        interval = body.get('interval', '5')
+        days = body.get('days', 1095)
+        zones = body.get('zones', [])  # Lista de zonas a analizar
+        params = body.get('params', {})  # Si no se pasan zonas, detectar con estos params
+        lookforward_bars = body.get('lookforward_bars', 100)
+        quality_threshold = body.get('quality_threshold', 60.0)
+
+        # Obtener velas
+        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "Could not fetch historical data"}
+
+        candles = historical['data']
+
+        # Si no se pasan zonas, detectar con parámetros dados
+        if not zones and params:
+            zone_params = ZoneDetectionParams(**params)
+            detected = zone_detector.detect_zones(candles, method="consolidation", params=zone_params)
+            zones = [z.to_dict() for z in detected]
+
+        if not zones:
+            return {"success": False, "error": "No zones provided and no params to detect"}
+
+        # Analizar cada zona
+        analyzer = ZoneQualityAnalyzer(candles)
+        analyses = analyzer.analyze_multiple_zones(zones, lookforward_bars)
+
+        # Generar estadísticas
+        stats = analyzer.generate_statistics(analyses, quality_threshold)
+
+        # Convertir análisis a diccionarios con información para visualización
+        analyses_dict = []
+        for a in analyses:
+            d = a.to_dict()
+            # Añadir clasificación de calidad
+            if a.quality_score >= 80:
+                d['quality_class'] = 'excellent'
+            elif a.quality_score >= 60:
+                d['quality_class'] = 'good'
+            elif a.quality_score >= 40:
+                d['quality_class'] = 'average'
+            else:
+                d['quality_class'] = 'poor'
+            analyses_dict.append(d)
+
+        # Ordenar por quality_score descendente
+        analyses_dict.sort(key=lambda x: x['quality_score'], reverse=True)
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "zones_analyzed": len(analyses),
+            "statistics": stats,
+            "analyses": analyses_dict,
+            "quality_zones": [a for a in analyses_dict if a['quality_score'] >= quality_threshold],
+            "visualization_data": {
+                "zones_by_quality": {
+                    "excellent": [a for a in analyses_dict if a['quality_class'] == 'excellent'],
+                    "good": [a for a in analyses_dict if a['quality_class'] == 'good'],
+                    "average": [a for a in analyses_dict if a['quality_class'] == 'average'],
+                    "poor": [a for a in analyses_dict if a['quality_class'] == 'poor']
+                }
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Zone quality analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/quality-metrics")
+async def get_quality_metrics_info():
+    """
+    Retorna información sobre las métricas de calidad disponibles.
+    """
+    return {
+        "success": True,
+        "metrics": {
+            "r_multiple": {
+                "description": "Ratio entre el movimiento del precio después del breakout y la altura de la zona",
+                "formula": "MFE / zone_height",
+                "interpretation": {
+                    "< 1.0": "Breakout débil - no alcanzó ni siquiera 1x la altura de la zona",
+                    "1.0 - 2.0": "Breakout aceptable - movimiento moderado",
+                    "2.0 - 3.0": "Breakout bueno - movimiento significativo",
+                    "> 3.0": "Breakout excelente - movimiento muy fuerte"
+                }
+            },
+            "momentum_score": {
+                "description": "Evalúa la fuerza y persistencia del breakout",
+                "components": {
+                    "breakout_body_ratio": "Tamaño del cuerpo de la vela de breakout vs ATR",
+                    "continuation_bars": "Velas consecutivas en la dirección del breakout",
+                    "pullback_depth": "Máximo retroceso antes de continuar"
+                }
+            },
+            "volume_score": {
+                "description": "Evalúa la confirmación de volumen",
+                "components": {
+                    "zone_volume_vs_avg": "Volumen de la zona vs promedio histórico",
+                    "breakout_volume_spike": "Volumen de breakout vs promedio de la zona",
+                    "volume_confirmation_bars": "Velas con volumen > promedio después del breakout"
+                }
+            },
+            "quality_score": {
+                "description": "Score compuesto ponderado",
+                "formula": "40% R-Multiple + 35% Momentum + 25% Volume",
+                "thresholds": {
+                    "excellent": ">= 80",
+                    "good": "60 - 80",
+                    "average": "40 - 60",
+                    "poor": "< 40"
+                }
+            }
+        },
+        "recommended_params_for_2r": {
+            "consol_min_bars": "8-12 (zonas más formadas)",
+            "consol_max_bars": "50-80 (evitar zonas muy largas)",
+            "consol_max_range_pct": "2.0-3.0% (rangos compactos)",
+            "consol_atr_ratio": "0.5-0.7 (baja volatilidad)",
+            "consol_body_ratio": "0.4-0.5 (velas de indecisión)",
+            "consol_max_outside_bars": "3-5 (tolerancia a wick)"
+        }
+    }
 
 
 # ==================== MAIN ====================

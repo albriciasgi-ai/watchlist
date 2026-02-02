@@ -23,6 +23,7 @@ import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
 import ConnectionStatus from "./ConnectionStatus";
 import { initRobustness, stopRobustness } from "../utils/robustness";
+import pollingCoordinator from "../utils/PollingCoordinator";
 
 const log = new Logger('SingleSymbolAnalyzer', { level: 'info' });
 
@@ -184,10 +185,17 @@ const SingleSymbolAnalyzer = () => {
   // Ref para el chart key (forzar remount al cambiar simbolo)
   const chartKeyRef = useRef(0);
 
-  // Inicializar sistema de robustez (health check, cache cleanup)
+  // Inicializar sistema de robustez (health check, cache cleanup) y PollingCoordinator
   useEffect(() => {
     initRobustness();
-    return () => stopRobustness();
+    pollingCoordinator.start();
+    log.info('[PollingCoordinator] Started');
+
+    return () => {
+      stopRobustness();
+      pollingCoordinator.stop();
+      log.info('[PollingCoordinator] Stopped');
+    };
   }, []);
 
   // Guardar preferencias en localStorage

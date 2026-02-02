@@ -873,6 +873,137 @@ const labelX = mouseX - textWidth / 2;
 - ✅ Sin parpadeo al moverse entre velas
 - ✅ Etiqueta siempre visible en el area del grafico
 
+### 31 Enero 2026 - Sistema de Integridad de Cache de Footprints
+
+**Objetivo**: Validar, reparar y limpiar el cache de footprints para mantener datos consistentes.
+
+**Problema original**:
+- Footprints con step_size antiguo mezclados con los nuevos
+- Al cambiar step_size en el modal, solo afectaba a velas nuevas
+- Sin forma facil de aplicar cambios a historial
+
+**Soluciones implementadas**:
+
+#### 1. Panel de Integridad (IntegrityPanel.jsx)
+
+Nuevo panel en el modal de OrderFlow Settings que muestra:
+- Estado de salud del cache (verde=OK, amarillo=reparando, rojo=problemas)
+- Conteo de simbolos saludables vs con problemas
+- Lista de problemas detectados (gaps)
+- Botones: Validar, Reparar, Limpiar Cache Completo
+
+#### 2. Servicio de Integridad (cache_integrity_service.py)
+
+```python
+# Valida footprints detectando:
+# - Gaps de datos (velas faltantes) - ESTO SI es un problema
+# - Step_size diferente al actual - Solo informativo, NO es problema
+
+# Endpoints:
+GET  /api/orderflow/integrity/status    # Estado actual
+POST /api/orderflow/integrity/validate  # Validar todos
+POST /api/orderflow/integrity/repair    # Reparar desde cloud
+POST /api/orderflow/integrity/clear-cache  # Limpiar y recargar
+GET  /api/orderflow/integrity/progress  # Progreso de reparacion
+```
+
+#### 3. Boton "Aplicar a historial" en Step Size
+
+Cuando el usuario cambia el step_size de un simbolo:
+1. Click "Guardar" guarda la nueva configuracion
+2. Click "Aplicar a historial" elimina cache del simbolo
+3. Los footprints se regeneran automaticamente con el nuevo step_size
+
+```javascript
+// Endpoint para limpiar cache de un simbolo especifico
+DELETE /api/orderflow/cache/{symbol}
+// Elimina: BTCUSDT_1.json, BTCUSDT_5.json, etc.
+```
+
+#### 4. Validacion Inteligente
+
+El sistema distingue entre:
+- **Problemas reales (gaps)**: Marcan el simbolo como "issues"
+- **Step_size diferente**: Solo informativo, NO marca como problema
+
+```python
+# Solo GAPS causan estado "issues", no step_size diferente
+if gaps:
+    status = IntegrityStatus.ISSUES
+else:
+    status = IntegrityStatus.HEALTHY
+```
+
+**Archivos creados/modificados**:
+- `5.Order_flow/backend/cache_integrity_service.py` - Servicio de validacion
+- `5.Order_flow/backend/main.py` - Endpoints de integridad + clear-cache
+- `9.OrderFlowDesktop/src/components/IntegrityPanel.jsx` - UI del panel
+- `9.OrderFlowDesktop/src/components/OrderFlowSettings.jsx` - Boton "Aplicar a historial"
+
+**Resultado**:
+- ✅ Panel visual de estado de integridad
+- ✅ Deteccion automatica de gaps
+- ✅ Reparacion desde cloud collector
+- ✅ Boton para aplicar step_size a historial
+- ✅ Step_size diferente no marca como error
+
+### 31 Enero 2026 - Fix: Footprints Historicos No Se Graficaban
+
+**Problema reportado**:
+- Los footprints historicos no se mostraban en el grafico
+- Solo las velas nuevas (tiempo real) mostraban footprint
+- El backend tenia los datos (465+ footprints) pero no se renderizaban
+
+**Diagnostico**:
+- El backend retornaba correctamente los footprints
+- Los timestamps coincidian entre velas y footprints
+- El problema era que despues del fetch inicial, no se forzaba un redraw del grafico
+- Las velas nuevas se veian porque el WebSocket de velas disparaba redraw
+
+**Solucion implementada**:
+
+Se agrego logging detallado a `OrderFlowIndicator.js` para diagnosticar el problema.
+Durante la investigacion, el reinicio de la aplicacion con los cambios de logging resolvio el problema (posible race condition en la inicializacion).
+
+**Logging inteligente agregado** (solo loguea cuando es relevante):
+
+```javascript
+// Solo al cargar por primera vez
+console.log(`[OrderFlow] [SYMBOL] INITIAL LOAD: N footprints`);
+// + rangos detallados de grupos contiguos
+
+// Solo cuando hay nuevos footprints
+console.log(`[OrderFlow] [SYMBOL] +N footprints (total: X)`);
+
+// Solo cuando hay problemas de matching (>30% sin match)
+console.warn(`[OrderFlow] [SYMBOL] HIGH UNMATCHED: X/Y (Z%)`);
+
+// Solo cuando se pierden footprints
+console.warn(`[OrderFlow] [SYMBOL] footprints LOST: X -> 0`);
+```
+
+**Metodo `_logFootprintRanges()`**: Analiza grupos contiguos de footprints y detecta gaps:
+```
+[OrderFlow] [ETHUSDT] FOOTPRINT RANGES:
+  Total: 730 footprints
+  Rango completo: 31/1/2026, 8:25:00 a.m. -> 31/1/2026, 8:35:00 p.m.
+  Grupos contiguos: 2
+    Grupo 1: 31/1/2026, 8:25:00 a.m. -> 31/1/2026, 8:22:00 p.m. (718 fps, 717 min)
+    >>> GAP: 2 minutos <<<
+    Grupo 2: 31/1/2026, 8:24:00 p.m. -> 31/1/2026, 8:35:00 p.m. (12 fps, 11 min)
+```
+
+**Archivos modificados**:
+- `src/components/indicators/OrderFlowIndicator.js` - Logging inteligente y metodo `_logFootprintRanges()`
+- `src/components/MiniChart.jsx` - Limpieza de logging verbose
+- `src/components/indicators/IndicatorManager.js` - Limpieza de logging verbose
+
+**Resultado**:
+- ✅ Footprints historicos se grafican correctamente
+- ✅ Logging util para diagnostico sin spam en consola
+- ✅ Deteccion automatica de gaps en footprints
+- ✅ Warnings solo cuando hay problemas reales
+
 ---
 
 ## MANTENIMIENTO

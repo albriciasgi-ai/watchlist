@@ -235,17 +235,44 @@
   padding: 10px;
   border-radius: 4px;
   border-left: 3px solid #4a6fa5;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+/* 🎯 NUEVO: Estilos para zonas clickeables */
+.zdt-zone-card.clickable {
+  cursor: pointer;
+}
+
+.zdt-zone-card.clickable:hover {
+  background: #3d3d54;
+  border-left-color: #6a8fc5;
+  transform: translateX(2px);
 }
 
 .zdt-zone-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 6px;
+  gap: 8px;
+}
+
+/* 🎯 NUEVO: Número de zona */
+.zdt-zone-number {
+  background: #4a6fa5;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 28px;
+  text-align: center;
 }
 
 .zdt-zone-score {
   color: #4a9;
   font-weight: 500;
+  flex: 1;
 }
 
 .zdt-zone-method {
@@ -261,6 +288,27 @@
 
 .zdt-zone-range {
   color: #888;
+}
+
+/* 🎯 NUEVO: Fechas de inicio y fin */
+.zdt-zone-dates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #6a9;
+  margin: 6px 0;
+  padding: 4px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.zdt-zone-date-icon {
+  font-size: 12px;
+}
+
+.zdt-zone-date-arrow {
+  color: #666;
 }
 
 .zdt-zone-stats {

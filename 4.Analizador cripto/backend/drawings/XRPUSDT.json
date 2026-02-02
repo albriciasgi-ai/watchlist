@@ -2,15 +2,34 @@
   "symbol": "XRPUSDT",
   "shapes": [
     {
-      "type": "tpsl",
-      "id": "tpsl_1769663143908_0.5787315666607371",
-      "entryPrice": 1.8796489260143197,
-      "tpPrice": 1.9010749403341287,
-      "slPrice": 1.8616381861575177,
-      "time": 1769661240000,
-      "widthTime": 12960000
+      "type": "vertical",
+      "id": "vertical_1769986308143_0.7147325804829159",
+      "price": 1.6007566458333333,
+      "time": 1769986260000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1769997340695_0.6406424309437317",
+      "price": 1.6034108125,
+      "time": 1769998380000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     }
   ],
-  "updated_at": "2026-01-29T05:06:19.564472+00:00",
-  "total_shapes": 1
+  "updated_at": "2026-02-02T02:14:37.861137+00:00",
+  "total_shapes": 2
 }

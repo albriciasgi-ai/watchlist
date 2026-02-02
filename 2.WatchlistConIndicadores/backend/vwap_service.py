@@ -538,6 +538,9 @@ class VWAPService:
         # Historical candle cache per symbol (loaded from Bybit API)
         self._historical_candles: Dict[str, List[Dict]] = {}
 
+        # Cliente HTTP global reutilizable (evita crear sesiones por cada request)
+        self._http_session: Optional[aiohttp.ClientSession] = None
+
         # Stats
         self.stats = {
             'calculations': 0,
@@ -547,6 +550,24 @@ class VWAPService:
 
         self._initialized = True
         logger.info("[VWAP_SERVICE] Initialized")
+
+    async def _get_http_session(self) -> aiohttp.ClientSession:
+        """Obtiene o crea la sesion HTTP global"""
+        if self._http_session is None or self._http_session.closed:
+            connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
+            self._http_session = aiohttp.ClientSession(
+                connector=connector,
+                timeout=aiohttp.ClientTimeout(total=60)
+            )
+            logger.info("[VWAP_SERVICE] HTTP session created")
+        return self._http_session
+
+    async def _close_http_session(self):
+        """Cierra la sesion HTTP global"""
+        if self._http_session and not self._http_session.closed:
+            await self._http_session.close()
+            self._http_session = None
+            logger.info("[VWAP_SERVICE] HTTP session closed")
 
     def _load_config(self) -> VWAPServiceConfig:
         """Load config from file or use defaults"""
@@ -644,61 +665,62 @@ class VWAPService:
         all_candles = []
         end_time = None  # None means current time
 
-        async with aiohttp.ClientSession() as session:
-            while len(all_candles) < total_candles_needed:
-                batch_size = min(200, total_candles_needed - len(all_candles))
+        # Usar sesion HTTP global reutilizable
+        session = await self._get_http_session()
+        while len(all_candles) < total_candles_needed:
+            batch_size = min(200, total_candles_needed - len(all_candles))
 
-                url = (
-                    f"{BYBIT_API_URL}?"
-                    f"category=linear&symbol={symbol}&interval={self.config.interval}"
-                    f"&limit={batch_size}"
-                )
-                if end_time:
-                    url += f"&end={end_time}"
+            url = (
+                f"{BYBIT_API_URL}?"
+                f"category=linear&symbol={symbol}&interval={self.config.interval}"
+                f"&limit={batch_size}"
+            )
+            if end_time:
+                url += f"&end={end_time}"
 
-                try:
-                    async with session.get(url) as response:
-                        if response.status != 200:
-                            logger.error(f"[VWAP_SERVICE] {symbol}: API error {response.status}")
-                            break
+            try:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        logger.error(f"[VWAP_SERVICE] {symbol}: API error {response.status}")
+                        break
 
-                        data = await response.json()
+                    data = await response.json()
 
-                        if data.get('retCode') != 0:
-                            logger.error(f"[VWAP_SERVICE] {symbol}: API returned error: {data.get('retMsg')}")
-                            break
+                    if data.get('retCode') != 0:
+                        logger.error(f"[VWAP_SERVICE] {symbol}: API returned error: {data.get('retMsg')}")
+                        break
 
-                        klines = data.get('result', {}).get('list', [])
-                        if not klines:
-                            logger.info(f"[VWAP_SERVICE] {symbol}: No more data available")
-                            break
+                    klines = data.get('result', {}).get('list', [])
+                    if not klines:
+                        logger.info(f"[VWAP_SERVICE] {symbol}: No more data available")
+                        break
 
-                        # Bybit returns: [timestamp, open, high, low, close, volume, turnover]
-                        # Data is in descending order (newest first)
-                        for kline in klines:
-                            candle = {
-                                'timestamp': int(kline[0]),
-                                'open': float(kline[1]),
-                                'high': float(kline[2]),
-                                'low': float(kline[3]),
-                                'close': float(kline[4]),
-                                'volume': float(kline[5]),
-                                'turnover': float(kline[6]) if len(kline) > 6 else 0
-                            }
-                            all_candles.append(candle)
+                    # Bybit returns: [timestamp, open, high, low, close, volume, turnover]
+                    # Data is in descending order (newest first)
+                    for kline in klines:
+                        candle = {
+                            'timestamp': int(kline[0]),
+                            'open': float(kline[1]),
+                            'high': float(kline[2]),
+                            'low': float(kline[3]),
+                            'close': float(kline[4]),
+                            'volume': float(kline[5]),
+                            'turnover': float(kline[6]) if len(kline) > 6 else 0
+                        }
+                        all_candles.append(candle)
 
-                        # Get oldest timestamp for next request
-                        oldest_ts = int(klines[-1][0])
-                        end_time = oldest_ts - 1  # 1ms before oldest
+                    # Get oldest timestamp for next request
+                    oldest_ts = int(klines[-1][0])
+                    end_time = oldest_ts - 1  # 1ms before oldest
 
-                        logger.debug(f"[VWAP_SERVICE] {symbol}: Fetched {len(klines)} candles, total: {len(all_candles)}")
+                    logger.debug(f"[VWAP_SERVICE] {symbol}: Fetched {len(klines)} candles, total: {len(all_candles)}")
 
-                        # Small delay to avoid rate limiting
-                        await asyncio.sleep(0.1)
+                    # Small delay to avoid rate limiting
+                    await asyncio.sleep(0.1)
 
-                except Exception as e:
-                    logger.error(f"[VWAP_SERVICE] {symbol}: Fetch error: {e}")
-                    break
+            except Exception as e:
+                logger.error(f"[VWAP_SERVICE] {symbol}: Fetch error: {e}")
+                break
 
         # Sort by timestamp ascending (oldest first) for VWAP calculation
         all_candles.sort(key=lambda x: x['timestamp'])
@@ -881,29 +903,65 @@ class VWAPService:
         await self._calculate_all_symbols()
         return True
 
-    async def reload_symbol_data(self, symbol: str, days: int, interval: str = None):
+    async def reload_symbol_data(self, symbol: str, days: int, interval: str = None, incremental: bool = False):
         """
         Reload historical data for a specific symbol with specified days and interval.
         Uses local variables for fetch config to avoid race conditions with concurrent requests.
+
+        Args:
+            symbol: Symbol to reload
+            days: Number of days to fetch
+            interval: Timeframe interval
+            incremental: If True, fetch only new candles since last known timestamp and merge
         """
         fetch_interval = interval or self.config.interval
-        logger.info(f"[VWAP_SERVICE] Reloading {symbol} with {days} days @ {fetch_interval} interval...")
+        logger.info(f"[VWAP_SERVICE] Reloading {symbol} with {days} days @ {fetch_interval} interval (incremental={incremental})...")
 
         try:
-            # Fetch candles using LOCAL parameters (not modifying global config during fetch)
-            candles = await self._fetch_historical_candles_with_params(symbol, days, fetch_interval)
-            if candles:
-                self._historical_candles[symbol] = candles
-                self.stats['candles_loaded'][symbol] = len(candles)
-                logger.info(f"[VWAP_SERVICE] {symbol}: Reloaded {len(candles)} candles for {days} days @ {fetch_interval}")
+            prev_count = len(self._historical_candles.get(symbol, []))
 
-                # Update config interval only AFTER successful fetch (for future polling)
-                if interval:
-                    self.config.interval = interval
-                    self.config.historyDays = days
+            if incremental and symbol in self._historical_candles and prev_count > 0:
+                # INCREMENTAL: Fetch only candles newer than what we have
+                existing = self._historical_candles[symbol]
+                last_ts = max(c['timestamp'] for c in existing)
 
-                # Recalculate VWAP for this symbol
-                await self._calculate_symbol(symbol)
+                # Fetch desde el ultimo timestamp conocido
+                candles = await self._fetch_candles_since(symbol, last_ts, fetch_interval)
+
+                if candles:
+                    # Merge new candles with existing data
+                    candle_map = {c['timestamp']: c for c in existing}
+                    new_count = 0
+                    for c in candles:
+                        if c['timestamp'] not in candle_map:
+                            new_count += 1
+                        candle_map[c['timestamp']] = c  # Override with newer data
+                    merged = sorted(candle_map.values(), key=lambda x: x['timestamp'])
+                    self._historical_candles[symbol] = merged
+                    logger.info(f"[VWAP_SERVICE] {symbol}: Incremental - fetched {len(candles)}, {new_count} new, total={len(merged)} (was {prev_count})")
+                else:
+                    logger.debug(f"[VWAP_SERVICE] {symbol}: Incremental - no new candles")
+            else:
+                # FULL LOAD: Fetch all historical candles
+                candles = await self._fetch_historical_candles_with_params(symbol, days, fetch_interval)
+                if candles:
+                    self._historical_candles[symbol] = candles
+                    logger.info(f"[VWAP_SERVICE] {symbol}: Full reload - {len(candles)} candles (prev={prev_count}) for {days} days @ {fetch_interval}")
+
+                    # Update config interval only for full loads
+                    if interval:
+                        self.config.interval = interval
+                        self.config.historyDays = days
+
+            self.stats['candles_loaded'][symbol] = len(self._historical_candles.get(symbol, []))
+
+            # Recalculate VWAP for this symbol
+            await self._calculate_symbol(symbol)
+
+            # Log resultado final
+            final_data = self._vwap_data.get(symbol, [])
+            logger.info(f"[VWAP_SERVICE] {symbol}: Final VWAP data count = {len(final_data)}")
+
         except Exception as e:
             logger.error(f"[VWAP_SERVICE] {symbol}: Reload error: {e}")
 
@@ -922,65 +980,122 @@ class VWAPService:
         all_candles = []
         end_time = None  # None means current time
 
-        async with aiohttp.ClientSession() as session:
-            while len(all_candles) < total_candles_needed:
-                batch_size = min(200, total_candles_needed - len(all_candles))
+        # Usar sesion HTTP global reutilizable
+        session = await self._get_http_session()
+        while len(all_candles) < total_candles_needed:
+            batch_size = min(200, total_candles_needed - len(all_candles))
 
-                url = (
-                    f"{BYBIT_API_URL}?"
-                    f"category=linear&symbol={symbol}&interval={interval}"
-                    f"&limit={batch_size}"
-                )
-                if end_time:
-                    url += f"&end={end_time}"
+            url = (
+                f"{BYBIT_API_URL}?"
+                f"category=linear&symbol={symbol}&interval={interval}"
+                f"&limit={batch_size}"
+            )
+            if end_time:
+                url += f"&end={end_time}"
 
-                try:
-                    async with session.get(url) as response:
-                        if response.status != 200:
-                            logger.error(f"[VWAP_SERVICE] {symbol}: API error {response.status}")
-                            break
+            try:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        logger.error(f"[VWAP_SERVICE] {symbol}: API error {response.status}")
+                        break
 
-                        data = await response.json()
+                    data = await response.json()
 
-                        if data.get('retCode') != 0:
-                            logger.error(f"[VWAP_SERVICE] {symbol}: API returned error: {data.get('retMsg')}")
-                            break
+                    if data.get('retCode') != 0:
+                        logger.error(f"[VWAP_SERVICE] {symbol}: API returned error: {data.get('retMsg')}")
+                        break
 
-                        klines = data.get('result', {}).get('list', [])
-                        if not klines:
-                            logger.info(f"[VWAP_SERVICE] {symbol}: No more data available")
-                            break
+                    klines = data.get('result', {}).get('list', [])
+                    if not klines:
+                        logger.info(f"[VWAP_SERVICE] {symbol}: No more data available")
+                        break
 
-                        # Bybit returns: [timestamp, open, high, low, close, volume, turnover]
-                        for kline in klines:
-                            candle = {
-                                'timestamp': int(kline[0]),
-                                'open': float(kline[1]),
-                                'high': float(kline[2]),
-                                'low': float(kline[3]),
-                                'close': float(kline[4]),
-                                'volume': float(kline[5]),
-                                'turnover': float(kline[6]) if len(kline) > 6 else 0
-                            }
-                            all_candles.append(candle)
+                    # Bybit returns: [timestamp, open, high, low, close, volume, turnover]
+                    for kline in klines:
+                        candle = {
+                            'timestamp': int(kline[0]),
+                            'open': float(kline[1]),
+                            'high': float(kline[2]),
+                            'low': float(kline[3]),
+                            'close': float(kline[4]),
+                            'volume': float(kline[5]),
+                            'turnover': float(kline[6]) if len(kline) > 6 else 0
+                        }
+                        all_candles.append(candle)
 
-                        # Get oldest timestamp for next request
-                        oldest_ts = int(klines[-1][0])
-                        end_time = oldest_ts - 1  # 1ms before oldest
+                    # Get oldest timestamp for next request
+                    oldest_ts = int(klines[-1][0])
+                    end_time = oldest_ts - 1  # 1ms before oldest
 
-                        logger.debug(f"[VWAP_SERVICE] {symbol}: Fetched {len(klines)} candles, total: {len(all_candles)}")
+                    logger.debug(f"[VWAP_SERVICE] {symbol}: Fetched {len(klines)} candles, total: {len(all_candles)}")
 
-                        # Small delay to avoid rate limiting
-                        await asyncio.sleep(0.1)
+                    # Small delay to avoid rate limiting
+                    await asyncio.sleep(0.1)
 
-                except Exception as e:
-                    logger.error(f"[VWAP_SERVICE] {symbol}: Fetch error: {e}")
-                    break
+            except Exception as e:
+                logger.error(f"[VWAP_SERVICE] {symbol}: Fetch error: {e}")
+                break
 
         # Sort by timestamp ascending (oldest first) for VWAP calculation
         all_candles.sort(key=lambda x: x['timestamp'])
 
         logger.info(f"[VWAP_SERVICE] {symbol}: Total {len(all_candles)} candles loaded @ {interval}")
+        return all_candles
+
+    async def _fetch_candles_since(self, symbol: str, since_timestamp: int, interval: str) -> List[Dict]:
+        """
+        Fetch candles since a specific timestamp (for incremental updates).
+        Only fetches candles NEWER than since_timestamp.
+        """
+        all_candles = []
+
+        # Usar sesion HTTP global reutilizable
+        session = await self._get_http_session()
+
+        # Bybit API usa 'start' para timestamp minimo
+        url = (
+            f"{BYBIT_API_URL}?"
+            f"category=linear&symbol={symbol}&interval={interval}"
+            f"&start={since_timestamp + 1}&limit=200"  # +1 para no incluir la vela que ya tenemos
+        )
+
+        try:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    logger.error(f"[VWAP_SERVICE] {symbol}: API error {response.status}")
+                    return []
+
+                data = await response.json()
+
+                if data.get('retCode') != 0:
+                    logger.error(f"[VWAP_SERVICE] {symbol}: API returned error: {data.get('retMsg')}")
+                    return []
+
+                klines = data.get('result', {}).get('list', [])
+                if not klines:
+                    logger.debug(f"[VWAP_SERVICE] {symbol}: No new candles since {since_timestamp}")
+                    return []
+
+                # Bybit returns: [timestamp, open, high, low, close, volume, turnover]
+                for kline in klines:
+                    candle = {
+                        'timestamp': int(kline[0]),
+                        'open': float(kline[1]),
+                        'high': float(kline[2]),
+                        'low': float(kline[3]),
+                        'close': float(kline[4]),
+                        'volume': float(kline[5]),
+                        'turnover': float(kline[6]) if len(kline) > 6 else 0
+                    }
+                    all_candles.append(candle)
+
+                logger.debug(f"[VWAP_SERVICE] {symbol}: Fetched {len(all_candles)} new candles since {since_timestamp}")
+
+        except Exception as e:
+            logger.error(f"[VWAP_SERVICE] {symbol}: Fetch since error: {e}")
+
+        # Sort by timestamp ascending
+        all_candles.sort(key=lambda x: x['timestamp'])
         return all_candles
 
 

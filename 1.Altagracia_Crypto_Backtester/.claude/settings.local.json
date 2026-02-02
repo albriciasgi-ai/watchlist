@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\".venv\\Scripts\\python.exe\":*)"
+      "Bash(./.venv/Scripts/python.exe:*)",
+      "Bash(cmd //c \"taskkill /PID 10068 /F\")"
     ],
     "deny": [],
     "ask": []

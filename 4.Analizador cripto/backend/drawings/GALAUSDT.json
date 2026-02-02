@@ -2,20 +2,20 @@
   "symbol": "GALAUSDT",
   "shapes": [
     {
-      "type": "rectangle",
-      "id": "rectangle_1769031374194_0.4896187440234493",
-      "price1": 0.00630952733686067,
-      "time1": 1769022360000,
-      "price2": 0.006686980599647266,
-      "time2": 1769030880000,
-      "label": "Zone",
+      "type": "vertical",
+      "id": "vertical_1769997364286_0.28464492943875497",
+      "price": 0.0047952997916666665,
+      "time": 1769997360000,
       "style": {
-        "fill": "rgba(59, 130, 246, 0.15)",
-        "stroke": "#3B82F6",
-        "labelBg": "#3B82F6"
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
       }
     }
   ],
-  "updated_at": "2026-01-29T00:47:58.789049+00:00",
+  "updated_at": "2026-02-02T01:56:10.652511+00:00",
   "total_shapes": 1
 }

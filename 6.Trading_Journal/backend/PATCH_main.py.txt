@@ -1,0 +1,31 @@
+# =============================================================================
+# PARCHE PARA main.py - Trading Journal Backend
+# =============================================================================
+#
+# Agregar el siguiente endpoint DESPUES de @app.put("/api/monitor/config")
+# y ANTES de # ==================== Screenshot Endpoints ====================
+#
+# Ubicacion aproximada: linea 322
+# =============================================================================
+
+@app.post("/api/monitor/reconcile")
+async def reconcile_entries():
+    """
+    Reconcilia entries huerfanas:
+    - Cierra entries OPEN que no tienen posicion activa en TradingBot
+    - Crea entries para posiciones activas sin tracking
+    """
+    if not position_monitor:
+        return {"success": False, "error": "Monitor not initialized"}
+
+    result = await position_monitor.reconcile()
+    return {
+        "success": len(result.get("errors", [])) == 0,
+        "result": result,
+        "status": position_monitor.get_status()
+    }
+
+
+# =============================================================================
+# FIN DEL PARCHE
+# =============================================================================

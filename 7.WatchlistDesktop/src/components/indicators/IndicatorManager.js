@@ -1207,6 +1207,23 @@ class IndicatorManager {
   }
 
   /**
+   * 🚀 NUEVO: Inicia el polling de todos los indicadores que lo soporten
+   * Llamar despues de refresh() para iniciar actualizaciones en tiempo real
+   */
+  async startAllPolling() {
+    const promises = [];
+    this.indicators.forEach(indicator => {
+      if (indicator.startPollingIfReady) {
+        // Llamar y agregar la promesa al array
+        promises.push(indicator.startPollingIfReady());
+      }
+    });
+    // Esperar a que todos los indicadores inicien su polling
+    await Promise.all(promises);
+    console.log(`[${this.symbol}] IndicatorManager: startAllPolling() completado`);
+  }
+
+  /**
    * 🎯 NUEVO: Obtiene el indicador de Fibonacci
    */
   getFibonacciIndicator() {

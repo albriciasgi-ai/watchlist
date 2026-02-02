@@ -953,6 +953,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const orderFlowIndicator = indicatorManagerRef.current.indicators?.find(
         ind => ind.name === "Order Flow"
       );
+
       if (orderFlowIndicator && orderFlowIndicator.enabled && orderFlowIndicator.hasFootprintData()) {
         const overlayBounds = {
           x: marginLeft,

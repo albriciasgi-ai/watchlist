@@ -6,8 +6,9 @@ import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 import Logger from '../../utils/Logger.js';
 import IndicatorCache from '../../utils/IndicatorCache.js';
+import pollingScheduler from '../../utils/PollingScheduler.js';
 
-const log = new Logger('VWAP', { level: 'info' });
+const log = new Logger('VWAP', { level: 'warn' }); // Reducido a warn para produccion
 
 class VWAPIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 1, config = {}) {
@@ -46,37 +47,84 @@ class VWAPIndicator extends IndicatorBase {
 
     // Lifecycle flag to prevent fetch after destroy
     this._destroyed = false;
-    this._pollingInterval = null;
+    this._pollingId = null; // Usa PollingScheduler en lugar de setInterval
+    this._isStartingPolling = false; // Evita llamadas concurrentes a startPollingIfReady
 
-    log.info(`[${symbol}] VWAPIndicator initialized (backend native, type=${this.vwapType})`);
+    log.debug(`[${symbol}] VWAPIndicator initialized (type=${this.vwapType})`);
   }
 
   // Cleanup method called when indicator is destroyed
   destroy() {
     this._destroyed = true;
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
-    }
+    this._isStartingPolling = false;
+    this.stopPolling();
     log.debug(`[${this.symbol}] VWAPIndicator destroyed`);
   }
 
+  // OPTIMIZADO: Usa PollingScheduler centralizado (ahorra memoria y evita timers duplicados)
   _startPolling() {
-    // Clear any existing interval
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
+    if (this._pollingId) {
+      return; // Ya registrado
     }
 
-    // Poll at configured interval
-    this._pollingInterval = setInterval(() => {
-      // ✅ OPTIMIZACIÓN: No hacer polling si el tab no está visible
-      if (document.visibilityState === 'hidden') {
-        return;
+    this._pollingId = pollingScheduler.register(
+      async () => {
+        if (this.enabled && !this._destroyed) {
+          const updated = await this.fetchData(true); // skipCache para polling
+          // Log de estado del polling
+          console.log(`[${this.symbol}] VWAP polling executed: updated=${updated}, hasRedraw=${!!this.indicatorManager?.requestRedraw}`);
+          // Disparar redraw si hay datos nuevos
+          if (updated && this.indicatorManager?.requestRedraw) {
+            this.indicatorManager.requestRedraw();
+            console.log(`[${this.symbol}] VWAP requestRedraw() called`);
+          }
+        }
+      },
+      this.fetchIntervalMs,
+      2 // Alta prioridad
+    );
+
+    // Log visible para confirmar registro (no usa logger para asegurar visibilidad)
+    console.log(`[${this.symbol}] VWAP polling registered (id: ${this._pollingId}, interval: ${this.fetchIntervalMs}ms)`);
+  }
+
+  /**
+   * Inicia polling solo si esta listo (llamado despues de carga completa)
+   * Si no tiene datos, primero hace fetch y luego inicia polling
+   */
+  async startPollingIfReady() {
+    // Evitar llamadas concurrentes y estados invalidos
+    if (this._pollingId || this._destroyed || !this.enabled || this._isStartingPolling) {
+      return; // Ya registrado, destruido, deshabilitado o ya iniciando
+    }
+
+    // Marcar que estamos en proceso de iniciar polling
+    this._isStartingPolling = true;
+
+    try {
+      // Si no tiene datos, hacer fetch primero
+      if (this.dataMap.size === 0) {
+        console.log(`[${this.symbol}] VWAP: No tiene datos, haciendo fetch inicial...`);
+        await this.fetchData(false); // false = usar cache si existe
       }
-      if (this.enabled && !this._destroyed) {
-        this.fetchData();
+
+      // Iniciar polling si aun no esta registrado y no fue destruido durante el fetch
+      if (!this._pollingId && !this._destroyed && this.enabled) {
+        this._startPolling();
       }
-    }, this.fetchIntervalMs);
+    } finally {
+      this._isStartingPolling = false;
+    }
+  }
+
+  /**
+   * Detiene el polling
+   */
+  stopPolling() {
+    if (this._pollingId) {
+      pollingScheduler.unregister(this._pollingId);
+      this._pollingId = null;
+    }
   }
 
   _getFetchIntervalForTimeframe(interval) {
@@ -93,33 +141,39 @@ class VWAPIndicator extends IndicatorBase {
     return intervalMs[interval] || 60 * 1000;
   }
 
-  async fetchData() {
+  /**
+   * Fetch VWAP data from backend
+   * @param {boolean} skipCache - Si true, ignora cache y fuerza fetch del backend (usado por polling)
+   */
+  async fetchData(skipCache = false) {
     // Don't fetch if indicator was destroyed (component unmounted)
     if (this._destroyed) {
-      log.debug(`[${this.symbol}] Skipping VWAP fetch - indicator destroyed`);
       return false;
     }
 
     this.loading = true;
     try {
-      // 🔄 FASE 4: Verificar cache primero
       const cacheParams = { vwapType: this.vwapType, days: this.days };
-      const cached = await IndicatorCache.get('vwap', this.symbol, this.interval, cacheParams);
-      if (cached && !this._destroyed) {
-        // 🔧 FIX: Construir nuevo Map primero, luego reemplazar atómicamente
-        // Esto evita flickering cuando un frame de render ocurre durante la actualización
-        const newMap = new Map();
-        cached.forEach(point => {
-          newMap.set(point.timestamp, point);
-        });
-        this.dataMap = newMap;
-        this.vwapData = [];
-        this.lastFetchTime = Date.now();
-        if (!this._pollingInterval) {
-          this._startPolling();
+
+      // Solo usar cache si no es polling (skipCache = false)
+      if (!skipCache) {
+        const cached = await IndicatorCache.get('vwap', this.symbol, this.interval, cacheParams);
+        if (cached && !this._destroyed) {
+          const newMap = new Map();
+          cached.forEach(point => {
+            newMap.set(point.timestamp, point);
+          });
+          this.dataMap = newMap;
+          this.vwapData = [];
+          this.lastFetchTime = Date.now();
+
+          // Iniciar polling despues de cargar desde cache
+          if (!this._pollingId) {
+            this._startPolling();
+          }
+
+          return true;
         }
-        log.debug(`[${this.symbol}] ✅ VWAP from cache: ${cached.length} points`);
-        return true;
       }
 
       // Pass all config to backend
@@ -129,38 +183,44 @@ class VWAPIndicator extends IndicatorBase {
         vwapType: this.vwapType,
         rollingPeriod: this.rollingPeriod
       });
+      // Si es polling (skipCache=true), agregar refresh=true para forzar recarga en backend
+      if (skipCache) {
+        params.append('refresh', 'true');
+      }
       const url = `${API_BASE_URL}/api/vwap-service/data/${this.symbol}?${params}`;
-      log.debug(`[${this.symbol}] Fetching VWAP: interval=${this.interval}, days=${this.days}`);
       const response = await fetch(url);
 
       // Check again after await - component might have been destroyed
       if (this._destroyed) {
-        log.debug(`[${this.symbol}] Discarding VWAP response - indicator destroyed during fetch`);
-        return false;
+          return false;
       }
 
       const json = await response.json();
 
       if (json.success && json.data) {
-        // 🔧 FIX: Construir nuevo Map primero, luego reemplazar atómicamente
-        // Esto evita flickering cuando un frame de render ocurre durante la actualización
         const newMap = new Map();
         json.data.forEach(point => {
           newMap.set(point.timestamp, point);
         });
         this.dataMap = newMap;
-        this.vwapData = []; // Mantener vacío para compatibilidad
+        this.vwapData = [];
         this.lastFetchTime = Date.now();
 
-        // Guardar en cache
-        IndicatorCache.set('vwap', this.symbol, this.interval, json.data, cacheParams);
+        // Guardar en cache (solo si no es polling)
+        if (!skipCache) {
+          IndicatorCache.set('vwap', this.symbol, this.interval, json.data, cacheParams);
 
-        // 🚀 Start polling only on first successful fetch
-        if (!this._pollingInterval) {
-          this._startPolling();
+          // Iniciar polling despues de carga inicial exitosa
+          if (!this._pollingId) {
+            this._startPolling();
+          }
+
+          // FIX: Forzar redraw despues de carga inicial
+          if (this.indicatorManager?.requestRedraw) {
+            this.indicatorManager.requestRedraw();
+          }
         }
 
-        log.debug(`[${this.symbol}] ✅ VWAP loaded: ${json.data.length} points (${this.vwapType}, ${this.days} days, interval=${this.interval})`);
         return true;
       } else {
         log.warn(`[${this.symbol}] VWAP service returned no data`);
@@ -180,15 +240,13 @@ class VWAPIndicator extends IndicatorBase {
   setDays(days) {
     if (this.days !== days) {
       this.days = days;
-      this.lastFetchTime = 0; // Force refetch on next render
-      log.info(`[${this.symbol}] Days updated to ${days}, will refetch VWAP data`);
+      this.lastFetchTime = 0;
     }
   }
 
   // Update interval and refetch data if needed
   setInterval(newInterval) {
     if (this.interval !== newInterval) {
-      log.info(`[${this.symbol}] Interval updated: ${this.interval} → ${newInterval}`);
       this.interval = newInterval;
       this.fetchIntervalMs = this._getFetchIntervalForTimeframe(newInterval);
       this.lastFetchTime = 0; // Force refetch on next render
@@ -216,14 +274,11 @@ class VWAPIndicator extends IndicatorBase {
         body: JSON.stringify(config)
       });
       const json = await response.json();
-      if (json.success) {
-        log.info(`[${this.symbol}] Backend config updated`);
-        return true;
-      }
+      return json.success || false;
     } catch (error) {
-      log.error(`[${this.symbol}] ❌ Backend config error:`, error);
+      log.error(`[${this.symbol}] Backend config error:`, error);
+      return false;
     }
-    return false;
   }
 
   updateConfig(config) {
@@ -252,7 +307,6 @@ class VWAPIndicator extends IndicatorBase {
 
     // Refetch if calculation config changed
     if (needsRefetch && this.enabled) {
-      log.info(`[${this.symbol}] Config changed (vwapType=${this.vwapType}), refetching...`);
       this.lastFetchTime = 0;
       this.fetchData();
     }
@@ -266,13 +320,24 @@ class VWAPIndicator extends IndicatorBase {
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) return;
+    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) {
+      // Log ocasional para diagnostico
+      if (Math.random() < 0.02) {
+        console.log(`[${this.symbol}] VWAP renderOverlay SKIP: enabled=${this.enabled}, destroyed=${this._destroyed}, candles=${visibleCandles?.length || 0}`);
+      }
+      return;
+    }
 
-    // 🚀 OPTIMIZADO: Polling se hace via setInterval en _startPolling()
-    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
+    // 🚀 OPTIMIZADO: Polling se hace via PollingScheduler
 
     // Need data from backend
-    if (this.dataMap.size === 0) return;
+    if (this.dataMap.size === 0) {
+      // Log ocasional para diagnostico
+      if (Math.random() < 0.02) {
+        console.log(`[${this.symbol}] VWAP renderOverlay SKIP: dataMap empty`);
+      }
+      return;
+    }
 
     const { x, y, width, height } = bounds;
     const viewport = priceContext || {};
@@ -292,12 +357,14 @@ class VWAPIndicator extends IndicatorBase {
     ctx.beginPath();
 
     let firstPoint = true;
+    let matchedPoints = 0;
     const candleWidth = width / visibleCandles.length;
 
     visibleCandles.forEach((candle, i) => {
       const vwapPoint = this.dataMap.get(candle.timestamp);
       if (!vwapPoint) return;
 
+      matchedPoints++;
       const candleX = x + (i * candleWidth) + (candleWidth / 2);
       const vwapPrice = vwapPoint.vwap;
 
@@ -317,6 +384,11 @@ class VWAPIndicator extends IndicatorBase {
     });
 
     ctx.stroke();
+
+    // Log ocasional para diagnostico
+    if (Math.random() < 0.02) {
+      console.log(`[${this.symbol}] VWAP draw: ${matchedPoints}/${visibleCandles.length} points matched, dataMap size: ${this.dataMap.size}`);
+    }
   }
 
   _drawBands(ctx, visibleCandles, viewport, x, y, width, height) {

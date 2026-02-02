@@ -8,6 +8,7 @@ function TradeDetail({ tradeId, onBack }) {
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [editData, setEditData] = useState({})
+  const [screenshotErrors, setScreenshotErrors] = useState({})
 
   useEffect(() => {
     if (tradeId) {
@@ -19,6 +20,7 @@ function TradeDetail({ tradeId, onBack }) {
     try {
       setLoading(true)
       setError(null)
+      setScreenshotErrors({})
       const res = await fetch(`${API_BASE_URL}/api/entries/${tradeId}`)
       if (!res.ok) throw new Error('Trade no encontrado')
       const data = await res.json()
@@ -30,7 +32,9 @@ function TradeDetail({ tradeId, onBack }) {
         emotions_after: data.reflection?.emotions_after || '',
         setup_quality: data.setup?.quality || 5,
         followed_rules: data.execution?.followed_rules ?? true,
-        execution_notes: data.execution?.notes || ''
+        execution_notes: data.execution?.notes || '',
+        stop_loss: data.setup?.stop_loss || '',
+        take_profit: data.setup?.take_profit || ''
       })
       setLoading(false)
     } catch (err) {
@@ -51,7 +55,9 @@ function TradeDetail({ tradeId, onBack }) {
         },
         setup: {
           ...trade.setup,
-          quality: editData.setup_quality
+          quality: editData.setup_quality,
+          stop_loss: editData.stop_loss ? parseFloat(editData.stop_loss) : null,
+          take_profit: editData.take_profit ? parseFloat(editData.take_profit) : null
         },
         execution: {
           ...trade.execution,
@@ -137,6 +143,25 @@ function TradeDetail({ tradeId, onBack }) {
       'manual': 'Manual'
     }
     return sourceMap[source] || source || 'Desconocido'
+  }
+
+  // Construye la URL correcta para screenshots
+  // Las rutas pueden venir como:
+  // - "screenshots/BTCUSDT/file.png" (relativa)
+  // - "screenshots\BTCUSDT\file.png" (Windows backslash)
+  // - "BTCUSDT/file.png" (solo el path relativo)
+  const getScreenshotUrl = (path) => {
+    if (!path) return null
+    // Normalizar backslashes a forward slashes
+    let normalizedPath = path.replace(/\\/g, '/')
+    // Remover "screenshots/" del inicio si existe
+    normalizedPath = normalizedPath.replace(/^\/?screenshots\//, '')
+    // Construir URL final - usar el mount de archivos estaticos
+    return `${API_BASE_URL}/screenshots/${normalizedPath}`
+  }
+
+  const handleScreenshotError = (type) => {
+    setScreenshotErrors(prev => ({ ...prev, [type]: true }))
   }
 
   if (loading) {
@@ -231,11 +256,12 @@ function TradeDetail({ tradeId, onBack }) {
             <div className="screenshots-grid">
               <div className="screenshot-card">
                 <span className="screenshot-label">Entrada</span>
-                {trade.screenshot_entry ? (
+                {trade.screenshot_entry && !screenshotErrors.entry ? (
                   <img
-                    src={`${API_BASE_URL}/api/screenshots/${trade.screenshot_entry}`}
+                    src={getScreenshotUrl(trade.screenshot_entry)}
                     alt="Entry screenshot"
                     className="screenshot-img"
+                    onError={() => handleScreenshotError('entry')}
                   />
                 ) : (
                   <div className="screenshot-placeholder">
@@ -244,17 +270,18 @@ function TradeDetail({ tradeId, onBack }) {
                       <circle cx="8.5" cy="8.5" r="1.5" />
                       <path d="M21 15l-5-5L5 21" />
                     </svg>
-                    <span>Sin screenshot</span>
+                    <span>{screenshotErrors.entry ? 'Error al cargar' : 'Sin screenshot'}</span>
                   </div>
                 )}
               </div>
               <div className="screenshot-card">
                 <span className="screenshot-label">Salida</span>
-                {trade.screenshot_exit ? (
+                {trade.screenshot_exit && !screenshotErrors.exit ? (
                   <img
-                    src={`${API_BASE_URL}/api/screenshots/${trade.screenshot_exit}`}
+                    src={getScreenshotUrl(trade.screenshot_exit)}
                     alt="Exit screenshot"
                     className="screenshot-img"
+                    onError={() => handleScreenshotError('exit')}
                   />
                 ) : (
                   <div className="screenshot-placeholder">
@@ -263,7 +290,7 @@ function TradeDetail({ tradeId, onBack }) {
                       <circle cx="8.5" cy="8.5" r="1.5" />
                       <path d="M21 15l-5-5L5 21" />
                     </svg>
-                    <span>Sin screenshot</span>
+                    <span>{screenshotErrors.exit ? 'Error al cargar' : 'Sin screenshot'}</span>
                   </div>
                 )}
               </div>
@@ -303,15 +330,37 @@ function TradeDetail({ tradeId, onBack }) {
               </div>
               <div className="detail-item">
                 <span className="detail-label">Stop Loss</span>
-                <span className="detail-value mono">
-                  {trade.setup?.stop_loss ? `$${trade.setup.stop_loss.toFixed(2)}` : '-'}
-                </span>
+                {editing ? (
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editData.stop_loss}
+                    onChange={e => setEditData({ ...editData, stop_loss: e.target.value })}
+                    placeholder="Precio SL"
+                    className="detail-input"
+                  />
+                ) : (
+                  <span className="detail-value mono">
+                    {trade.setup?.stop_loss ? `$${trade.setup.stop_loss.toFixed(2)}` : '-'}
+                  </span>
+                )}
               </div>
               <div className="detail-item">
                 <span className="detail-label">Take Profit</span>
-                <span className="detail-value mono">
-                  {trade.setup?.take_profit ? `$${trade.setup.take_profit.toFixed(2)}` : '-'}
-                </span>
+                {editing ? (
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editData.take_profit}
+                    onChange={e => setEditData({ ...editData, take_profit: e.target.value })}
+                    placeholder="Precio TP"
+                    className="detail-input"
+                  />
+                ) : (
+                  <span className="detail-value mono">
+                    {trade.setup?.take_profit ? `$${trade.setup.take_profit.toFixed(2)}` : '-'}
+                  </span>
+                )}
               </div>
             </div>
           </div>

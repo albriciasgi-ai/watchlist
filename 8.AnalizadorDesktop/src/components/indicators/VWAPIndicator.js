@@ -6,8 +6,9 @@ import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 import Logger from '../../utils/Logger.js';
 import IndicatorCache from '../../utils/IndicatorCache.js';
+import pollingCoordinator from '../../utils/PollingCoordinator.js';
 
-const log = new Logger('VWAP', { level: 'info' });
+const log = new Logger('VWAP', { level: 'warn' }); // Reducido a warn para produccion
 
 class VWAPIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 1, config = {}) {
@@ -46,9 +47,9 @@ class VWAPIndicator extends IndicatorBase {
 
     // Lifecycle flag to prevent fetch after destroy
     this._destroyed = false;
-    this._pollingInterval = null;
+    this._pollingId = null; // Usa PollingCoordinator en lugar de setInterval
 
-    log.info(`[${symbol}] VWAPIndicator initialized (backend native, type=${this.vwapType})`);
+    log.debug(`[${symbol}] VWAPIndicator initialized (type=${this.vwapType})`);
   }
 
   // Cleanup method called when indicator is destroyed
@@ -58,50 +59,53 @@ class VWAPIndicator extends IndicatorBase {
     log.debug(`[${this.symbol}] VWAPIndicator destroyed`);
   }
 
+  // OPTIMIZADO: Usa PollingCoordinator centralizado (ahorra memoria y evita timers duplicados)
   _startPolling() {
-    // Clear any existing interval
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
+    if (this._pollingId) {
+      log.debug(`[${this.symbol}] VWAP polling already registered, skipping`);
+      return;
     }
 
-    // Poll at configured interval
-    this._pollingInterval = setInterval(async () => {
-      if (this.enabled && !this._destroyed) {
-        // Polling siempre fuerza fetch del backend (ignora cache)
-        const updated = await this.fetchData(true);
-        // Disparar redraw si hay datos nuevos y tenemos referencia al manager
-        if (updated) {
-          if (this.indicatorManager?.requestRedraw) {
-            this.indicatorManager.requestRedraw();
-            log.info(`[${this.symbol}] VWAP requestRedraw() called after polling`);
-          } else {
-            log.warn(`[${this.symbol}] VWAP polling: no indicatorManager.requestRedraw available`);
+    this._pollingId = pollingCoordinator.register(
+      `VWAP_${this.symbol}`,
+      async () => {
+        if (this.enabled && !this._destroyed) {
+          // Polling siempre fuerza fetch del backend (ignora cache)
+          const updated = await this.fetchData(true);
+          // Disparar redraw si hay datos nuevos y tenemos referencia al manager
+          if (updated) {
+            if (this.indicatorManager?.requestRedraw) {
+              this.indicatorManager.requestRedraw();
+              log.debug(`[${this.symbol}] VWAP requestRedraw() called after polling`);
+            } else {
+              log.warn(`[${this.symbol}] VWAP polling: no indicatorManager.requestRedraw available`);
+            }
           }
         }
-      }
-    }, this.fetchIntervalMs);
+      },
+      this.fetchIntervalMs,
+      2 // Alta prioridad (VWAP es importante)
+    );
 
-    log.info(`[${this.symbol}] VWAP polling started (interval: ${this.fetchIntervalMs}ms)`);
+    log.debug(`[${this.symbol}] VWAP polling started (interval: ${this.fetchIntervalMs}ms)`);
   }
 
   /**
-   * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
+   * Inicia polling solo si esta listo (llamado despues de carga completa)
    */
   startPollingIfReady() {
-    log.info(`[${this.symbol}] VWAP startPollingIfReady: interval=${!!this._pollingInterval}, enabled=${this.enabled}, destroyed=${this._destroyed}`);
-    if (!this._pollingInterval && this.enabled && !this._destroyed) {
+    if (!this._pollingId && this.enabled && !this._destroyed) {
       this._startPolling();
     }
   }
 
   /**
-   * 🛑 Detiene el polling (llamado cuando el chart no es visible)
+   * Detiene el polling (llamado cuando el chart no es visible o al destruir)
    */
   stopPolling() {
-    if (this._pollingInterval) {
-      clearInterval(this._pollingInterval);
-      this._pollingInterval = null;
-      log.info(`[${this.symbol}] VWAP polling stopped`);
+    if (this._pollingId) {
+      pollingCoordinator.unregister(this._pollingId);
+      this._pollingId = null;
     }
   }
 
@@ -183,11 +187,9 @@ class VWAPIndicator extends IndicatorBase {
           IndicatorCache.set('vwap', this.symbol, this.interval, json.data, cacheParams);
         }
 
-        // Log diferenciado para carga inicial vs polling
-        if (skipCache) {
-          log.info(`[${this.symbol}] VWAP updated (polling): ${json.data.length} points`);
-        } else {
-          log.info(`[${this.symbol}] VWAP loaded: ${json.data.length} points (${this.vwapType}, ${this.days} days)`);
+        // FIX: Forzar redraw despues de carga inicial para que el VWAP aparezca inmediatamente
+        if (!skipCache && this.indicatorManager?.requestRedraw) {
+          this.indicatorManager.requestRedraw();
         }
         return true;
       } else {
@@ -209,14 +211,12 @@ class VWAPIndicator extends IndicatorBase {
     if (this.days !== days) {
       this.days = days;
       this.lastFetchTime = 0; // Force refetch on next render
-      log.info(`[${this.symbol}] Days updated to ${days}, will refetch VWAP data`);
     }
   }
 
   // Update interval and refetch data if needed
   setInterval(newInterval) {
     if (this.interval !== newInterval) {
-      log.info(`[${this.symbol}] Interval updated: ${this.interval} → ${newInterval}`);
       this.interval = newInterval;
       this.fetchIntervalMs = this._getFetchIntervalForTimeframe(newInterval);
       this.lastFetchTime = 0; // Force refetch on next render
@@ -244,14 +244,11 @@ class VWAPIndicator extends IndicatorBase {
         body: JSON.stringify(config)
       });
       const json = await response.json();
-      if (json.success) {
-        log.info(`[${this.symbol}] Backend config updated`);
-        return true;
-      }
+      return json.success || false;
     } catch (error) {
-      log.error(`[${this.symbol}] ❌ Backend config error:`, error);
+      log.error(`[${this.symbol}] Backend config error:`, error);
+      return false;
     }
-    return false;
   }
 
   updateConfig(config) {
@@ -280,7 +277,6 @@ class VWAPIndicator extends IndicatorBase {
 
     // Refetch if calculation config changed
     if (needsRefetch && this.enabled) {
-      log.info(`[${this.symbol}] Config changed (vwapType=${this.vwapType}), refetching...`);
       this.lastFetchTime = 0;
       this.fetchData();
     }
@@ -294,16 +290,28 @@ class VWAPIndicator extends IndicatorBase {
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) return;
+    if (!this.enabled || this._destroyed || !visibleCandles || visibleCandles.length === 0) {
+      return;
+    }
 
-    // 🚀 OPTIMIZADO: Polling se hace via setInterval en _startPolling()
-    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
+    // Verificar que ctx es valido
+    if (!ctx || typeof ctx.beginPath !== 'function') {
+      return;
+    }
 
     // Need data from backend
-    if (this.dataMap.size === 0) return;
+    if (this.dataMap.size === 0) {
+      return;
+    }
 
     const { x, y, width, height } = bounds;
     const viewport = priceContext || {};
+
+    // Guardar estado del canvas y resetear transformaciones
+    ctx.save();
+    ctx.setLineDash([]);  // Asegurar linea solida
+    ctx.globalAlpha = 1;  // Asegurar opacidad completa
+    ctx.globalCompositeOperation = 'source-over';  // Modo de composicion normal
 
     // Draw bands first (behind VWAP line)
     if (this.showBands) {
@@ -312,19 +320,20 @@ class VWAPIndicator extends IndicatorBase {
 
     // Draw VWAP line
     this._drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height);
+
+    ctx.restore();
   }
 
   _drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height) {
-    ctx.strokeStyle = this.vwapColor;
-    ctx.lineWidth = this.vwapLineWidth;
-    ctx.beginPath();
-
-    let firstPoint = true;
     const candleWidth = width / visibleCandles.length;
 
-    visibleCandles.forEach((candle, i) => {
+    // Collect all VWAP points
+    const points = [];
+
+    for (let i = 0; i < visibleCandles.length; i++) {
+      const candle = visibleCandles[i];
       const vwapPoint = this.dataMap.get(candle.timestamp);
-      if (!vwapPoint) return;
+      if (!vwapPoint) continue;
 
       const candleX = x + (i * candleWidth) + (candleWidth / 2);
       const vwapPrice = vwapPoint.vwap;
@@ -336,15 +345,24 @@ class VWAPIndicator extends IndicatorBase {
         candleY = y + ((viewport.maxPrice - vwapPrice) / (viewport.maxPrice - viewport.minPrice)) * height;
       }
 
-      if (firstPoint) {
-        ctx.moveTo(candleX, candleY);
-        firstPoint = false;
-      } else {
-        ctx.lineTo(candleX, candleY);
-      }
-    });
+      points.push({ x: candleX, y: candleY });
+    }
 
-    ctx.stroke();
+    // Draw VWAP line as individual segments (more reliable rendering)
+    if (points.length >= 2) {
+      ctx.strokeStyle = this.vwapColor;
+      ctx.lineWidth = this.vwapLineWidth;
+      ctx.setLineDash([]);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (let i = 0; i < points.length - 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[i + 1].x, points[i + 1].y);
+        ctx.stroke();
+      }
+    }
   }
 
   _drawBands(ctx, visibleCandles, viewport, x, y, width, height) {

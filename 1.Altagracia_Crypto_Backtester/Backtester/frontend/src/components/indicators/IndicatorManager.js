@@ -251,7 +251,16 @@ class IndicatorManager {
     // 🎯 Indicadores que requieren datos del backend
     const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns"];
 
+    // 🎯 NUEVO: Indicadores internos que NO deben ser controlados por el UI
+    // Zone Visualizer se controla manualmente desde el Zone Detector Tester
+    const internalIndicators = ["Zone Visualizer"];
+
     for (const indicator of this.indicators) {
+      // 🎯 Skip indicadores internos - mantienen su estado actual
+      if (internalIndicators.includes(indicator.name)) {
+        continue;
+      }
+
       const shouldBeEnabled = indicatorStates[indicator.name] || false;
       const wasEnabled = indicator.enabled;
 

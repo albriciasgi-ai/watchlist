@@ -1,0 +1,437 @@
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [CandleCache] ✅ ETHUSDT@1 - guardado (2676 velas, memoria: 2/4)
+ [ETHUSDT] SwingDetector: 257/257 signals for interval 1 (cached)
+ ✅ [7:29:02 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1442 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:29:05 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1442
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:29:20 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1442
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: VWAP_ETHUSDT
+ ✅ [7:29:45 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1442 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:29:45 p. m.] [VWAP] [ETHUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:29:50 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1442
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [CandleCache] ✅ ETHUSDT@1 - guardado (2676 velas, memoria: 2/4)
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] SwingDetector: 257/257 signals for interval 1 (cached)
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:30:03 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1443 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:30:06 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1443
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ ✅ [7:30:08 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1443
+ ✅ [7:30:09 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1443
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:30:11 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1443
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:30:21 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1443
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: VWAP_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:30:47 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1443 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:30:47 p. m.] [VWAP] [ETHUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [CandleCache] ✅ ETHUSDT@1 - guardado (2676 velas, memoria: 2/4)
+ [ETHUSDT] SwingDetector: 257/257 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:31:02 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1444 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:31:03 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1444
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ ✅ [7:31:41 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1444
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: VWAP_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ ✅ [7:31:48 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1444 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:31:48 p. m.] [VWAP] [ETHUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [CandleCache] ✅ ETHUSDT@1 - guardado (2676 velas, memoria: 2/4)
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] SwingDetector: 258/258 signals for interval 1 (cached)
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:32:02 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1445 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:32:21 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1445
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 2676)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [CandleCache] 💾 ETHUSDT@1 - desde memoria (2676 velas)
+ [CandleCache] OK VALIDATION ETHUSDT@1: 2676 velas sin gaps
+ [CandleCache] ETHUSDT@1 - Cache valido: 2676 velas, sin gaps significativos
+ [ETHUSDT] Cache tiene 2676 velas pero solo necesitamos ~1540 para 1 dias - forzando carga completa
+ [ETHUSDT] Completa: 1439 velas
+ [CandleCache] OK BACKEND-COMPLETO ETHUSDT: 1439 velas sin gaps
+ [ETHUSDT] ✅ Histórico final: 1439 velas
+ [CandleCache] ✅ ETHUSDT@1 - guardado (1439 velas, memoria: 2/4)
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [ETHUSDT] SwingDetector initialized with 1 days
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:32:39 p. m.] [Manager] [ETHUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+ ✅ [7:32:39 p. m.] [Manager] [ETHUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [7:32:39 p. m.] [VWAP] [ETHUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+ ✅ [7:32:39 p. m.] [Manager] [ETHUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [ETHUSDT] SwingDetector startPollingIfReady: pollingId=true, enabled=true, config.enabled=true
+ ✅ [7:32:39 p. m.] [Manager] [ETHUSDT] -> Llamando startPollingIfReady() para Order Flow
+ ✅ [7:32:39 p. m.] [Manager] [ETHUSDT] 🚀 Polling iniciado para todos los indicadores
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: VWAP_ETHUSDT
+ ✅ [7:32:50 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1445 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ ✅ [7:32:50 p. m.] [VWAP] [ETHUSDT] VWAP requestRedraw() called after polling
+ [PollingCoordinator] Completed: VWAP_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1439)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [CandleCache] ✅ ETHUSDT@1 - guardado (1440 velas, memoria: 2/4)
+ ✅ [7:33:00 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1445
+ [ETHUSDT] SwingDetector: 258/258 signals for interval 1 (cached)
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ ✅ [7:33:02 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1446 points
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+Logger.js:100 ✅ [7:33:39 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1446
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_ETHUSDT
+Logger.js:100 ✅ [7:33:52 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1446 points
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [7:33:52 p. m.] [VWAP] [ETHUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+CandleCache.js:169 [CandleCache] ✅ ETHUSDT@1 - guardado (1441 velas, memoria: 2/4)
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+SwingDetectorIndicator.js:238 [ETHUSDT] SwingDetector: 258/258 signals for interval 1 (cached)
+Logger.js:100 ✅ [7:34:02 p. m.] [VWAP] [ETHUSDT] VWAP updated (polling): 1447 points
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+IndicatorCache.js:71 [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+Logger.js:100 ✅ [7:34:19 p. m.] [Manager] [ETHUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1447
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+MiniChart.jsx:2158 [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2160 [ETHUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: OrderFlow_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Completed: SwingDetector_Status_ETHUSDT
+ [PollingCoordinator] Executing: SwingDetector_Signals_ETHUSDT
+ [IndicatorCache] 💾 swing@ETHUSDT desde memoria
+ [ETHUSDT] 🔄 requestRedraw called (candles: 1441)
+ [ETHUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: SwingDetector_Signals_ETHUSDT

@@ -87,7 +87,8 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab.
 │   │   ├── ProximityAlerts/
 │   │   └── *Settings.jsx             # Modales de configuracion
 │   ├── utils/
-│   │   ├── robustness.js             # Sistema centralizado de robustez (NUEVO)
+│   │   ├── robustness.js             # Sistema centralizado de robustez
+│   │   ├── PollingCoordinator.js     # Coordinador de polling para indicadores
 │   │   ├── CandleCache.js            # Cache IndexedDB con validacion
 │   │   ├── IndicatorCache.js
 │   │   ├── Logger.js
@@ -455,6 +456,11 @@ Archivos que NO deben modificarse sin cuidado:
 
 ## HISTORIAL DE CAMBIOS
 
+### Febrero 2026 - Fix VWAP tiempo real
+
+1. **Fix PollingCoordinator**: Agregada inicializacion en SingleSymbolAnalyzer.jsx
+2. **VWAPIndicator optimizado**: Logs reducidos a nivel warn, codigo limpio
+
 ### Enero 2026 - Creacion inicial
 
 1. **Migracion desde App 4**: Copiado codigo base del Analizador Cripto
@@ -565,6 +571,67 @@ Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia d
 
 **Error "uvicorn no se reconoce" en START_ALL.bat:**
 - El script usa `python -m uvicorn` para compatibilidad
+
+---
+
+## FIX: VWAP NO GRAFICABA EN TIEMPO REAL (Febrero 2026)
+
+### Problema
+
+El indicador VWAP no se actualizaba en tiempo real. Solo mostraba datos al cargar inicialmente pero no hacia polling para actualizaciones.
+
+### Causa Raiz
+
+El `VWAPIndicator.js` usaba el `PollingCoordinator` para registrar callbacks de polling, pero el **PollingCoordinator nunca se iniciaba**. El archivo `SingleSymbolAnalyzer.jsx` no importaba ni llamaba a `pollingCoordinator.start()`.
+
+### Diagnostico
+
+Al revisar los logs de consola:
+- NO aparecian mensajes `[VWAP]`
+- NO aparecia `[PollingCoordinator] Started`
+- Grep confirmo que `pollingCoordinator.start()` no se llamaba en ningun archivo
+
+### Solucion
+
+Se agrego la inicializacion del PollingCoordinator en `SingleSymbolAnalyzer.jsx`:
+
+```javascript
+// Import agregado (linea 26)
+import pollingCoordinator from "../utils/PollingCoordinator";
+
+// Inicializacion en useEffect (lineas 188-199)
+useEffect(() => {
+  initRobustness();
+  pollingCoordinator.start();
+  log.info('[PollingCoordinator] Started');
+
+  return () => {
+    stopRobustness();
+    pollingCoordinator.stop();
+    log.info('[PollingCoordinator] Stopped');
+  };
+}, []);
+```
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/SingleSymbolAnalyzer.jsx` | Import y inicializacion de pollingCoordinator |
+| `src/components/indicators/VWAPIndicator.js` | Limpieza de logs de debug (level: warn) |
+
+### Leccion Aprendida
+
+**CRITICO:** Cuando un indicador usa `PollingCoordinator.register()`, el coordinador DEBE iniciarse en el componente raiz con `pollingCoordinator.start()`. Sin esta llamada, los callbacks se registran pero los timers nunca se inician.
+
+### Verificacion
+
+Despues del fix, la consola debe mostrar:
+```
+[SingleSymbolAnalyzer] [PollingCoordinator] Started
+[PollingCoordinator] Started
+[PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+```
 
 ---
 
