@@ -53,6 +53,9 @@ from vwap_service import get_vwap_service
 # S&R v2 detector imports
 from sr_detector import get_sr_detector
 
+# Zone Detector imports
+from zone_detector import ZoneDetector, ZoneDetectionParams
+
 app = FastAPI(
     title="Crypto Watchlist Backend",
     description="Servidor backend para la Watchlist de criptomonedas con Bybit Futures",
@@ -4359,3 +4362,183 @@ async def get_support_resistance_v2(
             "success": False,
             "error": str(e)
         }
+
+
+# =============================================================================
+# ZONE DETECTOR - Detección de zonas de consolidación con simulación de trading
+# =============================================================================
+
+# Carpeta para guardar CSVs de zonas
+ZONES_CSV_DIR = Path("zones_csv")
+ZONES_CSV_DIR.mkdir(exist_ok=True)
+
+@app.post("/api/zones/detect")
+async def detect_trading_zones(request: Request):
+    """
+    Detecta zonas de consolidación y simula trades con TP=2R, SL=1R.
+    Genera un CSV con formato europeo cuando se cambian los parámetros.
+
+    Body:
+    {
+        "symbol": "BTCUSDT",
+        "interval": "5",
+        "days": 120,
+        "params": {
+            "consol_min_bars": 8,
+            "consol_max_bars": 50,
+            "consol_max_range_pct": 2.0,
+            "consol_atr_ratio": 0.6,
+            "consol_body_ratio": 0.5,
+            "consol_max_outside_bars": 3,
+            "lookforward_bars": 100,
+            "max_price_range_pct": 5.0
+        },
+        "generate_csv": true
+    }
+    """
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        params_dict = body.get("params", {})
+        generate_csv = body.get("generate_csv", True)
+
+        print(f"[{symbol}] [ZONES] Detectando zonas con interval={interval}, days={days}")
+        print(f"[{symbol}] [ZONES] Params: {params_dict}")
+
+        # Validar días contra máximo permitido
+        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        if days > max_days:
+            days = max_days
+            print(f"[{symbol}] [ZONES] Days ajustado a máximo permitido: {days}")
+
+        # Obtener datos históricos
+        historical = await get_historical(symbol, interval, days)
+
+        if not historical.get('success') or not historical.get('data'):
+            return {
+                "success": False,
+                "error": "No se pudieron obtener datos históricos",
+                "zones": []
+            }
+
+        candles = historical['data']
+        print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas")
+
+        # Configurar parámetros de detección
+        params = ZoneDetectionParams(
+            consol_min_bars=params_dict.get("consol_min_bars", 8),
+            consol_max_bars=params_dict.get("consol_max_bars", 50),
+            consol_max_range_pct=params_dict.get("consol_max_range_pct", 2.0),
+            consol_atr_ratio=params_dict.get("consol_atr_ratio", 0.6),
+            consol_body_ratio=params_dict.get("consol_body_ratio", 0.5),
+            consol_max_outside_bars=params_dict.get("consol_max_outside_bars", 3),
+            lookforward_bars=params_dict.get("lookforward_bars", 100),
+            max_price_range_pct=params_dict.get("max_price_range_pct", 5.0)
+        )
+
+        # Detectar zonas con simulación de trades
+        detector = ZoneDetector()
+        zones = detector.detect_zones(candles, method="trading_zones", params=params)
+
+        print(f"[{symbol}] [ZONES] {len(zones)} zonas detectadas")
+
+        # Convertir a diccionarios para JSON
+        zones_data = [zone.to_dict() for zone in zones]
+
+        # Generar CSV si se solicita
+        csv_path = None
+        if generate_csv and len(zones) > 0:
+            csv_path = _generate_zones_csv(symbol, interval, days, zones_data, params_dict)
+            print(f"[{symbol}] [ZONES] CSV generado: {csv_path}")
+
+        # Calcular estadísticas
+        wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
+        losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
+        total_pnl_r = sum(z.get('trade_pnl_r', 0) for z in zones_data)
+        win_rate = (wins / (wins + losses) * 100) if (wins + losses) > 0 else 0
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "candles_count": len(candles),
+            "zones": zones_data,
+            "stats": {
+                "total_zones": len(zones_data),
+                "wins": wins,
+                "losses": losses,
+                "open": len([z for z in zones_data if z.get('trade_result') == 'OPEN']),
+                "win_rate": round(win_rate, 1),
+                "total_pnl_r": round(total_pnl_r, 1)
+            },
+            "csv_path": csv_path,
+            "params_used": params_dict
+        }
+
+    except Exception as e:
+        print(f"[ZONES ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "zones": []
+        }
+
+
+def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict], params: dict) -> str:
+    """
+    Genera un archivo CSV con formato europeo (punto y coma, coma decimal).
+    Incluye timestamp en el nombre para no sobreescribir.
+    """
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{symbol}_{interval}m_{days}d_zones_{timestamp}.csv"
+    filepath = ZONES_CSV_DIR / filename
+
+    # Headers del CSV
+    headers = [
+        "zona_num", "fecha_inicio", "fecha_fin",
+        "precio_min", "precio_max", "rango_pct",
+        "direccion_breakout", "resultado", "pnl_r",
+        "r_multiple", "alcanzo_2r", "alcanzo_3r",
+        "velas_en_zona", "duracion_horas", "score"
+    ]
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        # Escribir parámetros usados como comentario
+        f.write(f"# Parametros: {json.dumps(params)}\n")
+        f.write(f"# Fecha: {datetime.now().isoformat()}\n")
+
+        # Headers
+        f.write(";".join(headers) + "\n")
+
+        # Datos
+        for i, zone in enumerate(zones, 1):
+            # Convertir timestamps a fechas legibles
+            start_dt = datetime.fromtimestamp(zone.get('start_timestamp', 0) / 1000)
+            end_dt = datetime.fromtimestamp(zone.get('end_timestamp', 0) / 1000)
+
+            row = [
+                str(i),
+                start_dt.strftime("%Y-%m-%d %H:%M"),
+                end_dt.strftime("%Y-%m-%d %H:%M"),
+                str(zone.get('min_price', 0)).replace('.', ','),
+                str(zone.get('max_price', 0)).replace('.', ','),
+                str(round(zone.get('price_range_pct', 0), 2)).replace('.', ','),
+                zone.get('breakout_direction', ''),
+                zone.get('trade_result', ''),
+                str(zone.get('trade_pnl_r', 0)).replace('.', ','),
+                str(round(zone.get('r_multiple', 0), 2)).replace('.', ','),
+                "Sí" if zone.get('reached_2r') else "No",
+                "Sí" if zone.get('reached_3r') else "No",
+                str(zone.get('candles_in_zone', 0)),
+                str(round(zone.get('duration_hours', 0), 1)).replace('.', ','),
+                str(round(zone.get('trading_score', 0), 0))
+            ]
+
+            f.write(";".join(row) + "\n")
+
+    return str(filepath)

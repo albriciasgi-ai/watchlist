@@ -19,6 +19,7 @@ import ContinuationPatternIndicator from "./ContinuationPatternIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: minConfidence 20%
 import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
+import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import Logger from '../../utils/Logger.js';
 
@@ -55,6 +56,9 @@ class IndicatorManager {
 
     // ✅ NUEVO: Referencia a las velas históricas (necesario para fetchData en DBT)
     this.allCandles = null;
+
+    // 🎯 NUEVO: Zone Visualizer (para trading zones)
+    this.zoneVisualizerIndicator = null;
 
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
@@ -133,6 +137,12 @@ class IndicatorManager {
       log.debug(`[${this.symbol}] Creando S&R v2 (Swing-based)`);
       this.indicators.push(new SupportResistance2Indicator(this.symbol, this.interval, this.days));
     }
+
+    // Zone Visualizer - siempre disponible (las zonas se cargan bajo demanda)
+    this.zoneVisualizerIndicator = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
+    this.zoneVisualizerIndicator.enabled = true;
+    this.indicators.push(this.zoneVisualizerIndicator);
+    log.debug(`[${this.symbol}] Zone Visualizer creado (siempre disponible)`);
 
     // Asignar referencia al manager a todos los indicadores
     this.indicators.forEach(indicator => {
@@ -1290,6 +1300,88 @@ class IndicatorManager {
    */
   getVWAPIndicator() {
     return this.indicators.find(ind => ind.name === "VWAP");
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el indicador Zone Visualizer
+   */
+  getZoneVisualizerIndicator() {
+    return this.zoneVisualizerIndicator;
+  }
+
+  /**
+   * 🎯 NUEVO: Carga zonas de trading desde el backend y las visualiza
+   * @param {object} params - Parámetros de detección de zonas
+   * @returns {Promise<object>} - Resultado con zonas y estadísticas
+   */
+  async loadTradingZones(params = {}) {
+    if (!this.zoneVisualizerIndicator) {
+      log.warn(`[${this.symbol}] ZoneVisualizer no inicializado`);
+      return { success: false, error: 'ZoneVisualizer no inicializado' };
+    }
+
+    try {
+      const API_BASE_URL = 'http://localhost:10000';
+      const requestBody = {
+        symbol: this.symbol,
+        interval: this.interval,
+        days: this.days,
+        params: {
+          consol_min_bars: params.consol_min_bars || 8,
+          consol_max_bars: params.consol_max_bars || 50,
+          consol_max_range_pct: params.consol_max_range_pct || 2.0,
+          consol_atr_ratio: params.consol_atr_ratio || 0.6,
+          consol_body_ratio: params.consol_body_ratio || 0.5,
+          consol_max_outside_bars: params.consol_max_outside_bars || 3,
+          lookforward_bars: params.lookforward_bars || 100,
+          max_price_range_pct: params.max_price_range_pct || 5.0
+        },
+        generate_csv: params.generate_csv !== false
+      };
+
+      log.info(`[${this.symbol}] Cargando zonas con params:`, requestBody.params);
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/detect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.zones) {
+        // Cargar zonas en el visualizador
+        this.zoneVisualizerIndicator.setZones(result.zones);
+        log.info(`[${this.symbol}] ${result.zones.length} zonas cargadas`);
+
+        if (result.csv_path) {
+          log.info(`[${this.symbol}] CSV generado: ${result.csv_path}`);
+        }
+
+        return {
+          success: true,
+          zones: result.zones,
+          stats: result.stats,
+          csv_path: result.csv_path
+        };
+      } else {
+        log.warn(`[${this.symbol}] Error cargando zonas: ${result.error}`);
+        return { success: false, error: result.error || 'Error desconocido' };
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] Error en loadTradingZones:`, error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * 🎯 NUEVO: Limpia las zonas del visualizador
+   */
+  clearTradingZones() {
+    if (this.zoneVisualizerIndicator) {
+      this.zoneVisualizerIndicator.clearZones();
+      log.info(`[${this.symbol}] Zonas limpiadas`);
+    }
   }
 
   /**

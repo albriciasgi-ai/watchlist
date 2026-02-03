@@ -1,0 +1,6 @@
+# Parametros: {}
+# Fecha: 2026-02-03T00:05:54.598845
+zona_num;fecha_inicio;fecha_fin;precio_min;precio_max;rango_pct;direccion_breakout;resultado;pnl_r;r_multiple;alcanzo_2r;alcanzo_3r;velas_en_zona;duracion_horas;score
+1;2026-01-27 01:00;2026-01-27 15:00;87688,1;88525,3;0,95;UP;WIN;2,0;2,47;Sí;No;15;14,0;74.0
+2;2026-01-27 16:00;2026-01-28 20:00;88802,0;89499,8;0,79;DOWN;WIN;2,0;20,4;Sí;Sí;29;28,0;71.0
+3;2026-01-28 21:00;2026-01-29 09:00;87650,0;88718,5;1,22;DOWN;WIN;2,0;12,24;Sí;Sí;13;12,0;65.0

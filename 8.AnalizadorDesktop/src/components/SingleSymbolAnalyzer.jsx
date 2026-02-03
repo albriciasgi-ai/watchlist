@@ -13,6 +13,7 @@ import SupportResistance2Settings from "./SupportResistance2Settings";
 import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
+import ZoneDetectorSettings from "./ZoneDetectorSettings";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
@@ -165,6 +166,7 @@ const SingleSymbolAnalyzer = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showSR2Settings, setShowSR2Settings] = useState(false);
+  const [showZoneDetectorSettings, setShowZoneDetectorSettings] = useState(false);
 
   // Trading Panel state
   const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
@@ -494,6 +496,13 @@ const SingleSymbolAnalyzer = () => {
     setShowSR2Settings(true);
   }, []);
 
+  const handleOpenZoneDetectorSettings = useCallback((manager) => {
+    if (manager) {
+      indicatorManagerRef.current = manager;
+    }
+    setShowZoneDetectorSettings(true);
+  }, []);
+
   // Handlers de cambio de configuracion
   const handleVWAPConfigChange = useCallback((config) => {
     const manager = indicatorManagerRef.current;
@@ -699,6 +708,24 @@ const SingleSymbolAnalyzer = () => {
             title="Trading Panel (Alt+T)"
           >
             📊 Trading
+          </button>
+          <button
+            className={`zone-detector-toggle ${showZoneDetectorSettings ? 'active' : ''}`}
+            onClick={() => {
+              handleOpenZoneDetectorSettings(indicatorManagerRef.current);
+            }}
+            title="Detector de Zonas de Trading"
+            style={{
+              padding: '8px 12px',
+              backgroundColor: showZoneDetectorSettings ? '#FF9800' : '#4A6FA5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            🎯 Zonas
           </button>
         </div>
       </div>
@@ -1043,6 +1070,23 @@ const SingleSymbolAnalyzer = () => {
             }
           }}
           onClose={() => setShowSR2Settings(false)}
+        />
+      )}
+
+      {showZoneDetectorSettings && (
+        <ZoneDetectorSettings
+          isOpen={showZoneDetectorSettings}
+          onClose={() => setShowZoneDetectorSettings(false)}
+          indicatorManager={indicatorManagerRef.current}
+          symbol={symbol}
+          onZonesLoaded={(result) => {
+            log.info(`Zonas cargadas: ${result.zones?.length || 0}`);
+            // Forzar redraw del chart usando el manager del Registry
+            const manager = IndicatorManagerRegistry.get(symbol);
+            if (manager?.requestRedraw) {
+              manager.requestRedraw();
+            }
+          }}
         />
       )}
     </div>

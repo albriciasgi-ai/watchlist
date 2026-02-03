@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(copy:*)",
+      "Bash(cmd //c \"taskkill /F /PID 9616\")",
+      "Bash(wmic process where \"processid=''9616''\" get processid,commandline 2)",
+      "Bash(cmd //c \"tasklist /v\")",
+      "Bash(cmd /c \"taskkill /F /PID 4760 & taskkill /F /PID 8816 & taskkill /F /PID 8592\")",
+      "Bash(cmd //c \"taskkill /F /PID 22220\")"
     ],
     "deny": [],
     "ask": []

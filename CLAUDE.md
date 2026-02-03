@@ -34,11 +34,11 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 | `1.Altagracia_Crypto_Backtester/` | Backtester de estrategias | 9000 | 5173 |
 | `2.WatchlistConIndicadores/` | Watchlist con indicadores en tiempo real | 8000 | 5173 |
 | `3.TradingBot_Python/` | Bot de trading automatizado | 5000 | 3000 |
-| `4.Analizador cripto/` | Analizador de un solo simbolo (optimizado) | 10000 | 10001 |
+| `4.Analizador cripto/` | Analizador de un solo simbolo (optimizado) | 10001 | 10001 |
 | `5.Order_flow/` | Analizador de Order Flow con Footprint | 11000 | 11001 |
 | `6.Trading_Journal/` | Diario de trading con metricas y screenshots | 12000 | 12001 |
 | `7.WatchlistDesktop/` | Watchlist version Electron (en desarrollo) | 8000 | Electron |
-| `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10000 | 5174 |
+| `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10001 | 5174 |
 | `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | 5175 |
 | `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
 | `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
@@ -3710,3 +3710,156 @@ El backend hace polling al TradingBot cada 5 segundos:
 - **Backend:** Usa el mismo backend de App 6 en puerto 12000
 - **TradingBot:** Requiere TradingBot corriendo en puerto 5000 para el monitor
 - **Screenshots:** Backend usa Playwright/mplfinance
+
+---
+
+# ZONE DETECTOR (Analizador Desktop - Febrero 2026)
+
+Sistema de deteccion de zonas de consolidacion con simulacion de trading integrada.
+
+## Cambio de Puerto (Febrero 2026)
+
+**IMPORTANTE:** El puerto del backend del Analizador cripto/AnalizadorDesktop cambio de 10000 a **10001** debido a procesos zombie que bloqueaban el puerto 10000.
+
+### Archivos Actualizados
+
+| Archivo | Cambio |
+|---------|--------|
+| `8.AnalizadorDesktop/src/config.js` | `API_BASE_URL = "http://localhost:10001"` |
+| `4.Analizador cripto/backend/main.py` | Fix: `get_historical_data` -> `get_historical` en endpoint zones |
+
+### Comando de Inicio
+
+```bash
+# Backend (puerto 10001)
+cd "4.Analizador cripto/backend"
+.venv\Scripts\python.exe -m uvicorn main:app --port 10001 --host 127.0.0.1
+
+# Frontend Electron
+cd 8.AnalizadorDesktop
+npm run dev:electron
+```
+
+## Endpoint de Deteccion de Zonas
+
+### POST `/api/zones/detect`
+
+Detecta zonas de consolidacion y simula trades con TP=2R y SL=1R.
+
+**Request:**
+```json
+{
+  "symbol": "BTCUSDT",
+  "interval": "60",
+  "days": 30,
+  "consol_min_bars": 8,
+  "consol_max_bars": 50,
+  "consol_max_range_pct": 2.0,
+  "consol_atr_ratio": 0.6,
+  "consol_body_ratio": 0.5,
+  "consol_max_outside_bars": 3,
+  "lookforward_bars": 100,
+  "max_price_range_pct": 5.0,
+  "generate_csv": true
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "symbol": "BTCUSDT",
+  "interval": "60",
+  "days": 30,
+  "candles_count": 720,
+  "zones": [
+    {
+      "id": "zone_1234567890_0",
+      "start_timestamp": 1706745600000,
+      "end_timestamp": 1706832000000,
+      "min_price": 42000.0,
+      "max_price": 42500.0,
+      "price_range_pct": 1.19,
+      "candles_in_zone": 12,
+      "duration_hours": 24.0,
+      "breakout_direction": "UP",
+      "breakout_price": 42550.0,
+      "breakout_timestamp": 1706835600000,
+      "trade_result": "WIN",
+      "trade_pnl_r": 2.0,
+      "r_multiple": 2.0,
+      "reached_2r": true,
+      "reached_3r": false,
+      "bars_to_close": 15,
+      "trading_score": 75
+    }
+  ],
+  "stats": {
+    "total_zones": 5,
+    "wins": 3,
+    "losses": 2,
+    "open": 0,
+    "win_rate": 60.0,
+    "total_pnl_r": 4.0
+  },
+  "csv_path": "zones_csv/BTCUSDT_60_zones_20260203_001500.csv"
+}
+```
+
+## Componentes Frontend
+
+### ZoneDetectorSettings.jsx
+
+Modal para configurar parametros de deteccion:
+
+| Parametro | Default | Descripcion |
+|-----------|---------|-------------|
+| `consol_min_bars` | 8 | Minimo de velas en la zona |
+| `consol_max_bars` | 50 | Maximo de velas en la zona |
+| `consol_max_range_pct` | 2.0 | Maximo % de rango de precio |
+| `consol_atr_ratio` | 0.6 | Ratio ATR para validar consolidacion |
+| `consol_body_ratio` | 0.5 | Ratio de cuerpo de velas |
+| `consol_max_outside_bars` | 3 | Velas fuera de rango permitidas |
+| `lookforward_bars` | 100 | Velas a futuro para simular trade |
+| `max_price_range_pct` | 5.0 | Filtro global de rango de precio |
+
+### Integracion con IndicatorManager
+
+```javascript
+// En ZoneDetectorSettings.jsx
+const manager = IndicatorManagerRegistry.get(symbol);
+const result = await manager.loadTradingZones({
+  ...params,
+  generate_csv: true
+});
+```
+
+## Generacion de CSV
+
+Cuando `generate_csv: true`, se crea un archivo CSV con formato europeo (separador `;`, decimal `,`):
+
+```
+zone_num;start_date;end_date;min_price;max_price;price_range_pct;breakout_direction;trade_result;trade_pnl_r;r_multiple;trading_score;candles_in_zone;duration_hours
+1;2026-01-15 08:00;2026-01-16 08:00;42000,00;42500,00;1,19;UP;WIN;2,0;2,00;75;12;24,0
+```
+
+**Ubicacion:** `4.Analizador cripto/backend/zones_csv/`
+
+## Troubleshooting
+
+**Error "IndicatorManager no disponible":**
+- El grafico debe estar cargado antes de abrir el modal
+- Verificar que `IndicatorManagerRegistry.get(symbol)` retorna un manager valido
+
+**Error 404 en `/api/zones/detect`:**
+- Verificar que el backend corre en puerto 10001
+- Verificar que el fix `get_historical` esta aplicado en main.py linea 4417
+
+**Puerto 10000 bloqueado:**
+- Procesos zombie de Python pueden bloquear el puerto
+- Usar puerto 10001 como alternativa
+- O reiniciar la PC para liberar sockets
+
+**CSV no se genera:**
+- Verificar que existe el directorio `zones_csv/`
+- Verificar permisos de escritura
