@@ -243,10 +243,36 @@
 .btn-danger {
   background: var(--accent-red);
   color: white;
+  border: none;
 }
 
 .btn-danger:hover {
-  background: #d64040;
+  background: #dc2626;
+}
+
+.btn-danger:disabled {
+  background: #7f1d1d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Danger Section */
+.danger-section {
+  border-color: var(--accent-red);
+  border-width: 1px;
+  border-style: dashed;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-md);
+}
+
+.danger-section h4 {
+  color: var(--accent-red);
+}
+
+.danger-text {
+  color: var(--accent-red);
+  opacity: 0.8;
 }
 
 /* Responsive */
@@ -259,4 +285,82 @@
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  max-width: 450px;
+  width: 90%;
+}
+
+.modal-content h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 1.1rem;
+}
+
+.modal-content p {
+  margin: var(--spacing-sm) 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Danger Modal */
+.danger-modal {
+  border-color: var(--accent-red);
+}
+
+.danger-modal h3 {
+  color: var(--accent-red);
+}
+
+/* Confirm Input */
+.confirm-input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  margin: var(--spacing-sm) 0;
+}
+
+.confirm-input:focus {
+  outline: none;
+  border-color: var(--accent-red);
+}
+
+/* Error Text */
+.error-text {
+  color: var(--accent-red) !important;
+  font-size: 0.75rem !important;
+  margin-top: var(--spacing-xs) !important;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-light);
 }

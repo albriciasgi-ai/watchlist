@@ -3267,6 +3267,17 @@ async def get_zone_methods():
                 "consol_atr_ratio": {"default": 0.6, "range": [0.3, 2.0], "description": "ATR local/global (menor = menos volátil)"},
                 "consol_body_ratio": {"default": 0.5, "range": [0.3, 0.8], "description": "Ratio cuerpo/rango de velas (menor = más indecisión)"},
                 "consol_max_outside_bars": {"default": 3, "range": [1, 10], "description": "Velas fuera del rango antes de cerrar zona"}
+            },
+            "trading_zones": {
+                "consol_min_bars": {"default": 8, "range": [3, 50], "description": "Mínimo de velas en consolidación"},
+                "consol_max_bars": {"default": 50, "range": [10, 300], "description": "Máximo de velas en consolidación"},
+                "consol_max_range_pct": {"default": 3.0, "range": [0.5, 10.0], "description": "Máximo % de rango de precio"},
+                "consol_atr_ratio": {"default": 0.6, "range": [0.2, 2.0], "description": "ATR local/global (menor = menos volátil)"},
+                "consol_body_ratio": {"default": 0.5, "range": [0.2, 0.9], "description": "Ratio cuerpo/rango (menor = más indecisión)"},
+                "consol_max_outside_bars": {"default": 3, "range": [1, 10], "description": "Velas fuera del rango antes de cerrar"},
+                "lookforward_bars": {"default": 100, "range": [20, 500], "description": "Velas hacia adelante para simular trade"},
+                "breakout_search_bars": {"default": 20, "range": [5, 50], "description": "Velas para buscar breakout después de consolidación"},
+                "include_no_breakout": {"default": True, "type": "boolean", "description": "Incluir zonas sin breakout claro"}
             }
         }
     }

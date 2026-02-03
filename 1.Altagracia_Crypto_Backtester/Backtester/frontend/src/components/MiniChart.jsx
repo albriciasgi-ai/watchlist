@@ -385,16 +385,9 @@ const MiniChart = forwardRef(({
         targetIndex = sourceCandles.length - 1;
       }
 
-      // 🎯 FIX: En modo backtesting, también actualizar el currentTime del playback
-      if (backtestingMode && onRequestTimeChange) {
-        const targetCandle = sourceCandles[targetIndex];
-        if (targetCandle) {
-          console.log(`[MiniChart ${symbol}] 🎯 Actualizando currentTime a ${new Date(targetCandle.timestamp).toISOString()}`);
-          onRequestTimeChange(targetCandle.timestamp);
-          // El useEffect de currentTime se encargará de actualizar candlesRef y redibujar
-          return;
-        }
-      }
+      // 🎯 FIX v2: NO actualizar currentTime - solo navegar visualmente
+      // Esto evita que las zonas desaparezcan al cambiar el playback time
+      // El usuario puede usar los controles de playback para cambiar el tiempo si lo desea
 
       // Calcular cuántas velas caben en la pantalla con el zoom actual
       const canvas = canvasRef.current;
@@ -408,12 +401,24 @@ const MiniChart = forwardRef(({
       // Posicionar el target en el centro de la pantalla
       const newOffset = Math.max(0, targetIndex - Math.floor(candlesPerScreen / 2));
 
-      // Limitar para que no se pase del final
-      const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+      // 🎯 FIX: En modo backtesting, usar allCandlesRef para calcular maxOffset
+      const maxOffset = Math.max(0, sourceCandles.length - candlesPerScreen);
       viewStateRef.current.offset = Math.min(newOffset, maxOffset);
 
-      // Forzar redibujado
-      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      // 🎯 NUEVO: Marcar que el usuario navegó manualmente (mostrar botón Follow)
+      if (backtestingMode) {
+        manualPanRef.current = true;
+        setShowFollowButton(true);
+        if (onRequestPause) {
+          onRequestPause();
+        }
+      }
+
+      // 🎯 FIX: En modo backtesting, dibujar con allCandles para ver todo el historial
+      const candlesToDraw = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : candlesRef.current;
+      drawChart(candlesToDraw, lastPriceRef.current, null, null);
 
       console.log(`[MiniChart ${symbol}] 🎯 Centrado en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
     }
@@ -1340,7 +1345,11 @@ const MiniChart = forwardRef(({
       const deltaCandlesFloat = (deltaX / chartWidth) * candlesPerScreen;
       const deltaCandles = Math.round(deltaCandlesFloat);
 
-      const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+      // 🎯 FIX: En modo backtesting, usar allCandlesRef para permitir navegación completa
+      const sourceForMax = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : candlesRef.current;
+      const maxOffset = Math.max(0, sourceForMax.length - candlesPerScreen);
       const newOffset = Math.max(0, Math.min(maxOffset, dragStateRef.current.startOffset + deltaCandles));
       viewStateRef.current.offset = newOffset;
 
@@ -1349,7 +1358,11 @@ const MiniChart = forwardRef(({
       const newVerticalOffset = dragStateRef.current.startVerticalOffset + deltaY;
       viewStateRef.current.verticalOffset = newVerticalOffset;
 
-      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      // 🎯 FIX: En modo backtesting, dibujar con allCandles para ver el historial completo
+      const candlesToDraw = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : candlesRef.current;
+      drawChart(candlesToDraw, lastPriceRef.current, null, null);
     } else {
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);

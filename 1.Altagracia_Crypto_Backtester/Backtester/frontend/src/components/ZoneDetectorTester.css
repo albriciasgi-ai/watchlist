@@ -318,6 +318,50 @@
   color: #888;
 }
 
+/* Trading Zone Metrics */
+.zdt-zone-trading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #333;
+  font-size: 11px;
+}
+
+.zdt-trade-result {
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.zdt-trade-win {
+  background: rgba(0, 200, 100, 0.2);
+  color: #00ff88;
+}
+
+.zdt-trade-loss {
+  background: rgba(255, 50, 50, 0.2);
+  color: #ff5555;
+}
+
+.zdt-trade-open {
+  background: rgba(255, 200, 0, 0.2);
+  color: #ffcc00;
+}
+
+.zdt-breakout-dir {
+  color: #aaa;
+}
+
+.zdt-r-multiple {
+  color: #88aaff;
+}
+
+.zdt-bars-close {
+  color: #888;
+}
+
 .zdt-more {
   text-align: center;
   color: #888;

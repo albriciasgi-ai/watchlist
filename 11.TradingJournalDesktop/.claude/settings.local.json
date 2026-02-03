@@ -11,7 +11,8 @@
       "Bash(copy /Y \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\services\\position_monitor_v2.py\" \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\6.Trading_Journal\\backend\\services\\position_monitor.py\")",
       "Bash(powershell -Command:*)",
       "WebSearch",
-      "WebFetch(domain:bybit-exchange.github.io)"
+      "WebFetch(domain:bybit-exchange.github.io)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

@@ -15,27 +15,33 @@ function TradeList({ onViewTrade }) {
   const [sortOrder, setSortOrder] = useState('desc')
 
   useEffect(() => {
+    console.log('[TradeList] Iniciando polling cada 5 segundos')
     fetchTrades(true)
 
     const interval = setInterval(() => {
       fetchTrades(false)
     }, 5000)
 
-    return () => clearInterval(interval)
+    return () => {
+      console.log('[TradeList] Deteniendo polling')
+      clearInterval(interval)
+    }
   }, [])
 
   const fetchTrades = async (showLoading = false) => {
     try {
       if (showLoading) setLoading(true)
       setError(null)
-      const res = await fetch(`${API_BASE_URL}/api/entries`)
+      const res = await fetch(`${API_BASE_URL}/api/entries?limit=500`)
       if (!res.ok) throw new Error('Error al cargar trades')
       const data = await res.json()
       const entries = data.entries || data || []
-      setTrades(Array.isArray(entries) ? entries : [])
+      const tradesArray = Array.isArray(entries) ? entries : []
+      console.log(`[TradeList] Fetch completado: ${tradesArray.length} trades`)
+      setTrades(tradesArray)
       setLoading(false)
     } catch (err) {
-      console.error('Error fetching trades:', err)
+      console.error('[TradeList] Error fetching trades:', err)
       setError('Error al cargar trades')
       setLoading(false)
     }
@@ -55,7 +61,18 @@ function TradeList({ onViewTrade }) {
     let result = [...trades]
 
     if (filterStatus !== 'all') {
-      result = result.filter(t => t.status === filterStatus)
+      result = result.filter(t => {
+        const status = (t.status || '').toLowerCase()
+        if (filterStatus === 'OPEN') {
+          return status === 'open'
+        } else if (filterStatus === 'CLOSED') {
+          // Incluir todos los tipos de cierre
+          return status.startsWith('closed') || status === 'closed'
+        } else if (filterStatus === 'CANCELLED') {
+          return status === 'cancelled'
+        }
+        return true
+      })
     }
     if (filterSymbol !== 'all') {
       result = result.filter(t => t.symbol === filterSymbol)
@@ -144,11 +161,17 @@ function TradeList({ onViewTrade }) {
 
   const getStatusBadge = (status) => {
     const statusMap = {
+      'open': { class: 'badge-blue', text: 'Abierto' },
       'OPEN': { class: 'badge-blue', text: 'Abierto' },
+      'closed_tp': { class: 'badge-green', text: 'TP' },
+      'closed_sl': { class: 'badge-red', text: 'SL' },
+      'closed_manual': { class: 'badge-gray', text: 'Manual' },
+      'closed_be': { class: 'badge-yellow', text: 'BE' },
       'CLOSED': { class: 'badge-green', text: 'Cerrado' },
+      'cancelled': { class: 'badge-yellow', text: 'Cancelado' },
       'CANCELLED': { class: 'badge-yellow', text: 'Cancelado' }
     }
-    const s = statusMap[status] || { class: '', text: status }
+    const s = statusMap[status] || { class: 'badge-gray', text: status || 'Desconocido' }
     return <span className={`badge ${s.class}`}>{s.text}</span>
   }
 

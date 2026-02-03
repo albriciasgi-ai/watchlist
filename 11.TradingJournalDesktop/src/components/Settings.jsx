@@ -9,6 +9,15 @@ function Settings({ monitorStatus, onRefresh }) {
   const [exportLoading, setExportLoading] = useState(false)
   const [importFile, setImportFile] = useState(null)
   const [reconciling, setReconciling] = useState(false)
+  const [clearingHistory, setClearingHistory] = useState(false)
+
+  // Estado para modal de confirmacion
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+
+  // Estado para modal de mensaje
+  const [messageModal, setMessageModal] = useState({ show: false, title: '', message: '' })
 
   useEffect(() => {
     fetchConfig()
@@ -106,11 +115,16 @@ function Settings({ monitorStatus, onRefresh }) {
     }
   }
 
-  
+  // Funcion helper para mostrar mensajes (reemplaza alert)
+  const showMessage = (title, message) => {
+    setMessageModal({ show: true, title, message })
+  }
+
   const handleReconcile = async () => {
-    if (!confirm('Esto cerrara entries huerfanas y sincronizara con TradingBot. Continuar?')) {
-      return
-    }
+    // Usar window.confirm con fallback
+    const confirmed = window.confirm ? window.confirm('Esto cerrara entries huerfanas y sincronizara con TradingBot. Continuar?') : true
+    if (!confirmed) return
+
     try {
       setReconciling(true)
       const res = await fetch(`${API_BASE_URL}/api/monitor/reconcile`, { method: 'POST' })
@@ -118,33 +132,70 @@ function Settings({ monitorStatus, onRefresh }) {
         const data = await res.json()
         const closed = data.result?.closed_orphans || 0
         const created = data.result?.created_entries || 0
-        alert(`Reconciliacion completada:
-- Entries cerradas: ${closed}
-- Entries creadas: ${created}`)
+        showMessage('Reconciliacion Completada', `Entries cerradas: ${closed}\nEntries creadas: ${created}`)
         onRefresh()
       } else {
-        alert('Error en reconciliacion')
+        showMessage('Error', 'Error en reconciliacion')
       }
     } catch (err) {
       console.error('Error reconciling:', err)
-      alert('Error de conexion')
+      showMessage('Error', 'Error de conexion')
     } finally {
       setReconciling(false)
     }
   }
 
   const handleClearScreenshots = async () => {
-    if (!confirm('Estas seguro de eliminar todos los screenshots? Esta accion no se puede deshacer.')) {
-      return
-    }
+    const confirmed = window.confirm ? window.confirm('Estas seguro de eliminar todos los screenshots? Esta accion no se puede deshacer.') : true
+    if (!confirmed) return
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/screenshots/clear`, { method: 'POST' })
       if (res.ok) {
-        alert('Screenshots eliminados')
+        showMessage('Exito', 'Screenshots eliminados')
       }
     } catch (err) {
       console.error('Error clearing screenshots:', err)
+    }
+  }
+
+  // Abre el modal de confirmacion para borrar historial
+  const openDeleteHistoryModal = () => {
+    setDeleteConfirmText('')
+    setDeleteError('')
+    setShowDeleteModal(true)
+  }
+
+  // Ejecuta el borrado del historial
+  const handleClearAllHistory = async () => {
+    if (deleteConfirmText !== 'BORRAR TODO') {
+      setDeleteError('Texto incorrecto. Escribe "BORRAR TODO" exactamente.')
+      return
+    }
+
+    try {
+      setClearingHistory(true)
+      setShowDeleteModal(false)
+      console.log('[Settings] Iniciando borrado de historial...')
+      const res = await fetch(`${API_BASE_URL}/api/admin/clear-all-entries`, { method: 'DELETE' })
+      console.log('[Settings] Respuesta recibida:', res.status)
+
+      if (res.ok) {
+        const data = await res.json()
+        console.log('[Settings] Datos:', data)
+        showMessage('Historial Eliminado', `${data.deleted_count} trades borrados`)
+        onRefresh()
+      } else {
+        const errorText = await res.text()
+        console.error('[Settings] Error del servidor:', errorText)
+        showMessage('Error', `Error al eliminar historial: ${res.status}`)
+      }
+    } catch (err) {
+      console.error('[Settings] Error clearing history:', err)
+      showMessage('Error', `Error de conexion: ${err.message}`)
+    } finally {
+      setClearingHistory(false)
+      setDeleteConfirmText('')
     }
   }
 
@@ -304,6 +355,20 @@ function Settings({ monitorStatus, onRefresh }) {
               )}
             </div>
           </div>
+
+          <div className="data-section danger-section">
+            <h4>Zona de Peligro</h4>
+            <p className="settings-description danger-text">
+              Elimina permanentemente TODOS los trades del historial. Esta accion no se puede deshacer.
+            </p>
+            <button
+              className="btn btn-danger"
+              onClick={openDeleteHistoryModal}
+              disabled={clearingHistory}
+            >
+              {clearingHistory ? 'Eliminando...' : 'Borrar Todo el Historial'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -347,6 +412,62 @@ function Settings({ monitorStatus, onRefresh }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmacion para borrar historial */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content danger-modal" onClick={e => e.stopPropagation()}>
+            <h3>Borrar Todo el Historial</h3>
+            <p className="danger-text">
+              ADVERTENCIA: Esto eliminara TODOS los trades del historial.
+              Esta accion NO se puede deshacer.
+            </p>
+            <p>Escribe <strong>"BORRAR TODO"</strong> para confirmar:</p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={e => {
+                setDeleteConfirmText(e.target.value)
+                setDeleteError('')
+              }}
+              placeholder="BORRAR TODO"
+              className="confirm-input"
+              autoFocus
+            />
+            {deleteError && <p className="error-text">{deleteError}</p>}
+            <div className="modal-actions">
+              <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                Cancelar
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleClearAllHistory}
+                disabled={clearingHistory}
+              >
+                {clearingHistory ? 'Eliminando...' : 'Confirmar Borrado'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de mensaje */}
+      {messageModal.show && (
+        <div className="modal-overlay" onClick={() => setMessageModal({ show: false, title: '', message: '' })}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>{messageModal.title}</h3>
+            <p style={{ whiteSpace: 'pre-line' }}>{messageModal.message}</p>
+            <div className="modal-actions">
+              <button
+                className="btn btn-primary"
+                onClick={() => setMessageModal({ show: false, title: '', message: '' })}
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

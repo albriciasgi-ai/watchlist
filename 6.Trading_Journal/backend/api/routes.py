@@ -774,11 +774,15 @@ async def clear_all_entries():
         raise HTTPException(status_code=500, detail="Store not initialized")
 
     try:
-        all_entries = store.list_all(limit=1000)
+        # Eliminar en batches hasta que no quede nada
         deleted_count = 0
-        for entry in all_entries:
-            store.delete(entry.id)
-            deleted_count += 1
+        while True:
+            entries = store.list_all(limit=100)
+            if not entries:
+                break
+            for entry in entries:
+                store.delete(entry.id)
+                deleted_count += 1
 
         return {
             "success": True,

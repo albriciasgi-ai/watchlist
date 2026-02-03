@@ -33,6 +33,38 @@ class Zone:
 
 
 @dataclass
+class TradingZone(Zone):
+    """
+    Zona de consolidación con métricas de trading para simulación.
+    Extiende Zone con datos de rentabilidad post-breakout.
+    """
+    # Métricas de Trading (calculadas por el analizador)
+    breakout_direction: str = ""  # "UP" o "DOWN"
+    breakout_price: float = 0.0
+    breakout_timestamp: int = 0
+
+    # Resultado del trade simulado (TP=2R, SL=1R)
+    trade_result: str = ""  # "WIN", "LOSS", "OPEN", "PENDING"
+    trade_pnl_r: float = 0.0  # +2 si WIN, -1 si LOSS, 0 si OPEN/PENDING
+    bars_to_close: int = 0  # Velas desde breakout hasta cierre
+
+    # R-Multiple alcanzado
+    r_multiple: float = 0.0
+    reached_2r: bool = False
+    reached_3r: bool = False
+
+    # Métricas de momentum
+    breakout_body_ratio: float = 0.0  # Cuerpo de vela de breakout / ATR
+    continuation_bars: int = 0  # Velas consecutivas en dirección del breakout
+
+    # Score de trading (basado en rentabilidad, no solo consolidación)
+    trading_score: float = 0.0  # 0-100 basado en probabilidad de éxito
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
 class ZoneDetectionParams:
     """Parámetros configurables para detección de zonas"""
     # Filtro global - rangos de precio máximo permitido
@@ -68,6 +100,11 @@ class ZoneDetectionParams:
     consol_body_ratio: float = 0.5     # Ratio cuerpo/rango de velas (velas pequeñas)
     consol_max_outside_bars: int = 3   # Máximo velas consecutivas fuera del rango antes de cerrar
 
+    # 🎯 NUEVO: Trading Zones Method (simulación de trades)
+    lookforward_bars: int = 100        # Velas hacia adelante para simular el trade
+    breakout_search_bars: int = 20     # Velas para buscar breakout después de la consolidación
+    include_no_breakout: bool = True   # Incluir zonas sin breakout claro (usa primera vela fuera)
+
 
 class ZoneDetector:
     """
@@ -75,7 +112,7 @@ class ZoneDetector:
     Permite comparar cuál funciona mejor.
     """
 
-    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action", "consolidation"]
+    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action", "consolidation", "trading_zones"]
 
     def __init__(self):
         self._zone_counter = 0
@@ -113,6 +150,8 @@ class ZoneDetector:
             zones = self._price_action_method(candles, params)
         elif method == "consolidation":
             zones = self._consolidation_method(candles, params)
+        elif method == "trading_zones":
+            zones = self._trading_zones_method(candles, params, params.lookforward_bars)
         else:
             raise ValueError(f"Método desconocido: {method}. Usar: {self.METHODS}")
 
@@ -854,6 +893,375 @@ class ZoneDetector:
                 zones.append(zone)
 
         return zones
+
+    # =========================================================================
+    # MÉTODO 6: TRADING ZONES
+    # Detecta zonas de consolidación y calcula métricas de trading (TP=2R, SL=1R)
+    # =========================================================================
+
+    def _trading_zones_method(
+        self,
+        candles: List[Dict],
+        params: ZoneDetectionParams,
+        lookforward_bars: int = 100
+    ) -> List[TradingZone]:
+        """
+        Detecta zonas de consolidación y calcula métricas de trading para cada una.
+
+        Usa el método de consolidación como base, pero extiende con:
+        - Detección de breakout (UP/DOWN)
+        - Simulación de trade (TP=2R, SL=1R adverso)
+        - Score basado en probabilidad de éxito, no solo calidad de consolidación
+
+        Args:
+            candles: Lista de velas OHLCV
+            params: Parámetros de detección
+            lookforward_bars: Velas a analizar después del breakout
+
+        Returns:
+            Lista de TradingZone ordenadas por trading_score descendente
+        """
+        if len(candles) < params.consol_min_bars + lookforward_bars + 20:
+            print(f"[ZoneDetector] Trading Zones: Insuficientes velas ({len(candles)})")
+            return []
+
+        trading_zones = []
+
+        # Calcular ATR global para referencia
+        global_atr = self._calculate_atr(candles, min(14, len(candles) // 4))
+        if global_atr == 0:
+            return []
+
+        # Pre-calcular ATR rolling
+        atr_values = self._calculate_rolling_atr_for_trading(candles, 14)
+
+        print(f"[ZoneDetector] Trading Zones: ATR global = {global_atr:.2f}, velas = {len(candles)}")
+
+        found_ranges = []
+        i = 0
+
+        # FASE 1: Detectar consolidaciones (igual que consolidation_method)
+        while i < len(candles) - params.consol_min_bars - lookforward_bars:
+            consol_start = i
+            consol_end = i + params.consol_min_bars
+
+            window = candles[consol_start:consol_end]
+            range_high = max(c['high'] for c in window)
+            range_low = min(c['low'] for c in window)
+            range_mid = (range_high + range_low) / 2
+            range_pct = ((range_high - range_low) / range_mid) * 100 if range_mid > 0 else 100
+
+            local_atr = self._calculate_atr(window, min(5, len(window) // 2))
+            atr_ratio = local_atr / global_atr if global_atr > 0 else 1.0
+            avg_body_ratio = self._calculate_avg_body_ratio(window)
+
+            if (range_pct > params.consol_max_range_pct or
+                atr_ratio > params.consol_atr_ratio or
+                avg_body_ratio > params.consol_body_ratio):
+                i += 1
+                continue
+
+            # Extender la zona hasta breakout
+            consecutive_outside = 0
+            last_valid_end = consol_end
+
+            while consol_end < len(candles) - lookforward_bars and (consol_end - consol_start) < params.consol_max_bars:
+                next_candle = candles[consol_end]
+                candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
+
+                if candle_touches_range:
+                    consecutive_outside = 0
+                    last_valid_end = consol_end + 1
+                else:
+                    consecutive_outside += 1
+                    if consecutive_outside >= params.consol_max_outside_bars:
+                        consol_end = last_valid_end
+                        break
+
+                consol_end += 1
+
+            consol_length = consol_end - consol_start
+            if consol_length >= params.consol_min_bars:
+                found_ranges.append({
+                    'start_idx': consol_start,
+                    'end_idx': consol_end,
+                    'range_high': range_high,
+                    'range_low': range_low,
+                    'consol_length': consol_length
+                })
+                i = consol_end
+            else:
+                i += 1
+
+        print(f"[ZoneDetector] Trading Zones: Encontradas {len(found_ranges)} consolidaciones")
+
+        # Eliminar rangos que se solapan mucho
+        found_ranges.sort(key=lambda x: x['consol_length'], reverse=True)
+        selected_ranges = []
+
+        for r in found_ranges:
+            overlaps = False
+            for selected in selected_ranges:
+                overlap_start = max(r['start_idx'], selected['start_idx'])
+                overlap_end = min(r['end_idx'], selected['end_idx'])
+                if overlap_end > overlap_start:
+                    overlap_size = overlap_end - overlap_start
+                    min_size = min(r['end_idx'] - r['start_idx'], selected['end_idx'] - selected['start_idx'])
+                    if overlap_size / min_size > 0.3:
+                        overlaps = True
+                        break
+
+            if not overlaps:
+                selected_ranges.append(r)
+
+        print(f"[ZoneDetector] Trading Zones: {len(selected_ranges)} después de deduplicación")
+
+        # FASE 2: Analizar cada zona con métricas de trading
+        stats = {"wins": 0, "losses": 0, "open": 0}
+
+        for r in selected_ranges:
+            zone_candles = candles[r['start_idx']:r['end_idx']]
+            zone_high = r['range_high']
+            zone_low = r['range_low']
+            zone_height = zone_high - zone_low
+            zone_mid = (zone_high + zone_low) / 2
+
+            start_ts = zone_candles[0]['timestamp']
+            end_ts = zone_candles[-1]['timestamp']
+            duration_hours = (end_ts - start_ts) / (1000 * 60 * 60)
+
+            # Volumen
+            avg_volume = np.mean([c['volume'] for c in zone_candles])
+            all_volumes = [c['volume'] for c in candles]
+            volume_score = self._calculate_volume_score(avg_volume, all_volumes)
+
+            # Detectar breakout
+            breakout_idx = r['end_idx']
+            breakout_direction = ""
+            breakout_price = 0.0
+            breakout_ts = 0
+
+            # Buscar vela que cierra fuera del rango (breakout)
+            search_limit = min(r['end_idx'] + params.breakout_search_bars, len(candles) - lookforward_bars)
+            for bi in range(r['end_idx'], search_limit):
+                c = candles[bi]
+                if c['close'] > zone_high:
+                    breakout_direction = "UP"
+                    breakout_price = zone_high
+                    breakout_ts = c['timestamp']
+                    breakout_idx = bi
+                    break
+                elif c['close'] < zone_low:
+                    breakout_direction = "DOWN"
+                    breakout_price = zone_low
+                    breakout_ts = c['timestamp']
+                    breakout_idx = bi
+                    break
+
+            if not breakout_direction:
+                if not params.include_no_breakout:
+                    # Sin breakout claro, omitir esta zona
+                    continue
+                # Si include_no_breakout=True, usar la última vela de la zona como "breakout"
+                # y determinar dirección por el cierre respecto al medio
+                last_candle = candles[min(r['end_idx'], len(candles) - lookforward_bars - 1)]
+                if last_candle['close'] > zone_mid:
+                    breakout_direction = "UP"
+                else:
+                    breakout_direction = "DOWN"
+                breakout_price = zone_high if breakout_direction == "UP" else zone_low
+                breakout_ts = last_candle['timestamp']
+                breakout_idx = r['end_idx']
+
+            # Simulación de trading: TP=2R, SL=1R adverso
+            if breakout_direction == "UP":
+                tp_price = breakout_price + (zone_height * 2)
+                sl_price = breakout_price - zone_height
+            else:
+                tp_price = breakout_price - (zone_height * 2)
+                sl_price = breakout_price + zone_height
+
+            trade_result = "PENDING"
+            trade_pnl_r = 0.0
+            bars_to_close = 0
+            r_multiple = 0.0
+            reached_2r = False
+            reached_3r = False
+            breakout_body_ratio = 0.0
+            continuation_bars = 0
+
+            # Analizar velas post-breakout
+            post_breakout = candles[breakout_idx:]
+            breakout_candle = candles[breakout_idx]
+
+            # Ratio del cuerpo de breakout
+            atr_at_breakout = atr_values[breakout_idx] if breakout_idx < len(atr_values) else zone_height
+            breakout_body = abs(breakout_candle['close'] - breakout_candle['open'])
+            breakout_body_ratio = breakout_body / atr_at_breakout if atr_at_breakout > 0 else 0
+
+            # Contar velas de continuación
+            for pc in post_breakout[1:min(20, len(post_breakout))]:
+                if breakout_direction == "UP" and pc['close'] > pc['open']:
+                    continuation_bars += 1
+                elif breakout_direction == "DOWN" and pc['close'] < pc['open']:
+                    continuation_bars += 1
+                else:
+                    break
+
+            # Calcular MFE y R-Multiple
+            if breakout_direction == "UP":
+                max_price = max(c['high'] for c in post_breakout[:lookforward_bars])
+                r_multiple = (max_price - breakout_price) / zone_height if zone_height > 0 else 0
+            else:
+                min_price = min(c['low'] for c in post_breakout[:lookforward_bars])
+                r_multiple = (breakout_price - min_price) / zone_height if zone_height > 0 else 0
+
+            reached_2r = r_multiple >= 2.0
+            reached_3r = r_multiple >= 3.0
+
+            # Simular trade (sin timeout)
+            for bar_num, c in enumerate(post_breakout):
+                if breakout_direction == "UP":
+                    tp_hit = c['high'] >= tp_price
+                    sl_hit = c['low'] <= sl_price
+
+                    if tp_hit and sl_hit:
+                        trade_result = "LOSS"
+                        trade_pnl_r = -1.0
+                        bars_to_close = bar_num + 1
+                        break
+                    elif tp_hit:
+                        trade_result = "WIN"
+                        trade_pnl_r = 2.0
+                        bars_to_close = bar_num + 1
+                        break
+                    elif sl_hit:
+                        trade_result = "LOSS"
+                        trade_pnl_r = -1.0
+                        bars_to_close = bar_num + 1
+                        break
+                else:  # DOWN
+                    tp_hit = c['low'] <= tp_price
+                    sl_hit = c['high'] >= sl_price
+
+                    if tp_hit and sl_hit:
+                        trade_result = "LOSS"
+                        trade_pnl_r = -1.0
+                        bars_to_close = bar_num + 1
+                        break
+                    elif tp_hit:
+                        trade_result = "WIN"
+                        trade_pnl_r = 2.0
+                        bars_to_close = bar_num + 1
+                        break
+                    elif sl_hit:
+                        trade_result = "LOSS"
+                        trade_pnl_r = -1.0
+                        bars_to_close = bar_num + 1
+                        break
+
+            if trade_result == "PENDING":
+                trade_result = "OPEN"
+
+            # Actualizar estadísticas
+            if trade_result == "WIN":
+                stats["wins"] += 1
+            elif trade_result == "LOSS":
+                stats["losses"] += 1
+            else:
+                stats["open"] += 1
+
+            # Calcular trading_score basado en factores que predicen éxito
+            # - Breakout body ratio alto = momentum fuerte = mejor
+            # - Continuation bars alto = confirmación = mejor
+            # - Range % bajo = compresión = mejor
+            # - Resultado histórico similar (aproximación)
+            momentum_score = min(breakout_body_ratio * 40, 30)  # 0-30
+            continuation_score = min(continuation_bars * 5, 20)  # 0-20
+            compression_score = max(0, (params.consol_max_range_pct - ((zone_high - zone_low) / zone_mid * 100)) / params.consol_max_range_pct) * 25  # 0-25
+            volume_bonus = volume_score * 0.25  # 0-25
+
+            trading_score = momentum_score + continuation_score + compression_score + volume_bonus
+
+            # Bonus si el trade ya cerró como WIN
+            if trade_result == "WIN":
+                trading_score = min(100, trading_score + 15)
+            elif trade_result == "LOSS":
+                trading_score = max(0, trading_score - 10)
+
+            # Toques
+            touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
+
+            # Crear TradingZone
+            trading_zone = TradingZone(
+                id=self._generate_zone_id(),
+                min_price=zone_low,
+                max_price=zone_high,
+                start_timestamp=start_ts,
+                end_timestamp=end_ts,
+                touches_support=touches['support'],
+                touches_resistance=touches['resistance'],
+                total_touches=touches['total'],
+                duration_hours=duration_hours,
+                avg_volume=avg_volume,
+                volume_score=volume_score,
+                method="trading_zones",
+                score=trading_score,  # Usar trading_score como score principal
+                candles_in_zone=len(zone_candles),
+                price_range_pct=((zone_high - zone_low) / zone_low) * 100,
+                # Campos de TradingZone
+                breakout_direction=breakout_direction,
+                breakout_price=breakout_price,
+                breakout_timestamp=breakout_ts,
+                trade_result=trade_result,
+                trade_pnl_r=trade_pnl_r,
+                bars_to_close=bars_to_close,
+                r_multiple=r_multiple,
+                reached_2r=reached_2r,
+                reached_3r=reached_3r,
+                breakout_body_ratio=breakout_body_ratio,
+                continuation_bars=continuation_bars,
+                trading_score=trading_score
+            )
+
+            trading_zones.append(trading_zone)
+
+        # Calcular estadísticas finales
+        total_closed = stats["wins"] + stats["losses"]
+        win_rate = (stats["wins"] / total_closed * 100) if total_closed > 0 else 0
+        total_pnl = (stats["wins"] * 2) - stats["losses"]
+        expectancy = total_pnl / total_closed if total_closed > 0 else 0
+
+        print(f"[ZoneDetector] Trading Zones RESULTADOS:")
+        print(f"  - Total zonas: {len(trading_zones)}")
+        print(f"  - Wins: {stats['wins']}, Losses: {stats['losses']}, Open: {stats['open']}")
+        print(f"  - Win Rate: {win_rate:.1f}%")
+        print(f"  - Total P&L: {total_pnl:+.0f}R")
+        print(f"  - Expectancy: {expectancy:.3f}R por trade")
+
+        # Ordenar por trading_score descendente
+        return sorted(trading_zones, key=lambda z: z.trading_score, reverse=True)
+
+    def _calculate_rolling_atr_for_trading(self, candles: List[Dict], period: int = 14) -> List[float]:
+        """Calcula ATR rolling para cada vela."""
+        atr_values = [0.0] * len(candles)
+
+        for i in range(period, len(candles)):
+            true_ranges = []
+            for j in range(i - period + 1, i + 1):
+                high = candles[j]['high']
+                low = candles[j]['low']
+                prev_close = candles[j - 1]['close'] if j > 0 else candles[j]['open']
+                tr = max(high - low, abs(high - prev_close), abs(low - prev_close))
+                true_ranges.append(tr)
+            atr_values[i] = np.mean(true_ranges)
+
+        # Rellenar primeros valores
+        first_valid = atr_values[period] if period < len(atr_values) else 0
+        for i in range(period):
+            atr_values[i] = first_valid
+
+        return atr_values
 
     def _calculate_avg_body_ratio(self, candles: List[Dict]) -> float:
         """Calcula el ratio promedio cuerpo/rango de las velas."""

@@ -27,6 +27,11 @@ class ZoneVisualizerIndicator extends IndicatorBase {
         volume_profile: { fill: 'rgba(74, 165, 74, 0.15)', border: '#4aa54a' },
         price_action: { fill: 'rgba(165, 165, 74, 0.15)', border: '#a5a54a' },
         consolidation: { fill: 'rgba(255, 152, 0, 0.20)', border: '#FF9800' }, // Naranja para consolidation
+        trading_zones: { fill: 'rgba(100, 100, 255, 0.15)', border: '#6464FF' }, // Azul para trading zones
+        // Colores especiales por resultado de trading
+        trading_win: { fill: 'rgba(0, 200, 100, 0.25)', border: '#00C864' },
+        trading_loss: { fill: 'rgba(255, 50, 50, 0.25)', border: '#FF3232' },
+        trading_open: { fill: 'rgba(255, 200, 0, 0.20)', border: '#FFC800' },
         default: { fill: 'rgba(128, 128, 128, 0.15)', border: '#808080' }
       },
       tradeableHighlight: { fill: 'rgba(74, 165, 74, 0.25)', border: '#4aa54a' }
@@ -249,8 +254,20 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       return false;
     }
 
-    // Obtener colores
-    const colors = this.config.colors[zone.method] || this.config.colors.default;
+    // Obtener colores - para trading_zones, usar color según resultado
+    let colors;
+    if (zone.method === 'trading_zones' && zone.trade_result) {
+      // Colores basados en resultado del trade
+      if (zone.trade_result === 'WIN') {
+        colors = this.config.colors.trading_win;
+      } else if (zone.trade_result === 'LOSS') {
+        colors = this.config.colors.trading_loss;
+      } else {
+        colors = this.config.colors.trading_open;
+      }
+    } else {
+      colors = this.config.colors[zone.method] || this.config.colors.default;
+    }
     let fillColor = colors.fill;
     let borderColor = colors.border;
 

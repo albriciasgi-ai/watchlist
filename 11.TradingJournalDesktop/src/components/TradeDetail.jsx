@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { API_BASE_URL } from '../config'
 import './TradeDetail.css'
 
-function TradeDetail({ tradeId, onBack }) {
+function TradeDetail({ tradeId, onBack, onDeleted }) {
   const [trade, setTrade] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [editing, setEditing] = useState(false)
   const [editData, setEditData] = useState({})
   const [screenshotErrors, setScreenshotErrors] = useState({})
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (tradeId) {
@@ -24,17 +25,19 @@ function TradeDetail({ tradeId, onBack }) {
       const res = await fetch(`${API_BASE_URL}/api/entries/${tradeId}`)
       if (!res.ok) throw new Error('Trade no encontrado')
       const data = await res.json()
-      setTrade(data)
+      // La API devuelve {success: true, entry: {...}}, extraer el entry
+      const tradeData = data.entry || data
+      setTrade(tradeData)
       setEditData({
-        notes: data.reflection?.notes || '',
-        lessons: data.reflection?.lessons || '',
-        emotions_before: data.reflection?.emotions_before || '',
-        emotions_after: data.reflection?.emotions_after || '',
-        setup_quality: data.setup?.quality || 5,
-        followed_rules: data.execution?.followed_rules ?? true,
-        execution_notes: data.execution?.notes || '',
-        stop_loss: data.setup?.stop_loss || '',
-        take_profit: data.setup?.take_profit || ''
+        notes: tradeData.reflection?.notes || '',
+        lessons: tradeData.reflection?.lessons || '',
+        emotions_before: tradeData.reflection?.emotions_before || '',
+        emotions_after: tradeData.reflection?.emotions_after || '',
+        setup_quality: tradeData.setup?.quality || 5,
+        followed_rules: tradeData.execution?.followed_rules ?? true,
+        execution_notes: tradeData.execution?.notes || '',
+        stop_loss: tradeData.setup?.stop_loss || '',
+        take_profit: tradeData.setup?.take_profit || ''
       })
       setLoading(false)
     } catch (err) {
@@ -82,6 +85,28 @@ function TradeDetail({ tradeId, onBack }) {
     }
   }
 
+  const handleDelete = async () => {
+    if (!confirm(`Estas seguro de eliminar este trade de ${trade.symbol}? Esta accion no se puede deshacer.`)) {
+      return
+    }
+
+    try {
+      setDeleting(true)
+      const res = await fetch(`${API_BASE_URL}/api/entries/${tradeId}`, {
+        method: 'DELETE'
+      })
+
+      if (!res.ok) throw new Error('Error al eliminar')
+
+      if (onDeleted) onDeleted()
+      onBack()
+    } catch (err) {
+      console.error('Error deleting trade:', err)
+      alert('Error al eliminar el trade')
+      setDeleting(false)
+    }
+  }
+
   const formatCurrency = (value) => {
     if (value === null || value === undefined) return '-'
     const num = parseFloat(value)
@@ -126,11 +151,17 @@ function TradeDetail({ tradeId, onBack }) {
 
   const getStatusBadge = (status) => {
     const statusMap = {
+      'open': { class: 'badge-blue', text: 'Abierto' },
       'OPEN': { class: 'badge-blue', text: 'Abierto' },
+      'closed_tp': { class: 'badge-green', text: 'TP' },
+      'closed_sl': { class: 'badge-red', text: 'SL' },
+      'closed_manual': { class: 'badge-gray', text: 'Manual' },
+      'closed_be': { class: 'badge-yellow', text: 'BE' },
       'CLOSED': { class: 'badge-green', text: 'Cerrado' },
+      'cancelled': { class: 'badge-yellow', text: 'Cancelado' },
       'CANCELLED': { class: 'badge-yellow', text: 'Cancelado' }
     }
-    const s = statusMap[status] || { class: '', text: status }
+    const s = statusMap[status] || { class: 'badge-gray', text: status || 'Desconocido' }
     return <span className={`badge ${s.class}`}>{s.text}</span>
   }
 
@@ -219,9 +250,18 @@ function TradeDetail({ tradeId, onBack }) {
               </button>
             </>
           ) : (
-            <button className="btn btn-secondary" onClick={() => setEditing(true)}>
-              Editar
-            </button>
+            <>
+              <button className="btn btn-secondary" onClick={() => setEditing(true)}>
+                Editar
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </>
           )}
         </div>
       </div>

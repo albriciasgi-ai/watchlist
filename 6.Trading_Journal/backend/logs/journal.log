@@ -14922,3 +14922,1092 @@ httpx.ReadTimeout
 2026-02-02 12:26:35,982 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/37c8619f-34c7-4dfd-a406-b7b7e6811193_entry_20260202_122625.png
 2026-02-02 12:27:29,535 | WARNING | services.position_monitor | TradingBot read timeout
 2026-02-02 12:28:04,571 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-02 15:17:25,575 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 15:17:28,013 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 15:17:28,123 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 15:17:28,140 | INFO | main | ============================================================
+2026-02-02 15:17:28,140 | INFO | main | Trading Journal Backend starting...
+2026-02-02 15:17:28,141 | INFO | main | Database: data/journal.db
+2026-02-02 15:17:28,141 | INFO | main | Screenshots: screenshots/
+2026-02-02 15:17:28,141 | INFO | main | ============================================================
+2026-02-02 15:17:28,142 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-02 15:17:28,555 | INFO | services.position_monitor | Loaded 27 existing open entries from database
+2026-02-02 15:17:28,556 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-02 15:17:28,556 | INFO | main | Position monitor ENABLED
+2026-02-02 15:17:28,556 | INFO | main | All services started successfully
+2026-02-02 15:17:42,254 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-02 15:18:36,496 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 1.146
+2026-02-02 15:18:36,496 | INFO | services.position_monitor |   SL: 1.1728, TP: 1.0959
+2026-02-02 15:18:36,575 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:18:36,584 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 15:18:36,585 | INFO | services.position_monitor |   Risk calculated from SL: $2.95
+2026-02-02 15:18:36,585 | INFO | services.position_monitor |   R:R ratio: 1.87
+2026-02-02 15:18:36,589 | INFO | store.journal_store | Created journal entry: 63eead75-5353-408a-bf16-0a243ee78694 - SUIUSDT short
+2026-02-02 15:18:36,592 | INFO | services.position_monitor | Created journal entry 63eead75-5353-408a-bf16-0a243ee78694 for SUIUSDT (source: analizador)
+2026-02-02 15:18:58,008 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:18:58,637 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\63eead75-5353-408a-bf16-0a243ee78694_entry_20260202_151836.png
+2026-02-02 15:18:58,642 | INFO | store.journal_store | Updated journal entry: 63eead75-5353-408a-bf16-0a243ee78694
+2026-02-02 15:18:58,645 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/63eead75-5353-408a-bf16-0a243ee78694_entry_20260202_151836.png
+2026-02-02 15:20:26,080 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-02 15:22:08,691 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-02 15:22:09,066 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 15:22:09,069 | INFO | services.position_monitor |   Exit manual: exit=1.1433, sl=1.1728, tp=1.0959
+2026-02-02 15:22:09,069 | INFO | services.position_monitor | R-Multiple calculated: 0.05R
+2026-02-02 15:22:09,071 | INFO | store.journal_store | Updated journal entry: 63eead75-5353-408a-bf16-0a243ee78694
+2026-02-02 15:22:28,369 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:22:28,826 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\63eead75-5353-408a-bf16-0a243ee78694_exit_20260202_152209.png
+2026-02-02 15:22:28,832 | INFO | store.journal_store | Updated journal entry: 63eead75-5353-408a-bf16-0a243ee78694
+2026-02-02 15:22:28,836 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SUIUSDT/63eead75-5353-408a-bf16-0a243ee78694_exit_20260202_152209.png
+2026-02-02 15:22:28,836 | INFO | services.position_monitor | Closed journal entry 63eead75-5353-408a-bf16-0a243ee78694: PnL $0.16 (0.24%) [0.05R]
+2026-02-02 15:22:45,454 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2327.7
+2026-02-02 15:22:45,454 | INFO | services.position_monitor |   SL: 2271.57, TP: 2418.05
+2026-02-02 15:22:45,519 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:22:45,522 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:22:45,522 | INFO | services.position_monitor |   Risk calculated from SL: $1.68
+2026-02-02 15:22:45,523 | INFO | services.position_monitor |   R:R ratio: 1.61
+2026-02-02 15:22:45,525 | INFO | store.journal_store | Created journal entry: 26500654-4b47-41c8-aa32-941a4c804f9d - ETHUSDT long
+2026-02-02 15:22:45,528 | INFO | services.position_monitor | Created journal entry 26500654-4b47-41c8-aa32-941a4c804f9d for ETHUSDT (source: analizador)
+2026-02-02 15:22:51,101 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:22:51,479 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\26500654-4b47-41c8-aa32-941a4c804f9d_entry_20260202_152245.png
+2026-02-02 15:22:51,484 | INFO | store.journal_store | Updated journal entry: 26500654-4b47-41c8-aa32-941a4c804f9d
+2026-02-02 15:22:51,488 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/26500654-4b47-41c8-aa32-941a4c804f9d_entry_20260202_152245.png
+2026-02-02 15:22:51,488 | INFO | services.position_monitor | New position detected: PAXGUSDT Sell @ 4683.6
+2026-02-02 15:22:51,488 | INFO | services.position_monitor |   SL: 4814.9, TP: 4499.2
+2026-02-02 15:22:51,519 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:22:51,522 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 15:22:51,522 | INFO | services.position_monitor |   Risk calculated from SL: $2.63
+2026-02-02 15:22:51,522 | INFO | services.position_monitor |   R:R ratio: 1.40
+2026-02-02 15:22:51,526 | INFO | store.journal_store | Created journal entry: 835ee81d-1821-4502-ae62-3a7cad7b1b14 - PAXGUSDT short
+2026-02-02 15:22:51,530 | INFO | services.position_monitor | Created journal entry 835ee81d-1821-4502-ae62-3a7cad7b1b14 for PAXGUSDT (source: analizador)
+2026-02-02 15:22:56,250 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:22:56,696 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\835ee81d-1821-4502-ae62-3a7cad7b1b14_entry_20260202_152251.png
+2026-02-02 15:22:56,700 | INFO | store.journal_store | Updated journal entry: 835ee81d-1821-4502-ae62-3a7cad7b1b14
+2026-02-02 15:22:56,703 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/835ee81d-1821-4502-ae62-3a7cad7b1b14_entry_20260202_152251.png
+2026-02-02 15:22:56,703 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.28281
+2026-02-02 15:22:56,703 | INFO | services.position_monitor |   SL: 0.27977, TP: 0.28825
+2026-02-02 15:22:56,734 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:22:56,736 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:22:56,736 | INFO | services.position_monitor |   Risk calculated from SL: $1.07
+2026-02-02 15:22:56,737 | INFO | services.position_monitor |   R:R ratio: 1.79
+2026-02-02 15:22:56,741 | INFO | store.journal_store | Created journal entry: db0e2d70-e471-43b9-bec6-6f577eac6cf2 - TRXUSDT long
+2026-02-02 15:22:56,745 | INFO | services.position_monitor | Created journal entry db0e2d70-e471-43b9-bec6-6f577eac6cf2 for TRXUSDT (source: analizador)
+2026-02-02 15:23:16,228 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:23:16,666 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\db0e2d70-e471-43b9-bec6-6f577eac6cf2_entry_20260202_152256.png
+2026-02-02 15:23:16,672 | INFO | store.journal_store | Updated journal entry: db0e2d70-e471-43b9-bec6-6f577eac6cf2
+2026-02-02 15:23:16,676 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/db0e2d70-e471-43b9-bec6-6f577eac6cf2_entry_20260202_152256.png
+2026-02-02 15:23:31,024 | INFO | services.position_monitor | New position detected: POLUSDT Sell @ 0.11295
+2026-02-02 15:23:31,025 | INFO | services.position_monitor |   SL: 0.11446, TP: 0.11106
+2026-02-02 15:23:31,094 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:23:31,096 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 15:23:31,096 | INFO | services.position_monitor |   Risk calculated from SL: $1.33
+2026-02-02 15:23:31,096 | INFO | services.position_monitor |   R:R ratio: 1.25
+2026-02-02 15:23:31,100 | INFO | store.journal_store | Created journal entry: a45bcd70-1aa8-4379-8260-a5e19dc9c857 - POLUSDT short
+2026-02-02 15:23:31,103 | INFO | services.position_monitor | Created journal entry a45bcd70-1aa8-4379-8260-a5e19dc9c857 for POLUSDT (source: analizador)
+2026-02-02 15:23:37,082 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/POLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:23:37,481 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\POLUSDT\a45bcd70-1aa8-4379-8260-a5e19dc9c857_entry_20260202_152331.png
+2026-02-02 15:23:37,487 | INFO | store.journal_store | Updated journal entry: a45bcd70-1aa8-4379-8260-a5e19dc9c857
+2026-02-02 15:23:37,491 | INFO | services.position_monitor | Entry screenshot saved: screenshots/POLUSDT/a45bcd70-1aa8-4379-8260-a5e19dc9c857_entry_20260202_152331.png
+2026-02-02 15:25:38,083 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.1441
+2026-02-02 15:25:38,083 | INFO | services.position_monitor |   SL: 1.1185, TP: 1.1951
+2026-02-02 15:25:38,145 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:25:38,148 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:25:38,148 | INFO | services.position_monitor |   Risk calculated from SL: $2.82
+2026-02-02 15:25:38,148 | INFO | services.position_monitor |   R:R ratio: 1.99
+2026-02-02 15:25:38,151 | INFO | store.journal_store | Created journal entry: 212fd01b-75fa-48ff-9df0-29eb3bd7230c - SUIUSDT long
+2026-02-02 15:25:38,155 | INFO | services.position_monitor | Created journal entry 212fd01b-75fa-48ff-9df0-29eb3bd7230c for SUIUSDT (source: analizador)
+2026-02-02 15:25:43,173 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:25:43,557 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\212fd01b-75fa-48ff-9df0-29eb3bd7230c_entry_20260202_152538.png
+2026-02-02 15:25:43,562 | INFO | store.journal_store | Updated journal entry: 212fd01b-75fa-48ff-9df0-29eb3bd7230c
+2026-02-02 15:25:43,566 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/212fd01b-75fa-48ff-9df0-29eb3bd7230c_entry_20260202_152538.png
+2026-02-02 15:25:43,567 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.10744
+2026-02-02 15:25:43,567 | INFO | services.position_monitor |   SL: 0.10512, TP: 0.11232
+2026-02-02 15:25:43,600 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:25:43,603 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:25:43,603 | INFO | services.position_monitor |   Risk calculated from SL: $2.94
+2026-02-02 15:25:43,603 | INFO | services.position_monitor |   R:R ratio: 2.10
+2026-02-02 15:25:43,607 | INFO | store.journal_store | Created journal entry: 25a64b8f-d8e5-4ac3-a0dc-0138798865f2 - DOGEUSDT long
+2026-02-02 15:25:43,612 | INFO | services.position_monitor | Created journal entry 25a64b8f-d8e5-4ac3-a0dc-0138798865f2 for DOGEUSDT (source: analizador)
+2026-02-02 15:25:51,970 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:25:52,523 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\25a64b8f-d8e5-4ac3-a0dc-0138798865f2_entry_20260202_152543.png
+2026-02-02 15:25:52,526 | INFO | store.journal_store | Updated journal entry: 25a64b8f-d8e5-4ac3-a0dc-0138798865f2
+2026-02-02 15:25:52,529 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/25a64b8f-d8e5-4ac3-a0dc-0138798865f2_entry_20260202_152543.png
+2026-02-02 15:25:52,530 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 78390.7
+2026-02-02 15:25:52,530 | INFO | services.position_monitor |   SL: 76694.6, TP: 81948.7
+2026-02-02 15:25:52,565 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:25:52,567 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:25:52,568 | INFO | services.position_monitor |   Risk calculated from SL: $1.70
+2026-02-02 15:25:52,568 | INFO | services.position_monitor |   R:R ratio: 2.10
+2026-02-02 15:25:52,571 | INFO | store.journal_store | Created journal entry: 50f20f63-0e9a-4544-8b9d-5a3462670263 - BTCUSDT long
+2026-02-02 15:25:52,575 | INFO | services.position_monitor | Created journal entry 50f20f63-0e9a-4544-8b9d-5a3462670263 for BTCUSDT (source: analizador)
+2026-02-02 15:25:57,477 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:25:57,906 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\50f20f63-0e9a-4544-8b9d-5a3462670263_entry_20260202_152552.png
+2026-02-02 15:25:57,911 | INFO | store.journal_store | Updated journal entry: 50f20f63-0e9a-4544-8b9d-5a3462670263
+2026-02-02 15:25:57,914 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/50f20f63-0e9a-4544-8b9d-5a3462670263_entry_20260202_152552.png
+2026-02-02 15:25:57,914 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 103.65
+2026-02-02 15:25:57,914 | INFO | services.position_monitor |   SL: 102.6, TP: 105.71
+2026-02-02 15:25:57,946 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:25:57,948 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:25:57,949 | INFO | services.position_monitor |   Risk calculated from SL: $2.00
+2026-02-02 15:25:57,949 | INFO | services.position_monitor |   R:R ratio: 1.96
+2026-02-02 15:25:57,954 | INFO | store.journal_store | Created journal entry: 30744d66-19ed-47c8-ad42-f088a51d1a20 - SOLUSDT long
+2026-02-02 15:25:57,957 | INFO | services.position_monitor | Created journal entry 30744d66-19ed-47c8-ad42-f088a51d1a20 for SOLUSDT (source: analizador)
+2026-02-02 15:26:20,099 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:26:20,500 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\30744d66-19ed-47c8-ad42-f088a51d1a20_entry_20260202_152557.png
+2026-02-02 15:26:20,507 | INFO | store.journal_store | Updated journal entry: 30744d66-19ed-47c8-ad42-f088a51d1a20
+2026-02-02 15:26:20,510 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/30744d66-19ed-47c8-ad42-f088a51d1a20_entry_20260202_152557.png
+2026-02-02 15:30:43,086 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.6232
+2026-02-02 15:30:43,086 | INFO | services.position_monitor |   SL: 1.6087, TP: 1.6575
+2026-02-02 15:30:43,156 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 15:30:43,158 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 15:30:43,158 | INFO | services.position_monitor |   Risk calculated from SL: $0.89
+2026-02-02 15:30:43,158 | INFO | services.position_monitor |   R:R ratio: 2.37
+2026-02-02 15:30:43,162 | INFO | store.journal_store | Created journal entry: 42bb7dcf-9839-446e-bccf-055280dbfa53 - XRPUSDT long
+2026-02-02 15:30:43,166 | INFO | services.position_monitor | Created journal entry 42bb7dcf-9839-446e-bccf-055280dbfa53 for XRPUSDT (source: analizador)
+2026-02-02 15:30:48,871 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 15:30:49,297 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\42bb7dcf-9839-446e-bccf-055280dbfa53_entry_20260202_153043.png
+2026-02-02 15:30:49,301 | INFO | store.journal_store | Updated journal entry: 42bb7dcf-9839-446e-bccf-055280dbfa53
+2026-02-02 15:30:49,304 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/42bb7dcf-9839-446e-bccf-055280dbfa53_entry_20260202_153043.png
+2026-02-02 16:05:12,700 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:05:15,069 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:05:15,189 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:05:15,213 | INFO | main | ============================================================
+2026-02-02 16:05:15,214 | INFO | main | Trading Journal Backend starting...
+2026-02-02 16:05:15,214 | INFO | main | Database: data/journal.db
+2026-02-02 16:05:15,214 | INFO | main | Screenshots: screenshots/
+2026-02-02 16:05:15,214 | INFO | main | ============================================================
+2026-02-02 16:05:15,215 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-02 16:05:15,653 | INFO | services.position_monitor | Loaded 36 existing open entries from database
+2026-02-02 16:05:15,654 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-02 16:05:15,654 | INFO | main | Position monitor ENABLED
+2026-02-02 16:05:15,655 | INFO | main | All services started successfully
+2026-02-02 16:05:32,477 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-02 16:07:40,083 | INFO | services.position_monitor | New position detected: PAXGUSDT Buy @ 4685.8
+2026-02-02 16:07:40,083 | INFO | services.position_monitor |   SL: 4574.2, TP: 4887.5
+2026-02-02 16:07:40,173 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:07:40,175 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:07:40,176 | INFO | services.position_monitor |   Risk calculated from SL: $2.23
+2026-02-02 16:07:40,176 | INFO | services.position_monitor |   R:R ratio: 1.81
+2026-02-02 16:07:40,180 | INFO | store.journal_store | Created journal entry: f5e56333-72fd-47c9-8efb-423e21396f05 - PAXGUSDT long
+2026-02-02 16:07:40,183 | INFO | services.position_monitor | Created journal entry f5e56333-72fd-47c9-8efb-423e21396f05 for PAXGUSDT (source: analizador)
+2026-02-02 16:07:48,085 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:07:49,366 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\f5e56333-72fd-47c9-8efb-423e21396f05_entry_20260202_160740.png
+2026-02-02 16:07:49,370 | INFO | store.journal_store | Updated journal entry: f5e56333-72fd-47c9-8efb-423e21396f05
+2026-02-02 16:07:49,373 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/f5e56333-72fd-47c9-8efb-423e21396f05_entry_20260202_160740.png
+2026-02-02 16:10:30,289 | INFO | services.position_monitor | New position detected: TRXUSDT Sell @ 0.28309
+2026-02-02 16:10:30,289 | INFO | services.position_monitor |   SL: 0.28591, TP: 0.27741
+2026-02-02 16:10:30,394 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:10:30,397 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:10:30,397 | INFO | services.position_monitor |   Risk calculated from SL: $1.00
+2026-02-02 16:10:30,397 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-02 16:10:30,399 | INFO | store.journal_store | Created journal entry: f8ff3e8c-e342-42c0-938f-b5537113ec74 - TRXUSDT short
+2026-02-02 16:10:30,403 | INFO | services.position_monitor | Created journal entry f8ff3e8c-e342-42c0-938f-b5537113ec74 for TRXUSDT (source: analizador)
+2026-02-02 16:10:36,098 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:10:36,488 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\f8ff3e8c-e342-42c0-938f-b5537113ec74_entry_20260202_161030.png
+2026-02-02 16:10:36,493 | INFO | store.journal_store | Updated journal entry: f8ff3e8c-e342-42c0-938f-b5537113ec74
+2026-02-02 16:10:36,497 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/f8ff3e8c-e342-42c0-938f-b5537113ec74_entry_20260202_161030.png
+2026-02-02 16:10:36,498 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 1.1463
+2026-02-02 16:10:36,498 | INFO | services.position_monitor |   SL: 1.1717, TP: 1.0949
+2026-02-02 16:10:36,530 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:10:36,532 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:10:36,533 | INFO | services.position_monitor |   Risk calculated from SL: $2.79
+2026-02-02 16:10:36,533 | INFO | services.position_monitor |   R:R ratio: 2.02
+2026-02-02 16:10:36,536 | INFO | store.journal_store | Created journal entry: 574c8e03-1ae2-4394-8acf-ff774184591c - SUIUSDT short
+2026-02-02 16:10:36,539 | INFO | services.position_monitor | Created journal entry 574c8e03-1ae2-4394-8acf-ff774184591c for SUIUSDT (source: analizador)
+2026-02-02 16:10:41,710 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:10:42,090 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\574c8e03-1ae2-4394-8acf-ff774184591c_entry_20260202_161036.png
+2026-02-02 16:10:42,095 | INFO | store.journal_store | Updated journal entry: 574c8e03-1ae2-4394-8acf-ff774184591c
+2026-02-02 16:10:42,098 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/574c8e03-1ae2-4394-8acf-ff774184591c_entry_20260202_161036.png
+2026-02-02 16:10:42,098 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.6204
+2026-02-02 16:10:42,098 | INFO | services.position_monitor |   SL: 1.6335, TP: 1.585
+2026-02-02 16:10:42,130 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:10:42,133 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:10:42,133 | INFO | services.position_monitor |   Risk calculated from SL: $0.81
+2026-02-02 16:10:42,134 | INFO | services.position_monitor |   R:R ratio: 2.70
+2026-02-02 16:10:42,137 | INFO | store.journal_store | Created journal entry: be30afde-b011-4ddc-aed1-c2d93689d41b - XRPUSDT short
+2026-02-02 16:10:42,140 | INFO | services.position_monitor | Created journal entry be30afde-b011-4ddc-aed1-c2d93689d41b for XRPUSDT (source: analizador)
+2026-02-02 16:10:47,703 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:10:48,254 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\be30afde-b011-4ddc-aed1-c2d93689d41b_entry_20260202_161042.png
+2026-02-02 16:10:48,257 | INFO | store.journal_store | Updated journal entry: be30afde-b011-4ddc-aed1-c2d93689d41b
+2026-02-02 16:10:48,261 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/be30afde-b011-4ddc-aed1-c2d93689d41b_entry_20260202_161042.png
+2026-02-02 16:11:06,728 | INFO | services.position_monitor | New position detected: ETHUSDT Sell @ 2333.26
+2026-02-02 16:11:06,729 | INFO | services.position_monitor |   SL: 2388.14, TP: 2241.07
+2026-02-02 16:11:06,813 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:11:06,816 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:11:06,817 | INFO | services.position_monitor |   Risk calculated from SL: $1.65
+2026-02-02 16:11:06,817 | INFO | services.position_monitor |   R:R ratio: 1.68
+2026-02-02 16:11:06,820 | INFO | store.journal_store | Created journal entry: dd7342b6-d11d-4b45-a740-e0558bfae694 - ETHUSDT short
+2026-02-02 16:11:06,824 | INFO | services.position_monitor | Created journal entry dd7342b6-d11d-4b45-a740-e0558bfae694 for ETHUSDT (source: analizador)
+2026-02-02 16:11:26,887 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:11:27,305 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\dd7342b6-d11d-4b45-a740-e0558bfae694_entry_20260202_161106.png
+2026-02-02 16:11:27,311 | INFO | store.journal_store | Updated journal entry: dd7342b6-d11d-4b45-a740-e0558bfae694
+2026-02-02 16:11:27,314 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/dd7342b6-d11d-4b45-a740-e0558bfae694_entry_20260202_161106.png
+2026-02-02 16:11:27,315 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 78263.6
+2026-02-02 16:11:27,315 | INFO | services.position_monitor |   SL: 79914.2, TP: 74675.2
+2026-02-02 16:11:27,358 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:11:27,361 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:11:27,361 | INFO | services.position_monitor |   Risk calculated from SL: $1.65
+2026-02-02 16:11:27,361 | INFO | services.position_monitor |   R:R ratio: 2.17
+2026-02-02 16:11:27,365 | INFO | store.journal_store | Created journal entry: 213e313b-cb30-43f8-80b4-7f54705d766a - BTCUSDT short
+2026-02-02 16:11:27,370 | INFO | services.position_monitor | Created journal entry 213e313b-cb30-43f8-80b4-7f54705d766a for BTCUSDT (source: analizador)
+2026-02-02 16:11:33,035 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:11:33,442 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\213e313b-cb30-43f8-80b4-7f54705d766a_entry_20260202_161127.png
+2026-02-02 16:11:33,446 | INFO | store.journal_store | Updated journal entry: 213e313b-cb30-43f8-80b4-7f54705d766a
+2026-02-02 16:11:33,449 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/213e313b-cb30-43f8-80b4-7f54705d766a_entry_20260202_161127.png
+2026-02-02 16:11:33,450 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 104.56
+2026-02-02 16:11:33,450 | INFO | services.position_monitor |   SL: 105.36, TP: 102.23
+2026-02-02 16:11:33,485 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:11:33,488 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:11:33,488 | INFO | services.position_monitor |   Risk calculated from SL: $1.52
+2026-02-02 16:11:33,488 | INFO | services.position_monitor |   R:R ratio: 2.91
+2026-02-02 16:11:33,491 | INFO | store.journal_store | Created journal entry: 54125547-0f30-4ba8-b90a-c6266ac4f821 - SOLUSDT short
+2026-02-02 16:11:33,494 | INFO | services.position_monitor | Created journal entry 54125547-0f30-4ba8-b90a-c6266ac4f821 for SOLUSDT (source: analizador)
+2026-02-02 16:11:39,168 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:11:39,554 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\54125547-0f30-4ba8-b90a-c6266ac4f821_entry_20260202_161133.png
+2026-02-02 16:11:39,560 | INFO | store.journal_store | Updated journal entry: 54125547-0f30-4ba8-b90a-c6266ac4f821
+2026-02-02 16:11:39,563 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/54125547-0f30-4ba8-b90a-c6266ac4f821_entry_20260202_161133.png
+2026-02-02 16:11:56,847 | INFO | services.position_monitor | New position detected: POLUSDT Buy @ 0.11369
+2026-02-02 16:11:56,848 | INFO | services.position_monitor |   SL: 0.11221, TP: 0.11561
+2026-02-02 16:11:56,915 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:11:56,925 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:11:56,925 | INFO | services.position_monitor |   Risk calculated from SL: $1.31
+2026-02-02 16:11:56,925 | INFO | services.position_monitor |   R:R ratio: 1.30
+2026-02-02 16:11:56,929 | INFO | store.journal_store | Created journal entry: 3557d183-c155-44b5-97c5-7efe7f9b6cd8 - POLUSDT long
+2026-02-02 16:11:56,933 | INFO | services.position_monitor | Created journal entry 3557d183-c155-44b5-97c5-7efe7f9b6cd8 for POLUSDT (source: analizador)
+2026-02-02 16:12:16,301 | INFO | httpx | HTTP Request: GET http://localhost:9000/api/historical/POLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:12:16,716 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\POLUSDT\3557d183-c155-44b5-97c5-7efe7f9b6cd8_entry_20260202_161156.png
+2026-02-02 16:12:16,720 | INFO | store.journal_store | Updated journal entry: 3557d183-c155-44b5-97c5-7efe7f9b6cd8
+2026-02-02 16:12:16,724 | INFO | services.position_monitor | Entry screenshot saved: screenshots/POLUSDT/3557d183-c155-44b5-97c5-7efe7f9b6cd8_entry_20260202_161156.png
+2026-02-02 16:36:39,918 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:36:41,915 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:36:42,006 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 16:36:42,022 | INFO | main | ============================================================
+2026-02-02 16:36:42,023 | INFO | main | Trading Journal Backend starting...
+2026-02-02 16:36:42,023 | INFO | main | Database: data/journal.db
+2026-02-02 16:36:42,023 | INFO | main | Screenshots: screenshots/
+2026-02-02 16:36:42,023 | INFO | main | ============================================================
+2026-02-02 16:36:42,024 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-02 16:36:42,386 | INFO | services.position_monitor | Loaded 44 existing open entries from database
+2026-02-02 16:36:42,387 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-02 16:36:42,387 | INFO | main | Position monitor ENABLED
+2026-02-02 16:36:42,387 | INFO | main | All services started successfully
+2026-02-02 16:37:07,955 | INFO | services.position_monitor | Synced 4 positions from TradingBot
+2026-02-02 16:38:29,425 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-02 16:39:45,083 | INFO | store.journal_store | Deleted journal entry: 37c8619f-34c7-4dfd-a406-b7b7e6811193
+2026-02-02 16:41:18,083 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-02-02 16:41:18,487 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 16:41:18,490 | INFO | services.position_monitor |   Exit manual: exit=4701.6000, sl=4574.2000, tp=4887.5000
+2026-02-02 16:41:18,490 | INFO | services.position_monitor | R-Multiple calculated: -0.07R
+2026-02-02 16:41:18,493 | INFO | store.journal_store | Updated journal entry: f5e56333-72fd-47c9-8efb-423e21396f05
+2026-02-02 16:41:25,655 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-02-02 16:41:25,656 | INFO | services.position_monitor | Closed journal entry f5e56333-72fd-47c9-8efb-423e21396f05: PnL $-0.15 (0.34%) [-0.07R]
+2026-02-02 16:41:25,656 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-02 16:41:26,927 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 16:41:26,929 | INFO | services.position_monitor |   Exit manual: exit=1.6228, sl=1.6335, tp=1.5850
+2026-02-02 16:41:26,930 | INFO | services.position_monitor | R-Multiple calculated: 0.18R
+2026-02-02 16:41:26,932 | INFO | store.journal_store | Updated journal entry: be30afde-b011-4ddc-aed1-c2d93689d41b
+2026-02-02 16:41:42,090 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-02-02 16:41:42,091 | INFO | services.position_monitor | Closed journal entry be30afde-b011-4ddc-aed1-c2d93689d41b: PnL $0.15 (-0.15%) [0.18R]
+2026-02-02 16:42:00,478 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-02 16:42:00,811 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 16:42:00,814 | INFO | services.position_monitor |   Exit manual: exit=78431.1000, sl=79914.2000, tp=74675.2000
+2026-02-02 16:42:00,814 | INFO | services.position_monitor | R-Multiple calculated: 0.01R
+2026-02-02 16:42:00,817 | INFO | store.journal_store | Updated journal entry: 213e313b-cb30-43f8-80b4-7f54705d766a
+2026-02-02 16:42:06,604 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:42:07,138 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\213e313b-cb30-43f8-80b4-7f54705d766a_exit_20260202_164200.png
+2026-02-02 16:42:07,143 | INFO | store.journal_store | Updated journal entry: 213e313b-cb30-43f8-80b4-7f54705d766a
+2026-02-02 16:42:07,146 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/213e313b-cb30-43f8-80b4-7f54705d766a_exit_20260202_164200.png
+2026-02-02 16:42:07,147 | INFO | services.position_monitor | Closed journal entry 213e313b-cb30-43f8-80b4-7f54705d766a: PnL $0.01 (-0.21%) [0.01R]
+2026-02-02 16:42:07,147 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-02 16:42:08,027 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 16:42:08,030 | INFO | services.position_monitor |   Exit manual: exit=2340.6800, sl=2388.1400, tp=2241.0700
+2026-02-02 16:42:08,031 | INFO | services.position_monitor | R-Multiple calculated: 0.06R
+2026-02-02 16:42:08,034 | INFO | store.journal_store | Updated journal entry: dd7342b6-d11d-4b45-a740-e0558bfae694
+2026-02-02 16:42:13,255 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:42:13,630 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\dd7342b6-d11d-4b45-a740-e0558bfae694_exit_20260202_164208.png
+2026-02-02 16:42:13,635 | INFO | store.journal_store | Updated journal entry: dd7342b6-d11d-4b45-a740-e0558bfae694
+2026-02-02 16:42:13,638 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ETHUSDT/dd7342b6-d11d-4b45-a740-e0558bfae694_exit_20260202_164208.png
+2026-02-02 16:42:13,638 | INFO | services.position_monitor | Closed journal entry dd7342b6-d11d-4b45-a740-e0558bfae694: PnL $0.09 (-0.32%) [0.06R]
+2026-02-02 16:46:27,852 | INFO | services.position_monitor | New position detected: POLUSDT Buy @ 0.11361
+2026-02-02 16:46:27,852 | INFO | services.position_monitor |   SL: 0.11215, TP: 0.11555
+2026-02-02 16:46:27,934 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:46:27,936 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:46:27,937 | INFO | services.position_monitor |   Risk calculated from SL: $1.29
+2026-02-02 16:46:27,937 | INFO | services.position_monitor |   R:R ratio: 1.33
+2026-02-02 16:46:27,941 | INFO | store.journal_store | Created journal entry: bef811b0-8b27-4d81-a89b-432c174e4e87 - POLUSDT long
+2026-02-02 16:46:27,944 | INFO | services.position_monitor | Created journal entry bef811b0-8b27-4d81-a89b-432c174e4e87 for POLUSDT (source: analizador)
+2026-02-02 16:46:43,112 | ERROR | services.screenshot_service | All screenshot methods failed for POLUSDT
+2026-02-02 16:48:10,074 | INFO | services.position_monitor | Starting reconciliation...
+2026-02-02 16:48:33,137 | INFO | services.position_monitor | Closing orphan entry 1d2b5c44-4202-416d-9a6a-e6015a021001 for ADAUSDT
+2026-02-02 16:48:33,139 | INFO | store.journal_store | Updated journal entry: 1d2b5c44-4202-416d-9a6a-e6015a021001
+2026-02-02 16:48:33,142 | INFO | services.position_monitor | Closing orphan entry 73165601-0215-4c3a-ab8e-0ed7fb55198e for ETHUSDT
+2026-02-02 16:48:33,146 | INFO | store.journal_store | Updated journal entry: 73165601-0215-4c3a-ab8e-0ed7fb55198e
+2026-02-02 16:48:33,150 | INFO | services.position_monitor | Closing orphan entry 647f2b5f-7947-449d-9d1d-1d9bb84d2654 for BTCUSDT
+2026-02-02 16:48:33,152 | INFO | store.journal_store | Updated journal entry: 647f2b5f-7947-449d-9d1d-1d9bb84d2654
+2026-02-02 16:48:33,156 | INFO | services.position_monitor | Closing orphan entry 5ec5367e-310c-438b-8bf3-7d4e092f6100 for BTCUSDT
+2026-02-02 16:48:33,159 | INFO | store.journal_store | Updated journal entry: 5ec5367e-310c-438b-8bf3-7d4e092f6100
+2026-02-02 16:48:33,162 | INFO | services.position_monitor | Closing orphan entry 3cceaebb-5746-4440-8b81-a06af5b29878 for PAXGUSDT
+2026-02-02 16:48:33,166 | INFO | store.journal_store | Updated journal entry: 3cceaebb-5746-4440-8b81-a06af5b29878
+2026-02-02 16:48:33,169 | INFO | services.position_monitor | Closing orphan entry 252ff149-1211-44d4-bb1f-57a1e1569bb7 for ETHUSDT
+2026-02-02 16:48:33,172 | INFO | store.journal_store | Updated journal entry: 252ff149-1211-44d4-bb1f-57a1e1569bb7
+2026-02-02 16:48:33,175 | INFO | services.position_monitor | Closing orphan entry c4e7598b-52ca-4312-86eb-350076204c0e for DOGEUSDT
+2026-02-02 16:48:33,177 | INFO | store.journal_store | Updated journal entry: c4e7598b-52ca-4312-86eb-350076204c0e
+2026-02-02 16:48:33,181 | INFO | services.position_monitor | Closing orphan entry 5fa5d61d-c1b3-43a1-b653-b28964284c09 for SUIUSDT
+2026-02-02 16:48:33,184 | INFO | store.journal_store | Updated journal entry: 5fa5d61d-c1b3-43a1-b653-b28964284c09
+2026-02-02 16:48:33,187 | INFO | services.position_monitor | Closing orphan entry bb454f3b-5894-4241-9f11-b7b0b5eda27a for BTCUSDT
+2026-02-02 16:48:33,190 | INFO | store.journal_store | Updated journal entry: bb454f3b-5894-4241-9f11-b7b0b5eda27a
+2026-02-02 16:48:33,193 | INFO | services.position_monitor | Closing orphan entry a97b7681-b756-4037-9459-b835b9463113 for ETHUSDT
+2026-02-02 16:48:33,196 | INFO | store.journal_store | Updated journal entry: a97b7681-b756-4037-9459-b835b9463113
+2026-02-02 16:48:33,200 | INFO | services.position_monitor | Closing orphan entry 80674261-bda1-4bb4-9439-0a20f4256ff6 for BTCUSDT
+2026-02-02 16:48:33,203 | INFO | store.journal_store | Updated journal entry: 80674261-bda1-4bb4-9439-0a20f4256ff6
+2026-02-02 16:48:33,206 | INFO | services.position_monitor | Closing orphan entry 06cdddb6-b429-43e2-b7f6-4afeb9d92247 for DOGEUSDT
+2026-02-02 16:48:33,209 | INFO | store.journal_store | Updated journal entry: 06cdddb6-b429-43e2-b7f6-4afeb9d92247
+2026-02-02 16:48:33,212 | INFO | services.position_monitor | Closing orphan entry 08b90ac7-405c-4e62-83b7-9104ca455390 for ETHUSDT
+2026-02-02 16:48:33,215 | INFO | store.journal_store | Updated journal entry: 08b90ac7-405c-4e62-83b7-9104ca455390
+2026-02-02 16:48:33,219 | INFO | services.position_monitor | Closing orphan entry 429638e8-252f-440f-a810-63fa11ab54f5 for SUIUSDT
+2026-02-02 16:48:33,222 | INFO | store.journal_store | Updated journal entry: 429638e8-252f-440f-a810-63fa11ab54f5
+2026-02-02 16:48:33,226 | INFO | services.position_monitor | Closing orphan entry 90377080-9a65-4966-b5cc-ebeb0df5781d for ADAUSDT
+2026-02-02 16:48:33,229 | INFO | store.journal_store | Updated journal entry: 90377080-9a65-4966-b5cc-ebeb0df5781d
+2026-02-02 16:48:33,233 | INFO | services.position_monitor | Closing orphan entry b6af53b1-6aed-44d0-b071-6959c796a91f for SOLUSDT
+2026-02-02 16:48:33,236 | INFO | store.journal_store | Updated journal entry: b6af53b1-6aed-44d0-b071-6959c796a91f
+2026-02-02 16:48:33,239 | INFO | services.position_monitor | Closing orphan entry c06a58d2-cc18-4c67-9592-d03c49e166e8 for ETHUSDT
+2026-02-02 16:48:33,243 | INFO | store.journal_store | Updated journal entry: c06a58d2-cc18-4c67-9592-d03c49e166e8
+2026-02-02 16:48:33,247 | INFO | services.position_monitor | Closing orphan entry 2ba27c53-c850-4eda-8bcf-75d722a238e7 for GALAUSDT
+2026-02-02 16:48:33,250 | INFO | store.journal_store | Updated journal entry: 2ba27c53-c850-4eda-8bcf-75d722a238e7
+2026-02-02 16:48:33,254 | INFO | services.position_monitor | Closing orphan entry c5cc9ad5-3e18-421d-aa0b-ecd791119d4b for ETHUSDT
+2026-02-02 16:48:33,257 | INFO | store.journal_store | Updated journal entry: c5cc9ad5-3e18-421d-aa0b-ecd791119d4b
+2026-02-02 16:48:33,260 | INFO | services.position_monitor | Closing orphan entry 11fa2186-f1ec-41fe-887d-1a34528ef000 for GALAUSDT
+2026-02-02 16:48:33,265 | INFO | store.journal_store | Updated journal entry: 11fa2186-f1ec-41fe-887d-1a34528ef000
+2026-02-02 16:48:33,268 | INFO | services.position_monitor | Closing orphan entry 212fd01b-75fa-48ff-9df0-29eb3bd7230c for SUIUSDT
+2026-02-02 16:48:33,271 | INFO | store.journal_store | Updated journal entry: 212fd01b-75fa-48ff-9df0-29eb3bd7230c
+2026-02-02 16:48:33,274 | INFO | services.position_monitor | Closing orphan entry 574c8e03-1ae2-4394-8acf-ff774184591c for SUIUSDT
+2026-02-02 16:48:33,277 | INFO | store.journal_store | Updated journal entry: 574c8e03-1ae2-4394-8acf-ff774184591c
+2026-02-02 16:48:33,280 | INFO | services.position_monitor | Closing orphan entry 25a64b8f-d8e5-4ac3-a0dc-0138798865f2 for DOGEUSDT
+2026-02-02 16:48:33,284 | INFO | store.journal_store | Updated journal entry: 25a64b8f-d8e5-4ac3-a0dc-0138798865f2
+2026-02-02 16:48:33,287 | INFO | services.position_monitor | Closing orphan entry 835ee81d-1821-4502-ae62-3a7cad7b1b14 for PAXGUSDT
+2026-02-02 16:48:33,290 | INFO | store.journal_store | Updated journal entry: 835ee81d-1821-4502-ae62-3a7cad7b1b14
+2026-02-02 16:48:33,292 | INFO | services.position_monitor | Closing orphan entry 26500654-4b47-41c8-aa32-941a4c804f9d for ETHUSDT
+2026-02-02 16:48:33,295 | INFO | store.journal_store | Updated journal entry: 26500654-4b47-41c8-aa32-941a4c804f9d
+2026-02-02 16:48:33,299 | INFO | services.position_monitor | Closing orphan entry 30744d66-19ed-47c8-ad42-f088a51d1a20 for SOLUSDT
+2026-02-02 16:48:33,302 | INFO | store.journal_store | Updated journal entry: 30744d66-19ed-47c8-ad42-f088a51d1a20
+2026-02-02 16:48:33,305 | INFO | services.position_monitor | Closing orphan entry 54125547-0f30-4ba8-b90a-c6266ac4f821 for SOLUSDT
+2026-02-02 16:48:33,307 | INFO | store.journal_store | Updated journal entry: 54125547-0f30-4ba8-b90a-c6266ac4f821
+2026-02-02 16:48:33,310 | INFO | services.position_monitor | Closing orphan entry 50f20f63-0e9a-4544-8b9d-5a3462670263 for BTCUSDT
+2026-02-02 16:48:33,314 | INFO | store.journal_store | Updated journal entry: 50f20f63-0e9a-4544-8b9d-5a3462670263
+2026-02-02 16:48:33,317 | INFO | services.position_monitor | Creating entry for untracked position: XRPUSDT
+2026-02-02 16:48:33,317 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.6221
+2026-02-02 16:48:33,317 | INFO | services.position_monitor |   SL: 1.6398, TP: 1.5911
+2026-02-02 16:48:49,684 | INFO | services.position_monitor | New position detected: TRXUSDT Sell @ 0.28326
+2026-02-02 16:48:49,684 | INFO | services.position_monitor |   SL: 0.28609, TP: 0.27759
+2026-02-02 16:48:49,691 | ERROR | services.position_monitor | Error finding matching alert: 
+2026-02-02 16:48:49,692 | INFO | services.position_monitor |   Risk calculated from SL: $1.09
+2026-02-02 16:48:49,692 | INFO | services.position_monitor |   R:R ratio: 1.75
+2026-02-02 16:48:49,702 | INFO | store.journal_store | Created journal entry: 30c433fb-383c-4766-8cd8-c03439adac27 - XRPUSDT short
+2026-02-02 16:48:49,706 | INFO | services.position_monitor | Created journal entry 30c433fb-383c-4766-8cd8-c03439adac27 for XRPUSDT (source: manual)
+2026-02-02 16:48:50,090 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:48:50,093 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:48:50,093 | INFO | services.position_monitor |   Risk calculated from SL: $1.00
+2026-02-02 16:48:50,093 | INFO | services.position_monitor |   R:R ratio: 2.00
+2026-02-02 16:48:50,100 | INFO | store.journal_store | Created journal entry: 1b66e98a-df25-44ec-82b5-5073941abbed - TRXUSDT short
+2026-02-02 16:48:50,104 | INFO | services.position_monitor | Created journal entry 1b66e98a-df25-44ec-82b5-5073941abbed for TRXUSDT (source: analizador)
+2026-02-02 16:48:58,116 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:48:58,666 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\30c433fb-383c-4766-8cd8-c03439adac27_entry_20260202_164849.png
+2026-02-02 16:48:58,670 | INFO | store.journal_store | Updated journal entry: 30c433fb-383c-4766-8cd8-c03439adac27
+2026-02-02 16:48:58,674 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/30c433fb-383c-4766-8cd8-c03439adac27_entry_20260202_164849.png
+2026-02-02 16:48:58,675 | INFO | services.position_monitor | Reconciliation complete: {'orphan_entries_closed': 28, 'untracked_positions_created': 1, 'errors': []}
+2026-02-02 16:48:58,677 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:48:59,152 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\1b66e98a-df25-44ec-82b5-5073941abbed_entry_20260202_164850.png
+2026-02-02 16:48:59,160 | INFO | store.journal_store | Updated journal entry: 1b66e98a-df25-44ec-82b5-5073941abbed
+2026-02-02 16:48:59,165 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/1b66e98a-df25-44ec-82b5-5073941abbed_entry_20260202_164850.png
+2026-02-02 16:48:59,165 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.6221
+2026-02-02 16:48:59,166 | INFO | services.position_monitor |   SL: 1.6398, TP: 1.5911
+2026-02-02 16:48:59,206 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:48:59,209 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 16:48:59,209 | INFO | services.position_monitor |   Risk calculated from SL: $1.09
+2026-02-02 16:48:59,209 | INFO | services.position_monitor |   R:R ratio: 1.75
+2026-02-02 16:48:59,213 | INFO | store.journal_store | Created journal entry: d593519e-1ffa-482d-a303-37a91d16400b - XRPUSDT short
+2026-02-02 16:48:59,216 | INFO | services.position_monitor | Created journal entry d593519e-1ffa-482d-a303-37a91d16400b for XRPUSDT (source: analizador)
+2026-02-02 16:49:07,491 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:49:07,871 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\d593519e-1ffa-482d-a303-37a91d16400b_entry_20260202_164859.png
+2026-02-02 16:49:07,873 | INFO | store.journal_store | Updated journal entry: d593519e-1ffa-482d-a303-37a91d16400b
+2026-02-02 16:49:07,876 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/d593519e-1ffa-482d-a303-37a91d16400b_entry_20260202_164859.png
+2026-02-02 16:49:33,513 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 78381.3
+2026-02-02 16:49:33,513 | INFO | services.position_monitor |   SL: 76612.4, TP: 81860.9
+2026-02-02 16:49:33,573 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:49:33,575 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:49:33,575 | INFO | services.position_monitor |   Risk calculated from SL: $1.77
+2026-02-02 16:49:33,575 | INFO | services.position_monitor |   R:R ratio: 1.97
+2026-02-02 16:49:33,580 | INFO | store.journal_store | Created journal entry: 81d2a1ea-ee51-47b4-a0e5-740173c0af88 - BTCUSDT long
+2026-02-02 16:49:33,584 | INFO | services.position_monitor | Created journal entry 81d2a1ea-ee51-47b4-a0e5-740173c0af88 for BTCUSDT (source: analizador)
+2026-02-02 16:49:42,573 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:49:42,994 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\81d2a1ea-ee51-47b4-a0e5-740173c0af88_entry_20260202_164933.png
+2026-02-02 16:49:43,000 | INFO | store.journal_store | Updated journal entry: 81d2a1ea-ee51-47b4-a0e5-740173c0af88
+2026-02-02 16:49:43,003 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/81d2a1ea-ee51-47b4-a0e5-740173c0af88_entry_20260202_164933.png
+2026-02-02 16:49:43,003 | INFO | services.position_monitor | New position detected: ADAUSDT Buy @ 0.3007
+2026-02-02 16:49:43,003 | INFO | services.position_monitor |   SL: 0.2974, TP: 0.3065
+2026-02-02 16:49:43,036 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:49:43,038 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:49:43,039 | INFO | services.position_monitor |   Risk calculated from SL: $1.10
+2026-02-02 16:49:43,039 | INFO | services.position_monitor |   R:R ratio: 1.76
+2026-02-02 16:49:43,043 | INFO | store.journal_store | Created journal entry: 46648204-7202-40b7-94e0-3e77d5444a15 - ADAUSDT long
+2026-02-02 16:49:43,046 | INFO | services.position_monitor | Created journal entry 46648204-7202-40b7-94e0-3e77d5444a15 for ADAUSDT (source: analizador)
+2026-02-02 16:49:48,219 | INFO | services.position_monitor | Starting reconciliation...
+2026-02-02 16:50:00,168 | INFO | services.position_monitor | Creating entry for untracked position: SUIUSDT
+2026-02-02 16:50:00,168 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.1435
+2026-02-02 16:50:00,168 | INFO | services.position_monitor |   SL: 1.1181, TP: 1.1947
+2026-02-02 16:50:00,172 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ADAUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:00,591 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ADAUSDT\46648204-7202-40b7-94e0-3e77d5444a15_entry_20260202_164943.png
+2026-02-02 16:50:00,595 | INFO | store.journal_store | Updated journal entry: 46648204-7202-40b7-94e0-3e77d5444a15
+2026-02-02 16:50:00,599 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ADAUSDT/46648204-7202-40b7-94e0-3e77d5444a15_entry_20260202_164943.png
+2026-02-02 16:50:00,600 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.10811
+2026-02-02 16:50:00,600 | INFO | services.position_monitor |   SL: 0.10576, TP: 0.113
+2026-02-02 16:50:00,603 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:00,605 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:00,606 | INFO | services.position_monitor |   Risk calculated from SL: $2.79
+2026-02-02 16:50:00,606 | INFO | services.position_monitor |   R:R ratio: 2.02
+2026-02-02 16:50:00,609 | INFO | store.journal_store | Created journal entry: 7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04 - SUIUSDT long
+2026-02-02 16:50:00,613 | INFO | services.position_monitor | Created journal entry 7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04 for SUIUSDT (source: analizador)
+2026-02-02 16:50:00,964 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:00,966 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:00,967 | INFO | services.position_monitor |   Risk calculated from SL: $2.96
+2026-02-02 16:50:00,967 | INFO | services.position_monitor |   R:R ratio: 2.08
+2026-02-02 16:50:00,970 | INFO | store.journal_store | Created journal entry: 1b0811cd-dac0-4959-a49e-a0daaaceac31 - DOGEUSDT long
+2026-02-02 16:50:00,973 | INFO | services.position_monitor | Created journal entry 1b0811cd-dac0-4959-a49e-a0daaaceac31 for DOGEUSDT (source: analizador)
+2026-02-02 16:50:07,232 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:07,597 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04_entry_20260202_165000.png
+2026-02-02 16:50:07,602 | INFO | store.journal_store | Updated journal entry: 7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04
+2026-02-02 16:50:07,606 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04_entry_20260202_165000.png
+2026-02-02 16:50:07,606 | INFO | services.position_monitor | Creating entry for untracked position: DOGEUSDT
+2026-02-02 16:50:07,607 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.10811
+2026-02-02 16:50:07,607 | INFO | services.position_monitor |   SL: 0.10576, TP: 0.113
+2026-02-02 16:50:07,656 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:07,659 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:07,659 | INFO | services.position_monitor |   Risk calculated from SL: $2.96
+2026-02-02 16:50:07,659 | INFO | services.position_monitor |   R:R ratio: 2.08
+2026-02-02 16:50:07,663 | INFO | store.journal_store | Created journal entry: ef1c1867-5951-4796-b8fa-ff76821eb65d - DOGEUSDT long
+2026-02-02 16:50:07,667 | INFO | services.position_monitor | Created journal entry ef1c1867-5951-4796-b8fa-ff76821eb65d for DOGEUSDT (source: analizador)
+2026-02-02 16:50:08,815 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:09,204 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\1b0811cd-dac0-4959-a49e-a0daaaceac31_entry_20260202_165000.png
+2026-02-02 16:50:09,208 | INFO | store.journal_store | Updated journal entry: 1b0811cd-dac0-4959-a49e-a0daaaceac31
+2026-02-02 16:50:09,212 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/1b0811cd-dac0-4959-a49e-a0daaaceac31_entry_20260202_165000.png
+2026-02-02 16:50:09,212 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.1435
+2026-02-02 16:50:09,213 | INFO | services.position_monitor |   SL: 1.1181, TP: 1.1947
+2026-02-02 16:50:09,242 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:09,244 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:09,244 | INFO | services.position_monitor |   Risk calculated from SL: $2.79
+2026-02-02 16:50:09,245 | INFO | services.position_monitor |   R:R ratio: 2.02
+2026-02-02 16:50:09,248 | INFO | store.journal_store | Created journal entry: 814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99 - SUIUSDT long
+2026-02-02 16:50:09,252 | INFO | services.position_monitor | Created journal entry 814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99 for SUIUSDT (source: analizador)
+2026-02-02 16:50:14,090 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:14,481 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99_entry_20260202_165009.png
+2026-02-02 16:50:14,488 | INFO | store.journal_store | Updated journal entry: 814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99
+2026-02-02 16:50:14,491 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99_entry_20260202_165009.png
+2026-02-02 16:50:14,492 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2339.3
+2026-02-02 16:50:14,492 | INFO | services.position_monitor |   SL: 2285.0, TP: 2432.35
+2026-02-02 16:50:14,496 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:14,935 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\ef1c1867-5951-4796-b8fa-ff76821eb65d_entry_20260202_165007.png
+2026-02-02 16:50:14,940 | INFO | store.journal_store | Updated journal entry: ef1c1867-5951-4796-b8fa-ff76821eb65d
+2026-02-02 16:50:14,943 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/ef1c1867-5951-4796-b8fa-ff76821eb65d_entry_20260202_165007.png
+2026-02-02 16:50:14,943 | INFO | services.position_monitor | Creating entry for untracked position: ETHUSDT
+2026-02-02 16:50:14,943 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2339.3
+2026-02-02 16:50:14,943 | INFO | services.position_monitor |   SL: 2285.0, TP: 2432.35
+2026-02-02 16:50:14,946 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:14,948 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:14,948 | INFO | services.position_monitor |   Risk calculated from SL: $1.63
+2026-02-02 16:50:14,949 | INFO | services.position_monitor |   R:R ratio: 1.71
+2026-02-02 16:50:14,953 | INFO | store.journal_store | Created journal entry: fed50c6c-f218-44f9-9d10-67e0e0d5c614 - ETHUSDT long
+2026-02-02 16:50:14,957 | INFO | services.position_monitor | Created journal entry fed50c6c-f218-44f9-9d10-67e0e0d5c614 for ETHUSDT (source: analizador)
+2026-02-02 16:50:15,301 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:15,303 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:15,304 | INFO | services.position_monitor |   Risk calculated from SL: $1.63
+2026-02-02 16:50:15,304 | INFO | services.position_monitor |   R:R ratio: 1.71
+2026-02-02 16:50:15,307 | INFO | store.journal_store | Created journal entry: 30000381-e9ca-4f60-8a3f-b2101bc7145b - ETHUSDT long
+2026-02-02 16:50:15,310 | INFO | services.position_monitor | Created journal entry 30000381-e9ca-4f60-8a3f-b2101bc7145b for ETHUSDT (source: analizador)
+2026-02-02 16:50:21,257 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:21,735 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\fed50c6c-f218-44f9-9d10-67e0e0d5c614_entry_20260202_165014.png
+2026-02-02 16:50:21,742 | INFO | store.journal_store | Updated journal entry: fed50c6c-f218-44f9-9d10-67e0e0d5c614
+2026-02-02 16:50:21,746 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/fed50c6c-f218-44f9-9d10-67e0e0d5c614_entry_20260202_165014.png
+2026-02-02 16:50:21,746 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 104.78
+2026-02-02 16:50:21,746 | INFO | services.position_monitor |   SL: 103.64, TP: 106.78
+2026-02-02 16:50:21,783 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:21,786 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:21,786 | INFO | services.position_monitor |   Risk calculated from SL: $2.17
+2026-02-02 16:50:21,786 | INFO | services.position_monitor |   R:R ratio: 1.75
+2026-02-02 16:50:21,790 | INFO | store.journal_store | Created journal entry: f87df3c9-83b8-4071-9e29-d9930f954f08 - SOLUSDT long
+2026-02-02 16:50:21,794 | INFO | services.position_monitor | Created journal entry f87df3c9-83b8-4071-9e29-d9930f954f08 for SOLUSDT (source: analizador)
+2026-02-02 16:50:23,312 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:23,758 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\30000381-e9ca-4f60-8a3f-b2101bc7145b_entry_20260202_165015.png
+2026-02-02 16:50:23,763 | INFO | store.journal_store | Updated journal entry: 30000381-e9ca-4f60-8a3f-b2101bc7145b
+2026-02-02 16:50:23,766 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/30000381-e9ca-4f60-8a3f-b2101bc7145b_entry_20260202_165015.png
+2026-02-02 16:50:23,766 | INFO | services.position_monitor | Creating entry for untracked position: SOLUSDT
+2026-02-02 16:50:23,767 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 104.78
+2026-02-02 16:50:23,767 | INFO | services.position_monitor |   SL: 103.64, TP: 106.78
+2026-02-02 16:50:23,797 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:23,799 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:23,799 | INFO | services.position_monitor |   Risk calculated from SL: $2.17
+2026-02-02 16:50:23,799 | INFO | services.position_monitor |   R:R ratio: 1.75
+2026-02-02 16:50:23,802 | INFO | store.journal_store | Created journal entry: 542e119d-eee2-4a03-9dd3-623f05402922 - SOLUSDT long
+2026-02-02 16:50:23,805 | INFO | services.position_monitor | Created journal entry 542e119d-eee2-4a03-9dd3-623f05402922 for SOLUSDT (source: analizador)
+2026-02-02 16:50:27,410 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:27,784 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\f87df3c9-83b8-4071-9e29-d9930f954f08_entry_20260202_165021.png
+2026-02-02 16:50:27,791 | INFO | store.journal_store | Updated journal entry: f87df3c9-83b8-4071-9e29-d9930f954f08
+2026-02-02 16:50:27,794 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/f87df3c9-83b8-4071-9e29-d9930f954f08_entry_20260202_165021.png
+2026-02-02 16:50:28,847 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:29,215 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\542e119d-eee2-4a03-9dd3-623f05402922_entry_20260202_165023.png
+2026-02-02 16:50:29,222 | INFO | store.journal_store | Updated journal entry: 542e119d-eee2-4a03-9dd3-623f05402922
+2026-02-02 16:50:29,225 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/542e119d-eee2-4a03-9dd3-623f05402922_entry_20260202_165023.png
+2026-02-02 16:50:29,226 | INFO | services.position_monitor | Reconciliation complete: {'orphan_entries_closed': 0, 'untracked_positions_created': 4, 'errors': []}
+2026-02-02 16:50:46,322 | INFO | services.position_monitor | New position detected: PAXGUSDT Buy @ 4695.4
+2026-02-02 16:50:46,323 | INFO | services.position_monitor |   SL: 4590.3, TP: 4904.8
+2026-02-02 16:50:46,362 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 16:50:46,364 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 16:50:46,364 | INFO | services.position_monitor |   Risk calculated from SL: $2.10
+2026-02-02 16:50:46,364 | INFO | services.position_monitor |   R:R ratio: 1.99
+2026-02-02 16:50:46,370 | INFO | store.journal_store | Created journal entry: 2fda11fc-06a0-4a71-a01b-0c6a439bd456 - PAXGUSDT long
+2026-02-02 16:50:46,373 | INFO | services.position_monitor | Created journal entry 2fda11fc-06a0-4a71-a01b-0c6a439bd456 for PAXGUSDT (source: analizador)
+2026-02-02 16:50:51,616 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 16:50:52,011 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\2fda11fc-06a0-4a71-a01b-0c6a439bd456_entry_20260202_165046.png
+2026-02-02 16:50:52,017 | INFO | store.journal_store | Updated journal entry: 2fda11fc-06a0-4a71-a01b-0c6a439bd456
+2026-02-02 16:50:52,020 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/2fda11fc-06a0-4a71-a01b-0c6a439bd456_entry_20260202_165046.png
+2026-02-02 17:15:26,759 | INFO | main | Trading Journal Backend shutting down...
+2026-02-02 17:15:26,762 | INFO | services.position_monitor | Position monitor stopped
+2026-02-02 17:15:26,762 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-02 17:15:26,762 | INFO | main | Shutdown complete
+2026-02-02 17:15:29,537 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 17:15:29,641 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 17:15:29,657 | INFO | main | ============================================================
+2026-02-02 17:15:29,657 | INFO | main | Trading Journal Backend starting...
+2026-02-02 17:15:29,658 | INFO | main | Database: data/journal.db
+2026-02-02 17:15:29,658 | INFO | main | Screenshots: screenshots/
+2026-02-02 17:15:29,658 | INFO | main | ============================================================
+2026-02-02 17:15:29,659 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-02 17:15:30,035 | INFO | services.position_monitor | Loaded 26 existing open entries from database
+2026-02-02 17:15:30,036 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-02 17:15:30,036 | INFO | main | Position monitor ENABLED
+2026-02-02 17:15:30,036 | INFO | main | All services started successfully
+2026-02-02 17:15:45,618 | INFO | services.position_monitor | Synced 10 positions from TradingBot
+2026-02-02 17:17:15,662 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-02 17:22:08,551 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 17:22:10,433 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 17:22:10,519 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-02 17:22:10,536 | INFO | main | ============================================================
+2026-02-02 17:22:10,537 | INFO | main | Trading Journal Backend starting...
+2026-02-02 17:22:10,537 | INFO | main | Database: data/journal.db
+2026-02-02 17:22:10,537 | INFO | main | Screenshots: screenshots/
+2026-02-02 17:22:10,537 | INFO | main | ============================================================
+2026-02-02 17:22:10,538 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-02 17:22:10,900 | INFO | services.position_monitor | Loaded 26 existing open entries from database
+2026-02-02 17:22:10,901 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-02 17:22:10,901 | INFO | main | Position monitor ENABLED
+2026-02-02 17:22:10,901 | INFO | main | All services started successfully
+2026-02-02 17:22:23,285 | INFO | services.position_monitor | Synced 10 positions from TradingBot
+2026-02-02 17:27:10,256 | INFO | store.journal_store | Deleted journal entry: 34363d24-f8d8-4bce-9fd7-1ce17ded8dcf
+2026-02-02 17:27:10,264 | INFO | store.journal_store | Deleted journal entry: 1d2b5c44-4202-416d-9a6a-e6015a021001
+2026-02-02 17:27:10,270 | INFO | store.journal_store | Deleted journal entry: 73165601-0215-4c3a-ab8e-0ed7fb55198e
+2026-02-02 17:27:10,276 | INFO | store.journal_store | Deleted journal entry: 647f2b5f-7947-449d-9d1d-1d9bb84d2654
+2026-02-02 17:27:10,282 | INFO | store.journal_store | Deleted journal entry: a2e7bd8e-8fc8-463a-a4b1-865fc154d2ae
+2026-02-02 17:27:10,287 | INFO | store.journal_store | Deleted journal entry: 5ec5367e-310c-438b-8bf3-7d4e092f6100
+2026-02-02 17:27:10,293 | INFO | store.journal_store | Deleted journal entry: 0685ef3f-3178-48ec-956c-1e6fb06fecec
+2026-02-02 17:27:10,299 | INFO | store.journal_store | Deleted journal entry: 3cceaebb-5746-4440-8b81-a06af5b29878
+2026-02-02 17:27:10,304 | INFO | store.journal_store | Deleted journal entry: 252ff149-1211-44d4-bb1f-57a1e1569bb7
+2026-02-02 17:27:10,311 | INFO | store.journal_store | Deleted journal entry: c4e7598b-52ca-4312-86eb-350076204c0e
+2026-02-02 17:27:10,316 | INFO | store.journal_store | Deleted journal entry: 5fa5d61d-c1b3-43a1-b653-b28964284c09
+2026-02-02 17:27:10,321 | INFO | store.journal_store | Deleted journal entry: 0dc35e76-8c84-442e-ba44-965c12da0942
+2026-02-02 17:27:10,328 | INFO | store.journal_store | Deleted journal entry: bb454f3b-5894-4241-9f11-b7b0b5eda27a
+2026-02-02 17:27:10,333 | INFO | store.journal_store | Deleted journal entry: 323a5773-467b-4ffe-bdd0-2a79853daf39
+2026-02-02 17:27:10,339 | INFO | store.journal_store | Deleted journal entry: a97b7681-b756-4037-9459-b835b9463113
+2026-02-02 17:27:10,346 | INFO | store.journal_store | Deleted journal entry: 42de141e-0ef6-4ca3-a832-c9e28c1908df
+2026-02-02 17:27:10,352 | INFO | store.journal_store | Deleted journal entry: 8db7b6cf-535d-4b1a-8342-1aa6df9d7dbc
+2026-02-02 17:27:10,358 | INFO | store.journal_store | Deleted journal entry: 65daf7e9-e739-499a-821d-36ae8020a632
+2026-02-02 17:27:10,364 | INFO | store.journal_store | Deleted journal entry: f1121054-d151-4514-8951-53b76204e10e
+2026-02-02 17:27:10,370 | INFO | store.journal_store | Deleted journal entry: c114bdba-280e-4ecc-94f5-7657eb0868cf
+2026-02-02 17:27:10,375 | INFO | store.journal_store | Deleted journal entry: 80674261-bda1-4bb4-9439-0a20f4256ff6
+2026-02-02 17:27:10,382 | INFO | store.journal_store | Deleted journal entry: 06cdddb6-b429-43e2-b7f6-4afeb9d92247
+2026-02-02 17:27:10,388 | INFO | store.journal_store | Deleted journal entry: fcd5b0ee-a116-4964-8db2-a46d585ed5de
+2026-02-02 17:27:10,394 | INFO | store.journal_store | Deleted journal entry: 08b90ac7-405c-4e62-83b7-9104ca455390
+2026-02-02 17:27:10,399 | INFO | store.journal_store | Deleted journal entry: 42e123b1-c127-4f05-a118-49ce76f56e82
+2026-02-02 17:27:10,408 | INFO | store.journal_store | Deleted journal entry: a21f3765-6ba3-43f6-b129-c31b49eec488
+2026-02-02 17:27:10,416 | INFO | store.journal_store | Deleted journal entry: 429638e8-252f-440f-a810-63fa11ab54f5
+2026-02-02 17:27:10,423 | INFO | store.journal_store | Deleted journal entry: 37c7f391-11c5-48d0-8f8f-71ba867ba34a
+2026-02-02 17:27:10,430 | INFO | store.journal_store | Deleted journal entry: 7d6f77ba-5e9e-40dd-9aa2-c44ac202f400
+2026-02-02 17:27:10,436 | INFO | store.journal_store | Deleted journal entry: 90377080-9a65-4966-b5cc-ebeb0df5781d
+2026-02-02 17:27:10,442 | INFO | store.journal_store | Deleted journal entry: 85e3033f-5d3b-43ec-9013-3848d953953b
+2026-02-02 17:27:10,448 | INFO | store.journal_store | Deleted journal entry: c59d6742-aca6-4ca4-845d-5e6a1af861b3
+2026-02-02 17:27:10,454 | INFO | store.journal_store | Deleted journal entry: b6af53b1-6aed-44d0-b071-6959c796a91f
+2026-02-02 17:27:10,461 | INFO | store.journal_store | Deleted journal entry: ad31e88f-ce21-4e5e-8c1c-686e20ffac18
+2026-02-02 17:27:10,467 | INFO | store.journal_store | Deleted journal entry: 68529b90-8e76-41d8-b959-aeec0b83bb3e
+2026-02-02 17:27:10,474 | INFO | store.journal_store | Deleted journal entry: 6b7d7513-5077-4d3c-9390-60179a88c4d4
+2026-02-02 17:27:10,481 | INFO | store.journal_store | Deleted journal entry: 173b9762-2155-497a-9653-9993866f85c8
+2026-02-02 17:27:10,487 | INFO | store.journal_store | Deleted journal entry: c06a58d2-cc18-4c67-9592-d03c49e166e8
+2026-02-02 17:27:10,494 | INFO | store.journal_store | Deleted journal entry: f4c2afe0-d687-4d59-8bd0-5bc6102a8711
+2026-02-02 17:27:10,500 | INFO | store.journal_store | Deleted journal entry: d1c535db-dba0-4cd7-ad13-a1ab2af687ea
+2026-02-02 17:27:10,506 | INFO | store.journal_store | Deleted journal entry: 8d92d93f-4723-4dd0-aabf-63a03ff0e269
+2026-02-02 17:27:10,512 | INFO | store.journal_store | Deleted journal entry: 962813a5-d8cb-4f47-99ed-bd7484c60017
+2026-02-02 17:27:10,518 | INFO | store.journal_store | Deleted journal entry: cbb7abd6-48cb-4b31-9ee8-fbd49c1954c3
+2026-02-02 17:27:10,523 | INFO | store.journal_store | Deleted journal entry: 1c38f77f-8f96-4d7f-a368-d08c19c1129f
+2026-02-02 17:27:10,529 | INFO | store.journal_store | Deleted journal entry: bd8498f4-e5e2-40d1-b670-6ba010105fc2
+2026-02-02 17:27:10,534 | INFO | store.journal_store | Deleted journal entry: fb7c8654-5187-4591-9ce1-4697c886519b
+2026-02-02 17:27:10,540 | INFO | store.journal_store | Deleted journal entry: 689f1fee-b651-424a-a1b7-a269898d1528
+2026-02-02 17:27:10,546 | INFO | store.journal_store | Deleted journal entry: ca108542-c4a8-43af-95d3-94ee49526b3b
+2026-02-02 17:27:10,551 | INFO | store.journal_store | Deleted journal entry: 977cffa3-99e6-4b0d-983a-1d2fbf82e8dc
+2026-02-02 17:27:10,556 | INFO | store.journal_store | Deleted journal entry: a1e0a563-d02f-450c-a925-105ec484e4e1
+2026-02-02 17:27:10,562 | INFO | store.journal_store | Deleted journal entry: cbc3315f-40b0-4f89-8fce-88640a96d5f5
+2026-02-02 17:27:10,568 | INFO | store.journal_store | Deleted journal entry: fc759271-6fa3-4401-b9c6-09cbb75cbae2
+2026-02-02 17:27:10,574 | INFO | store.journal_store | Deleted journal entry: 2ba27c53-c850-4eda-8bcf-75d722a238e7
+2026-02-02 17:27:10,579 | INFO | store.journal_store | Deleted journal entry: 67b07398-8691-4872-98ac-961504793f1f
+2026-02-02 17:27:10,585 | INFO | store.journal_store | Deleted journal entry: 5f6c23af-80ef-4f94-a104-e03ee2921abe
+2026-02-02 17:27:10,590 | INFO | store.journal_store | Deleted journal entry: c5cc9ad5-3e18-421d-aa0b-ecd791119d4b
+2026-02-02 17:27:10,596 | INFO | store.journal_store | Deleted journal entry: d71cffbc-f310-4544-a995-84374628081e
+2026-02-02 17:27:10,602 | INFO | store.journal_store | Deleted journal entry: ecf509ec-032c-4eec-bd8e-988d8229c256
+2026-02-02 17:27:10,608 | INFO | store.journal_store | Deleted journal entry: 237289b5-55bf-42d5-bfce-76b61e5b0704
+2026-02-02 17:27:10,614 | INFO | store.journal_store | Deleted journal entry: a37443aa-fff1-461d-a80c-eaf910b7417c
+2026-02-02 17:27:10,619 | INFO | store.journal_store | Deleted journal entry: 11fa2186-f1ec-41fe-887d-1a34528ef000
+2026-02-02 17:27:10,626 | INFO | store.journal_store | Deleted journal entry: def2316f-15a1-4b3f-83c9-9db38c633b9d
+2026-02-02 17:27:10,632 | INFO | store.journal_store | Deleted journal entry: 4a529b39-dab4-40f4-a297-93efcf809585
+2026-02-02 17:27:10,639 | INFO | store.journal_store | Deleted journal entry: aadd290a-fcd6-4b74-a386-74e2e9a395b0
+2026-02-02 17:27:10,646 | INFO | store.journal_store | Deleted journal entry: 86882f81-22b4-49e6-8b56-9e5c66f69a77
+2026-02-02 17:27:10,652 | INFO | store.journal_store | Deleted journal entry: 1db17312-6a5b-42de-b6ec-e1b76d8d1551
+2026-02-02 17:27:10,659 | INFO | store.journal_store | Deleted journal entry: a3edb6d5-6aac-4d82-a093-c2c9dd58f2e7
+2026-02-02 17:27:10,665 | INFO | store.journal_store | Deleted journal entry: 814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99
+2026-02-02 17:27:10,670 | INFO | store.journal_store | Deleted journal entry: 7f98b6b5-a7e3-4d12-ad7b-3bc570f93f04
+2026-02-02 17:27:10,677 | INFO | store.journal_store | Deleted journal entry: 574c8e03-1ae2-4394-8acf-ff774184591c
+2026-02-02 17:27:10,682 | INFO | store.journal_store | Deleted journal entry: 212fd01b-75fa-48ff-9df0-29eb3bd7230c
+2026-02-02 17:27:10,687 | INFO | store.journal_store | Deleted journal entry: 63eead75-5353-408a-bf16-0a243ee78694
+2026-02-02 17:27:10,693 | INFO | store.journal_store | Deleted journal entry: ef1c1867-5951-4796-b8fa-ff76821eb65d
+2026-02-02 17:27:10,699 | INFO | store.journal_store | Deleted journal entry: 1b0811cd-dac0-4959-a49e-a0daaaceac31
+2026-02-02 17:27:10,704 | INFO | store.journal_store | Deleted journal entry: 25a64b8f-d8e5-4ac3-a0dc-0138798865f2
+2026-02-02 17:27:10,710 | INFO | store.journal_store | Deleted journal entry: 2fda11fc-06a0-4a71-a01b-0c6a439bd456
+2026-02-02 17:27:10,716 | INFO | store.journal_store | Deleted journal entry: f5e56333-72fd-47c9-8efb-423e21396f05
+2026-02-02 17:27:10,721 | INFO | store.journal_store | Deleted journal entry: 835ee81d-1821-4502-ae62-3a7cad7b1b14
+2026-02-02 17:27:10,727 | INFO | store.journal_store | Deleted journal entry: 542e119d-eee2-4a03-9dd3-623f05402922
+2026-02-02 17:27:10,733 | INFO | store.journal_store | Deleted journal entry: f87df3c9-83b8-4071-9e29-d9930f954f08
+2026-02-02 17:27:10,740 | INFO | store.journal_store | Deleted journal entry: 30000381-e9ca-4f60-8a3f-b2101bc7145b
+2026-02-02 17:27:10,747 | INFO | store.journal_store | Deleted journal entry: fed50c6c-f218-44f9-9d10-67e0e0d5c614
+2026-02-02 17:27:10,752 | INFO | store.journal_store | Deleted journal entry: 46648204-7202-40b7-94e0-3e77d5444a15
+2026-02-02 17:27:10,758 | INFO | store.journal_store | Deleted journal entry: d593519e-1ffa-482d-a303-37a91d16400b
+2026-02-02 17:27:10,765 | INFO | store.journal_store | Deleted journal entry: 1b66e98a-df25-44ec-82b5-5073941abbed
+2026-02-02 17:27:10,770 | INFO | store.journal_store | Deleted journal entry: 30c433fb-383c-4766-8cd8-c03439adac27
+2026-02-02 17:27:10,777 | INFO | store.journal_store | Deleted journal entry: bef811b0-8b27-4d81-a89b-432c174e4e87
+2026-02-02 17:27:10,783 | INFO | store.journal_store | Deleted journal entry: 3557d183-c155-44b5-97c5-7efe7f9b6cd8
+2026-02-02 17:27:10,789 | INFO | store.journal_store | Deleted journal entry: 54125547-0f30-4ba8-b90a-c6266ac4f821
+2026-02-02 17:27:10,795 | INFO | store.journal_store | Deleted journal entry: dd7342b6-d11d-4b45-a740-e0558bfae694
+2026-02-02 17:27:10,801 | INFO | store.journal_store | Deleted journal entry: be30afde-b011-4ddc-aed1-c2d93689d41b
+2026-02-02 17:27:10,805 | INFO | store.journal_store | Deleted journal entry: f8ff3e8c-e342-42c0-938f-b5537113ec74
+2026-02-02 17:27:10,812 | INFO | store.journal_store | Deleted journal entry: 42bb7dcf-9839-446e-bccf-055280dbfa53
+2026-02-02 17:27:10,818 | INFO | store.journal_store | Deleted journal entry: 30744d66-19ed-47c8-ad42-f088a51d1a20
+2026-02-02 17:27:10,824 | INFO | store.journal_store | Deleted journal entry: a45bcd70-1aa8-4379-8260-a5e19dc9c857
+2026-02-02 17:27:10,831 | INFO | store.journal_store | Deleted journal entry: db0e2d70-e471-43b9-bec6-6f577eac6cf2
+2026-02-02 17:27:10,837 | INFO | store.journal_store | Deleted journal entry: 26500654-4b47-41c8-aa32-941a4c804f9d
+2026-02-02 17:27:10,844 | INFO | store.journal_store | Deleted journal entry: 81d2a1ea-ee51-47b4-a0e5-740173c0af88
+2026-02-02 17:27:10,850 | INFO | store.journal_store | Deleted journal entry: 213e313b-cb30-43f8-80b4-7f54705d766a
+2026-02-02 17:27:10,855 | INFO | store.journal_store | Deleted journal entry: 50f20f63-0e9a-4544-8b9d-5a3462670263
+2026-02-02 17:27:28,517 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-02 17:27:28,518 | WARNING | services.position_monitor | Entry 814a1ef3-c31b-4fa8-a6c5-5b5630ec2c99 not found in store
+2026-02-02 17:27:45,851 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-02 17:27:45,852 | WARNING | services.position_monitor | Entry 542e119d-eee2-4a03-9dd3-623f05402922 not found in store
+2026-02-02 17:27:45,853 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-02-02 17:27:45,853 | WARNING | services.position_monitor | Entry ef1c1867-5951-4796-b8fa-ff76821eb65d not found in store
+2026-02-02 17:27:45,854 | INFO | services.position_monitor | Position closed: POLUSDT
+2026-02-02 17:27:45,854 | WARNING | services.position_monitor | Entry bef811b0-8b27-4d81-a89b-432c174e4e87 not found in store
+2026-02-02 17:27:45,855 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-02-02 17:27:45,855 | WARNING | services.position_monitor | Entry 2fda11fc-06a0-4a71-a01b-0c6a439bd456 not found in store
+2026-02-02 17:27:45,856 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-02 17:27:45,857 | WARNING | services.position_monitor | Entry d593519e-1ffa-482d-a303-37a91d16400b not found in store
+2026-02-02 17:27:45,857 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-02-02 17:27:45,858 | WARNING | services.position_monitor | Entry 46648204-7202-40b7-94e0-3e77d5444a15 not found in store
+2026-02-02 17:27:45,859 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-02-02 17:27:45,860 | WARNING | services.position_monitor | Entry 1b66e98a-df25-44ec-82b5-5073941abbed not found in store
+2026-02-02 17:27:45,860 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-02 17:27:45,861 | WARNING | services.position_monitor | Entry 30000381-e9ca-4f60-8a3f-b2101bc7145b not found in store
+2026-02-02 17:27:45,861 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-02 17:27:45,862 | WARNING | services.position_monitor | Entry 81d2a1ea-ee51-47b4-a0e5-740173c0af88 not found in store
+2026-02-02 17:35:11,628 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.10839
+2026-02-02 17:35:11,628 | INFO | services.position_monitor |   SL: 0.10581, TP: 0.11306
+2026-02-02 17:35:11,680 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:35:11,682 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 17:35:11,683 | INFO | services.position_monitor |   Risk calculated from SL: $3.25
+2026-02-02 17:35:11,683 | INFO | services.position_monitor |   R:R ratio: 1.81
+2026-02-02 17:35:11,685 | INFO | store.journal_store | Created journal entry: db6c3b32-0c15-45e1-9dce-e99396358479 - DOGEUSDT long
+2026-02-02 17:35:11,690 | INFO | services.position_monitor | Created journal entry db6c3b32-0c15-45e1-9dce-e99396358479 for DOGEUSDT (source: analizador)
+2026-02-02 17:35:17,287 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:35:17,852 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\db6c3b32-0c15-45e1-9dce-e99396358479_entry_20260202_173511.png
+2026-02-02 17:35:17,856 | INFO | store.journal_store | Updated journal entry: db6c3b32-0c15-45e1-9dce-e99396358479
+2026-02-02 17:35:17,859 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/db6c3b32-0c15-45e1-9dce-e99396358479_entry_20260202_173511.png
+2026-02-02 17:36:25,279 | INFO | services.position_monitor | New position detected: POLUSDT Buy @ 0.11339
+2026-02-02 17:36:25,279 | INFO | services.position_monitor |   SL: 0.11203, TP: 0.11543
+2026-02-02 17:36:25,336 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:36:25,338 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 17:36:25,338 | INFO | services.position_monitor |   Risk calculated from SL: $1.20
+2026-02-02 17:36:25,338 | INFO | services.position_monitor |   R:R ratio: 1.50
+2026-02-02 17:36:25,341 | INFO | store.journal_store | Created journal entry: f0939db1-4494-4b83-bd5a-380e87f73795 - POLUSDT long
+2026-02-02 17:36:25,344 | INFO | services.position_monitor | Created journal entry f0939db1-4494-4b83-bd5a-380e87f73795 for POLUSDT (source: analizador)
+2026-02-02 17:36:31,253 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/POLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:36:31,637 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\POLUSDT\f0939db1-4494-4b83-bd5a-380e87f73795_entry_20260202_173625.png
+2026-02-02 17:36:31,641 | INFO | store.journal_store | Updated journal entry: f0939db1-4494-4b83-bd5a-380e87f73795
+2026-02-02 17:36:31,644 | INFO | services.position_monitor | Entry screenshot saved: screenshots/POLUSDT/f0939db1-4494-4b83-bd5a-380e87f73795_entry_20260202_173625.png
+2026-02-02 17:37:20,552 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.28359
+2026-02-02 17:37:20,552 | INFO | services.position_monitor |   SL: 0.28072, TP: 0.28923
+2026-02-02 17:37:20,611 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:37:20,613 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 17:37:20,614 | INFO | services.position_monitor |   Risk calculated from SL: $1.01
+2026-02-02 17:37:20,614 | INFO | services.position_monitor |   R:R ratio: 1.97
+2026-02-02 17:37:20,616 | INFO | store.journal_store | Created journal entry: cf7965e2-a97e-4db8-9ef5-64bac51a031b - TRXUSDT long
+2026-02-02 17:37:20,620 | INFO | services.position_monitor | Created journal entry cf7965e2-a97e-4db8-9ef5-64bac51a031b for TRXUSDT (source: analizador)
+2026-02-02 17:37:25,466 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:37:25,810 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\cf7965e2-a97e-4db8-9ef5-64bac51a031b_entry_20260202_173720.png
+2026-02-02 17:37:25,815 | INFO | store.journal_store | Updated journal entry: cf7965e2-a97e-4db8-9ef5-64bac51a031b
+2026-02-02 17:37:25,818 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/cf7965e2-a97e-4db8-9ef5-64bac51a031b_entry_20260202_173720.png
+2026-02-02 17:38:18,727 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.6246
+2026-02-02 17:38:18,727 | INFO | services.position_monitor |   SL: 1.6049, TP: 1.6536
+2026-02-02 17:38:18,795 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:38:18,797 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 17:38:18,798 | INFO | services.position_monitor |   Risk calculated from SL: $1.21
+2026-02-02 17:38:18,798 | INFO | services.position_monitor |   R:R ratio: 1.47
+2026-02-02 17:38:18,801 | INFO | store.journal_store | Created journal entry: a7b148c6-4007-475d-b277-2fa9de94aada - XRPUSDT long
+2026-02-02 17:38:18,813 | INFO | services.position_monitor | Created journal entry a7b148c6-4007-475d-b277-2fa9de94aada for XRPUSDT (source: analizador)
+2026-02-02 17:38:25,193 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:38:25,553 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\a7b148c6-4007-475d-b277-2fa9de94aada_entry_20260202_173818.png
+2026-02-02 17:38:25,555 | INFO | store.journal_store | Updated journal entry: a7b148c6-4007-475d-b277-2fa9de94aada
+2026-02-02 17:38:25,559 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/a7b148c6-4007-475d-b277-2fa9de94aada_entry_20260202_173818.png
+2026-02-02 17:39:19,179 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 104.93
+2026-02-02 17:39:19,179 | INFO | services.position_monitor |   SL: 106.06, TP: 102.9
+2026-02-02 17:39:19,239 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:39:19,242 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 17:39:19,242 | INFO | services.position_monitor |   Risk calculated from SL: $2.15
+2026-02-02 17:39:19,242 | INFO | services.position_monitor |   R:R ratio: 1.80
+2026-02-02 17:39:19,246 | INFO | store.journal_store | Created journal entry: 8810e779-2c04-4b47-bca6-d4e4aeba7f12 - SOLUSDT short
+2026-02-02 17:39:19,249 | INFO | services.position_monitor | Created journal entry 8810e779-2c04-4b47-bca6-d4e4aeba7f12 for SOLUSDT (source: analizador)
+2026-02-02 17:39:24,453 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:39:24,857 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\8810e779-2c04-4b47-bca6-d4e4aeba7f12_entry_20260202_173919.png
+2026-02-02 17:39:24,862 | INFO | store.journal_store | Updated journal entry: 8810e779-2c04-4b47-bca6-d4e4aeba7f12
+2026-02-02 17:39:24,866 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/8810e779-2c04-4b47-bca6-d4e4aeba7f12_entry_20260202_173919.png
+2026-02-02 17:39:24,866 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 1.1489
+2026-02-02 17:39:24,866 | INFO | services.position_monitor |   SL: 1.1753, TP: 1.0982
+2026-02-02 17:39:24,899 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:39:24,901 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 17:39:24,901 | INFO | services.position_monitor |   Risk calculated from SL: $2.90
+2026-02-02 17:39:24,901 | INFO | services.position_monitor |   R:R ratio: 1.92
+2026-02-02 17:39:24,905 | INFO | store.journal_store | Created journal entry: 2028eba8-b9de-42eb-8551-987902d27457 - SUIUSDT short
+2026-02-02 17:39:24,909 | INFO | services.position_monitor | Created journal entry 2028eba8-b9de-42eb-8551-987902d27457 for SUIUSDT (source: analizador)
+2026-02-02 17:39:29,890 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:39:30,268 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\2028eba8-b9de-42eb-8551-987902d27457_entry_20260202_173924.png
+2026-02-02 17:39:30,273 | INFO | store.journal_store | Updated journal entry: 2028eba8-b9de-42eb-8551-987902d27457
+2026-02-02 17:39:30,276 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/2028eba8-b9de-42eb-8551-987902d27457_entry_20260202_173924.png
+2026-02-02 17:42:22,425 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 78777.8
+2026-02-02 17:42:22,425 | INFO | services.position_monitor |   SL: 77004.0, TP: 82279.3
+2026-02-02 17:42:22,495 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:42:22,497 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 17:42:22,497 | INFO | services.position_monitor |   Risk calculated from SL: $1.77
+2026-02-02 17:42:22,498 | INFO | services.position_monitor |   R:R ratio: 1.97
+2026-02-02 17:42:22,500 | INFO | store.journal_store | Created journal entry: 79fbbbc4-f0a8-4919-bc98-a02e9241048b - BTCUSDT long
+2026-02-02 17:42:22,504 | INFO | services.position_monitor | Created journal entry 79fbbbc4-f0a8-4919-bc98-a02e9241048b for BTCUSDT (source: analizador)
+2026-02-02 17:42:28,060 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:42:28,414 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\79fbbbc4-f0a8-4919-bc98-a02e9241048b_entry_20260202_174222.png
+2026-02-02 17:42:28,417 | INFO | store.journal_store | Updated journal entry: 79fbbbc4-f0a8-4919-bc98-a02e9241048b
+2026-02-02 17:42:28,421 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/79fbbbc4-f0a8-4919-bc98-a02e9241048b_entry_20260202_174222.png
+2026-02-02 17:45:27,619 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-02 17:46:35,450 | INFO | services.position_monitor | New position detected: ADAUSDT Sell @ 0.3003
+2026-02-02 17:46:35,450 | INFO | services.position_monitor |   SL: 0.3035, TP: 0.2944
+2026-02-02 17:46:35,515 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:46:35,517 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 17:46:35,517 | INFO | services.position_monitor |   Risk calculated from SL: $1.06
+2026-02-02 17:46:35,518 | INFO | services.position_monitor |   R:R ratio: 1.84
+2026-02-02 17:46:35,520 | INFO | store.journal_store | Created journal entry: dd855038-1205-4638-84ef-aab8861fdaa1 - ADAUSDT short
+2026-02-02 17:46:35,523 | INFO | services.position_monitor | Created journal entry dd855038-1205-4638-84ef-aab8861fdaa1 for ADAUSDT (source: analizador)
+2026-02-02 17:46:43,707 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ADAUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:46:44,065 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ADAUSDT\dd855038-1205-4638-84ef-aab8861fdaa1_entry_20260202_174635.png
+2026-02-02 17:46:44,068 | INFO | store.journal_store | Updated journal entry: dd855038-1205-4638-84ef-aab8861fdaa1
+2026-02-02 17:46:44,071 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ADAUSDT/dd855038-1205-4638-84ef-aab8861fdaa1_entry_20260202_174635.png
+2026-02-02 17:46:44,072 | INFO | services.position_monitor | New position detected: ETHUSDT Sell @ 2349.33
+2026-02-02 17:46:44,072 | INFO | services.position_monitor |   SL: 2405.39, TP: 2257.25
+2026-02-02 17:46:44,106 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:46:44,109 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 17:46:44,109 | INFO | services.position_monitor |   Risk calculated from SL: $1.68
+2026-02-02 17:46:44,109 | INFO | services.position_monitor |   R:R ratio: 1.64
+2026-02-02 17:46:44,113 | INFO | store.journal_store | Created journal entry: 54dfdfed-10c8-492c-bcdb-04649d319a22 - ETHUSDT short
+2026-02-02 17:46:44,116 | INFO | services.position_monitor | Created journal entry 54dfdfed-10c8-492c-bcdb-04649d319a22 for ETHUSDT (source: analizador)
+2026-02-02 17:46:49,697 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:46:50,062 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\54dfdfed-10c8-492c-bcdb-04649d319a22_entry_20260202_174644.png
+2026-02-02 17:46:50,067 | INFO | store.journal_store | Updated journal entry: 54dfdfed-10c8-492c-bcdb-04649d319a22
+2026-02-02 17:46:50,071 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/54dfdfed-10c8-492c-bcdb-04649d319a22_entry_20260202_174644.png
+2026-02-02 17:47:26,099 | INFO | services.position_monitor | New position detected: PAXGUSDT Sell @ 4698.8
+2026-02-02 17:47:26,099 | INFO | services.position_monitor |   SL: 4804.4, TP: 4489.4
+2026-02-02 17:47:26,165 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 17:47:26,168 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 17:47:26,168 | INFO | services.position_monitor |   Risk calculated from SL: $2.11
+2026-02-02 17:47:26,168 | INFO | services.position_monitor |   R:R ratio: 1.98
+2026-02-02 17:47:26,172 | INFO | store.journal_store | Created journal entry: f65d8566-e773-45a5-85b2-35445d251684 - PAXGUSDT short
+2026-02-02 17:47:26,175 | INFO | services.position_monitor | Created journal entry f65d8566-e773-45a5-85b2-35445d251684 for PAXGUSDT (source: analizador)
+2026-02-02 17:47:33,022 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 17:47:33,384 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\f65d8566-e773-45a5-85b2-35445d251684_entry_20260202_174726.png
+2026-02-02 17:47:33,388 | INFO | store.journal_store | Updated journal entry: f65d8566-e773-45a5-85b2-35445d251684
+2026-02-02 17:47:33,391 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/f65d8566-e773-45a5-85b2-35445d251684_entry_20260202_174726.png
+2026-02-02 18:21:27,444 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-02-02 18:21:27,808 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:21:27,811 | INFO | services.position_monitor |   Exit manual: exit=4757.9000, sl=4804.4000, tp=4489.4000
+2026-02-02 18:21:27,812 | INFO | services.position_monitor | R-Multiple calculated: -0.61R
+2026-02-02 18:21:27,815 | INFO | store.journal_store | Updated journal entry: f65d8566-e773-45a5-85b2-35445d251684
+2026-02-02 18:21:33,629 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:21:34,031 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\f65d8566-e773-45a5-85b2-35445d251684_exit_20260202_182127.png
+2026-02-02 18:21:34,035 | INFO | store.journal_store | Updated journal entry: f65d8566-e773-45a5-85b2-35445d251684
+2026-02-02 18:21:34,038 | INFO | services.position_monitor | Exit screenshot saved: screenshots/PAXGUSDT/f65d8566-e773-45a5-85b2-35445d251684_exit_20260202_182127.png
+2026-02-02 18:21:34,039 | INFO | services.position_monitor | Closed journal entry f65d8566-e773-45a5-85b2-35445d251684: PnL $-1.29 (-1.26%) [-0.61R]
+2026-02-02 18:21:34,039 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-02 18:21:35,895 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:21:35,898 | INFO | services.position_monitor |   Exit manual: exit=1.1481, sl=1.1753, tp=1.0982
+2026-02-02 18:21:35,899 | INFO | services.position_monitor | R-Multiple calculated: -0.02R
+2026-02-02 18:21:35,901 | INFO | store.journal_store | Updated journal entry: 2028eba8-b9de-42eb-8551-987902d27457
+2026-02-02 18:21:42,299 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:21:42,711 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\2028eba8-b9de-42eb-8551-987902d27457_exit_20260202_182135.png
+2026-02-02 18:21:42,716 | INFO | store.journal_store | Updated journal entry: 2028eba8-b9de-42eb-8551-987902d27457
+2026-02-02 18:21:42,720 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SUIUSDT/2028eba8-b9de-42eb-8551-987902d27457_exit_20260202_182135.png
+2026-02-02 18:21:42,720 | INFO | services.position_monitor | Closed journal entry 2028eba8-b9de-42eb-8551-987902d27457: PnL $-0.05 (0.07%) [-0.02R]
+2026-02-02 18:22:02,007 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-02 18:22:02,329 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:02,332 | INFO | services.position_monitor |   Exit manual: exit=104.6000, sl=106.0600, tp=102.9000
+2026-02-02 18:22:02,332 | INFO | services.position_monitor | R-Multiple calculated: 0.19R
+2026-02-02 18:22:02,335 | INFO | store.journal_store | Updated journal entry: 8810e779-2c04-4b47-bca6-d4e4aeba7f12
+2026-02-02 18:22:08,578 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:08,979 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\8810e779-2c04-4b47-bca6-d4e4aeba7f12_exit_20260202_182202.png
+2026-02-02 18:22:08,985 | INFO | store.journal_store | Updated journal entry: 8810e779-2c04-4b47-bca6-d4e4aeba7f12
+2026-02-02 18:22:08,989 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SOLUSDT/8810e779-2c04-4b47-bca6-d4e4aeba7f12_exit_20260202_182202.png
+2026-02-02 18:22:08,989 | INFO | services.position_monitor | Closed journal entry 8810e779-2c04-4b47-bca6-d4e4aeba7f12: PnL $0.41 (0.31%) [0.19R]
+2026-02-02 18:22:08,989 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-02-02 18:22:10,003 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:10,005 | INFO | services.position_monitor |   Exit manual: exit=0.1081, sl=0.1058, tp=0.1131
+2026-02-02 18:22:10,005 | INFO | services.position_monitor | R-Multiple calculated: -0.16R
+2026-02-02 18:22:10,009 | INFO | store.journal_store | Updated journal entry: db6c3b32-0c15-45e1-9dce-e99396358479
+2026-02-02 18:22:16,584 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:16,973 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\db6c3b32-0c15-45e1-9dce-e99396358479_exit_20260202_182210.png
+2026-02-02 18:22:16,977 | INFO | store.journal_store | Updated journal entry: db6c3b32-0c15-45e1-9dce-e99396358479
+2026-02-02 18:22:16,980 | INFO | services.position_monitor | Exit screenshot saved: screenshots/DOGEUSDT/db6c3b32-0c15-45e1-9dce-e99396358479_exit_20260202_182210.png
+2026-02-02 18:22:16,980 | INFO | services.position_monitor | Closed journal entry db6c3b32-0c15-45e1-9dce-e99396358479: PnL $-0.52 (-0.27%) [-0.16R]
+2026-02-02 18:22:16,980 | INFO | services.position_monitor | Position closed: POLUSDT
+2026-02-02 18:22:17,859 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/POLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:17,862 | INFO | services.position_monitor |   Exit manual: exit=0.1134, sl=0.1120, tp=0.1154
+2026-02-02 18:22:17,863 | INFO | services.position_monitor | R-Multiple calculated: -0.05R
+2026-02-02 18:22:17,866 | INFO | store.journal_store | Updated journal entry: f0939db1-4494-4b83-bd5a-380e87f73795
+2026-02-02 18:22:23,096 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/POLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:23,468 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\POLUSDT\f0939db1-4494-4b83-bd5a-380e87f73795_exit_20260202_182217.png
+2026-02-02 18:22:23,472 | INFO | store.journal_store | Updated journal entry: f0939db1-4494-4b83-bd5a-380e87f73795
+2026-02-02 18:22:23,474 | INFO | services.position_monitor | Exit screenshot saved: screenshots/POLUSDT/f0939db1-4494-4b83-bd5a-380e87f73795_exit_20260202_182217.png
+2026-02-02 18:22:23,475 | INFO | services.position_monitor | Closed journal entry f0939db1-4494-4b83-bd5a-380e87f73795: PnL $-0.07 (0.04%) [-0.05R]
+2026-02-02 18:22:23,475 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-02 18:22:25,260 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:25,263 | INFO | services.position_monitor |   Exit manual: exit=1.6199, sl=1.6049, tp=1.6536
+2026-02-02 18:22:25,263 | INFO | services.position_monitor | R-Multiple calculated: -0.33R
+2026-02-02 18:22:25,266 | INFO | store.journal_store | Updated journal entry: a7b148c6-4007-475d-b277-2fa9de94aada
+2026-02-02 18:22:30,909 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:31,296 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\a7b148c6-4007-475d-b277-2fa9de94aada_exit_20260202_182225.png
+2026-02-02 18:22:31,300 | INFO | store.journal_store | Updated journal entry: a7b148c6-4007-475d-b277-2fa9de94aada
+2026-02-02 18:22:31,304 | INFO | services.position_monitor | Exit screenshot saved: screenshots/XRPUSDT/a7b148c6-4007-475d-b277-2fa9de94aada_exit_20260202_182225.png
+2026-02-02 18:22:31,304 | INFO | services.position_monitor | Closed journal entry a7b148c6-4007-475d-b277-2fa9de94aada: PnL $-0.40 (-0.29%) [-0.33R]
+2026-02-02 18:22:31,304 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-02-02 18:22:32,214 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:32,216 | INFO | services.position_monitor |   Exit manual: exit=0.2992, sl=0.3035, tp=0.2944
+2026-02-02 18:22:32,217 | INFO | services.position_monitor | R-Multiple calculated: 0.24R
+2026-02-02 18:22:32,219 | INFO | store.journal_store | Updated journal entry: dd855038-1205-4638-84ef-aab8861fdaa1
+2026-02-02 18:22:39,448 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ADAUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:39,826 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ADAUSDT\dd855038-1205-4638-84ef-aab8861fdaa1_exit_20260202_182232.png
+2026-02-02 18:22:39,829 | INFO | store.journal_store | Updated journal entry: dd855038-1205-4638-84ef-aab8861fdaa1
+2026-02-02 18:22:39,833 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ADAUSDT/dd855038-1205-4638-84ef-aab8861fdaa1_exit_20260202_182232.png
+2026-02-02 18:22:39,833 | INFO | services.position_monitor | Closed journal entry dd855038-1205-4638-84ef-aab8861fdaa1: PnL $0.26 (0.37%) [0.24R]
+2026-02-02 18:22:39,833 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-02-02 18:22:42,669 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/TRXUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:42,671 | INFO | services.position_monitor |   Exit manual: exit=0.2832, sl=0.2807, tp=0.2892
+2026-02-02 18:22:42,672 | INFO | services.position_monitor | R-Multiple calculated: -0.25R
+2026-02-02 18:22:42,676 | INFO | store.journal_store | Updated journal entry: cf7965e2-a97e-4db8-9ef5-64bac51a031b
+2026-02-02 18:22:49,217 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:49,626 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\cf7965e2-a97e-4db8-9ef5-64bac51a031b_exit_20260202_182242.png
+2026-02-02 18:22:49,632 | INFO | store.journal_store | Updated journal entry: cf7965e2-a97e-4db8-9ef5-64bac51a031b
+2026-02-02 18:22:49,635 | INFO | services.position_monitor | Exit screenshot saved: screenshots/TRXUSDT/cf7965e2-a97e-4db8-9ef5-64bac51a031b_exit_20260202_182242.png
+2026-02-02 18:22:49,636 | INFO | services.position_monitor | Closed journal entry cf7965e2-a97e-4db8-9ef5-64bac51a031b: PnL $-0.25 (-0.14%) [-0.25R]
+2026-02-02 18:22:49,636 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-02 18:22:49,968 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:49,970 | INFO | services.position_monitor |   Exit manual: exit=2345.3900, sl=2405.3900, tp=2257.2500
+2026-02-02 18:22:49,971 | INFO | services.position_monitor | R-Multiple calculated: 0.02R
+2026-02-02 18:22:49,974 | INFO | store.journal_store | Updated journal entry: 54dfdfed-10c8-492c-bcdb-04649d319a22
+2026-02-02 18:22:54,645 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:22:55,086 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\54dfdfed-10c8-492c-bcdb-04649d319a22_exit_20260202_182249.png
+2026-02-02 18:22:55,092 | INFO | store.journal_store | Updated journal entry: 54dfdfed-10c8-492c-bcdb-04649d319a22
+2026-02-02 18:22:55,096 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ETHUSDT/54dfdfed-10c8-492c-bcdb-04649d319a22_exit_20260202_182249.png
+2026-02-02 18:22:55,096 | INFO | services.position_monitor | Closed journal entry 54dfdfed-10c8-492c-bcdb-04649d319a22: PnL $0.04 (0.17%) [0.02R]
+2026-02-02 18:22:55,096 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-02 18:22:56,000 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:22:56,002 | INFO | services.position_monitor |   Exit manual: exit=78652.6000, sl=77004.0000, tp=82279.3000
+2026-02-02 18:22:56,003 | INFO | services.position_monitor | R-Multiple calculated: -0.12R
+2026-02-02 18:22:56,006 | INFO | store.journal_store | Updated journal entry: 79fbbbc4-f0a8-4919-bc98-a02e9241048b
+2026-02-02 18:23:02,795 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:23:03,204 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\79fbbbc4-f0a8-4919-bc98-a02e9241048b_exit_20260202_182256.png
+2026-02-02 18:23:03,211 | INFO | store.journal_store | Updated journal entry: 79fbbbc4-f0a8-4919-bc98-a02e9241048b
+2026-02-02 18:23:03,214 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/79fbbbc4-f0a8-4919-bc98-a02e9241048b_exit_20260202_182256.png
+2026-02-02 18:23:03,214 | INFO | services.position_monitor | Closed journal entry 79fbbbc4-f0a8-4919-bc98-a02e9241048b: PnL $-0.21 (-0.16%) [-0.12R]
+2026-02-02 18:28:14,793 | INFO | services.position_monitor | New position detected: POLUSDT Buy @ 0.1129
+2026-02-02 18:28:14,794 | INFO | services.position_monitor |   SL: 0.11186, TP: 0.11524
+2026-02-02 18:28:14,842 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:28:14,845 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:28:14,845 | INFO | services.position_monitor |   Risk calculated from SL: $0.92
+2026-02-02 18:28:14,845 | INFO | services.position_monitor |   R:R ratio: 2.25
+2026-02-02 18:28:14,850 | INFO | store.journal_store | Created journal entry: 5df641e4-444c-4a38-91ff-a479f0d72ed5 - POLUSDT long
+2026-02-02 18:28:14,854 | INFO | services.position_monitor | Created journal entry 5df641e4-444c-4a38-91ff-a479f0d72ed5 for POLUSDT (source: analizador)
+2026-02-02 18:28:21,304 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/POLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:28:21,700 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\POLUSDT\5df641e4-444c-4a38-91ff-a479f0d72ed5_entry_20260202_182814.png
+2026-02-02 18:28:21,704 | INFO | store.journal_store | Updated journal entry: 5df641e4-444c-4a38-91ff-a479f0d72ed5
+2026-02-02 18:28:21,708 | INFO | services.position_monitor | Entry screenshot saved: screenshots/POLUSDT/5df641e4-444c-4a38-91ff-a479f0d72ed5_entry_20260202_182814.png
+2026-02-02 18:31:16,426 | INFO | services.position_monitor | New position detected: PAXGUSDT Sell @ 4751.4
+2026-02-02 18:31:16,427 | INFO | services.position_monitor |   SL: 4881.4, TP: 4561.4
+2026-02-02 18:31:16,478 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:31:16,481 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-02 18:31:16,481 | INFO | services.position_monitor |   Risk calculated from SL: $2.60
+2026-02-02 18:31:16,481 | INFO | services.position_monitor |   R:R ratio: 1.46
+2026-02-02 18:31:16,486 | INFO | store.journal_store | Created journal entry: 3cf2820d-f8b4-4c5f-b582-63dfba843c8e - PAXGUSDT short
+2026-02-02 18:31:16,490 | INFO | services.position_monitor | Created journal entry 3cf2820d-f8b4-4c5f-b582-63dfba843c8e for PAXGUSDT (source: analizador)
+2026-02-02 18:31:22,799 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:31:23,155 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\3cf2820d-f8b4-4c5f-b582-63dfba843c8e_entry_20260202_183116.png
+2026-02-02 18:31:23,161 | INFO | store.journal_store | Updated journal entry: 3cf2820d-f8b4-4c5f-b582-63dfba843c8e
+2026-02-02 18:31:23,164 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/3cf2820d-f8b4-4c5f-b582-63dfba843c8e_entry_20260202_183116.png
+2026-02-02 18:31:23,165 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.10793
+2026-02-02 18:31:23,165 | INFO | services.position_monitor |   SL: 0.10557, TP: 0.1128
+2026-02-02 18:31:23,198 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:31:23,199 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:31:23,200 | INFO | services.position_monitor |   Risk calculated from SL: $2.98
+2026-02-02 18:31:23,200 | INFO | services.position_monitor |   R:R ratio: 2.06
+2026-02-02 18:31:23,204 | INFO | store.journal_store | Created journal entry: 4cc6875c-546a-4084-a43d-c2639d726cf5 - DOGEUSDT long
+2026-02-02 18:31:23,208 | INFO | services.position_monitor | Created journal entry 4cc6875c-546a-4084-a43d-c2639d726cf5 for DOGEUSDT (source: analizador)
+2026-02-02 18:31:29,247 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:31:29,616 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\4cc6875c-546a-4084-a43d-c2639d726cf5_entry_20260202_183123.png
+2026-02-02 18:31:29,618 | INFO | store.journal_store | Updated journal entry: 4cc6875c-546a-4084-a43d-c2639d726cf5
+2026-02-02 18:31:29,621 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/4cc6875c-546a-4084-a43d-c2639d726cf5_entry_20260202_183123.png
+2026-02-02 18:31:29,622 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.28309
+2026-02-02 18:31:29,622 | INFO | services.position_monitor |   SL: 0.28016, TP: 0.28864
+2026-02-02 18:31:29,657 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:31:29,660 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:31:29,660 | INFO | services.position_monitor |   Risk calculated from SL: $1.03
+2026-02-02 18:31:29,660 | INFO | services.position_monitor |   R:R ratio: 1.89
+2026-02-02 18:31:29,664 | INFO | store.journal_store | Created journal entry: c7db9e32-455d-478b-826c-e19d370966ba - TRXUSDT long
+2026-02-02 18:31:29,668 | INFO | services.position_monitor | Created journal entry c7db9e32-455d-478b-826c-e19d370966ba for TRXUSDT (source: analizador)
+2026-02-02 18:31:36,700 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/TRXUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:31:37,090 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\TRXUSDT\c7db9e32-455d-478b-826c-e19d370966ba_entry_20260202_183129.png
+2026-02-02 18:31:37,095 | INFO | store.journal_store | Updated journal entry: c7db9e32-455d-478b-826c-e19d370966ba
+2026-02-02 18:31:37,098 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/c7db9e32-455d-478b-826c-e19d370966ba_entry_20260202_183129.png
+2026-02-02 18:31:37,098 | INFO | services.position_monitor | New position detected: SUIUSDT Buy @ 1.1474
+2026-02-02 18:31:37,098 | INFO | services.position_monitor |   SL: 1.1214, TP: 1.1983
+2026-02-02 18:31:37,130 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:31:37,132 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:31:37,133 | INFO | services.position_monitor |   Risk calculated from SL: $2.86
+2026-02-02 18:31:37,133 | INFO | services.position_monitor |   R:R ratio: 1.96
+2026-02-02 18:31:37,136 | INFO | store.journal_store | Created journal entry: 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4 - SUIUSDT long
+2026-02-02 18:31:37,139 | INFO | services.position_monitor | Created journal entry 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4 for SUIUSDT (source: analizador)
+2026-02-02 18:31:43,864 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SUIUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:31:44,257 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SUIUSDT\47a1f01b-ba46-4802-9ef2-6b96a2edbbb4_entry_20260202_183137.png
+2026-02-02 18:31:44,263 | INFO | store.journal_store | Updated journal entry: 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4
+2026-02-02 18:31:44,266 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/47a1f01b-ba46-4802-9ef2-6b96a2edbbb4_entry_20260202_183137.png
+2026-02-02 18:32:01,547 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 104.46
+2026-02-02 18:32:01,547 | INFO | services.position_monitor |   SL: 103.42, TP: 106.55
+2026-02-02 18:32:01,583 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:32:01,585 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:32:01,585 | INFO | services.position_monitor |   Risk calculated from SL: $1.98
+2026-02-02 18:32:01,585 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-02 18:32:01,590 | INFO | store.journal_store | Created journal entry: cfc398af-c25a-43f1-a58c-53feacc6bc8c - SOLUSDT long
+2026-02-02 18:32:01,594 | INFO | services.position_monitor | Created journal entry cfc398af-c25a-43f1-a58c-53feacc6bc8c for SOLUSDT (source: analizador)
+2026-02-02 18:32:07,127 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/SOLUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:32:07,529 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\SOLUSDT\cfc398af-c25a-43f1-a58c-53feacc6bc8c_entry_20260202_183201.png
+2026-02-02 18:32:07,534 | INFO | store.journal_store | Updated journal entry: cfc398af-c25a-43f1-a58c-53feacc6bc8c
+2026-02-02 18:32:07,538 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/cfc398af-c25a-43f1-a58c-53feacc6bc8c_entry_20260202_183201.png
+2026-02-02 18:32:07,538 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 78576.2
+2026-02-02 18:32:07,538 | INFO | services.position_monitor |   SL: 76865.9, TP: 82131.7
+2026-02-02 18:32:07,586 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:32:07,589 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:32:07,589 | INFO | services.position_monitor |   Risk calculated from SL: $1.71
+2026-02-02 18:32:07,589 | INFO | services.position_monitor |   R:R ratio: 2.08
+2026-02-02 18:32:07,593 | INFO | store.journal_store | Created journal entry: a1c8abc4-0f09-4f59-aefe-987738123601 - BTCUSDT long
+2026-02-02 18:32:07,596 | INFO | services.position_monitor | Created journal entry a1c8abc4-0f09-4f59-aefe-987738123601 for BTCUSDT (source: analizador)
+2026-02-02 18:32:12,424 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:32:12,829 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\a1c8abc4-0f09-4f59-aefe-987738123601_entry_20260202_183207.png
+2026-02-02 18:32:12,834 | INFO | store.journal_store | Updated journal entry: a1c8abc4-0f09-4f59-aefe-987738123601
+2026-02-02 18:32:12,838 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/a1c8abc4-0f09-4f59-aefe-987738123601_entry_20260202_183207.png
+2026-02-02 18:32:28,957 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.6171
+2026-02-02 18:32:28,957 | INFO | services.position_monitor |   SL: 1.6008, TP: 1.6493
+2026-02-02 18:32:28,991 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:32:28,994 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:32:28,994 | INFO | services.position_monitor |   Risk calculated from SL: $1.01
+2026-02-02 18:32:28,994 | INFO | services.position_monitor |   R:R ratio: 1.98
+2026-02-02 18:32:28,999 | INFO | store.journal_store | Created journal entry: 20c51dbe-5e6c-4f70-b912-9b4276ef5785 - XRPUSDT long
+2026-02-02 18:32:29,002 | INFO | services.position_monitor | Created journal entry 20c51dbe-5e6c-4f70-b912-9b4276ef5785 for XRPUSDT (source: analizador)
+2026-02-02 18:32:34,763 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/XRPUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:32:35,160 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\XRPUSDT\20c51dbe-5e6c-4f70-b912-9b4276ef5785_entry_20260202_183229.png
+2026-02-02 18:32:35,165 | INFO | store.journal_store | Updated journal entry: 20c51dbe-5e6c-4f70-b912-9b4276ef5785
+2026-02-02 18:32:35,168 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/20c51dbe-5e6c-4f70-b912-9b4276ef5785_entry_20260202_183229.png
+2026-02-02 18:33:27,248 | INFO | services.position_monitor | New position detected: ADAUSDT Buy @ 0.2989
+2026-02-02 18:33:27,248 | INFO | services.position_monitor |   SL: 0.2958, TP: 0.3047
+2026-02-02 18:33:27,297 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:33:27,299 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:33:27,299 | INFO | services.position_monitor |   Risk calculated from SL: $1.04
+2026-02-02 18:33:27,300 | INFO | services.position_monitor |   R:R ratio: 1.87
+2026-02-02 18:33:27,304 | INFO | store.journal_store | Created journal entry: edf45888-a5f1-4e5f-b9dc-2925920ae2b0 - ADAUSDT long
+2026-02-02 18:33:27,309 | INFO | services.position_monitor | Created journal entry edf45888-a5f1-4e5f-b9dc-2925920ae2b0 for ADAUSDT (source: analizador)
+2026-02-02 18:33:35,176 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ADAUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:33:35,537 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ADAUSDT\edf45888-a5f1-4e5f-b9dc-2925920ae2b0_entry_20260202_183327.png
+2026-02-02 18:33:35,543 | INFO | store.journal_store | Updated journal entry: edf45888-a5f1-4e5f-b9dc-2925920ae2b0
+2026-02-02 18:33:35,546 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ADAUSDT/edf45888-a5f1-4e5f-b9dc-2925920ae2b0_entry_20260202_183327.png
+2026-02-02 18:33:35,547 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2344.42
+2026-02-02 18:33:35,547 | INFO | services.position_monitor |   SL: 2285.65, TP: 2433.03
+2026-02-02 18:33:35,580 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-02 18:33:35,583 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-02 18:33:35,583 | INFO | services.position_monitor |   Risk calculated from SL: $1.76
+2026-02-02 18:33:35,584 | INFO | services.position_monitor |   R:R ratio: 1.51
+2026-02-02 18:33:35,588 | INFO | store.journal_store | Created journal entry: cfd66b35-a0b7-43a1-9005-48b6d86d80f8 - ETHUSDT long
+2026-02-02 18:33:35,593 | INFO | services.position_monitor | Created journal entry cfd66b35-a0b7-43a1-9005-48b6d86d80f8 for ETHUSDT (source: analizador)
+2026-02-02 18:33:41,867 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:33:42,226 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\cfd66b35-a0b7-43a1-9005-48b6d86d80f8_entry_20260202_183335.png
+2026-02-02 18:33:42,232 | INFO | store.journal_store | Updated journal entry: cfd66b35-a0b7-43a1-9005-48b6d86d80f8
+2026-02-02 18:33:42,235 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/cfd66b35-a0b7-43a1-9005-48b6d86d80f8_entry_20260202_183335.png
+2026-02-02 18:57:16,232 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-02-02 18:57:17,153 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:57:17,156 | INFO | services.position_monitor |   Exit manual: exit=0.1078, sl=0.1056, tp=0.1128
+2026-02-02 18:57:17,156 | INFO | services.position_monitor | R-Multiple calculated: -0.11R
+2026-02-02 18:57:17,160 | INFO | store.journal_store | Updated journal entry: 4cc6875c-546a-4084-a43d-c2639d726cf5
+2026-02-02 18:57:23,908 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/DOGEUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:57:24,365 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\DOGEUSDT\4cc6875c-546a-4084-a43d-c2639d726cf5_exit_20260202_185717.png
+2026-02-02 18:57:24,368 | INFO | store.journal_store | Updated journal entry: 4cc6875c-546a-4084-a43d-c2639d726cf5
+2026-02-02 18:57:24,372 | INFO | services.position_monitor | Exit screenshot saved: screenshots/DOGEUSDT/4cc6875c-546a-4084-a43d-c2639d726cf5_exit_20260202_185717.png
+2026-02-02 18:57:24,372 | INFO | services.position_monitor | Closed journal entry 4cc6875c-546a-4084-a43d-c2639d726cf5: PnL $-0.31 (-0.12%) [-0.11R]
+2026-02-02 18:57:24,372 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-02-02 18:57:24,705 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:57:24,707 | INFO | services.position_monitor |   Exit manual: exit=4787.2000, sl=4881.4000, tp=4561.4000
+2026-02-02 18:57:24,707 | INFO | services.position_monitor | R-Multiple calculated: -0.32R
+2026-02-02 18:57:24,710 | INFO | store.journal_store | Updated journal entry: 3cf2820d-f8b4-4c5f-b582-63dfba843c8e
+2026-02-02 18:57:30,311 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:57:30,757 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\3cf2820d-f8b4-4c5f-b582-63dfba843c8e_exit_20260202_185724.png
+2026-02-02 18:57:30,762 | INFO | store.journal_store | Updated journal entry: 3cf2820d-f8b4-4c5f-b582-63dfba843c8e
+2026-02-02 18:57:30,766 | INFO | services.position_monitor | Exit screenshot saved: screenshots/PAXGUSDT/3cf2820d-f8b4-4c5f-b582-63dfba843c8e_exit_20260202_185724.png
+2026-02-02 18:57:30,766 | INFO | services.position_monitor | Closed journal entry 3cf2820d-f8b4-4c5f-b582-63dfba843c8e: PnL $-0.82 (-0.75%) [-0.32R]
+2026-02-02 18:57:30,766 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-02-02 18:57:32,553 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:57:32,556 | INFO | services.position_monitor |   Exit manual: exit=0.2988, sl=0.2958, tp=0.3047
+2026-02-02 18:57:32,556 | INFO | services.position_monitor | R-Multiple calculated: -0.14R
+2026-02-02 18:57:32,560 | INFO | store.journal_store | Updated journal entry: edf45888-a5f1-4e5f-b9dc-2925920ae2b0
+2026-02-02 18:57:37,724 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ADAUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:57:38,145 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ADAUSDT\edf45888-a5f1-4e5f-b9dc-2925920ae2b0_exit_20260202_185732.png
+2026-02-02 18:57:38,151 | INFO | store.journal_store | Updated journal entry: edf45888-a5f1-4e5f-b9dc-2925920ae2b0
+2026-02-02 18:57:38,154 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ADAUSDT/edf45888-a5f1-4e5f-b9dc-2925920ae2b0_exit_20260202_185732.png
+2026-02-02 18:57:38,155 | INFO | services.position_monitor | Closed journal entry edf45888-a5f1-4e5f-b9dc-2925920ae2b0: PnL $-0.14 (-0.03%) [-0.14R]
+2026-02-02 18:57:38,155 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-02 18:57:39,062 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:57:39,065 | INFO | services.position_monitor |   Exit manual: exit=2344.6800, sl=2285.6500, tp=2433.0300
+2026-02-02 18:57:39,065 | INFO | services.position_monitor | R-Multiple calculated: -0.04R
+2026-02-02 18:57:39,069 | INFO | store.journal_store | Updated journal entry: cfd66b35-a0b7-43a1-9005-48b6d86d80f8
+2026-02-02 18:57:44,100 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/ETHUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:57:44,536 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\ETHUSDT\cfd66b35-a0b7-43a1-9005-48b6d86d80f8_exit_20260202_185739.png
+2026-02-02 18:57:44,542 | INFO | store.journal_store | Updated journal entry: cfd66b35-a0b7-43a1-9005-48b6d86d80f8
+2026-02-02 18:57:44,546 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ETHUSDT/cfd66b35-a0b7-43a1-9005-48b6d86d80f8_exit_20260202_185739.png
+2026-02-02 18:57:44,546 | INFO | services.position_monitor | Closed journal entry cfd66b35-a0b7-43a1-9005-48b6d86d80f8: PnL $-0.07 (0.01%) [-0.04R]
+2026-02-02 18:57:44,547 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-02 18:57:44,868 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-02 18:57:44,871 | INFO | services.position_monitor |   Exit manual: exit=78725.5000, sl=76865.9000, tp=82131.7000
+2026-02-02 18:57:44,872 | INFO | services.position_monitor | R-Multiple calculated: 0.04R
+2026-02-02 18:57:44,876 | INFO | store.journal_store | Updated journal entry: a1c8abc4-0f09-4f59-aefe-987738123601
+2026-02-02 18:57:49,856 | INFO | httpx | HTTP Request: GET http://localhost:10000/api/historical/BTCUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-02 18:57:50,241 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\BTCUSDT\a1c8abc4-0f09-4f59-aefe-987738123601_exit_20260202_185744.png
+2026-02-02 18:57:50,247 | INFO | store.journal_store | Updated journal entry: a1c8abc4-0f09-4f59-aefe-987738123601
+2026-02-02 18:57:50,250 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/a1c8abc4-0f09-4f59-aefe-987738123601_exit_20260202_185744.png
+2026-02-02 18:57:50,250 | INFO | services.position_monitor | Closed journal entry a1c8abc4-0f09-4f59-aefe-987738123601: PnL $0.06 (0.19%) [0.04R]

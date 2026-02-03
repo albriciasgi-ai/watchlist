@@ -406,15 +406,28 @@ class PositionMonitor:
                 exit_price = float(close_details.get('exitPrice') or close_details.get('exit_price', 0) or 0)
                 pnl_usd = float(close_details.get('closedPnl') or close_details.get('closed_pnl', 0) or 0)
 
-                # Determinar status basado en PnL y SL/TP
+                # Determinar status basado en comparacion de exit_price con SL/TP
+                # Tolerancia de 0.5% para considerar que salio por SL/TP
                 tp = float(entry.setup.take_profit or 0)
                 sl = float(entry.setup.stop_loss or 0)
-                if tp > 0 and abs(exit_price - tp) < (exit_price * 0.001):
-                    status = TradeStatus.CLOSED_TP
-                elif sl > 0 and abs(exit_price - sl) < (exit_price * 0.001):
-                    status = TradeStatus.CLOSED_SL
-                else:
-                    status = TradeStatus.CLOSED_MANUAL
+                tolerance = 0.005  # 0.5% de tolerancia
+
+                status = TradeStatus.CLOSED_MANUAL  # Default
+
+                if tp > 0 and exit_price > 0:
+                    tp_diff = abs(exit_price - tp) / exit_price
+                    if tp_diff < tolerance:
+                        status = TradeStatus.CLOSED_TP
+                        logger.info(f"  Exit by TP: exit={exit_price:.4f} vs tp={tp:.4f} (diff={tp_diff*100:.2f}%)")
+
+                if status == TradeStatus.CLOSED_MANUAL and sl > 0 and exit_price > 0:
+                    sl_diff = abs(exit_price - sl) / exit_price
+                    if sl_diff < tolerance:
+                        status = TradeStatus.CLOSED_SL
+                        logger.info(f"  Exit by SL: exit={exit_price:.4f} vs sl={sl:.4f} (diff={sl_diff*100:.2f}%)")
+
+                if status == TradeStatus.CLOSED_MANUAL:
+                    logger.info(f"  Exit manual: exit={exit_price:.4f}, sl={sl:.4f}, tp={tp:.4f}")
             else:
                 # Usar ultimo mark_price conocido
                 prev_pos = self._previous_positions.get(symbol)

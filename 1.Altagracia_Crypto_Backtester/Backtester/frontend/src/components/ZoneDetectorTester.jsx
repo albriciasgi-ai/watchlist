@@ -33,13 +33,17 @@ const ZoneDetectorTester = ({
     vp_price_bins: 50,
     pa_touch_tolerance_pct: 0.2,
     pa_min_touches: 3,
-    // 🎯 NUEVO: Parámetros para método Consolidation
+    // 🎯 NUEVO: Parámetros para método Consolidation / Trading Zones
     consol_min_bars: 8,         // Mínimo de velas en consolidación
     consol_max_bars: 50,        // Máximo de velas
     consol_max_range_pct: 3.0,  // Máximo % de rango de precio
     consol_atr_ratio: 0.6,      // ATR local vs global (< 1 = baja volatilidad)
     consol_body_ratio: 0.5,     // Ratio cuerpo/rango de velas
-    consol_max_outside_bars: 3  // Velas consecutivas fuera del rango antes de cerrar
+    consol_max_outside_bars: 3, // Velas consecutivas fuera del rango antes de cerrar
+    // 🎯 NUEVO: Parámetros específicos para Trading Zones
+    lookforward_bars: 100,      // Velas hacia adelante para simular el trade
+    breakout_search_bars: 20,   // Velas para buscar breakout después de consolidación
+    include_no_breakout: true   // Incluir zonas sin breakout claro
   });
 
   // Resultados
@@ -285,13 +289,19 @@ const ZoneDetectorTester = ({
       methodParams.pa_touch_tolerance_pct = params.pa_touch_tolerance_pct;
       methodParams.pa_min_touches = params.pa_min_touches;
     }
-    if (method === 'consolidation' || method === 'all') {
+    if (method === 'consolidation' || method === 'trading_zones' || method === 'all') {
       methodParams.consol_min_bars = params.consol_min_bars;
       methodParams.consol_max_bars = params.consol_max_bars;
       methodParams.consol_max_range_pct = params.consol_max_range_pct;
       methodParams.consol_atr_ratio = params.consol_atr_ratio;
       methodParams.consol_body_ratio = params.consol_body_ratio;
       methodParams.consol_max_outside_bars = params.consol_max_outside_bars;
+    }
+    // Parámetros exclusivos de trading_zones
+    if (method === 'trading_zones') {
+      methodParams.lookforward_bars = params.lookforward_bars;
+      methodParams.breakout_search_bars = params.breakout_search_bars;
+      methodParams.include_no_breakout = params.include_no_breakout;
     }
     return methodParams;
   };
@@ -305,25 +315,46 @@ const ZoneDetectorTester = ({
 
     return (
       <div className="zdt-params-grid">
-        {Object.entries(methodConfig).map(([key, config]) => (
-          <div key={key} className="zdt-param-item">
-            <label title={config.description}>
-              {key.replace(/_/g, ' ')}
-              <span className="zdt-param-hint">({config.range[0]} - {config.range[1]})</span>
-            </label>
-            <input
-              type="number"
-              value={params[key] || config.default}
-              onChange={(e) => setParams(prev => ({
-                ...prev,
-                [key]: parseFloat(e.target.value)
-              }))}
-              step={key.includes('pct') || key.includes('ratio') ? 0.1 : 1}
-              min={config.range[0]}
-              max={config.range[1]}
-            />
-          </div>
-        ))}
+        {Object.entries(methodConfig).map(([key, config]) => {
+          // Parámetro booleano (checkbox)
+          if (config.type === 'boolean') {
+            return (
+              <div key={key} className="zdt-param-item zdt-param-checkbox">
+                <label title={config.description}>
+                  <input
+                    type="checkbox"
+                    checked={params[key] !== undefined ? params[key] : config.default}
+                    onChange={(e) => setParams(prev => ({
+                      ...prev,
+                      [key]: e.target.checked
+                    }))}
+                  />
+                  {key.replace(/_/g, ' ')}
+                </label>
+              </div>
+            );
+          }
+          // Parámetro numérico
+          return (
+            <div key={key} className="zdt-param-item">
+              <label title={config.description}>
+                {key.replace(/_/g, ' ')}
+                <span className="zdt-param-hint">({config.range[0]} - {config.range[1]})</span>
+              </label>
+              <input
+                type="number"
+                value={params[key] !== undefined ? params[key] : config.default}
+                onChange={(e) => setParams(prev => ({
+                  ...prev,
+                  [key]: parseFloat(e.target.value)
+                }))}
+                step={key.includes('pct') || key.includes('ratio') ? 0.1 : 1}
+                min={config.range[0]}
+                max={config.range[1]}
+              />
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -377,6 +408,27 @@ const ZoneDetectorTester = ({
                   <span>Duración: {zone.duration_hours?.toFixed(1)}h</span>
                   <span>Vol Score: {zone.volume_score?.toFixed(0)}</span>
                 </div>
+                {/* 💰 Métricas de Trading (solo para trading_zones) */}
+                {zone.method === 'trading_zones' && zone.trade_result && (
+                  <div className="zdt-zone-trading">
+                    <span className={`zdt-trade-result zdt-trade-${zone.trade_result?.toLowerCase()}`}>
+                      {zone.trade_result === 'WIN' ? '✅ WIN +2R' :
+                       zone.trade_result === 'LOSS' ? '❌ LOSS -1R' :
+                       '⏳ OPEN'}
+                    </span>
+                    <span className="zdt-breakout-dir">
+                      {zone.breakout_direction === 'UP' ? '🟢 UP' : '🔴 DOWN'}
+                    </span>
+                    <span className="zdt-r-multiple">
+                      R: {zone.r_multiple?.toFixed(2)}
+                      {zone.reached_2r && ' ✓2R'}
+                      {zone.reached_3r && ' ✓3R'}
+                    </span>
+                    {zone.bars_to_close > 0 && (
+                      <span className="zdt-bars-close">📊 {zone.bars_to_close} velas</span>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
             {zones.length > 20 && (
@@ -678,7 +730,8 @@ const ZoneDetectorTester = ({
             <label>
               Método:
               <select value={method} onChange={(e) => setMethod(e.target.value)}>
-                <option value="consolidation">🎯 Consolidación (Recomendado)</option>
+                <option value="trading_zones">💰 Trading Zones (Simulación)</option>
+                <option value="consolidation">🎯 Consolidación</option>
                 <option value="pivot_cluster">Pivot Cluster</option>
                 <option value="atr_based">ATR Based</option>
                 <option value="volume_profile">Volume Profile</option>

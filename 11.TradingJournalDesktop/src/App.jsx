@@ -48,7 +48,7 @@ function App() {
       case 'trades':
         return <TradeList onViewTrade={handleViewTrade} />
       case 'detail':
-        return <TradeDetail tradeId={selectedTradeId} onBack={handleBack} />
+        return <TradeDetail tradeId={selectedTradeId} onBack={handleBack} onDeleted={fetchMonitorStatus} />
       case 'settings':
         return <Settings monitorStatus={monitorStatus} onRefresh={fetchMonitorStatus} />
       default:

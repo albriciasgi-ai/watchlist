@@ -1,0 +1,999 @@
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=295, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=272, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=243, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=218, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=191, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=342, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=371, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=392, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=413, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=295, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=272, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=243, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=218, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=191, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=342, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=371, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=392, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=413, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=297, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=274, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=245, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=220, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=193, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=344, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=373, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=394, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=415, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=437, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=297, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=274, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=245, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=220, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=193, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=344, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=373, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=394, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=415, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=437, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=297, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=274, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=245, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=220, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=193, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=344, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=373, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=394, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=415, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=437, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=298, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=275, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=246, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=221, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=194, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=345, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=374, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=395, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=416, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=438, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=298, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=275, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=246, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=221, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=194, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=345, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=374, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=395, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=416, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=438, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=300, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=277, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=248, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=223, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=196, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=347, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=376, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=397, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=418, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=440, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=304, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=281, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=252, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=227, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=200, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=351, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=380, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=401, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=422, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=444, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=308, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=285, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=256, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=231, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=204, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=355, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=384, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=405, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=426, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=448, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=312, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=289, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=260, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=235, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=208, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=359, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=388, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=409, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=430, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=452, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=315, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=292, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=263, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=238, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=211, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=362, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=391, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=412, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=433, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=455, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=315, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=292, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=263, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=238, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=211, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=362, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=391, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=412, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=433, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=455, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BacktestingApp] handlePause clicked
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90276.54, y=317, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=90784.16, y=294, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91396.31, y=265, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=91937.63, y=240, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=resistance, price=92523.29, y=213, x=10-1240, color=rgba(255, 0, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=89269.71, y=364, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88662.04, y=393, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=88196.27, y=414, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87749.59, y=435, x=10-1240, color=rgba(0, 255, 0, 1)
+ [BTCUSDT] ✅ S&R v2: LÍNEA DIBUJADA - type=support, price=87267.76, y=457, x=10-1240, color=rgba(0, 255, 0, 1)
+ [MiniChart] Actualizando indicadores: Object
+ [MiniChart] Velas disponibles: 313124
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume":true,"Volume Profile":false,"CVD":false,"Open Interest":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] ❌ Desactivando S&R v2
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 313124 velas
+ [ZoneDetectorTester] 📅 Usando end_timestamp: 1769230800000 (2026-01-24T05:00:00.000Z)
+ [ZoneDetectorTester] 📊 Zonas recibidas: 35
+ [ZoneDetectorTester] Zona #1: Object
+ [ZoneDetectorTester] Zona #2: Object
+ [ZoneDetectorTester] Zona #3: Object
+ [BacktestingApp] 🎯 35 zonas detectadas, activeTimeframe=5m
+ [BacktestingApp] 🎯 Zonas: Array(2)
+ [BacktestingApp] 🎯 miniChart ref: true setZones: true
+ [BTCUSDT] 🎯 IndicatorManager.setZones() llamado con 35 zonas
+ [BTCUSDT] 🎯 zoneVisualizer existe: true
+ [BTCUSDT] ZoneVisualizer: 35 zonas cargadas
+ [BTCUSDT] 🎯 IndicatorManager: 35 zonas establecidas, enabled=true
+ [BTCUSDT] 🎯 Primera zona: Object
+ [BTCUSDT] 🎯 ZoneVisualizer.renderOverlay: Renderizando 35 zonas
+ [BTCUSDT] 🎯 priceContext: Object
+ [BTCUSDT] 🎯 visibleCandles range: Object
+ [BTCUSDT] 🎯 Primera zona: Object
+ [ZoneVisualizer] Zona #1 precio check: Object
+ [ZoneVisualizer] Zona #1: Object
+ [ZoneVisualizer] ⚠️ Zona #1 descartada - x1(10) >= x2(-2713)
+ [ZoneVisualizer] Zona #2 precio check: Object
+ [ZoneVisualizer] Zona #2: Object
+ [ZoneVisualizer] ⚠️ Zona #2 descartada - x1(10) >= x2(-2698)
+ [ZoneVisualizer] Zona #3 precio check: Object
+ [ZoneVisualizer] Zona #3: Object
+ [ZoneVisualizer] ⚠️ Zona #3 descartada - x1(10) >= x2(-2689)
+ [ZoneVisualizer] Zona #4 precio check: Object
+ [ZoneVisualizer] Zona #4: Object
+ [ZoneVisualizer] ⚠️ Zona #4 descartada - x1(10) >= x2(-2615)
+ [ZoneVisualizer] Zona #5 precio check: Object
+ [ZoneVisualizer] Zona #5: Object
+ [ZoneVisualizer] ⚠️ Zona #5 descartada - x1(10) >= x2(-2604)
+ [ZoneVisualizer] Zona #6 precio check: Object
+ [ZoneVisualizer] Zona #6: Object
+ [ZoneVisualizer] ⚠️ Zona #6 descartada - x1(10) >= x2(-2045)
+ [ZoneVisualizer] Zona #7 precio check: Object
+ [ZoneVisualizer] Zona #7: Object
+ [ZoneVisualizer] ⚠️ Zona #7 descartada - x1(10) >= x2(-2034)
+ [ZoneVisualizer] Zona #8 precio check: Object
+ [ZoneVisualizer] Zona #8: Object
+ [ZoneVisualizer] ⚠️ Zona #8 descartada - x1(10) >= x2(-1997)
+ [ZoneVisualizer] Zona #9 precio check: Object
+ [ZoneVisualizer] Zona #9: Object
+ [ZoneVisualizer] ⚠️ Zona #9 descartada - x1(10) >= x2(-1503)
+ [ZoneVisualizer] Zona #10 precio check: Object
+ [ZoneVisualizer] Zona #10: Object
+ [ZoneVisualizer] ⚠️ Zona #10 descartada - x1(10) >= x2(-1496)
+ [ZoneVisualizer] Zona #11 precio check: Object
+ [ZoneVisualizer] Zona #11: Object
+ [ZoneVisualizer] ⚠️ Zona #11 descartada - x1(10) >= x2(-1483)
+ [ZoneVisualizer] Zona #12 precio check: Object
+ [ZoneVisualizer] Zona #12: Object
+ [ZoneVisualizer] ⚠️ Zona #12 descartada - x1(10) >= x2(-1471)
+ [ZoneVisualizer] Zona #13 precio check: Object
+ [ZoneVisualizer] Zona #13: Object
+ [ZoneVisualizer] ⚠️ Zona #13 descartada - x1(10) >= x2(-1454)
+ [ZoneVisualizer] Zona #14 precio check: Object
+ [ZoneVisualizer] Zona #14: Object
+ [ZoneVisualizer] ⚠️ Zona #14 descartada - x1(10) >= x2(-1441)
+ [ZoneVisualizer] Zona #15 precio check: Object
+ [ZoneVisualizer] Zona #15: Object
+ [ZoneVisualizer] ⚠️ Zona #15 descartada - x1(10) >= x2(-1423)
+ [ZoneVisualizer] Zona #16 precio check: Object
+ [ZoneVisualizer] Zona #16: Object
+ [ZoneVisualizer] ⚠️ Zona #16 descartada - x1(10) >= x2(-1405)
+ [ZoneVisualizer] Zona #17 precio check: Object
+ [ZoneVisualizer] Zona #17: Object
+ [ZoneVisualizer] ⚠️ Zona #17 descartada - x1(10) >= x2(-1399)
+ [ZoneVisualizer] Zona #18 precio check: Object
+ [ZoneVisualizer] Zona #18: Object
+ [ZoneVisualizer] ⚠️ Zona #18 descartada - x1(10) >= x2(-1393)
+ [ZoneVisualizer] Zona #19 precio check: Object
+ [ZoneVisualizer] Zona #19: Object
+ [ZoneVisualizer] ⚠️ Zona #19 descartada - x1(10) >= x2(-1370)
+ [ZoneVisualizer] Zona #20 precio check: Object
+ [ZoneVisualizer] Zona #20: Object
+ [ZoneVisualizer] ⚠️ Zona #20 descartada - x1(10) >= x2(-1357)
+ [ZoneVisualizer] Zona #21 precio check: Object
+ [ZoneVisualizer] Zona #21: Object
+ [ZoneVisualizer] ⚠️ Zona #21 descartada - x1(10) >= x2(-1341)
+ [ZoneVisualizer] Zona #22 precio check: Object
+ [ZoneVisualizer] Zona #22: Object
+ [ZoneVisualizer] ⚠️ Zona #22 descartada - x1(10) >= x2(-1044)
+ [ZoneVisualizer] Zona #23 precio check: Object
+ [ZoneVisualizer] Zona #23: Object
+ [ZoneVisualizer] ⚠️ Zona #23 descartada - x1(10) >= x2(-1037)
+ [ZoneVisualizer] Zona #24 precio check: Object
+ [ZoneVisualizer] Zona #24: Object
+ [ZoneVisualizer] ⚠️ Zona #24 descartada - x1(10) >= x2(-1025)
+ [ZoneVisualizer] Zona #25 precio check: Object
+ [ZoneVisualizer] Zona #25: Object
+ [ZoneVisualizer] ⚠️ Zona #25 descartada - x1(10) >= x2(-1015)
+ [ZoneVisualizer] Zona #26 precio check: Object
+ [ZoneVisualizer] Zona #26: Object
+ [ZoneVisualizer] ⚠️ Zona #26 descartada - x1(10) >= x2(-228)
+ [ZoneVisualizer] Zona #27 precio check: Object
+ [ZoneVisualizer] Zona #27: Object
+ [ZoneVisualizer] ⚠️ Zona #27 descartada - x1(10) >= x2(-196)
+ [ZoneVisualizer] Zona #28 precio check: Object
+ [ZoneVisualizer] Zona #28: Object
+ [ZoneVisualizer] ⚠️ Zona #28 descartada - x1(10) >= x2(-180)
+ [ZoneVisualizer] Zona #29 precio check: Object
+ [ZoneVisualizer] Zona #29: Object
+ [ZoneVisualizer] ⚠️ Zona #29 descartada - x1(10) >= x2(-169)
+ [ZoneVisualizer] Zona #30 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #30: Object
+ZoneVisualizerIndicator.js:172 [ZoneVisualizer] Zona #31 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #31: Object
+ZoneVisualizerIndicator.js:172 [ZoneVisualizer] Zona #32 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #32: Object
+ZoneVisualizerIndicator.js:172 [ZoneVisualizer] Zona #33 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #33: Object
+ZoneVisualizerIndicator.js:172 [ZoneVisualizer] Zona #34 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #34: Object
+ZoneVisualizerIndicator.js:172 [ZoneVisualizer] Zona #35 precio check: Object
+ZoneVisualizerIndicator.js:218 [ZoneVisualizer] Zona #35: Object
+MiniChart.jsx:341 [MiniChart BTCUSDT 5m] 🎯 35 zonas establecidas
+MiniChart.jsx:259 [MiniChart BTCUSDT 5m] Canvas forzado a redibujar
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #6 SKIP: yTop(590) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #7 SKIP: yTop(589) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #8 SKIP: yTop(602) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #9 SKIP: yTop(653) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #10 SKIP: yTop(648) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #11 SKIP: yTop(645) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #12 SKIP: yTop(639) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #13 SKIP: yTop(644) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #14 SKIP: yTop(642) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #15 SKIP: yTop(620) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #16 SKIP: yTop(626) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #17 SKIP: yTop(631) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #18 SKIP: yTop(632) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #19 SKIP: yTop(615) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #20 SKIP: yTop(620) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #21 SKIP: yTop(638) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #22 SKIP: yTop(628) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #23 SKIP: yTop(624) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #24 SKIP: yTop(615) >= yBottom(525) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #25 SKIP: yTop(611) >= yBottom(525) - fuera de rango Y visible
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #35 descartada - x1(930) >= x2(929)
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #34 descartada - x1(930) >= x2(929)
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:270 [BacktestingApp] Modo pantalla completa activado
+BacktestingApp.jsx:361 [BacktestingApp] Fullscreen cambió: activado
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #30 SKIP: yTop(25) >= yBottom(15) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #32 SKIP: yTop(25) >= yBottom(15) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #33 SKIP: yTop(25) >= yBottom(15) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #34 SKIP: yTop(25) >= yBottom(8) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #31 SKIP: yTop(25) >= yBottom(25) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #35 SKIP: yTop(25) >= yBottom(22) - fuera de rango Y visible
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #30 descartada - x1(10) >= x2(-135)
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #31 descartada - x1(10) >= x2(-89)
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #32 descartada - x1(10) >= x2(-50)
+ZoneVisualizerIndicator.js:246 [ZoneVisualizer] ⚠️ Zona #33 descartada - x1(10) >= x2(3)
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #1 SKIP: yTop(624) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #4 SKIP: yTop(626) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #5 SKIP: yTop(633) >= yBottom(620) - fuera de rango Y visible
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #2 SKIP: yTop(675) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #3 SKIP: yTop(667) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #26 SKIP: yTop(652) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #27 SKIP: yTop(638) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #28 SKIP: yTop(632) >= yBottom(620) - fuera de rango Y visible
+ZoneVisualizerIndicator.js:200 [ZoneVisualizer] Zona #29 SKIP: yTop(638) >= yBottom(620) - fuera de rango Y visible
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:893 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:361 [BacktestingApp] Fullscreen cambió: desactivado

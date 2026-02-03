@@ -1607,6 +1607,136 @@ async fetchData() {
 }
 ```
 
+## Polling en Tiempo Real (Febrero 2026)
+
+### Problema Original
+El VWAP solo se actualizaba para 2 de 10 simbolos durante el polling. Los otros 8 mantenian `dataMap.size` fijo porque el backend consideraba que ya tenia suficientes datos.
+
+### Solucion: Carga Incremental
+
+1. **Parametro `refresh` en endpoint**:
+```python
+@app.get("/api/vwap-service/data/{symbol}")
+async def get_vwap_service_data(
+    symbol: str,
+    days: int = 1,
+    interval: str = "60",
+    refresh: bool = False  # Para polling
+):
+    if refresh and not config_changed and not needs_more_data:
+        # Carga incremental - solo velas nuevas
+        await vwap_service.reload_symbol_data(symbol, 1, interval, incremental=True)
+```
+
+2. **Metodo `_fetch_candles_since` en vwap_service.py**:
+```python
+async def _fetch_candles_since(self, symbol: str, since_timestamp: int, interval: str):
+    """Fetch solo velas nuevas desde un timestamp especifico"""
+    url = f"{BYBIT_API_URL}?symbol={symbol}&interval={interval}&start={since_timestamp + 1}&limit=200"
+    # Una sola llamada eficiente a la API
+```
+
+3. **Merge incremental**:
+```python
+if incremental and symbol in self._historical_candles:
+    existing = self._historical_candles[symbol]
+    last_ts = max(c['timestamp'] for c in existing)
+    candles = await self._fetch_candles_since(symbol, last_ts, interval)
+    # Merge usando Map por timestamp para deduplicar
+    candle_map = {c['timestamp']: c for c in existing}
+    for c in candles:
+        candle_map[c['timestamp']] = c
+    self._historical_candles[symbol] = sorted(candle_map.values(), key=lambda x: x['timestamp'])
+```
+
+4. **Frontend envia `refresh=true` en polling**:
+```javascript
+// VWAPIndicator.js - fetchData()
+if (skipCache) {
+  params.append('refresh', 'true');
+}
+```
+
+### Resultado
+- Todas las monedas actualizan VWAP en tiempo real
+- Una sola llamada eficiente a Bybit API por simbolo
+- Sin acumulacion de datos duplicados
+
+## Fix: Cliente HTTP Global (Febrero 2026)
+
+### Problema
+Error `ValueError: too many file descriptors in select()` despues de uso prolongado.
+
+### Causa
+`vwap_service.py` creaba nueva `aiohttp.ClientSession()` para cada request.
+
+### Solucion
+```python
+class VWAPService:
+    def __init__(self):
+        self._http_session: Optional[aiohttp.ClientSession] = None
+
+    async def _get_http_session(self) -> aiohttp.ClientSession:
+        if self._http_session is None or self._http_session.closed:
+            connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
+            self._http_session = aiohttp.ClientSession(
+                connector=connector,
+                timeout=aiohttp.ClientTimeout(total=60)
+            )
+        return self._http_session
+```
+
+---
+
+# VELAS DUPLICADAS Y GAPS (Febrero 2026)
+
+## Problema
+Aparecian velas repetidas (ej: vela de 12:59 duplicada) y gaps entre velas en el grafico.
+
+## Causa
+Dos lugares en `MiniChart.jsx` no deduplicaban correctamente:
+
+1. **Merge de velas del WebSocket** - concatenaba sin verificar
+2. **Push de velas cerradas** - siempre hacia push sin verificar existencia
+
+## Solucion
+
+### 1. Merge con Map para deduplicar (lineas 1138-1154)
+```javascript
+// Preservar velas del WebSocket que son mas nuevas - CON DEDUPLICACION
+const existingCandles = candlesRef.current;
+if (existingCandles && existingCandles.length > 0 && finalCandles.length > 0) {
+  const candleMap = new Map();
+  finalCandles.forEach(c => candleMap.set(c.timestamp, c));
+
+  const lastFinalTs = finalCandles[finalCandles.length - 1].timestamp;
+  existingCandles.forEach(c => {
+    if (c.timestamp > lastFinalTs) {
+      candleMap.set(c.timestamp, c);
+    }
+  });
+
+  finalCandles = Array.from(candleMap.values()).sort((a, b) => a.timestamp - b.timestamp);
+}
+```
+
+### 2. Verificar antes de push (lineas 1348-1362)
+```javascript
+// Evitar duplicados - solo agregar si no existe una vela con ese timestamp
+const existingIndex = candlesRef.current.findIndex(c => c.timestamp === currentInProgress.timestamp);
+if (existingIndex === -1) {
+  candlesRef.current.push(currentInProgress);
+} else {
+  // Actualizar la vela existente con datos mas recientes
+  candlesRef.current[existingIndex] = currentInProgress;
+}
+```
+
+## Archivos Modificados
+- `7.WatchlistDesktop/src/components/MiniChart.jsx`
+- `2.WatchlistConIndicadores/backend/vwap_service.py`
+- `2.WatchlistConIndicadores/backend/main.py`
+
 ---
 
 # LECCIONES APRENDIDAS (Enero 2026)

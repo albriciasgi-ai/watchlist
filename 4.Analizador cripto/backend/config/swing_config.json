@@ -15,8 +15,8 @@
     "BNBUSDT",
     "POLUSDT"
   ],
-  "interval": "60",
-  "days": 360,
+  "interval": "1",
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -44,7 +44,7 @@
         "lookbackBars": 50
       },
       "swingBars": 5,
-      "days": 360,
+      "days": 1,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },
@@ -99,7 +99,7 @@
       "swingBars": 5
     },
     "PAXGUSDT": {
-      "days": 1,
+      "days": 360,
       "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,

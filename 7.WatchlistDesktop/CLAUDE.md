@@ -372,7 +372,128 @@ await this.clear(symbol, interval);
 - Detecciones subsecuentes dentro de 1 minuto: usa las velas disponibles
 - Esto previene el ciclo infinito cuando el backend esta caido
 
-### 6. Mejoras de Robustez (29 Enero 2026)
+### 6. VWAP Solo Actualizaba en 2 de 10 Monedas (Febrero 2026)
+
+**Problema**: El VWAP se graficaba correctamente al inicio pero durante el polling en tiempo real, solo BTCUSDT y ETHUSDT actualizaban. Las otras 8 monedas mantenian `dataMap.size` fijo en 7200.
+
+**Causa raiz**: El endpoint `/api/vwap-service/data/{symbol}` verificaba:
+```python
+needs_more_data = len(current_data) < candles_needed * 0.9
+```
+Como ya habia suficientes datos, no recargaba. BTCUSDT/ETHUSDT funcionaban porque tenian WebSocket activo agregando velas.
+
+**Solucion en 3 partes**:
+
+1. **Backend `main.py`** - Agregar parametro `refresh`:
+```python
+@app.get("/api/vwap-service/data/{symbol}")
+async def get_vwap_service_data(
+    symbol: str,
+    days: int = 1,
+    interval: str = "60",
+    refresh: bool = False  # NUEVO
+):
+    # Si refresh=true, hacer carga incremental
+    if refresh and not config_changed and not needs_more_data:
+        await vwap_service.reload_symbol_data(symbol, 1, interval, incremental=True)
+```
+
+2. **Backend `vwap_service.py`** - Carga incremental eficiente:
+```python
+async def reload_symbol_data(self, symbol, days, interval, incremental=False):
+    if incremental and symbol in self._historical_candles:
+        # Solo fetch velas nuevas desde ultimo timestamp conocido
+        last_ts = max(c['timestamp'] for c in existing)
+        candles = await self._fetch_candles_since(symbol, last_ts, interval)
+        # Merge con existentes (Map por timestamp)
+        candle_map = {c['timestamp']: c for c in existing}
+        for c in candles:
+            candle_map[c['timestamp']] = c
+        self._historical_candles[symbol] = sorted(candle_map.values(), key=lambda x: x['timestamp'])
+
+async def _fetch_candles_since(self, symbol, since_timestamp, interval):
+    # Una sola llamada a Bybit API con start=since_timestamp+1
+    url = f"{BYBIT_API_URL}?symbol={symbol}&interval={interval}&start={since_timestamp + 1}&limit=200"
+```
+
+3. **Frontend `VWAPIndicator.js`** - Enviar refresh en polling:
+```javascript
+if (skipCache) {
+  params.append('refresh', 'true');
+}
+```
+
+**Resultado**: Todas las 10 monedas actualizan VWAP en tiempo real con una sola llamada eficiente a la API.
+
+### 7. Velas Duplicadas y Gaps (Febrero 2026)
+
+**Problema**: Aparecian velas repetidas (ej: 12:59 duplicada) y gaps entre velas en el grafico.
+
+**Causa**: Dos lugares en `MiniChart.jsx` no deduplicaban correctamente:
+
+1. **Merge de velas del WebSocket** (lineas 1138-1154):
+```javascript
+// ANTES - concatenaba sin verificar duplicados
+finalCandles = [...finalCandles, ...newerFromWs];
+```
+
+2. **Push de velas cerradas** (linea 1353):
+```javascript
+// ANTES - siempre hacia push
+candlesRef.current.push(currentInProgress);
+```
+
+**Solucion**:
+
+1. **Merge con Map para deduplicar**:
+```javascript
+const candleMap = new Map();
+finalCandles.forEach(c => candleMap.set(c.timestamp, c));
+existingCandles.forEach(c => {
+  if (c.timestamp > lastFinalTs) {
+    candleMap.set(c.timestamp, c);
+  }
+});
+finalCandles = Array.from(candleMap.values()).sort((a, b) => a.timestamp - b.timestamp);
+```
+
+2. **Verificar antes de push**:
+```javascript
+const existingIndex = candlesRef.current.findIndex(c => c.timestamp === currentInProgress.timestamp);
+if (existingIndex === -1) {
+  candlesRef.current.push(currentInProgress);
+} else {
+  candlesRef.current[existingIndex] = currentInProgress;
+}
+```
+
+**Resultado**: Sin velas duplicadas ni gaps en los graficos.
+
+### 8. Backend Error "too many file descriptors" (Febrero 2026)
+
+**Problema**: El backend crasheaba con `ValueError: too many file descriptors in select()` despues de un tiempo de uso.
+
+**Causa**: `vwap_service.py` creaba una nueva `aiohttp.ClientSession()` para cada request HTTP en lugar de reutilizar una sesion global.
+
+**Solucion**: Agregar cliente HTTP global con connection pooling:
+```python
+class VWAPService:
+    def __init__(self):
+        self._http_session: Optional[aiohttp.ClientSession] = None
+
+    async def _get_http_session(self) -> aiohttp.ClientSession:
+        if self._http_session is None or self._http_session.closed:
+            connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
+            self._http_session = aiohttp.ClientSession(
+                connector=connector,
+                timeout=aiohttp.ClientTimeout(total=60)
+            )
+        return self._http_session
+```
+
+**Resultado**: Sin acumulacion de file descriptors, backend estable.
+
+### 9. Mejoras de Robustez (29 Enero 2026)
 
 Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia de usuario:
 
