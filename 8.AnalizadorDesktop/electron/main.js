@@ -55,7 +55,8 @@ let powerSaveBlockerId = null;
 // URL del servidor de desarrollo o archivo en produccion
 // ELECTRON_DEV_MODE=1 fuerza modo desarrollo (usado por dev:electron)
 // Sin esa variable, carga desde dist/ (modo produccion local)
-const isDev = process.env.ELECTRON_DEV_MODE === '1';
+// NOTA: En Windows, tambien verificamos si Vite esta corriendo en el puerto
+const isDev = process.env.ELECTRON_DEV_MODE === '1' || process.env.npm_lifecycle_event === 'dev:electron';
 const DEV_SERVER_URL = 'http://localhost:5174';
 
 // ============================================================

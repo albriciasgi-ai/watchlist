@@ -5,7 +5,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
-    "dev:electron": "concurrently \"vite\" \"wait-on http://localhost:5174 && set ELECTRON_DEV_MODE=1 && electron .\"",
+    "dev:electron": "set ELECTRON_DEV_MODE=1 && concurrently \"vite\" \"wait-on http://localhost:5174 && electron .\"",
     "build": "vite build",
     "build:electron": "vite build && electron-builder --win",
     "build:portable": "vite build && electron-builder --win portable",

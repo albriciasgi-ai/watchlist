@@ -78,7 +78,7 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 MAX_DAYS_BY_INTERVAL = {
     "1": 5,       # 1 min -> máx 5 días (aumentado para mejor detección DTB)
     "3": 10,      # 3 min -> máx 10 días
-    "5": 30,      # 5 min -> máx 30 días
+    "5": 120,     # 5 min -> máx 120 días
     "15": 90,     # 15 min -> máx 90 días
     "30": 150,    # 30 min -> máx 150 días
     "60": 360,    # 1 hora -> máx 360 días
@@ -295,8 +295,8 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         
         async with httpx.AsyncClient(timeout=30) as client:
             request_count = 0
-            max_requests = 10
-            
+            max_requests = 50  # 50 requests × 1000 velas = 50,000 velas máx (~173 días en 5min)
+
             while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
                 candles_remaining = total_candles_needed - len(all_candles)

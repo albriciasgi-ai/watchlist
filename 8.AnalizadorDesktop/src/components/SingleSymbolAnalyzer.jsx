@@ -51,7 +51,7 @@ const DEFAULT_DAYS_BY_INTERVAL = {
 // Limites maximos de dias por timeframe
 const MAX_DAYS_BY_INTERVAL = {
   "1": 5,
-  "5": 30,
+  "5": 120,
   "15": 90,
   "30": 150,
   "60": 360,
@@ -63,7 +63,7 @@ const MAX_DAYS_BY_INTERVAL = {
 // Opciones de dias por timeframe
 const DAYS_OPTIONS_BY_INTERVAL = {
   "1": [1, 2, 3, 4, 5],
-  "5": [1, 2, 5, 7, 10, 15, 20, 30],
+  "5": [1, 2, 5, 7, 10, 15, 20, 30, 60, 90, 120],
   "15": [1, 2, 5, 7, 10, 15, 30, 60, 90],
   "30": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 150],
   "60": [1, 2, 5, 7, 10, 15, 30, 60, 90, 120, 180, 270, 360],
