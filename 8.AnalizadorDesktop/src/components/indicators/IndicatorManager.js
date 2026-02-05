@@ -21,6 +21,7 @@ import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
+import { API_BASE_URL } from "../../config";
 import Logger from '../../utils/Logger.js';
 
 // Logger instance
@@ -1321,11 +1322,12 @@ class IndicatorManager {
     }
 
     try {
-      const API_BASE_URL = 'http://localhost:10000';
+      // Usar days del parametro si se especifica, sino el del chart
+      const requestDays = params.days || this.days;
       const requestBody = {
         symbol: this.symbol,
         interval: this.interval,
-        days: this.days,
+        days: requestDays,
         params: {
           consol_min_bars: params.consol_min_bars || 8,
           consol_max_bars: params.consol_max_bars || 50,
@@ -1334,25 +1336,58 @@ class IndicatorManager {
           consol_body_ratio: params.consol_body_ratio || 0.5,
           consol_max_outside_bars: params.consol_max_outside_bars || 3,
           lookforward_bars: params.lookforward_bars || 100,
-          max_price_range_pct: params.max_price_range_pct || 5.0
+          max_price_range_pct: params.max_price_range_pct || 5.0,
+          entry_mode: params.entry_mode || "breakout_close",
+          position_mode: params.position_mode || "sequential",
+          swing_bars: params.swing_bars || 5,
+          sl_mode: params.sl_mode || "zone_opposite",
         },
         generate_csv: params.generate_csv !== false
       };
 
-      log.info(`[${this.symbol}] Cargando zonas con params:`, requestBody.params);
+      const fetchUrl = `${API_BASE_URL}/api/zones/detect`;
+      log.info(`[${this.symbol}] Cargando zonas: days=${requestDays}, interval=${this.interval}`);
+      log.info(`[${this.symbol}] URL: ${fetchUrl}`);
+      log.info(`[${this.symbol}] Request body:`, JSON.stringify(requestBody));
 
-      const response = await fetch(`${API_BASE_URL}/api/zones/detect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
+      // Callback de progreso (si se paso)
+      const onProgress = params._onProgress || null;
+      if (onProgress) onProgress({ phase: 'fetching', message: 'Enviando request al backend...' });
+
+      // Timeout largo: 120 dias en 5m = ~35K velas, puede tardar 30-90s
+      const controller = new AbortController();
+      const timeoutMs = 5 * 60 * 1000; // 5 minutos max
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      const startTime = Date.now();
+      let response;
+      try {
+        log.info(`[${this.symbol}] Enviando POST a ${fetchUrl}...`);
+        response = await fetch(fetchUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+          signal: controller.signal
+        });
+        log.info(`[${this.symbol}] Fetch completado: status=${response.status}`);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        log.error(`[${this.symbol}] Fetch FALLO: ${fetchError.name}: ${fetchError.message}`);
+        throw fetchError;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      log.info(`[${this.symbol}] Respuesta recibida en ${elapsed}s, status=${response.status}`);
+
+      if (onProgress) onProgress({ phase: 'processing', message: `Procesando respuesta (${elapsed}s)...` });
 
       const result = await response.json();
 
       if (result.success && result.zones) {
-        // Cargar zonas en el visualizador
         this.zoneVisualizerIndicator.setZones(result.zones);
-        log.info(`[${this.symbol}] ${result.zones.length} zonas cargadas`);
+        log.info(`[${this.symbol}] ${result.zones.length} zonas cargadas (${result.candles_count || '?'} velas analizadas)`);
 
         if (result.csv_path) {
           log.info(`[${this.symbol}] CSV generado: ${result.csv_path}`);
@@ -1362,15 +1397,22 @@ class IndicatorManager {
           success: true,
           zones: result.zones,
           stats: result.stats,
-          csv_path: result.csv_path
+          csv_path: result.csv_path,
+          candles_count: result.candles_count
         };
       } else {
         log.warn(`[${this.symbol}] Error cargando zonas: ${result.error}`);
         return { success: false, error: result.error || 'Error desconocido' };
       }
     } catch (error) {
-      log.error(`[${this.symbol}] Error en loadTradingZones:`, error);
-      return { success: false, error: error.message };
+      log.error(`[${this.symbol}] Error en loadTradingZones:`, error.message || error);
+      let errorMsg = error.message || 'Error desconocido';
+      if (error.name === 'AbortError') {
+        errorMsg = `Timeout: la deteccion tardo mas de 5 minutos. Intenta con menos dias.`;
+      } else if (errorMsg === 'Failed to fetch') {
+        errorMsg = `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`;
+      }
+      return { success: false, error: errorMsg };
     }
   }
 

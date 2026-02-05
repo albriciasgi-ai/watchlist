@@ -14,8 +14,45 @@
           5
         ]
       }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1770237276056_0.30933421326165345",
+      "price": 69403.43278688524,
+      "time": 1757462400000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1770239102628_0.249610232941315",
+      "price": 62386.4074941452,
+      "time": 1758326400000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1770243123470_0.6471725712231222",
+      "entryPrice": 72365.93860884545,
+      "tpPrice": 69681.84961587121,
+      "slPrice": 72924.71793103448,
+      "time": 1770240840000,
+      "widthTime": 3720000
     }
   ],
-  "updated_at": "2026-02-01T21:25:29.076200+00:00",
-  "total_shapes": 1
+  "updated_at": "2026-02-04T22:13:46.586068+00:00",
+  "total_shapes": 4
 }

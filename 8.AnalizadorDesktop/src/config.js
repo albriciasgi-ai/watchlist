@@ -2,12 +2,12 @@
  * Configuracion del Analizador Desktop
  *
  * Este archivo contiene la configuracion central de la aplicacion.
- * El backend del Analizador corre en el puerto 10001.
+ * El backend del Analizador corre en el puerto 10000.
  */
 
 // URL base del backend API
 // En Electron, siempre nos conectamos al backend local
-export const API_BASE_URL = "http://localhost:10001";
+export const API_BASE_URL = "http://localhost:10000";
 
 // Detectar si estamos en Electron
 export const isElectron = () => {

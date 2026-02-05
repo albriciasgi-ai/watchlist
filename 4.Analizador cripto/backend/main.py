@@ -296,23 +296,45 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         all_candles = []
         current_start = start_ms
         
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             request_count = 0
-            max_requests = 50  # 50 requests × 1000 velas = 50,000 velas máx (~173 días en 5min)
+            max_requests = 50  # 50 requests x 1000 velas = 50,000 velas max (~173 dias en 5min)
+            consecutive_errors = 0
+            max_consecutive_errors = 3
+
+            print(f"[{symbol}] [DATA] Necesita {total_candles_needed} velas, max_requests={max_requests}")
 
             while len(all_candles) < total_candles_needed and request_count < max_requests:
                 request_count += 1
                 candles_remaining = total_candles_needed - len(all_candles)
                 fetch_limit = min(limit_per_request, candles_remaining)
-                
+
                 url = (
                     "https://api.bybit.com/v5/market/kline?"
                     f"category=linear&symbol={symbol}&interval={interval_final}"
                     f"&start={current_start}&limit={fetch_limit}"
                 )
-                
-                r = await client.get(url)
-                data = r.json()
+
+                try:
+                    r = await client.get(url)
+                    data = r.json()
+                    consecutive_errors = 0  # Reset en exito
+                except (httpx.ReadTimeout, httpx.ConnectTimeout, httpx.PoolTimeout) as te:
+                    consecutive_errors += 1
+                    print(f"[{symbol}] [DATA] Request #{request_count}: TIMEOUT ({type(te).__name__}) - error {consecutive_errors}/{max_consecutive_errors}")
+                    if consecutive_errors >= max_consecutive_errors:
+                        print(f"[{symbol}] [DATA] Demasiados errores consecutivos, usando {len(all_candles)} velas disponibles")
+                        break
+                    await asyncio.sleep(1)  # Esperar antes de reintentar
+                    continue
+                except Exception as e:
+                    consecutive_errors += 1
+                    print(f"[{symbol}] [DATA] Request #{request_count}: ERROR ({type(e).__name__}: {e}) - error {consecutive_errors}/{max_consecutive_errors}")
+                    if consecutive_errors >= max_consecutive_errors:
+                        print(f"[{symbol}] [DATA] Demasiados errores consecutivos, usando {len(all_candles)} velas disponibles")
+                        break
+                    await asyncio.sleep(1)
+                    continue
 
                 if data.get("retCode") != 0:
                     print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
@@ -320,22 +342,29 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
                 batch_candles = data["result"]["list"]
                 if not batch_candles:
+                    print(f"[{symbol}] [DATA] Request #{request_count}: 0 velas (fin de datos)")
                     break
-                
+
                 batch_candles.reverse()
                 all_candles.extend(batch_candles)
-                
+
+                if request_count <= 5 or request_count % 10 == 0:
+                    print(f"[{symbol}] [DATA] Request #{request_count}: +{len(batch_candles)} velas (total: {len(all_candles)}/{total_candles_needed})")
+
                 last_candle_ts = int(batch_candles[-1][0])
                 current_start = last_candle_ts + (interval_minutes * 60 * 1000)
-                
+
                 if current_start >= end_ms:
+                    print(f"[{symbol}] [DATA] Fin: alcanzado end_ms en request #{request_count}")
                     break
-                
+
                 # Si ya tenemos suficientes velas, salir
                 if len(all_candles) >= total_candles_needed:
                     break
-                
+
                 await asyncio.sleep(0.1)
+
+            print(f"[{symbol}] [DATA] Completado: {len(all_candles)} velas en {request_count} requests")
 
         candles = []
         current_time_utc = int(time.time() * 1000)
@@ -2430,7 +2459,7 @@ async def startup_event():
         print("[STARTUP] Real-time detection disabled - install websockets: pip install websockets>=12.0")
 
     # Now start swing detector service (WebSocket already running with all symbols)
-    if swing_service:
+    if swing_service and swing_service.config.enabled:
         try:
             await swing_service.start()
             print(f"[STARTUP] Swing detector service started - monitoring {len(swing_symbols)} symbols @ {swing_interval}m")
@@ -4404,29 +4433,41 @@ async def detect_trading_zones(request: Request):
         params_dict = body.get("params", {})
         generate_csv = body.get("generate_csv", True)
 
-        print(f"[{symbol}] [ZONES] Detectando zonas con interval={interval}, days={days}")
+        import time as _time
+        _zone_start = _time.time()
+
+        interval_min = {"1":1,"3":3,"5":5,"15":15,"30":30,"60":60,"120":120,"240":240,"D":1440,"W":10080}.get(interval, 60)
+        expected_candles = int((days * 24 * 60) / interval_min)
+        print(f"[{symbol}] [ZONES] === INICIO DETECCION ===")
+        print(f"[{symbol}] [ZONES] interval={interval}, days={days}, velas esperadas=~{expected_candles}")
         print(f"[{symbol}] [ZONES] Params: {params_dict}")
 
-        # Validar días contra máximo permitido
+        # Validar dias contra maximo permitido
         max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
         if days > max_days:
+            print(f"[{symbol}] [ZONES] Days {days} > max {max_days}, ajustando")
             days = max_days
-            print(f"[{symbol}] [ZONES] Days ajustado a máximo permitido: {days}")
+            expected_candles = int((days * 24 * 60) / interval_min)
+            print(f"[{symbol}] [ZONES] Nuevas velas esperadas: ~{expected_candles}")
 
-        # Obtener datos históricos
+        # Obtener datos historicos
+        _fetch_start = _time.time()
+        print(f"[{symbol}] [ZONES] Descargando velas de Bybit...")
         historical = await get_historical(symbol, interval, days)
+        _fetch_elapsed = _time.time() - _fetch_start
 
         if not historical.get('success') or not historical.get('data'):
+            print(f"[{symbol}] [ZONES] ERROR: No se obtuvieron datos historicos ({_fetch_elapsed:.1f}s)")
             return {
                 "success": False,
-                "error": "No se pudieron obtener datos históricos",
+                "error": "No se pudieron obtener datos historicos",
                 "zones": []
             }
 
         candles = historical['data']
-        print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas")
+        print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas en {_fetch_elapsed:.1f}s (esperadas: ~{expected_candles})")
 
-        # Configurar parámetros de detección
+        # Configurar parametros de deteccion
         params = ZoneDetectionParams(
             consol_min_bars=params_dict.get("consol_min_bars", 8),
             consol_max_bars=params_dict.get("consol_max_bars", 50),
@@ -4435,14 +4476,21 @@ async def detect_trading_zones(request: Request):
             consol_body_ratio=params_dict.get("consol_body_ratio", 0.5),
             consol_max_outside_bars=params_dict.get("consol_max_outside_bars", 3),
             lookforward_bars=params_dict.get("lookforward_bars", 100),
-            max_price_range_pct=params_dict.get("max_price_range_pct", 5.0)
+            max_price_range_pct=params_dict.get("max_price_range_pct", 5.0),
+            entry_mode=params_dict.get("entry_mode", "breakout_close"),
+            position_mode=params_dict.get("position_mode", "sequential"),
+            swing_bars=params_dict.get("swing_bars", 5),
+            sl_mode=params_dict.get("sl_mode", "zone_opposite"),
         )
 
-        # Detectar zonas con simulación de trades
+        # Detectar zonas con simulacion de trades
+        _detect_start = _time.time()
         detector = ZoneDetector()
         zones = detector.detect_zones(candles, method="trading_zones", params=params)
+        _detect_elapsed = _time.time() - _detect_start
 
-        print(f"[{symbol}] [ZONES] {len(zones)} zonas detectadas")
+        _total_elapsed = _time.time() - _zone_start
+        print(f"[{symbol}] [ZONES] {len(zones)} zonas detectadas en {_detect_elapsed:.1f}s (total: {_total_elapsed:.1f}s)")
 
         # Convertir a diccionarios para JSON
         zones_data = [zone.to_dict() for zone in zones]
@@ -4453,11 +4501,15 @@ async def detect_trading_zones(request: Request):
             csv_path = _generate_zones_csv(symbol, interval, days, zones_data, params_dict)
             print(f"[{symbol}] [ZONES] CSV generado: {csv_path}")
 
-        # Calcular estadísticas
+        # Calcular estadisticas - ya no hay OPEN, todos los trades cierran
         wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
         losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
+        skipped = len([z for z in zones_data if z.get('trade_result') == 'SKIPPED'])
+        no_entry = len([z for z in zones_data if z.get('trade_result') == 'NO_ENTRY'])
         total_pnl_r = sum(z.get('trade_pnl_r', 0) for z in zones_data)
-        win_rate = (wins / (wins + losses) * 100) if (wins + losses) > 0 else 0
+        total_closed = wins + losses
+        win_rate = (wins / total_closed * 100) if total_closed > 0 else 0
+        expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
 
         return {
             "success": True,
@@ -4470,9 +4522,14 @@ async def detect_trading_zones(request: Request):
                 "total_zones": len(zones_data),
                 "wins": wins,
                 "losses": losses,
-                "open": len([z for z in zones_data if z.get('trade_result') == 'OPEN']),
+                "open": 0,
+                "skipped": skipped,
+                "no_entry": no_entry,
                 "win_rate": round(win_rate, 1),
-                "total_pnl_r": round(total_pnl_r, 1)
+                "total_pnl_r": round(total_pnl_r, 1),
+                "expectancy": round(expectancy, 3),
+                "entry_mode": params_dict.get("entry_mode", "breakout_close"),
+                "position_mode": params_dict.get("position_mode", "sequential"),
             },
             "csv_path": csv_path,
             "params_used": params_dict
@@ -4502,9 +4559,11 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
     headers = [
         "zona_num", "fecha_inicio", "fecha_fin",
         "precio_min", "precio_max", "rango_pct",
-        "direccion_breakout", "resultado", "pnl_r",
+        "direccion_breakout", "precio_breakout",
+        "modo_entrada", "precio_entrada", "offset_barras",
+        "resultado", "pnl_r",
         "r_multiple", "alcanzo_2r", "alcanzo_3r",
-        "velas_en_zona", "duracion_horas", "score"
+        "barras_cierre", "velas_en_zona", "duracion_horas", "score"
     ]
 
     with open(filepath, 'w', encoding='utf-8') as f:
@@ -4521,6 +4580,12 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
             start_dt = datetime.fromtimestamp(zone.get('start_timestamp', 0) / 1000)
             end_dt = datetime.fromtimestamp(zone.get('end_timestamp', 0) / 1000)
 
+            entry_mode_label = zone.get('entry_mode', '')
+            if entry_mode_label == 'breakout_close':
+                entry_mode_label = 'Close Breakout'
+            elif entry_mode_label == 'swing_confirmation':
+                entry_mode_label = 'Swing Confirm'
+
             row = [
                 str(i),
                 start_dt.strftime("%Y-%m-%d %H:%M"),
@@ -4529,11 +4594,16 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
                 str(zone.get('max_price', 0)).replace('.', ','),
                 str(round(zone.get('price_range_pct', 0), 2)).replace('.', ','),
                 zone.get('breakout_direction', ''),
+                str(zone.get('breakout_price', 0)).replace('.', ','),
+                entry_mode_label,
+                str(zone.get('entry_price', 0)).replace('.', ','),
+                str(zone.get('entry_bar_offset', 0)),
                 zone.get('trade_result', ''),
                 str(zone.get('trade_pnl_r', 0)).replace('.', ','),
                 str(round(zone.get('r_multiple', 0), 2)).replace('.', ','),
-                "Sí" if zone.get('reached_2r') else "No",
-                "Sí" if zone.get('reached_3r') else "No",
+                "Si" if zone.get('reached_2r') else "No",
+                "Si" if zone.get('reached_3r') else "No",
+                str(zone.get('bars_to_close', 0)),
                 str(zone.get('candles_in_zone', 0)),
                 str(round(zone.get('duration_hours', 0), 1)).replace('.', ','),
                 str(round(zone.get('trading_score', 0), 0))

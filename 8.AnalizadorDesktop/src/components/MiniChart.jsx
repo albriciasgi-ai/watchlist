@@ -1144,18 +1144,25 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const maxExpectedCandles = Math.ceil((parseInt(days) * 24 * 60 * 60 * 1000) / intervalMs) + 100; // +100 buffer
 
       if (cached && cached.candles.length > 0) {
-        // Si el cache tiene MAS velas de las necesarias para los dias actuales,
-        // hacer carga completa para respetar la seleccion del usuario
+        const cacheRatio = cached.candles.length / maxExpectedCandles;
+
         if (cached.candles.length > maxExpectedCandles) {
-          console.log(`[${symbol}] Cache tiene ${cached.candles.length} velas pero solo necesitamos ~${maxExpectedCandles} para ${days} dias - forzando carga completa`);
+          // Cache tiene MAS velas de las necesarias - carga completa para respetar dias
+          console.log(`[${symbol}] Cache tiene ${cached.candles.length} velas pero solo necesitamos ~${maxExpectedCandles} para ${days} dias - carga COMPLETA`);
+          url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
+          isIncremental = false;
+        } else if (cacheRatio < 0.7) {
+          // Cache tiene MUCHAS MENOS velas de las necesarias - carga completa
+          // La incremental solo agrega al final, no puede rellenar el inicio
+          console.log(`[${symbol}] Cache insuficiente: ${cached.candles.length}/${maxExpectedCandles} velas (${(cacheRatio * 100).toFixed(0)}%) - carga COMPLETA`);
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
           isIncremental = false;
         } else {
-          // Cache es valido - pedir solo velas nuevas desde el ultimo timestamp
+          // Cache tiene suficientes velas (>70%) - carga incremental (solo nuevas)
           const sinceTs = cached.lastTimestamp;
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&since_timestamp=${sinceTs}&t=${timestamp}`;
           isIncremental = true;
-          console.log(`[${symbol}] Carga INCREMENTAL: desde ${new Date(sinceTs).toLocaleString()} (${cached.candles.length} velas en cache)`);
+          console.log(`[${symbol}] Carga INCREMENTAL: desde ${new Date(sinceTs).toLocaleString()} (${cached.candles.length} velas en cache, ${(cacheRatio * 100).toFixed(0)}%)`);
         }
       } else {
         // No hay cache o fue limpiado por corrupto - carga completa

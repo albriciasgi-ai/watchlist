@@ -164,215 +164,184 @@ class ZoneVisualizerIndicator extends IndicatorBase {
 
   /**
    * Renderiza una zona individual como overlay
-   * @returns {boolean} true si se renderizó, false si se saltó
+   * Dibuja 2 rectangulos: consolidacion + trade (entry -> TP/SL)
+   * @returns {boolean} true si se renderizo, false si se salto
    */
   _renderZoneOverlay(ctx, zone, visibleCandles, allCandles, bounds, priceContext) {
+    // No renderizar zonas sin trade (SKIPPED, NO_ENTRY)
+    if (zone.trade_result === 'SKIPPED' || zone.trade_result === 'NO_ENTRY') {
+      return false;
+    }
+
     const { x: boundsX, y: boundsY, width: boundsWidth, height: boundsHeight } = bounds;
     const { priceToY, timeToX, minPrice, maxPrice } = priceContext;
+    // Usar timeline_index del backend (orden cronologico) si existe
+    const zoneIndex = zone.timeline_index || (this.zones.indexOf(zone) + 1);
 
-    // 🔍 DEBUG: Log una vez por zona para diagnóstico
-    const zoneIndex = this.zones.indexOf(zone) + 1;
-    if (!zone._priceCheckLogged) {
-      const inPriceRange = zone.min_price <= maxPrice && zone.max_price >= minPrice;
-      console.log(`[ZoneVisualizer] Zona #${zoneIndex} precio check:`, {
-        zone_min: zone.min_price?.toFixed(2),
-        zone_max: zone.max_price?.toFixed(2),
-        chart_min: minPrice?.toFixed(2),
-        chart_max: maxPrice?.toFixed(2),
-        inPriceRange
-      });
-      zone._priceCheckLogged = true;
-    }
+    // --- RECTANGULO 1: Zona de consolidacion ---
+    const yZoneTop = priceToY(zone.max_price);
+    const yZoneBottom = priceToY(zone.min_price);
 
-    // Obtener coordenadas Y para los precios usando priceToY (funcion)
-    const y1 = priceToY(zone.max_price);
-    const y2 = priceToY(zone.min_price);
-
-    if (y1 === undefined || y2 === undefined || isNaN(y1) || isNaN(y2)) {
-      if (!zone._yErrorLogged) {
-        console.warn(`[ZoneVisualizer] Zona #${zoneIndex} SKIP: y1=${y1}, y2=${y2} (undefined o NaN)`);
-        zone._yErrorLogged = true;
-      }
+    if (yZoneTop === undefined || yZoneBottom === undefined || isNaN(yZoneTop) || isNaN(yZoneBottom)) {
       return false;
     }
 
-    // Asegurar que las coordenadas Y estan dentro del area visible
-    const yTop = Math.max(Math.min(y1, y2), boundsY);
-    const yBottom = Math.min(Math.max(y1, y2), boundsY + boundsHeight);
-
-    if (yTop >= yBottom) {
-      if (!zone._yRangeLogged) {
-        console.log(`[ZoneVisualizer] Zona #${zoneIndex} SKIP: yTop(${yTop.toFixed(0)}) >= yBottom(${yBottom.toFixed(0)}) - fuera de rango Y visible`);
-        zone._yRangeLogged = true;
-      }
-      return false; // Zona fuera del area visible
-    }
-
-    // 🎯 NUEVO: Calcular límites X usando timestamps de la zona
-    let x1 = boundsX;
-    let x2 = boundsX + boundsWidth;
-    let hasTemporalLimits = false;
+    // Calcular X de la consolidacion
+    let xZoneStart = boundsX;
+    let xZoneEnd = boundsX + boundsWidth;
 
     if (timeToX && zone.start_timestamp && zone.end_timestamp) {
-      const calcX1 = timeToX(zone.start_timestamp);
-      const calcX2 = timeToX(zone.end_timestamp);
-
-      // 🔍 DEBUG: Log de conversión de timestamps (solo primera vez por zona)
-      if (!zone._debugLogged) {
-        const zoneIndex = this.zones.indexOf(zone) + 1;
-        console.log(`[ZoneVisualizer] Zona #${zoneIndex}:`, {
-          start_ts: zone.start_timestamp,
-          end_ts: zone.end_timestamp,
-          calcX1,
-          calcX2,
-          boundsX,
-          boundsWidth,
-          isStartVisible: calcX1 !== null && calcX1 >= boundsX && calcX1 <= boundsX + boundsWidth,
-          isEndVisible: calcX2 !== null && calcX2 >= boundsX && calcX2 <= boundsX + boundsWidth
-        });
-        zone._debugLogged = true;
-      }
-
-      // Solo usar límites calculados si están en rango visible
-      if (calcX1 !== null && calcX1 !== undefined) {
-        x1 = Math.max(boundsX, calcX1);
-        hasTemporalLimits = true;
-      }
-      if (calcX2 !== null && calcX2 !== undefined) {
-        x2 = Math.min(boundsX + boundsWidth, calcX2);
-        hasTemporalLimits = true;
-      }
+      const cx1 = timeToX(zone.start_timestamp);
+      const cx2 = timeToX(zone.end_timestamp);
+      if (cx1 !== null && cx1 !== undefined) xZoneStart = Math.max(boundsX, cx1);
+      if (cx2 !== null && cx2 !== undefined) xZoneEnd = Math.min(boundsX + boundsWidth, cx2);
     }
 
-    // Si x1 >= x2, la zona está fuera de la vista
-    if (x1 >= x2) {
-      // 🔍 DEBUG: Log cuando la zona se descarta por estar fuera de vista
-      if (!zone._skippedLogged) {
-        console.log(`[ZoneVisualizer] ⚠️ Zona #${zoneIndex} descartada - x1(${x1.toFixed(0)}) >= x2(${x2.toFixed(0)})`);
-        zone._skippedLogged = true;
-      }
+    // Clamp Y a area visible
+    const yTop = Math.max(Math.min(yZoneTop, yZoneBottom), boundsY);
+    const yBot = Math.min(Math.max(yZoneTop, yZoneBottom), boundsY + boundsHeight);
+
+    if (yTop >= yBot || xZoneStart >= xZoneEnd) {
       return false;
     }
 
-    // Obtener colores - para trading_zones, usar color según resultado
-    let colors;
-    if (zone.method === 'trading_zones' && zone.trade_result) {
-      // Colores basados en resultado del trade
-      if (zone.trade_result === 'WIN') {
-        colors = this.config.colors.trading_win;
-      } else if (zone.trade_result === 'LOSS') {
-        colors = this.config.colors.trading_loss;
-      } else {
-        colors = this.config.colors.trading_open;
-      }
-    } else {
-      colors = this.config.colors[zone.method] || this.config.colors.default;
-    }
-    let fillColor = colors.fill;
-    let borderColor = colors.border;
+    // Dibujar consolidacion: azul semi-transparente
+    ctx.fillStyle = 'rgba(100, 140, 200, 0.12)';
+    ctx.fillRect(xZoneStart, yTop, xZoneEnd - xZoneStart, yBot - yTop);
 
-    // Highlight para zonas tradeables
-    if (this.config.highlightTradeable && zone.tradeable) {
-      fillColor = this.config.tradeableHighlight.fill;
-      borderColor = this.config.tradeableHighlight.border;
-    }
-
-    // Dibujar rectangulo de la zona
-    const width = x2 - x1;
-    const height = yBottom - yTop;
-
-    // Fill
-    ctx.fillStyle = fillColor;
-    ctx.fillRect(x1, yTop, width, height);
-
-    // Border (líneas horizontales punteadas)
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = this.config.borderWidth;
-    ctx.setLineDash([4, 4]);
-
-    // Solo dibujar borde horizontal superior e inferior
+    // Bordes punteados de la consolidacion
+    ctx.strokeStyle = 'rgba(100, 140, 200, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
     ctx.beginPath();
-    ctx.moveTo(x1, yTop);
-    ctx.lineTo(x2, yTop);
-    ctx.moveTo(x1, yBottom);
-    ctx.lineTo(x2, yBottom);
+    ctx.moveTo(xZoneStart, yTop);
+    ctx.lineTo(xZoneEnd, yTop);
+    ctx.moveTo(xZoneStart, yBot);
+    ctx.lineTo(xZoneEnd, yBot);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // 🎯 NUEVO: Líneas verticales sólidas en los límites temporales
-    if (hasTemporalLimits) {
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 2;
-      ctx.setLineDash([]);  // Línea sólida
+    // Lineas verticales de la consolidacion
+    ctx.strokeStyle = 'rgba(100, 140, 200, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(xZoneStart, yTop);
+    ctx.lineTo(xZoneStart, yBot);
+    ctx.moveTo(xZoneEnd, yTop);
+    ctx.lineTo(xZoneEnd, yBot);
+    ctx.stroke();
 
-      // Línea izquierda (inicio de zona)
-      if (x1 > boundsX) {
-        ctx.beginPath();
-        ctx.moveTo(x1, yTop);
-        ctx.lineTo(x1, yBottom);
-        ctx.stroke();
+    // --- RECTANGULO 2: Trade (entry -> TP/SL) ---
+    if (zone.entry_price && zone.sl_price && zone.tp_price && zone.entry_timestamp && zone.trade_close_timestamp) {
+      const isWin = zone.trade_result === 'WIN';
+
+      // X del trade: desde entry hasta cierre
+      let xTradeStart = boundsX;
+      let xTradeEnd = boundsX + boundsWidth;
+
+      if (timeToX) {
+        const tx1 = timeToX(zone.entry_timestamp);
+        const tx2 = timeToX(zone.trade_close_timestamp);
+        if (tx1 !== null && tx1 !== undefined) xTradeStart = Math.max(boundsX, tx1);
+        if (tx2 !== null && tx2 !== undefined) xTradeEnd = Math.min(boundsX + boundsWidth, tx2);
       }
 
-      // Línea derecha (fin de zona)
-      if (x2 < boundsX + boundsWidth) {
-        ctx.beginPath();
-        ctx.moveTo(x2, yTop);
-        ctx.lineTo(x2, yBottom);
-        ctx.stroke();
+      if (xTradeStart < xTradeEnd) {
+        // Y del trade: entre SL y TP
+        const yEntry = priceToY(zone.entry_price);
+        const ySL = priceToY(zone.sl_price);
+        const yTP = priceToY(zone.tp_price);
+
+        if (yEntry !== undefined && ySL !== undefined && yTP !== undefined) {
+          const yTradeTop = Math.max(Math.min(ySL, yTP), boundsY);
+          const yTradeBot = Math.min(Math.max(ySL, yTP), boundsY + boundsHeight);
+          const tradeWidth = xTradeEnd - xTradeStart;
+          const tradeHeight = yTradeBot - yTradeTop;
+
+          if (tradeHeight > 0 && tradeWidth > 0) {
+            // Fill del trade: verde si WIN, rojo si LOSS, semi-transparente
+            ctx.fillStyle = isWin
+              ? 'rgba(0, 180, 80, 0.10)'
+              : 'rgba(220, 40, 40, 0.10)';
+            ctx.fillRect(xTradeStart, yTradeTop, tradeWidth, tradeHeight);
+
+            // Borde del trade
+            ctx.strokeStyle = isWin ? 'rgba(0, 180, 80, 0.4)' : 'rgba(220, 40, 40, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([]);
+            ctx.strokeRect(xTradeStart, yTradeTop, tradeWidth, tradeHeight);
+
+            // Linea de ENTRY: blanca punteada
+            const yEntryClamp = Math.max(Math.min(yEntry, boundsY + boundsHeight), boundsY);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(xTradeStart, yEntryClamp);
+            ctx.lineTo(xTradeEnd, yEntryClamp);
+            ctx.stroke();
+
+            // Linea de TP: verde solida
+            const yTPClamp = Math.max(Math.min(yTP, boundsY + boundsHeight), boundsY);
+            ctx.strokeStyle = 'rgba(0, 200, 80, 0.9)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(xTradeStart, yTPClamp);
+            ctx.lineTo(xTradeEnd, yTPClamp);
+            ctx.stroke();
+
+            // Linea de SL: roja solida
+            const ySLClamp = Math.max(Math.min(ySL, boundsY + boundsHeight), boundsY);
+            ctx.strokeStyle = 'rgba(220, 40, 40, 0.9)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(xTradeStart, ySLClamp);
+            ctx.lineTo(xTradeEnd, ySLClamp);
+            ctx.stroke();
+
+            // Labels de TP y SL al lado derecho
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            // Label TP
+            ctx.fillStyle = 'rgba(0, 200, 80, 1)';
+            ctx.fillText('TP', xTradeEnd - 3, yTPClamp);
+
+            // Label SL
+            ctx.fillStyle = 'rgba(220, 40, 40, 1)';
+            ctx.fillText('SL', xTradeEnd - 3, ySLClamp);
+          }
+        }
       }
     }
 
-    // Lineas de soporte y resistencia mas marcadas
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = 1.5;
-
-    // Linea de resistencia (superior)
-    ctx.beginPath();
-    ctx.moveTo(x1, yTop);
-    ctx.lineTo(x2, yTop);
-    ctx.stroke();
-
-    // Linea de soporte (inferior)
-    ctx.beginPath();
-    ctx.moveTo(x1, yBottom);
-    ctx.lineTo(x2, yBottom);
-    ctx.stroke();
-
-    // Labels con numeración
+    // --- LABEL de la zona ---
     if (this.config.showLabels) {
-      this._renderLabelOverlay(ctx, zone, x1, yTop, width, height, borderColor, zoneIndex);
+      const isWin = zone.trade_result === 'WIN';
+      const labelColor = isWin ? '#00C864' : '#FF3232';
+      const resultText = isWin ? 'W' : 'L';
+      const labelText = `#${zoneIndex} ${resultText}`;
+
+      ctx.font = 'bold 13px Arial';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+
+      const padding = 4;
+      const textMetrics = ctx.measureText(labelText);
+      const labelWidth = textMetrics.width + padding * 2;
+      const labelHeight = 19;
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+      ctx.fillRect(xZoneStart + 2, yTop + 2, labelWidth, labelHeight);
+
+      ctx.fillStyle = labelColor;
+      ctx.fillText(labelText, xZoneStart + 2 + padding, yTop + 5);
     }
 
-    return true; // Zona renderizada exitosamente
-  }
-
-  /**
-   * Renderiza el label de la zona (overlay version)
-   * @param {number} zoneIndex - Número de la zona (1-based)
-   */
-  _renderLabelOverlay(ctx, zone, x, y, width, height, color, zoneIndex = null) {
-    // 🎯 SIMPLIFICADO: Solo mostrar el número de zona en grande
-    if (zoneIndex === null) return;
-
-    const labelText = `#${zoneIndex}`;
-
-    // Fuente grande y bold
-    ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-
-    // Background del label
-    const padding = 5;
-    const textMetrics = ctx.measureText(labelText);
-    const labelWidth = textMetrics.width + padding * 2;
-    const labelHeight = 22;
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-    ctx.fillRect(x + 3, y + 3, labelWidth, labelHeight);
-
-    // Texto del número
-    ctx.fillStyle = color;
-    ctx.fillText(labelText, x + 3 + padding, y + 6);
+    return true;
   }
 
   /**

@@ -35,30 +35,44 @@ class Zone:
 @dataclass
 class TradingZone(Zone):
     """
-    Zona de consolidación con métricas de trading para simulación.
+    Zona de consolidacion con metricas de trading para simulacion.
     Extiende Zone con datos de rentabilidad post-breakout.
     """
-    # Métricas de Trading (calculadas por el analizador)
+    # Metricas de Trading (calculadas por el analizador)
     breakout_direction: str = ""  # "UP" o "DOWN"
     breakout_price: float = 0.0
     breakout_timestamp: int = 0
 
-    # Resultado del trade simulado (TP=2R, SL=1R)
-    trade_result: str = ""  # "WIN", "LOSS", "OPEN", "PENDING"
-    trade_pnl_r: float = 0.0  # +2 si WIN, -1 si LOSS, 0 si OPEN/PENDING
-    bars_to_close: int = 0  # Velas desde breakout hasta cierre
+    # Entrada real (puede diferir de breakout_price segun entry_mode)
+    entry_mode: str = ""  # "breakout_close", "swing_confirmation"
+    entry_price: float = 0.0  # Precio real de entrada
+    entry_timestamp: int = 0  # Timestamp de la vela de entrada
+    entry_bar_offset: int = 0  # Velas entre breakout y entrada
+
+    # Niveles del trade (para visualizacion)
+    sl_price: float = 0.0  # Stop Loss
+    tp_price: float = 0.0  # Take Profit
+
+    # Resultado del trade simulado (TP=2R, SL=1R, o cierre al final de datos)
+    trade_result: str = ""  # "WIN", "LOSS", "SKIPPED", "NO_ENTRY"
+    trade_pnl_r: float = 0.0  # +2 si TP, -1 si SL, parcial si cierre al final
+    bars_to_close: int = 0  # Velas desde entrada hasta cierre
+    trade_close_timestamp: int = 0  # Timestamp donde cierra el trade (para visualizacion)
 
     # R-Multiple alcanzado
     r_multiple: float = 0.0
     reached_2r: bool = False
     reached_3r: bool = False
 
-    # Métricas de momentum
+    # Metricas de momentum
     breakout_body_ratio: float = 0.0  # Cuerpo de vela de breakout / ATR
-    continuation_bars: int = 0  # Velas consecutivas en dirección del breakout
+    continuation_bars: int = 0  # Velas consecutivas en direccion del breakout
 
-    # Score de trading (basado en rentabilidad, no solo consolidación)
-    trading_score: float = 0.0  # 0-100 basado en probabilidad de éxito
+    # Score de trading (basado en rentabilidad, no solo consolidacion)
+    trading_score: float = 0.0  # 0-100 basado en probabilidad de exito
+
+    # Indice cronologico (para que frontend muestre numero temporal, no por score)
+    timeline_index: int = 0
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -100,10 +114,14 @@ class ZoneDetectionParams:
     consol_body_ratio: float = 0.5     # Ratio cuerpo/rango de velas (velas pequeñas)
     consol_max_outside_bars: int = 3   # Máximo velas consecutivas fuera del rango antes de cerrar
 
-    # 🎯 NUEVO: Trading Zones Method (simulación de trades)
+    # Trading Zones Method (simulacion de trades)
     lookforward_bars: int = 100        # Velas hacia adelante para simular el trade
-    breakout_search_bars: int = 20     # Velas para buscar breakout después de la consolidación
+    breakout_search_bars: int = 20     # Velas para buscar breakout despues de la consolidacion
     include_no_breakout: bool = True   # Incluir zonas sin breakout claro (usa primera vela fuera)
+    entry_mode: str = "breakout_close"  # "breakout_close" o "swing_confirmation"
+    position_mode: str = "sequential"   # "sequential" (una a la vez) o "concurrent" (simultaneas)
+    swing_bars: int = 5                 # Velas a cada lado para confirmar swing (solo para swing_confirmation)
+    sl_mode: str = "zone_opposite"     # "zone_opposite" (SL al lado opuesto del rango) o "swing_previous" (SL al swing H/L anterior)
 
 
 class ZoneDetector:
@@ -375,8 +393,8 @@ class ZoneDetector:
         """
         Detecta zonas donde el ATR está por debajo del promedio.
         """
-        # Calcular ATR
-        atr_values = self._calculate_atr(candles, params.atr_period)
+        # Calcular ATR (serie completa)
+        atr_values = self._calculate_atr_series(candles, params.atr_period)
 
         if len(atr_values) < params.atr_min_bars:
             return []
@@ -411,8 +429,8 @@ class ZoneDetector:
 
         return zones
 
-    def _calculate_atr(self, candles: List[Dict], period: int) -> List[float]:
-        """Calcula Average True Range"""
+    def _calculate_atr_series(self, candles: List[Dict], period: int) -> List[float]:
+        """Calcula serie completa de Average True Range (una valor por vela)."""
         if len(candles) < period + 1:
             return []
 
@@ -921,7 +939,7 @@ class ZoneDetector:
         Returns:
             Lista de TradingZone ordenadas por trading_score descendente
         """
-        if len(candles) < params.consol_min_bars + lookforward_bars + 20:
+        if len(candles) < params.consol_min_bars + 20:
             print(f"[ZoneDetector] Trading Zones: Insuficientes velas ({len(candles)})")
             return []
 
@@ -935,13 +953,15 @@ class ZoneDetector:
         # Pre-calcular ATR rolling
         atr_values = self._calculate_rolling_atr_for_trading(candles, 14)
 
+        print(f"[ZoneDetector] ===== VERSION 2.4 (sequential por ENTRY_TS, range recalc, sl_mode) =====")
         print(f"[ZoneDetector] Trading Zones: ATR global = {global_atr:.2f}, velas = {len(candles)}")
+        print(f"[ZoneDetector] Config: entry_mode={params.entry_mode}, position_mode={params.position_mode}, swing_bars={params.swing_bars}, sl_mode={params.sl_mode}")
 
         found_ranges = []
         i = 0
 
-        # FASE 1: Detectar consolidaciones (igual que consolidation_method)
-        while i < len(candles) - params.consol_min_bars - lookforward_bars:
+        # FASE 1: Detectar consolidaciones
+        while i < len(candles) - params.consol_min_bars:
             consol_start = i
             consol_end = i + params.consol_min_bars
 
@@ -965,7 +985,7 @@ class ZoneDetector:
             consecutive_outside = 0
             last_valid_end = consol_end
 
-            while consol_end < len(candles) - lookforward_bars and (consol_end - consol_start) < params.consol_max_bars:
+            while consol_end < len(candles) and (consol_end - consol_start) < params.consol_max_bars:
                 next_candle = candles[consol_end]
                 candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
 
@@ -982,11 +1002,15 @@ class ZoneDetector:
 
             consol_length = consol_end - consol_start
             if consol_length >= params.consol_min_bars:
+                # Recalcular range_high/range_low con TODAS las velas de la zona final
+                final_zone_candles = candles[consol_start:consol_end]
+                final_range_high = max(c['high'] for c in final_zone_candles)
+                final_range_low = min(c['low'] for c in final_zone_candles)
                 found_ranges.append({
                     'start_idx': consol_start,
                     'end_idx': consol_end,
-                    'range_high': range_high,
-                    'range_low': range_low,
+                    'range_high': final_range_high,
+                    'range_low': final_range_low,
                     'consol_length': consol_length
                 })
                 i = consol_end
@@ -1014,12 +1038,21 @@ class ZoneDetector:
             if not overlaps:
                 selected_ranges.append(r)
 
-        print(f"[ZoneDetector] Trading Zones: {len(selected_ranges)} después de deduplicación")
+        print(f"[ZoneDetector] Trading Zones: {len(selected_ranges)} despues de deduplicacion")
 
-        # FASE 2: Analizar cada zona con métricas de trading
-        stats = {"wins": 0, "losses": 0, "open": 0}
+        # Ordenar por tiempo para que sequential funcione correctamente
+        selected_ranges.sort(key=lambda x: x['start_idx'])
 
-        for r in selected_ranges:
+        # FASE 2: Analizar cada zona con metricas de trading
+        stats = {"wins": 0, "losses": 0, "open": 0, "skipped": 0}
+        # Para modo sequential: timestamp donde cierra el trade activo (0 = sin trade)
+        current_trade_close_ts = 0
+
+        all_volumes = [c['volume'] for c in candles]
+
+        print(f"[ZoneDetector] position_mode='{params.position_mode}' (type={type(params.position_mode).__name__})")
+
+        for zone_num, r in enumerate(selected_ranges):
             zone_candles = candles[r['start_idx']:r['end_idx']]
             zone_high = r['range_high']
             zone_low = r['range_low']
@@ -1032,75 +1065,200 @@ class ZoneDetector:
 
             # Volumen
             avg_volume = np.mean([c['volume'] for c in zone_candles])
-            all_volumes = [c['volume'] for c in candles]
             volume_score = self._calculate_volume_score(avg_volume, all_volumes)
 
-            # Detectar breakout
+            # Detectar breakout: vela que CIERRA fuera del rango
             breakout_idx = r['end_idx']
             breakout_direction = ""
-            breakout_price = 0.0
+            breakout_close_price = 0.0
             breakout_ts = 0
 
-            # Buscar vela que cierra fuera del rango (breakout)
-            search_limit = min(r['end_idx'] + params.breakout_search_bars, len(candles) - lookforward_bars)
+            search_limit = min(r['end_idx'] + params.breakout_search_bars, len(candles))
             for bi in range(r['end_idx'], search_limit):
                 c = candles[bi]
                 if c['close'] > zone_high:
                     breakout_direction = "UP"
-                    breakout_price = zone_high
+                    breakout_close_price = c['close']  # Close real de la vela de breakout
                     breakout_ts = c['timestamp']
                     breakout_idx = bi
                     break
                 elif c['close'] < zone_low:
                     breakout_direction = "DOWN"
-                    breakout_price = zone_low
+                    breakout_close_price = c['close']
                     breakout_ts = c['timestamp']
                     breakout_idx = bi
                     break
 
             if not breakout_direction:
                 if not params.include_no_breakout:
-                    # Sin breakout claro, omitir esta zona
                     continue
-                # Si include_no_breakout=True, usar la última vela de la zona como "breakout"
-                # y determinar dirección por el cierre respecto al medio
-                last_candle = candles[min(r['end_idx'], len(candles) - lookforward_bars - 1)]
+                safe_idx = min(r['end_idx'], len(candles) - 1)
+                last_candle = candles[safe_idx]
                 if last_candle['close'] > zone_mid:
                     breakout_direction = "UP"
                 else:
                     breakout_direction = "DOWN"
-                breakout_price = zone_high if breakout_direction == "UP" else zone_low
+                breakout_close_price = last_candle['close']
                 breakout_ts = last_candle['timestamp']
-                breakout_idx = r['end_idx']
+                breakout_idx = safe_idx  # Nunca fuera de rango
 
-            # Simulación de trading: TP=2R, SL=1R adverso
-            if breakout_direction == "UP":
-                tp_price = breakout_price + (zone_height * 2)
-                sl_price = breakout_price - zone_height
+            # --- Determinar precio de entrada segun entry_mode ---
+            entry_price = 0.0
+            entry_ts = 0
+            entry_idx = breakout_idx
+            entry_bar_offset = 0
+            entry_found = True
+
+            if params.entry_mode == "swing_confirmation":
+                # Buscar swing de confirmacion despues del breakout
+                # Un swing en posicion 'si' solo se confirma cuando cierra la vela si+sb
+                # (necesita sb velas a cada lado). La entrada es al CLOSE de esa vela de confirmacion.
+                entry_found = False
+                sb = params.swing_bars
+                search_start = breakout_idx + 1
+                search_end = min(breakout_idx + lookforward_bars, len(candles) - sb)
+
+                for si in range(max(search_start, sb), search_end):
+                    if breakout_direction == "UP":
+                        # Tras breakout UP, buscamos swing LOW = fin del pullback
+                        if self._is_swing_low_static(candles, si, sb):
+                            # La confirmacion ocurre en la vela si+sb (la ultima que valida el swing)
+                            confirm_idx = si + sb
+                            if confirm_idx < len(candles):
+                                entry_price = candles[confirm_idx]['close']
+                                entry_ts = candles[confirm_idx]['timestamp']
+                                entry_idx = confirm_idx
+                                entry_bar_offset = confirm_idx - breakout_idx
+                                entry_found = True
+                            break
+                    else:  # DOWN
+                        # Tras breakout DOWN, buscamos swing HIGH = fin del pullback
+                        if self._is_swing_high_static(candles, si, sb):
+                            confirm_idx = si + sb
+                            if confirm_idx < len(candles):
+                                entry_price = candles[confirm_idx]['close']
+                                entry_ts = candles[confirm_idx]['timestamp']
+                                entry_idx = confirm_idx
+                                entry_bar_offset = confirm_idx - breakout_idx
+                                entry_found = True
+                            break
             else:
-                tp_price = breakout_price - (zone_height * 2)
-                sl_price = breakout_price + zone_height
+                # breakout_close: entrada en el close de la vela de breakout
+                entry_price = breakout_close_price
+                entry_ts = breakout_ts
+                entry_idx = breakout_idx
+                entry_bar_offset = 0
 
-            trade_result = "PENDING"
-            trade_pnl_r = 0.0
-            bars_to_close = 0
-            r_multiple = 0.0
-            reached_2r = False
-            reached_3r = False
-            breakout_body_ratio = 0.0
-            continuation_bars = 0
+            # --- Modo sequential: verificar si hay trade abierto ---
+            # Comparamos la ENTRADA (entry_ts) de la nueva zona vs el CIERRE del trade anterior
+            # Porque la entrada es cuando realmente se abre la posicion
+            if params.position_mode == "sequential" and current_trade_close_ts > 0:
+                # Usar entry_ts si existe, sino breakout_ts
+                check_ts = entry_ts if entry_ts > 0 else breakout_ts
+                if check_ts <= current_trade_close_ts:
+                    from datetime import datetime
+                    entry_dt = datetime.fromtimestamp(check_ts / 1000).strftime('%m/%d %H:%M') if check_ts else '?'
+                    cls_dt = datetime.fromtimestamp(current_trade_close_ts / 1000).strftime('%m/%d %H:%M')
+                    print(f"[SEQ] Zona#{zone_num} SKIP: entry={entry_dt} <= trade_close_prev={cls_dt}")
+                    touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
+                    trading_zone = self._build_trading_zone(
+                        zone_low, zone_high, start_ts, end_ts, touches, duration_hours,
+                        avg_volume, volume_score, len(zone_candles),
+                        breakout_direction, breakout_close_price, breakout_ts,
+                        params.entry_mode, entry_price, entry_ts, entry_bar_offset,
+                        0.0, 0.0,  # sl_price, tp_price
+                        "SKIPPED", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                    )
+                    trading_zones.append(trading_zone)
+                    stats["skipped"] += 1
+                    continue
+                else:
+                    from datetime import datetime
+                    entry_dt = datetime.fromtimestamp(check_ts / 1000).strftime('%m/%d %H:%M') if check_ts else '?'
+                    cls_dt = datetime.fromtimestamp(current_trade_close_ts / 1000).strftime('%m/%d %H:%M')
+                    print(f"[SEQ] Zona#{zone_num} OK: entry={entry_dt} > trade_close_prev={cls_dt}")
 
-            # Analizar velas post-breakout
-            post_breakout = candles[breakout_idx:]
+            if not entry_found:
+                # No se encontro swing de confirmacion
+                touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
+                trading_zone = self._build_trading_zone(
+                    zone_low, zone_high, start_ts, end_ts, touches, duration_hours,
+                    avg_volume, volume_score, len(zone_candles),
+                    breakout_direction, breakout_close_price, breakout_ts,
+                    params.entry_mode, 0.0, 0, 0,
+                    0.0, 0.0,  # sl_price, tp_price
+                    "NO_ENTRY", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                )
+                trading_zones.append(trading_zone)
+                stats["skipped"] += 1
+                continue
+
+            # --- Calcular SL/TP desde el precio REAL de entrada ---
+            if params.sl_mode == "swing_previous":
+                # SL al swing high/low anterior al breakout
+                sl_price = self._find_swing_sl(
+                    candles, breakout_idx, breakout_direction,
+                    params.swing_bars, zone_low, zone_high, entry_price
+                )
+                # R = distancia de entry a SL (siempre positivo)
+                r_distance = abs(entry_price - sl_price)
+                if r_distance == 0:
+                    r_distance = zone_height  # fallback
+                # TP siempre del lado favorable (opuesto al SL)
+                if breakout_direction == "UP":
+                    tp_price = entry_price + (r_distance * 2)
+                else:
+                    tp_price = entry_price - (r_distance * 2)
+
+                from datetime import datetime
+                e_dt = datetime.fromtimestamp(entry_ts / 1000).strftime('%m/%d %H:%M') if entry_ts else '?'
+                print(f"[SL_MODE] Zona#{zone_num} swing_previous: dir={breakout_direction} entry={entry_price:.2f} sl={sl_price:.2f} tp={tp_price:.2f} R={r_distance:.2f} ({e_dt})")
+            else:
+                # zone_opposite: SL al lado opuesto del rango (1R = zone_height)
+                r_distance = zone_height
+                if breakout_direction == "UP":
+                    sl_price = entry_price - zone_height
+                    tp_price = entry_price + (zone_height * 2)
+                else:
+                    sl_price = entry_price + zone_height
+                    tp_price = entry_price - (zone_height * 2)
+
+            # --- Validar coherencia SL/TP ---
+            # LONG (UP): SL debe estar DEBAJO de entry, TP ENCIMA
+            # SHORT (DOWN): SL debe estar ENCIMA de entry, TP DEBAJO
+            if breakout_direction == "UP":
+                if sl_price >= entry_price:
+                    print(f"[SL_FIX] Zona#{zone_num} UP: SL={sl_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
+                    sl_price = entry_price - zone_height
+                    r_distance = zone_height
+                    tp_price = entry_price + (zone_height * 2)
+                if tp_price <= entry_price:
+                    print(f"[SL_FIX] Zona#{zone_num} UP: TP={tp_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
+                    tp_price = entry_price + (r_distance * 2)
+            else:
+                if sl_price <= entry_price:
+                    print(f"[SL_FIX] Zona#{zone_num} DOWN: SL={sl_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
+                    sl_price = entry_price + zone_height
+                    r_distance = zone_height
+                    tp_price = entry_price - (zone_height * 2)
+                if tp_price >= entry_price:
+                    print(f"[SL_FIX] Zona#{zone_num} DOWN: TP={tp_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
+                    tp_price = entry_price - (r_distance * 2)
+
+            # --- Metricas de momentum ---
+            # Proteger contra indice fuera de rango
+            if breakout_idx >= len(candles):
+                breakout_idx = len(candles) - 1
+            if entry_idx >= len(candles):
+                entry_idx = len(candles) - 1
             breakout_candle = candles[breakout_idx]
-
-            # Ratio del cuerpo de breakout
             atr_at_breakout = atr_values[breakout_idx] if breakout_idx < len(atr_values) else zone_height
             breakout_body = abs(breakout_candle['close'] - breakout_candle['open'])
             breakout_body_ratio = breakout_body / atr_at_breakout if atr_at_breakout > 0 else 0
 
-            # Contar velas de continuación
-            for pc in post_breakout[1:min(20, len(post_breakout))]:
+            continuation_bars = 0
+            post_breakout_for_cont = candles[breakout_idx + 1:breakout_idx + 21]
+            for pc in post_breakout_for_cont:
                 if breakout_direction == "UP" and pc['close'] > pc['open']:
                     continuation_bars += 1
                 elif breakout_direction == "DOWN" and pc['close'] < pc['open']:
@@ -1108,62 +1266,108 @@ class ZoneDetector:
                 else:
                     break
 
-            # Calcular MFE y R-Multiple
-            if breakout_direction == "UP":
-                max_price = max(c['high'] for c in post_breakout[:lookforward_bars])
-                r_multiple = (max_price - breakout_price) / zone_height if zone_height > 0 else 0
-            else:
-                min_price = min(c['low'] for c in post_breakout[:lookforward_bars])
-                r_multiple = (breakout_price - min_price) / zone_height if zone_height > 0 else 0
+            # --- Simular trade desde la vela de entrada hasta TP o SL ---
+            trade_result = "PENDING"
+            trade_pnl_r = 0.0
+            bars_to_close = 0
+            r_multiple = 0.0
+            reached_2r = False
+            reached_3r = False
 
-            reached_2r = r_multiple >= 2.0
-            reached_3r = r_multiple >= 3.0
+            # Usar TODAS las velas restantes (sin limite de lookforward)
+            post_entry = candles[entry_idx:]
 
-            # Simular trade (sin timeout)
-            for bar_num, c in enumerate(post_breakout):
+            # MFE y R-Multiple (R = r_distance, que depende de sl_mode)
+            if len(post_entry) > 0:
+                if breakout_direction == "UP":
+                    max_p = max(c['high'] for c in post_entry)
+                    r_multiple = (max_p - entry_price) / r_distance if r_distance > 0 else 0
+                else:
+                    min_p = min(c['low'] for c in post_entry)
+                    r_multiple = (entry_price - min_p) / r_distance if r_distance > 0 else 0
+                reached_2r = r_multiple >= 2.0
+                reached_3r = r_multiple >= 3.0
+
+            # Simular hit de TP/SL (sin limite de velas)
+            trade_close_idx = entry_idx  # default si no cierra
+            for bar_num, c in enumerate(post_entry):
                 if breakout_direction == "UP":
                     tp_hit = c['high'] >= tp_price
                     sl_hit = c['low'] <= sl_price
-
-                    if tp_hit and sl_hit:
-                        trade_result = "LOSS"
-                        trade_pnl_r = -1.0
-                        bars_to_close = bar_num + 1
-                        break
-                    elif tp_hit:
-                        trade_result = "WIN"
-                        trade_pnl_r = 2.0
-                        bars_to_close = bar_num + 1
-                        break
-                    elif sl_hit:
-                        trade_result = "LOSS"
-                        trade_pnl_r = -1.0
-                        bars_to_close = bar_num + 1
-                        break
-                else:  # DOWN
+                else:
                     tp_hit = c['low'] <= tp_price
                     sl_hit = c['high'] >= sl_price
 
-                    if tp_hit and sl_hit:
-                        trade_result = "LOSS"
-                        trade_pnl_r = -1.0
-                        bars_to_close = bar_num + 1
-                        break
-                    elif tp_hit:
-                        trade_result = "WIN"
-                        trade_pnl_r = 2.0
-                        bars_to_close = bar_num + 1
-                        break
-                    elif sl_hit:
-                        trade_result = "LOSS"
-                        trade_pnl_r = -1.0
-                        bars_to_close = bar_num + 1
-                        break
+                if tp_hit and sl_hit:
+                    # Ambos tocados en la misma vela: inferir cual fue primero
+                    # usando la direccion de la vela (open vs close)
+                    if breakout_direction == "UP":
+                        # Trade LONG: TP arriba, SL abajo
+                        # Si la vela es alcista (close > open), probablemente subio primero al TP
+                        # Si la vela es bajista (close < open), probablemente bajo primero al SL
+                        if c['close'] >= c['open']:
+                            trade_result = "WIN"
+                            trade_pnl_r = 2.0
+                        else:
+                            trade_result = "LOSS"
+                            trade_pnl_r = -1.0
+                    else:
+                        # Trade SHORT: TP abajo, SL arriba
+                        # Si la vela es bajista (close < open), probablemente bajo primero al TP
+                        # Si la vela es alcista (close > open), probablemente subio primero al SL
+                        if c['close'] <= c['open']:
+                            trade_result = "WIN"
+                            trade_pnl_r = 2.0
+                        else:
+                            trade_result = "LOSS"
+                            trade_pnl_r = -1.0
+                    bars_to_close = bar_num + 1
+                    trade_close_idx = entry_idx + bar_num
+                    break
+                elif tp_hit:
+                    trade_result = "WIN"
+                    trade_pnl_r = 2.0
+                    bars_to_close = bar_num + 1
+                    trade_close_idx = entry_idx + bar_num
+                    break
+                elif sl_hit:
+                    trade_result = "LOSS"
+                    trade_pnl_r = -1.0
+                    bars_to_close = bar_num + 1
+                    trade_close_idx = entry_idx + bar_num
+                    break
 
             if trade_result == "PENDING":
-                trade_result = "OPEN"
+                # No alcanzo TP ni SL con los datos disponibles
+                # Cerrar al precio de la ultima vela como LOSS parcial
+                last_candle = candles[-1]
+                if breakout_direction == "UP":
+                    pnl = (last_candle['close'] - entry_price) / r_distance if r_distance > 0 else 0
+                else:
+                    pnl = (entry_price - last_candle['close']) / r_distance if r_distance > 0 else 0
 
-            # Actualizar estadísticas
+                if pnl >= 0:
+                    trade_result = "WIN"
+                    trade_pnl_r = min(pnl, 2.0)  # Cap a 2R (TP)
+                else:
+                    trade_result = "LOSS"
+                    trade_pnl_r = max(pnl, -1.0)  # Cap a -1R (SL)
+
+                bars_to_close = len(post_entry)
+                trade_close_idx = len(candles) - 1
+
+            # Calcular timestamp de cierre del trade
+            trade_close_ts = candles[trade_close_idx]['timestamp'] if trade_close_idx < len(candles) else 0
+
+            # Actualizar timestamp de cierre para modo sequential
+            if params.position_mode == "sequential":
+                from datetime import datetime
+                entry_dt = datetime.fromtimestamp(entry_ts / 1000).strftime('%m/%d %H:%M') if entry_ts else '?'
+                close_dt = datetime.fromtimestamp(trade_close_ts / 1000).strftime('%m/%d %H:%M') if trade_close_ts else '?'
+                print(f"[SEQ] Zona#{zone_num} TRADE: {trade_result} {trade_pnl_r:+.1f}R | dir={breakout_direction} | entry={entry_dt} | close={close_dt} | bars={bars_to_close}")
+                current_trade_close_ts = trade_close_ts
+
+            # Estadisticas
             if trade_result == "WIN":
                 stats["wins"] += 1
             elif trade_result == "LOSS":
@@ -1171,76 +1375,217 @@ class ZoneDetector:
             else:
                 stats["open"] += 1
 
-            # Calcular trading_score basado en factores que predicen éxito
-            # - Breakout body ratio alto = momentum fuerte = mejor
-            # - Continuation bars alto = confirmación = mejor
-            # - Range % bajo = compresión = mejor
-            # - Resultado histórico similar (aproximación)
-            momentum_score = min(breakout_body_ratio * 40, 30)  # 0-30
-            continuation_score = min(continuation_bars * 5, 20)  # 0-20
-            compression_score = max(0, (params.consol_max_range_pct - ((zone_high - zone_low) / zone_mid * 100)) / params.consol_max_range_pct) * 25  # 0-25
-            volume_bonus = volume_score * 0.25  # 0-25
+            # Trading score
+            momentum_score = min(breakout_body_ratio * 40, 30)
+            continuation_score = min(continuation_bars * 5, 20)
+            compression_score = max(0, (params.consol_max_range_pct - ((zone_high - zone_low) / zone_mid * 100)) / params.consol_max_range_pct) * 25
+            volume_bonus = volume_score * 0.25
 
             trading_score = momentum_score + continuation_score + compression_score + volume_bonus
 
-            # Bonus si el trade ya cerró como WIN
             if trade_result == "WIN":
                 trading_score = min(100, trading_score + 15)
             elif trade_result == "LOSS":
                 trading_score = max(0, trading_score - 10)
 
-            # Toques
             touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
 
-            # Crear TradingZone
-            trading_zone = TradingZone(
-                id=self._generate_zone_id(),
-                min_price=zone_low,
-                max_price=zone_high,
-                start_timestamp=start_ts,
-                end_timestamp=end_ts,
-                touches_support=touches['support'],
-                touches_resistance=touches['resistance'],
-                total_touches=touches['total'],
-                duration_hours=duration_hours,
-                avg_volume=avg_volume,
-                volume_score=volume_score,
-                method="trading_zones",
-                score=trading_score,  # Usar trading_score como score principal
-                candles_in_zone=len(zone_candles),
-                price_range_pct=((zone_high - zone_low) / zone_low) * 100,
-                # Campos de TradingZone
-                breakout_direction=breakout_direction,
-                breakout_price=breakout_price,
-                breakout_timestamp=breakout_ts,
-                trade_result=trade_result,
-                trade_pnl_r=trade_pnl_r,
-                bars_to_close=bars_to_close,
-                r_multiple=r_multiple,
-                reached_2r=reached_2r,
-                reached_3r=reached_3r,
-                breakout_body_ratio=breakout_body_ratio,
-                continuation_bars=continuation_bars,
-                trading_score=trading_score
+            trading_zone = self._build_trading_zone(
+                zone_low, zone_high, start_ts, end_ts, touches, duration_hours,
+                avg_volume, volume_score, len(zone_candles),
+                breakout_direction, breakout_close_price, breakout_ts,
+                params.entry_mode, entry_price, entry_ts, entry_bar_offset,
+                sl_price, tp_price,
+                trade_result, trade_pnl_r, bars_to_close,
+                r_multiple, reached_2r, reached_3r,
+                breakout_body_ratio, continuation_bars, trading_score,
+                trade_close_timestamp=trade_close_ts
             )
-
             trading_zones.append(trading_zone)
 
-        # Calcular estadísticas finales
+        # Estadisticas finales - usar PnL real de cada trade (ya no hay OPEN)
         total_closed = stats["wins"] + stats["losses"]
         win_rate = (stats["wins"] / total_closed * 100) if total_closed > 0 else 0
-        total_pnl = (stats["wins"] * 2) - stats["losses"]
+        total_pnl = sum(tz.trade_pnl_r for tz in trading_zones if tz.trade_result in ("WIN", "LOSS"))
         expectancy = total_pnl / total_closed if total_closed > 0 else 0
 
-        print(f"[ZoneDetector] Trading Zones RESULTADOS:")
+        print(f"[ZoneDetector] Trading Zones RESULTADOS (mode={params.entry_mode}, pos={params.position_mode}, sl={params.sl_mode}):")
         print(f"  - Total zonas: {len(trading_zones)}")
-        print(f"  - Wins: {stats['wins']}, Losses: {stats['losses']}, Open: {stats['open']}")
+        print(f"  - Wins: {stats['wins']}, Losses: {stats['losses']}, Skipped: {stats['skipped']}")
         print(f"  - Win Rate: {win_rate:.1f}%")
-        print(f"  - Total P&L: {total_pnl:+.0f}R")
+        print(f"  - Total P&L: {total_pnl:+.1f}R")
         print(f"  - Expectancy: {expectancy:.3f}R por trade")
 
-        # Ordenar por trading_score descendente
-        return sorted(trading_zones, key=lambda z: z.trading_score, reverse=True)
+        # =====================================================================
+        # ASIGNAR timeline_index cronologico a cada zona
+        # =====================================================================
+        from datetime import datetime as _dt
+        # Ordenar por entry_timestamp (o start_timestamp si no tiene entry)
+        zones_by_time = sorted(trading_zones, key=lambda z: z.entry_timestamp if z.entry_timestamp > 0 else z.start_timestamp)
+        for i, tz in enumerate(zones_by_time):
+            tz.timeline_index = i + 1  # 1-based
+
+        # =====================================================================
+        # LOG DETALLADO: Solo trades activos (WIN/LOSS), ordenados por tiempo
+        # Esto muestra la secuencia REAL de posiciones abiertas/cerradas
+        # =====================================================================
+        active_trades = [tz for tz in zones_by_time if tz.trade_result in ("WIN", "LOSS")]
+        print(f"\n{'='*110}")
+        print(f"[TIMELINE] TRADES ACTIVOS en orden cronologico (mode={params.position_mode})")
+        print(f"{'='*110}")
+        print(f"{'TL#':>4} | {'Result':>6} | {'Dir':>5} | {'Entry Date':>14} | {'Close Date':>14} | {'Entry$':>10} | {'SL$':>10} | {'TP$':>10} | {'PnL':>6} | Overlap?")
+        print(f"{'-'*4}-+-{'-'*6}-+-{'-'*5}-+-{'-'*14}-+-{'-'*14}-+-{'-'*10}-+-{'-'*10}-+-{'-'*10}-+-{'-'*6}-+-{'-'*10}")
+
+        prev_close_ts = 0
+        overlap_count = 0
+        for tz in active_trades:
+            et = _dt.fromtimestamp(tz.entry_timestamp / 1000).strftime('%m/%d %H:%M') if tz.entry_timestamp else '---'
+            tc = _dt.fromtimestamp(tz.trade_close_timestamp / 1000).strftime('%m/%d %H:%M') if tz.trade_close_timestamp else '---'
+
+            overlap_flag = ""
+            if prev_close_ts > 0 and tz.entry_timestamp > 0:
+                if tz.entry_timestamp <= prev_close_ts:
+                    overlap_flag = "OVERLAP!"
+                    overlap_count += 1
+
+            print(f"{tz.timeline_index:>4} | {tz.trade_result:>6} | {tz.breakout_direction:>5} | {et:>14} | {tc:>14} | {tz.entry_price:>10.2f} | {tz.sl_price:>10.2f} | {tz.tp_price:>10.2f} | {tz.trade_pnl_r:>+5.1f}R | {overlap_flag}")
+
+            if tz.trade_close_timestamp > 0:
+                prev_close_ts = tz.trade_close_timestamp
+
+        if overlap_count > 0:
+            print(f"\n*** ALERTA: {overlap_count} SOLAPAMIENTO(S) DETECTADO(S) ***")
+        else:
+            print(f"\n[OK] Sin solapamientos entre trades activos")
+        print(f"{'='*110}\n")
+
+        # Retornar ordenado por tiempo (timeline_index ya asignado)
+        return zones_by_time
+
+    # =========================================================================
+    # HELPERS para Trading Zones
+    # =========================================================================
+
+    @staticmethod
+    def _is_swing_high_static(candles: List[Dict], idx: int, bars: int) -> bool:
+        """Detecta si la vela en idx es un swing high (high mayor que N velas a cada lado)."""
+        if idx < bars or idx >= len(candles) - bars:
+            return False
+        current_high = candles[idx]['high']
+        for j in range(idx - bars, idx):
+            if candles[j]['high'] >= current_high:
+                return False
+        for j in range(idx + 1, idx + bars + 1):
+            if candles[j]['high'] >= current_high:
+                return False
+        return True
+
+    @staticmethod
+    def _is_swing_low_static(candles: List[Dict], idx: int, bars: int) -> bool:
+        """Detecta si la vela en idx es un swing low (low menor que N velas a cada lado)."""
+        if idx < bars or idx >= len(candles) - bars:
+            return False
+        current_low = candles[idx]['low']
+        for j in range(idx - bars, idx):
+            if candles[j]['low'] <= current_low:
+                return False
+        for j in range(idx + 1, idx + bars + 1):
+            if candles[j]['low'] <= current_low:
+                return False
+        return True
+
+    def _find_swing_sl(self, candles: List[Dict], breakout_idx: int,
+                       breakout_direction: str, swing_bars: int,
+                       zone_low: float, zone_high: float,
+                       entry_price: float = 0.0) -> float:
+        """
+        Busca el swing high/low anterior al breakout para usar como SL.
+        - Breakout UP (LONG): SL al swing LOW anterior (DEBAJO del entry)
+        - Breakout DOWN (SHORT): SL al swing HIGH anterior (ENCIMA del entry)
+        Busca hacia atras desde el breakout, de mas reciente a mas antiguo.
+        Solo acepta swings que queden del lado defensivo correcto.
+        Si no encuentra, usa zone_low (LONG) o zone_high (SHORT) como fallback.
+        """
+        search_start = max(swing_bars, 0)
+        search_end = breakout_idx - swing_bars
+
+        if search_end <= search_start:
+            # No hay espacio para buscar
+            return zone_low if breakout_direction == "UP" else zone_high
+
+        if breakout_direction == "UP":
+            # LONG: buscar swing LOW que este DEBAJO del entry_price
+            for si in range(search_end, search_start - 1, -1):
+                if self._is_swing_low_static(candles, si, swing_bars):
+                    sl_candidate = candles[si]['low']
+                    if entry_price == 0.0 or sl_candidate < entry_price:
+                        return sl_candidate
+            # Fallback: el low de la zona (siempre debajo del breakout)
+            return zone_low
+        else:
+            # SHORT: buscar swing HIGH que este ENCIMA del entry_price
+            for si in range(search_end, search_start - 1, -1):
+                if self._is_swing_high_static(candles, si, swing_bars):
+                    sl_candidate = candles[si]['high']
+                    if entry_price == 0.0 or sl_candidate > entry_price:
+                        return sl_candidate
+            # Fallback: el high de la zona (siempre encima del breakout)
+            return zone_high
+
+    def _build_trading_zone(
+        self,
+        zone_low: float, zone_high: float,
+        start_ts: int, end_ts: int,
+        touches: Dict[str, int], duration_hours: float,
+        avg_volume: float, volume_score: float, candles_in_zone: int,
+        breakout_direction: str, breakout_price: float, breakout_ts: int,
+        entry_mode: str, entry_price: float, entry_ts: int, entry_bar_offset: int,
+        sl_price: float, tp_price: float,
+        trade_result: str, trade_pnl_r: float, bars_to_close: int,
+        r_multiple: float, reached_2r: bool, reached_3r: bool,
+        breakout_body_ratio: float, continuation_bars: int, trading_score: float,
+        trade_close_timestamp: int = 0
+    ) -> TradingZone:
+        """Construye un objeto TradingZone con todos los campos."""
+        zone_mid = (zone_high + zone_low) / 2
+        price_range_pct = ((zone_high - zone_low) / zone_mid * 100) if zone_mid > 0 else 0
+
+        return TradingZone(
+            id=self._generate_zone_id(),
+            min_price=zone_low,
+            max_price=zone_high,
+            start_timestamp=start_ts,
+            end_timestamp=end_ts,
+            touches_support=touches.get('support', 0) if isinstance(touches, dict) else 0,
+            touches_resistance=touches.get('resistance', 0) if isinstance(touches, dict) else 0,
+            total_touches=touches.get('total', 0) if isinstance(touches, dict) else 0,
+            duration_hours=duration_hours,
+            avg_volume=avg_volume,
+            volume_score=volume_score,
+            method="trading_zones",
+            score=trading_score,
+            candles_in_zone=candles_in_zone,
+            price_range_pct=price_range_pct,
+            breakout_direction=breakout_direction,
+            breakout_price=breakout_price,
+            breakout_timestamp=breakout_ts,
+            entry_mode=entry_mode,
+            entry_price=entry_price,
+            entry_timestamp=entry_ts,
+            entry_bar_offset=entry_bar_offset,
+            sl_price=sl_price,
+            tp_price=tp_price,
+            trade_result=trade_result,
+            trade_pnl_r=trade_pnl_r,
+            bars_to_close=bars_to_close,
+            r_multiple=r_multiple,
+            reached_2r=reached_2r,
+            reached_3r=reached_3r,
+            breakout_body_ratio=breakout_body_ratio,
+            continuation_bars=continuation_bars,
+            trading_score=trading_score,
+            trade_close_timestamp=trade_close_timestamp,
+        )
 
     def _calculate_rolling_atr_for_trading(self, candles: List[Dict], period: int = 14) -> List[float]:
         """Calcula ATR rolling para cada vela."""

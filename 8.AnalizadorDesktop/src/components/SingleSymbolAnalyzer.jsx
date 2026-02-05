@@ -103,7 +103,7 @@ const SingleSymbolAnalyzer = () => {
     "Double Top/Bottom": false,
     "Support & Resistance": false,
     "S&R v2": true,
-    "Swing Detector": true
+    "Swing Detector": false
   };
 
   const [indicatorStates, setIndicatorStates] = useState(() => {
@@ -1079,6 +1079,7 @@ const SingleSymbolAnalyzer = () => {
           onClose={() => setShowZoneDetectorSettings(false)}
           indicatorManager={indicatorManagerRef.current}
           symbol={symbol}
+          interval={interval}
           onZonesLoaded={(result) => {
             log.info(`Zonas cargadas: ${result.zones?.length || 0}`);
             // Forzar redraw del chart usando el manager del Registry
