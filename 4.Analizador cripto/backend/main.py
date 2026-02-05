@@ -4404,26 +4404,8 @@ ZONES_CSV_DIR.mkdir(exist_ok=True)
 @app.post("/api/zones/detect")
 async def detect_trading_zones(request: Request):
     """
-    Detecta zonas de consolidación y simula trades con TP=2R, SL=1R.
-    Genera un CSV con formato europeo cuando se cambian los parámetros.
-
-    Body:
-    {
-        "symbol": "BTCUSDT",
-        "interval": "5",
-        "days": 120,
-        "params": {
-            "consol_min_bars": 8,
-            "consol_max_bars": 50,
-            "consol_max_range_pct": 2.0,
-            "consol_atr_ratio": 0.6,
-            "consol_body_ratio": 0.5,
-            "consol_max_outside_bars": 3,
-            "lookforward_bars": 100,
-            "max_price_range_pct": 5.0
-        },
-        "generate_csv": true
-    }
+    Detecta zonas de consolidacion y simula trades con TP=2R, SL=1R.
+    Soporta 5 capas opcionales v3.0 para mejorar deteccion.
     """
     try:
         body = await request.json()
@@ -4431,14 +4413,13 @@ async def detect_trading_zones(request: Request):
         interval = body.get("interval", "5")
         days = body.get("days", 120)
         params_dict = body.get("params", {})
-        generate_csv = body.get("generate_csv", True)
 
         import time as _time
         _zone_start = _time.time()
 
         interval_min = {"1":1,"3":3,"5":5,"15":15,"30":30,"60":60,"120":120,"240":240,"D":1440,"W":10080}.get(interval, 60)
         expected_candles = int((days * 24 * 60) / interval_min)
-        print(f"[{symbol}] [ZONES] === INICIO DETECCION ===")
+        print(f"[{symbol}] [ZONES] === INICIO DETECCION v3.0 ===")
         print(f"[{symbol}] [ZONES] interval={interval}, days={days}, velas esperadas=~{expected_candles}")
         print(f"[{symbol}] [ZONES] Params: {params_dict}")
 
@@ -4467,7 +4448,7 @@ async def detect_trading_zones(request: Request):
         candles = historical['data']
         print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas en {_fetch_elapsed:.1f}s (esperadas: ~{expected_candles})")
 
-        # Configurar parametros de deteccion
+        # Configurar parametros de deteccion (clasicos + capas v3.0)
         params = ZoneDetectionParams(
             consol_min_bars=params_dict.get("consol_min_bars", 8),
             consol_max_bars=params_dict.get("consol_max_bars", 50),
@@ -4481,6 +4462,22 @@ async def detect_trading_zones(request: Request):
             position_mode=params_dict.get("position_mode", "sequential"),
             swing_bars=params_dict.get("swing_bars", 5),
             sl_mode=params_dict.get("sl_mode", "zone_opposite"),
+            # Capas v3.0
+            use_atr_band=params_dict.get("use_atr_band", False),
+            atr_band_period=params_dict.get("atr_band_period", 200),
+            atr_band_multiplier=params_dict.get("atr_band_multiplier", 1.0),
+            atr_band_ma_period=params_dict.get("atr_band_ma_period", 20),
+            use_reentry=params_dict.get("use_reentry", False),
+            max_reentry_bars=params_dict.get("max_reentry_bars", 3),
+            use_ttm_prefilter=params_dict.get("use_ttm_prefilter", False),
+            ttm_atr_length=params_dict.get("ttm_atr_length", 20),
+            ttm_kc_multiplier=params_dict.get("ttm_kc_multiplier", 1.5),
+            ttm_min_squeeze_bars=params_dict.get("ttm_min_squeeze_bars", 5),
+            use_bbwp_scoring=params_dict.get("use_bbwp_scoring", False),
+            bbwp_lookback=params_dict.get("bbwp_lookback", 252),
+            bbwp_squeeze_threshold=params_dict.get("bbwp_squeeze_threshold", 20),
+            use_inside_pct_filter=params_dict.get("use_inside_pct_filter", False),
+            min_inside_pct=params_dict.get("min_inside_pct", 70.0),
         )
 
         # Detectar zonas con simulacion de trades
@@ -4495,13 +4492,7 @@ async def detect_trading_zones(request: Request):
         # Convertir a diccionarios para JSON
         zones_data = [zone.to_dict() for zone in zones]
 
-        # Generar CSV si se solicita
-        csv_path = None
-        if generate_csv and len(zones) > 0:
-            csv_path = _generate_zones_csv(symbol, interval, days, zones_data, params_dict)
-            print(f"[{symbol}] [ZONES] CSV generado: {csv_path}")
-
-        # Calcular estadisticas - ya no hay OPEN, todos los trades cierran
+        # Calcular estadisticas
         wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
         losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
         skipped = len([z for z in zones_data if z.get('trade_result') == 'SKIPPED'])
@@ -4531,7 +4522,6 @@ async def detect_trading_zones(request: Request):
                 "entry_mode": params_dict.get("entry_mode", "breakout_close"),
                 "position_mode": params_dict.get("position_mode", "sequential"),
             },
-            "csv_path": csv_path,
             "params_used": params_dict
         }
 
@@ -4544,6 +4534,38 @@ async def detect_trading_zones(request: Request):
             "error": str(e),
             "zones": []
         }
+
+
+@app.post("/api/zones/export-csv")
+async def export_zones_csv(request: Request):
+    """
+    Genera CSV a partir de zonas ya detectadas (enviadas desde el frontend).
+    Se invoca con un boton despues de la simulacion, no automaticamente.
+    """
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        zones_data = body.get("zones", [])
+        params_dict = body.get("params", {})
+
+        if not zones_data:
+            return {"success": False, "error": "No hay zonas para exportar"}
+
+        csv_path = _generate_zones_csv(symbol, interval, days, zones_data, params_dict)
+        print(f"[{symbol}] [ZONES] CSV exportado: {csv_path}")
+
+        return {
+            "success": True,
+            "csv_path": csv_path,
+            "zones_exported": len(zones_data)
+        }
+    except Exception as e:
+        print(f"[ZONES CSV ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
 
 
 def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict], params: dict) -> str:

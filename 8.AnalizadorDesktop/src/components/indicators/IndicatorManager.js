@@ -1341,14 +1341,28 @@ class IndicatorManager {
           position_mode: params.position_mode || "sequential",
           swing_bars: params.swing_bars || 5,
           sl_mode: params.sl_mode || "zone_opposite",
-        },
-        generate_csv: params.generate_csv !== false
+          // Capas v3.0
+          use_atr_band: params.use_atr_band || false,
+          atr_band_period: params.atr_band_period || 200,
+          atr_band_multiplier: params.atr_band_multiplier || 1.0,
+          atr_band_ma_period: params.atr_band_ma_period || 20,
+          use_reentry: params.use_reentry || false,
+          max_reentry_bars: params.max_reentry_bars || 3,
+          use_ttm_prefilter: params.use_ttm_prefilter || false,
+          ttm_atr_length: params.ttm_atr_length || 20,
+          ttm_kc_multiplier: params.ttm_kc_multiplier || 1.5,
+          ttm_min_squeeze_bars: params.ttm_min_squeeze_bars || 5,
+          use_bbwp_scoring: params.use_bbwp_scoring || false,
+          bbwp_lookback: params.bbwp_lookback || 252,
+          bbwp_squeeze_threshold: params.bbwp_squeeze_threshold || 20,
+          use_inside_pct_filter: params.use_inside_pct_filter || false,
+          min_inside_pct: params.min_inside_pct || 70.0,
+        }
       };
 
       const fetchUrl = `${API_BASE_URL}/api/zones/detect`;
       log.info(`[${this.symbol}] Cargando zonas: days=${requestDays}, interval=${this.interval}`);
       log.info(`[${this.symbol}] URL: ${fetchUrl}`);
-      log.info(`[${this.symbol}] Request body:`, JSON.stringify(requestBody));
 
       // Callback de progreso (si se paso)
       const onProgress = params._onProgress || null;
@@ -1362,14 +1376,12 @@ class IndicatorManager {
       const startTime = Date.now();
       let response;
       try {
-        log.info(`[${this.symbol}] Enviando POST a ${fetchUrl}...`);
         response = await fetch(fetchUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestBody),
           signal: controller.signal
         });
-        log.info(`[${this.symbol}] Fetch completado: status=${response.status}`);
       } catch (fetchError) {
         clearTimeout(timeoutId);
         log.error(`[${this.symbol}] Fetch FALLO: ${fetchError.name}: ${fetchError.message}`);
@@ -1389,15 +1401,10 @@ class IndicatorManager {
         this.zoneVisualizerIndicator.setZones(result.zones);
         log.info(`[${this.symbol}] ${result.zones.length} zonas cargadas (${result.candles_count || '?'} velas analizadas)`);
 
-        if (result.csv_path) {
-          log.info(`[${this.symbol}] CSV generado: ${result.csv_path}`);
-        }
-
         return {
           success: true,
           zones: result.zones,
           stats: result.stats,
-          csv_path: result.csv_path,
           candles_count: result.candles_count
         };
       } else {
@@ -1413,6 +1420,43 @@ class IndicatorManager {
         errorMsg = `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`;
       }
       return { success: false, error: errorMsg };
+    }
+  }
+
+  /**
+   * Exporta las zonas actualmente cargadas a CSV (endpoint separado)
+   * @param {object} params - symbol, interval, days, zones, params usados en la deteccion
+   * @returns {Promise<object>} - { success, csv_path, zones_exported }
+   */
+  async exportZonesCsv(params = {}) {
+    try {
+      const zones = this.zoneVisualizerIndicator ? this.zoneVisualizerIndicator.getZones() : [];
+      if (!zones || zones.length === 0) {
+        return { success: false, error: 'No hay zonas para exportar' };
+      }
+
+      const requestBody = {
+        symbol: params.symbol || this.symbol,
+        interval: params.interval || this.interval,
+        days: params.days || this.days,
+        zones: zones,
+        params: params.detectionParams || {}
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/export-csv`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        log.info(`[${this.symbol}] CSV exportado: ${result.csv_path} (${result.zones_exported} zonas)`);
+      }
+      return result;
+    } catch (error) {
+      log.error(`[${this.symbol}] Error exportando CSV:`, error.message);
+      return { success: false, error: error.message };
     }
   }
 

@@ -16,7 +16,23 @@ const defaultParams = {
   entry_mode: "breakout_close",
   position_mode: "sequential",
   swing_bars: 5,
-  sl_mode: "zone_opposite"
+  sl_mode: "zone_opposite",
+  // Capas v3.0
+  use_atr_band: false,
+  atr_band_period: 200,
+  atr_band_multiplier: 1.0,
+  atr_band_ma_period: 20,
+  use_reentry: false,
+  max_reentry_bars: 3,
+  use_ttm_prefilter: false,
+  ttm_atr_length: 20,
+  ttm_kc_multiplier: 1.5,
+  ttm_min_squeeze_bars: 5,
+  use_bbwp_scoring: false,
+  bbwp_lookback: 252,
+  bbwp_squeeze_threshold: 20,
+  use_inside_pct_filter: false,
+  min_inside_pct: 70.0
 };
 
 // Limites maximos de dias por timeframe (debe coincidir con backend)
@@ -33,6 +49,8 @@ const DEFAULT_ZONE_DAYS_BY_INTERVAL = {
 
 // Campos que son strings (no numericos) - fuera del componente para estabilidad
 const STRING_PARAMS = ['entry_mode', 'position_mode', 'sl_mode'];
+// Campos booleanos (toggles de capas)
+const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter'];
 
 function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded, symbol, interval }) {
   const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 120;
@@ -50,7 +68,9 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const handleParamChange = useCallback((key, value) => {
     setParams(prev => ({
       ...prev,
-      [key]: STRING_PARAMS.includes(key) ? value : (typeof value === 'string' ? parseFloat(value) || 0 : value)
+      [key]: STRING_PARAMS.includes(key) ? value
+           : BOOL_PARAMS.includes(key) ? Boolean(value)
+           : (typeof value === 'string' ? parseFloat(value) || 0 : value)
     }));
   }, []);
 
@@ -95,7 +115,6 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       const result = await manager.loadTradingZones({
         ...params,
         days: zoneDays,
-        generate_csv: true,
         _onProgress: (p) => setProgress(p)
       });
 
@@ -104,7 +123,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       if (result.success) {
         setStats(result.stats);
         setCandlesCount(result.candles_count || null);
-        setCsvPath(result.csv_path);
+        setCsvPath(null);  // Reset csv path (se genera con boton aparte)
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
         setProgress({ phase: 'done', message: `Completado en ${elapsed}s` });
         if (onZonesLoaded) {
@@ -131,6 +150,32 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       setCsvPath(null);
     }
   }, [getManager]);
+
+  const [exportingCsv, setExportingCsv] = useState(false);
+
+  const handleExportCsv = useCallback(async () => {
+    const manager = getManager();
+    if (!manager) return;
+
+    setExportingCsv(true);
+    try {
+      const result = await manager.exportZonesCsv({
+        symbol,
+        interval,
+        days: zoneDays,
+        detectionParams: params
+      });
+      if (result.success) {
+        setCsvPath(result.csv_path);
+      } else {
+        setError(result.error || 'Error exportando CSV');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setExportingCsv(false);
+    }
+  }, [getManager, symbol, interval, zoneDays, params]);
 
   if (!isOpen) return null;
 
@@ -234,7 +279,183 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             </div>
           </div>
 
-          {/* Parámetros de simulación */}
+          {/* Capas v3.0 opcionales */}
+          <div style={styles.section}>
+            <h4 style={styles.sectionTitle}>Capas Opcionales v3.0</h4>
+
+            {/* Capa 1: Banda ATR Dinamica */}
+            <div style={styles.layerBlock}>
+              <div style={styles.layerHeader}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.use_atr_band}
+                    onChange={(e) => handleParamChange('use_atr_band', e.target.checked)}
+                  />
+                  <span style={styles.layerName}>Banda ATR Dinamica</span>
+                </label>
+              </div>
+              {params.use_atr_band && (
+                <div style={styles.layerContent}>
+                  <div style={{fontSize: '11px', color: '#777', marginBottom: '6px'}}>
+                    Reemplaza high/low absoluto con SMA +/- ATR*mult
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>ATR Periodo:</label>
+                    <input type="number" style={styles.input} value={params.atr_band_period}
+                      onChange={(e) => handleParamChange('atr_band_period', parseInt(e.target.value))}
+                      min="50" max="500" />
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Multiplicador:</label>
+                    <input type="number" style={styles.input} value={params.atr_band_multiplier}
+                      onChange={(e) => handleParamChange('atr_band_multiplier', e.target.value)}
+                      step="0.1" min="0.5" max="3.0" />
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>SMA Periodo:</label>
+                    <input type="number" style={styles.input} value={params.atr_band_ma_period}
+                      onChange={(e) => handleParamChange('atr_band_ma_period', parseInt(e.target.value))}
+                      min="5" max="100" />
+                  </div>
+                  <div style={{fontSize: '10px', color: '#666', marginTop: '2px'}}>
+                    Ignora: Max Rango %, ATR Ratio, Body Ratio
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Capa 2: Re-ingreso Tolerante */}
+            <div style={styles.layerBlock}>
+              <div style={styles.layerHeader}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.use_reentry}
+                    onChange={(e) => handleParamChange('use_reentry', e.target.checked)}
+                  />
+                  <span style={styles.layerName}>Re-ingreso Tolerante</span>
+                </label>
+              </div>
+              {params.use_reentry && (
+                <div style={styles.layerContent}>
+                  <div style={{fontSize: '11px', color: '#777', marginBottom: '6px'}}>
+                    Permite velas fuera sin romper la zona
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Max Barras Fuera:</label>
+                    <input type="number" style={styles.input} value={params.max_reentry_bars}
+                      onChange={(e) => handleParamChange('max_reentry_bars', parseInt(e.target.value))}
+                      min="1" max="10" />
+                  </div>
+                  <div style={{fontSize: '10px', color: '#666', marginTop: '2px'}}>
+                    Reemplaza el parametro "Max Outside Bars" clasico
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Capa 3: TTM Squeeze Pre-Filtro */}
+            <div style={styles.layerBlock}>
+              <div style={styles.layerHeader}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.use_ttm_prefilter}
+                    onChange={(e) => handleParamChange('use_ttm_prefilter', e.target.checked)}
+                  />
+                  <span style={styles.layerName}>TTM Squeeze Pre-Filtro</span>
+                </label>
+              </div>
+              {params.use_ttm_prefilter && (
+                <div style={styles.layerContent}>
+                  <div style={{fontSize: '11px', color: '#777', marginBottom: '6px'}}>
+                    Solo busca zonas donde BB esta dentro de KC
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>ATR Length:</label>
+                    <input type="number" style={styles.input} value={params.ttm_atr_length}
+                      onChange={(e) => handleParamChange('ttm_atr_length', parseInt(e.target.value))}
+                      min="5" max="50" />
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>KC Multiplicador:</label>
+                    <input type="number" style={styles.input} value={params.ttm_kc_multiplier}
+                      onChange={(e) => handleParamChange('ttm_kc_multiplier', e.target.value)}
+                      step="0.1" min="0.5" max="3.0" />
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Min Barras Squeeze:</label>
+                    <input type="number" style={styles.input} value={params.ttm_min_squeeze_bars}
+                      onChange={(e) => handleParamChange('ttm_min_squeeze_bars', parseInt(e.target.value))}
+                      min="2" max="20" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Capa 4: BBWP Scoring */}
+            <div style={styles.layerBlock}>
+              <div style={styles.layerHeader}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.use_bbwp_scoring}
+                    onChange={(e) => handleParamChange('use_bbwp_scoring', e.target.checked)}
+                  />
+                  <span style={styles.layerName}>BBWP Scoring</span>
+                </label>
+              </div>
+              {params.use_bbwp_scoring && (
+                <div style={styles.layerContent}>
+                  <div style={{fontSize: '11px', color: '#777', marginBottom: '6px'}}>
+                    Bonus al score si BBWP bajo (volatilidad comprimida)
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Lookback:</label>
+                    <input type="number" style={styles.input} value={params.bbwp_lookback}
+                      onChange={(e) => handleParamChange('bbwp_lookback', parseInt(e.target.value))}
+                      min="50" max="500" />
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Threshold %:</label>
+                    <input type="number" style={styles.input} value={params.bbwp_squeeze_threshold}
+                      onChange={(e) => handleParamChange('bbwp_squeeze_threshold', parseInt(e.target.value))}
+                      min="5" max="50" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Capa 5: % Velas Dentro */}
+            <div style={styles.layerBlock}>
+              <div style={styles.layerHeader}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.use_inside_pct_filter}
+                    onChange={(e) => handleParamChange('use_inside_pct_filter', e.target.checked)}
+                  />
+                  <span style={styles.layerName}>% Velas Dentro</span>
+                </label>
+              </div>
+              {params.use_inside_pct_filter && (
+                <div style={styles.layerContent}>
+                  <div style={{fontSize: '11px', color: '#777', marginBottom: '6px'}}>
+                    Descarta zonas con muchas velas fuera del rango
+                  </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Min % Dentro:</label>
+                    <input type="number" style={styles.input} value={params.min_inside_pct}
+                      onChange={(e) => handleParamChange('min_inside_pct', e.target.value)}
+                      step="5" min="50" max="100" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Parametros de simulacion */}
           <div style={styles.section}>
             <h4 style={styles.sectionTitle}>Simulacion de Trade</h4>
 
@@ -435,10 +656,21 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             </div>
           )}
 
-          {/* CSV Path */}
-          {csvPath && (
-            <div style={styles.csvInfo}>
-              📁 CSV guardado: <code style={styles.code}>{csvPath}</code>
+          {/* Exportar CSV (solo visible despues de detectar) */}
+          {stats && (
+            <div style={{marginBottom: '12px'}}>
+              <button
+                style={styles.csvBtn}
+                onClick={handleExportCsv}
+                disabled={exportingCsv}
+              >
+                {exportingCsv ? 'Exportando...' : 'Exportar CSV'}
+              </button>
+              {csvPath && (
+                <div style={styles.csvInfo}>
+                  CSV guardado: <code style={styles.code}>{csvPath}</code>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -587,7 +819,8 @@ const styles = {
     borderRadius: '4px',
     padding: '8px 12px',
     fontSize: '12px',
-    color: '#A0A0A0'
+    color: '#A0A0A0',
+    marginTop: '6px'
   },
   code: {
     backgroundColor: '#1A1A2A',
@@ -595,6 +828,42 @@ const styles = {
     borderRadius: '2px',
     fontSize: '11px',
     color: '#4FC3F7'
+  },
+  csvBtn: {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '4px',
+    border: '1px solid #4A6FA5',
+    backgroundColor: 'transparent',
+    color: '#4A6FA5',
+    fontSize: '13px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  layerBlock: {
+    marginBottom: '8px',
+    borderRadius: '4px',
+    border: '1px solid #333',
+    overflow: 'hidden'
+  },
+  layerHeader: {
+    padding: '6px 10px',
+    backgroundColor: '#252536'
+  },
+  layerContent: {
+    padding: '8px 10px',
+    backgroundColor: '#1E1E2E',
+    borderTop: '1px solid #333'
+  },
+  checkboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    cursor: 'pointer'
+  },
+  layerName: {
+    fontSize: '13px',
+    color: '#C0C0C0'
   }
 };
 

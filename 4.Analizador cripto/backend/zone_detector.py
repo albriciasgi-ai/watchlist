@@ -123,6 +123,33 @@ class ZoneDetectionParams:
     swing_bars: int = 5                 # Velas a cada lado para confirmar swing (solo para swing_confirmation)
     sl_mode: str = "zone_opposite"     # "zone_opposite" (SL al lado opuesto del rango) o "swing_previous" (SL al swing H/L anterior)
 
+    # --- Capas opcionales v3.0 ---
+
+    # Capa 1: Banda ATR dinamica (reemplaza high/low absoluto para definir limites del rango)
+    use_atr_band: bool = False
+    atr_band_period: int = 200         # Periodo ATR largo para volatilidad de fondo
+    atr_band_multiplier: float = 1.0   # Ancho de la banda: SMA +/- ATR*mult
+    atr_band_ma_period: int = 20       # Periodo de la SMA central
+
+    # Capa 2: Re-ingreso tolerante (permite velas fuera temporalmente sin romper la zona)
+    use_reentry: bool = False
+    max_reentry_bars: int = 3          # Max velas fuera antes de romper
+
+    # Capa 3: TTM Squeeze como pre-filtro (solo busca zonas donde volatilidad esta comprimida)
+    use_ttm_prefilter: bool = False
+    ttm_atr_length: int = 20           # Periodo ATR para Keltner Channels
+    ttm_kc_multiplier: float = 1.5     # Multiplicador Keltner: SMA +/- ATR*mult
+    ttm_min_squeeze_bars: int = 5      # Minimo velas consecutivas con squeeze ON
+
+    # Capa 4: BBWP como scoring (bonus/penalizacion segun compresion de volatilidad)
+    use_bbwp_scoring: bool = False
+    bbwp_lookback: int = 252           # Periodos para calcular percentil
+    bbwp_squeeze_threshold: int = 20   # BBWP < esto = squeeze (bonus)
+
+    # Capa 5: % velas dentro como validacion (descarta zonas con muchas velas fuera)
+    use_inside_pct_filter: bool = False
+    min_inside_pct: float = 70.0       # Minimo % de velas con cuerpo dentro del rango
+
 
 class ZoneDetector:
     """
@@ -953,69 +980,195 @@ class ZoneDetector:
         # Pre-calcular ATR rolling
         atr_values = self._calculate_rolling_atr_for_trading(candles, 14)
 
-        print(f"[ZoneDetector] ===== VERSION 2.4 (sequential por ENTRY_TS, range recalc, sl_mode) =====")
+        print(f"[ZoneDetector] ===== VERSION 3.0 (5 capas opcionales) =====")
         print(f"[ZoneDetector] Trading Zones: ATR global = {global_atr:.2f}, velas = {len(candles)}")
         print(f"[ZoneDetector] Config: entry_mode={params.entry_mode}, position_mode={params.position_mode}, swing_bars={params.swing_bars}, sl_mode={params.sl_mode}")
+
+        # --- Pre-calculos condicionales v3.0 ---
+        # Solo calculamos lo que el usuario habilito
+
+        # Para capas 1, 3 y 4 necesitamos SMA y std_dev (Bollinger base)
+        bb_sma_values = []
+        bb_std_values = []
+        need_bb_base = params.use_ttm_prefilter or params.use_bbwp_scoring
+        if need_bb_base:
+            bb_period = params.atr_band_ma_period  # Usamos el mismo periodo (default 20)
+            bb_sma_values = self._calculate_sma(candles, bb_period)
+            bb_std_values = self._calculate_std_dev(candles, bb_period)
+
+        # Capa 1: Banda ATR dinamica
+        atr_band_sma = []
+        atr_band_upper = []
+        atr_band_lower = []
+        if params.use_atr_band:
+            atr_band_sma = self._calculate_sma(candles, params.atr_band_ma_period)
+            long_atr = self._calculate_rolling_atr_for_trading(candles, params.atr_band_period)
+            for idx in range(len(candles)):
+                if atr_band_sma[idx] > 0 and long_atr[idx] > 0:
+                    atr_band_upper.append(atr_band_sma[idx] + long_atr[idx] * params.atr_band_multiplier)
+                    atr_band_lower.append(atr_band_sma[idx] - long_atr[idx] * params.atr_band_multiplier)
+                else:
+                    atr_band_upper.append(0.0)
+                    atr_band_lower.append(0.0)
+            print(f"[ZoneDetector] Capa 1 ATR Band: ON (period={params.atr_band_period}, mult={params.atr_band_multiplier}, ma={params.atr_band_ma_period})")
+
+        # Capa 3: TTM Squeeze pre-filtro -> regiones donde buscar
+        squeeze_regions = None  # None = buscar en todo el rango
+        if params.use_ttm_prefilter:
+            if not bb_sma_values:
+                bb_sma_values = self._calculate_sma(candles, params.ttm_atr_length)
+                bb_std_values = self._calculate_std_dev(candles, params.ttm_atr_length)
+            squeeze_vals = self._calculate_ttm_squeeze_values(
+                candles, bb_sma_values, bb_std_values,
+                params.ttm_atr_length, params.ttm_kc_multiplier
+            )
+            squeeze_regions = self._find_squeeze_regions(squeeze_vals, params.ttm_min_squeeze_bars)
+            print(f"[ZoneDetector] Capa 3 TTM Pre-filter: ON ({len(squeeze_regions)} regiones de squeeze encontradas)")
+
+        # Capa 4: BBWP scoring (pre-calculo)
+        bbwp_values = []
+        if params.use_bbwp_scoring:
+            if not bb_sma_values:
+                bb_sma_values = self._calculate_sma(candles, 20)
+                bb_std_values = self._calculate_std_dev(candles, 20)
+            bbwp_values = self._calculate_bbwp_values(
+                candles, bb_sma_values, bb_std_values, params.bbwp_lookback
+            )
+            print(f"[ZoneDetector] Capa 4 BBWP Scoring: ON (lookback={params.bbwp_lookback}, threshold={params.bbwp_squeeze_threshold})")
+
+        # Log capas habilitadas
+        layers_on = []
+        if params.use_atr_band: layers_on.append("ATR_Band")
+        if params.use_reentry: layers_on.append(f"Reentry({params.max_reentry_bars})")
+        if params.use_ttm_prefilter: layers_on.append("TTM_Squeeze")
+        if params.use_bbwp_scoring: layers_on.append("BBWP_Score")
+        if params.use_inside_pct_filter: layers_on.append(f"InsidePct({params.min_inside_pct}%)")
+        if layers_on:
+            print(f"[ZoneDetector] Capas v3.0 activas: {', '.join(layers_on)}")
+        else:
+            print(f"[ZoneDetector] Capas v3.0: ninguna activa (modo clasico)")
 
         found_ranges = []
         i = 0
 
         # FASE 1: Detectar consolidaciones
-        while i < len(candles) - params.consol_min_bars:
-            consol_start = i
-            consol_end = i + params.consol_min_bars
+        # Si TTM pre-filter esta activo, solo buscar dentro de squeeze regions
+        if squeeze_regions is not None and len(squeeze_regions) > 0:
+            search_ranges = squeeze_regions
+        else:
+            # Sin filtro: buscar en todo el rango de velas
+            search_ranges = [(0, len(candles) - params.consol_min_bars)]
 
-            window = candles[consol_start:consol_end]
-            range_high = max(c['high'] for c in window)
-            range_low = min(c['low'] for c in window)
-            range_mid = (range_high + range_low) / 2
-            range_pct = ((range_high - range_low) / range_mid) * 100 if range_mid > 0 else 100
+        for sr_start, sr_end in search_ranges:
+            i = sr_start
+            while i < min(sr_end + 1, len(candles) - params.consol_min_bars):
+                consol_start = i
+                consol_end = i + params.consol_min_bars
 
-            local_atr = self._calculate_atr(window, min(5, len(window) // 2))
-            atr_ratio = local_atr / global_atr if global_atr > 0 else 1.0
-            avg_body_ratio = self._calculate_avg_body_ratio(window)
+                window = candles[consol_start:consol_end]
 
-            if (range_pct > params.consol_max_range_pct or
-                atr_ratio > params.consol_atr_ratio or
-                avg_body_ratio > params.consol_body_ratio):
-                i += 1
-                continue
-
-            # Extender la zona hasta breakout
-            consecutive_outside = 0
-            last_valid_end = consol_end
-
-            while consol_end < len(candles) and (consol_end - consol_start) < params.consol_max_bars:
-                next_candle = candles[consol_end]
-                candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
-
-                if candle_touches_range:
-                    consecutive_outside = 0
-                    last_valid_end = consol_end + 1
+                # --- Capa 1: Definir limites del rango ---
+                if params.use_atr_band and atr_band_upper and atr_band_lower:
+                    # Banda ATR: usar SMA +/- ATR*mult como limites
+                    # Los limites son los de la vela CENTRAL de la ventana semilla
+                    mid_idx = consol_start + params.consol_min_bars // 2
+                    if mid_idx < len(atr_band_upper) and atr_band_upper[mid_idx] > 0:
+                        range_high = atr_band_upper[mid_idx]
+                        range_low = atr_band_lower[mid_idx]
+                    else:
+                        range_high = max(c['high'] for c in window)
+                        range_low = min(c['low'] for c in window)
                 else:
-                    consecutive_outside += 1
-                    if consecutive_outside >= params.consol_max_outside_bars:
-                        consol_end = last_valid_end
-                        break
+                    # Clasico: high/low absoluto de la ventana semilla
+                    range_high = max(c['high'] for c in window)
+                    range_low = min(c['low'] for c in window)
 
-                consol_end += 1
+                range_mid = (range_high + range_low) / 2
+                range_pct = ((range_high - range_low) / range_mid) * 100 if range_mid > 0 else 100
 
-            consol_length = consol_end - consol_start
-            if consol_length >= params.consol_min_bars:
-                # Recalcular range_high/range_low con TODAS las velas de la zona final
-                final_zone_candles = candles[consol_start:consol_end]
-                final_range_high = max(c['high'] for c in final_zone_candles)
-                final_range_low = min(c['low'] for c in final_zone_candles)
-                found_ranges.append({
-                    'start_idx': consol_start,
-                    'end_idx': consol_end,
-                    'range_high': final_range_high,
-                    'range_low': final_range_low,
-                    'consol_length': consol_length
-                })
-                i = consol_end
-            else:
-                i += 1
+                # --- Validacion de semilla (solo si NO usamos ATR band) ---
+                if not params.use_atr_band:
+                    local_atr = self._calculate_atr(window, min(5, len(window) // 2))
+                    atr_ratio = local_atr / global_atr if global_atr > 0 else 1.0
+                    avg_body_ratio = self._calculate_avg_body_ratio(window)
+
+                    if (range_pct > params.consol_max_range_pct or
+                        atr_ratio > params.consol_atr_ratio or
+                        avg_body_ratio > params.consol_body_ratio):
+                        i += 1
+                        continue
+                else:
+                    # Con ATR band: solo verificar que la ventana tenga velas DENTRO de la banda
+                    inside_count = 0
+                    for c in window:
+                        if self._is_candle_inside_band(c, range_low, range_high):
+                            inside_count += 1
+                    if inside_count < len(window) * 0.5:
+                        # Menos de 50% de velas dentro de la banda -> no es consolidacion
+                        i += 1
+                        continue
+
+                # Extender la zona hasta breakout
+                consecutive_outside = 0
+                last_valid_end = consol_end
+                # Capa 2: max_outside usa re-entry si habilitado
+                max_outside = params.max_reentry_bars if params.use_reentry else params.consol_max_outside_bars
+
+                while consol_end < len(candles) and (consol_end - consol_start) < params.consol_max_bars:
+                    next_candle = candles[consol_end]
+
+                    # Determinar si la vela esta "dentro" del rango
+                    if params.use_atr_band and atr_band_upper and consol_end < len(atr_band_upper):
+                        # Con ATR band: usar limites dinamicos de la vela actual
+                        curr_high = atr_band_upper[consol_end]
+                        curr_low = atr_band_lower[consol_end]
+                        if curr_high > 0:
+                            candle_touches_range = self._is_candle_inside_band(next_candle, curr_low, curr_high)
+                        else:
+                            candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
+                    else:
+                        # Clasico: high/low estatico
+                        candle_touches_range = not (next_candle['low'] > range_high or next_candle['high'] < range_low)
+
+                    if candle_touches_range:
+                        consecutive_outside = 0
+                        last_valid_end = consol_end + 1
+                    else:
+                        consecutive_outside += 1
+                        if consecutive_outside >= max_outside:
+                            consol_end = last_valid_end
+                            break
+
+                    consol_end += 1
+
+                consol_length = consol_end - consol_start
+                if consol_length >= params.consol_min_bars:
+                    # Recalcular range_high/range_low con TODAS las velas de la zona final
+                    final_zone_candles = candles[consol_start:consol_end]
+                    final_range_high = max(c['high'] for c in final_zone_candles)
+                    final_range_low = min(c['low'] for c in final_zone_candles)
+
+                    # --- Capa 5: Validar % de velas dentro ---
+                    if params.use_inside_pct_filter:
+                        inside_count = 0
+                        for c in final_zone_candles:
+                            if self._is_candle_inside_band(c, final_range_low, final_range_high):
+                                inside_count += 1
+                        inside_pct = (inside_count / len(final_zone_candles)) * 100
+                        if inside_pct < params.min_inside_pct:
+                            i = consol_end
+                            continue
+
+                    found_ranges.append({
+                        'start_idx': consol_start,
+                        'end_idx': consol_end,
+                        'range_high': final_range_high,
+                        'range_low': final_range_low,
+                        'consol_length': consol_length
+                    })
+                    i = consol_end
+                else:
+                    i += 1
 
         print(f"[ZoneDetector] Trading Zones: Encontradas {len(found_ranges)} consolidaciones")
 
@@ -1383,6 +1536,17 @@ class ZoneDetector:
 
             trading_score = momentum_score + continuation_score + compression_score + volume_bonus
 
+            # --- Capa 4: BBWP scoring bonus ---
+            if params.use_bbwp_scoring and bbwp_values:
+                # Usar BBWP promedio de la zona de consolidacion
+                zone_bbwp_vals = [bbwp_values[idx] for idx in range(r['start_idx'], r['end_idx']) if idx < len(bbwp_values) and bbwp_values[idx] > 0]
+                if zone_bbwp_vals:
+                    avg_bbwp = sum(zone_bbwp_vals) / len(zone_bbwp_vals)
+                    if avg_bbwp <= params.bbwp_squeeze_threshold:
+                        # BBWP bajo = volatilidad comprimida = bonus
+                        bbwp_bonus = (params.bbwp_squeeze_threshold - avg_bbwp) / params.bbwp_squeeze_threshold * 15
+                        trading_score += bbwp_bonus
+
             if trade_result == "WIN":
                 trading_score = min(100, trading_score + 15)
             elif trade_result == "LOSS":
@@ -1641,6 +1805,130 @@ class ZoneDetector:
 
         # ATR simple (promedio de los últimos 'period' TR)
         return np.mean(true_ranges[-period:])
+
+    # =========================================================================
+    # HELPERS v3.0: Banda ATR, TTM Squeeze, BBWP
+    # =========================================================================
+
+    def _calculate_sma(self, candles: List[Dict], period: int) -> List[float]:
+        """Calcula SMA (Simple Moving Average) del close para cada vela."""
+        closes = [c['close'] for c in candles]
+        sma = [0.0] * len(candles)
+        for i in range(period - 1, len(candles)):
+            sma[i] = np.mean(closes[i - period + 1:i + 1])
+        # Rellenar primeros valores
+        if period - 1 < len(sma):
+            first_valid = sma[period - 1]
+            for i in range(period - 1):
+                sma[i] = first_valid
+        return sma
+
+    def _calculate_std_dev(self, candles: List[Dict], period: int) -> List[float]:
+        """Calcula desviacion estandar rolling del close."""
+        closes = [c['close'] for c in candles]
+        std = [0.0] * len(candles)
+        for i in range(period - 1, len(candles)):
+            std[i] = float(np.std(closes[i - period + 1:i + 1], ddof=1)) if period > 1 else 0.0
+        if period - 1 < len(std):
+            first_valid = std[period - 1]
+            for i in range(period - 1):
+                std[i] = first_valid
+        return std
+
+    def _calculate_ttm_squeeze_values(
+        self, candles: List[Dict],
+        bb_sma_values: List[float], bb_std_values: List[float],
+        kc_atr_length: int, kc_multiplier: float
+    ) -> List[bool]:
+        """
+        Calcula TTM Squeeze para cada vela.
+        Squeeze ON = Bollinger Bands (SMA +/- 1 std) estan DENTRO de Keltner Channels (SMA +/- ATR*mult)
+        Retorna lista de bools (True = squeeze ON).
+        """
+        kc_atr = self._calculate_rolling_atr_for_trading(candles, kc_atr_length)
+        squeeze = [False] * len(candles)
+
+        for i in range(len(candles)):
+            sma_val = bb_sma_values[i]
+            std_val = bb_std_values[i]
+            atr_val = kc_atr[i]
+
+            if sma_val == 0 or atr_val == 0:
+                continue
+
+            bb_upper = sma_val + std_val
+            bb_lower = sma_val - std_val
+            kc_upper = sma_val + (atr_val * kc_multiplier)
+            kc_lower = sma_val - (atr_val * kc_multiplier)
+
+            # Squeeze ON cuando BB esta DENTRO de KC
+            squeeze[i] = (bb_upper < kc_upper) and (bb_lower > kc_lower)
+
+        return squeeze
+
+    def _calculate_bbwp_values(
+        self, candles: List[Dict],
+        bb_sma_values: List[float], bb_std_values: List[float],
+        lookback: int
+    ) -> List[float]:
+        """
+        Calcula BBWP (Bollinger Band Width Percentile) para cada vela.
+        BandWidth = (BB_upper - BB_lower) / SMA * 100
+        BBWP = percentil del BW actual vs ultimos N periodos
+        Retorna lista de floats 0-100.
+        """
+        # Primero calcular bandwidth para cada vela
+        bandwidth = [0.0] * len(candles)
+        for i in range(len(candles)):
+            if bb_sma_values[i] > 0 and bb_std_values[i] > 0:
+                bw = ((bb_sma_values[i] + bb_std_values[i]) - (bb_sma_values[i] - bb_std_values[i])) / bb_sma_values[i] * 100
+                # Simplificado: bw = 2 * std / sma * 100
+                bandwidth[i] = (2 * bb_std_values[i] / bb_sma_values[i]) * 100
+
+        # Calcular percentil
+        bbwp = [50.0] * len(candles)  # default 50 = neutral
+        for i in range(len(candles)):
+            start_idx = max(0, i - lookback + 1)
+            historical = bandwidth[start_idx:i + 1]
+            if len(historical) < 10:  # minimo para que el percentil tenga sentido
+                continue
+            count_below = sum(1 for bw in historical if bw < bandwidth[i])
+            bbwp[i] = (count_below / len(historical)) * 100
+
+        return bbwp
+
+    def _find_squeeze_regions(self, squeeze_values: List[bool], min_bars: int) -> List[Tuple[int, int]]:
+        """
+        Encuentra regiones donde TTM Squeeze estuvo ON por >= min_bars consecutivos.
+        Retorna lista de (start_idx, end_idx) inclusivo.
+        """
+        regions = []
+        start = None
+
+        for i, is_squeeze in enumerate(squeeze_values):
+            if is_squeeze:
+                if start is None:
+                    start = i
+            else:
+                if start is not None:
+                    length = i - start
+                    if length >= min_bars:
+                        regions.append((start, i - 1))
+                    start = None
+
+        # Ultima region si termina con squeeze
+        if start is not None:
+            length = len(squeeze_values) - start
+            if length >= min_bars:
+                regions.append((start, len(squeeze_values) - 1))
+
+        return regions
+
+    def _is_candle_inside_band(self, candle: Dict, band_low: float, band_high: float) -> bool:
+        """Verifica si el CUERPO de la vela esta dentro de la banda."""
+        body_high = max(candle['open'], candle['close'])
+        body_low = min(candle['open'], candle['close'])
+        return body_low >= band_low and body_high <= band_high
 
     # =========================================================================
     # MÉTODOS AUXILIARES
