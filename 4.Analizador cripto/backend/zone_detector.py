@@ -150,6 +150,14 @@ class ZoneDetectionParams:
     use_inside_pct_filter: bool = False
     min_inside_pct: float = 70.0       # Minimo % de velas con cuerpo dentro del rango
 
+    # --- ATR Dynamic Method (basado en ATRBasedRangeDetector) ---
+    # Usa SMA +/- ATR como limites dinamicos del rango
+    atr_dyn_period: int = 200          # Periodo del ATR (volatilidad de fondo)
+    atr_dyn_ma_period: int = 20        # Periodo de la SMA (tambien minimo velas)
+    atr_dyn_multiplier: float = 1.0    # Ancho de banda: SMA +/- ATR*mult
+    atr_dyn_max_breakout: int = 5      # Velas fuera permitidas antes de romper
+    atr_dyn_merge_overlap: bool = True # Mergear rangos que se solapan en tiempo/precio
+
 
 class ZoneDetector:
     """
@@ -157,7 +165,7 @@ class ZoneDetector:
     Permite comparar cuál funciona mejor.
     """
 
-    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action", "consolidation", "trading_zones"]
+    METHODS = ["pivot_cluster", "atr_based", "volume_profile", "price_action", "consolidation", "trading_zones", "atr_dynamic"]
 
     def __init__(self):
         self._zone_counter = 0
@@ -197,8 +205,10 @@ class ZoneDetector:
             zones = self._consolidation_method(candles, params)
         elif method == "trading_zones":
             zones = self._trading_zones_method(candles, params, params.lookforward_bars)
+        elif method == "atr_dynamic":
+            zones = self._atr_dynamic_method(candles, params)
         else:
-            raise ValueError(f"Método desconocido: {method}. Usar: {self.METHODS}")
+            raise ValueError(f"Metodo desconocido: {method}. Usar: {self.METHODS}")
 
         # Filtrar zonas con rango de precio excesivo
         filtered_zones = []
@@ -1931,7 +1941,291 @@ class ZoneDetector:
         return body_low >= band_low and body_high <= band_high
 
     # =========================================================================
-    # MÉTODOS AUXILIARES
+    # METODO 7: ATR DYNAMIC (basado en ATRBasedRangeDetector del frontend)
+    # Usa SMA +/- ATR*mult como limites dinamicos del rango
+    # Soporta re-ingreso y merge de rangos solapados
+    # =========================================================================
+
+    def _atr_dynamic_method(self, candles: List[Dict], params: ZoneDetectionParams) -> List[Zone]:
+        """
+        Detecta rangos usando ATR dinamico (inspirado en LuxAlgo Range Detector).
+
+        Algoritmo:
+        1. Calcula SMA y ATR para cada vela
+        2. Define banda: SMA +/- ATR*mult
+        3. Cuenta velas fuera del rango en ventana rolling
+        4. countOutside == 0 → todas dentro → rango valido
+        5. Permite re-ingreso si sale por menos de max_breakout velas
+        6. Post-procesa mergeando rangos solapados
+        """
+        atr_period = params.atr_dyn_period        # 200 default
+        ma_period = params.atr_dyn_ma_period      # 20 default (tambien min velas)
+        multiplier = params.atr_dyn_multiplier    # 1.0 default
+        max_breakout = params.atr_dyn_max_breakout # 5 default
+        merge_overlap = params.atr_dyn_merge_overlap
+
+        min_candles = max(atr_period, ma_period) + 50
+        if len(candles) < min_candles:
+            print(f"[ZoneDetector] atr_dynamic: No hay suficientes velas ({len(candles)} < {min_candles})")
+            return []
+
+        # 1. Calcular ATR y SMA
+        atr_values = self._calculate_rolling_atr_for_trading(candles, atr_period)
+        sma_values = self._calculate_sma(candles, ma_period)
+
+        # --- Pre-calculos v3.0 opcionales ---
+        bb_sma_values = None
+        bb_std_values = None
+        squeeze_values = None
+        bbwp_values = None
+
+        if params.use_ttm_prefilter or params.use_bbwp_scoring:
+            bb_sma_values = self._calculate_sma(candles, 20)  # BB usa SMA(20)
+            bb_std_values = self._calculate_std_dev(candles, 20)
+
+        if params.use_ttm_prefilter:
+            squeeze_values = self._calculate_ttm_squeeze_values(
+                candles, bb_sma_values, bb_std_values,
+                params.ttm_atr_length, params.ttm_kc_multiplier
+            )
+            squeeze_regions = self._find_squeeze_regions(squeeze_values, params.ttm_min_squeeze_bars)
+            print(f"[ZoneDetector] atr_dynamic TTM Prefilter: {len(squeeze_regions)} regiones de squeeze")
+
+        if params.use_bbwp_scoring:
+            bbwp_values = self._calculate_bbwp_values(
+                candles, bb_sma_values, bb_std_values, params.bbwp_lookback
+            )
+
+        # 2. Detectar rangos
+        start_index = max(atr_period, ma_period)
+        raw_ranges = []
+        current_range = None
+        prev_count_outside = None
+        breakout_candle_count = 0
+
+        for i in range(start_index, len(candles)):
+            atr_idx = i  # ATR ya esta alineado
+            sma_idx = i  # SMA ya esta alineado
+
+            if atr_idx >= len(atr_values) or sma_idx >= len(sma_values):
+                continue
+
+            atr_val = atr_values[atr_idx] * multiplier
+            ma_val = sma_values[sma_idx]
+
+            if atr_val <= 0 or ma_val <= 0:
+                continue
+
+            range_high = ma_val + atr_val
+            range_low = ma_val - atr_val
+
+            # Verificar si vela actual esta dentro
+            current_close = candles[i]['close']
+            is_current_inside = range_low <= current_close <= range_high
+
+            # Contar velas fuera en las ultimas ma_period velas
+            count_outside = 0
+            for j in range(max(0, i - ma_period + 1), i + 1):
+                deviation = abs(candles[j]['close'] - ma_val)
+                if deviation > atr_val:
+                    count_outside += 1
+
+            # TRANSICION: fuera → dentro (countOutside == 0)
+            if count_outside == 0 and prev_count_outside is not None and prev_count_outside != 0:
+                # Verificar re-ingreso
+                if current_range and 0 < breakout_candle_count <= max_breakout:
+                    # RE-INGRESO: continuar rango existente
+                    current_range['end_idx'] = i
+                    current_range['end_ts'] = candles[i]['timestamp']
+                    current_range['candle_count'] += 1
+                    current_range['high'] = max(current_range['high'], range_high)
+                    current_range['low'] = min(current_range['low'], range_low)
+                    breakout_candle_count = 0
+                else:
+                    # NUEVO RANGO
+                    new_start_idx = max(0, i - ma_period + 1)
+
+                    # Verificar overlap con ultimo rango guardado
+                    if raw_ranges and new_start_idx <= raw_ranges[-1]['end_idx']:
+                        # Mergear con el anterior
+                        raw_ranges[-1]['end_idx'] = i
+                        raw_ranges[-1]['end_ts'] = candles[i]['timestamp']
+                        raw_ranges[-1]['high'] = max(raw_ranges[-1]['high'], range_high)
+                        raw_ranges[-1]['low'] = min(raw_ranges[-1]['low'], range_low)
+                        raw_ranges[-1]['candle_count'] = raw_ranges[-1]['end_idx'] - raw_ranges[-1]['start_idx'] + 1
+                        current_range = None
+                    else:
+                        current_range = {
+                            'start_idx': new_start_idx,
+                            'start_ts': candles[new_start_idx]['timestamp'],
+                            'end_idx': i,
+                            'end_ts': candles[i]['timestamp'],
+                            'high': range_high,
+                            'low': range_low,
+                            'candle_count': ma_period
+                        }
+                    breakout_candle_count = 0
+
+            elif count_outside == 0:
+                # DENTRO DEL RANGO: extender
+                if current_range:
+                    current_range['end_idx'] = i
+                    current_range['end_ts'] = candles[i]['timestamp']
+                    current_range['candle_count'] += 1
+                    current_range['high'] = max(current_range['high'], range_high)
+                    current_range['low'] = min(current_range['low'], range_low)
+                breakout_candle_count = 0
+            else:
+                # HAY VELAS FUERA
+                if current_range:
+                    if not is_current_inside:
+                        breakout_candle_count += 1
+                        if breakout_candle_count > max_breakout:
+                            # BREAKOUT CONFIRMADO: guardar rango
+                            if current_range['candle_count'] >= ma_period:
+                                raw_ranges.append(current_range)
+                            current_range = None
+                            breakout_candle_count = 0
+                    else:
+                        # Vela actual dentro, hay re-ingreso
+                        if breakout_candle_count > 0:
+                            breakout_candle_count = 0
+                        current_range['end_idx'] = i
+                        current_range['end_ts'] = candles[i]['timestamp']
+                        current_range['candle_count'] += 1
+                        # Actualizar limites si el precio expande
+                        current_range['high'] = max(current_range['high'], candles[i]['high'])
+                        current_range['low'] = min(current_range['low'], candles[i]['low'])
+
+            prev_count_outside = count_outside
+
+        # Guardar ultimo rango
+        if current_range and current_range['candle_count'] >= ma_period:
+            raw_ranges.append(current_range)
+
+        # 3. Post-proceso: Merge rangos solapados
+        if merge_overlap and len(raw_ranges) > 1:
+            raw_ranges = self._merge_overlapping_atr_ranges(raw_ranges)
+
+        print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos crudos detectados")
+
+        # 4. Convertir a objetos Zone
+        zones = []
+        for r in raw_ranges:
+            # --- TTM Squeeze pre-filtro ---
+            if params.use_ttm_prefilter:
+                in_squeeze = False
+                for (sq_start, sq_end) in squeeze_regions:
+                    if r['start_idx'] >= sq_start and r['start_idx'] <= sq_end:
+                        in_squeeze = True
+                        break
+                if not in_squeeze:
+                    continue  # Descartar si no empezo en zona de squeeze
+
+            zone_candles = candles[r['start_idx']:r['end_idx'] + 1]
+            min_price = r['low']
+            max_price = r['high']
+
+            # --- Capa 5: % velas dentro ---
+            if params.use_inside_pct_filter:
+                inside_count = 0
+                for c in zone_candles:
+                    if self._is_candle_inside_band(c, min_price, max_price):
+                        inside_count += 1
+                inside_pct = (inside_count / len(zone_candles)) * 100 if zone_candles else 0
+                if inside_pct < params.min_inside_pct:
+                    continue  # Descartar
+
+            duration_hours = (r['end_ts'] - r['start_ts']) / (1000 * 60 * 60)
+            touches = self._count_touches_in_range(zone_candles, min_price, max_price)
+
+            avg_volume = np.mean([c['volume'] for c in zone_candles]) if zone_candles else 0
+            all_volumes = [c['volume'] for c in candles]
+            volume_score = self._calculate_volume_score(avg_volume, all_volumes)
+
+            price_range_pct = ((max_price - min_price) / min_price) * 100 if min_price > 0 else 0
+
+            # Score base
+            score = self._calculate_zone_score(
+                touches=touches['total'],
+                duration_hours=duration_hours,
+                volume_score=volume_score,
+                price_range_pct=price_range_pct,
+                balance=min(touches['support'], touches['resistance']) / max(touches['support'], touches['resistance'], 1)
+            )
+
+            # --- Capa 4: BBWP bonus ---
+            if params.use_bbwp_scoring and bbwp_values:
+                zone_bbwp = [bbwp_values[idx] for idx in range(r['start_idx'], r['end_idx'] + 1) if idx < len(bbwp_values)]
+                if zone_bbwp:
+                    avg_bbwp = sum(zone_bbwp) / len(zone_bbwp)
+                    if avg_bbwp <= params.bbwp_squeeze_threshold:
+                        bbwp_bonus = (params.bbwp_squeeze_threshold - avg_bbwp) / params.bbwp_squeeze_threshold * 15
+                        score = min(100, score + bbwp_bonus)
+
+            zone = Zone(
+                id=self._generate_zone_id(),
+                min_price=min_price,
+                max_price=max_price,
+                start_timestamp=r['start_ts'],
+                end_timestamp=r['end_ts'],
+                touches_support=touches['support'],
+                touches_resistance=touches['resistance'],
+                total_touches=touches['total'],
+                duration_hours=duration_hours,
+                avg_volume=avg_volume,
+                volume_score=volume_score,
+                method="atr_dynamic",
+                score=score,
+                candles_in_zone=r['candle_count'],
+                price_range_pct=price_range_pct
+            )
+            zones.append(zone)
+
+        print(f"[ZoneDetector] atr_dynamic: {len(zones)} zonas finales despues de filtros v3.0")
+        return zones
+
+    def _merge_overlapping_atr_ranges(self, ranges: List[Dict]) -> List[Dict]:
+        """
+        Mergea rangos que se solapan en tiempo O precio.
+        Ordenados por start_idx.
+        """
+        if not ranges:
+            return ranges
+
+        sorted_ranges = sorted(ranges, key=lambda r: r['start_idx'])
+        merged = [sorted_ranges[0]]
+
+        for r in sorted_ranges[1:]:
+            last = merged[-1]
+
+            # Overlap temporal
+            time_overlap = r['start_idx'] <= last['end_idx']
+
+            # Overlap de precio (>30% de interseccion)
+            price_overlap = False
+            overlap_high = min(last['high'], r['high'])
+            overlap_low = max(last['low'], r['low'])
+            if overlap_high > overlap_low:
+                overlap_size = overlap_high - overlap_low
+                smaller_range = min(last['high'] - last['low'], r['high'] - r['low'])
+                if smaller_range > 0 and overlap_size / smaller_range > 0.3:
+                    price_overlap = True
+
+            if time_overlap or price_overlap:
+                # Mergear
+                last['end_idx'] = max(last['end_idx'], r['end_idx'])
+                last['end_ts'] = max(last['end_ts'], r['end_ts'])
+                last['high'] = max(last['high'], r['high'])
+                last['low'] = min(last['low'], r['low'])
+                last['candle_count'] = last['end_idx'] - last['start_idx'] + 1
+            else:
+                merged.append(r)
+
+        return merged
+
+    # =========================================================================
+    # METODOS AUXILIARES
     # =========================================================================
 
     def _create_zone_from_range(

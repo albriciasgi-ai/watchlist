@@ -5,6 +5,9 @@ import React, { useState, useCallback } from 'react';
 import IndicatorManagerRegistry from '../utils/IndicatorManagerRegistry';
 
 const defaultParams = {
+  // Metodo de deteccion
+  detection_method: "trading_zones",  // "trading_zones" (consol) o "atr_dynamic"
+  // Consolidation method params
   consol_min_bars: 8,
   consol_max_bars: 50,
   consol_max_range_pct: 2.0,
@@ -17,6 +20,12 @@ const defaultParams = {
   position_mode: "sequential",
   swing_bars: 5,
   sl_mode: "zone_opposite",
+  // ATR Dynamic method params (nuevo)
+  atr_dyn_period: 200,
+  atr_dyn_ma_period: 20,
+  atr_dyn_multiplier: 1.0,
+  atr_dyn_max_breakout: 5,
+  atr_dyn_merge_overlap: true,
   // Capas v3.0
   use_atr_band: false,
   atr_band_period: 200,
@@ -48,9 +57,9 @@ const DEFAULT_ZONE_DAYS_BY_INTERVAL = {
 };
 
 // Campos que son strings (no numericos) - fuera del componente para estabilidad
-const STRING_PARAMS = ['entry_mode', 'position_mode', 'sl_mode'];
+const STRING_PARAMS = ['entry_mode', 'position_mode', 'sl_mode', 'detection_method'];
 // Campos booleanos (toggles de capas)
-const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter'];
+const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter', 'atr_dyn_merge_overlap'];
 
 function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded, symbol, interval }) {
   const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 120;
@@ -188,6 +197,27 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         </div>
 
         <div style={styles.content}>
+          {/* Metodo de Deteccion */}
+          <div style={styles.section}>
+            <h4 style={styles.sectionTitle}>Metodo de Deteccion</h4>
+            <div style={styles.row}>
+              <label style={styles.label}>Algoritmo:</label>
+              <select
+                style={{...styles.input, width: '180px'}}
+                value={params.detection_method}
+                onChange={(e) => handleParamChange('detection_method', e.target.value)}
+              >
+                <option value="trading_zones">Consolidacion (actual)</option>
+                <option value="atr_dynamic">ATR Dinamico (Range Detector)</option>
+              </select>
+            </div>
+            <div style={{fontSize: '11px', color: '#666', marginTop: '4px'}}>
+              {params.detection_method === 'trading_zones'
+                ? 'Detecta rangos por body ratio y ATR ratio de velas'
+                : 'Usa SMA +/- ATR como limites dinamicos (como Range Detector)'}
+            </div>
+          </div>
+
           {/* Periodo de analisis */}
           <div style={styles.section}>
             <h4 style={styles.sectionTitle}>Periodo de Analisis</h4>
@@ -211,73 +241,157 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             </div>
           </div>
 
-          {/* Parámetros de consolidación */}
-          <div style={styles.section}>
-            <h4 style={styles.sectionTitle}>Parametros de Consolidacion</h4>
+          {/* Parametros de consolidacion - solo si metodo es trading_zones */}
+          {params.detection_method === 'trading_zones' && (
+            <div style={styles.section}>
+              <h4 style={styles.sectionTitle}>Parametros de Consolidacion</h4>
 
-            <div style={styles.row}>
-              <label style={styles.label}>Min Barras:</label>
-              <input
-                type="number"
-                style={styles.input}
-                value={params.consol_min_bars}
-                onChange={(e) => handleParamChange('consol_min_bars', parseInt(e.target.value))}
-                min="3"
-                max="30"
-              />
-            </div>
+              <div style={styles.row}>
+                <label style={styles.label}>Min Barras:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.consol_min_bars}
+                  onChange={(e) => handleParamChange('consol_min_bars', parseInt(e.target.value))}
+                  min="3"
+                  max="30"
+                />
+              </div>
 
-            <div style={styles.row}>
-              <label style={styles.label}>Max Barras:</label>
-              <input
-                type="number"
-                style={styles.input}
-                value={params.consol_max_bars}
-                onChange={(e) => handleParamChange('consol_max_bars', parseInt(e.target.value))}
-                min="10"
-                max="200"
-              />
-            </div>
+              <div style={styles.row}>
+                <label style={styles.label}>Max Barras:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.consol_max_bars}
+                  onChange={(e) => handleParamChange('consol_max_bars', parseInt(e.target.value))}
+                  min="10"
+                  max="200"
+                />
+              </div>
 
-            <div style={styles.row}>
-              <label style={styles.label}>Max Rango %:</label>
-              <input
-                type="number"
-                style={styles.input}
-                value={params.consol_max_range_pct}
-                onChange={(e) => handleParamChange('consol_max_range_pct', e.target.value)}
-                step="0.1"
-                min="0.5"
-                max="10"
-              />
-            </div>
+              <div style={styles.row}>
+                <label style={styles.label}>Max Rango %:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.consol_max_range_pct}
+                  onChange={(e) => handleParamChange('consol_max_range_pct', e.target.value)}
+                  step="0.1"
+                  min="0.5"
+                  max="10"
+                />
+              </div>
 
-            <div style={styles.row}>
-              <label style={styles.label}>ATR Ratio:</label>
-              <input
-                type="number"
-                style={styles.input}
-                value={params.consol_atr_ratio}
-                onChange={(e) => handleParamChange('consol_atr_ratio', e.target.value)}
-                step="0.1"
-                min="0.1"
-                max="2"
-              />
-            </div>
+              <div style={styles.row}>
+                <label style={styles.label}>ATR Ratio:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.consol_atr_ratio}
+                  onChange={(e) => handleParamChange('consol_atr_ratio', e.target.value)}
+                  step="0.1"
+                  min="0.1"
+                  max="2"
+                />
+              </div>
 
-            <div style={styles.row}>
-              <label style={styles.label}>Body Ratio:</label>
-              <input
-                type="number"
-                style={styles.input}
-                value={params.consol_body_ratio}
-                onChange={(e) => handleParamChange('consol_body_ratio', e.target.value)}
-                step="0.1"
-                min="0.1"
-                max="1"
-              />
+              <div style={styles.row}>
+                <label style={styles.label}>Body Ratio:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.consol_body_ratio}
+                  onChange={(e) => handleParamChange('consol_body_ratio', e.target.value)}
+                  step="0.1"
+                  min="0.1"
+                  max="1"
+                />
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Parametros ATR Dynamic - solo si metodo es atr_dynamic */}
+          {params.detection_method === 'atr_dynamic' && (
+            <div style={styles.section}>
+              <h4 style={styles.sectionTitle}>Parametros ATR Dinamico</h4>
+              <div style={{fontSize: '11px', color: '#777', marginBottom: '8px'}}>
+                Algoritmo basado en LuxAlgo Range Detector. Usa SMA +/- ATR como limites dinamicos.
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.label}>ATR Periodo:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.atr_dyn_period}
+                  onChange={(e) => handleParamChange('atr_dyn_period', parseInt(e.target.value))}
+                  min="50"
+                  max="500"
+                />
+              </div>
+              <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
+                Periodo largo para volatilidad de fondo (default: 200)
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.label}>SMA Periodo:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.atr_dyn_ma_period}
+                  onChange={(e) => handleParamChange('atr_dyn_ma_period', parseInt(e.target.value))}
+                  min="5"
+                  max="100"
+                />
+              </div>
+              <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
+                Tambien es el minimo de velas para validar rango (default: 20)
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.label}>Multiplicador:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.atr_dyn_multiplier}
+                  onChange={(e) => handleParamChange('atr_dyn_multiplier', e.target.value)}
+                  step="0.1"
+                  min="0.5"
+                  max="3.0"
+                />
+              </div>
+              <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
+                Ancho de banda: SMA +/- ATR*mult (default: 1.0)
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.label}>Max Breakout:</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.atr_dyn_max_breakout}
+                  onChange={(e) => handleParamChange('atr_dyn_max_breakout', parseInt(e.target.value))}
+                  min="1"
+                  max="15"
+                />
+              </div>
+              <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
+                Velas fuera permitidas antes de romper (re-entry tolerance)
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={params.atr_dyn_merge_overlap}
+                    onChange={(e) => handleParamChange('atr_dyn_merge_overlap', e.target.checked)}
+                  />
+                  <span>Mergear rangos solapados</span>
+                </label>
+              </div>
+            </div>
+          )}
 
           {/* Capas v3.0 opcionales */}
           <div style={styles.section}>

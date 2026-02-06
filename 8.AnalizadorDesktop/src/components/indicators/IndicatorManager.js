@@ -1329,6 +1329,9 @@ class IndicatorManager {
         interval: this.interval,
         days: requestDays,
         params: {
+          // Metodo de deteccion
+          detection_method: params.detection_method || "trading_zones",
+          // Consolidation method
           consol_min_bars: params.consol_min_bars || 8,
           consol_max_bars: params.consol_max_bars || 50,
           consol_max_range_pct: params.consol_max_range_pct || 2.0,
@@ -1341,6 +1344,12 @@ class IndicatorManager {
           position_mode: params.position_mode || "sequential",
           swing_bars: params.swing_bars || 5,
           sl_mode: params.sl_mode || "zone_opposite",
+          // ATR Dynamic method (nuevo)
+          atr_dyn_period: params.atr_dyn_period || 200,
+          atr_dyn_ma_period: params.atr_dyn_ma_period || 20,
+          atr_dyn_multiplier: params.atr_dyn_multiplier || 1.0,
+          atr_dyn_max_breakout: params.atr_dyn_max_breakout || 5,
+          atr_dyn_merge_overlap: params.atr_dyn_merge_overlap !== false,
           // Capas v3.0
           use_atr_band: params.use_atr_band || false,
           atr_band_period: params.atr_band_period || 200,

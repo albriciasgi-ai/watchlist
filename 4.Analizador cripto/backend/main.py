@@ -4448,7 +4448,10 @@ async def detect_trading_zones(request: Request):
         candles = historical['data']
         print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas en {_fetch_elapsed:.1f}s (esperadas: ~{expected_candles})")
 
-        # Configurar parametros de deteccion (clasicos + capas v3.0)
+        # Metodo de deteccion: "trading_zones" (actual) o "atr_dynamic" (nuevo basado en ATRBasedRangeDetector)
+        detection_method = params_dict.get("detection_method", "trading_zones")
+
+        # Configurar parametros de deteccion (clasicos + capas v3.0 + atr_dynamic)
         params = ZoneDetectionParams(
             consol_min_bars=params_dict.get("consol_min_bars", 8),
             consol_max_bars=params_dict.get("consol_max_bars", 50),
@@ -4478,12 +4481,20 @@ async def detect_trading_zones(request: Request):
             bbwp_squeeze_threshold=params_dict.get("bbwp_squeeze_threshold", 20),
             use_inside_pct_filter=params_dict.get("use_inside_pct_filter", False),
             min_inside_pct=params_dict.get("min_inside_pct", 70.0),
+            # ATR Dynamic Method (nuevo)
+            atr_dyn_period=params_dict.get("atr_dyn_period", 200),
+            atr_dyn_ma_period=params_dict.get("atr_dyn_ma_period", 20),
+            atr_dyn_multiplier=params_dict.get("atr_dyn_multiplier", 1.0),
+            atr_dyn_max_breakout=params_dict.get("atr_dyn_max_breakout", 5),
+            atr_dyn_merge_overlap=params_dict.get("atr_dyn_merge_overlap", True),
         )
 
-        # Detectar zonas con simulacion de trades
+        print(f"[{symbol}] [ZONES] Metodo de deteccion: {detection_method}")
+
+        # Detectar zonas con el metodo seleccionado
         _detect_start = _time.time()
         detector = ZoneDetector()
-        zones = detector.detect_zones(candles, method="trading_zones", params=params)
+        zones = detector.detect_zones(candles, method=detection_method, params=params)
         _detect_elapsed = _time.time() - _detect_start
 
         _total_elapsed = _time.time() - _zone_start
@@ -4588,8 +4599,12 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
         "barras_cierre", "velas_en_zona", "duracion_horas", "score"
     ]
 
-    with open(filepath, 'w', encoding='utf-8') as f:
-        # Escribir parámetros usados como comentario
+    with open(filepath, 'w', encoding='utf-8-sig') as f:
+        # UTF-8 BOM (utf-8-sig lo incluye automaticamente)
+        # Instruccion para Excel: usar ; como separador
+        f.write("sep=;\n")
+
+        # Escribir parametros usados como comentario
         f.write(f"# Parametros: {json.dumps(params)}\n")
         f.write(f"# Fecha: {datetime.now().isoformat()}\n")
 
