@@ -1366,6 +1366,10 @@ class IndicatorManager {
           bbwp_squeeze_threshold: params.bbwp_squeeze_threshold || 20,
           use_inside_pct_filter: params.use_inside_pct_filter || false,
           min_inside_pct: params.min_inside_pct || 70.0,
+          // Filtro de calidad
+          min_score_filter: params.min_score_filter || 0,
+          // Score intrinseco (sin sesgos post-trade)
+          use_continuation_score: params.use_continuation_score || false,
         }
       };
 

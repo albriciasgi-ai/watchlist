@@ -1,9 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(del /f /q \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\__pycache__\\zone_detector*\" 2)",
-      "Bash(dir \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\__pycache__\" 2)",
-      "Bash(del /f /q \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\__pycache__\\zone_detector.cpython-314.pyc\")"
+      "Bash(python:*)",
+      "Bash(tasklist /FI 'IMAGENAME eq python.exe' /FI 'WINDOWTITLE eq *uvicorn*' 2)",
+      "Bash(findstr:*)",
+      "Bash(npx eslint:*)",
+      "Bash(node -e:*)",
+      "Bash(if exist node_modules.vite rmdir /s /q node_modules.vite)"
     ],
     "deny": [],
     "ask": []

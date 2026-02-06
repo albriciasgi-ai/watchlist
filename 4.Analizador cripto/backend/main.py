@@ -30,6 +30,7 @@ for logger_name in ['uvicorn', 'uvicorn.error', 'uvicorn.access']:
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 import httpx
 import asyncio
 import time
@@ -79,16 +80,16 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
-    "1": 5,       # 1 min -> máx 5 días (aumentado para mejor detección DTB)
-    "3": 10,      # 3 min -> máx 10 días
-    "5": 120,     # 5 min -> máx 120 días
-    "15": 90,     # 15 min -> máx 90 días
-    "30": 150,    # 30 min -> máx 150 días
-    "60": 360,    # 1 hora -> máx 360 días
-    "120": 180,   # 2 horas -> máx 180 días
-    "240": 720,   # 4 horas -> máx 720 días
-    "D": 1440,    # 1 día -> máx 1440 días (4 años)
-    "W": 730,     # 1 semana -> máx 730 días
+    "1": 7,       # 1 min -> max 7 dias
+    "3": 21,      # 3 min -> max 21 dias
+    "5": 400,     # 5 min -> max 400 dias (~115k velas) - con streaming SSE
+    "15": 180,    # 15 min -> max 180 dias
+    "30": 360,    # 30 min -> max 360 dias
+    "60": 730,    # 1 hora -> max 730 dias (2 anios)
+    "120": 730,   # 2 horas -> max 730 dias
+    "240": 1095,  # 4 horas -> max 1095 dias (3 anios)
+    "D": 2000,    # 1 dia -> max 2000 dias (~5.5 anios)
+    "W": 1000,    # 1 semana -> max 1000 dias
 }
 
 def load_cache(symbol: str, interval: str, indicator: str):
@@ -298,7 +299,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         
         async with httpx.AsyncClient(timeout=60) as client:
             request_count = 0
-            max_requests = 50  # 50 requests x 1000 velas = 50,000 velas max (~173 dias en 5min)
+            max_requests = 120  # 120 requests x 1000 velas = 120,000 velas max (~416 dias en 5min)
             consecutive_errors = 0
             max_consecutive_errors = 3
 
@@ -437,6 +438,131 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             "error": str(e),
             "success": False
         }
+
+
+@app.get("/api/historical-stream/{symbol}")
+async def get_historical_stream(symbol: str, interval: str = "15", days: int = 30):
+    """
+    Endpoint SSE para carga de datos historicos con progreso en tiempo real.
+    Envia eventos de progreso mientras descarga velas de Bybit.
+    """
+    async def generate():
+        try:
+            interval_clean = (
+                interval.replace("m", "")
+                .replace("h", "")
+                .replace("d", "D")
+                .replace("w", "W")
+            )
+            if "h" in interval.lower() and interval_clean.isdigit():
+                interval_clean = str(int(interval_clean) * 60)
+
+            interval_final = INTERVAL_MAP.get(interval_clean, "15")
+            interval_minutes = get_interval_minutes(interval_final)
+
+            now_ms = int(time.time() * 1000)
+            end_ms = now_ms + (10 * 60 * 1000)
+
+            max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+            days_to_fetch = min(days, max_days_allowed)
+            minutes_in_period = days_to_fetch * 24 * 60
+            total_candles_needed = int(minutes_in_period / interval_minutes)
+            start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
+
+            # Enviar info inicial
+            yield f"data: {json.dumps({'type': 'start', 'total_expected': total_candles_needed, 'days': days_to_fetch})}\n\n"
+
+            limit_per_request = min(1000, total_candles_needed)
+            all_candles = []
+            current_start = start_ms
+
+            async with httpx.AsyncClient(timeout=60) as client:
+                request_count = 0
+                max_requests = 120  # 120 requests x 1000 = 120,000 velas max (~416 dias en 5min)
+                consecutive_errors = 0
+                max_consecutive_errors = 3
+
+                while len(all_candles) < total_candles_needed and request_count < max_requests:
+                    request_count += 1
+                    candles_remaining = total_candles_needed - len(all_candles)
+                    fetch_limit = min(limit_per_request, candles_remaining)
+
+                    url = (
+                        "https://api.bybit.com/v5/market/kline?"
+                        f"category=linear&symbol={symbol}&interval={interval_final}"
+                        f"&start={current_start}&limit={fetch_limit}"
+                    )
+
+                    try:
+                        r = await client.get(url)
+                        data = r.json()
+                        consecutive_errors = 0
+                    except Exception as e:
+                        consecutive_errors += 1
+                        if consecutive_errors >= max_consecutive_errors:
+                            yield f"data: {json.dumps({'type': 'error', 'message': f'Demasiados errores: {str(e)}'})}\n\n"
+                            break
+                        await asyncio.sleep(1)
+                        continue
+
+                    if data.get("retCode") != 0:
+                        yield f"data: {json.dumps({'type': 'error', 'message': data.get('retMsg', 'Error Bybit')})}\n\n"
+                        break
+
+                    batch_candles = data["result"]["list"]
+                    if not batch_candles:
+                        break
+
+                    batch_candles.reverse()
+                    all_candles.extend(batch_candles)
+
+                    # Enviar progreso
+                    progress_pct = min(100, int(len(all_candles) / total_candles_needed * 100))
+                    yield f"data: {json.dumps({'type': 'progress', 'loaded': len(all_candles), 'total': total_candles_needed, 'percent': progress_pct, 'request': request_count})}\n\n"
+
+                    last_candle_ts = int(batch_candles[-1][0])
+                    current_start = last_candle_ts + (interval_minutes * 60 * 1000)
+
+                    if current_start >= end_ms or len(all_candles) >= total_candles_needed:
+                        break
+
+                    await asyncio.sleep(0.05)  # Pequeña pausa para no saturar
+
+            # Procesar velas
+            candles = []
+            current_time_utc = int(time.time() * 1000)
+
+            for c in all_candles:
+                ts_ms = int(c[0])
+                candles.append({
+                    "timestamp": ts_ms,
+                    "open": float(c[1]),
+                    "high": float(c[2]),
+                    "low": float(c[3]),
+                    "close": float(c[4]),
+                    "volume": float(c[5]),
+                    "in_progress": (current_time_utc - ts_ms) / (1000 * 60) < interval_minutes
+                })
+
+            if len(candles) > total_candles_needed:
+                candles = candles[-total_candles_needed:]
+
+            # Enviar datos finales
+            yield f"data: {json.dumps({'type': 'complete', 'total_candles': len(candles), 'data': candles})}\n\n"
+
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
 
 @app.get("/api/volume-delta/{symbol}")
 async def get_volume_delta(symbol: str, interval: str = "15", days: int = 30):
@@ -4487,6 +4613,10 @@ async def detect_trading_zones(request: Request):
             atr_dyn_multiplier=params_dict.get("atr_dyn_multiplier", 1.0),
             atr_dyn_max_breakout=params_dict.get("atr_dyn_max_breakout", 5),
             atr_dyn_merge_overlap=params_dict.get("atr_dyn_merge_overlap", True),
+            # Filtro de calidad
+            min_score_filter=params_dict.get("min_score_filter", 0),
+            # Score intrinseco (sin sesgos post-trade)
+            use_continuation_score=params_dict.get("use_continuation_score", False),
         )
 
         print(f"[{symbol}] [ZONES] Metodo de deteccion: {detection_method}")
@@ -4503,7 +4633,7 @@ async def detect_trading_zones(request: Request):
         # Convertir a diccionarios para JSON
         zones_data = [zone.to_dict() for zone in zones]
 
-        # Calcular estadisticas
+        # Calcular estadisticas basicas
         wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
         losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
         skipped = len([z for z in zones_data if z.get('trade_result') == 'SKIPPED'])
@@ -4512,6 +4642,51 @@ async def detect_trading_zones(request: Request):
         total_closed = wins + losses
         win_rate = (wins / total_closed * 100) if total_closed > 0 else 0
         expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
+
+        # Calcular metricas avanzadas: rachas y equity curve
+        # Ordenar zonas por entry_timestamp (o start_timestamp si no tiene entry)
+        active_trades = [z for z in zones_data if z.get('trade_result') in ('WIN', 'LOSS')]
+        active_trades.sort(key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0))
+
+        max_consecutive_wins = 0
+        max_consecutive_losses = 0
+        current_wins = 0
+        current_losses = 0
+        equity = 0.0
+        equity_curve = []
+
+        for z in active_trades:
+            result = z.get('trade_result')
+            pnl = z.get('trade_pnl_r', 0)
+            equity += pnl
+
+            # Guardar punto de equity
+            equity_curve.append({
+                "timestamp": z.get('entry_timestamp', 0) or z.get('start_timestamp', 0),
+                "equity": round(equity, 2),
+                "result": result,
+                "pnl": pnl
+            })
+
+            if result == 'WIN':
+                current_wins += 1
+                current_losses = 0
+                max_consecutive_wins = max(max_consecutive_wins, current_wins)
+            elif result == 'LOSS':
+                current_losses += 1
+                current_wins = 0
+                max_consecutive_losses = max(max_consecutive_losses, current_losses)
+
+        # Calcular max drawdown desde equity curve
+        max_equity = 0.0
+        max_drawdown = 0.0
+        for point in equity_curve:
+            eq = point['equity']
+            if eq > max_equity:
+                max_equity = eq
+            drawdown = max_equity - eq
+            if drawdown > max_drawdown:
+                max_drawdown = drawdown
 
         return {
             "success": True,
@@ -4530,9 +4705,13 @@ async def detect_trading_zones(request: Request):
                 "win_rate": round(win_rate, 1),
                 "total_pnl_r": round(total_pnl_r, 1),
                 "expectancy": round(expectancy, 3),
+                "max_consecutive_wins": max_consecutive_wins,
+                "max_consecutive_losses": max_consecutive_losses,
+                "max_drawdown_r": round(max_drawdown, 2),
                 "entry_mode": params_dict.get("entry_mode", "breakout_close"),
                 "position_mode": params_dict.get("position_mode", "sequential"),
             },
+            "equity_curve": equity_curve,
             "params_used": params_dict
         }
 
@@ -4583,18 +4762,37 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
     """
     Genera un archivo CSV con formato europeo (punto y coma, coma decimal).
     Incluye timestamp en el nombre para no sobreescribir.
+    Las zonas se ordenan cronologicamente por entry_timestamp.
     """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{symbol}_{interval}m_{days}d_zones_{timestamp}.csv"
     filepath = ZONES_CSV_DIR / filename
 
+    # Ordenar zonas cronologicamente por entry_timestamp (o start_timestamp)
+    sorted_zones = sorted(
+        zones,
+        key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0)
+    )
+
+    # Filtrar solo trades activos (WIN/LOSS) para calcular equity
+    active_trades = [z for z in sorted_zones if z.get('trade_result') in ('WIN', 'LOSS')]
+
+    # Calcular equity acumulado para cada trade
+    equity_map = {}  # timestamp -> equity
+    equity = 0.0
+    for z in active_trades:
+        pnl = z.get('trade_pnl_r', 0)
+        equity += pnl
+        ts_key = z.get('entry_timestamp', 0) or z.get('start_timestamp', 0)
+        equity_map[ts_key] = equity
+
     # Headers del CSV
     headers = [
-        "zona_num", "fecha_inicio", "fecha_fin",
+        "zona_num", "fecha_entrada", "fecha_cierre",
         "precio_min", "precio_max", "rango_pct",
-        "direccion_breakout", "precio_breakout",
+        "direccion", "precio_breakout",
         "modo_entrada", "precio_entrada", "offset_barras",
-        "resultado", "pnl_r",
+        "resultado", "pnl_r", "equity_r",
         "r_multiple", "alcanzo_2r", "alcanzo_3r",
         "barras_cierre", "velas_en_zona", "duracion_horas", "score"
     ]
@@ -4611,11 +4809,15 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
         # Headers
         f.write(";".join(headers) + "\n")
 
-        # Datos
-        for i, zone in enumerate(zones, 1):
+        # Datos ordenados cronologicamente
+        running_equity = 0.0
+        for i, zone in enumerate(sorted_zones, 1):
             # Convertir timestamps a fechas legibles
-            start_dt = datetime.fromtimestamp(zone.get('start_timestamp', 0) / 1000)
-            end_dt = datetime.fromtimestamp(zone.get('end_timestamp', 0) / 1000)
+            entry_ts = zone.get('entry_timestamp', 0) or zone.get('start_timestamp', 0)
+            close_ts = zone.get('trade_close_timestamp', 0) or zone.get('end_timestamp', 0)
+
+            entry_dt = datetime.fromtimestamp(entry_ts / 1000) if entry_ts else None
+            close_dt = datetime.fromtimestamp(close_ts / 1000) if close_ts else None
 
             entry_mode_label = zone.get('entry_mode', '')
             if entry_mode_label == 'breakout_close':
@@ -4623,10 +4825,18 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
             elif entry_mode_label == 'swing_confirmation':
                 entry_mode_label = 'Swing Confirm'
 
+            # Calcular equity para este trade
+            result = zone.get('trade_result', '')
+            if result in ('WIN', 'LOSS'):
+                running_equity += zone.get('trade_pnl_r', 0)
+                equity_str = str(round(running_equity, 2)).replace('.', ',')
+            else:
+                equity_str = "-"
+
             row = [
                 str(i),
-                start_dt.strftime("%Y-%m-%d %H:%M"),
-                end_dt.strftime("%Y-%m-%d %H:%M"),
+                entry_dt.strftime("%Y-%m-%d %H:%M") if entry_dt else "-",
+                close_dt.strftime("%Y-%m-%d %H:%M") if close_dt else "-",
                 str(zone.get('min_price', 0)).replace('.', ','),
                 str(zone.get('max_price', 0)).replace('.', ','),
                 str(round(zone.get('price_range_pct', 0), 2)).replace('.', ','),
@@ -4635,8 +4845,9 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
                 entry_mode_label,
                 str(zone.get('entry_price', 0)).replace('.', ','),
                 str(zone.get('entry_bar_offset', 0)),
-                zone.get('trade_result', ''),
+                result,
                 str(zone.get('trade_pnl_r', 0)).replace('.', ','),
+                equity_str,
                 str(round(zone.get('r_multiple', 0), 2)).replace('.', ','),
                 "Si" if zone.get('reached_2r') else "No",
                 "Si" if zone.get('reached_3r') else "No",

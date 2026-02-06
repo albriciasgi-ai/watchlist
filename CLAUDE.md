@@ -3863,3 +3863,255 @@ zone_num;start_date;end_date;min_price;max_price;price_range_pct;breakout_direct
 **CSV no se genera:**
 - Verificar que existe el directorio `zones_csv/`
 - Verificar permisos de escritura
+
+---
+
+# ZONE DETECTOR v3.1 - Mejoras Febrero 2026
+
+## Resumen de Cambios
+
+Sistema mejorado con presets, scoring intrinseco, limites expandidos y barra de progreso para carga de datos.
+
+## 1. Sistema de Presets (ZoneDetectorSettings.jsx)
+
+Permite guardar, cargar y eliminar configuraciones personalizadas.
+
+### Funciones Implementadas
+
+```javascript
+// Guardar preset
+const handleSavePreset = () => {
+  const presets = JSON.parse(localStorage.getItem(PRESETS_STORAGE_KEY) || '{}');
+  presets[presetName] = { ...currentParams };
+  localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(presets));
+};
+
+// Cargar preset
+const handleLoadPreset = (name) => {
+  const presets = JSON.parse(localStorage.getItem(PRESETS_STORAGE_KEY) || '{}');
+  if (presets[name]) {
+    setParams(presets[name]);
+  }
+};
+
+// Eliminar preset
+const handleDeletePreset = (name) => {
+  const presets = JSON.parse(localStorage.getItem(PRESETS_STORAGE_KEY) || '{}');
+  delete presets[name];
+  localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(presets));
+};
+```
+
+### UI de Presets
+
+- Dropdown para seleccionar preset guardado
+- Input + boton "Guardar" para crear nuevo preset
+- Boton "Eliminar" para borrar preset seleccionado
+- Boton "Reset" para volver a valores por defecto
+
+### Storage Key
+
+```javascript
+const PRESETS_STORAGE_KEY = 'zoneDetector_presets';
+```
+
+## 2. Scoring Intrinseco (Correccion de Sesgos)
+
+El calculo del score de cada zona fue corregido para eliminar sesgos post-trade.
+
+### Sesgos Corregidos
+
+1. **Continuation Score**: Ahora es opcional via `use_continuation_score`
+   - Solo aplica cuando `entry_mode = "swing_confirmation"`
+   - No aplica para `breakout_close` (no hay forma de saber si velas futuras continuaran)
+
+2. **Ajuste por Resultado**: Eliminado completamente
+   - Antes: WIN +15, LOSS -10
+   - Ahora: Score final = base_score (sin ajuste por resultado)
+
+### Implementacion (zone_detector.py)
+
+```python
+@dataclass
+class ZoneDetectionParams:
+    # ... otros parametros ...
+    use_continuation_score: bool = False  # Solo usar si entry_mode=swing_confirmation
+
+# En calculo de score:
+continuation_score = 0
+if params.use_continuation_score and params.entry_mode == "swing_confirmation":
+    continuation_score = min(continuation_bars * 5, 20)
+
+# Score final = base_score (NO aplicamos ajuste por resultado WIN/LOSS)
+trading_score = base_score
+```
+
+### UI (ZoneDetectorSettings.jsx)
+
+Checkbox "Usar Continuation Score" solo visible cuando entry_mode = "swing_confirmation".
+
+## 3. Limites de Dias Expandidos
+
+### MAX_DAYS_BY_INTERVAL Actualizado
+
+| Intervalo | Antes | Ahora |
+|-----------|-------|-------|
+| 1 min | 5 | 7 |
+| 3 min | 10 | 21 |
+| 5 min | 120 | **400** |
+| 15 min | 90 | 180 |
+| 30 min | 150 | 360 |
+| 60 min | 360 | 730 |
+| 120 min | 180 | 730 |
+| 240 min | 720 | 1095 |
+| D | 1440 | 2000 |
+| W | 730 | 1000 |
+
+### Archivos Actualizados
+
+1. **Backend:** `4.Analizador cripto/backend/main.py` (linea 82)
+2. **Frontend Settings:** `8.AnalizadorDesktop/src/components/ZoneDetectorSettings.jsx`
+3. **Frontend Chart:** `8.AnalizadorDesktop/src/components/SingleSymbolAnalyzer.jsx`
+
+### Limite de Requests Aumentado
+
+En `get_historical()` (main.py linea 302):
+```python
+# Antes: max_requests = 50  (50k velas max)
+# Ahora:
+max_requests = 120  # 120 requests x 1000 velas = 120,000 velas max (~416 dias en 5min)
+```
+
+## 4. Barra de Progreso para Carga de Datos
+
+Sistema SSE (Server-Sent Events) para mostrar progreso durante carga de datasets grandes.
+
+### Backend - Endpoint SSE
+
+```python
+@app.get("/api/historical-stream/{symbol}")
+async def get_historical_stream(symbol: str, interval: str = "15", days: int = 30):
+    async def generate():
+        # Enviar progreso mientras descarga
+        yield f"data: {json.dumps({'type': 'progress', 'loaded': N, 'total': T, 'percent': P})}\n\n"
+        # Enviar datos finales
+        yield f"data: {json.dumps({'type': 'complete', 'total_candles': N, 'data': candles})}\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
+```
+
+### Frontend - MiniChart.jsx
+
+**Estado de progreso:**
+```javascript
+const [loadProgress, setLoadProgress] = useState(null); // { loaded, total, percent }
+```
+
+**Umbral para usar streaming:**
+```javascript
+const STREAM_THRESHOLD = 10000; // Mas de 10k velas usa SSE
+```
+
+**Funcion de carga con SSE:**
+```javascript
+const loadHistoricalWithStream = async (daysToLoad) => {
+  return new Promise((resolve, reject) => {
+    const url = `${API_BASE_URL}/api/historical-stream/${symbol}?interval=${interval}&days=${daysToLoad}`;
+    const eventSource = new EventSource(url);
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'progress') {
+        setLoadProgress({ loaded: data.loaded, total: data.total, percent: data.percent });
+      } else if (data.type === 'complete') {
+        setLoadProgress(null);
+        eventSource.close();
+        resolve({ success: true, data: data.data });
+      }
+    };
+  });
+};
+```
+
+**UI de barra de progreso:**
+- Overlay con fondo semitransparente
+- Barra de progreso con gradiente azul-verde
+- Porcentaje centrado en la barra
+- Contador de velas: "45,000 / 115,000 velas"
+- Info: "BTCUSDT @ 5min - 400 dias"
+
+### Logica de Decision
+
+```javascript
+// En loadHistoricalData():
+if (useStreaming && !isIncremental) {
+  // Dataset grande (>10k velas) - usar SSE con progreso
+  json = await loadHistoricalWithStream(parseInt(days));
+} else {
+  // Dataset pequeno o incremental - fetch tradicional
+  json = await fetchWithRetry(url, ...);
+}
+```
+
+## 5. Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `zone_detector.py` | `use_continuation_score`, eliminado ajuste WIN/LOSS |
+| `main.py` | MAX_DAYS expandido, max_requests=120, endpoint SSE |
+| `ZoneDetectorSettings.jsx` | Presets, MAX_DAYS expandido, checkbox continuation |
+| `SingleSymbolAnalyzer.jsx` | MAX_DAYS_BY_INTERVAL, DAYS_OPTIONS expandidos |
+| `MiniChart.jsx` | Estado loadProgress, loadHistoricalWithStream(), UI progreso |
+| `IndicatorManager.js` | Parametro use_continuation_score |
+
+## 6. Formula de Score Actual
+
+```
+base_score = momentum_score + compression_score + volume_bonus + [continuation_score] + [bbwp_bonus]
+
+Donde:
+- momentum_score: 0-25 (direccion del breakout vs momentum previo)
+- compression_score: 0-25 (que tan comprimida esta la zona)
+- volume_bonus: 0-15 (volumen relativo en zona)
+- continuation_score: 0-20 (OPCIONAL, solo si use_continuation_score=true Y entry_mode=swing_confirmation)
+- bbwp_bonus: 0-15 (OPCIONAL, solo si use_bbwp_scoring=true Y BBWP < threshold)
+
+trading_score = base_score (sin ajuste por resultado WIN/LOSS)
+```
+
+## 7. Ejemplo de Uso
+
+```javascript
+// Cargar 400 dias de datos en 5 minutos con barra de progreso
+const params = {
+  symbol: "BTCUSDT",
+  interval: "5",
+  days: 400,
+  use_continuation_score: false,  // No usar para breakout_close
+  entry_mode: "breakout_close",
+  min_score_filter: 50
+};
+
+// El frontend detecta que 400 dias en 5min = ~115k velas > 10k threshold
+// Automaticamente usa SSE con barra de progreso
+const result = await manager.loadTradingZones(params);
+```
+
+## 8. Troubleshooting Adicional
+
+**Barra de progreso no aparece:**
+- Verificar que days * candles_por_dia > 10,000
+- Para 5min: threshold es ~35 dias
+- Para 1h: threshold es ~416 dias
+
+**Analisis dice "50,000 velas" aunque seleccione 400 dias:**
+- Verificar que `max_requests = 120` en main.py linea 302
+- Reiniciar backend despues de cambiar
+
+**Preset no se guarda:**
+- Verificar localStorage disponible
+- Key: `zoneDetector_presets`
+
+**Score muy bajo en todas las zonas:**
+- Revisar que no se esta usando continuation_score incorrectamente
+- El score maximo sin continuation es ~80 (momentum + compression + volume + bbwp)

@@ -1,0 +1,42 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:56 [Preload] Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:57 [Preload] Plataforma: win32
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:58 [Preload] Electron: 33.4.11
+chunk-ZFBEYDM4.js?v=0d753ea7:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+config.js:19 [Config] API_BASE_URL: http://localhost:10000
+config.js:20 [Config] Electron: Si
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+main.jsx:15 ====================================
+main.jsx:16 Analizador Desktop - Frontend
+main.jsx:17 ====================================
+main.jsx:21 [Electron] Ejecutando en Electron
+main.jsx:22 [Electron] Versiones: Object
+main.jsx:23 [Electron] Plataforma: win32
+main.jsx:28 [App] Backend esperado en: http://localhost:10000
+MiniChart.jsx:271 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2084 [BTCUSDT] 🚀 Componente montado, iniciando...
+ZoneVisualizerIndicator.js:40 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [1:08:18 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+CandleCache.js:79 [CandleCache] 💾 BTCUSDT@5 - desde IndexedDB (34559 velas)
+CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@5: 34559 velas sin gaps
+MiniChart.jsx:1165 [BTCUSDT] Carga INCREMENTAL: desde 6/2/2026, 1:00:00 p.m. (34559 velas en cache, 100%)
+robustness.js:415 [CacheCleanup] Complete: 0/7 candles, 0/2 indicators removed
+WebSocketManager.js:61 WebSocket Manager conectado [5]
+WebSocketManager.js:79 ✓ Suscrito: 
+CandleCache.js:192 [CandleCache] 🔄 Merge: 34559 cached + 1 new = 34559 total
+MiniChart.jsx:1221 [BTCUSDT] ✅ Incremental: +1 velas nuevas = 34559 total
+MiniChart.jsx:1245 [BTCUSDT] ✅ Histórico final: 34559 velas
+MiniChart.jsx:680 [BTCUSDT] drawChart: 34560 velas disponibles, zoom=0.100, chartWidth=1196, mostrando=1196, userZoomed=false
+ZoneVisualizerIndicator.js:104 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+Logger.js:100 ✅ [1:08:22 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 1 indicadores
+Logger.js:100 ✅ [1:08:22 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@5 - guardado (34559 velas, memoria: 1/4)
+SymbolList.jsx:75 [Prefetch] Activado (10s despues de carga)
+Logger.js:100 ✅ [1:08:30 p. m.] [SingleSymbolAnalyzer] Backend monitoring interval: 5
+MiniChart.jsx:680 [BTCUSDT] drawChart: 34560 velas disponibles, zoom=0.100, chartWidth=697, mostrando=697, userZoomed=false

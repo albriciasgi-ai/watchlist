@@ -1,8 +1,11 @@
 // ZoneDetectorSettings.jsx
 // Panel para configurar y ejecutar la detección de zonas de trading
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import IndicatorManagerRegistry from '../utils/IndicatorManagerRegistry';
+
+// Key para localStorage
+const PRESETS_STORAGE_KEY = 'zoneDetector_presets';
 
 const defaultParams = {
   // Metodo de deteccion
@@ -41,29 +44,40 @@ const defaultParams = {
   bbwp_lookback: 252,
   bbwp_squeeze_threshold: 20,
   use_inside_pct_filter: false,
-  min_inside_pct: 70.0
+  min_inside_pct: 70.0,
+  // Filtro de calidad
+  min_score_filter: 0,  // 0 = sin filtro, >0 = score minimo para incluir zona
+  use_continuation_score: false  // Solo usar con swing_confirmation (ya pasaron velas)
 };
 
 // Limites maximos de dias por timeframe (debe coincidir con backend)
+// 5min: 400 dias = 115,200 velas (para backtesting extenso)
 const MAX_DAYS_BY_INTERVAL = {
-  "1": 5, "3": 10, "5": 120, "15": 90, "30": 150,
-  "60": 360, "120": 180, "240": 720, "D": 1440, "W": 730
+  "1": 7, "3": 21, "5": 400, "15": 180, "30": 360,
+  "60": 730, "120": 730, "240": 1095, "D": 2000, "W": 1000
 };
 
-// Dias por defecto para deteccion de zonas (mas alto que el chart)
+// Dias por defecto para deteccion de zonas
 const DEFAULT_ZONE_DAYS_BY_INTERVAL = {
-  "1": 3, "3": 7, "5": 30, "15": 60, "30": 90,
-  "60": 180, "120": 180, "240": 360, "D": 730, "W": 730
+  "1": 3, "3": 7, "5": 60, "15": 90, "30": 120,
+  "60": 180, "120": 180, "240": 365, "D": 730, "W": 730
 };
 
 // Campos que son strings (no numericos) - fuera del componente para estabilidad
 const STRING_PARAMS = ['entry_mode', 'position_mode', 'sl_mode', 'detection_method'];
 // Campos booleanos (toggles de capas)
-const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter', 'atr_dyn_merge_overlap'];
+const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter', 'atr_dyn_merge_overlap', 'use_continuation_score'];
 
 function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded, symbol, interval }) {
-  const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 120;
-  const defaultDays = DEFAULT_ZONE_DAYS_BY_INTERVAL[interval] || 30;
+  // Calcular maxDays y defaultDays basados en interval (reactivos)
+  // Asegurar que interval sea string para buscar en el objeto
+  const maxDays = useMemo(() => {
+    const key = String(interval);
+    const max = MAX_DAYS_BY_INTERVAL[key];
+    console.log(`[ZoneDetector] interval=${key}, maxDays=${max}`);
+    return max || 400;
+  }, [interval]);
+  const defaultDays = useMemo(() => DEFAULT_ZONE_DAYS_BY_INTERVAL[String(interval)] || 60, [interval]);
 
   const [params, setParams] = useState(defaultParams);
   const [zoneDays, setZoneDays] = useState(defaultDays);
@@ -73,6 +87,90 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const [candlesCount, setCandlesCount] = useState(null);
   const [csvPath, setCsvPath] = useState(null);
   const [error, setError] = useState(null);
+
+  // === PRESETS ===
+  const [presets, setPresets] = useState({});
+  const [selectedPreset, setSelectedPreset] = useState('');
+  const [newPresetName, setNewPresetName] = useState('');
+  const [showPresetInput, setShowPresetInput] = useState(false);
+
+  // Actualizar zoneDays cuando cambia el interval (nuevo maxDays/defaultDays)
+  useEffect(() => {
+    // Si zoneDays actual excede el nuevo max, ajustar al default
+    if (zoneDays > maxDays) {
+      setZoneDays(defaultDays);
+    }
+  }, [interval, maxDays, defaultDays, zoneDays]);
+
+  // Cargar presets de localStorage al montar
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(PRESETS_STORAGE_KEY);
+      if (saved) {
+        setPresets(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error cargando presets:', e);
+    }
+  }, []);
+
+  // Guardar preset actual
+  const handleSavePreset = useCallback(() => {
+    const name = newPresetName.trim();
+    if (!name) return;
+
+    const presetData = {
+      params: { ...params },
+      zoneDays,
+      savedAt: new Date().toISOString()
+    };
+
+    const updated = { ...presets, [name]: presetData };
+    setPresets(updated);
+    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(updated));
+    setSelectedPreset(name);
+    setNewPresetName('');
+    setShowPresetInput(false);
+    console.log(`[ZoneDetector] Preset "${name}" guardado`);
+  }, [params, zoneDays, presets, newPresetName]);
+
+  // Cargar preset seleccionado
+  const handleLoadPreset = useCallback((presetName) => {
+    if (!presetName || !presets[presetName]) {
+      setSelectedPreset('');
+      return;
+    }
+
+    const preset = presets[presetName];
+    setParams(preset.params);
+    if (preset.zoneDays) {
+      setZoneDays(Math.min(preset.zoneDays, maxDays));
+    }
+    setSelectedPreset(presetName);
+    console.log(`[ZoneDetector] Preset "${presetName}" cargado`);
+  }, [presets, maxDays]);
+
+  // Eliminar preset
+  const handleDeletePreset = useCallback((presetName) => {
+    if (!presetName || !presets[presetName]) return;
+
+    const updated = { ...presets };
+    delete updated[presetName];
+    setPresets(updated);
+    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(updated));
+    if (selectedPreset === presetName) {
+      setSelectedPreset('');
+    }
+    console.log(`[ZoneDetector] Preset "${presetName}" eliminado`);
+  }, [presets, selectedPreset]);
+
+  // Resetear a valores por defecto
+  const handleResetToDefaults = useCallback(() => {
+    setParams(defaultParams);
+    setZoneDays(defaultDays);
+    setSelectedPreset('');
+    console.log('[ZoneDetector] Parametros reseteados a valores por defecto');
+  }, [defaultDays]);
 
   const handleParamChange = useCallback((key, value) => {
     setParams(prev => ({
@@ -197,6 +295,85 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         </div>
 
         <div style={styles.content}>
+          {/* === PRESETS === */}
+          <div style={styles.presetsSection}>
+            <div style={styles.presetsRow}>
+              <select
+                style={styles.presetSelect}
+                value={selectedPreset}
+                onChange={(e) => handleLoadPreset(e.target.value)}
+              >
+                <option value="">-- Preset --</option>
+                {Object.keys(presets).sort().map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+
+              {selectedPreset && (
+                <button
+                  style={styles.presetDeleteBtn}
+                  onClick={() => handleDeletePreset(selectedPreset)}
+                  title="Eliminar preset"
+                >
+                  🗑️
+                </button>
+              )}
+
+              <button
+                style={styles.presetResetBtn}
+                onClick={handleResetToDefaults}
+                title="Resetear a valores por defecto"
+              >
+                ↺
+              </button>
+
+              {!showPresetInput ? (
+                <button
+                  style={styles.presetSaveBtn}
+                  onClick={() => setShowPresetInput(true)}
+                  title="Guardar como preset"
+                >
+                  💾 Guardar
+                </button>
+              ) : (
+                <div style={styles.presetInputRow}>
+                  <input
+                    type="text"
+                    style={styles.presetNameInput}
+                    value={newPresetName}
+                    onChange={(e) => setNewPresetName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSavePreset();
+                      if (e.key === 'Escape') setShowPresetInput(false);
+                    }}
+                    placeholder="Nombre del preset"
+                    autoFocus
+                  />
+                  <button
+                    style={styles.presetConfirmBtn}
+                    onClick={handleSavePreset}
+                    disabled={!newPresetName.trim()}
+                  >
+                    ✓
+                  </button>
+                  <button
+                    style={styles.presetCancelBtn}
+                    onClick={() => {
+                      setShowPresetInput(false);
+                      setNewPresetName('');
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+            {Object.keys(presets).length > 0 && (
+              <div style={styles.presetCount}>
+                {Object.keys(presets).length} preset{Object.keys(presets).length !== 1 ? 's' : ''} guardado{Object.keys(presets).length !== 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
           {/* Metodo de Deteccion */}
           <div style={styles.section}>
             <h4 style={styles.sectionTitle}>Metodo de Deteccion</h4>
@@ -591,17 +768,32 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             </div>
 
             {params.entry_mode === 'swing_confirmation' && (
-              <div style={styles.row}>
-                <label style={styles.label}>Swing Bars:</label>
-                <input
-                  type="number"
-                  style={styles.input}
-                  value={params.swing_bars}
-                  onChange={(e) => handleParamChange('swing_bars', parseInt(e.target.value))}
-                  min="2"
-                  max="10"
-                />
-              </div>
+              <>
+                <div style={styles.row}>
+                  <label style={styles.label}>Swing Bars:</label>
+                  <input
+                    type="number"
+                    style={styles.input}
+                    value={params.swing_bars}
+                    onChange={(e) => handleParamChange('swing_bars', parseInt(e.target.value))}
+                    min="2"
+                    max="10"
+                  />
+                </div>
+                <div style={styles.row}>
+                  <label style={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={params.use_continuation_score}
+                      onChange={(e) => handleParamChange('use_continuation_score', e.target.checked)}
+                    />
+                    <span style={{fontSize: '12px', color: '#A0A0A0'}}>Incluir continuation en score</span>
+                  </label>
+                </div>
+                <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
+                  Suma puntos por velas consecutivas post-breakout (solo aplica en swing confirmation)
+                </div>
+              </>
             )}
 
             <div style={styles.row}>
@@ -661,6 +853,26 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                 min="1"
                 max="20"
               />
+            </div>
+
+            {/* Filtro de Score Minimo */}
+            <div style={{...styles.row, marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #333'}}>
+              <label style={styles.label}>Score Minimo:</label>
+              <input
+                type="range"
+                style={{...styles.input, width: '120px'}}
+                value={params.min_score_filter}
+                onChange={(e) => handleParamChange('min_score_filter', parseInt(e.target.value))}
+                min="0"
+                max="80"
+                step="5"
+              />
+              <span style={{marginLeft: '8px', fontSize: '12px', color: params.min_score_filter > 0 ? '#4CAF50' : '#888'}}>
+                {params.min_score_filter > 0 ? `${params.min_score_filter}%` : 'Sin filtro'}
+              </span>
+            </div>
+            <div style={{fontSize: '11px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
+              Descarta zonas con score menor (0 = sin filtro). Recomendado: 50-65%
             </div>
           </div>
 
@@ -766,6 +978,25 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                     </span>
                   </div>
                 )}
+                {/* Nuevas metricas de rachas */}
+                <div style={styles.statItem}>
+                  <span style={styles.statLabel}>Max Wins Seguidos:</span>
+                  <span style={{...styles.statValue, color: '#4CAF50'}}>
+                    {stats.max_consecutive_wins || 0}
+                  </span>
+                </div>
+                <div style={styles.statItem}>
+                  <span style={styles.statLabel}>Max Losses Seguidos:</span>
+                  <span style={{...styles.statValue, color: '#FF5722'}}>
+                    {stats.max_consecutive_losses || 0}
+                  </span>
+                </div>
+                <div style={styles.statItem}>
+                  <span style={styles.statLabel}>Max Drawdown:</span>
+                  <span style={{...styles.statValue, color: '#FF5722'}}>
+                    -{stats.max_drawdown_r || 0}R
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -978,6 +1209,95 @@ const styles = {
   layerName: {
     fontSize: '13px',
     color: '#C0C0C0'
+  },
+  // === PRESETS STYLES ===
+  presetsSection: {
+    marginBottom: '16px',
+    paddingBottom: '12px',
+    borderBottom: '1px solid #333'
+  },
+  presetsRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    flexWrap: 'wrap'
+  },
+  presetSelect: {
+    flex: 1,
+    minWidth: '120px',
+    padding: '6px 8px',
+    borderRadius: '4px',
+    border: '1px solid #444',
+    backgroundColor: '#2A2A3A',
+    color: '#E0E0E0',
+    fontSize: '12px',
+    cursor: 'pointer'
+  },
+  presetDeleteBtn: {
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: '1px solid #FF5722',
+    backgroundColor: 'transparent',
+    color: '#FF5722',
+    fontSize: '12px',
+    cursor: 'pointer'
+  },
+  presetResetBtn: {
+    padding: '4px 10px',
+    borderRadius: '4px',
+    border: '1px solid #666',
+    backgroundColor: 'transparent',
+    color: '#888',
+    fontSize: '14px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  presetSaveBtn: {
+    padding: '4px 10px',
+    borderRadius: '4px',
+    border: '1px solid #4A6FA5',
+    backgroundColor: 'transparent',
+    color: '#4A6FA5',
+    fontSize: '12px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  presetInputRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
+  },
+  presetNameInput: {
+    width: '120px',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: '1px solid #4A6FA5',
+    backgroundColor: '#2A2A3A',
+    color: '#E0E0E0',
+    fontSize: '12px'
+  },
+  presetConfirmBtn: {
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    fontSize: '12px',
+    cursor: 'pointer'
+  },
+  presetCancelBtn: {
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#666',
+    color: 'white',
+    fontSize: '12px',
+    cursor: 'pointer'
+  },
+  presetCount: {
+    fontSize: '10px',
+    color: '#666',
+    marginTop: '4px'
   }
 };
 

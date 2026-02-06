@@ -134,6 +134,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
 
+  // 📊 Estado para barra de progreso de carga
+  const [loadProgress, setLoadProgress] = useState(null); // { loaded, total, percent }
+
   // Estados para modo dibujo inline
   const [internalDrawingMode, setInternalDrawingMode] = useState(false);
   const [selectedDrawingTool, setSelectedDrawingTool] = useState('select');
@@ -1129,6 +1132,54 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // ==================== DATA LOADING ====================
 
+  // 📊 Umbral para usar carga con streaming (SSE) - mas de 10,000 velas
+  const STREAM_THRESHOLD = 10000;
+
+  // Funcion para cargar con SSE (Server-Sent Events) - para datasets grandes
+  const loadHistoricalWithStream = async (daysToLoad) => {
+    return new Promise((resolve, reject) => {
+      const url = `${API_BASE_URL}/api/historical-stream/${symbol}?interval=${interval}&days=${daysToLoad}`;
+      console.log(`[${symbol}] 📊 Iniciando carga STREAM: ${daysToLoad} dias @ ${interval}`);
+
+      setLoadProgress({ loaded: 0, total: 0, percent: 0 });
+
+      const eventSource = new EventSource(url);
+
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.type === 'progress') {
+            setLoadProgress({
+              loaded: data.loaded,
+              total: data.total,
+              percent: data.percent
+            });
+          } else if (data.type === 'complete') {
+            console.log(`[${symbol}] ✅ Stream completado: ${data.total_candles} velas`);
+            setLoadProgress(null);
+            eventSource.close();
+            resolve({ success: true, data: data.data });
+          } else if (data.type === 'error') {
+            console.error(`[${symbol}] ❌ Error en stream:`, data.message);
+            setLoadProgress(null);
+            eventSource.close();
+            reject(new Error(data.message));
+          }
+        } catch (e) {
+          console.error(`[${symbol}] Error parseando evento SSE:`, e);
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error(`[${symbol}] ❌ Error conexion SSE:`, error);
+        setLoadProgress(null);
+        eventSource.close();
+        reject(new Error('Error de conexion SSE'));
+      };
+    });
+  };
+
   const loadHistoricalData = async () => {
     try {
       const timestamp = Date.now();
@@ -1138,6 +1189,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const cached = await CandleCache.getValidated(symbol, interval, parseInt(days));
       let url;
       let isIncremental = false;
+      let useStreaming = false;
 
       // Calcular maximo de velas esperadas para los dias solicitados
       const intervalMs = getIntervalMilliseconds(interval);
@@ -1151,40 +1203,53 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           console.log(`[${symbol}] Cache tiene ${cached.candles.length} velas pero solo necesitamos ~${maxExpectedCandles} para ${days} dias - carga COMPLETA`);
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
           isIncremental = false;
+          useStreaming = maxExpectedCandles > STREAM_THRESHOLD;
         } else if (cacheRatio < 0.7) {
           // Cache tiene MUCHAS MENOS velas de las necesarias - carga completa
           // La incremental solo agrega al final, no puede rellenar el inicio
           console.log(`[${symbol}] Cache insuficiente: ${cached.candles.length}/${maxExpectedCandles} velas (${(cacheRatio * 100).toFixed(0)}%) - carga COMPLETA`);
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
           isIncremental = false;
+          useStreaming = maxExpectedCandles > STREAM_THRESHOLD;
         } else {
           // Cache tiene suficientes velas (>70%) - carga incremental (solo nuevas)
           const sinceTs = cached.lastTimestamp;
           url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&since_timestamp=${sinceTs}&t=${timestamp}`;
           isIncremental = true;
+          useStreaming = false; // Incremental siempre es rapido
           console.log(`[${symbol}] Carga INCREMENTAL: desde ${new Date(sinceTs).toLocaleString()} (${cached.candles.length} velas en cache, ${(cacheRatio * 100).toFixed(0)}%)`);
         }
       } else {
         // No hay cache o fue limpiado por corrupto - carga completa
         url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}&t=${timestamp}`;
         console.log(`[${symbol}] Carga COMPLETA: ${days} dias @ ${interval}`);
+        useStreaming = maxExpectedCandles > STREAM_THRESHOLD;
       }
 
-      const res = await fetchWithRetry(url, {
-        cache: 'no-cache',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      }, {
-        maxRetries: 3,
-        initialDelayMs: 1000,
-        context: `historical-${symbol}`,
-        onRetry: (attempt, error, delay) => {
-          console.warn(`[${symbol}] Retry ${attempt}: ${error.message}, waiting ${delay}ms`);
-        }
-      });
-      const json = await res.json();
+      let json;
+
+      // 📊 Usar streaming para datasets grandes (>10k velas)
+      if (useStreaming && !isIncremental) {
+        console.log(`[${symbol}] 📊 Usando carga con streaming (${maxExpectedCandles} velas estimadas)`);
+        json = await loadHistoricalWithStream(parseInt(days));
+      } else {
+        // Carga tradicional (rapida para datasets pequenos o incrementales)
+        const res = await fetchWithRetry(url, {
+          cache: 'no-cache',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        }, {
+          maxRetries: 3,
+          initialDelayMs: 1000,
+          context: `historical-${symbol}`,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[${symbol}] Retry ${attempt}: ${error.message}, waiting ${delay}ms`);
+          }
+        });
+        json = await res.json();
+      }
 
       // 🔍 DEBUG: Log para diagnosticar problemas de carga
       if (!json.success) {
@@ -2453,6 +2518,78 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               animation: 'spin 1s linear infinite'
             }} />
             <span style={{ color: '#888' }}>Cargando {symbol}...</span>
+          </div>
+        )}
+        {/* 📊 BARRA DE PROGRESO: Visible durante carga de datasets grandes */}
+        {loadProgress && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(26, 26, 46, 0.95)',
+            color: '#4a9eff',
+            fontSize: '14px',
+            zIndex: 250,
+            gap: '16px'
+          }}>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#fff'
+            }}>
+              Cargando datos historicos...
+            </div>
+            {/* Barra de progreso */}
+            <div style={{
+              width: '80%',
+              maxWidth: '400px',
+              height: '24px',
+              background: '#1a1a2e',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid #333',
+              position: 'relative'
+            }}>
+              <div style={{
+                width: `${loadProgress.percent}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #2196F3 0%, #4CAF50 100%)',
+                borderRadius: '12px',
+                transition: 'width 0.3s ease-out'
+              }} />
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                textShadow: '0 0 4px #000'
+              }}>
+                {loadProgress.percent.toFixed(0)}%
+              </div>
+            </div>
+            {/* Contador de velas */}
+            <div style={{
+              color: '#888',
+              fontSize: '13px'
+            }}>
+              {loadProgress.loaded.toLocaleString()} / {loadProgress.total.toLocaleString()} velas
+            </div>
+            {/* Simbolo */}
+            <div style={{
+              color: '#666',
+              fontSize: '12px'
+            }}>
+              {symbol} @ {interval}min - {days} dias
+            </div>
           </div>
         )}
         {/* 🎯 VIRTUALIZACIÓN: Placeholder cuando el chart no es visible */}
