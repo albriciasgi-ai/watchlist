@@ -37,10 +37,10 @@
       "min_inside_pct": 70,
       "min_score_filter": 45,
       "use_continuation_score": false,
-      "sl_poc_buffer_pct": 10,
+      "sl_poc_buffer_pct": 50,
       "vp_bins_per_zone": 30
     },
     "zoneDays": 1,
-    "savedAt": "2026-02-07T16:16:46.486Z"
+    "savedAt": "2026-02-07T22:28:12.724Z"
   }
 }

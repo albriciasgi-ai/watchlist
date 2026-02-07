@@ -1907,19 +1907,35 @@ class ZoneDetector:
         BandWidth = (BB_upper - BB_lower) / SMA * 100
         BBWP = percentil del BW actual vs ultimos N periodos
         Retorna lista de floats 0-100.
+
+        Auto-escalado: si lookback es muy pequeno relativo al dataset,
+        se escala para usar al menos el 80% de las velas disponibles.
+        Esto es critico en timeframes pequenos (1min) donde lookback=252
+        solo cubre ~4 horas y no da contraste suficiente para el percentil.
         """
+        n = len(candles)
+
+        # Auto-escalar lookback para que cubra un rango significativo
+        # El lookback=252 fue disenado para velas diarias (1 anio).
+        # En timeframes pequenos necesitamos cubrir mas velas para tener contraste.
+        effective_lookback = lookback
+        min_coverage = int(n * 0.8)  # Al menos 80% del dataset
+        if effective_lookback < min_coverage:
+            effective_lookback = min_coverage
+            print(f"[ZoneDetector] BBWP auto-escalado: lookback {lookback} -> {effective_lookback} "
+                  f"(80% de {n} velas)")
+
         # Primero calcular bandwidth para cada vela
-        bandwidth = [0.0] * len(candles)
-        for i in range(len(candles)):
+        bandwidth = [0.0] * n
+        for i in range(n):
             if bb_sma_values[i] > 0 and bb_std_values[i] > 0:
-                bw = ((bb_sma_values[i] + bb_std_values[i]) - (bb_sma_values[i] - bb_std_values[i])) / bb_sma_values[i] * 100
-                # Simplificado: bw = 2 * std / sma * 100
+                # bw = 2 * std / sma * 100
                 bandwidth[i] = (2 * bb_std_values[i] / bb_sma_values[i]) * 100
 
         # Calcular percentil
-        bbwp = [50.0] * len(candles)  # default 50 = neutral
-        for i in range(len(candles)):
-            start_idx = max(0, i - lookback + 1)
+        bbwp = [50.0] * n  # default 50 = neutral
+        for i in range(n):
+            start_idx = max(0, i - effective_lookback + 1)
             historical = bandwidth[start_idx:i + 1]
             if len(historical) < 10:  # minimo para que el percentil tenga sentido
                 continue
@@ -2027,6 +2043,16 @@ class ZoneDetector:
         prev_count_outside = None
         breakout_candle_count = 0
 
+        # --- DEBUG: tracking de secciones count_outside==0 ---
+        debug_sections = []  # Todas las secciones donde count_outside==0
+        current_section_start = None
+
+        from datetime import datetime, timezone
+
+        def _ts_to_str(ts):
+            """Timestamp ms -> string legible"""
+            return datetime.fromtimestamp(ts / 1000, tz=timezone.utc).strftime('%m/%d %H:%M')
+
         for i in range(start_index, len(candles)):
             atr_idx = i  # ATR ya esta alineado
             sma_idx = i  # SMA ya esta alineado
@@ -2054,30 +2080,54 @@ class ZoneDetector:
                 if deviation > atr_val:
                     count_outside += 1
 
-            # TRANSICION: fuera → dentro (countOutside == 0)
+            # --- DEBUG: trackear secciones azules (count_outside==0) ---
+            if count_outside == 0:
+                if current_section_start is None:
+                    current_section_start = i
+            else:
+                if current_section_start is not None:
+                    section_len = i - current_section_start
+                    debug_sections.append({
+                        'start_idx': current_section_start,
+                        'end_idx': i - 1,
+                        'length': section_len,
+                        'start_ts': candles[current_section_start]['timestamp'],
+                        'end_ts': candles[i - 1]['timestamp'],
+                    })
+                    current_section_start = None
+
+            # TRANSICION: fuera -> dentro (countOutside == 0)
             if count_outside == 0 and prev_count_outside is not None and prev_count_outside != 0:
                 # Verificar re-ingreso
                 if current_range and 0 < breakout_candle_count <= max_breakout:
-                    # RE-INGRESO: continuar rango existente
+                    # RE-INGRESO: continuar rango existente (breakout no confirmado)
                     current_range['end_idx'] = i
                     current_range['end_ts'] = candles[i]['timestamp']
                     current_range['candle_count'] += 1
                     current_range['high'] = max(current_range['high'], range_high)
                     current_range['low'] = min(current_range['low'], range_low)
                     breakout_candle_count = 0
+                elif current_range and breakout_candle_count == 0:
+                    # Rango activo sin breakout pendiente: simplemente extender
+                    current_range['end_idx'] = i
+                    current_range['end_ts'] = candles[i]['timestamp']
+                    current_range['candle_count'] += 1
+                    current_range['high'] = max(current_range['high'], range_high)
+                    current_range['low'] = min(current_range['low'], range_low)
                 else:
-                    # NUEVO RANGO
+                    # NUEVO RANGO (current_range es None o breakout ya confirmado)
                     new_start_idx = max(0, i - ma_period + 1)
 
                     # Verificar overlap con ultimo rango guardado
                     if raw_ranges and new_start_idx <= raw_ranges[-1]['end_idx']:
-                        # Mergear con el anterior
-                        raw_ranges[-1]['end_idx'] = i
-                        raw_ranges[-1]['end_ts'] = candles[i]['timestamp']
-                        raw_ranges[-1]['high'] = max(raw_ranges[-1]['high'], range_high)
-                        raw_ranges[-1]['low'] = min(raw_ranges[-1]['low'], range_low)
-                        raw_ranges[-1]['candle_count'] = raw_ranges[-1]['end_idx'] - raw_ranges[-1]['start_idx'] + 1
-                        current_range = None
+                        # Mergear con el anterior - sacarlo de raw_ranges y hacerlo current_range
+                        merged = raw_ranges.pop()
+                        merged['end_idx'] = i
+                        merged['end_ts'] = candles[i]['timestamp']
+                        merged['high'] = max(merged['high'], range_high)
+                        merged['low'] = min(merged['low'], range_low)
+                        merged['candle_count'] = merged['end_idx'] - merged['start_idx'] + 1
+                        current_range = merged  # Mantener como activo para seguir extendiendo
                     else:
                         current_range = {
                             'start_idx': new_start_idx,
@@ -2091,13 +2141,25 @@ class ZoneDetector:
                     breakout_candle_count = 0
 
             elif count_outside == 0:
-                # DENTRO DEL RANGO: extender
+                # DENTRO DEL RANGO: extender o crear
                 if current_range:
                     current_range['end_idx'] = i
                     current_range['end_ts'] = candles[i]['timestamp']
                     current_range['candle_count'] += 1
                     current_range['high'] = max(current_range['high'], range_high)
                     current_range['low'] = min(current_range['low'], range_low)
+                else:
+                    # No hay rango activo pero count_outside==0: crear nuevo
+                    new_start_idx = max(0, i - ma_period + 1)
+                    current_range = {
+                        'start_idx': new_start_idx,
+                        'start_ts': candles[new_start_idx]['timestamp'],
+                        'end_idx': i,
+                        'end_ts': candles[i]['timestamp'],
+                        'high': range_high,
+                        'low': range_low,
+                        'candle_count': i - new_start_idx + 1
+                    }
                 breakout_candle_count = 0
             else:
                 # HAY VELAS FUERA
@@ -2108,6 +2170,10 @@ class ZoneDetector:
                             # BREAKOUT CONFIRMADO: guardar rango
                             if current_range['candle_count'] >= min_bars:
                                 raw_ranges.append(current_range)
+                            else:
+                                print(f"[ZoneDetector] DEBUG DESCARTADO por min_bars: "
+                                      f"{current_range['candle_count']} < {min_bars} velas, "
+                                      f"periodo {_ts_to_str(current_range['start_ts'])} - {_ts_to_str(current_range['end_ts'])}")
                             current_range = None
                             breakout_candle_count = 0
                     else:
@@ -2123,15 +2189,80 @@ class ZoneDetector:
 
             prev_count_outside = count_outside
 
+        # Cerrar ultima seccion debug si quedo abierta
+        if current_section_start is not None:
+            section_len = len(candles) - current_section_start
+            debug_sections.append({
+                'start_idx': current_section_start,
+                'end_idx': len(candles) - 1,
+                'length': section_len,
+                'start_ts': candles[current_section_start]['timestamp'],
+                'end_ts': candles[-1]['timestamp'],
+            })
+
         # Guardar ultimo rango
         if current_range and current_range['candle_count'] >= min_bars:
             raw_ranges.append(current_range)
+        elif current_range:
+            print(f"[ZoneDetector] DEBUG DESCARTADO ultimo rango por min_bars: "
+                  f"{current_range['candle_count']} < {min_bars} velas, "
+                  f"periodo {_ts_to_str(current_range['start_ts'])} - {_ts_to_str(current_range['end_ts'])}")
+
+        # --- DEBUG: Imprimir todas las secciones azules vs rangos detectados ---
+        print(f"\n{'='*80}")
+        print(f"[ZoneDetector] DEBUG atr_dynamic: ANALISIS DE SECCIONES AZULES")
+        print(f"  Params: ma_period={ma_period}, min_bars={min_bars}, max_breakout={max_breakout}, mult={multiplier}")
+        print(f"  Total velas: {len(candles)}, start_index: {start_index}")
+        print(f"  Secciones con count_outside==0: {len(debug_sections)}")
+        print(f"  Rangos crudos detectados: {len(raw_ranges)}")
+        print(f"")
+
+        # Crear set de rangos detectados para marcar cuales secciones fueron capturadas
+        range_intervals = []
+        for r in raw_ranges:
+            range_intervals.append((r['start_idx'], r['end_idx']))
+
+        for si, sec in enumerate(debug_sections):
+            # Ver si esta seccion esta contenida en algun rango detectado
+            captured = False
+            captured_by = None
+            for ri, (rs, re) in enumerate(range_intervals):
+                if sec['start_idx'] >= rs and sec['end_idx'] <= re:
+                    captured = True
+                    captured_by = ri
+                    break
+                # Overlap parcial
+                if sec['start_idx'] <= re and sec['end_idx'] >= rs:
+                    captured = True
+                    captured_by = ri
+                    break
+
+            status = f"-> CAPTURADA por rango #{captured_by}" if captured else "-> NO CAPTURADA"
+            reason = ""
+            if not captured:
+                if sec['length'] < min_bars:
+                    reason = f" (muy corta: {sec['length']} < {min_bars} min_bars)"
+                else:
+                    reason = f" (revisar: {sec['length']} velas >= {min_bars} min_bars)"
+
+            print(f"  Seccion #{si}: idx {sec['start_idx']}-{sec['end_idx']} "
+                  f"({sec['length']} velas) "
+                  f"{_ts_to_str(sec['start_ts'])} - {_ts_to_str(sec['end_ts'])} "
+                  f"{status}{reason}")
+
+        print(f"")
+        for ri, r in enumerate(raw_ranges):
+            print(f"  Rango #{ri}: idx {r['start_idx']}-{r['end_idx']} "
+                  f"({r['candle_count']} velas) "
+                  f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])} "
+                  f"precio {r['low']:.2f} - {r['high']:.2f}")
+        print(f"{'='*80}\n")
 
         # 3. Post-proceso: Merge rangos solapados
         if merge_overlap and len(raw_ranges) > 1:
             raw_ranges = self._merge_overlapping_atr_ranges(raw_ranges)
 
-        print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos crudos detectados")
+        print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos crudos detectados (post-merge)")
 
         # 4. Filtrar rangos y preparar para simulacion de trades
         filtered_ranges = []
@@ -2139,13 +2270,18 @@ class ZoneDetector:
 
         for r in raw_ranges:
             # --- TTM Squeeze pre-filtro ---
+            # Verificar si CUALQUIER parte del rango se solapa con una squeeze region
             if squeeze_regions_list:
                 in_squeeze = False
                 for (sq_start, sq_end) in squeeze_regions_list:
-                    if r['start_idx'] >= sq_start and r['start_idx'] <= sq_end:
+                    # Overlap: rango y squeeze se solapan si no estan completamente separados
+                    if r['start_idx'] <= sq_end and r['end_idx'] >= sq_start:
                         in_squeeze = True
                         break
                 if not in_squeeze:
+                    print(f"[ZoneDetector] DEBUG FILTRADO por TTM: rango "
+                          f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])} "
+                          f"no se solapa con ninguna squeeze region")
                     continue
 
             zone_candles = candles[r['start_idx']:r['end_idx'] + 1]
@@ -2160,6 +2296,9 @@ class ZoneDetector:
                         inside_count += 1
                 inside_pct = (inside_count / len(zone_candles)) * 100 if zone_candles else 0
                 if inside_pct < params.min_inside_pct:
+                    print(f"[ZoneDetector] DEBUG FILTRADO por inside_pct: "
+                          f"{inside_pct:.1f}% < {params.min_inside_pct}% en rango "
+                          f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])}")
                     continue
 
             filtered_ranges.append(r)
@@ -2281,7 +2420,11 @@ class ZoneDetector:
           - high, low (limites de precio)
           - candle_count (numero de velas)
         """
-        from datetime import datetime
+        from datetime import datetime, timezone
+
+        def _ts_to_str(ts):
+            """Timestamp ms -> string legible"""
+            return datetime.fromtimestamp(ts / 1000, tz=timezone.utc).strftime('%m/%d %H:%M')
 
         if not ranges:
             return []
@@ -2623,6 +2766,8 @@ class ZoneDetector:
 
             base_score = momentum_score + continuation_score + compression_score + volume_bonus
 
+            bbwp_bonus = 0
+            avg_bbwp = -1
             if params.use_bbwp_scoring and bbwp_values:
                 zone_bbwp_vals = [bbwp_values[idx] for idx in range(start_idx, end_idx + 1) if idx < len(bbwp_values) and bbwp_values[idx] > 0]
                 if zone_bbwp_vals:
@@ -2630,10 +2775,22 @@ class ZoneDetector:
                     if avg_bbwp <= params.bbwp_squeeze_threshold:
                         bbwp_bonus = (params.bbwp_squeeze_threshold - avg_bbwp) / params.bbwp_squeeze_threshold * 15
                         base_score += bbwp_bonus
+                    print(f"[ZoneDetector] BBWP DEBUG zona {_ts_to_str(start_ts)}: "
+                          f"avg_bbwp={avg_bbwp:.1f}, threshold={params.bbwp_squeeze_threshold}, "
+                          f"bonus={bbwp_bonus:.1f}, lookback={params.bbwp_lookback}, "
+                          f"vals_count={len(zone_bbwp_vals)}, "
+                          f"min={min(zone_bbwp_vals):.1f}, max={max(zone_bbwp_vals):.1f}")
 
             # --- Filtro de score minimo ---
             if params.min_score_filter > 0 and base_score < params.min_score_filter:
                 stats["filtered"] = stats.get("filtered", 0) + 1
+                bbwp_bonus_dbg = base_score - (momentum_score + continuation_score + compression_score + volume_bonus)
+                print(f"[ZoneDetector] SCORE FILTRADO: {base_score:.1f} < {params.min_score_filter} | "
+                      f"zona {_ts_to_str(start_ts)}-{_ts_to_str(end_ts)} | "
+                      f"breakout={breakout_direction} result={trade_result} | "
+                      f"momentum={momentum_score:.1f} compression={compression_score:.1f} "
+                      f"vol={volume_bonus:.1f} bbwp={bbwp_bonus_dbg:.1f} cont={continuation_score:.1f} | "
+                      f"body_ratio={breakout_body_ratio:.2f} range_pct={((zone_high - zone_low) / zone_mid * 100):.2f}%")
                 # Revertir stats si ya se contabilizo
                 if trade_result == "WIN":
                     stats["wins"] -= 1
@@ -2646,6 +2803,13 @@ class ZoneDetector:
 
             # Score final = base_score (NO aplicamos ajuste por resultado)
             trading_score = base_score
+            bbwp_bonus_dbg = base_score - (momentum_score + continuation_score + compression_score + volume_bonus)
+            print(f"[ZoneDetector] SCORE OK: {base_score:.1f} >= {params.min_score_filter} | "
+                  f"zona {_ts_to_str(start_ts)}-{_ts_to_str(end_ts)} | "
+                  f"breakout={breakout_direction} result={trade_result} | "
+                  f"momentum={momentum_score:.1f} compression={compression_score:.1f} "
+                  f"vol={volume_bonus:.1f} bbwp={bbwp_bonus_dbg:.1f} cont={continuation_score:.1f} | "
+                  f"body_ratio={breakout_body_ratio:.2f} range_pct={((zone_high - zone_low) / zone_mid * 100):.2f}%")
 
             touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
 
@@ -2690,7 +2854,9 @@ class ZoneDetector:
 
     def _merge_overlapping_atr_ranges(self, ranges: List[Dict]) -> List[Dict]:
         """
-        Mergea rangos que se solapan en tiempo O precio.
+        Mergea rangos que se solapan en TIEMPO solamente.
+        El merge por precio sin overlap temporal creaba mega-rangos artificiales
+        (ej: 3 rangos separados por horas se mergeaban porque tenian precios similares).
         Ordenados por start_idx.
         """
         if not ranges:
@@ -2702,20 +2868,10 @@ class ZoneDetector:
         for r in sorted_ranges[1:]:
             last = merged[-1]
 
-            # Overlap temporal
+            # Solo merge por overlap temporal (un rango empieza antes de que el otro termine)
             time_overlap = r['start_idx'] <= last['end_idx']
 
-            # Overlap de precio (>30% de interseccion)
-            price_overlap = False
-            overlap_high = min(last['high'], r['high'])
-            overlap_low = max(last['low'], r['low'])
-            if overlap_high > overlap_low:
-                overlap_size = overlap_high - overlap_low
-                smaller_range = min(last['high'] - last['low'], r['high'] - r['low'])
-                if smaller_range > 0 and overlap_size / smaller_range > 0.3:
-                    price_overlap = True
-
-            if time_overlap or price_overlap:
+            if time_overlap:
                 # Mergear
                 last['end_idx'] = max(last['end_idx'], r['end_idx'])
                 last['end_ts'] = max(last['end_ts'], r['end_ts'])

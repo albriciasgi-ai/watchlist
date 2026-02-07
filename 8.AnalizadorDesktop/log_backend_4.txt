@@ -1,0 +1,1121 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:10000 (Press CTRL+C to quit)
+INFO:     Started reloader process [21264] using WatchFiles
+2026-02-07 16:50:10 - uvicorn.error - INFO - Started server process [21376]
+2026-02-07 16:50:10 - uvicorn.error - INFO - Started server process [21376]
+2026-02-07 16:50:10 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-07 16:50:10 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-07 16:50:11 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-02-07 16:50:11 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-02-07 16:50:13 - alert_sender - WARNING - [WARN] Alert service not reachable at http://localhost:5000
+2026-02-07 16:50:13 - alert_sender - INFO - [TIP] Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+2026-02-07 16:50:13 - swing_detector - INFO - [SWING_DETECTOR] Initialized
+2026-02-07 16:50:13 - websocket_manager - INFO - WebSocketManager initialized
+2026-02-07 16:50:13 - swing_service - INFO - [SWING_SERVICE] Loaded config: 13 symbols, interval=1
+2026-02-07 16:50:13 - swing_service - INFO - [SWING_SERVICE] Initialized
+[STARTUP] Swing config loaded: 13 symbols, interval=1m
+2026-02-07 16:50:13 - config_store - INFO - Loaded configs for 2 symbols from file
+2026-02-07 16:50:13 - config_store - INFO - ConfigStore initialized with 2 symbols
+2026-02-07 16:50:13 - pattern_state_manager - INFO - Loaded 0 alerted patterns
+2026-02-07 16:50:13 - pattern_state_manager - INFO - Loaded 23 cooldown states
+2026-02-07 16:50:13 - pattern_state_manager - INFO - Loaded 100 alert records
+2026-02-07 16:50:13 - pattern_state_manager - INFO - PatternStateManager initialized with 0 alerted patterns
+2026-02-07 16:50:13 - realtime_pattern_service - INFO - RealtimePatternService initialized
+2026-02-07 16:50:13 - realtime_pattern_service - INFO - Starting RealtimePatternService
+2026-02-07 16:50:13 - realtime_pattern_service - INFO - Symbols: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT']
+2026-02-07 16:50:13 - realtime_pattern_service - INFO - Intervals: ['60']
+2026-02-07 16:50:13 - websocket_manager - INFO - Candle close callback registered (total: 1)
+2026-02-07 16:50:13 - realtime_pattern_service - INFO - [PRELOAD] Starting historical candle preload...
+2026-02-07 16:50:14 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for BTCUSDT/60...
+2026-02-07 16:50:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:15 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:15 - websocket_manager - INFO - [PRELOAD] BTCUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:15 - realtime_pattern_service - INFO - [PRELOAD] ✅ BTCUSDT/60: Loaded 200 candles
+2026-02-07 16:50:15 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for ETHUSDT/60...
+2026-02-07 16:50:16 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:16 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:16 - websocket_manager - INFO - [PRELOAD] ETHUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:16 - realtime_pattern_service - INFO - [PRELOAD] ✅ ETHUSDT/60: Loaded 200 candles
+2026-02-07 16:50:16 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for XRPUSDT/60...
+2026-02-07 16:50:17 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:17 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:17 - websocket_manager - INFO - [PRELOAD] XRPUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:17 - realtime_pattern_service - INFO - [PRELOAD] ✅ XRPUSDT/60: Loaded 200 candles
+2026-02-07 16:50:17 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for TRXUSDT/60...
+2026-02-07 16:50:18 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:18 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:18 - websocket_manager - INFO - [PRELOAD] TRXUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:18 - realtime_pattern_service - INFO - [PRELOAD] ✅ TRXUSDT/60: Loaded 200 candles
+2026-02-07 16:50:18 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for GALAUSDT/60...
+2026-02-07 16:50:18 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:19 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:19 - websocket_manager - INFO - [PRELOAD] GALAUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] ✅ GALAUSDT/60: Loaded 200 candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for SUIUSDT/60...
+2026-02-07 16:50:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:19 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:19 - websocket_manager - INFO - [PRELOAD] SUIUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] ✅ SUIUSDT/60: Loaded 200 candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for TRBUSDT/60...
+2026-02-07 16:50:19 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:19 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:19 - websocket_manager - INFO - [PRELOAD] TRBUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] ✅ TRBUSDT/60: Loaded 200 candles
+2026-02-07 16:50:19 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for SOLUSDT/60...
+2026-02-07 16:50:20 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:20 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:20 - websocket_manager - INFO - [PRELOAD] SOLUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:20 - realtime_pattern_service - INFO - [PRELOAD] ✅ SOLUSDT/60: Loaded 200 candles
+2026-02-07 16:50:20 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for ADAUSDT/60...
+2026-02-07 16:50:21 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:21 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:21 - websocket_manager - INFO - [PRELOAD] ADAUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:21 - realtime_pattern_service - INFO - [PRELOAD] ✅ ADAUSDT/60: Loaded 200 candles
+2026-02-07 16:50:21 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for DOGEUSDT/60...
+2026-02-07 16:50:21 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:21 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:21 - websocket_manager - INFO - [PRELOAD] DOGEUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:21 - realtime_pattern_service - INFO - [PRELOAD] ✅ DOGEUSDT/60: Loaded 200 candles
+2026-02-07 16:50:21 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for PAXGUSDT/60...
+2026-02-07 16:50:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:22 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:22 - websocket_manager - INFO - [PRELOAD] PAXGUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:22 - realtime_pattern_service - INFO - [PRELOAD] ✅ PAXGUSDT/60: Loaded 200 candles
+2026-02-07 16:50:22 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for BNBUSDT/60...
+2026-02-07 16:50:22 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:22 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:22 - websocket_manager - INFO - [PRELOAD] BNBUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:22 - realtime_pattern_service - INFO - [PRELOAD] ✅ BNBUSDT/60: Loaded 200 candles
+2026-02-07 16:50:22 - realtime_pattern_service - INFO - [PRELOAD] Fetching 200 candles for POLUSDT/60...
+2026-02-07 16:50:23 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=60&limit=200 "HTTP/1.1 200 OK"
+2026-02-07 16:50:23 - websocket_manager - INFO - Preloaded 200 candles, buffer now has 200 candles
+2026-02-07 16:50:23 - websocket_manager - INFO - [PRELOAD] POLUSDT/60: Preloaded 200 historical candles
+2026-02-07 16:50:23 - realtime_pattern_service - INFO - [PRELOAD] ✅ POLUSDT/60: Loaded 200 candles
+2026-02-07 16:50:23 - realtime_pattern_service - INFO - [PRELOAD] Historical candle preload complete
+2026-02-07 16:50:23 - websocket_manager - INFO - Starting WebSocketManager with 13 subscriptions
+2026-02-07 16:50:23 - websocket_manager - INFO - Symbols: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT']
+2026-02-07 16:50:23 - websocket_manager - INFO - Intervals: ['60']
+2026-02-07 16:50:23 - realtime_pattern_service - INFO - RealtimePatternService started successfully
+[STARTUP] Real-time pattern detection service started
+[STARTUP] Monitoring symbols: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT']
+[STARTUP] Initial interval: ['60']
+2026-02-07 16:50:24 - websocket_manager - INFO - Candle close listener added (total: 2)
+2026-02-07 16:50:24 - swing_service - INFO - [SWING_SERVICE] WebSocket already running, adding subscriptions for 13 symbols
+2026-02-07 16:50:24 - swing_service - INFO - [SWING_SERVICE] Symbols to subscribe: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT']
+2026-02-07 16:50:24 - swing_service - INFO - [SWING_SERVICE] Interval to subscribe: 1
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] add_subscriptions called: symbols=['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT'], intervals=['1']
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] Requested subscriptions: ['kline.1.ADAUSDT', 'kline.1.BNBUSDT', 'kline.1.BTCUSDT', 'kline.1.DOGEUSDT', 'kline.1.ETHUSDT', 'kline.1.GALAUSDT', 'kline.1.PAXGUSDT', 'kline.1.POLUSDT', 'kline.1.SOLUSDT', 'kline.1.SUIUSDT', 'kline.1.TRBUSDT', 'kline.1.TRXUSDT', 'kline.1.XRPUSDT']
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] Existing subscriptions: ['kline.60.ADAUSDT', 'kline.60.BNBUSDT', 'kline.60.BTCUSDT', 'kline.60.DOGEUSDT', 'kline.60.ETHUSDT', 'kline.60.GALAUSDT', 'kline.60.PAXGUSDT', 'kline.60.POLUSDT', 'kline.60.SOLUSDT', 'kline.60.SUIUSDT', 'kline.60.TRBUSDT', 'kline.60.TRXUSDT', 'kline.60.XRPUSDT']
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] Adding 13 new subscriptions: ['kline.1.ADAUSDT', 'kline.1.BNBUSDT', 'kline.1.BTCUSDT', 'kline.1.DOGEUSDT', 'kline.1.ETHUSDT', 'kline.1.GALAUSDT', 'kline.1.PAXGUSDT', 'kline.1.POLUSDT', 'kline.1.SOLUSDT', 'kline.1.SUIUSDT', 'kline.1.TRBUSDT', 'kline.1.TRXUSDT', 'kline.1.XRPUSDT']
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] Total subscriptions now: 26
+2026-02-07 16:50:24 - websocket_manager - INFO - [WS_MANAGER] WebSocket not yet connected, waiting...
+2026-02-07 16:50:24 - websocket_manager - INFO - Connecting to wss://stream.bybit.com/v5/public/linear...
+2026-02-07 16:50:26 - websocket_manager - INFO - Connected to Bybit WebSocket
+2026-02-07 16:50:26 - realtime_pattern_service - INFO - WebSocket connected
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Subscribing to 26 channels in 3 batch(es)
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent subscribe batch 1/3: ['kline.60.GALAUSDT', 'kline.60.ETHUSDT', 'kline.60.SUIUSDT', 'kline.1.ETHUSDT', 'kline.1.SOLUSDT', 'kline.1.TRBUSDT', 'kline.1.PAXGUSDT', 'kline.1.BTCUSDT', 'kline.1.SUIUSDT', 'kline.1.XRPUSDT']
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent subscribe batch 2/3: ['kline.60.XRPUSDT', 'kline.60.ADAUSDT', 'kline.1.BNBUSDT', 'kline.60.POLUSDT', 'kline.1.ADAUSDT', 'kline.60.SOLUSDT', 'kline.60.BNBUSDT', 'kline.1.GALAUSDT', 'kline.1.DOGEUSDT', 'kline.1.TRXUSDT']
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] WebSocket connected after 2.0s
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sending 13 new subscriptions in 2 batch(es)
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent add_subscriptions batch 1/2: ['kline.1.BNBUSDT', 'kline.1.ADAUSDT', 'kline.1.BTCUSDT', 'kline.1.GALAUSDT', 'kline.1.ETHUSDT', 'kline.1.SOLUSDT', 'kline.1.DOGEUSDT', 'kline.1.TRXUSDT', 'kline.1.TRBUSDT', 'kline.1.PAXGUSDT']
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent subscribe batch 3/3: ['kline.60.BTCUSDT', 'kline.1.POLUSDT', 'kline.60.PAXGUSDT', 'kline.60.TRBUSDT', 'kline.60.TRXUSDT', 'kline.60.DOGEUSDT']
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Subscribed to 26 channels total
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent add_subscriptions batch 2/2: ['kline.1.POLUSDT', 'kline.1.SUIUSDT', 'kline.1.XRPUSDT']
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_MANAGER] Sent subscribe request for 13 new channels
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] After add_subscriptions: 26 total subscriptions
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] Started - monitoring ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT'] @ 1m
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] Waiting 0.5s for WebSocket data...
+2026-02-07 16:50:26 - websocket_manager - INFO - Candle closed: TRBUSDT 1 @ 15.058 (notifying 2 listeners)
+2026-02-07 16:50:26 - realtime_pattern_service - INFO - Candle closed: TRBUSDT 1m @ 15.06
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_SUBSCRIPTION] Confirmed: conn_id=d50fm4vi86s91gv26ef0-bitmr, data={'success': True, 'ret_msg': '', 'conn_id': 'd50fm4vi86s91gv26ef0-bitmr', 'req_id': '', 'op': 'subscribe'}
+2026-02-07 16:50:26 - websocket_manager - INFO - [WS_SUBSCRIPTION] Confirmed: conn_id=d50fm4vi86s91gv26ef0-bitmr, data={'success': True, 'ret_msg': '', 'conn_id': 'd50fm4vi86s91gv26ef0-bitmr', 'req_id': '', 'op': 'subscribe'}
+2026-02-07 16:50:26 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:kline.1.BNBUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:kline.1.BNBUSDT', 'conn_id': 'd50fm4vi86s91gv26ef0-bitmr', 'req_id': '', 'op': 'subscribe'}
+2026-02-07 16:50:26 - realtime_pattern_service - WARNING - [REALTIME] TRBUSDT/1: Not enough candles (2), need at least 50
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRBUSDT 1m @ 15.058 (ts=1770500940000)
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] Analyzing historical data...
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Loading extended history from API...
+2026-02-07 16:50:26 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:27 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:27 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:27 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Loading extended history from API...
+2026-02-07 16:50:27 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:28 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:28 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:28 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Loading extended history from API...
+2026-02-07 16:50:28 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Loading extended history from API...
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Days=5, Interval=1 -> 7200 candles
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Loading extended history from API...
+2026-02-07 16:50:29 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Fetching 7200 candles from API...
+2026-02-07 16:50:30 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:30 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:30 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Loading extended history from API...
+2026-02-07 16:50:30 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: WebSocket buffer has 2 candles
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Loading extended history from API...
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Loading extended history from API...
+2026-02-07 16:50:31 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:32 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:32 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:32 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Loading extended history from API...
+2026-02-07 16:50:32 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:33 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:33 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:33 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Loading extended history from API...
+2026-02-07 16:50:33 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:34 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Days=5, Interval=1 -> 7200 candles
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Loading extended history from API...
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Fetching 7200 candles from API...
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: WebSocket buffer has 1 candles
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Loading extended history from API...
+2026-02-07 16:50:34 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:35 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Days=1, Interval=1 -> 1440 candles
+2026-02-07 16:50:35 - swing_service - INFO - [SWING_SERVICE] POLUSDT: WebSocket buffer has 0 candles
+2026-02-07 16:50:35 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Loading extended history from API...
+2026-02-07 16:50:35 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Fetching 1440 candles from API...
+2026-02-07 16:50:36 - websocket_manager - INFO - [WS_SUBSCRIPTION] Confirmed: conn_id=d50fm4vi86s91gv26ef0-bitmr, data={'success': True, 'ret_msg': '', 'conn_id': 'd50fm4vi86s91gv26ef0-bitmr', 'req_id': '', 'op': 'subscribe'}
+2026-02-07 16:50:36 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:kline.1.POLUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:kline.1.POLUSDT', 'conn_id': 'd50fm4vi86s91gv26ef0-bitmr', 'req_id': '', 'op': 'subscribe'}
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770429026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770441029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770453034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=40&end=1770417035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770453026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770429028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770501034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:37 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770489029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770417029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770441032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770429035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770465034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770429032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770501026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770429033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=40&end=1770417027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770501032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=40&end=1770417026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770429029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770477032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770465032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770501027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770501028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770477026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770453030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770465026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770489026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&limit=200&end=1770441026855 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770453027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770441033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770489028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770465028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770429027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:38 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:38 - websocket_manager - INFO - [PRELOAD] BTCUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:38 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:38 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:38 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 174 swing signals (86 HIGH, 88 LOW)
+2026-02-07 16:50:38 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Found 174 historical signals
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770453034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770501034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770441027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=40&end=1770417034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=40&end=1770417033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770441035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:38 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770441034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770417034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770477034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770429034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770477029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=40&end=1770417029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770477028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770489033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770477033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770489035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770453033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770429034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770465027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=40&end=1770417031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770465033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770405029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770453035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770441029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770477029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770501031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770489027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770441031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770465035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=DOGEUSDT&interval=1&limit=200&end=1770501033437 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770453028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770489029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770453031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770477035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770429030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770441034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770465034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770489034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770453029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770429031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BNBUSDT&interval=1&limit=200&end=1770489034878 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770501029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770393029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770501029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770405034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770489032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:39 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:39 - websocket_manager - INFO - [PRELOAD] DOGEUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:39 - swing_detector - INFO - [SWING_DETECTOR] DOGEUSDT/1: Detected 151 swing signals (73 HIGH, 78 LOW)
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Found 151 historical signals
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770501031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=40&end=1770417030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770429029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770489030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770477031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=40&end=1770417028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770465031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770465030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770453029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770477034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770465031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770501030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRXUSDT&interval=1&limit=200&end=1770465029058 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770441030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ETHUSDT&interval=1&limit=200&end=1770477027592 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SUIUSDT&interval=1&limit=200&end=1770477030527 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:39 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:39 - websocket_manager - INFO - [PRELOAD] SUIUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:39 - swing_detector - INFO - [SWING_DETECTOR] SUIUSDT/1: Detected 158 swing signals (77 HIGH, 81 LOW)
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Found 158 historical signals
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770489031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=40&end=1770417032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=40&end=1770417031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770441031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:39 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] TRXUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] TRXUSDT/1: Detected 111 swing signals (57 HIGH, 54 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Found 111 historical signals
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770429031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] ETHUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 179 swing signals (88 HIGH, 91 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Found 179 historical signals
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770477031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=XRPUSDT&interval=1&limit=200&end=1770441028351 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=SOLUSDT&interval=1&limit=200&end=1770489031965 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=TRBUSDT&interval=1&limit=200&end=1770453031240 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] SOLUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] SOLUSDT/1: Detected 168 swing signals (84 HIGH, 84 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Found 168 historical signals
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] TRBUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] TRBUSDT/1: Detected 101 swing signals (51 HIGH, 50 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Found 101 historical signals
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=POLUSDT&interval=1&limit=200&end=1770501035610 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770393034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=ADAUSDT&interval=1&limit=200&end=1770453032684 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770465029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] POLUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] POLUSDT/1: Detected 149 swing signals (66 HIGH, 83 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Found 149 historical signals
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:40 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:40 - websocket_manager - INFO - [PRELOAD] BNBUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:40 - swing_detector - INFO - [SWING_DETECTOR] BNBUSDT/1: Detected 132 swing signals (61 HIGH, 71 LOW)
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Found 132 historical signals
+2026-02-07 16:50:40 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:41 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:41 - websocket_manager - INFO - [PRELOAD] XRPUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:41 - swing_detector - INFO - [SWING_DETECTOR] XRPUSDT/1: Detected 173 swing signals (88 HIGH, 85 LOW)
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Found 173 historical signals
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Fetched 1440 candles from API (parallel)
+2026-02-07 16:50:41 - websocket_manager - INFO - Preloaded 1440 candles, buffer now has 500 candles
+2026-02-07 16:50:41 - websocket_manager - INFO - [PRELOAD] ADAUSDT/1: Preloaded 1440 historical candles
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Preloaded 1440 candles to WebSocket buffer
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Analyzing 1440 candles...
+2026-02-07 16:50:41 - swing_detector - INFO - [SWING_DETECTOR] ADAUSDT/1: Detected 110 swing signals (57 HIGH, 53 LOW)
+2026-02-07 16:50:41 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Found 110 historical signals
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770369029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770333029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770369034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770381029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770381034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770297034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770345029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770285034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770297029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770357029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770357034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770309034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770309029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770321034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770321029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770273029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770333034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770345034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770273034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770285029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770225034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770213034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770201034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770261034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770165034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770189034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770153034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770237034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770177034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770249034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770225029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770201029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770189029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770153029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770165029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770261029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770213029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770249029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770141034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770081034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770093034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770105034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770117034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770177029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770237029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=PAXGUSDT&interval=1&limit=200&end=1770129034154 "HTTP/1.1 200 OK"
+2026-02-07 16:50:44 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Fetched 7200 candles from API (parallel)
+2026-02-07 16:50:48 - websocket_manager - INFO - Preloaded 7200 candles, buffer now has 500 candles
+2026-02-07 16:50:48 - websocket_manager - INFO - [PRELOAD] PAXGUSDT/1: Preloaded 7200 historical candles
+2026-02-07 16:50:48 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Preloaded 7200 candles to WebSocket buffer
+2026-02-07 16:50:48 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Analyzing 7200 candles...
+2026-02-07 16:50:48 - swing_detector - INFO - [SWING_DETECTOR] PAXGUSDT/1: Detected 714 swing signals (351 HIGH, 363 LOW)
+2026-02-07 16:50:48 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Found 714 historical signals
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770081029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770117029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770105029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770141029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770093029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=GALAUSDT&interval=1&limit=200&end=1770129029774 "HTTP/1.1 200 OK"
+2026-02-07 16:50:48 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Fetched 7200 candles from API (parallel)
+2026-02-07 16:50:52 - websocket_manager - INFO - Preloaded 7200 candles, buffer now has 500 candles
+2026-02-07 16:50:52 - websocket_manager - INFO - [PRELOAD] GALAUSDT/1: Preloaded 7200 historical candles
+2026-02-07 16:50:52 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Preloaded 7200 candles to WebSocket buffer
+2026-02-07 16:50:52 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Analyzing 7200 candles...
+2026-02-07 16:50:52 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: No historical signals found
+2026-02-07 16:50:52 - swing_service - INFO - [SWING_SERVICE] Historical analysis complete. Total signals: 2320
+[STARTUP] Swing detector service started - monitoring 13 symbols @ 1m
+2026-02-07 16:50:52 - vwap_service - INFO - [VWAP_SERVICE] Initialized
+2026-02-07 16:50:52 - websocket_manager - INFO - Candle close listener added (total: 3)
+2026-02-07 16:50:52 - vwap_service - INFO - [VWAP_SERVICE] Registered candle close listener
+2026-02-07 16:50:52 - vwap_service - INFO - [VWAP_SERVICE] Starting background load of 1 day(s) historical data...
+2026-02-07 16:50:52 - vwap_service - INFO - [VWAP_SERVICE] Started for symbols: ['BTCUSDT', 'ETHUSDT']
+[STARTUP] VWAP service started
+2026-02-07 16:50:52 - zone_service - INFO - [ZONE_SERVICE] Config cargada: 1 simbolos, interval=1
+2026-02-07 16:50:53 - websocket_manager - INFO - Candle close listener added (total: 4)
+2026-02-07 16:50:53 - websocket_manager - INFO - [WS_MANAGER] add_subscriptions called: symbols=['BTCUSDT'], intervals=['1']
+2026-02-07 16:50:53 - websocket_manager - INFO - [WS_MANAGER] Requested subscriptions: ['kline.1.BTCUSDT']
+2026-02-07 16:50:53 - websocket_manager - INFO - [WS_MANAGER] Existing subscriptions: ['kline.1.ADAUSDT', 'kline.1.BNBUSDT', 'kline.1.BTCUSDT', 'kline.1.DOGEUSDT', 'kline.1.ETHUSDT', 'kline.1.GALAUSDT', 'kline.1.PAXGUSDT', 'kline.1.POLUSDT', 'kline.1.SOLUSDT', 'kline.1.SUIUSDT', 'kline.1.TRBUSDT', 'kline.1.TRXUSDT', 'kline.1.XRPUSDT', 'kline.60.ADAUSDT', 'kline.60.BNBUSDT', 'kline.60.BTCUSDT', 'kline.60.DOGEUSDT', 'kline.60.ETHUSDT', 'kline.60.GALAUSDT', 'kline.60.PAXGUSDT', 'kline.60.POLUSDT', 'kline.60.SOLUSDT', 'kline.60.SUIUSDT', 'kline.60.TRBUSDT', 'kline.60.TRXUSDT', 'kline.60.XRPUSDT']
+2026-02-07 16:50:53 - websocket_manager - INFO - [WS_MANAGER] All 1 subscriptions already exist
+2026-02-07 16:50:53 - zone_service - INFO - [ZONE_SERVICE] Iniciado - 1 simbolos @ 1m, ventana=5
+[STARTUP] Zone detector realtime service started - 1 symbols @ 1m
+2026-02-07 16:50:53 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 24 candles (1 days @ 60m)
+2026-02-07 16:50:53 - uvicorn.error - INFO - Application startup complete.
+2026-02-07 16:50:53 - uvicorn.error - INFO - Application startup complete.
+2026-02-07 16:50:53 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 24 candles loaded
+2026-02-07 16:50:53 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Loaded 24 historical candles
+2026-02-07 16:50:53 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Need 24 candles (1 days @ 60m)
+2026-02-07 16:50:54 - zone_service - INFO - [ZONE_SERVICE] Cargando historico para 1 simbolos...
+2026-02-07 16:50:54 - websocket_manager - INFO - [PRELOAD] BTCUSDT/1: Preloaded 5 historical candles
+2026-02-07 16:50:54 - zone_service - INFO - [ZONE_SERVICE] BTCUSDT: 5 velas cargadas
+2026-02-07 16:50:54 - zone_service - INFO - [ZONE_SERVICE] Historico cargado para todos los simbolos
+2026-02-07 16:50:54 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Total 24 candles loaded
+2026-02-07 16:50:54 - vwap_service - INFO - [VWAP_SERVICE] ETHUSDT: Loaded 24 historical candles
+2026-02-07 16:50:54 - vwap_service - INFO - [VWAP_SERVICE] Background initialization complete
+2026-02-07 16:50:56 - uvicorn.access - INFO - 127.0.0.1:53814 - "GET /api/status HTTP/1.1" 200
+2026-02-07 16:51:00 - websocket_manager - INFO - Candle closed: ADAUSDT 1 @ 0.273 (notifying 4 listeners)
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - Candle closed: ADAUSDT 1m @ 0.27
+2026-02-07 16:51:00 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 69405.3 (notifying 4 listeners)
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 69405.30
+2026-02-07 16:51:00 - websocket_manager - INFO - Candle closed: DOGEUSDT 1 @ 0.09837 (notifying 4 listeners)
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - Candle closed: DOGEUSDT 1m @ 0.10
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - [REALTIME] ADAUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: ADAUSDT 1m @ 0.273 (ts=1770501000000)
+2026-02-07 16:51:00 - swing_detector - INFO - [SWING_DETECTOR] ADAUSDT/1: Detected 36 swing signals (20 HIGH, 16 LOW)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Detection complete - found 36 total signals, swingBars=5
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | ADAUSDT | SWING_LOW | price=0.27 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 69405.3 (ts=1770501000000)
+2026-02-07 16:51:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 62 swing signals (31 HIGH, 31 LOW)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Detection complete - found 62 total signals, swingBars=5
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | BTCUSDT | SWING_LOW | price=69314.00 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - [REALTIME] DOGEUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: DOGEUSDT 1m @ 0.09837 (ts=1770501000000)
+2026-02-07 16:51:00 - swing_detector - INFO - [SWING_DETECTOR] DOGEUSDT/1: Detected 53 swing signals (23 HIGH, 30 LOW)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | DOGEUSDT | SWING_LOW | price=0.10 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:00 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 2098.55 (notifying 4 listeners)
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 2098.55
+2026-02-07 16:51:00 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 2098.55 (ts=1770501000000)
+2026-02-07 16:51:00 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 54 swing signals (27 HIGH, 27 LOW)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Detection complete - found 54 total signals, swingBars=5
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:00 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | ETHUSDT | SWING_LOW | price=2098.40 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: GALAUSDT 1 @ 0.004269 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: GALAUSDT 1m @ 0.00
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: XRPUSDT 1 @ 1.4295 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: XRPUSDT 1m @ 1.43
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] GALAUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: GALAUSDT 1m @ 0.004269 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Detection complete - found 0 total signals, swingBars=5
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] XRPUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: XRPUSDT 1m @ 1.4295 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] XRPUSDT/1: Detected 55 swing signals (29 HIGH, 26 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | XRPUSDT | SWING_LOW | price=1.43 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: TRBUSDT 1 @ 15.051 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: TRBUSDT 1m @ 15.05
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: TRXUSDT 1 @ 0.27765 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: TRXUSDT 1m @ 0.28
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] TRBUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRBUSDT 1m @ 15.051 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] TRBUSDT/1: Detected 43 swing signals (24 HIGH, 19 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] TRXUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRXUSDT 1m @ 0.27765 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] TRXUSDT/1: Detected 40 swing signals (19 HIGH, 21 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Detection complete - found 40 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | TRXUSDT | SWING_LOW | price=0.28 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: SOLUSDT 1 @ 88.25 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: SOLUSDT 1m @ 88.25
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: SUIUSDT 1 @ 1.0112 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: SUIUSDT 1m @ 1.01
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: BNBUSDT 1 @ 649.5 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: BNBUSDT 1m @ 649.50
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: PAXGUSDT 1 @ 4994.4 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: PAXGUSDT 1m @ 4994.40
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] SOLUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SOLUSDT 1m @ 88.25 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] SOLUSDT/1: Detected 55 swing signals (28 HIGH, 27 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] SUIUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SUIUSDT 1m @ 1.0112 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] SUIUSDT/1: Detected 56 swing signals (28 HIGH, 28 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Detection complete - found 56 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | SUIUSDT | SWING_LOW | price=1.01 | signal_ts=1770500760 | service_start=1770501023
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] BNBUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: BNBUSDT 1m @ 649.5 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] BNBUSDT/1: Detected 43 swing signals (21 HIGH, 22 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] PAXGUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: PAXGUSDT 1m @ 4994.4 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] PAXGUSDT/1: Detected 31 swing signals (17 HIGH, 14 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Detection complete - found 31 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - websocket_manager - INFO - Candle closed: POLUSDT 1 @ 0.09722 (notifying 4 listeners)
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - Candle closed: POLUSDT 1m @ 0.10
+2026-02-07 16:51:01 - realtime_pattern_service - INFO - [REALTIME] POLUSDT/1: Running detection with 500 candles
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: POLUSDT 1m @ 0.09722 (ts=1770501000000)
+2026-02-07 16:51:01 - swing_detector - INFO - [SWING_DETECTOR] POLUSDT/1: Detected 53 swing signals (22 HIGH, 31 LOW)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Checking for signal at ts=1770500760000 (idx=-6)
+2026-02-07 16:51:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: 1 newly confirmed signal(s) at ts=1770500760000
+2026-02-07 16:51:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | POLUSDT | SWING_LOW | price=0.10 | signal_ts=1770500760 | service_start=1770501023
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:04 - uvicorn.access - INFO - 127.0.0.1:53830 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:04 - uvicorn.access - INFO - 127.0.0.1:53832 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:51:05 - uvicorn.access - INFO - 127.0.0.1:53831 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+2026-02-07 16:51:05 - uvicorn.access - INFO - 127.0.0.1:53832 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:51:05 - realtime_pattern_service - INFO - [REALTIME] Updating intervals: ['60'] -> ['1']
+2026-02-07 16:51:05 - realtime_pattern_service - INFO - [REALTIME] Pre-loading historical data for new intervals: {'1'}
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] BTCUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] ETHUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] XRPUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] TRXUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] GALAUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] SUIUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] TRBUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] SOLUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] ADAUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] DOGEUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] PAXGUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] BNBUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [PRELOAD] POLUSDT/1: Already has 500 candles, skipping
+2026-02-07 16:51:06 - websocket_manager - INFO - [WS] Updating subscriptions: -13 +0
+2026-02-07 16:51:06 - websocket_manager - INFO - [WS] Unsubscribed from 13 channels: {'kline.60.GALAUSDT', 'kline.60.POLUSDT', 'kline.60.SOLUSDT', 'kline.60.BNBUSDT', 'kline.60.DOGEUSDT', 'kline.60.ETHUSDT', 'kline.60.SUIUSDT', 'kline.60.BTCUSDT', 'kline.60.PAXGUSDT', 'kline.60.TRBUSDT', 'kline.60.TRXUSDT', 'kline.60.XRPUSDT', 'kline.60.ADAUSDT'}
+2026-02-07 16:51:06 - websocket_manager - INFO - [WS] Now monitoring 13 channels
+2026-02-07 16:51:06 - realtime_pattern_service - INFO - [REALTIME] Now monitoring intervals: ['1']
+[REALTIME] Active interval changed: ['60'] -> ['1']
+2026-02-07 16:51:06 - uvicorn.access - INFO - 127.0.0.1:53831 - "POST /api/realtime/set-interval HTTP/1.1" 200
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=rolling
+2026-02-07 16:51:06 - vwap_service - INFO - [VWAP_SERVICE] Reloading BTCUSDT with 1 days @ 1 interval...
+2026-02-07 16:51:06 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Need 1440 candles (1 days @ 1m)
+2026-02-07 16:51:06 - uvicorn.access - INFO - 127.0.0.1:53835 - "OPTIONS /api/historical/BTCUSDT?interval=1&since_timestamp=1770500880000&t=1770501064075 HTTP/1.1" 200
+2026-02-07 16:51:06 - uvicorn.access - INFO - 127.0.0.1:53830 - "GET /api/status HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1770500880000 (~13 velas esperadas) @ 1
+[BTCUSDT] [DATA] Necesita 13 velas, max_requests=120
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:07 - uvicorn.access - INFO - 127.0.0.1:53830 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:07 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/tickers?category=linear "HTTP/1.1 200 OK"
+2026-02-07 16:51:07 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770500880000&limit=13 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] Request #1: +4 velas (total: 4/13)
+2026-02-07 16:51:07 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-07 16:51:07 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770501120000&limit=9 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] Request #2: 0 velas (fin de datos)
+[BTCUSDT] [DATA] Completado: 4 velas en 2 requests
+[BTCUSDT] Historical: [OK] Devolviendo 4 velas (esperadas: 13)
+2026-02-07 16:51:07 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/historical/BTCUSDT?interval=1&since_timestamp=1770500880000&t=1770501064075 HTTP/1.1" 200
+2026-02-07 16:51:08 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-07 16:51:08 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896267979&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:10 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:12 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Total 1440 candles loaded @ 1
+2026-02-07 16:51:12 - vwap_service - INFO - [VWAP_SERVICE] BTCUSDT: Reloaded 1440 candles for 1 days @ 1
+2026-02-07 16:51:13 - uvicorn.access - INFO - 127.0.0.1:53834 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:13 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:13 - uvicorn.access - INFO - 127.0.0.1:53833 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-07 16:51:13 - uvicorn.access - INFO - 127.0.0.1:53834 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-07 16:51:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:14 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496320000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:51:15 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:16 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:19 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:22 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:23 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:25 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896283768&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:28 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:28 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:28 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:31 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:31 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:32 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:33 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496320000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:51:33 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:34 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:51:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/status HTTP/1.1" 200
+2026-02-07 16:51:34 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:37 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:38 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/presets HTTP/1.1" 200
+2026-02-07 16:51:38 - uvicorn.access - INFO - 127.0.0.1:55522 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-07 16:51:38 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896297980&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:40 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:43 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:43 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:45 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:46 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:46 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:46 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496320000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:51:46 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+2026-02-07 16:51:48 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-07 16:51:48 - uvicorn.access - INFO - 127.0.0.1:53835 - "OPTIONS /api/zones/detect HTTP/1.1" 200
+[BTCUSDT] [ZONES] === INICIO DETECCION v3.0 ===
+[BTCUSDT] [ZONES] interval=1, days=1, velas esperadas=~1440
+[BTCUSDT] [ZONES] Params: {'detection_method': 'atr_dynamic', 'consol_min_bars': 8, 'consol_max_bars': 50, 'consol_max_range_pct': 2, 'consol_atr_ratio': 0.6, 'consol_body_ratio': 0.5, 'consol_max_outside_bars': 3, 'lookforward_bars': 100, 'max_price_range_pct': 6, 'entry_mode': 'va_breakout', 'position_mode': 'concurrent', 'swing_bars': 5, 'sl_mode': 'zone_opposite', 'atr_dyn_period': 200, 'atr_dyn_ma_period': 20, 'atr_dyn_min_bars': 20, 'atr_dyn_multiplier': 1.3, 'atr_dyn_max_breakout': 5, 'atr_dyn_merge_overlap': True, 'use_atr_band': False, 'atr_band_period': 200, 'atr_band_multiplier': 1, 'atr_band_ma_period': 20, 'use_reentry': True, 'max_reentry_bars': 3, 'use_ttm_prefilter': True, 'ttm_atr_length': 25, 'ttm_kc_multiplier': 1.8, 'ttm_min_squeeze_bars': 5, 'use_bbwp_scoring': True, 'bbwp_lookback': 252, 'bbwp_squeeze_threshold': 20, 'use_inside_pct_filter': False, 'min_inside_pct': 70, 'min_score_filter': 45, 'use_continuation_score': False, 'sl_poc_buffer_pct': 10, 'vp_bins_per_zone': 30}
+[BTCUSDT] [ZONES] Descargando velas de Bybit...
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 7) @ 1
+[BTCUSDT] [DATA] Necesita 1440 velas, max_requests=120
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:49 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:50 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770414708689&limit=1000 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] Request #1: +1000 velas (total: 1000/1440)
+2026-02-07 16:51:50 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770474720000&limit=440 "HTTP/1.1 200 OK"
+[BTCUSDT] [DATA] Request #2: +440 velas (total: 1440/1440)
+[BTCUSDT] [DATA] Completado: 1440 velas en 2 requests
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[BTCUSDT] [ZONES] 1440 velas obtenidas en 2.5s (esperadas: ~1440)
+[BTCUSDT] [ZONES] Metodo de deteccion: atr_dynamic
+[ZoneDetector] atr_dynamic TTM Prefilter: 15 regiones de squeeze
+
+================================================================================
+[ZoneDetector] DEBUG atr_dynamic: ANALISIS DE SECCIONES AZULES
+  Params: ma_period=20, min_bars=20, max_breakout=5, mult=1.3
+  Total velas: 1440, start_index: 200
+  Secciones con count_outside==0: 35
+  Rangos crudos detectados: 8
+
+  Seccion #0: idx 252-263 (12 velas) 02/07 02:04 - 02/07 02:15 -> CAPTURADA por rango #0
+  Seccion #1: idx 274-293 (20 velas) 02/07 02:26 - 02/07 02:45 -> CAPTURADA por rango #0
+  Seccion #2: idx 428-429 (2 velas) 02/07 05:00 - 02/07 05:01 -> CAPTURADA por rango #1
+  Seccion #3: idx 478-478 (1 velas) 02/07 05:50 - 02/07 05:50 -> CAPTURADA por rango #2
+  Seccion #4: idx 528-530 (3 velas) 02/07 06:40 - 02/07 06:42 -> CAPTURADA por rango #2
+  Seccion #5: idx 647-660 (14 velas) 02/07 08:39 - 02/07 08:52 -> CAPTURADA por rango #3
+  Seccion #6: idx 667-667 (1 velas) 02/07 08:59 - 02/07 08:59 -> CAPTURADA por rango #3
+  Seccion #7: idx 672-697 (26 velas) 02/07 09:04 - 02/07 09:29 -> CAPTURADA por rango #3
+  Seccion #8: idx 719-744 (26 velas) 02/07 09:51 - 02/07 10:16 -> CAPTURADA por rango #4
+  Seccion #9: idx 751-765 (15 velas) 02/07 10:23 - 02/07 10:37 -> CAPTURADA por rango #4
+  Seccion #10: idx 801-811 (11 velas) 02/07 11:13 - 02/07 11:23 -> CAPTURADA por rango #4
+  Seccion #11: idx 813-829 (17 velas) 02/07 11:25 - 02/07 11:41 -> CAPTURADA por rango #4
+  Seccion #12: idx 839-839 (1 velas) 02/07 11:51 - 02/07 11:51 -> CAPTURADA por rango #4
+  Seccion #13: idx 844-845 (2 velas) 02/07 11:56 - 02/07 11:57 -> CAPTURADA por rango #4
+  Seccion #14: idx 927-934 (8 velas) 02/07 13:19 - 02/07 13:26 -> CAPTURADA por rango #5
+  Seccion #15: idx 943-945 (3 velas) 02/07 13:35 - 02/07 13:37 -> CAPTURADA por rango #5
+  Seccion #16: idx 958-982 (25 velas) 02/07 13:50 - 02/07 14:14 -> CAPTURADA por rango #5
+  Seccion #17: idx 988-990 (3 velas) 02/07 14:20 - 02/07 14:22 -> CAPTURADA por rango #5
+  Seccion #18: idx 992-992 (1 velas) 02/07 14:24 - 02/07 14:24 -> CAPTURADA por rango #5
+  Seccion #19: idx 999-1005 (7 velas) 02/07 14:31 - 02/07 14:37 -> CAPTURADA por rango #5
+  Seccion #20: idx 1125-1134 (10 velas) 02/07 16:37 - 02/07 16:46 -> CAPTURADA por rango #6
+  Seccion #21: idx 1153-1154 (2 velas) 02/07 17:05 - 02/07 17:06 -> CAPTURADA por rango #6
+  Seccion #22: idx 1156-1157 (2 velas) 02/07 17:08 - 02/07 17:09 -> CAPTURADA por rango #6
+  Seccion #23: idx 1172-1173 (2 velas) 02/07 17:24 - 02/07 17:25 -> CAPTURADA por rango #6
+  Seccion #24: idx 1203-1205 (3 velas) 02/07 17:55 - 02/07 17:57 -> CAPTURADA por rango #6
+  Seccion #25: idx 1207-1227 (21 velas) 02/07 17:59 - 02/07 18:19 -> CAPTURADA por rango #6
+  Seccion #26: idx 1259-1278 (20 velas) 02/07 18:51 - 02/07 19:10 -> CAPTURADA por rango #6
+  Seccion #27: idx 1280-1286 (7 velas) 02/07 19:12 - 02/07 19:18 -> CAPTURADA por rango #6
+  Seccion #28: idx 1295-1323 (29 velas) 02/07 19:27 - 02/07 19:55 -> CAPTURADA por rango #6
+  Seccion #29: idx 1326-1328 (3 velas) 02/07 19:58 - 02/07 20:00 -> CAPTURADA por rango #6
+  Seccion #30: idx 1331-1331 (1 velas) 02/07 20:03 - 02/07 20:03 -> CAPTURADA por rango #6
+  Seccion #31: idx 1336-1354 (19 velas) 02/07 20:08 - 02/07 20:26 -> CAPTURADA por rango #6
+  Seccion #32: idx 1359-1361 (3 velas) 02/07 20:31 - 02/07 20:33 -> CAPTURADA por rango #6
+  Seccion #33: idx 1408-1415 (8 velas) 02/07 21:20 - 02/07 21:27 -> CAPTURADA por rango #7
+  Seccion #34: idx 1428-1431 (4 velas) 02/07 21:40 - 02/07 21:43 -> CAPTURADA por rango #7
+
+  Rango #0: idx 233-293 (61 velas) 02/07 01:45 - 02/07 02:45 precio 70239.83 - 70621.74
+  Rango #1: idx 409-444 (29 velas) 02/07 04:41 - 02/07 05:16 precio 70565.87 - 70950.00
+  Rango #2: idx 459-530 (59 velas) 02/07 05:31 - 02/07 06:42 precio 69893.80 - 70331.64
+  Rango #3: idx 628-697 (69 velas) 02/07 08:20 - 02/07 09:29 precio 68287.24 - 68816.08
+  Rango #4: idx 700-845 (127 velas) 02/07 09:32 - 02/07 11:57 precio 67577.30 - 68270.28
+  Rango #5: idx 908-1030 (105 velas) 02/07 13:00 - 02/07 15:02 precio 68456.50 - 69263.30
+  Rango #6: idx 1106-1361 (231 velas) 02/07 16:18 - 02/07 20:33 precio 68489.40 - 69638.94
+  Rango #7: idx 1389-1439 (45 velas) 02/07 21:01 - 02/07 21:51 precio 69314.00 - 69621.30
+================================================================================
+
+[ZoneDetector] atr_dynamic: 6 rangos crudos detectados (post-merge)
+[ZoneDetector] atr_dynamic: 6 rangos despues de filtros v3.0
+[ZoneDetector] _simulate_trades: position_mode='concurrent'
+[ZoneDetector] SCORE OK: 58.6 >= 45 | zona 02/07 01:45-02/07 02:45 | breakout=DOWN result=LOSS | momentum=30.0 compression=18.2 vol=10.3 bbwp=0.0 cont=0.0 | body_ratio=1.74 range_pct=0.54%
+[ZoneDetector] SCORE FILTRADO: 29.8 < 45 | zona 02/07 04:41-02/07 05:16 | breakout=UP result=LOSS | momentum=1.0 compression=18.2 vol=10.6 bbwp=0.0 cont=0.0 | body_ratio=0.03 range_pct=0.54%
+[ZoneDetector] SCORE OK: 58.3 >= 45 | zona 02/07 05:31-02/07 06:42 | breakout=DOWN result=WIN | momentum=30.0 compression=17.2 vol=11.2 bbwp=0.0 cont=0.0 | body_ratio=2.56 range_pct=0.62%
+[ZoneDetector] SCORE OK: 57.5 >= 45 | zona 02/07 08:20-02/07 09:29 | breakout=DOWN result=WIN | momentum=30.0 compression=15.4 vol=12.2 bbwp=0.0 cont=0.0 | body_ratio=1.00 range_pct=0.77%
+[ZoneDetector] SCORE OK: 53.2 >= 45 | zona 02/07 09:32-02/07 11:57 | breakout=UP result=LOSS | momentum=30.0 compression=12.2 vol=11.0 bbwp=0.0 cont=0.0 | body_ratio=2.35 range_pct=1.02%
+[ZoneDetector] SCORE FILTRADO: 30.5 < 45 | zona 02/07 13:00-02/07 21:51 | breakout=UP result=OPEN | momentum=15.0 compression=3.6 vol=11.9 bbwp=0.0 cont=0.0 | body_ratio=0.37 range_pct=1.71%
+[ZoneDetector] atr_dynamic RESULTADOS (mode=va_breakout, pos=concurrent, sl=zone_opposite):
+  - Total zonas: 4 (filtradas por score: 2)
+  - Wins: 2, Losses: 2, Skipped: 0
+  - Win Rate: 50.0%
+  - Total P&L: +2.0R
+  - Expectancy: 0.500R por trade
+  - Min Score Filter: 45%
+[ZoneDetector] Deduplicación: 4 -> 4 zonas
+[BTCUSDT] [ZONES] 4 zonas detectadas en 0.5s (total: 3.0s)
+2026-02-07 16:51:51 - uvicorn.access - INFO - 127.0.0.1:55518 - "POST /api/zones/detect HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:52 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:53 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:55 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:55 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896313763&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:55 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196320000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:51:58 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:51:58 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-07 16:51:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:51:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:00 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436320000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:00 - websocket_manager - INFO - Candle closed: ADAUSDT 1 @ 0.273 (notifying 4 listeners)
+2026-02-07 16:52:00 - realtime_pattern_service - INFO - Candle closed: ADAUSDT 1m @ 0.27
+2026-02-07 16:52:00 - realtime_pattern_service - INFO - [REALTIME] ADAUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: ADAUSDT 1m @ 0.273 (ts=1770501060000)
+2026-02-07 16:52:00 - swing_detector - INFO - [SWING_DETECTOR] ADAUSDT/1: Detected 36 swing signals (20 HIGH, 16 LOW)
+2026-02-07 16:52:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Detection complete - found 36 total signals, swingBars=5
+2026-02-07 16:52:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:00 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496320000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:52:01 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1.3&use_ttm_prefilter=true&use_bbwp_scoring=true&atr_band_ma_period=20&ttm_atr_length=25&ttm_kc_multiplier=1.8&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:01 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 69419.0 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 69419.00
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: DOGEUSDT 1 @ 0.09832 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: DOGEUSDT 1m @ 0.10
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 2098.93 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 2098.93
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: GALAUSDT 1 @ 0.004268 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: GALAUSDT 1m @ 0.00
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: XRPUSDT 1 @ 1.4295 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: XRPUSDT 1m @ 1.43
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: TRBUSDT 1 @ 15.052 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: TRBUSDT 1m @ 15.05
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: TRXUSDT 1 @ 0.27762 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: TRXUSDT 1m @ 0.28
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 69419.0 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 62 swing signals (31 HIGH, 31 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Detection complete - found 62 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] DOGEUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: DOGEUSDT 1m @ 0.09832 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] DOGEUSDT/1: Detected 53 swing signals (23 HIGH, 30 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 2098.93 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 54 swing signals (27 HIGH, 27 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Detection complete - found 54 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] GALAUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: GALAUSDT 1m @ 0.004268 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Detection complete - found 0 total signals, swingBars=5
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] XRPUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: XRPUSDT 1m @ 1.4295 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] XRPUSDT/1: Detected 55 swing signals (29 HIGH, 26 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] TRBUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRBUSDT 1m @ 15.052 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] TRBUSDT/1: Detected 43 swing signals (24 HIGH, 19 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] TRXUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRXUSDT 1m @ 0.27762 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] TRXUSDT/1: Detected 40 swing signals (19 HIGH, 21 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Detection complete - found 40 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: SOLUSDT 1 @ 88.21 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: SOLUSDT 1m @ 88.21
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: SUIUSDT 1 @ 1.011 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: SUIUSDT 1m @ 1.01
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: BNBUSDT 1 @ 649.2 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: BNBUSDT 1m @ 649.20
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: PAXGUSDT 1 @ 4994.0 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: PAXGUSDT 1m @ 4994.00
+2026-02-07 16:52:01 - websocket_manager - INFO - Candle closed: POLUSDT 1 @ 0.09724 (notifying 4 listeners)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - Candle closed: POLUSDT 1m @ 0.10
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] SOLUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SOLUSDT 1m @ 88.21 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] SOLUSDT/1: Detected 55 swing signals (28 HIGH, 27 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] SUIUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SUIUSDT 1m @ 1.011 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] SUIUSDT/1: Detected 56 swing signals (28 HIGH, 28 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Detection complete - found 56 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] BNBUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: BNBUSDT 1m @ 649.2 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] BNBUSDT/1: Detected 43 swing signals (21 HIGH, 22 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] PAXGUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: PAXGUSDT 1m @ 4994.0 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] PAXGUSDT/1: Detected 31 swing signals (17 HIGH, 14 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Detection complete - found 31 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:01 - realtime_pattern_service - INFO - [REALTIME] POLUSDT/1: Running detection with 500 candles
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: POLUSDT 1m @ 0.09724 (ts=1770501060000)
+2026-02-07 16:52:01 - swing_detector - INFO - [SWING_DETECTOR] POLUSDT/1: Detected 53 swing signals (22 HIGH, 31 LOW)
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:52:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Checking for signal at ts=1770500820000 (idx=-6)
+2026-02-07 16:52:02 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:04 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:04 - uvicorn.access - INFO - 127.0.0.1:55525 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:52:04 - uvicorn.access - INFO - 127.0.0.1:55530 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:52:04 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/status HTTP/1.1" 200
+2026-02-07 16:52:05 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/tickers?category=linear "HTTP/1.1 200 OK"
+2026-02-07 16:52:05 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:07 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:08 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-07 16:52:08 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896328104&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:10 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256380000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:13 - uvicorn.access - INFO - 127.0.0.1:53835 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:14 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496380000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:52:15 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1.3&use_ttm_prefilter=true&use_bbwp_scoring=true&atr_band_ma_period=20&ttm_atr_length=25&ttm_kc_multiplier=1.8&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:16 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:19 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:22 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:23 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:25 - uvicorn.access - INFO - 127.0.0.1:55534 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896343767&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:25 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:26 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:27 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196380000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:28 - uvicorn.access - INFO - 127.0.0.1:55534 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:28 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:28 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:29 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:30 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496380000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:52:30 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1.3&use_ttm_prefilter=true&use_bbwp_scoring=true&atr_band_ma_period=20&ttm_atr_length=25&ttm_kc_multiplier=1.8&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:31 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:52:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/status HTTP/1.1" 200
+2026-02-07 16:52:34 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:37 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:38 - uvicorn.access - INFO - 127.0.0.1:55538 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:39 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896357989&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:40 - uvicorn.access - INFO - 127.0.0.1:55538 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:40 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:41 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:42 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196380000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:43 - uvicorn.access - INFO - 127.0.0.1:55538 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:44 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:45 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:45 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376380000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:46 - uvicorn.access - INFO - 127.0.0.1:55538 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:46 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:47 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496380000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:52:47 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1.3&use_ttm_prefilter=true&use_bbwp_scoring=true&atr_band_ma_period=20&ttm_atr_length=25&ttm_kc_multiplier=1.8&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:49 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:52 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:53 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:55 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896373757&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:55 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:55 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:56 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:57 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256380000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:52:58 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:52:58 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:52:59 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436380000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:00 - websocket_manager - INFO - Candle closed: ADAUSDT 1 @ 0.2727 (notifying 4 listeners)
+2026-02-07 16:53:00 - realtime_pattern_service - INFO - Candle closed: ADAUSDT 1m @ 0.27
+2026-02-07 16:53:00 - realtime_pattern_service - INFO - [REALTIME] ADAUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: ADAUSDT 1m @ 0.2727 (ts=1770501120000)
+2026-02-07 16:53:00 - swing_detector - INFO - [SWING_DETECTOR] ADAUSDT/1: Detected 36 swing signals (20 HIGH, 16 LOW)
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Detection complete - found 36 total signals, swingBars=5
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] ADAUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:00 - websocket_manager - INFO - Candle closed: BTCUSDT 1 @ 69407.0 (notifying 4 listeners)
+2026-02-07 16:53:00 - realtime_pattern_service - INFO - Candle closed: BTCUSDT 1m @ 69407.00
+2026-02-07 16:53:00 - realtime_pattern_service - INFO - [REALTIME] BTCUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] Candle closed: BTCUSDT 1m @ 69407.0 (ts=1770501120000)
+2026-02-07 16:53:00 - swing_detector - INFO - [SWING_DETECTOR] BTCUSDT/1: Detected 62 swing signals (31 HIGH, 31 LOW)
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Detection complete - found 62 total signals, swingBars=5
+2026-02-07 16:53:00 - swing_service - INFO - [SWING_SERVICE] BTCUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770496380000&limit=80 "HTTP/1.1 200 OK"
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: DOGEUSDT 1 @ 0.09824 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: DOGEUSDT 1m @ 0.10
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: ETHUSDT 1 @ 2097.91 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: ETHUSDT 1m @ 2097.91
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: GALAUSDT 1 @ 0.004262 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: GALAUSDT 1m @ 0.00
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: XRPUSDT 1 @ 1.4285 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: XRPUSDT 1m @ 1.43
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: TRBUSDT 1 @ 15.052 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: TRBUSDT 1m @ 15.05
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] DOGEUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: DOGEUSDT 1m @ 0.09824 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] DOGEUSDT/1: Detected 53 swing signals (23 HIGH, 30 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] DOGEUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] ETHUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: ETHUSDT 1m @ 2097.91 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] ETHUSDT/1: Detected 54 swing signals (27 HIGH, 27 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Detection complete - found 54 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] ETHUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] GALAUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: GALAUSDT 1m @ 0.004262 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] GALAUSDT: Detection complete - found 0 total signals, swingBars=5
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] XRPUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: XRPUSDT 1m @ 1.4285 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] XRPUSDT/1: Detected 55 swing signals (29 HIGH, 26 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] XRPUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] TRBUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRBUSDT 1m @ 15.052 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] TRBUSDT/1: Detected 43 swing signals (24 HIGH, 19 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] TRBUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - uvicorn.access - INFO - 127.0.0.1:55539 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1.3&use_ttm_prefilter=true&use_bbwp_scoring=true&atr_band_ma_period=20&ttm_atr_length=25&ttm_kc_multiplier=1.8&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:53:01 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: TRXUSDT 1 @ 0.27763 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: TRXUSDT 1m @ 0.28
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: SOLUSDT 1 @ 88.21 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: SOLUSDT 1m @ 88.21
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: SUIUSDT 1 @ 1.0101 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: SUIUSDT 1m @ 1.01
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: BNBUSDT 1 @ 648.9 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: BNBUSDT 1m @ 648.90
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: PAXGUSDT 1 @ 4994.1 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: PAXGUSDT 1m @ 4994.10
+2026-02-07 16:53:01 - websocket_manager - INFO - Candle closed: POLUSDT 1 @ 0.09718 (notifying 4 listeners)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - Candle closed: POLUSDT 1m @ 0.10
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] TRXUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: TRXUSDT 1m @ 0.27763 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] TRXUSDT/1: Detected 40 swing signals (19 HIGH, 21 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Detection complete - found 40 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] TRXUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] SOLUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SOLUSDT 1m @ 88.21 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] SOLUSDT/1: Detected 55 swing signals (28 HIGH, 27 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Detection complete - found 55 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] SOLUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] SUIUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: SUIUSDT 1m @ 1.0101 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] SUIUSDT/1: Detected 56 swing signals (28 HIGH, 28 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Detection complete - found 56 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] SUIUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] BNBUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: BNBUSDT 1m @ 648.9 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] BNBUSDT/1: Detected 43 swing signals (21 HIGH, 22 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Detection complete - found 43 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] BNBUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] PAXGUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: PAXGUSDT 1m @ 4994.1 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] PAXGUSDT/1: Detected 31 swing signals (17 HIGH, 14 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Detection complete - found 31 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] PAXGUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:01 - realtime_pattern_service - INFO - [REALTIME] POLUSDT/1: Running detection with 500 candles
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] Candle closed: POLUSDT 1m @ 0.09718 (ts=1770501120000)
+2026-02-07 16:53:01 - swing_detector - INFO - [SWING_DETECTOR] POLUSDT/1: Detected 53 swing signals (22 HIGH, 31 LOW)
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Detection complete - found 53 total signals, swingBars=5
+2026-02-07 16:53:01 - swing_service - INFO - [SWING_SERVICE] POLUSDT: Checking for signal at ts=1770500880000 (idx=-6)
+2026-02-07 16:53:02 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:53:04 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:04 - uvicorn.access - INFO - 127.0.0.1:55518 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:53:04 - uvicorn.access - INFO - 127.0.0.1:55547 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-07 16:53:04 - uvicorn.access - INFO - 127.0.0.1:55546 - "GET /api/status HTTP/1.1" 200
+2026-02-07 16:53:05 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/tickers?category=linear "HTTP/1.1 200 OK"
+2026-02-07 16:53:05 - uvicorn.access - INFO - 127.0.0.1:55539 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:53:07 - uvicorn.access - INFO - 127.0.0.1:55539 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:08 - uvicorn.access - INFO - 127.0.0.1:55547 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:08 - uvicorn.access - INFO - 127.0.0.1:55546 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-07 16:53:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769896387991&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:09 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1769956440000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:53:10 - uvicorn.access - INFO - 127.0.0.1:55546 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770016440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:10 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770076440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:11 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770136440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:12 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770196440000&limit=1000 "HTTP/1.1 200 OK"
+[DRAWINGS] [OK] Loaded 0 shapes for BTCUSDT
+2026-02-07 16:53:13 - uvicorn.access - INFO - 127.0.0.1:55546 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-07 16:53:13 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770256440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:14 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770316440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770376440000&limit=1000 "HTTP/1.1 200 OK"
+2026-02-07 16:53:15 - httpx - INFO - HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1770436440000&limit=1000 "HTTP/1.1 200 OK"
