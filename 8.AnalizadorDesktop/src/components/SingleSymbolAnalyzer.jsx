@@ -403,6 +403,13 @@ const SingleSymbolAnalyzer = () => {
     return () => clearInterval(interval);
   }, [isTradingPanelOpen, fetchCurrentPrice]);
 
+  // Reportar simbolo actual al main process de Electron (para screenshot server)
+  useEffect(() => {
+    if (window.electronAPI && window.electronAPI.reportCurrentSymbol) {
+      window.electronAPI.reportCurrentSymbol(symbol);
+    }
+  }, [symbol]);
+
   // Handler para cambio de simbolo
   const handleSymbolChange = useCallback((newSymbol) => {
     if (newSymbol !== symbol) {

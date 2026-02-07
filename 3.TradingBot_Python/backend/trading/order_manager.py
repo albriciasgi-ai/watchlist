@@ -177,6 +177,31 @@ class OrderManager:
             # SHORT: TP below entry price
             return entry_price * (Decimal("1") - tp_percent)
 
+    def _validate_tpsl_coherence(
+        self,
+        real_price: Decimal,
+        side: str,
+        sl_price: Decimal,
+        tp_price: Decimal
+    ) -> tuple:
+        """
+        Validate that custom SL/TP prices make sense relative to the real execution price.
+        Returns (sl_valid, tp_valid) tuple.
+
+        For LONG (Buy): SL must be below entry, TP must be above entry
+        For SHORT (Sell): SL must be above entry, TP must be below entry
+        """
+        if side == "Buy":
+            # LONG position
+            sl_valid = sl_price < real_price
+            tp_valid = tp_price > real_price
+        else:
+            # SHORT position
+            sl_valid = sl_price > real_price
+            tp_valid = tp_price < real_price
+
+        return (sl_valid, tp_valid)
+
     async def _wait_for_position(
         self,
         symbol: str,
@@ -391,7 +416,9 @@ class OrderManager:
                 result["market_order"] = market_result
 
                 if market_result.get("retCode") != 0:
-                    print(f"[ERROR] Market order failed, aborting sequence")
+                    error_msg = market_result.get("retMsg", "Unknown Bybit error")
+                    print(f"[ERROR] Market order failed: retCode={market_result.get('retCode')}, retMsg={error_msg}")
+                    result["error"] = f"Market order failed: {error_msg} (retCode={market_result.get('retCode')})"
                     return result
 
                 # Step 3: Wait for position with intelligent polling (NOT fixed sleep)
@@ -408,17 +435,19 @@ class OrderManager:
 
                 if real_price == 0:
                     print(f"[ERROR] Invalid real price, aborting SL/TP")
+                    result["error"] = "Could not determine execution price (price=0)"
                     return result
 
                 # Step 4: Calculate SL and TP prices
                 tick_size = Decimal(str(config.get("tick_size", "0.01")))
+                sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
+                tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
 
                 # Use custom SL/TP if provided, otherwise calculate from percentages
                 if config.get("custom_stop_loss"):
                     sl_price = Decimal(str(config["custom_stop_loss"]))
                     sl_source = "custom"
                 else:
-                    sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
                     sl_price = self._calculate_sl_price(real_price, side, sl_percent)
                     sl_source = f"{sl_percent*100:.1f}%"
 
@@ -426,9 +455,24 @@ class OrderManager:
                     tp_price = Decimal(str(config["custom_take_profit"]))
                     tp_source = "custom"
                 else:
-                    tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
                     tp_price = self._calculate_tp_price(real_price, side, tp_percent)
                     tp_source = f"{tp_percent*100:.1f}%"
+
+                # Validate custom TP/SL coherence with real execution price
+                # If execution price differs significantly, custom values may be invalid
+                sl_valid, tp_valid = self._validate_tpsl_coherence(real_price, side, sl_price, tp_price)
+
+                if not sl_valid:
+                    old_sl = sl_price
+                    sl_price = self._calculate_sl_price(real_price, side, sl_percent)
+                    sl_source = f"{sl_percent*100:.1f}% (recalculated, custom ${old_sl} invalid for entry ${real_price})"
+                    print(f"[WARNING] Custom SL ${old_sl} invalid for {side} at ${real_price}, recalculated to ${sl_price}")
+
+                if not tp_valid:
+                    old_tp = tp_price
+                    tp_price = self._calculate_tp_price(real_price, side, tp_percent)
+                    tp_source = f"{tp_percent*100:.1f}% (recalculated, custom ${old_tp} invalid for entry ${real_price})"
+                    print(f"[WARNING] Custom TP ${old_tp} invalid for {side} at ${real_price}, recalculated to ${tp_price}")
 
                 sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
                 tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
@@ -590,14 +634,17 @@ class OrderManager:
 
                 if entry_price == 0:
                     print(f"[ERROR] No valid price for TP/SL calculation")
+                    result["error"] = "No valid price for TP/SL calculation (price=0)"
                     return result
 
                 # Calculate SL price
+                sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
+                tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
+
                 if config.get("custom_stop_loss"):
                     sl_price = Decimal(str(config["custom_stop_loss"]))
                     sl_source = "custom"
                 else:
-                    sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
                     sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
                     sl_source = f"{sl_percent*100:.1f}%"
 
@@ -606,9 +653,23 @@ class OrderManager:
                     tp_price = Decimal(str(config["custom_take_profit"]))
                     tp_source = "custom"
                 else:
-                    tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
                     tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
                     tp_source = f"{tp_percent*100:.1f}%"
+
+                # Validate custom TP/SL coherence with entry price
+                sl_valid, tp_valid = self._validate_tpsl_coherence(entry_price, side, sl_price, tp_price)
+
+                if not sl_valid:
+                    old_sl = sl_price
+                    sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
+                    sl_source = f"{sl_percent*100:.1f}% (recalculated, custom ${old_sl} invalid for {side} at ${entry_price})"
+                    print(f"[WARNING] Custom SL ${old_sl} invalid for {side} at ${entry_price}, recalculated to ${sl_price}")
+
+                if not tp_valid:
+                    old_tp = tp_price
+                    tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
+                    tp_source = f"{tp_percent*100:.1f}% (recalculated, custom ${old_tp} invalid for {side} at ${entry_price})"
+                    print(f"[WARNING] Custom TP ${old_tp} invalid for {side} at ${entry_price}, recalculated to ${tp_price}")
 
                 sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
                 tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
@@ -649,7 +710,8 @@ class OrderManager:
                     print(f"   Single API call: {result['timing'].get('order_ms', 0):.0f}ms")
                 else:
                     error_msg = order_result.get("retMsg", "Unknown error")
-                    print(f"[FAILED] Integrated order failed: {error_msg}")
+                    result["error"] = f"Integrated order failed: {error_msg} (retCode={order_result.get('retCode')})"
+                    print(f"[FAILED] {result['error']}")
                 print(f"{'='*60}\n")
 
                 return result

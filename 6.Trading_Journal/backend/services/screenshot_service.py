@@ -1,6 +1,10 @@
 """
 Trading Journal - Screenshot Service
-Sistema híbrido de capturas: Playwright (primario) + mplfinance (fallback).
+Captura screenshots del grafico del AnalizadorDesktop via HTTP + mplfinance (fallback).
+
+Estrategia de captura:
+1. Electron capture: HTTP GET al servidor de screenshots del AnalizadorDesktop (puerto 5180)
+2. Fallback mplfinance: Genera grafico estatico con datos de la API
 """
 
 import os
@@ -13,14 +17,6 @@ import json
 
 logger = logging.getLogger(__name__)
 
-# Intentar importar Playwright
-try:
-    from playwright.async_api import async_playwright, Browser, Page
-    PLAYWRIGHT_AVAILABLE = True
-except ImportError:
-    PLAYWRIGHT_AVAILABLE = False
-    logger.warning("Playwright not available. Install with: pip install playwright && playwright install chromium")
-
 # Intentar importar mplfinance para fallback
 try:
     import mplfinance as mpf
@@ -31,60 +27,56 @@ except ImportError:
     logger.warning("mplfinance not available for fallback charts")
 
 
+# URL del servidor de screenshots del AnalizadorDesktop
+ELECTRON_SCREENSHOT_URL = "http://127.0.0.1:5180"
+
+
 class ScreenshotService:
     """
-    Servicio de capturas de pantalla híbrido.
+    Servicio de capturas de pantalla.
 
     Estrategia:
-    1. Intenta usar Playwright para capturar el frontend real
-    2. Si falla, usa mplfinance para generar gráfico estático
-    3. Guarda imágenes en screenshots/{symbol}/{entry_id}_{event}.png
+    1. Intenta capturar via HTTP desde AnalizadorDesktop (Electron, puerto 5180)
+    2. Si falla, usa mplfinance para generar grafico estatico
+    3. Guarda imagenes en screenshots/{symbol}/{entry_id}_{event}.png
     """
 
     def __init__(
         self,
         screenshots_dir: str = "screenshots",
-        frontend_urls: Dict[str, str] = None
+        electron_url: str = ELECTRON_SCREENSHOT_URL
     ):
         self.screenshots_dir = Path(screenshots_dir)
         self.screenshots_dir.mkdir(parents=True, exist_ok=True)
-
-        # URLs de frontends por defecto (versiones Desktop)
-        self.frontend_urls = frontend_urls or {
-            "watchlist": "http://localhost:5173",      # App 2 (web)
-            "analizador": "http://localhost:5174",     # App 8 AnalizadorDesktop
-            "order_flow": "http://localhost:5175",     # App 9 OrderFlowDesktop
-            "backtester": "http://localhost:5173"      # App 1 (web)
-        }
-
-        # Estado de Playwright
-        self._browser: Optional[Browser] = None
-        self._playwright = None
+        self.electron_url = electron_url
 
     async def initialize(self):
-        """Inicializa Playwright si está disponible"""
-        if not PLAYWRIGHT_AVAILABLE:
-            logger.info("Screenshot service initialized (mplfinance fallback only)")
-            return
-
-        try:
-            self._playwright = await async_playwright().start()
-            self._browser = await self._playwright.chromium.launch(
-                headless=True,
-                args=['--no-sandbox', '--disable-setuid-sandbox']
-            )
-            logger.info("Screenshot service initialized with Playwright")
-        except Exception as e:
-            logger.error(f"Failed to initialize Playwright: {e}")
-            self._browser = None
+        """Inicializa el servicio y verifica disponibilidad del Electron screenshot server"""
+        electron_ok = await self._check_electron_available()
+        if electron_ok:
+            logger.info(f"Screenshot service initialized (Electron capture at {self.electron_url})")
+        elif MPLFINANCE_AVAILABLE:
+            logger.info("Screenshot service initialized (mplfinance fallback only - Electron not available)")
+        else:
+            logger.warning("Screenshot service initialized (NO capture methods available)")
 
     async def shutdown(self):
         """Cierra recursos"""
-        if self._browser:
-            await self._browser.close()
-        if self._playwright:
-            await self._playwright.stop()
         logger.info("Screenshot service shut down")
+
+    async def _check_electron_available(self) -> bool:
+        """Verifica si el servidor de screenshots de Electron esta disponible"""
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=3.0) as client:
+                response = await client.get(f"{self.electron_url}/status")
+                if response.status_code == 200:
+                    data = response.json()
+                    logger.info(f"Electron screenshot server: available={data.get('available')}, symbol={data.get('currentSymbol')}")
+                    return data.get('available', False)
+        except Exception:
+            pass
+        return False
 
     async def capture(
         self,
@@ -96,20 +88,20 @@ class ScreenshotService:
         candles_data: Optional[list] = None
     ) -> Optional[str]:
         """
-        Captura screenshot del gráfico.
+        Captura screenshot del grafico.
 
         Args:
-            symbol: Símbolo (ej: BTCUSDT)
+            symbol: Simbolo (ej: BTCUSDT)
             event_type: "entry" o "exit"
             entry_id: ID de la entrada del journal
-            source: App fuente para determinar URL
-            timeframe: Timeframe del gráfico
+            source: App fuente (no se usa actualmente, siempre captura del Analizador)
+            timeframe: Timeframe del grafico
             candles_data: Datos de velas para fallback (opcional)
 
         Returns:
             Path al archivo de imagen o None si falla
         """
-        # Crear directorio para el símbolo
+        # Crear directorio para el simbolo
         symbol_dir = self.screenshots_dir / symbol
         symbol_dir.mkdir(parents=True, exist_ok=True)
 
@@ -118,18 +110,15 @@ class ScreenshotService:
         filename = f"{entry_id}_{event_type}_{timestamp}.png"
         filepath = symbol_dir / filename
 
-        # Intentar Playwright primero
-        if self._browser:
-            success = await self._capture_with_playwright(
-                symbol=symbol,
-                source=source,
-                timeframe=timeframe,
-                filepath=str(filepath)
-            )
-            if success:
-                return str(filepath)
+        # 1. Intentar captura desde Electron (AnalizadorDesktop)
+        success = await self._capture_from_electron(
+            symbol=symbol,
+            filepath=str(filepath)
+        )
+        if success:
+            return str(filepath)
 
-        # Fallback a mplfinance
+        # 2. Fallback a mplfinance con datos proporcionados
         if MPLFINANCE_AVAILABLE and candles_data:
             success = await self._capture_with_mplfinance(
                 symbol=symbol,
@@ -139,7 +128,7 @@ class ScreenshotService:
             if success:
                 return str(filepath)
 
-        # Fallback: intentar obtener datos y generar gráfico
+        # 3. Fallback: obtener datos de la API y generar grafico
         if MPLFINANCE_AVAILABLE:
             candles = await self._fetch_candles_for_fallback(symbol, timeframe)
             if candles:
@@ -154,71 +143,49 @@ class ScreenshotService:
         logger.error(f"All screenshot methods failed for {symbol}")
         return None
 
-    async def _capture_with_playwright(
+    async def _capture_from_electron(
         self,
         symbol: str,
-        source: str,
-        timeframe: str,
         filepath: str
     ) -> bool:
-        """Captura usando Playwright"""
+        """Captura screenshot desde el AnalizadorDesktop via HTTP"""
+        import httpx
         try:
-            base_url = self.frontend_urls.get(source, self.frontend_urls["analizador"])
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(
+                    f"{self.electron_url}/screenshot",
+                    params={"symbol": symbol}
+                )
 
-            # Crear nueva página
-            page = await self._browser.new_page()
-            page.set_default_timeout(30000)  # 30 segundos
+                if response.status_code == 200:
+                    # Verificar si el simbolo coincide
+                    symbol_match = response.headers.get('X-Symbol-Match', 'false') == 'true'
+                    current_symbol = response.headers.get('X-Current-Symbol', 'unknown')
 
-            # Construir URL según la app
-            if source == "analizador":
-                url = f"{base_url}?symbol={symbol}&interval={timeframe}"
-            elif source == "watchlist":
-                url = f"{base_url}?symbol={symbol}"
-            elif source == "order_flow":
-                url = f"{base_url}?symbol={symbol}&interval={timeframe}"
-            else:
-                url = base_url
+                    # Guardar la imagen PNG
+                    with open(filepath, 'wb') as f:
+                        f.write(response.content)
 
-            logger.info(f"Navigating to {url}")
+                    if symbol_match:
+                        logger.info(f"Electron screenshot saved: {filepath} (symbol: {symbol})")
+                    else:
+                        logger.info(f"Electron screenshot saved: {filepath} (requested: {symbol}, showing: {current_symbol})")
 
-            # Navegar
-            await page.goto(url, wait_until="networkidle")
+                    return True
+                else:
+                    error_msg = "unknown error"
+                    try:
+                        error_msg = response.json().get('error', error_msg)
+                    except Exception:
+                        pass
+                    logger.warning(f"Electron screenshot failed ({response.status_code}): {error_msg}")
+                    return False
 
-            # Esperar a que el gráfico cargue
-            await asyncio.sleep(3)  # Dar tiempo para renderizado
-
-            # Intentar encontrar el contenedor del gráfico
-            chart_selectors = [
-                '.chart-container',
-                '.uplot',
-                '[class*="chart"]',
-                'canvas',
-                '#chart'
-            ]
-
-            element = None
-            for selector in chart_selectors:
-                try:
-                    element = await page.query_selector(selector)
-                    if element:
-                        break
-                except:
-                    continue
-
-            if element:
-                # Capturar solo el gráfico
-                await element.screenshot(path=filepath)
-            else:
-                # Capturar página completa
-                await page.screenshot(path=filepath, full_page=False)
-
-            await page.close()
-
-            logger.info(f"Playwright screenshot saved: {filepath}")
-            return True
-
+        except httpx.ConnectError:
+            logger.debug("Electron screenshot server not available (AnalizadorDesktop not running?)")
+            return False
         except Exception as e:
-            logger.error(f"Playwright capture failed: {e}")
+            logger.warning(f"Electron screenshot error: {e}")
             return False
 
     async def _capture_with_mplfinance(
@@ -300,12 +267,12 @@ class ScreenshotService:
         timeframe: str,
         limit: int = 100
     ) -> Optional[list]:
-        """Obtiene datos de velas para el fallback"""
+        """Obtiene datos de velas para el fallback de mplfinance"""
         import httpx
 
-        # Intentar desde diferentes backends
+        # Intentar desde diferentes backends (Analizador, Watchlist, Backtester)
         backends = [
-            f"http://localhost:10000/api/historical/{symbol}?interval={timeframe}&limit={limit}",
+            f"http://localhost:10001/api/historical/{symbol}?interval={timeframe}&limit={limit}",
             f"http://localhost:8000/api/historical/{symbol}?interval={timeframe}&limit={limit}",
             f"http://localhost:9000/api/historical/{symbol}?interval={timeframe}&limit={limit}",
         ]
@@ -321,58 +288,6 @@ class ScreenshotService:
                             return candles
                 except Exception:
                     continue
-
-        return None
-
-    async def request_screenshot_from_frontend(
-        self,
-        symbol: str,
-        source: str,
-        event_type: str,
-        entry_id: str
-    ) -> Optional[str]:
-        """
-        Solicita screenshot directamente al frontend vía endpoint.
-        Requiere que el frontend implemente /api/screenshot
-        """
-        import httpx
-
-        base_url = self.frontend_urls.get(source, self.frontend_urls["analizador"])
-
-        # Cambiar puerto de frontend a backend si es necesario
-        port_mapping = {
-            "10001": "10000",  # Analizador
-            "5173": "8000",    # Watchlist
-            "11001": "11000",  # Order Flow
-        }
-
-        for frontend_port, backend_port in port_mapping.items():
-            if frontend_port in base_url:
-                backend_url = base_url.replace(frontend_port, backend_port)
-                break
-        else:
-            backend_url = base_url
-
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.post(
-                    f"{backend_url}/api/screenshot",
-                    json={
-                        "symbol": symbol,
-                        "event_type": event_type,
-                        "entry_id": entry_id
-                    }
-                )
-
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get('success') and data.get('path'):
-                        # Copiar archivo al directorio de screenshots del journal
-                        # Por ahora solo retornamos el path
-                        return data.get('path')
-
-        except Exception as e:
-            logger.debug(f"Frontend screenshot request failed: {e}")
 
         return None
 
@@ -409,9 +324,7 @@ class ScreenshotService:
     def get_status(self) -> Dict[str, Any]:
         """Retorna estado del servicio"""
         return {
-            "playwright_available": PLAYWRIGHT_AVAILABLE,
-            "playwright_browser_running": self._browser is not None,
+            "electron_screenshot_url": self.electron_url,
             "mplfinance_available": MPLFINANCE_AVAILABLE,
-            "screenshots_dir": str(self.screenshots_dir),
-            "frontend_urls": self.frontend_urls
+            "screenshots_dir": str(self.screenshots_dir)
         }

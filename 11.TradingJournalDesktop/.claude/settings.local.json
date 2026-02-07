@@ -12,7 +12,9 @@
       "Bash(powershell -Command:*)",
       "WebSearch",
       "WebFetch(domain:bybit-exchange.github.io)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(dir:*)",
+      "Bash(curl.exe:*)"
     ],
     "deny": [],
     "ask": []

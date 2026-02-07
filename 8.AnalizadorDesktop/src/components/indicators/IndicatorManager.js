@@ -1044,6 +1044,97 @@ class IndicatorManager {
     log.debug(`[${this.symbol}] 🗑️ ${autoRangeIds.length} rangos auto-detectados eliminados`);
   }
 
+  // ==================== ZONE DETECTOR VOLUME PROFILES ====================
+
+  /**
+   * Crea Volume Profile Fixed Range para zonas del Zone Detector.
+   * Limpia VP anteriores del zone detector antes de crear nuevos.
+   * @param {Array} zones - Zonas detectadas con start_timestamp, end_timestamp
+   */
+  createZoneDetectorFixedRanges(zones) {
+    // 1. Limpiar VP anteriores del zone detector
+    this.clearZoneDetectorFixedRanges();
+
+    if (!zones || zones.length === 0) {
+      log.debug(`[${this.symbol}] No hay zonas para crear VP`);
+      return 0;
+    }
+
+    let created = 0;
+    zones.forEach((zone, idx) => {
+      const startTs = zone.start_timestamp;
+      const endTs = zone.end_timestamp;
+
+      if (!startTs || !endTs) return;
+
+      const rangeId = `zd_vp_${startTs}_${idx}`;
+
+      const rangeProfile = {
+        rangeId: rangeId,
+        symbol: this.symbol,
+        interval: this.interval,
+        startTimestamp: startTs,
+        endTimestamp: endTs,
+        enabled: true,
+        isZoneDetector: true,  // Flag para identificar VP del zone detector
+        rows: 50,
+        valueAreaPercent: 70,
+        histogramMaxWidth: 25,
+        useGradient: true,
+        baseColor: "#2196F3",
+        valueAreaColor: "#FF9800",
+        pocColor: "#F44336",
+        vahValColor: "#9C27B0",
+        rangeShadeColor: "#CCCCCC",
+        enableClusterDetection: true,
+        clusterThreshold: 1.5,
+        clusterColor: "#4CAF50"
+      };
+
+      // Asignar etiqueta alfabetica
+      const rangeLabel = this.indexToAlphaLabel(idx);
+      rangeProfile.rangeLabel = rangeLabel;
+
+      this.fixedRangeProfiles.push(rangeProfile);
+
+      // Crear instancia del indicador
+      const indicator = new VolumeProfileFixedRangeIndicator(
+        this.symbol,
+        this.interval,
+        rangeId
+      );
+      indicator.loadFromData(rangeProfile);
+      indicator.rangeLabel = rangeLabel;
+      this.fixedRangeIndicators.push(indicator);
+
+      created++;
+    });
+
+    this.saveFixedRangeProfilesToStorage();
+    log.debug(`[${this.symbol}] Zone Detector VP: ${created} Volume Profiles creados`);
+    return created;
+  }
+
+  /**
+   * Elimina todos los Volume Profile Fixed Range creados por el Zone Detector.
+   * No afecta VP manuales ni los del Range Detection.
+   */
+  clearZoneDetectorFixedRanges() {
+    const zdRangeIds = this.fixedRangeProfiles
+      .filter(p => p.symbol === this.symbol && p.isZoneDetector)
+      .map(p => p.rangeId);
+
+    if (zdRangeIds.length === 0) return 0;
+
+    zdRangeIds.forEach(rangeId => {
+      this.deleteFixedRangeProfile(rangeId);
+    });
+
+    this.saveFixedRangeProfilesToStorage();
+    log.debug(`[${this.symbol}] Zone Detector VP: ${zdRangeIds.length} Volume Profiles eliminados`);
+    return zdRangeIds.length;
+  }
+
   /**
    * Guarda la configuración del detector en localStorage
    * 🎯 MODIFICADO: Ahora guarda por símbolo Y timeframe
@@ -1347,6 +1438,7 @@ class IndicatorManager {
           // ATR Dynamic method (nuevo)
           atr_dyn_period: params.atr_dyn_period || 200,
           atr_dyn_ma_period: params.atr_dyn_ma_period || 20,
+          atr_dyn_min_bars: params.atr_dyn_min_bars || 0,
           atr_dyn_multiplier: params.atr_dyn_multiplier || 1.0,
           atr_dyn_max_breakout: params.atr_dyn_max_breakout || 5,
           atr_dyn_merge_overlap: params.atr_dyn_merge_overlap !== false,
@@ -1370,6 +1462,9 @@ class IndicatorManager {
           min_score_filter: params.min_score_filter || 0,
           // Score intrinseco (sin sesgos post-trade)
           use_continuation_score: params.use_continuation_score || false,
+          // Volume Profile por zona (para va_breakout)
+          sl_poc_buffer_pct: params.sl_poc_buffer_pct != null ? params.sl_poc_buffer_pct : 50.0,
+          vp_bins_per_zone: params.vp_bins_per_zone || 30,
         }
       };
 
@@ -1474,7 +1569,81 @@ class IndicatorManager {
   }
 
   /**
-   * 🎯 NUEVO: Limpia las zonas del visualizador
+   * Envia alerta de una zona al TradingBot via backend del Analizador.
+   * @param {object} zone - Datos de la zona con breakout
+   * @param {string} tradingBotUrl - URL del TradingBot (default: localhost:5000)
+   * @returns {Promise<object>} - Resultado del envio
+   */
+  async sendZoneAlert(zone, tradingBotUrl = 'http://localhost:5000') {
+    try {
+      const requestBody = {
+        symbol: this.symbol,
+        direction: zone.breakout_direction || '',
+        entry_price: zone.entry_price || 0,
+        sl_price: zone.sl_price || 0,
+        tp_price: zone.tp_price || 0,
+        confidence: zone.trading_score || 70,
+        entry_mode: zone.entry_mode || 'breakout_close',
+        trading_bot_url: tradingBotUrl
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/send-alert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        log.info(`[${this.symbol}] Alerta zona enviada: ${zone.breakout_direction} @ ${zone.entry_price}`);
+      } else {
+        log.warn(`[${this.symbol}] Alerta zona rechazada: ${result.error}`);
+      }
+      return result;
+    } catch (error) {
+      log.error(`[${this.symbol}] Error enviando alerta zona:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Envia alertas de multiples zonas al TradingBot via backend del Analizador.
+   * Solo envia zonas con entry_price, sl_price y tp_price validos.
+   * @param {Array} zones - Lista de zonas detectadas
+   * @param {string} entryMode - Modo de entrada usado en la deteccion
+   * @param {string} tradingBotUrl - URL del TradingBot
+   * @returns {Promise<object>} - Resultado batch
+   */
+  async sendZoneAlertsBatch(zones, entryMode = 'breakout_close', tradingBotUrl = 'http://localhost:5000') {
+    try {
+      const requestBody = {
+        symbol: this.symbol,
+        zones: zones,
+        entry_mode: entryMode,
+        trading_bot_url: tradingBotUrl
+      };
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/send-alerts-batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        log.info(`[${this.symbol}] Alertas batch: ${result.sent} enviadas, ${result.failed} fallidas`);
+      } else {
+        log.warn(`[${this.symbol}] Alertas batch fallaron: ${result.error}`);
+      }
+      return result;
+    } catch (error) {
+      log.error(`[${this.symbol}] Error enviando alertas batch:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Limpia las zonas del visualizador
    */
   clearTradingZones() {
     if (this.zoneVisualizerIndicator) {

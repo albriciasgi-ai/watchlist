@@ -175,6 +175,7 @@ class PositionMonitor:
             if current_positions is not None:
                 self._trading_bot_connected = True
                 self._previous_positions = current_positions
+                current_symbols = set(current_positions.keys())
                 logger.info(f"Synced {len(current_positions)} positions from TradingBot")
 
                 # Crear entries para posiciones que no tenemos tracking
@@ -182,6 +183,15 @@ class PositionMonitor:
                     if symbol not in self._tracked_entries:
                         logger.info(f"Found untracked position: {symbol}, creating entry...")
                         await self._handle_new_position(position)
+
+                # Cerrar entries huerfanas (trackeadas pero sin posicion real)
+                orphan_symbols = set(self._tracked_entries.keys()) - current_symbols
+                for symbol in orphan_symbols:
+                    logger.info(f"Orphan entry detected during sync: {symbol} (no active position)")
+                    await self._handle_closed_position(symbol)
+
+                if orphan_symbols:
+                    logger.info(f"Closed {len(orphan_symbols)} orphan entries during initial sync")
             else:
                 self._trading_bot_connected = False
                 logger.info("No positions found in TradingBot (or bot not running)")
@@ -221,6 +231,18 @@ class PositionMonitor:
             self._trading_bot_connected = True
             current_symbols = set(current_positions.keys())
             previous_symbols = set(self._previous_positions.keys())
+
+            # Verificar integridad: entries trackeadas que fueron eliminadas de la DB
+            for symbol in list(self._tracked_entries.keys()):
+                entry_id = self._tracked_entries[symbol]
+                entry = self.store.get(entry_id)
+                if entry is None and symbol in current_symbols:
+                    # La entry fue eliminada pero la posicion sigue abierta -> re-crear
+                    logger.warning(f"Tracked entry {entry_id} for {symbol} was deleted from DB, re-creating...")
+                    del self._tracked_entries[symbol]
+                    if symbol in self._tracked_directions:
+                        del self._tracked_directions[symbol]
+                    await self._handle_new_position(current_positions[symbol])
 
             # Detectar nuevas posiciones
             new_positions = current_symbols - previous_symbols

@@ -57,6 +57,9 @@ from sr_detector import get_sr_detector
 # Zone Detector imports
 from zone_detector import ZoneDetector, ZoneDetectionParams
 
+# Zone realtime service imports
+from zone_service import get_zone_service
+
 app = FastAPI(
     title="Crypto Watchlist Backend",
     description="Servidor backend para la Watchlist de criptomonedas con Bybit Futures",
@@ -2602,6 +2605,17 @@ async def startup_event():
     except Exception as e:
         print(f"[STARTUP] Warning: Could not start VWAP service: {e}")
 
+    # Start Zone Detector realtime service
+    try:
+        zone_service = get_zone_service()
+        if zone_service.config.enabled:
+            await zone_service.start()
+            print(f"[STARTUP] Zone detector realtime service started - {len(zone_service.config.symbols)} symbols @ {zone_service.config.interval}m")
+        else:
+            print("[STARTUP] Zone detector realtime service disabled (enable from frontend)")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not start zone realtime service: {e}")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -2632,6 +2646,14 @@ async def shutdown_event():
         print("[SHUTDOWN] VWAP service stopped")
     except Exception as e:
         print(f"[SHUTDOWN] Warning: Error stopping VWAP service: {e}")
+
+    # Stop Zone Detector realtime service
+    try:
+        zone_service = get_zone_service()
+        await zone_service.stop()
+        print("[SHUTDOWN] Zone detector realtime service stopped")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error stopping zone realtime service: {e}")
 
     # Save config store
     try:
@@ -4613,6 +4635,10 @@ async def detect_trading_zones(request: Request):
             atr_dyn_multiplier=params_dict.get("atr_dyn_multiplier", 1.0),
             atr_dyn_max_breakout=params_dict.get("atr_dyn_max_breakout", 5),
             atr_dyn_merge_overlap=params_dict.get("atr_dyn_merge_overlap", True),
+            atr_dyn_min_bars=params_dict.get("atr_dyn_min_bars", 0),
+            # Volume Profile por zona (para va_breakout)
+            sl_poc_buffer_pct=params_dict.get("sl_poc_buffer_pct", 50.0),
+            vp_bins_per_zone=params_dict.get("vp_bins_per_zone", 30),
             # Filtro de calidad
             min_score_filter=params_dict.get("min_score_filter", 0),
             # Score intrinseco (sin sesgos post-trade)
@@ -4792,9 +4818,11 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
         "precio_min", "precio_max", "rango_pct",
         "direccion", "precio_breakout",
         "modo_entrada", "precio_entrada", "offset_barras",
+        "sl_price", "tp_price",
         "resultado", "pnl_r", "equity_r",
         "r_multiple", "alcanzo_2r", "alcanzo_3r",
-        "barras_cierre", "velas_en_zona", "duracion_horas", "score"
+        "barras_cierre", "velas_en_zona", "duracion_horas", "score",
+        "vp_poc", "vp_vah", "vp_val"
     ]
 
     with open(filepath, 'w', encoding='utf-8-sig') as f:
@@ -4822,6 +4850,8 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
             entry_mode_label = zone.get('entry_mode', '')
             if entry_mode_label == 'breakout_close':
                 entry_mode_label = 'Close Breakout'
+            elif entry_mode_label == 'va_breakout':
+                entry_mode_label = 'VA Breakout'
             elif entry_mode_label == 'swing_confirmation':
                 entry_mode_label = 'Swing Confirm'
 
@@ -4845,6 +4875,8 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
                 entry_mode_label,
                 str(zone.get('entry_price', 0)).replace('.', ','),
                 str(zone.get('entry_bar_offset', 0)),
+                str(round(zone.get('sl_price', 0), 2)).replace('.', ','),
+                str(round(zone.get('tp_price', 0), 2)).replace('.', ','),
                 result,
                 str(zone.get('trade_pnl_r', 0)).replace('.', ','),
                 equity_str,
@@ -4854,9 +4886,390 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
                 str(zone.get('bars_to_close', 0)),
                 str(zone.get('candles_in_zone', 0)),
                 str(round(zone.get('duration_hours', 0), 1)).replace('.', ','),
-                str(round(zone.get('trading_score', 0), 0))
+                str(round(zone.get('trading_score', 0), 0)),
+                str(round(zone.get('vp_poc_price', 0), 2)).replace('.', ','),
+                str(round(zone.get('vp_vah_price', 0), 2)).replace('.', ','),
+                str(round(zone.get('vp_val_price', 0), 2)).replace('.', ',')
             ]
 
             f.write(";".join(row) + "\n")
 
     return str(filepath)
+
+
+# =============================================
+# ZONE DETECTOR - ALERTAS AL TRADING BOT
+# =============================================
+
+@app.post("/api/zones/send-alert")
+async def send_zone_alert(request: Request):
+    """
+    Envia una alerta de breakout de zona al TradingBot Desktop (puerto 5000).
+    El frontend llama a este endpoint con los datos de la zona que tiene breakout.
+    """
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "").upper()
+        direction = body.get("direction", "").upper()  # "UP" -> LONG, "DOWN" -> SHORT
+        entry_price = body.get("entry_price", 0)
+        sl_price = body.get("sl_price", 0)
+        tp_price = body.get("tp_price", 0)
+        confidence = body.get("confidence", 70)
+        entry_mode = body.get("entry_mode", "breakout_close")
+        trading_bot_url = body.get("trading_bot_url", "http://localhost:5000")
+
+        if not symbol or not direction or not entry_price:
+            return {"success": False, "error": "Faltan campos requeridos: symbol, direction, entry_price"}
+
+        if not sl_price or not tp_price:
+            return {"success": False, "error": "Se requieren sl_price y tp_price"}
+
+        # Mapear direction: UP -> LONG, DOWN -> SHORT
+        if direction in ("UP", "LONG"):
+            pattern_direction = "LONG"
+        elif direction in ("DOWN", "SHORT"):
+            pattern_direction = "SHORT"
+        else:
+            return {"success": False, "error": f"Direccion invalida: {direction}"}
+
+        # Construir payload en formato compatible con TradingBot
+        alert_payload = {
+            "source": "ZONE_DETECTOR",
+            "symbol": symbol,
+            "interval": "0",  # No aplica para zone detector
+            "pattern": {
+                "patternType": f"ZONE_BREAKOUT_{entry_mode.upper()}",
+                "price": float(entry_price),
+                "confidence": float(confidence),
+                "direction": pattern_direction
+            },
+            "custom_stop_loss": float(sl_price),
+            "custom_take_profit": float(tp_price)
+        }
+
+        # Enviar al TradingBot
+        target_url = f"{trading_bot_url}/api/watchlist-alert"
+        print(f"[ZONE_ALERT] Enviando alerta: {symbol} {pattern_direction} @ {entry_price} | SL={sl_price} TP={tp_price} -> {target_url}")
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.post(target_url, json=alert_payload)
+            result = response.json()
+
+        if response.status_code == 200 and result.get("success"):
+            print(f"[ZONE_ALERT] OK: {symbol} {pattern_direction} - TradingBot respondio: {result.get('message', 'success')}")
+            return {
+                "success": True,
+                "message": f"Alerta enviada: {symbol} {pattern_direction}",
+                "trading_bot_response": result
+            }
+        else:
+            error_msg = result.get("detail", result.get("message", f"HTTP {response.status_code}"))
+            print(f"[ZONE_ALERT] REJECTED: {symbol} - {error_msg}")
+            return {
+                "success": False,
+                "error": f"TradingBot rechazo la alerta: {error_msg}",
+                "trading_bot_response": result
+            }
+
+    except httpx.ConnectError:
+        print(f"[ZONE_ALERT] ERROR: No se pudo conectar al TradingBot en {trading_bot_url}")
+        return {"success": False, "error": f"No se pudo conectar al TradingBot en {trading_bot_url}. Verifica que este corriendo."}
+    except httpx.TimeoutException:
+        print(f"[ZONE_ALERT] ERROR: Timeout al conectar con TradingBot")
+        return {"success": False, "error": "Timeout al conectar con TradingBot (10s)"}
+    except Exception as e:
+        print(f"[ZONE_ALERT] ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/send-alerts-batch")
+async def send_zone_alerts_batch(request: Request):
+    """
+    Envia alertas para multiples zonas con breakout al TradingBot.
+    Solo envia zonas con trade_result != 'SKIPPED' y != 'NO_ENTRY' que tengan entry_price, sl_price y tp_price.
+    """
+    try:
+        body = await request.json()
+        zones = body.get("zones", [])
+        symbol = body.get("symbol", "").upper()
+        trading_bot_url = body.get("trading_bot_url", "http://localhost:5000")
+        entry_mode = body.get("entry_mode", "breakout_close")
+
+        if not zones or not symbol:
+            return {"success": False, "error": "Se requieren zones y symbol"}
+
+        # Filtrar zonas validas para alertas
+        valid_zones = []
+        for z in zones:
+            trade_result = z.get("trade_result", "")
+            if trade_result in ("SKIPPED", "NO_ENTRY", ""):
+                continue
+            if not z.get("entry_price") or not z.get("sl_price") or not z.get("tp_price"):
+                continue
+            valid_zones.append(z)
+
+        if not valid_zones:
+            return {"success": False, "error": "No hay zonas validas para enviar alertas", "filtered": len(zones)}
+
+        results = []
+        sent = 0
+        failed = 0
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            for z in valid_zones:
+                direction = z.get("breakout_direction", "")
+                if direction == "UP":
+                    pattern_direction = "LONG"
+                elif direction == "DOWN":
+                    pattern_direction = "SHORT"
+                else:
+                    continue
+
+                alert_payload = {
+                    "source": "ZONE_DETECTOR",
+                    "symbol": symbol,
+                    "interval": "0",
+                    "pattern": {
+                        "patternType": f"ZONE_BREAKOUT_{entry_mode.upper()}",
+                        "price": float(z["entry_price"]),
+                        "confidence": float(z.get("trading_score", 70)),
+                        "direction": pattern_direction
+                    },
+                    "custom_stop_loss": float(z["sl_price"]),
+                    "custom_take_profit": float(z["tp_price"])
+                }
+
+                try:
+                    target_url = f"{trading_bot_url}/api/watchlist-alert"
+                    response = await client.post(target_url, json=alert_payload)
+                    result = response.json()
+                    success = response.status_code == 200 and result.get("success")
+
+                    results.append({
+                        "zone_id": z.get("id", "?"),
+                        "direction": pattern_direction,
+                        "entry_price": z["entry_price"],
+                        "success": success,
+                        "message": result.get("message", "") if success else result.get("detail", result.get("message", ""))
+                    })
+
+                    if success:
+                        sent += 1
+                    else:
+                        failed += 1
+
+                except Exception as e:
+                    results.append({
+                        "zone_id": z.get("id", "?"),
+                        "direction": pattern_direction,
+                        "entry_price": z["entry_price"],
+                        "success": False,
+                        "message": str(e)
+                    })
+                    failed += 1
+
+        print(f"[ZONE_ALERT_BATCH] {symbol}: {sent} enviadas, {failed} fallidas de {len(valid_zones)} validas")
+
+        return {
+            "success": sent > 0,
+            "sent": sent,
+            "failed": failed,
+            "total_valid": len(valid_zones),
+            "total_zones": len(zones),
+            "results": results
+        }
+
+    except httpx.ConnectError:
+        return {"success": False, "error": f"No se pudo conectar al TradingBot"}
+    except Exception as e:
+        print(f"[ZONE_ALERT_BATCH] ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+# =============================================
+# ZONE DETECTOR - SERVICIO REALTIME
+# =============================================
+
+@app.get("/api/zones/realtime/status")
+async def get_zone_realtime_status():
+    """Estado del servicio de deteccion de zonas en tiempo real."""
+    try:
+        zone_service = get_zone_service()
+        return {"success": True, **zone_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/config")
+async def update_zone_realtime_config(request: Request):
+    """Actualiza configuracion del servicio realtime de zonas."""
+    try:
+        body = await request.json()
+        zone_service = get_zone_service()
+
+        # Verificar si se necesita start/stop
+        was_enabled = zone_service.config.enabled
+        was_running = zone_service.running
+
+        result = zone_service.update_config(body)
+
+        now_enabled = zone_service.config.enabled
+
+        # Si se acaba de habilitar y no estaba corriendo, iniciar
+        if now_enabled and not was_running:
+            await zone_service.start()
+            print("[ZONE_REALTIME] Servicio iniciado via config update")
+
+        # Si se acaba de deshabilitar y estaba corriendo, detener
+        if not now_enabled and was_running:
+            await zone_service.stop()
+            print("[ZONE_REALTIME] Servicio detenido via config update")
+
+        # Si cambio el interval o symbols y esta corriendo, reiniciar
+        if was_running and now_enabled:
+            restart_keys = {"interval", "symbols", "window_candles"}
+            if restart_keys.intersection(set(result.get("updated", []))):
+                await zone_service.stop()
+                zone_service._known_zones.clear()
+                zone_service._candle_buffers.clear()
+                zone_service._recent_zones.clear()
+                await zone_service.start()
+                print("[ZONE_REALTIME] Servicio reiniciado por cambio de interval/symbols")
+
+        return {"success": True, **result, "status": zone_service.get_status()}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/start")
+async def start_zone_realtime():
+    """Inicia el servicio de deteccion de zonas en tiempo real."""
+    try:
+        zone_service = get_zone_service()
+        if zone_service.running:
+            return {"success": True, "message": "Ya esta corriendo"}
+        zone_service.config.enabled = True
+        zone_service._save_config()
+        await zone_service.start()
+        return {"success": True, "message": "Servicio iniciado", "status": zone_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/stop")
+async def stop_zone_realtime():
+    """Detiene el servicio de deteccion de zonas en tiempo real."""
+    try:
+        zone_service = get_zone_service()
+        if not zone_service.running:
+            return {"success": True, "message": "Ya esta detenido"}
+        zone_service.config.enabled = False
+        zone_service._save_config()
+        await zone_service.stop()
+        return {"success": True, "message": "Servicio detenido"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/realtime/zones/{symbol}")
+async def get_zone_realtime_zones(symbol: str):
+    """Retorna zonas detectadas en tiempo real para un simbolo."""
+    try:
+        zone_service = get_zone_service()
+        zones = zone_service.get_zones(symbol.upper())
+        return {"success": True, "symbol": symbol.upper(), "count": len(zones), "zones": zones}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/reanalyze")
+async def reanalyze_zone_realtime():
+    """Re-analiza el historico con la configuracion actual."""
+    try:
+        zone_service = get_zone_service()
+        if not zone_service.running:
+            return {"success": False, "error": "Servicio no esta corriendo"}
+        await zone_service.reanalyze()
+        return {"success": True, "message": "Re-analisis completado", "status": zone_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/clear-cooldowns")
+async def clear_zone_realtime_cooldowns():
+    """Limpia cooldowns del servicio de zonas (para testing)."""
+    try:
+        zone_service = get_zone_service()
+        zone_service.clear_cooldowns()
+        return {"success": True, "message": "Cooldowns limpiados"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ============================================================
+# Zone Detector Presets (persistencia en archivo JSON)
+# ============================================================
+
+_ZONE_PRESETS_FILE = Path("config") / "zone_detector_presets.json"
+
+
+def _load_zone_presets() -> dict:
+    if _ZONE_PRESETS_FILE.exists():
+        try:
+            return json.loads(_ZONE_PRESETS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_zone_presets(presets: dict):
+    _ZONE_PRESETS_FILE.write_text(
+        json.dumps(presets, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+@app.get("/api/zones/presets")
+async def get_zone_presets():
+    """Retorna todos los presets guardados."""
+    try:
+        presets = _load_zone_presets()
+        return {"success": True, "presets": presets}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/presets/{name}")
+async def save_zone_preset(name: str, request: Request):
+    """Guarda o actualiza un preset."""
+    try:
+        body = await request.json()
+        presets = _load_zone_presets()
+        presets[name] = {
+            "params": body.get("params", {}),
+            "zoneDays": body.get("zoneDays"),
+            "savedAt": body.get("savedAt", ""),
+        }
+        _save_zone_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' guardado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/zones/presets/{name}")
+async def delete_zone_preset(name: str):
+    """Elimina un preset por nombre."""
+    try:
+        presets = _load_zone_presets()
+        if name not in presets:
+            return {"success": False, "error": f"Preset '{name}' no existe"}
+        del presets[name]
+        _save_zone_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' eliminado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}

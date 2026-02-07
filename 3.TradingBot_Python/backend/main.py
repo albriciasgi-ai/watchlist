@@ -1062,8 +1062,9 @@ async def process_watchlist_alert(request: Dict[str, Any]):
         # Detect source and parse accordingly
         source = request.get("source", "WATCHLIST")
         is_swing_detector = source == "SWING_DETECTOR"
+        is_zone_detector = source == "ZONE_DETECTOR"
 
-        if is_swing_detector:
+        if is_swing_detector or is_zone_detector:
             # SwingDetector format: {source, symbol, interval, pattern: {patternType, price, direction, ...}}
             symbol = request.get("symbol", "").upper()
             pattern_data = request.get("pattern", {})
@@ -1182,6 +1183,16 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             quantity = risk_calc["quantity"]
             config["current_price"] = float(price)
 
+            # Check for custom SL/TP from alert (e.g. from Zone Detector)
+            custom_sl = request.get("custom_stop_loss")
+            custom_tp = request.get("custom_take_profit")
+            if custom_sl is not None:
+                config["custom_stop_loss"] = float(custom_sl)
+                state.log("info", f"[CUSTOM SL] Using custom stop loss: ${float(custom_sl)}")
+            if custom_tp is not None:
+                config["custom_take_profit"] = float(custom_tp)
+                state.log("info", f"[CUSTOM TP] Using custom take profit: ${float(custom_tp)}")
+
             # Check for limit price in request
             order_type = request.get("order_type", "Market")
             limit_price_raw = request.get("limit_price")
@@ -1240,8 +1251,8 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                     "entry_price": float(price),
                     "quantity_coin": float(quantity),
                     "quantity_usdt": float(quantity * price),
-                    "stop_loss": float(risk_calc.get("stop_loss_price", 0)),
-                    "take_profit": float(risk_calc.get("take_profit_price", 0)),
+                    "stop_loss": float(custom_sl) if custom_sl else float(risk_calc.get("stop_loss_price", 0)),
+                    "take_profit": float(custom_tp) if custom_tp else float(risk_calc.get("take_profit_price", 0)),
                     "pattern": pattern,
                     "confidence": confidence,
                     "source": source,

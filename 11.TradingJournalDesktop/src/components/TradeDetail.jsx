@@ -10,6 +10,7 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
   const [editData, setEditData] = useState({})
   const [screenshotErrors, setScreenshotErrors] = useState({})
   const [deleting, setDeleting] = useState(false)
+  const [fullscreenImg, setFullscreenImg] = useState(null)
 
   useEffect(() => {
     if (tradeId) {
@@ -297,12 +298,22 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
               <div className="screenshot-card">
                 <span className="screenshot-label">Entrada</span>
                 {trade.screenshot_entry && !screenshotErrors.entry ? (
-                  <img
-                    src={getScreenshotUrl(trade.screenshot_entry)}
-                    alt="Entry screenshot"
-                    className="screenshot-img"
-                    onError={() => handleScreenshotError('entry')}
-                  />
+                  <div className="screenshot-wrapper" onClick={() => setFullscreenImg(getScreenshotUrl(trade.screenshot_entry))}>
+                    <img
+                      src={getScreenshotUrl(trade.screenshot_entry)}
+                      alt="Entry screenshot"
+                      className="screenshot-img"
+                      onError={() => handleScreenshotError('entry')}
+                    />
+                    <button
+                      className="screenshot-fullscreen-btn"
+                      title="Ver pantalla completa"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+                      </svg>
+                    </button>
+                  </div>
                 ) : (
                   <div className="screenshot-placeholder">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -317,12 +328,22 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
               <div className="screenshot-card">
                 <span className="screenshot-label">Salida</span>
                 {trade.screenshot_exit && !screenshotErrors.exit ? (
-                  <img
-                    src={getScreenshotUrl(trade.screenshot_exit)}
-                    alt="Exit screenshot"
-                    className="screenshot-img"
-                    onError={() => handleScreenshotError('exit')}
-                  />
+                  <div className="screenshot-wrapper" onClick={() => setFullscreenImg(getScreenshotUrl(trade.screenshot_exit))}>
+                    <img
+                      src={getScreenshotUrl(trade.screenshot_exit)}
+                      alt="Exit screenshot"
+                      className="screenshot-img"
+                      onError={() => handleScreenshotError('exit')}
+                    />
+                    <button
+                      className="screenshot-fullscreen-btn"
+                      title="Ver pantalla completa"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                        <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+                      </svg>
+                    </button>
+                  </div>
                 ) : (
                   <div className="screenshot-placeholder">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -537,6 +558,23 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
           )}
         </div>
       </div>
+
+      {fullscreenImg && (
+        <div className="screenshot-overlay" onClick={() => setFullscreenImg(null)}>
+          <button className="screenshot-overlay-close" onClick={() => setFullscreenImg(null)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          <img
+            src={fullscreenImg}
+            alt="Screenshot fullscreen"
+            className="screenshot-overlay-img"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   )
 }

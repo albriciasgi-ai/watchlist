@@ -16011,3 +16011,350 @@ httpx.ReadTimeout
 2026-02-02 18:57:50,247 | INFO | store.journal_store | Updated journal entry: a1c8abc4-0f09-4f59-aefe-987738123601
 2026-02-02 18:57:50,250 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/a1c8abc4-0f09-4f59-aefe-987738123601_exit_20260202_185744.png
 2026-02-02 18:57:50,250 | INFO | services.position_monitor | Closed journal entry a1c8abc4-0f09-4f59-aefe-987738123601: PnL $0.06 (0.19%) [0.04R]
+2026-02-06 16:22:26,276 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 16:22:28,461 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 16:22:28,570 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 16:22:28,586 | INFO | main | ============================================================
+2026-02-06 16:22:28,586 | INFO | main | Trading Journal Backend starting...
+2026-02-06 16:22:28,586 | INFO | main | Database: data/journal.db
+2026-02-06 16:22:28,586 | INFO | main | Screenshots: screenshots/
+2026-02-06 16:22:28,586 | INFO | main | ============================================================
+2026-02-06 16:22:28,587 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only)
+2026-02-06 16:22:28,989 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 16:22:28,989 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 16:22:28,989 | INFO | main | Position monitor ENABLED
+2026-02-06 16:22:28,990 | INFO | main | All services started successfully
+2026-02-06 16:22:31,195 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-02-06 18:12:53,240 | INFO | main | Trading Journal Backend shutting down...
+2026-02-06 18:12:53,242 | INFO | services.position_monitor | Position monitor stopped
+2026-02-06 18:12:53,242 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-06 18:12:53,242 | INFO | main | Shutdown complete
+2026-02-06 18:12:55,557 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:12:55,675 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:12:55,694 | INFO | main | ============================================================
+2026-02-06 18:12:55,694 | INFO | main | Trading Journal Backend starting...
+2026-02-06 18:12:55,694 | INFO | main | Database: data/journal.db
+2026-02-06 18:12:55,695 | INFO | main | Screenshots: screenshots/
+2026-02-06 18:12:55,695 | INFO | main | ============================================================
+2026-02-06 18:12:58,141 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only - Electron not available)
+2026-02-06 18:12:58,458 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 18:12:58,458 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 18:12:58,458 | INFO | main | Position monitor ENABLED
+2026-02-06 18:12:58,458 | INFO | main | All services started successfully
+2026-02-06 18:13:00,578 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-02-06 18:13:05,412 | INFO | main | Trading Journal Backend shutting down...
+2026-02-06 18:13:05,414 | INFO | services.position_monitor | Position monitor stopped
+2026-02-06 18:13:05,415 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-06 18:13:05,415 | INFO | main | Shutdown complete
+2026-02-06 18:13:07,804 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:07,908 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:07,924 | INFO | main | ============================================================
+2026-02-06 18:13:07,924 | INFO | main | Trading Journal Backend starting...
+2026-02-06 18:13:07,925 | INFO | main | Database: data/journal.db
+2026-02-06 18:13:07,925 | INFO | main | Screenshots: screenshots/
+2026-02-06 18:13:07,925 | INFO | main | ============================================================
+2026-02-06 18:13:10,321 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only - Electron not available)
+2026-02-06 18:13:10,723 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 18:13:10,723 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 18:13:10,724 | INFO | main | Position monitor ENABLED
+2026-02-06 18:13:10,724 | INFO | main | All services started successfully
+2026-02-06 18:13:12,840 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-02-06 18:13:24,118 | INFO | main | Trading Journal Backend shutting down...
+2026-02-06 18:13:24,120 | INFO | services.position_monitor | Position monitor stopped
+2026-02-06 18:13:24,120 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-06 18:13:24,121 | INFO | main | Shutdown complete
+2026-02-06 18:13:26,358 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:26,461 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:26,476 | INFO | main | ============================================================
+2026-02-06 18:13:26,476 | INFO | main | Trading Journal Backend starting...
+2026-02-06 18:13:26,476 | INFO | main | Database: data/journal.db
+2026-02-06 18:13:26,476 | INFO | main | Screenshots: screenshots/
+2026-02-06 18:13:26,477 | INFO | main | ============================================================
+2026-02-06 18:13:28,882 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only - Electron not available)
+2026-02-06 18:13:29,202 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 18:13:29,203 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 18:13:29,203 | INFO | main | Position monitor ENABLED
+2026-02-06 18:13:29,203 | INFO | main | All services started successfully
+2026-02-06 18:13:31,313 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-02-06 18:13:33,629 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:33,725 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 18:13:33,744 | INFO | main | ============================================================
+2026-02-06 18:13:33,745 | INFO | main | Trading Journal Backend starting...
+2026-02-06 18:13:33,745 | INFO | main | Database: data/journal.db
+2026-02-06 18:13:33,745 | INFO | main | Screenshots: screenshots/
+2026-02-06 18:13:33,745 | INFO | main | ============================================================
+2026-02-06 18:13:36,142 | INFO | services.screenshot_service | Screenshot service initialized (mplfinance fallback only - Electron not available)
+2026-02-06 18:13:36,486 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 18:13:36,487 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 18:13:36,487 | INFO | main | Position monitor ENABLED
+2026-02-06 18:13:36,487 | INFO | main | All services started successfully
+2026-02-06 18:13:38,620 | INFO | services.position_monitor | No positions found in TradingBot (or bot not running)
+2026-02-06 20:01:49,812 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 20:01:51,793 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 20:01:51,893 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 20:01:51,911 | INFO | main | ============================================================
+2026-02-06 20:01:51,911 | INFO | main | Trading Journal Backend starting...
+2026-02-06 20:01:51,911 | INFO | main | Database: data/journal.db
+2026-02-06 20:01:51,911 | INFO | main | Screenshots: screenshots/
+2026-02-06 20:01:51,911 | INFO | main | ============================================================
+2026-02-06 20:01:52,312 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-06 20:01:52,314 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-06 20:01:52,315 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-06 20:01:52,637 | INFO | services.position_monitor | Loaded 5 existing open entries from database
+2026-02-06 20:01:52,638 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 20:01:52,638 | INFO | main | Position monitor ENABLED
+2026-02-06 20:01:52,638 | INFO | main | All services started successfully
+2026-02-06 20:02:14,409 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-06 20:08:29,061 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 69997.6
+2026-02-06 20:08:29,062 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 20:08:29,129 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 20:08:29,132 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (LONG), raw_source=zone_detector
+2026-02-06 20:08:29,132 | INFO | services.position_monitor |   Risk estimated (no SL): $1.40 (2.0% of position)
+2026-02-06 20:08:29,136 | INFO | store.journal_store | Created journal entry: cfe95708-2f00-4fcb-b55d-61b638862c36 - BTCUSDT long
+2026-02-06 20:08:29,140 | INFO | services.position_monitor | Created journal entry cfe95708-2f00-4fcb-b55d-61b638862c36 for BTCUSDT (source: analizador)
+2026-02-06 20:08:30,064 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:08:30,067 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\cfe95708-2f00-4fcb-b55d-61b638862c36_entry_20260206_200829.png (symbol: BTCUSDT)
+2026-02-06 20:08:30,072 | INFO | store.journal_store | Updated journal entry: cfe95708-2f00-4fcb-b55d-61b638862c36
+2026-02-06 20:08:30,074 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/cfe95708-2f00-4fcb-b55d-61b638862c36_entry_20260206_200829.png
+2026-02-06 20:11:09,256 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:11:09,260 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\test123_test_20260206_201108.png (symbol: BTCUSDT)
+2026-02-06 20:11:27,095 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-06 20:11:27,444 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:11:27,446 | INFO | services.position_monitor |   Exit manual: exit=69894.9000, sl=0.0000, tp=0.0000
+2026-02-06 20:11:27,446 | INFO | services.position_monitor | R-Multiple calculated: -0.13R
+2026-02-06 20:11:27,449 | INFO | store.journal_store | Updated journal entry: cfe95708-2f00-4fcb-b55d-61b638862c36
+2026-02-06 20:11:28,415 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:11:28,420 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\cfe95708-2f00-4fcb-b55d-61b638862c36_exit_20260206_201127.png (symbol: BTCUSDT)
+2026-02-06 20:11:28,427 | INFO | store.journal_store | Updated journal entry: cfe95708-2f00-4fcb-b55d-61b638862c36
+2026-02-06 20:11:28,432 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/cfe95708-2f00-4fcb-b55d-61b638862c36_exit_20260206_201127.png
+2026-02-06 20:11:28,432 | INFO | services.position_monitor | Closed journal entry cfe95708-2f00-4fcb-b55d-61b638862c36: PnL $-0.18 (-0.15%) [-0.13R]
+2026-02-06 20:15:25,544 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 69817.8
+2026-02-06 20:15:25,544 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 20:15:25,603 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 20:15:25,604 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-06 20:15:25,605 | INFO | services.position_monitor |   Risk estimated (no SL): $1.40 (2.0% of position)
+2026-02-06 20:15:25,607 | INFO | store.journal_store | Created journal entry: c6ba3be9-4d17-45b1-b7e5-e105d953f47f - BTCUSDT short
+2026-02-06 20:15:25,611 | INFO | services.position_monitor | Created journal entry c6ba3be9-4d17-45b1-b7e5-e105d953f47f for BTCUSDT (source: analizador)
+2026-02-06 20:15:26,529 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:15:26,533 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\c6ba3be9-4d17-45b1-b7e5-e105d953f47f_entry_20260206_201525.png (symbol: BTCUSDT)
+2026-02-06 20:15:26,536 | INFO | store.journal_store | Updated journal entry: c6ba3be9-4d17-45b1-b7e5-e105d953f47f
+2026-02-06 20:15:26,540 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/c6ba3be9-4d17-45b1-b7e5-e105d953f47f_entry_20260206_201525.png
+2026-02-06 20:22:11,710 | INFO | main | Trading Journal Backend shutting down...
+2026-02-06 20:22:11,712 | INFO | services.position_monitor | Position monitor stopped
+2026-02-06 20:22:11,712 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-06 20:22:11,712 | INFO | main | Shutdown complete
+2026-02-06 20:22:14,227 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 20:22:14,328 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 20:22:14,350 | INFO | main | ============================================================
+2026-02-06 20:22:14,350 | INFO | main | Trading Journal Backend starting...
+2026-02-06 20:22:14,350 | INFO | main | Database: data/journal.db
+2026-02-06 20:22:14,350 | INFO | main | Screenshots: screenshots/
+2026-02-06 20:22:14,351 | INFO | main | ============================================================
+2026-02-06 20:22:14,735 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-06 20:22:14,738 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-06 20:22:14,739 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-06 20:22:15,060 | INFO | services.position_monitor | Loaded 6 existing open entries from database
+2026-02-06 20:22:15,060 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 20:22:15,061 | INFO | main | Position monitor ENABLED
+2026-02-06 20:22:15,061 | INFO | main | All services started successfully
+2026-02-06 20:22:37,783 | INFO | services.position_monitor | Synced 1 positions from TradingBot
+2026-02-06 20:22:37,784 | INFO | services.position_monitor | Orphan entry detected during sync: SOLUSDT (no active position)
+2026-02-06 20:22:37,784 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-06 20:22:38,114 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:22:38,117 | INFO | services.position_monitor |   Exit by SL: exit=103.4200 vs sl=103.4200 (diff=0.00%)
+2026-02-06 20:22:38,117 | INFO | services.position_monitor | R-Multiple calculated: -1.10R
+2026-02-06 20:22:38,120 | INFO | store.journal_store | Updated journal entry: cfc398af-c25a-43f1-a58c-53feacc6bc8c
+2026-02-06 20:22:39,017 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:22:39,021 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\SOLUSDT\cfc398af-c25a-43f1-a58c-53feacc6bc8c_exit_20260206_202238.png (requested: SOLUSDT, showing: BTCUSDT)
+2026-02-06 20:22:39,025 | INFO | store.journal_store | Updated journal entry: cfc398af-c25a-43f1-a58c-53feacc6bc8c
+2026-02-06 20:22:39,029 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SOLUSDT/cfc398af-c25a-43f1-a58c-53feacc6bc8c_exit_20260206_202238.png
+2026-02-06 20:22:39,029 | INFO | services.position_monitor | Closed journal entry cfc398af-c25a-43f1-a58c-53feacc6bc8c: PnL $-2.17 (-1.00%) [-1.10R]
+2026-02-06 20:22:39,030 | INFO | services.position_monitor | Orphan entry detected during sync: TRXUSDT (no active position)
+2026-02-06 20:22:39,030 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-02-06 20:22:39,895 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/TRXUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:22:39,898 | INFO | services.position_monitor |   Exit by SL: exit=0.2802 vs sl=0.2802 (diff=0.03%)
+2026-02-06 20:22:39,898 | INFO | services.position_monitor | R-Multiple calculated: -1.01R
+2026-02-06 20:22:39,900 | INFO | store.journal_store | Updated journal entry: c7db9e32-455d-478b-826c-e19d370966ba
+2026-02-06 20:22:40,797 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:22:40,800 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\TRXUSDT\c7db9e32-455d-478b-826c-e19d370966ba_exit_20260206_202239.png (requested: TRXUSDT, showing: BTCUSDT)
+2026-02-06 20:22:40,804 | INFO | store.journal_store | Updated journal entry: c7db9e32-455d-478b-826c-e19d370966ba
+2026-02-06 20:22:40,807 | INFO | services.position_monitor | Exit screenshot saved: screenshots/TRXUSDT/c7db9e32-455d-478b-826c-e19d370966ba_exit_20260206_202239.png
+2026-02-06 20:22:40,808 | INFO | services.position_monitor | Closed journal entry c7db9e32-455d-478b-826c-e19d370966ba: PnL $-1.05 (-1.01%) [-1.01R]
+2026-02-06 20:22:40,808 | INFO | services.position_monitor | Orphan entry detected during sync: SUIUSDT (no active position)
+2026-02-06 20:22:40,808 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-06 20:22:41,695 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:22:41,698 | INFO | services.position_monitor |   Exit by SL: exit=1.1214 vs sl=1.1214 (diff=0.00%)
+2026-02-06 20:22:41,698 | INFO | services.position_monitor | R-Multiple calculated: -1.05R
+2026-02-06 20:22:41,703 | INFO | store.journal_store | Updated journal entry: 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4
+2026-02-06 20:22:42,594 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:22:42,598 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\SUIUSDT\47a1f01b-ba46-4802-9ef2-6b96a2edbbb4_exit_20260206_202241.png (requested: SUIUSDT, showing: BTCUSDT)
+2026-02-06 20:22:42,602 | INFO | store.journal_store | Updated journal entry: 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4
+2026-02-06 20:22:42,605 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SUIUSDT/47a1f01b-ba46-4802-9ef2-6b96a2edbbb4_exit_20260206_202241.png
+2026-02-06 20:22:42,605 | INFO | services.position_monitor | Closed journal entry 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4: PnL $-3.00 (-2.27%) [-1.05R]
+2026-02-06 20:22:42,605 | INFO | services.position_monitor | Orphan entry detected during sync: POLUSDT (no active position)
+2026-02-06 20:22:42,606 | INFO | services.position_monitor | Position closed: POLUSDT
+2026-02-06 20:22:43,473 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/POLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:22:43,475 | INFO | services.position_monitor |   Exit by SL: exit=0.1118 vs sl=0.1119 (diff=0.10%)
+2026-02-06 20:22:43,476 | INFO | services.position_monitor | R-Multiple calculated: -1.21R
+2026-02-06 20:22:43,478 | INFO | store.journal_store | Updated journal entry: 5df641e4-444c-4a38-91ff-a479f0d72ed5
+2026-02-06 20:22:44,385 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=POLUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:22:44,388 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\POLUSDT\5df641e4-444c-4a38-91ff-a479f0d72ed5_exit_20260206_202243.png (requested: POLUSDT, showing: BTCUSDT)
+2026-02-06 20:22:44,393 | INFO | store.journal_store | Updated journal entry: 5df641e4-444c-4a38-91ff-a479f0d72ed5
+2026-02-06 20:22:44,396 | INFO | services.position_monitor | Exit screenshot saved: screenshots/POLUSDT/5df641e4-444c-4a38-91ff-a479f0d72ed5_exit_20260206_202243.png
+2026-02-06 20:22:44,396 | INFO | services.position_monitor | Closed journal entry 5df641e4-444c-4a38-91ff-a479f0d72ed5: PnL $-1.11 (-1.02%) [-1.21R]
+2026-02-06 20:22:44,396 | INFO | services.position_monitor | Orphan entry detected during sync: XRPUSDT (no active position)
+2026-02-06 20:22:44,397 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-06 20:22:45,303 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:22:45,305 | INFO | services.position_monitor |   Exit manual: exit=1.6114, sl=1.6008, tp=1.6493
+2026-02-06 20:22:45,305 | INFO | services.position_monitor | R-Multiple calculated: -0.46R
+2026-02-06 20:22:45,308 | INFO | store.journal_store | Updated journal entry: 20c51dbe-5e6c-4f70-b912-9b4276ef5785
+2026-02-06 20:22:46,209 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:22:46,213 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\XRPUSDT\20c51dbe-5e6c-4f70-b912-9b4276ef5785_exit_20260206_202245.png (requested: XRPUSDT, showing: BTCUSDT)
+2026-02-06 20:22:46,218 | INFO | store.journal_store | Updated journal entry: 20c51dbe-5e6c-4f70-b912-9b4276ef5785
+2026-02-06 20:22:46,221 | INFO | services.position_monitor | Exit screenshot saved: screenshots/XRPUSDT/20c51dbe-5e6c-4f70-b912-9b4276ef5785_exit_20260206_202245.png
+2026-02-06 20:22:46,222 | INFO | services.position_monitor | Closed journal entry 20c51dbe-5e6c-4f70-b912-9b4276ef5785: PnL $-0.46 (-0.35%) [-0.46R]
+2026-02-06 20:22:46,222 | INFO | services.position_monitor | Closed 5 orphan entries during initial sync
+2026-02-06 20:35:39,287 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-06 20:35:40,154 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:35:40,156 | INFO | services.position_monitor |   Exit manual: exit=70188.0000, sl=0.0000, tp=0.0000
+2026-02-06 20:35:40,157 | INFO | services.position_monitor | R-Multiple calculated: -0.32R
+2026-02-06 20:35:40,161 | INFO | store.journal_store | Updated journal entry: c6ba3be9-4d17-45b1-b7e5-e105d953f47f
+2026-02-06 20:35:41,044 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:35:41,047 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\c6ba3be9-4d17-45b1-b7e5-e105d953f47f_exit_20260206_203540.png (symbol: BTCUSDT)
+2026-02-06 20:35:41,050 | INFO | store.journal_store | Updated journal entry: c6ba3be9-4d17-45b1-b7e5-e105d953f47f
+2026-02-06 20:35:41,053 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/c6ba3be9-4d17-45b1-b7e5-e105d953f47f_exit_20260206_203540.png
+2026-02-06 20:35:41,053 | INFO | services.position_monitor | Closed journal entry c6ba3be9-4d17-45b1-b7e5-e105d953f47f: PnL $-0.45 (-0.53%) [-0.32R]
+2026-02-06 20:51:50,932 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 70571.1
+2026-02-06 20:51:50,933 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 20:51:50,992 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 20:51:50,994 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-06 20:51:50,995 | INFO | services.position_monitor |   Risk estimated (no SL): $1.41 (2.0% of position)
+2026-02-06 20:51:50,998 | INFO | store.journal_store | Created journal entry: feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7 - BTCUSDT short
+2026-02-06 20:51:51,003 | INFO | services.position_monitor | Created journal entry feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7 for BTCUSDT (source: analizador)
+2026-02-06 20:51:51,940 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:51:51,944 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7_entry_20260206_205151.png (symbol: BTCUSDT)
+2026-02-06 20:51:51,949 | INFO | store.journal_store | Updated journal entry: feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7
+2026-02-06 20:51:51,954 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7_entry_20260206_205151.png
+2026-02-06 20:54:05,568 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-06 20:54:06,444 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 20:54:06,446 | INFO | services.position_monitor |   Exit manual: exit=70508.9000, sl=0.0000, tp=0.0000
+2026-02-06 20:54:06,446 | INFO | services.position_monitor | R-Multiple calculated: -0.02R
+2026-02-06 20:54:06,450 | INFO | store.journal_store | Updated journal entry: feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7
+2026-02-06 20:54:07,343 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:54:07,347 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7_exit_20260206_205406.png (symbol: BTCUSDT)
+2026-02-06 20:54:07,351 | INFO | store.journal_store | Updated journal entry: feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7
+2026-02-06 20:54:07,355 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7_exit_20260206_205406.png
+2026-02-06 20:54:07,355 | INFO | services.position_monitor | Closed journal entry feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7: PnL $-0.03 (0.09%) [-0.02R]
+2026-02-06 20:54:23,942 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 70505.9
+2026-02-06 20:54:23,942 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 20:54:23,992 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 20:54:23,995 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-06 20:54:23,995 | INFO | services.position_monitor |   Risk estimated (no SL): $1.41 (2.0% of position)
+2026-02-06 20:54:23,999 | INFO | store.journal_store | Created journal entry: 14d04ad3-e876-42a9-9ea0-582fe6030e1f - BTCUSDT short
+2026-02-06 20:54:24,002 | INFO | services.position_monitor | Created journal entry 14d04ad3-e876-42a9-9ea0-582fe6030e1f for BTCUSDT (source: analizador)
+2026-02-06 20:54:24,900 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 20:54:24,904 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\14d04ad3-e876-42a9-9ea0-582fe6030e1f_entry_20260206_205424.png (symbol: BTCUSDT)
+2026-02-06 20:54:24,908 | INFO | store.journal_store | Updated journal entry: 14d04ad3-e876-42a9-9ea0-582fe6030e1f
+2026-02-06 20:54:24,911 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/14d04ad3-e876-42a9-9ea0-582fe6030e1f_entry_20260206_205424.png
+2026-02-06 20:55:59,278 | INFO | store.journal_store | Deleted journal entry: 47a1f01b-ba46-4802-9ef2-6b96a2edbbb4
+2026-02-06 20:55:59,285 | INFO | store.journal_store | Deleted journal entry: 2028eba8-b9de-42eb-8551-987902d27457
+2026-02-06 20:55:59,291 | INFO | store.journal_store | Deleted journal entry: 4cc6875c-546a-4084-a43d-c2639d726cf5
+2026-02-06 20:55:59,308 | INFO | store.journal_store | Deleted journal entry: db6c3b32-0c15-45e1-9dce-e99396358479
+2026-02-06 20:55:59,316 | INFO | store.journal_store | Deleted journal entry: 3cf2820d-f8b4-4c5f-b582-63dfba843c8e
+2026-02-06 20:55:59,323 | INFO | store.journal_store | Deleted journal entry: f65d8566-e773-45a5-85b2-35445d251684
+2026-02-06 20:55:59,329 | INFO | store.journal_store | Deleted journal entry: cfd66b35-a0b7-43a1-9005-48b6d86d80f8
+2026-02-06 20:55:59,336 | INFO | store.journal_store | Deleted journal entry: edf45888-a5f1-4e5f-b9dc-2925920ae2b0
+2026-02-06 20:55:59,342 | INFO | store.journal_store | Deleted journal entry: 20c51dbe-5e6c-4f70-b912-9b4276ef5785
+2026-02-06 20:55:59,349 | INFO | store.journal_store | Deleted journal entry: cfc398af-c25a-43f1-a58c-53feacc6bc8c
+2026-02-06 20:55:59,356 | INFO | store.journal_store | Deleted journal entry: c7db9e32-455d-478b-826c-e19d370966ba
+2026-02-06 20:55:59,362 | INFO | store.journal_store | Deleted journal entry: 5df641e4-444c-4a38-91ff-a479f0d72ed5
+2026-02-06 20:55:59,369 | INFO | store.journal_store | Deleted journal entry: 54dfdfed-10c8-492c-bcdb-04649d319a22
+2026-02-06 20:55:59,374 | INFO | store.journal_store | Deleted journal entry: dd855038-1205-4638-84ef-aab8861fdaa1
+2026-02-06 20:55:59,381 | INFO | store.journal_store | Deleted journal entry: 8810e779-2c04-4b47-bca6-d4e4aeba7f12
+2026-02-06 20:55:59,387 | INFO | store.journal_store | Deleted journal entry: a7b148c6-4007-475d-b277-2fa9de94aada
+2026-02-06 20:55:59,393 | INFO | store.journal_store | Deleted journal entry: cf7965e2-a97e-4db8-9ef5-64bac51a031b
+2026-02-06 20:55:59,400 | INFO | store.journal_store | Deleted journal entry: f0939db1-4494-4b83-bd5a-380e87f73795
+2026-02-06 20:55:59,421 | INFO | store.journal_store | Deleted journal entry: 14d04ad3-e876-42a9-9ea0-582fe6030e1f
+2026-02-06 20:55:59,427 | INFO | store.journal_store | Deleted journal entry: feec2d73-ccbf-4ab5-be0f-4c36b7b6a3b7
+2026-02-06 20:55:59,434 | INFO | store.journal_store | Deleted journal entry: c6ba3be9-4d17-45b1-b7e5-e105d953f47f
+2026-02-06 20:55:59,441 | INFO | store.journal_store | Deleted journal entry: cfe95708-2f00-4fcb-b55d-61b638862c36
+2026-02-06 20:55:59,448 | INFO | store.journal_store | Deleted journal entry: a1c8abc4-0f09-4f59-aefe-987738123601
+2026-02-06 20:55:59,454 | INFO | store.journal_store | Deleted journal entry: 79fbbbc4-f0a8-4919-bc98-a02e9241048b
+2026-02-06 21:02:57,506 | INFO | main | Trading Journal Backend shutting down...
+2026-02-06 21:02:57,509 | INFO | services.position_monitor | Position monitor stopped
+2026-02-06 21:02:57,509 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-06 21:02:57,510 | INFO | main | Shutdown complete
+2026-02-06 21:02:59,901 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 21:03:00,024 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 21:03:00,062 | INFO | main | ============================================================
+2026-02-06 21:03:00,062 | INFO | main | Trading Journal Backend starting...
+2026-02-06 21:03:00,063 | INFO | main | Database: data/journal.db
+2026-02-06 21:03:00,064 | INFO | main | Screenshots: screenshots/
+2026-02-06 21:03:00,064 | INFO | main | ============================================================
+2026-02-06 21:03:00,518 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-06 21:03:00,521 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-06 21:03:00,523 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-06 21:03:00,878 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-06 21:03:00,879 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 21:03:00,879 | INFO | main | Position monitor ENABLED
+2026-02-06 21:03:00,879 | INFO | main | All services started successfully
+2026-02-06 21:03:15,662 | INFO | services.position_monitor | Synced 1 positions from TradingBot
+2026-02-06 21:03:15,662 | INFO | services.position_monitor | Found untracked position: BTCUSDT, creating entry...
+2026-02-06 21:03:15,663 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 70505.9
+2026-02-06 21:03:15,663 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 21:03:15,751 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 21:03:15,753 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-06 21:03:15,754 | INFO | services.position_monitor |   Risk estimated (no SL): $1.41 (2.0% of position)
+2026-02-06 21:03:15,757 | INFO | store.journal_store | Created journal entry: 74091e2e-c1e2-4abe-b617-2289a48094a9 - BTCUSDT short
+2026-02-06 21:03:15,760 | INFO | services.position_monitor | Created journal entry 74091e2e-c1e2-4abe-b617-2289a48094a9 for BTCUSDT (source: analizador)
+2026-02-06 21:03:16,691 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 21:03:16,696 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\74091e2e-c1e2-4abe-b617-2289a48094a9_entry_20260206_210315.png (symbol: BTCUSDT)
+2026-02-06 21:03:16,699 | INFO | store.journal_store | Updated journal entry: 74091e2e-c1e2-4abe-b617-2289a48094a9
+2026-02-06 21:03:16,702 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/74091e2e-c1e2-4abe-b617-2289a48094a9_entry_20260206_210315.png
+2026-02-06 21:20:40,207 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-06 21:20:40,534 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 21:20:40,536 | INFO | services.position_monitor |   Exit manual: exit=70346.6000, sl=0.0000, tp=0.0000
+2026-02-06 21:20:40,537 | INFO | services.position_monitor | R-Multiple calculated: 0.06R
+2026-02-06 21:20:40,541 | INFO | store.journal_store | Updated journal entry: 74091e2e-c1e2-4abe-b617-2289a48094a9
+2026-02-06 21:20:41,431 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 21:20:41,434 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\74091e2e-c1e2-4abe-b617-2289a48094a9_exit_20260206_212040.png (symbol: BTCUSDT)
+2026-02-06 21:20:41,438 | INFO | store.journal_store | Updated journal entry: 74091e2e-c1e2-4abe-b617-2289a48094a9
+2026-02-06 21:20:41,440 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/74091e2e-c1e2-4abe-b617-2289a48094a9_exit_20260206_212040.png
+2026-02-06 21:20:41,440 | INFO | services.position_monitor | Closed journal entry 74091e2e-c1e2-4abe-b617-2289a48094a9: PnL $0.08 (0.23%) [0.06R]
+2026-02-06 21:20:57,037 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 70348.4
+2026-02-06 21:20:57,038 | INFO | services.position_monitor |   SL: None, TP: None
+2026-02-06 21:20:57,104 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-06 21:20:57,106 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (LONG), raw_source=zone_detector
+2026-02-06 21:20:57,107 | INFO | services.position_monitor |   Risk estimated (no SL): $2.81 (2.0% of position)
+2026-02-06 21:20:57,110 | INFO | store.journal_store | Created journal entry: 7f7db991-0c4d-49ab-b917-06f1e920b08f - BTCUSDT long
+2026-02-06 21:20:57,113 | INFO | services.position_monitor | Created journal entry 7f7db991-0c4d-49ab-b917-06f1e920b08f for BTCUSDT (source: analizador)
+2026-02-06 21:20:57,993 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 21:20:57,997 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\7f7db991-0c4d-49ab-b917-06f1e920b08f_entry_20260206_212057.png (symbol: BTCUSDT)
+2026-02-06 21:20:58,003 | INFO | store.journal_store | Updated journal entry: 7f7db991-0c4d-49ab-b917-06f1e920b08f
+2026-02-06 21:20:58,006 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/7f7db991-0c4d-49ab-b917-06f1e920b08f_entry_20260206_212057.png
+2026-02-06 21:21:45,310 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-06 21:21:45,631 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-06 21:21:45,633 | INFO | services.position_monitor |   Exit manual: exit=70355.6000, sl=0.0000, tp=0.0000
+2026-02-06 21:21:45,633 | INFO | services.position_monitor | R-Multiple calculated: -0.05R
+2026-02-06 21:21:45,637 | INFO | store.journal_store | Updated journal entry: 7f7db991-0c4d-49ab-b917-06f1e920b08f
+2026-02-06 21:21:46,515 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-06 21:21:46,518 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\7f7db991-0c4d-49ab-b917-06f1e920b08f_exit_20260206_212145.png (symbol: BTCUSDT)
+2026-02-06 21:21:46,523 | INFO | store.journal_store | Updated journal entry: 7f7db991-0c4d-49ab-b917-06f1e920b08f
+2026-02-06 21:21:46,526 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/7f7db991-0c4d-49ab-b917-06f1e920b08f_exit_20260206_212145.png
+2026-02-06 21:21:46,527 | INFO | services.position_monitor | Closed journal entry 7f7db991-0c4d-49ab-b917-06f1e920b08f: PnL $-0.14 (0.01%) [-0.05R]
+2026-02-06 21:29:19,777 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 21:29:21,610 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 21:29:21,712 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-06 21:29:21,729 | INFO | main | ============================================================
+2026-02-06 21:29:21,729 | INFO | main | Trading Journal Backend starting...
+2026-02-06 21:29:21,730 | INFO | main | Database: data/journal.db
+2026-02-06 21:29:21,730 | INFO | main | Screenshots: screenshots/
+2026-02-06 21:29:21,730 | INFO | main | ============================================================
+2026-02-06 21:29:22,147 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-06 21:29:22,149 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-06 21:29:22,150 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-06 21:29:22,467 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-06 21:29:22,468 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-06 21:29:22,468 | INFO | main | Position monitor ENABLED
+2026-02-06 21:29:22,468 | INFO | main | All services started successfully
+2026-02-06 21:29:34,516 | INFO | services.position_monitor | Synced 0 positions from TradingBot

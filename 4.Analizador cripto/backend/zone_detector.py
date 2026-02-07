@@ -71,6 +71,12 @@ class TradingZone(Zone):
     # Score de trading (basado en rentabilidad, no solo consolidacion)
     trading_score: float = 0.0  # 0-100 basado en probabilidad de exito
 
+    # Volume Profile de la zona (para entry_mode=va_breakout)
+    vp_poc_price: float = 0.0    # Point of Control (precio con mayor volumen)
+    vp_vah_price: float = 0.0    # Value Area High
+    vp_val_price: float = 0.0    # Value Area Low
+    vp_total_volume: float = 0.0 # Volumen total en la zona
+
     # Indice cronologico (para que frontend muestre numero temporal, no por score)
     timeline_index: int = 0
 
@@ -118,10 +124,12 @@ class ZoneDetectionParams:
     lookforward_bars: int = 100        # Velas hacia adelante para simular el trade
     breakout_search_bars: int = 20     # Velas para buscar breakout despues de la consolidacion
     include_no_breakout: bool = True   # Incluir zonas sin breakout claro (usa primera vela fuera)
-    entry_mode: str = "breakout_close"  # "breakout_close" o "swing_confirmation"
+    entry_mode: str = "breakout_close"  # "breakout_close", "swing_confirmation" o "va_breakout"
     position_mode: str = "sequential"   # "sequential" (una a la vez) o "concurrent" (simultaneas)
     swing_bars: int = 5                 # Velas a cada lado para confirmar swing (solo para swing_confirmation)
     sl_mode: str = "zone_opposite"     # "zone_opposite" (SL al lado opuesto del rango) o "swing_previous" (SL al swing H/L anterior)
+    sl_poc_buffer_pct: float = 50.0    # % extra de distancia entry->POC para SL (solo va_breakout). Ej: 50 = SL a 1.5x la distancia entry->POC
+    vp_bins_per_zone: int = 30         # Bins de precio para VP de cada zona (mas = mas detalle)
 
     # --- Capas opcionales v3.0 ---
 
@@ -155,6 +163,7 @@ class ZoneDetectionParams:
     atr_dyn_period: int = 200          # Periodo del ATR (volatilidad de fondo)
     atr_dyn_ma_period: int = 20        # Periodo de la SMA (tambien minimo velas)
     atr_dyn_multiplier: float = 1.0    # Ancho de banda: SMA +/- ATR*mult
+    atr_dyn_min_bars: int = 0          # Minimo velas en zona (0 = usar atr_dyn_ma_period)
     atr_dyn_max_breakout: int = 5      # Velas fuera permitidas antes de romper
     atr_dyn_merge_overlap: bool = True # Mergear rangos que se solapan en tiempo/precio
 
@@ -1728,7 +1737,9 @@ class ZoneDetector:
         trade_result: str, trade_pnl_r: float, bars_to_close: int,
         r_multiple: float, reached_2r: bool, reached_3r: bool,
         breakout_body_ratio: float, continuation_bars: int, trading_score: float,
-        trade_close_timestamp: int = 0
+        trade_close_timestamp: int = 0,
+        vp_poc_price: float = 0.0, vp_vah_price: float = 0.0,
+        vp_val_price: float = 0.0, vp_total_volume: float = 0.0
     ) -> TradingZone:
         """Construye un objeto TradingZone con todos los campos."""
         zone_mid = (zone_high + zone_low) / 2
@@ -1769,6 +1780,10 @@ class ZoneDetector:
             continuation_bars=continuation_bars,
             trading_score=trading_score,
             trade_close_timestamp=trade_close_timestamp,
+            vp_poc_price=vp_poc_price,
+            vp_vah_price=vp_vah_price,
+            vp_val_price=vp_val_price,
+            vp_total_volume=vp_total_volume,
         )
 
     def _calculate_rolling_atr_for_trading(self, candles: List[Dict], period: int = 14) -> List[float]:
@@ -1975,6 +1990,7 @@ class ZoneDetector:
         multiplier = params.atr_dyn_multiplier    # 1.0 default
         max_breakout = params.atr_dyn_max_breakout # 5 default
         merge_overlap = params.atr_dyn_merge_overlap
+        min_bars = params.atr_dyn_min_bars if params.atr_dyn_min_bars > 0 else ma_period
 
         min_candles = max(atr_period, ma_period) + 50
         if len(candles) < min_candles:
@@ -2094,7 +2110,7 @@ class ZoneDetector:
                         breakout_candle_count += 1
                         if breakout_candle_count > max_breakout:
                             # BREAKOUT CONFIRMADO: guardar rango
-                            if current_range['candle_count'] >= ma_period:
+                            if current_range['candle_count'] >= min_bars:
                                 raw_ranges.append(current_range)
                             current_range = None
                             breakout_candle_count = 0
@@ -2112,7 +2128,7 @@ class ZoneDetector:
             prev_count_outside = count_outside
 
         # Guardar ultimo rango
-        if current_range and current_range['candle_count'] >= ma_period:
+        if current_range and current_range['candle_count'] >= min_bars:
             raw_ranges.append(current_range)
 
         # 3. Post-proceso: Merge rangos solapados
@@ -2162,6 +2178,94 @@ class ZoneDetector:
             bbwp_values=bbwp_values,
             method_name="atr_dynamic"
         )
+
+    def _calculate_zone_volume_profile(
+        self,
+        zone_candles: List[Dict],
+        num_bins: int = 30
+    ) -> Dict:
+        """
+        Calcula Volume Profile para una zona especifica.
+        Retorna POC, VAH, VAL y distribucion de volumen.
+
+        Args:
+            zone_candles: Velas de la zona
+            num_bins: Numero de bins de precio
+
+        Returns:
+            Dict con poc_price, vah_price, val_price, total_volume
+        """
+        if not zone_candles or len(zone_candles) < 2:
+            return {"poc_price": 0, "vah_price": 0, "val_price": 0, "total_volume": 0}
+
+        price_high = max(c['high'] for c in zone_candles)
+        price_low = min(c['low'] for c in zone_candles)
+
+        if price_high == price_low:
+            mid = price_high
+            return {"poc_price": mid, "vah_price": mid, "val_price": mid, "total_volume": sum(c['volume'] for c in zone_candles)}
+
+        bin_size = (price_high - price_low) / num_bins
+        volume_by_bin = [0.0] * num_bins
+
+        total_volume = 0.0
+        for c in zone_candles:
+            c_low = c['low']
+            c_high = c['high']
+            c_vol = c['volume']
+            total_volume += c_vol
+
+            low_bin = int((c_low - price_low) / bin_size)
+            high_bin = int((c_high - price_low) / bin_size)
+            low_bin = max(0, min(low_bin, num_bins - 1))
+            high_bin = max(0, min(high_bin, num_bins - 1))
+
+            bins_touched = high_bin - low_bin + 1
+            vol_per_bin = c_vol / bins_touched if bins_touched > 0 else 0
+
+            for b in range(low_bin, high_bin + 1):
+                volume_by_bin[b] += vol_per_bin
+
+        if total_volume == 0:
+            mid = (price_high + price_low) / 2
+            return {"poc_price": mid, "vah_price": price_high, "val_price": price_low, "total_volume": 0}
+
+        # POC: bin con mayor volumen
+        poc_bin = max(range(num_bins), key=lambda i: volume_by_bin[i])
+        poc_price = price_low + (poc_bin + 0.5) * bin_size
+
+        # Value Area: 70% del volumen, expandiendo desde POC
+        target_volume = total_volume * 0.70
+        va_volume = volume_by_bin[poc_bin]
+        va_low_bin = poc_bin
+        va_high_bin = poc_bin
+
+        while va_volume < target_volume and (va_low_bin > 0 or va_high_bin < num_bins - 1):
+            # Expandir hacia el lado con mas volumen
+            vol_below = volume_by_bin[va_low_bin - 1] if va_low_bin > 0 else 0
+            vol_above = volume_by_bin[va_high_bin + 1] if va_high_bin < num_bins - 1 else 0
+
+            if vol_below >= vol_above and va_low_bin > 0:
+                va_low_bin -= 1
+                va_volume += volume_by_bin[va_low_bin]
+            elif va_high_bin < num_bins - 1:
+                va_high_bin += 1
+                va_volume += volume_by_bin[va_high_bin]
+            elif va_low_bin > 0:
+                va_low_bin -= 1
+                va_volume += volume_by_bin[va_low_bin]
+            else:
+                break
+
+        val_price = price_low + va_low_bin * bin_size        # Value Area Low
+        vah_price = price_low + (va_high_bin + 1) * bin_size # Value Area High
+
+        return {
+            "poc_price": round(poc_price, 8),
+            "vah_price": round(vah_price, 8),
+            "val_price": round(val_price, 8),
+            "total_volume": round(total_volume, 2)
+        }
 
     def _simulate_trades_for_ranges(
         self,
@@ -2223,7 +2327,25 @@ class ZoneDetector:
             avg_volume = np.mean([c['volume'] for c in zone_candles])
             volume_score = self._calculate_volume_score(avg_volume, all_volumes)
 
-            # Detectar breakout: vela que CIERRA fuera del rango
+            # Calcular Volume Profile de la zona
+            vp_data = self._calculate_zone_volume_profile(
+                zone_candles, num_bins=params.vp_bins_per_zone
+            )
+            poc_price = vp_data["poc_price"]
+            vah_price = vp_data["vah_price"]
+            val_price = vp_data["val_price"]
+
+            # Determinar limites de breakout segun entry_mode
+            if params.entry_mode == "va_breakout":
+                # Breakout del Value Area (mas rapido que breakout de zona completa)
+                breakout_upper = vah_price
+                breakout_lower = val_price
+            else:
+                # Breakout de la zona completa (comportamiento original)
+                breakout_upper = zone_high
+                breakout_lower = zone_low
+
+            # Detectar breakout: vela que CIERRA fuera del limite
             breakout_idx = end_idx
             breakout_direction = ""
             breakout_close_price = 0.0
@@ -2232,13 +2354,13 @@ class ZoneDetector:
             search_limit = min(end_idx + params.breakout_search_bars, len(candles))
             for bi in range(end_idx, search_limit):
                 c = candles[bi]
-                if c['close'] > zone_high:
+                if c['close'] > breakout_upper:
                     breakout_direction = "UP"
                     breakout_close_price = c['close']
                     breakout_ts = c['timestamp']
                     breakout_idx = bi
                     break
-                elif c['close'] < zone_low:
+                elif c['close'] < breakout_lower:
                     breakout_direction = "DOWN"
                     breakout_close_price = c['close']
                     breakout_ts = c['timestamp']
@@ -2309,7 +2431,9 @@ class ZoneDetector:
                         breakout_direction, breakout_close_price, breakout_ts,
                         params.entry_mode, entry_price, entry_ts, entry_bar_offset,
                         0.0, 0.0,
-                        "SKIPPED", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                        "SKIPPED", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0,
+                        vp_poc_price=poc_price, vp_vah_price=vah_price,
+                        vp_val_price=val_price, vp_total_volume=vp_data["total_volume"]
                     )
                     trading_zone.method = method_name
                     trading_zones.append(trading_zone)
@@ -2324,7 +2448,9 @@ class ZoneDetector:
                     breakout_direction, breakout_close_price, breakout_ts,
                     params.entry_mode, 0.0, 0, 0,
                     0.0, 0.0,
-                    "NO_ENTRY", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                    "NO_ENTRY", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0,
+                    vp_poc_price=poc_price, vp_vah_price=vah_price,
+                    vp_val_price=val_price, vp_total_volume=vp_data["total_volume"]
                 )
                 trading_zone.method = method_name
                 trading_zones.append(trading_zone)
@@ -2332,7 +2458,21 @@ class ZoneDetector:
                 continue
 
             # --- Calcular SL/TP ---
-            if params.sl_mode == "swing_previous":
+            if params.entry_mode == "va_breakout" and poc_price > 0:
+                # SL basado en distancia Entry -> POC + buffer %
+                dist_to_poc = abs(entry_price - poc_price)
+                if dist_to_poc == 0:
+                    dist_to_poc = zone_height * 0.3  # fallback: 30% de la zona
+                buffer_mult = 1.0 + (params.sl_poc_buffer_pct / 100.0)
+                r_distance = dist_to_poc * buffer_mult
+
+                if breakout_direction == "UP":
+                    sl_price = entry_price - r_distance
+                    tp_price = entry_price + (r_distance * 2)
+                else:
+                    sl_price = entry_price + r_distance
+                    tp_price = entry_price - (r_distance * 2)
+            elif params.sl_mode == "swing_previous":
                 sl_price = self._find_swing_sl(
                     candles, breakout_idx, breakout_direction,
                     params.swing_bars, zone_low, zone_high, entry_price
@@ -2526,7 +2666,9 @@ class ZoneDetector:
                 trade_result, trade_pnl_r, bars_to_close,
                 r_multiple, reached_2r, reached_3r,
                 breakout_body_ratio, continuation_bars, trading_score,
-                trade_close_timestamp=trade_close_ts
+                trade_close_timestamp=trade_close_ts,
+                vp_poc_price=poc_price, vp_vah_price=vah_price,
+                vp_val_price=val_price, vp_total_volume=vp_data["total_volume"]
             )
             trading_zone.method = method_name
             trading_zones.append(trading_zone)

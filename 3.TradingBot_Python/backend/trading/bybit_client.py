@@ -62,6 +62,9 @@ class BybitClient:
         # Position index cache
         self._position_idx_cache: Dict[str, Optional[int]] = {}
 
+        # Position mode: None=unknown, "one_way"=posIdx 0, "hedge"=posIdx 1/2
+        self._position_mode: Optional[str] = None
+
         # Statistics
         self._request_count = 0
         self._total_request_time_ms = 0.0
@@ -263,6 +266,115 @@ class BybitClient:
 
         return {"retCode": -1, "retMsg": "Max retries exceeded"}
 
+    async def detect_position_mode(self, symbol: str = "BTCUSDT", category: str = "linear") -> str:
+        """
+        Detect the account's position mode using two strategies:
+        1. Check existing positions (if any open)
+        2. Use switch-mode endpoint to confirm/set one-way mode
+
+        Returns: "one_way" (posIdx=0), "hedge" (posIdx=1/2), or "unknown"
+        """
+        if self._position_mode:
+            return self._position_mode
+
+        # Strategy 1: Check existing positions
+        try:
+            result = await self._make_request("GET", "/v5/position/list", {
+                "category": category,
+                "symbol": symbol,
+            })
+
+            if result.get("retCode") == 0:
+                positions = result.get("result", {}).get("list", [])
+                if positions:
+                    pos_idx = int(positions[0].get("positionIdx", 0))
+                    if pos_idx == 0:
+                        self._position_mode = "one_way"
+                    else:
+                        self._position_mode = "hedge"
+                    print(f"[BYBIT] Position mode detected from position: {self._position_mode} (posIdx={pos_idx})")
+                    return self._position_mode
+        except Exception as e:
+            print(f"[BYBIT] Error checking positions: {e}")
+
+        # Strategy 2: Use switch-mode to set one-way mode (mode=0)
+        # If it succeeds, account is now in one-way mode
+        # If it fails with "position mode not modified" type errors, we know the current mode
+        try:
+            print(f"[BYBIT] No positions found, trying switch-mode to detect/set mode...")
+            switch_result = await self._make_request("POST", "/v5/position/switch-mode", {
+                "category": category,
+                "coin": "USDT",
+                "mode": 0,  # One-way mode
+            })
+
+            ret_code = switch_result.get("retCode", -1)
+            ret_msg = switch_result.get("retMsg", "")
+            print(f"[BYBIT] switch-mode(0) response: retCode={ret_code}, retMsg={ret_msg}")
+
+            if ret_code == 0:
+                # Successfully set to one-way mode
+                self._position_mode = "one_way"
+                print(f"[BYBIT] Position mode set to one_way via switch-mode")
+                return self._position_mode
+            elif ret_code == 110025 or "not modified" in ret_msg.lower() or "same" in ret_msg.lower():
+                # Already in one-way mode
+                self._position_mode = "one_way"
+                print(f"[BYBIT] Position mode confirmed: one_way (already set)")
+                return self._position_mode
+            elif "position" in ret_msg.lower() and ("exist" in ret_msg.lower() or "open" in ret_msg.lower()):
+                # Can't switch because there are open positions - try to detect from them
+                print(f"[BYBIT] Can't switch mode (open positions), defaulting to one_way")
+                self._position_mode = "one_way"
+                return self._position_mode
+            else:
+                # Unknown error - try setting hedge mode to see if that works
+                print(f"[BYBIT] switch-mode(0) failed, trying mode=3 (hedge)...")
+                switch_result2 = await self._make_request("POST", "/v5/position/switch-mode", {
+                    "category": category,
+                    "coin": "USDT",
+                    "mode": 3,  # Hedge mode
+                })
+                ret_code2 = switch_result2.get("retCode", -1)
+                ret_msg2 = switch_result2.get("retMsg", "")
+                print(f"[BYBIT] switch-mode(3) response: retCode={ret_code2}, retMsg={ret_msg2}")
+
+                if ret_code2 == 0:
+                    # Was able to switch to hedge mode - switch back to one-way
+                    self._position_mode = "hedge"
+                    print(f"[BYBIT] Account was in hedge mode. Switching back to one-way...")
+                    await self._make_request("POST", "/v5/position/switch-mode", {
+                        "category": category,
+                        "coin": "USDT",
+                        "mode": 0,
+                    })
+                    self._position_mode = "one_way"
+                    return self._position_mode
+                elif ret_code2 == 110025 or "not modified" in ret_msg2.lower():
+                    self._position_mode = "hedge"
+                    print(f"[BYBIT] Position mode confirmed: hedge (already set)")
+                    return self._position_mode
+
+        except Exception as e:
+            print(f"[BYBIT] Error in switch-mode detection: {e}")
+
+        # Fallback: assume one-way (most common mode)
+        print(f"[BYBIT] Could not detect position mode, defaulting to one_way")
+        self._position_mode = "one_way"
+        return self._position_mode
+
+    def _get_position_configs(self, side: str) -> list:
+        """
+        Get ordered list of positionIdx values to try, based on detected mode.
+        """
+        if self._position_mode == "one_way":
+            return [0]
+        elif self._position_mode == "hedge":
+            return [1 if side == "Buy" else 2]
+        else:
+            # Unknown - try all (0 first since most accounts use one-way)
+            return [0, 1 if side == "Buy" else 2]
+
     async def get_instrument_info(
         self,
         symbol: str,
@@ -360,51 +472,69 @@ class BybitClient:
         """
         print(f"[ORDER] Placing Market Order: {side} {symbol} qty={qty}")
 
-        # List of position index configurations to try
-        # Different symbols might need different configurations
-        position_configs = [
-            None,  # No positionIdx (works for BTCUSDT)
-            0,     # One-way mode
-            1 if side == "Buy" else 2,  # Hedge mode
-        ]
+        # retCodes that indicate positionIdx mismatch (should try next config)
+        POSITION_MODE_ERRORS = {10001, 110025, 110026}
+
+        # Auto-detect position mode if not yet known
+        if not self._position_mode:
+            await self.detect_position_mode(symbol, category)
+
+        # Get ordered list of positionIdx to try
+        cache_key = f"{symbol}_{side}"
+        cached_idx = self._position_idx_cache.get(cache_key)
+
+        if cached_idx is not None:
+            position_configs = [cached_idx]
+        else:
+            position_configs = self._get_position_configs(side)
 
         last_error = None
-        order_link_id = f"mkt_{int(time.time() * 1000)}"
 
-        for pos_idx in position_configs:
+        for attempt_num, pos_idx in enumerate(position_configs):
+            # Unique orderLinkId per attempt (Bybit rejects duplicate IDs)
+            order_link_id = f"mkt_{int(time.time() * 1000)}_{attempt_num}"
+
             params = {
                 "category": category,
                 "symbol": symbol,
                 "side": side,
                 "orderType": "Market",
                 "qty": qty,
+                "positionIdx": pos_idx,
                 "orderLinkId": order_link_id
             }
 
-            # Add positionIdx if not None
-            if pos_idx is not None:
-                params["positionIdx"] = pos_idx
-                print(f"[DEBUG] Trying with positionIdx: {pos_idx}")
-            else:
-                print(f"[DEBUG] Trying without positionIdx")
+            print(f"[DEBUG] Market order attempt {attempt_num+1}/{len(position_configs)} with positionIdx={pos_idx} (mode={self._position_mode})")
 
             result = await self._make_request("POST", "/v5/order/create", params)
+            ret_code = result.get("retCode")
+            ret_msg = result.get("retMsg", "")
 
-            if result.get("retCode") == 0:
+            print(f"[DEBUG] Market order response: retCode={ret_code}, retMsg={ret_msg}")
+
+            if ret_code == 0:
                 order_id = result["result"]["orderId"]
                 print(f"[OK] Market Order placed: {order_id} (positionIdx: {pos_idx})")
-                # Store successful config for this symbol
-                self._position_idx_cache[f"{symbol}_{side}"] = pos_idx
+                self._position_idx_cache[cache_key] = pos_idx
+                # Confirm position mode from successful attempt
+                if pos_idx == 0:
+                    self._position_mode = "one_way"
+                elif pos_idx in (1, 2):
+                    self._position_mode = "hedge"
                 return result
             else:
-                last_error = result.get("retMsg")
-                if result.get("retCode") != 10001:  # If it's not position mode error, stop trying
-                    print(f"[ERROR] Market Order failed: {last_error}")
+                last_error = ret_msg
+                is_pos_error = ret_code in POSITION_MODE_ERRORS or "position" in last_error.lower()
+                if not is_pos_error:
+                    print(f"[ERROR] Market Order failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
                     return result
-                # Continue trying other position index values
+                print(f"[DEBUG] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
+                # Invalidate cache for this key
+                self._position_idx_cache.pop(cache_key, None)
+                self._position_mode = None  # Reset so next attempt reconsiders
 
         # All attempts failed
-        print(f"[ERROR] Market Order failed after all attempts: {last_error}")
+        print(f"[ERROR] Market Order failed after all {len(position_configs)} positionIdx attempts: {last_error}")
         return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
 
     async def place_order_with_tpsl(
@@ -449,23 +579,35 @@ class BybitClient:
             print(f"[ERROR] Limit order requires limit_price")
             return {"retCode": -1, "retMsg": "Limit order requires limit_price"}
 
-        # List of position index configurations to try
-        position_configs = [
-            None,  # No positionIdx
-            0,     # One-way mode
-            1 if side == "Buy" else 2,  # Hedge mode
-        ]
+        # retCodes that indicate positionIdx mismatch (should try next config)
+        POSITION_MODE_ERRORS = {10001, 110025, 110026}
+
+        # Auto-detect position mode if not yet known
+        if not self._position_mode:
+            await self.detect_position_mode(symbol, category)
+
+        # Get ordered list of positionIdx to try
+        cache_key = f"{symbol}_{side}"
+        cached_idx = self._position_idx_cache.get(cache_key)
+
+        if cached_idx is not None:
+            position_configs = [cached_idx]
+        else:
+            position_configs = self._get_position_configs(side)
 
         last_error = None
-        order_link_id = f"tpsl_{int(time.time() * 1000)}"
 
-        for pos_idx in position_configs:
+        for attempt_num, pos_idx in enumerate(position_configs):
+            # Unique orderLinkId per attempt (Bybit rejects duplicate IDs)
+            order_link_id = f"tpsl_{int(time.time() * 1000)}_{attempt_num}"
+
             params = {
                 "category": category,
                 "symbol": symbol,
                 "side": side,
                 "orderType": order_type.capitalize(),  # "Market" or "Limit"
                 "qty": qty,
+                "positionIdx": pos_idx,
                 "orderLinkId": order_link_id,
                 "timeInForce": "GTC" if order_type.upper() == "LIMIT" else "IOC",
             }
@@ -474,12 +616,7 @@ class BybitClient:
             if order_type.upper() == "LIMIT" and limit_price:
                 params["price"] = limit_price
 
-            # Add positionIdx if not None
-            if pos_idx is not None:
-                params["positionIdx"] = pos_idx
-                print(f"[DEBUG] Trying with positionIdx: {pos_idx}")
-            else:
-                print(f"[DEBUG] Trying without positionIdx")
+            print(f"[DEBUG] {order_type_display}+TPSL attempt {attempt_num+1}/{len(position_configs)} with positionIdx={pos_idx} (mode={self._position_mode})")
 
             # Add Take Profit if provided
             if take_profit:
@@ -498,22 +635,32 @@ class BybitClient:
                 params["tpslMode"] = "Full"  # Apply to entire position
 
             result = await self._make_request("POST", "/v5/order/create", params)
+            ret_code = result.get("retCode")
+            ret_msg = result.get("retMsg", "")
 
-            if result.get("retCode") == 0:
+            print(f"[DEBUG] {order_type_display}+TPSL response: retCode={ret_code}, retMsg={ret_msg}")
+
+            if ret_code == 0:
                 order_id = result["result"]["orderId"]
                 print(f"[OK] {order_type_display} Order with TP/SL placed: {order_id} (positionIdx: {pos_idx})")
-                # Store successful config for this symbol
-                self._position_idx_cache[f"{symbol}_{side}"] = pos_idx
+                self._position_idx_cache[cache_key] = pos_idx
+                if pos_idx == 0:
+                    self._position_mode = "one_way"
+                elif pos_idx in (1, 2):
+                    self._position_mode = "hedge"
                 return result
             else:
-                last_error = result.get("retMsg")
-                if result.get("retCode") != 10001:  # If it's not position mode error, stop trying
-                    print(f"[ERROR] {order_type_display} Order with TP/SL failed: {last_error}")
+                last_error = ret_msg
+                is_pos_error = ret_code in POSITION_MODE_ERRORS or "position" in last_error.lower()
+                if not is_pos_error:
+                    print(f"[ERROR] {order_type_display} Order with TP/SL failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
                     return result
-                # Continue trying other position index values
+                print(f"[DEBUG] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
+                self._position_idx_cache.pop(cache_key, None)
+                self._position_mode = None
 
         # All attempts failed
-        print(f"[ERROR] {order_type_display} Order with TP/SL failed after all attempts: {last_error}")
+        print(f"[ERROR] {order_type_display} Order with TP/SL failed after all {len(position_configs)} positionIdx attempts: {last_error}")
         return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
 
     async def place_stop_loss_order(
@@ -539,18 +686,17 @@ class BybitClient:
         # For closing SHORT (side="Buy"): trigger when price rises -> direction=1
         trigger_direction = 2 if side == "Sell" else 1
 
-        # Use cached positionIdx if available, otherwise use 0
-        # Note: for SL, side is opposite of opening position
-        # So we need to get the cached index for the opening side
+        # For SL, side is opposite of opening position
         opening_side = "Buy" if side == "Sell" else "Sell"
         cache_key = f"{symbol}_{opening_side}"
 
-        # Get cached position index or default to 0
-        pos_idx = 0
-        if cache_key in self._position_idx_cache:
-            cached = self._position_idx_cache[cache_key]
-            if cached is not None:
-                pos_idx = cached
+        # Use cached positionIdx, or derive from detected mode
+        if cache_key in self._position_idx_cache and self._position_idx_cache[cache_key] is not None:
+            pos_idx = self._position_idx_cache[cache_key]
+        elif self._position_mode == "hedge":
+            pos_idx = 1 if opening_side == "Buy" else 2
+        else:
+            pos_idx = 0  # one_way or unknown default
 
         params = {
             "category": category,
@@ -564,17 +710,17 @@ class BybitClient:
             "orderLinkId": f"sl_{int(time.time() * 1000)}",
             "timeInForce": "GTC",
             "closeOnTrigger": True,
-            "positionIdx": pos_idx  # Use cached or default
+            "positionIdx": pos_idx
         }
 
-        print(f"[SL] Placing Stop Loss: {side} {symbol} @ {trigger_price} (direction={trigger_direction})")
+        print(f"[SL] Placing Stop Loss: {side} {symbol} @ {trigger_price} (posIdx={pos_idx})")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
             print(f"[OK] Stop Loss placed: {order_id}")
         else:
-            print(f"[ERROR] Stop Loss failed: {result.get('retMsg')}")
+            print(f"[ERROR] Stop Loss failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
 
         return result
 
@@ -596,18 +742,17 @@ class BybitClient:
             price: Limit price for take profit
             category: "linear" for USDT perpetual
         """
-        # Use cached positionIdx if available, otherwise use 0
-        # Note: for TP, side is opposite of opening position
-        # So we need to get the cached index for the opening side
+        # For TP, side is opposite of opening position
         opening_side = "Buy" if side == "Sell" else "Sell"
         cache_key = f"{symbol}_{opening_side}"
 
-        # Get cached position index or default to 0
-        pos_idx = 0
-        if cache_key in self._position_idx_cache:
-            cached = self._position_idx_cache[cache_key]
-            if cached is not None:
-                pos_idx = cached
+        # Use cached positionIdx, or derive from detected mode
+        if cache_key in self._position_idx_cache and self._position_idx_cache[cache_key] is not None:
+            pos_idx = self._position_idx_cache[cache_key]
+        elif self._position_mode == "hedge":
+            pos_idx = 1 if opening_side == "Buy" else 2
+        else:
+            pos_idx = 0  # one_way or unknown default
 
         params = {
             "category": category,
@@ -619,17 +764,17 @@ class BybitClient:
             "orderLinkId": f"tp_{int(time.time() * 1000)}",
             "timeInForce": "GTC",
             "reduceOnly": True,
-            "positionIdx": pos_idx  # Use cached or default
+            "positionIdx": pos_idx
         }
 
-        print(f"[TP] Placing Take Profit: {side} {symbol} @ {price}")
+        print(f"[TP] Placing Take Profit: {side} {symbol} @ {price} (posIdx={pos_idx})")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
             print(f"[OK] Take Profit placed: {order_id}")
         else:
-            print(f"[ERROR] Take Profit failed: {result.get('retMsg')}")
+            print(f"[ERROR] Take Profit failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
 
         return result
 

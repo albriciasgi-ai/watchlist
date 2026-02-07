@@ -24,6 +24,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     new Notification(title, { body });
   },
 
+  // Reportar simbolo actual al main process (para screenshot server)
+  reportCurrentSymbol: (symbol) => {
+    ipcRenderer.send('report-current-symbol', symbol);
+  },
+
   // Comunicacion bidireccional con el main process
   send: (channel, data) => {
     // Lista blanca de canales permitidos

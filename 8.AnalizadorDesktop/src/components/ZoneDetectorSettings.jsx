@@ -1,11 +1,11 @@
 // ZoneDetectorSettings.jsx
 // Panel para configurar y ejecutar la detección de zonas de trading
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import IndicatorManagerRegistry from '../utils/IndicatorManagerRegistry';
+import { API_BASE_URL } from '../config';
 
-// Key para localStorage
-const PRESETS_STORAGE_KEY = 'zoneDetector_presets';
+// Presets se persisten en backend (config/zone_detector_presets.json)
 
 const defaultParams = {
   // Metodo de deteccion
@@ -27,6 +27,7 @@ const defaultParams = {
   atr_dyn_period: 200,
   atr_dyn_ma_period: 20,
   atr_dyn_multiplier: 1.0,
+  atr_dyn_min_bars: 0,
   atr_dyn_max_breakout: 5,
   atr_dyn_merge_overlap: true,
   // Capas v3.0
@@ -47,7 +48,10 @@ const defaultParams = {
   min_inside_pct: 70.0,
   // Filtro de calidad
   min_score_filter: 0,  // 0 = sin filtro, >0 = score minimo para incluir zona
-  use_continuation_score: false  // Solo usar con swing_confirmation (ya pasaron velas)
+  use_continuation_score: false,  // Solo usar con swing_confirmation (ya pasaron velas)
+  // Volume Profile por zona (para va_breakout)
+  sl_poc_buffer_pct: 50.0,  // % buffer sobre distancia entry->POC para SL
+  vp_bins_per_zone: 30      // Bins de precio para VP de cada zona
 };
 
 // Limites maximos de dias por timeframe (debe coincidir con backend)
@@ -88,6 +92,32 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const [csvPath, setCsvPath] = useState(null);
   const [error, setError] = useState(null);
 
+  // === VOLUME PROFILE EN ZONAS ===
+  const [detectedZones, setDetectedZones] = useState([]);
+  const [vpLoading, setVpLoading] = useState(false);
+  const [vpCount, setVpCount] = useState(0);
+  const VP_MAX = 50; // Maximo de Volume Profiles
+
+  // === ALERTAS AL TRADING BOT ===
+  const [alertsEnabled, setAlertsEnabled] = useState(() => {
+    try { return localStorage.getItem('zoneDetector_alertsEnabled') === 'true'; } catch { return false; }
+  });
+  const [tradingBotUrl, setTradingBotUrl] = useState(() => {
+    try { return localStorage.getItem('zoneDetector_tradingBotUrl') || 'http://localhost:5000'; } catch { return 'http://localhost:5000'; }
+  });
+  const [alertSending, setAlertSending] = useState(false);
+  const [alertResult, setAlertResult] = useState(null); // { sent, failed, total_valid, results }
+
+  // === REALTIME ZONE DETECTION SERVICE ===
+  const [realtimeEnabled, setRealtimeEnabled] = useState(false);
+  const [realtimeRunning, setRealtimeRunning] = useState(false);
+  const [realtimeStatus, setRealtimeStatus] = useState(null);
+  const [realtimeLoading, setRealtimeLoading] = useState(false);
+  const [realtimeWindowCandles, setRealtimeWindowCandles] = useState(500);
+  const [realtimeCooldown, setRealtimeCooldown] = useState(30);
+  const [realtimeMinScore, setRealtimeMinScore] = useState(0);
+  const realtimePollingRef = useRef(null);
+
   // === PRESETS ===
   const [presets, setPresets] = useState({});
   const [selectedPreset, setSelectedPreset] = useState('');
@@ -102,20 +132,58 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     }
   }, [interval, maxDays, defaultDays, zoneDays]);
 
-  // Cargar presets de localStorage al montar
+  // Cargar presets del backend al montar
   useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/zones/presets`);
+        const data = await res.json();
+        if (data.success && data.presets) {
+          setPresets(data.presets);
+        }
+      } catch (e) {
+        console.error('[ZoneDetector] Error cargando presets del backend:', e);
+      }
+    })();
+  }, []);
+
+  // Cargar estado del servicio realtime al abrir el modal
+  const fetchRealtimeStatus = useCallback(async () => {
     try {
-      const saved = localStorage.getItem(PRESETS_STORAGE_KEY);
-      if (saved) {
-        setPresets(JSON.parse(saved));
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/status`);
+      const data = await res.json();
+      if (data.success) {
+        setRealtimeEnabled(data.enabled || false);
+        setRealtimeRunning(data.running || false);
+        setRealtimeStatus(data);
+        // Cargar config del servicio
+        if (data.config) {
+          setRealtimeWindowCandles(data.config.window_candles || 500);
+          setRealtimeCooldown(data.config.cooldownMinutes || 30);
+          setRealtimeMinScore(data.config.min_score_filter || 0);
+        }
       }
     } catch (e) {
-      console.error('[ZoneDetector] Error cargando presets:', e);
+      console.debug('[ZoneDetector] Realtime service no disponible:', e.message);
     }
   }, []);
 
-  // Guardar preset actual
-  const handleSavePreset = useCallback(() => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchRealtimeStatus();
+      // Polling del estado cada 10s mientras el modal esta abierto
+      realtimePollingRef.current = setInterval(fetchRealtimeStatus, 10000);
+    }
+    return () => {
+      if (realtimePollingRef.current) {
+        clearInterval(realtimePollingRef.current);
+        realtimePollingRef.current = null;
+      }
+    };
+  }, [isOpen, fetchRealtimeStatus]);
+
+  // Guardar preset actual (persistido en backend)
+  const handleSavePreset = useCallback(async () => {
     const name = newPresetName.trim();
     if (!name) return;
 
@@ -125,13 +193,23 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       savedAt: new Date().toISOString()
     };
 
-    const updated = { ...presets, [name]: presetData };
-    setPresets(updated);
-    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(updated));
-    setSelectedPreset(name);
-    setNewPresetName('');
-    setShowPresetInput(false);
-    console.log(`[ZoneDetector] Preset "${name}" guardado`);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/presets/${encodeURIComponent(name)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(presetData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPresets(prev => ({ ...prev, [name]: presetData }));
+        setSelectedPreset(name);
+        setNewPresetName('');
+        setShowPresetInput(false);
+        console.log(`[ZoneDetector] Preset "${name}" guardado en backend`);
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error guardando preset:', e);
+    }
   }, [params, zoneDays, presets, newPresetName]);
 
   // Cargar preset seleccionado
@@ -150,18 +228,29 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     console.log(`[ZoneDetector] Preset "${presetName}" cargado`);
   }, [presets, maxDays]);
 
-  // Eliminar preset
-  const handleDeletePreset = useCallback((presetName) => {
+  // Eliminar preset (del backend)
+  const handleDeletePreset = useCallback(async (presetName) => {
     if (!presetName || !presets[presetName]) return;
 
-    const updated = { ...presets };
-    delete updated[presetName];
-    setPresets(updated);
-    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(updated));
-    if (selectedPreset === presetName) {
-      setSelectedPreset('');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/presets/${encodeURIComponent(presetName)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPresets(prev => {
+          const updated = { ...prev };
+          delete updated[presetName];
+          return updated;
+        });
+        if (selectedPreset === presetName) {
+          setSelectedPreset('');
+        }
+        console.log(`[ZoneDetector] Preset "${presetName}" eliminado del backend`);
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error eliminando preset:', e);
     }
-    console.log(`[ZoneDetector] Preset "${presetName}" eliminado`);
   }, [presets, selectedPreset]);
 
   // Resetear a valores por defecto
@@ -229,6 +318,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
 
       if (result.success) {
         setStats(result.stats);
+        setDetectedZones(result.zones || []);
         setCandlesCount(result.candles_count || null);
         setCsvPath(null);  // Reset csv path (se genera con boton aparte)
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -253,8 +343,48 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     const manager = getManager();
     if (manager) {
       manager.clearTradingZones();
+      manager.clearZoneDetectorFixedRanges();
       setStats(null);
+      setDetectedZones([]);
+      setVpCount(0);
       setCsvPath(null);
+    }
+  }, [getManager]);
+
+  // === HANDLERS VOLUME PROFILE ===
+  const handleDrawVP = useCallback((sortOrder) => {
+    const manager = getManager();
+    if (!manager || detectedZones.length === 0) return;
+
+    setVpLoading(true);
+    try {
+      let zonesToDraw = [...detectedZones];
+
+      if (zonesToDraw.length > VP_MAX) {
+        // Ordenar por trading_score
+        if (sortOrder === 'best') {
+          zonesToDraw.sort((a, b) => (b.trading_score || 0) - (a.trading_score || 0));
+        } else {
+          zonesToDraw.sort((a, b) => (a.trading_score || 0) - (b.trading_score || 0));
+        }
+        zonesToDraw = zonesToDraw.slice(0, VP_MAX);
+      }
+
+      const created = manager.createZoneDetectorFixedRanges(zonesToDraw);
+      setVpCount(created);
+      console.log(`[ZoneDetector] VP creados: ${created} (de ${detectedZones.length} zonas, orden: ${sortOrder || 'todas'})`);
+    } catch (err) {
+      console.error('[ZoneDetector] Error creando VP:', err);
+    } finally {
+      setVpLoading(false);
+    }
+  }, [getManager, detectedZones]);
+
+  const handleClearVP = useCallback(() => {
+    const manager = getManager();
+    if (manager) {
+      manager.clearZoneDetectorFixedRanges();
+      setVpCount(0);
     }
   }, [getManager]);
 
@@ -283,6 +413,144 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       setExportingCsv(false);
     }
   }, [getManager, symbol, interval, zoneDays, params]);
+
+  // === HANDLER ALERTAS ===
+  const handleToggleAlerts = useCallback((enabled) => {
+    setAlertsEnabled(enabled);
+    try { localStorage.setItem('zoneDetector_alertsEnabled', String(enabled)); } catch {}
+  }, []);
+
+  const handleTradingBotUrlChange = useCallback((url) => {
+    setTradingBotUrl(url);
+    try { localStorage.setItem('zoneDetector_tradingBotUrl', url); } catch {}
+  }, []);
+
+  const handleSendAlerts = useCallback(async () => {
+    const manager = getManager();
+    if (!manager || detectedZones.length === 0) return;
+
+    setAlertSending(true);
+    setAlertResult(null);
+    try {
+      const result = await manager.sendZoneAlertsBatch(
+        detectedZones,
+        params.entry_mode || 'breakout_close',
+        tradingBotUrl
+      );
+      setAlertResult(result);
+      console.log(`[ZoneDetector] Alertas enviadas:`, result);
+    } catch (err) {
+      setAlertResult({ success: false, error: err.message });
+    } finally {
+      setAlertSending(false);
+    }
+  }, [getManager, detectedZones, params.entry_mode, tradingBotUrl]);
+
+  // === HANDLERS REALTIME SERVICE ===
+  const handleRealtimeToggle = useCallback(async () => {
+    setRealtimeLoading(true);
+    try {
+      const endpoint = realtimeRunning
+        ? `${API_BASE_URL}/api/zones/realtime/stop`
+        : `${API_BASE_URL}/api/zones/realtime/start`;
+      const res = await fetch(endpoint, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setRealtimeRunning(!realtimeRunning);
+        setRealtimeEnabled(!realtimeRunning);
+        await fetchRealtimeStatus();
+      } else {
+        console.error('[ZoneDetector] Error toggling realtime:', data.error);
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error toggling realtime:', e);
+    } finally {
+      setRealtimeLoading(false);
+    }
+  }, [realtimeRunning, fetchRealtimeStatus]);
+
+  const handleRealtimeConfigSave = useCallback(async () => {
+    setRealtimeLoading(true);
+    try {
+      // Enviar config actual de parametros del detector + realtime settings
+      const configPayload = {
+        symbols: [symbol],
+        interval: interval,
+        window_candles: realtimeWindowCandles,
+        cooldownMinutes: realtimeCooldown,
+        min_score_filter: realtimeMinScore,
+        alertsEnabled: alertsEnabled,
+        alertTargetUrl: `${tradingBotUrl}/api/watchlist-alert`,
+        // Pasar parametros de deteccion actuales
+        consol_min_bars: params.consol_min_bars,
+        consol_max_bars: params.consol_max_bars,
+        consol_max_range_pct: params.consol_max_range_pct,
+        consol_atr_ratio: params.consol_atr_ratio,
+        consol_body_ratio: params.consol_body_ratio,
+        consol_max_outside_bars: params.consol_max_outside_bars,
+        breakout_search_bars: typeof params.breakout_search_bars === 'number' ? params.breakout_search_bars : 20,
+        entry_mode: params.entry_mode || 'breakout_close',
+        sl_mode: params.sl_mode || 'zone_opposite',
+        sl_poc_buffer_pct: params.sl_poc_buffer_pct || 50.0,
+        swing_bars: params.swing_bars || 5,
+        max_price_range_pct: params.max_price_range_pct || 5.0,
+        vp_bins_per_zone: params.vp_bins_per_zone || 30,
+        // Capas v3.0
+        use_atr_band: !!params.use_atr_band,
+        use_reentry: !!params.use_reentry,
+        use_ttm_prefilter: !!params.use_ttm_prefilter,
+        use_bbwp_scoring: !!params.use_bbwp_scoring,
+        use_inside_pct_filter: !!params.use_inside_pct_filter,
+      };
+
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(configPayload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        console.log('[ZoneDetector] Realtime config guardada:', data.updated);
+        await fetchRealtimeStatus();
+      } else {
+        console.error('[ZoneDetector] Error guardando config realtime:', data.error);
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error guardando config realtime:', e);
+    } finally {
+      setRealtimeLoading(false);
+    }
+  }, [symbol, interval, realtimeWindowCandles, realtimeCooldown, realtimeMinScore,
+      alertsEnabled, tradingBotUrl, params, fetchRealtimeStatus]);
+
+  const handleRealtimeClearCooldowns = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/clear-cooldowns`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        console.log('[ZoneDetector] Cooldowns limpiados');
+        await fetchRealtimeStatus();
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error limpiando cooldowns:', e);
+    }
+  }, [fetchRealtimeStatus]);
+
+  const handleRealtimeReanalyze = useCallback(async () => {
+    setRealtimeLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/reanalyze`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        console.log('[ZoneDetector] Re-analisis realtime completado');
+        await fetchRealtimeStatus();
+      }
+    } catch (e) {
+      console.error('[ZoneDetector] Error re-analizando:', e);
+    } finally {
+      setRealtimeLoading(false);
+    }
+  }, [fetchRealtimeStatus]);
 
   if (!isOpen) return null;
 
@@ -523,7 +791,22 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                 />
               </div>
               <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
-                Tambien es el minimo de velas para validar rango (default: 20)
+                Periodo de la media movil central (default: 20)
+              </div>
+
+              <div style={styles.row}>
+                <label style={styles.label}>Min Bars (zona):</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={params.atr_dyn_min_bars}
+                  onChange={(e) => handleParamChange('atr_dyn_min_bars', parseInt(e.target.value))}
+                  min="0"
+                  max="200"
+                />
+              </div>
+              <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '4px'}}>
+                Minimo de velas en la zona. 0 = usar SMA Periodo (default: 0)
               </div>
 
               <div style={styles.row}>
@@ -758,14 +1041,56 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                 onChange={(e) => handleParamChange('entry_mode', e.target.value)}
               >
                 <option value="breakout_close">Close del Breakout</option>
+                <option value="va_breakout">VA Breakout (Volume Profile)</option>
                 <option value="swing_confirmation">Swing Confirmation</option>
               </select>
             </div>
             <div style={{fontSize: '11px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
               {params.entry_mode === 'breakout_close'
-                ? 'Entrada al precio de cierre de la vela de breakout'
+                ? 'Entrada al precio de cierre de la vela que rompe la zona'
+                : params.entry_mode === 'va_breakout'
+                ? 'Entrada al cierre de la vela que rompe el Value Area (70% vol). SL basado en POC'
                 : 'Entrada al confirmarse el swing (pullback) post-breakout'}
             </div>
+
+            {params.entry_mode === 'va_breakout' && (
+              <>
+                <div style={{fontSize: '11px', color: '#4A90E2', marginBottom: '8px', padding: '6px 8px', background: 'rgba(74,144,226,0.08)', borderRadius: '4px', lineHeight: '1.4'}}>
+                  El breakout se detecta cuando el precio cierra fuera del Value Area (donde esta el 70% del volumen), no de la zona completa. El SL se calcula desde la distancia Entry -&gt; POC + buffer %.
+                </div>
+                <div style={styles.row}>
+                  <label style={styles.label}>SL Buffer % (sobre POC):</label>
+                  <input
+                    type="number"
+                    style={{...styles.input, width: '70px'}}
+                    value={params.sl_poc_buffer_pct}
+                    onChange={(e) => handleParamChange('sl_poc_buffer_pct', parseFloat(e.target.value))}
+                    min="0"
+                    max="200"
+                    step="10"
+                  />
+                  <span style={{fontSize: '11px', color: '#888', marginLeft: '6px'}}>%</span>
+                </div>
+                <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
+                  50% = SL a 1.5x la distancia entry&rarr;POC. 100% = SL a 2x.
+                </div>
+                <div style={styles.row}>
+                  <label style={styles.label}>VP Bins por zona:</label>
+                  <input
+                    type="number"
+                    style={{...styles.input, width: '70px'}}
+                    value={params.vp_bins_per_zone}
+                    onChange={(e) => handleParamChange('vp_bins_per_zone', parseInt(e.target.value))}
+                    min="10"
+                    max="100"
+                    step="5"
+                  />
+                </div>
+                <div style={{fontSize: '10px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
+                  Resolucion del Volume Profile (mas bins = mas detalle, 30 recomendado)
+                </div>
+              </>
+            )}
 
             {params.entry_mode === 'swing_confirmation' && (
               <>
@@ -813,22 +1138,26 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                 : 'Multiples trades simultaneos'}
             </div>
 
-            <div style={styles.row}>
-              <label style={styles.label}>Modo de StopLoss:</label>
-              <select
-                style={{...styles.input, width: '150px', textAlign: 'left'}}
-                value={params.sl_mode}
-                onChange={(e) => handleParamChange('sl_mode', e.target.value)}
-              >
-                <option value="zone_opposite">Lado opuesto del rango</option>
-                <option value="swing_previous">Swing H/L anterior</option>
-              </select>
-            </div>
-            <div style={{fontSize: '11px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
-              {params.sl_mode === 'zone_opposite'
-                ? 'SL a 1R del entry (R = altura del rango)'
-                : 'SL al swing high/low anterior al breakout'}
-            </div>
+            {params.entry_mode !== 'va_breakout' && (
+              <>
+                <div style={styles.row}>
+                  <label style={styles.label}>Modo de StopLoss:</label>
+                  <select
+                    style={{...styles.input, width: '150px', textAlign: 'left'}}
+                    value={params.sl_mode}
+                    onChange={(e) => handleParamChange('sl_mode', e.target.value)}
+                  >
+                    <option value="zone_opposite">Lado opuesto del rango</option>
+                    <option value="swing_previous">Swing H/L anterior</option>
+                  </select>
+                </div>
+                <div style={{fontSize: '11px', color: '#666', marginTop: '-4px', marginBottom: '8px'}}>
+                  {params.sl_mode === 'zone_opposite'
+                    ? 'SL a 1R del entry (R = altura del rango)'
+                    : 'SL al swing high/low anterior al breakout'}
+                </div>
+              </>
+            )}
 
             <div style={styles.row}>
               <label style={styles.label}>Lookforward Bars:</label>
@@ -931,7 +1260,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
               )}
               {stats.entry_mode && (
                 <div style={{fontSize: '11px', color: '#666', marginBottom: '8px'}}>
-                  Entrada: {stats.entry_mode === 'breakout_close' ? 'Close Breakout' : 'Swing Confirmation'}
+                  Entrada: {stats.entry_mode === 'breakout_close' ? 'Close Breakout' : stats.entry_mode === 'va_breakout' ? 'VA Breakout (VP)' : 'Swing Confirmation'}
                   {' | '}Pos: {stats.position_mode === 'sequential' ? 'Sequential' : 'Concurrent'}
                 </div>
               )}
@@ -1001,6 +1330,71 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             </div>
           )}
 
+          {/* Volume Profile en Zonas (solo visible despues de detectar) */}
+          {stats && detectedZones.length > 0 && (
+            <div style={styles.vpSection}>
+              <h4 style={styles.sectionTitle}>Volume Profile en Zonas</h4>
+              <div style={{fontSize: '11px', color: '#888', marginBottom: '8px'}}>
+                Dibuja Volume Profile Fixed Range en cada zona detectada para analizar la distribucion de volumen.
+                {detectedZones.length > VP_MAX && (
+                  <span style={{color: '#FFC107'}}> Hay {detectedZones.length} zonas (max {VP_MAX}).</span>
+                )}
+              </div>
+
+              {detectedZones.length <= VP_MAX ? (
+                /* Caso simple: <= 50 zonas, dibujar todas */
+                <div style={{display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap'}}>
+                  <button
+                    style={styles.vpBtn}
+                    onClick={() => handleDrawVP('all')}
+                    disabled={vpLoading}
+                  >
+                    {vpLoading ? 'Dibujando...' : `Dibujar VP (${detectedZones.length} zonas)`}
+                  </button>
+                  {vpCount > 0 && (
+                    <button style={styles.vpClearBtn} onClick={handleClearVP}>
+                      Limpiar VP ({vpCount})
+                    </button>
+                  )}
+                </div>
+              ) : (
+                /* Caso >50 zonas: selector mejor/peor score */
+                <div>
+                  <div style={{fontSize: '11px', color: '#B0B0B0', marginBottom: '6px'}}>
+                    Selecciona cuales {VP_MAX} zonas dibujar:
+                  </div>
+                  <div style={{display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap'}}>
+                    <button
+                      style={styles.vpBtn}
+                      onClick={() => handleDrawVP('best')}
+                      disabled={vpLoading}
+                    >
+                      {vpLoading ? 'Dibujando...' : `Mejores ${VP_MAX} (mayor score)`}
+                    </button>
+                    <button
+                      style={{...styles.vpBtn, backgroundColor: '#5D4037'}}
+                      onClick={() => handleDrawVP('worst')}
+                      disabled={vpLoading}
+                    >
+                      {vpLoading ? 'Dibujando...' : `Peores ${VP_MAX} (menor score)`}
+                    </button>
+                  </div>
+                  {vpCount > 0 && (
+                    <button style={{...styles.vpClearBtn, marginTop: '6px'}} onClick={handleClearVP}>
+                      Limpiar VP ({vpCount})
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {vpCount > 0 && (
+                <div style={{fontSize: '11px', color: '#4CAF50', marginTop: '6px'}}>
+                  {vpCount} Volume Profiles dibujados
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Exportar CSV (solo visible despues de detectar) */}
           {stats && (
             <div style={{marginBottom: '12px'}}>
@@ -1018,6 +1412,221 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
               )}
             </div>
           )}
+
+          {/* === DETECCION EN TIEMPO REAL === */}
+          <div style={styles.realtimeSection}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+              <h4 style={{...styles.sectionTitle, marginBottom: 0}}>
+                Deteccion Realtime
+              </h4>
+              <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                <span style={{
+                  display: 'inline-block',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: realtimeRunning ? '#4CAF50' : '#666',
+                  boxShadow: realtimeRunning ? '0 0 6px #4CAF50' : 'none'
+                }} />
+                <span style={{fontSize: '11px', color: realtimeRunning ? '#4CAF50' : '#888'}}>
+                  {realtimeRunning ? 'Corriendo' : 'Detenido'}
+                </span>
+              </div>
+            </div>
+
+            <div style={{fontSize: '11px', color: '#888', marginBottom: '8px'}}>
+              Monitorea velas en tiempo real para detectar consolidaciones y breakouts automaticamente.
+              Los parametros de deteccion se sincronizan con los de arriba.
+            </div>
+
+            {/* Controles realtime */}
+            <div style={styles.row}>
+              <label style={styles.label}>Ventana (velas):</label>
+              <input
+                type="number"
+                style={{...styles.input, width: '80px'}}
+                value={realtimeWindowCandles}
+                onChange={(e) => setRealtimeWindowCandles(Math.max(100, Math.min(5000, parseInt(e.target.value) || 500)))}
+                min={100}
+                max={5000}
+              />
+              <span style={{fontSize: '10px', color: '#666', marginLeft: '4px'}}>
+                {realtimeWindowCandles >= 1440 ? `~${Math.round(realtimeWindowCandles / 1440)}d en 1m` : `~${Math.round(realtimeWindowCandles / 288)}d en 5m`}
+              </span>
+            </div>
+
+            <div style={styles.row}>
+              <label style={styles.label}>Cooldown (min):</label>
+              <input
+                type="number"
+                style={{...styles.input, width: '60px'}}
+                value={realtimeCooldown}
+                onChange={(e) => setRealtimeCooldown(Math.max(1, Math.min(1440, parseInt(e.target.value) || 30)))}
+                min={1}
+                max={1440}
+              />
+            </div>
+
+            <div style={styles.row}>
+              <label style={styles.label}>Score minimo:</label>
+              <input
+                type="number"
+                style={{...styles.input, width: '60px'}}
+                value={realtimeMinScore}
+                onChange={(e) => setRealtimeMinScore(Math.max(0, Math.min(100, parseInt(e.target.value) || 0)))}
+                min={0}
+                max={100}
+              />
+              <span style={{fontSize: '10px', color: '#666', marginLeft: '4px'}}>0 = sin filtro</span>
+            </div>
+
+            {/* Botones */}
+            <div style={{display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap'}}>
+              <button
+                style={{
+                  ...styles.realtimeBtn,
+                  backgroundColor: realtimeRunning ? '#C62828' : '#2E7D32',
+                  opacity: realtimeLoading ? 0.6 : 1
+                }}
+                onClick={handleRealtimeToggle}
+                disabled={realtimeLoading}
+              >
+                {realtimeLoading ? '...' : (realtimeRunning ? 'Detener' : 'Iniciar')}
+              </button>
+
+              <button
+                style={{...styles.realtimeBtn, backgroundColor: '#1565C0'}}
+                onClick={handleRealtimeConfigSave}
+                disabled={realtimeLoading}
+                title="Guarda parametros y reinicia si es necesario"
+              >
+                Aplicar Config
+              </button>
+
+              {realtimeRunning && (
+                <>
+                  <button
+                    style={{...styles.realtimeBtn, backgroundColor: '#6A1B9A'}}
+                    onClick={handleRealtimeReanalyze}
+                    disabled={realtimeLoading}
+                    title="Re-analizar historico con los parametros actuales"
+                  >
+                    Re-analizar
+                  </button>
+                  <button
+                    style={{...styles.realtimeBtn, backgroundColor: '#455A64'}}
+                    onClick={handleRealtimeClearCooldowns}
+                    title="Limpiar cooldowns (para testing)"
+                  >
+                    Clear CD
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Stats del servicio */}
+            {realtimeStatus && realtimeRunning && (
+              <div style={{marginTop: '8px', fontSize: '11px', color: '#B0B0B0'}}>
+                <div style={{display: 'flex', gap: '12px', flexWrap: 'wrap'}}>
+                  <span>Zonas: {realtimeStatus.stats?.zones_detected || 0}</span>
+                  <span>Alertas: {realtimeStatus.stats?.alerts_sent || 0}</span>
+                  <span>Bloqueadas: {realtimeStatus.stats?.alerts_blocked_cooldown || 0}</span>
+                  <span>Uptime: {Math.round((realtimeStatus.uptime_seconds || 0) / 60)}m</span>
+                </div>
+                {realtimeStatus.buffers && (
+                  <div style={{marginTop: '4px'}}>
+                    Buffers: {Object.entries(realtimeStatus.buffers).map(([sym, count]) => (
+                      <span key={sym} style={{marginRight: '8px'}}>{sym}: {count} velas</span>
+                    ))}
+                  </div>
+                )}
+                {realtimeStatus.cooldowns && Object.keys(realtimeStatus.cooldowns).length > 0 && (
+                  <div style={{marginTop: '4px'}}>
+                    Cooldowns activos: {Object.entries(realtimeStatus.cooldowns).map(([key, secs]) => (
+                      <span key={key} style={{marginRight: '8px', color: '#FFA726'}}>{key}: {Math.round(secs)}s</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* === ALERTAS AL TRADING BOT (MANUALES) === */}
+          <div style={styles.alertSection}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+              <h4 style={{...styles.sectionTitle, marginBottom: 0}}>Alertas Manuales</h4>
+              <label style={{display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'}}>
+                <input
+                  type="checkbox"
+                  checked={alertsEnabled}
+                  onChange={(e) => handleToggleAlerts(e.target.checked)}
+                  style={{cursor: 'pointer'}}
+                />
+                <span style={{fontSize: '12px', color: alertsEnabled ? '#4CAF50' : '#888'}}>
+                  {alertsEnabled ? 'Activo' : 'Inactivo'}
+                </span>
+              </label>
+            </div>
+
+            {alertsEnabled && (
+              <>
+                <div style={{fontSize: '11px', color: '#888', marginBottom: '8px'}}>
+                  Envia las zonas con breakout al TradingBot para ejecutar ordenes con SL/TP calculados.
+                </div>
+
+                <div style={styles.row}>
+                  <label style={styles.label}>TradingBot URL:</label>
+                  <input
+                    type="text"
+                    style={{...styles.input, width: '180px', textAlign: 'left', fontSize: '11px'}}
+                    value={tradingBotUrl}
+                    onChange={(e) => handleTradingBotUrlChange(e.target.value)}
+                    placeholder="http://localhost:5000"
+                  />
+                </div>
+
+                {/* Boton enviar alertas (solo si hay zonas detectadas) */}
+                {stats && detectedZones.length > 0 && (
+                  <div style={{marginTop: '8px'}}>
+                    <button
+                      style={styles.alertBtn}
+                      onClick={handleSendAlerts}
+                      disabled={alertSending}
+                    >
+                      {alertSending ? 'Enviando...' : `Enviar Alertas (${detectedZones.filter(z => z.trade_result && z.trade_result !== 'SKIPPED' && z.trade_result !== 'NO_ENTRY' && z.entry_price && z.sl_price && z.tp_price).length} zonas)`}
+                    </button>
+
+                    {/* Resultado del envio */}
+                    {alertResult && (
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        backgroundColor: alertResult.success ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 87, 34, 0.1)',
+                        border: `1px solid ${alertResult.success ? '#4CAF50' : '#FF5722'}`,
+                        color: alertResult.success ? '#4CAF50' : '#FF5722'
+                      }}>
+                        {alertResult.error
+                          ? `Error: ${alertResult.error}`
+                          : `Enviadas: ${alertResult.sent} | Fallidas: ${alertResult.failed} | Total validas: ${alertResult.total_valid}`
+                        }
+                        {alertResult.results && alertResult.results.length > 0 && (
+                          <div style={{marginTop: '4px', fontSize: '11px', color: '#B0B0B0', maxHeight: '80px', overflowY: 'auto'}}>
+                            {alertResult.results.map((r, i) => (
+                              <div key={i} style={{color: r.success ? '#4CAF50' : '#FF5722'}}>
+                                {r.direction} @ {r.entry_price} - {r.success ? 'OK' : r.message}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -1185,6 +1794,32 @@ const styles = {
     cursor: 'pointer',
     fontWeight: 'bold'
   },
+  vpSection: {
+    marginBottom: '12px',
+    padding: '10px',
+    backgroundColor: '#252536',
+    borderRadius: '6px',
+    border: '1px solid #333'
+  },
+  vpBtn: {
+    padding: '6px 12px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#1565C0',
+    color: '#fff',
+    fontSize: '12px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  vpClearBtn: {
+    padding: '6px 12px',
+    borderRadius: '4px',
+    border: '1px solid #666',
+    backgroundColor: 'transparent',
+    color: '#999',
+    fontSize: '12px',
+    cursor: 'pointer'
+  },
   layerBlock: {
     marginBottom: '8px',
     borderRadius: '4px',
@@ -1298,6 +1933,42 @@ const styles = {
     fontSize: '10px',
     color: '#666',
     marginTop: '4px'
+  },
+  // === REALTIME STYLES ===
+  realtimeSection: {
+    marginBottom: '12px',
+    padding: '10px',
+    backgroundColor: '#1A2332',
+    borderRadius: '6px',
+    border: '1px solid #1565C0'
+  },
+  realtimeBtn: {
+    padding: '5px 10px',
+    borderRadius: '4px',
+    border: 'none',
+    color: 'white',
+    fontSize: '12px',
+    cursor: 'pointer',
+    fontWeight: '500'
+  },
+  // === ALERTAS STYLES ===
+  alertSection: {
+    marginBottom: '12px',
+    padding: '10px',
+    backgroundColor: '#252536',
+    borderRadius: '6px',
+    border: '1px solid #333'
+  },
+  alertBtn: {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#E65100',
+    color: 'white',
+    fontSize: '13px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
   }
 };
 
