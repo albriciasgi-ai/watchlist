@@ -34,7 +34,7 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
         lessons: tradeData.reflection?.lessons || '',
         emotions_before: tradeData.reflection?.emotions_before || '',
         emotions_after: tradeData.reflection?.emotions_after || '',
-        setup_quality: tradeData.setup?.quality || 5,
+        setup_quality: tradeData.setup?.quality ?? 5,
         followed_rules: tradeData.execution?.followed_rules ?? true,
         execution_notes: tradeData.execution?.notes || '',
         stop_loss: tradeData.setup?.stop_loss || '',
@@ -58,13 +58,11 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
           emotions_after: editData.emotions_after
         },
         setup: {
-          ...trade.setup,
           quality: editData.setup_quality,
-          stop_loss: editData.stop_loss ? parseFloat(editData.stop_loss) : null,
-          take_profit: editData.take_profit ? parseFloat(editData.take_profit) : null
+          stop_loss: editData.stop_loss ? parseFloat(editData.stop_loss) : 0,
+          take_profit: editData.take_profit ? parseFloat(editData.take_profit) : 0
         },
         execution: {
-          ...trade.execution,
           followed_rules: editData.followed_rules,
           notes: editData.execution_notes
         }
@@ -76,7 +74,11 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
         body: JSON.stringify(updateData)
       })
 
-      if (!res.ok) throw new Error('Error al guardar')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        console.error('Backend error:', errData)
+        throw new Error('Error al guardar')
+      }
 
       await fetchTrade()
       setEditing(false)

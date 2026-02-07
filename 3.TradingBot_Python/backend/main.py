@@ -1202,12 +1202,17 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             if order_type.upper() == "LIMIT" and not limit_price:
                 raise HTTPException(status_code=400, detail="limit_price required for Limit orders")
 
-            # Execute order sequence - use configured method
-            execution_method = "integrated" if state.use_integrated_tpsl else "sequential"
-            order_type_str = f"{order_type.upper()} " if order_type.upper() == "LIMIT" else ""
+            # For Limit orders, ALWAYS use integrated method (sequential doesn't support limit)
+            is_limit = order_type.upper() == "LIMIT"
+            use_integrated = state.use_integrated_tpsl or is_limit
+            execution_method = "integrated" if use_integrated else "sequential"
+            if is_limit and not state.use_integrated_tpsl:
+                state.log("info", f"[TRADE] Limit order detected - forcing integrated method")
+
+            order_type_str = f"{order_type.upper()} " if is_limit else ""
             state.log("info", f"[TRADE] Executing {order_type_str}trade ({execution_method}): {side} {symbol} qty={quantity} @ {price}")
 
-            if state.use_integrated_tpsl:
+            if use_integrated:
                 # Integrated method: 1 API call with TP/SL
                 result = await state.order_manager.execute_integrated_sequence(
                     symbol=symbol,
@@ -1218,7 +1223,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                     limit_price=limit_price
                 )
             else:
-                # Sequential method: 3 separate API calls (original)
+                # Sequential method: 3 separate API calls (only for Market orders)
                 result = await state.order_manager.execute_complete_sequence(
                     symbol=symbol,
                     side=side,

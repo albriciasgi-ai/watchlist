@@ -129,6 +129,9 @@ class TradeSetup:
     # Notas pre-trade
     setup_notes: str = ""
 
+    # Calidad del setup (1-10)
+    quality: int = 5
+
     def calculate_rr(self) -> float:
         """Calcula el Risk/Reward ratio"""
         if self.entry_price == 0 or self.stop_loss == 0 or self.take_profit == 0:
@@ -184,6 +187,10 @@ class ExecutionQuality:
     # Score de ejecucion (0-100)
     execution_score: int = 50
 
+    # Gestion manual
+    followed_rules: bool = True
+    notes: str = ""
+
     def calculate_slippage(self) -> float:
         """Calcula el slippage de entrada"""
         if self.intended_entry == 0:
@@ -221,6 +228,12 @@ class TradeReflection:
 
     # Rating general (1-5 estrellas)
     overall_rating: int = 3
+
+    # Campos del frontend
+    notes: str = ""
+    lessons: str = ""
+    emotions_before: str = ""
+    emotions_after: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

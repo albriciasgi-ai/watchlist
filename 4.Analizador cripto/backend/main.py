@@ -4917,12 +4917,13 @@ async def send_zone_alert(request: Request):
         confidence = body.get("confidence", 70)
         entry_mode = body.get("entry_mode", "breakout_close")
         trading_bot_url = body.get("trading_bot_url", "http://localhost:5000")
+        order_type = body.get("order_type", "market").lower()  # "market" o "limit"
 
         if not symbol or not direction or not entry_price:
             return {"success": False, "error": "Faltan campos requeridos: symbol, direction, entry_price"}
 
-        if not sl_price or not tp_price:
-            return {"success": False, "error": "Se requieren sl_price y tp_price"}
+        if order_type == "limit" and (not sl_price or not tp_price):
+            return {"success": False, "error": "Se requieren sl_price y tp_price para ordenes Limit"}
 
         # Mapear direction: UP -> LONG, DOWN -> SHORT
         if direction in ("UP", "LONG"):
@@ -4942,14 +4943,25 @@ async def send_zone_alert(request: Request):
                 "price": float(entry_price),
                 "confidence": float(confidence),
                 "direction": pattern_direction
-            },
-            "custom_stop_loss": float(sl_price),
-            "custom_take_profit": float(tp_price)
+            }
         }
+
+        if order_type == "limit":
+            # Limit: usar entry_price de la zona como precio limite, con TP/SL exactos
+            alert_payload["order_type"] = "Limit"
+            alert_payload["limit_price"] = float(entry_price)
+            alert_payload["custom_stop_loss"] = float(sl_price)
+            alert_payload["custom_take_profit"] = float(tp_price)
+        else:
+            # Market: NO enviar custom TP/SL, el TradingBot usara sus defaults
+            alert_payload["order_type"] = "Market"
 
         # Enviar al TradingBot
         target_url = f"{trading_bot_url}/api/watchlist-alert"
-        print(f"[ZONE_ALERT] Enviando alerta: {symbol} {pattern_direction} @ {entry_price} | SL={sl_price} TP={tp_price} -> {target_url}")
+        if order_type == "limit":
+            print(f"[ZONE_ALERT] Enviando LIMIT: {symbol} {pattern_direction} @ {entry_price} | SL={sl_price} TP={tp_price} -> {target_url}")
+        else:
+            print(f"[ZONE_ALERT] Enviando MARKET: {symbol} {pattern_direction} (TP/SL defaults del bot) -> {target_url}")
 
         async with httpx.AsyncClient(timeout=10) as client:
             response = await client.post(target_url, json=alert_payload)
@@ -4996,6 +5008,7 @@ async def send_zone_alerts_batch(request: Request):
         symbol = body.get("symbol", "").upper()
         trading_bot_url = body.get("trading_bot_url", "http://localhost:5000")
         entry_mode = body.get("entry_mode", "breakout_close")
+        order_type = body.get("order_type", "market").lower()  # "market" o "limit"
 
         if not zones or not symbol:
             return {"success": False, "error": "Se requieren zones y symbol"}
@@ -5006,12 +5019,17 @@ async def send_zone_alerts_batch(request: Request):
             trade_result = z.get("trade_result", "")
             if trade_result in ("SKIPPED", "NO_ENTRY", ""):
                 continue
-            if not z.get("entry_price") or not z.get("sl_price") or not z.get("tp_price"):
+            if not z.get("entry_price"):
+                continue
+            # Para limit, necesitamos sl_price y tp_price
+            if order_type == "limit" and (not z.get("sl_price") or not z.get("tp_price")):
                 continue
             valid_zones.append(z)
 
         if not valid_zones:
             return {"success": False, "error": "No hay zonas validas para enviar alertas", "filtered": len(zones)}
+
+        print(f"[ZONE_ALERT_BATCH] {symbol} | {len(valid_zones)} zonas validas | order_type={order_type.upper()}")
 
         results = []
         sent = 0
@@ -5036,10 +5054,18 @@ async def send_zone_alerts_batch(request: Request):
                         "price": float(z["entry_price"]),
                         "confidence": float(z.get("trading_score", 70)),
                         "direction": pattern_direction
-                    },
-                    "custom_stop_loss": float(z["sl_price"]),
-                    "custom_take_profit": float(z["tp_price"])
+                    }
                 }
+
+                if order_type == "limit":
+                    # Limit: entry_price como precio limite, TP/SL exactos de la simulacion
+                    alert_payload["order_type"] = "Limit"
+                    alert_payload["limit_price"] = float(z["entry_price"])
+                    alert_payload["custom_stop_loss"] = float(z["sl_price"])
+                    alert_payload["custom_take_profit"] = float(z["tp_price"])
+                else:
+                    # Market: sin custom TP/SL, el TradingBot usara sus defaults
+                    alert_payload["order_type"] = "Market"
 
                 try:
                     target_url = f"{trading_bot_url}/api/watchlist-alert"

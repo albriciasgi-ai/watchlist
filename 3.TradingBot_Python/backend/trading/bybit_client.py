@@ -16,6 +16,7 @@ import json
 import httpx
 import asyncio
 from typing import Optional, Dict, Any
+from decimal import Decimal
 from datetime import datetime, timezone
 
 from .rate_limiter import get_rate_limiter, RateLimiter
@@ -453,6 +454,34 @@ class BybitClient:
         except Exception as e:
             print(f"[ERROR] Failed to get instrument info for {symbol}: {e}")
             return {"success": False, "error": str(e)}
+
+    async def get_last_price(self, symbol: str, category: str = "linear") -> Optional[Decimal]:
+        """
+        Get the current last traded price for a symbol from Bybit.
+
+        Args:
+            symbol: Trading pair (e.g., "BTCUSDT")
+            category: "linear" for USDT perpetual
+
+        Returns:
+            Decimal price or None if failed
+        """
+        try:
+            result = await self._make_request(
+                "GET",
+                "/v5/market/tickers",
+                params={"category": category, "symbol": symbol}
+            )
+            if result.get("retCode") == 0:
+                tickers = result.get("result", {}).get("list", [])
+                if tickers:
+                    last_price = tickers[0].get("lastPrice", "0")
+                    return Decimal(str(last_price))
+            print(f"[WARNING] Could not get last price for {symbol}: {result.get('retMsg', 'Unknown')}")
+            return None
+        except Exception as e:
+            print(f"[WARNING] Error getting last price for {symbol}: {e}")
+            return None
 
     async def place_market_order(
         self,

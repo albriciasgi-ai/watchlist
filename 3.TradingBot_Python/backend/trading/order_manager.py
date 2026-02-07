@@ -627,10 +627,16 @@ class OrderManager:
                     )
                     print(f"[LIMIT] Entry Price: ${formatted_limit}")
                 else:
-                    # For market orders, use current price from config
-                    entry_price = Decimal(str(config.get("current_price", 0)))
+                    # For market orders, get REAL current price from Bybit
+                    # (alert price may be historical and differ from current market)
+                    real_market_price = await self.client.get_last_price(symbol, config.get("category", "linear"))
+                    if real_market_price and real_market_price > 0:
+                        entry_price = real_market_price
+                        print(f"[MARKET] Using real market price for TP/SL calc: ${entry_price}")
+                    else:
+                        entry_price = Decimal(str(config.get("current_price", 0)))
+                        print(f"[MARKET] Fallback to alert price for TP/SL calc: ${entry_price}")
                     formatted_limit = None
-                    print(f"[MARKET] Using alert price for TP/SL calc: ${entry_price}")
 
                 if entry_price == 0:
                     print(f"[ERROR] No valid price for TP/SL calculation")

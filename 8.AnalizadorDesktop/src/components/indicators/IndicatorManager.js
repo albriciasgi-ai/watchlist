@@ -1574,7 +1574,7 @@ class IndicatorManager {
    * @param {string} tradingBotUrl - URL del TradingBot (default: localhost:5000)
    * @returns {Promise<object>} - Resultado del envio
    */
-  async sendZoneAlert(zone, tradingBotUrl = 'http://localhost:5000') {
+  async sendZoneAlert(zone, tradingBotUrl = 'http://localhost:5000', orderType = 'market') {
     try {
       const requestBody = {
         symbol: this.symbol,
@@ -1584,7 +1584,8 @@ class IndicatorManager {
         tp_price: zone.tp_price || 0,
         confidence: zone.trading_score || 70,
         entry_mode: zone.entry_mode || 'breakout_close',
-        trading_bot_url: tradingBotUrl
+        trading_bot_url: tradingBotUrl,
+        order_type: orderType
       };
 
       const response = await fetch(`${API_BASE_URL}/api/zones/send-alert`, {
@@ -1612,15 +1613,17 @@ class IndicatorManager {
    * @param {Array} zones - Lista de zonas detectadas
    * @param {string} entryMode - Modo de entrada usado en la deteccion
    * @param {string} tradingBotUrl - URL del TradingBot
+   * @param {string} orderType - 'market' o 'limit'
    * @returns {Promise<object>} - Resultado batch
    */
-  async sendZoneAlertsBatch(zones, entryMode = 'breakout_close', tradingBotUrl = 'http://localhost:5000') {
+  async sendZoneAlertsBatch(zones, entryMode = 'breakout_close', tradingBotUrl = 'http://localhost:5000', orderType = 'market') {
     try {
       const requestBody = {
         symbol: this.symbol,
         zones: zones,
         entry_mode: entryMode,
-        trading_bot_url: tradingBotUrl
+        trading_bot_url: tradingBotUrl,
+        order_type: orderType
       };
 
       const response = await fetch(`${API_BASE_URL}/api/zones/send-alerts-batch`, {

@@ -55,50 +55,60 @@ class MarketContextInput(BaseModel):
 
 
 class TradeSetupInput(BaseModel):
-    pattern_type: str = "custom"
-    pattern_confidence: float = 0.0
-    entry_price: float = 0.0
-    stop_loss: float = 0.0
-    take_profit: float = 0.0
-    risk_reward_ratio: float = 0.0
-    risk_amount_usd: float = 0.0
-    position_size: float = 0.0
-    position_size_usd: float = 0.0
-    timeframe: str = "1"
+    pattern_type: Optional[str] = None
+    pattern_confidence: Optional[float] = None
+    entry_price: Optional[float] = None
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    risk_reward_ratio: Optional[float] = None
+    risk_amount_usd: Optional[float] = None
+    position_size: Optional[float] = None
+    position_size_usd: Optional[float] = None
+    timeframe: Optional[str] = None
     key_level_entry: Optional[float] = None
-    key_level_type: str = "unknown"
-    setup_notes: str = ""
+    key_level_type: Optional[str] = None
+    setup_notes: Optional[str] = None
+    # Campo adicional del frontend
+    quality: Optional[int] = None
 
 
 class ExecutionQualityInput(BaseModel):
-    intended_entry: float = 0.0
-    actual_entry: float = 0.0
-    entry_slippage_pct: float = 0.0
-    entry_timing: str = "unknown"
-    exit_timing: str = "unknown"
-    sl_moved: bool = False
-    sl_moved_direction: str = "none"
-    tp_moved: bool = False
-    added_to_position: bool = False
-    partial_close: bool = False
-    fomo_entry: bool = False
-    revenge_trade: bool = False
-    overtrading: bool = False
-    execution_score: int = 50
+    intended_entry: Optional[float] = None
+    actual_entry: Optional[float] = None
+    entry_slippage_pct: Optional[float] = None
+    entry_timing: Optional[str] = None
+    exit_timing: Optional[str] = None
+    sl_moved: Optional[bool] = None
+    sl_moved_direction: Optional[str] = None
+    tp_moved: Optional[bool] = None
+    added_to_position: Optional[bool] = None
+    partial_close: Optional[bool] = None
+    fomo_entry: Optional[bool] = None
+    revenge_trade: Optional[bool] = None
+    overtrading: Optional[bool] = None
+    execution_score: Optional[int] = None
+    # Campo adicional del frontend
+    followed_rules: Optional[bool] = None
+    notes: Optional[str] = None
 
 
 class TradeReflectionInput(BaseModel):
-    what_went_well: str = ""
-    what_went_wrong: str = ""
-    lessons_learned: str = ""
-    followed_plan: bool = True
-    would_take_again: bool = True
-    confidence_level: int = 5
-    tags: List[str] = []
-    ai_analysis: str = ""
-    ai_suggestions: List[str] = []
-    ai_pattern_detected: str = ""
-    overall_rating: int = 3
+    what_went_well: Optional[str] = None
+    what_went_wrong: Optional[str] = None
+    lessons_learned: Optional[str] = None
+    followed_plan: Optional[bool] = None
+    would_take_again: Optional[bool] = None
+    confidence_level: Optional[int] = None
+    tags: Optional[List[str]] = None
+    ai_analysis: Optional[str] = None
+    ai_suggestions: Optional[List[str]] = None
+    ai_pattern_detected: Optional[str] = None
+    overall_rating: Optional[int] = None
+    # Campos adicionales del frontend
+    notes: Optional[str] = None
+    lessons: Optional[str] = None
+    emotions_before: Optional[str] = None
+    emotions_after: Optional[str] = None
 
 
 class CreateEntryRequest(BaseModel):
@@ -196,19 +206,24 @@ async def create_entry(request: CreateEntryRequest):
 
     # Aplicar sub-modelos si se proporcionan
     if request.market_context:
-        entry.market_context = MarketContext(**request.market_context.model_dump())
+        mc_data = {k: v for k, v in request.market_context.model_dump().items() if v is not None}
+        entry.market_context = MarketContext(**{k: v for k, v in mc_data.items() if k in MarketContext.__dataclass_fields__})
 
     if request.setup:
-        setup_data = request.setup.model_dump()
+        setup_data = {k: v for k, v in request.setup.model_dump().items() if v is not None}
         try:
-            setup_data['pattern_type'] = PatternType(setup_data['pattern_type'])
+            setup_data['pattern_type'] = PatternType(setup_data.get('pattern_type', 'custom'))
         except ValueError:
             setup_data['pattern_type'] = PatternType.CUSTOM
-        entry.setup = TradeSetup(**setup_data)
+        # Filtrar solo campos validos del dataclass
+        valid_data = {k: v for k, v in setup_data.items() if k in TradeSetup.__dataclass_fields__}
+        entry.setup = TradeSetup(**valid_data)
         entry.setup.risk_reward_ratio = entry.setup.calculate_rr()
 
     if request.execution:
-        entry.execution = ExecutionQuality(**request.execution.model_dump())
+        ex_data = {k: v for k, v in request.execution.model_dump().items() if v is not None}
+        valid_data = {k: v for k, v in ex_data.items() if k in ExecutionQuality.__dataclass_fields__}
+        entry.execution = ExecutionQuality(**valid_data)
         entry.execution.entry_slippage_pct = entry.execution.calculate_slippage()
 
     # Guardar
@@ -359,23 +374,41 @@ async def update_entry(entry_id: str, request: UpdateEntryRequest):
     if request.notes is not None:
         entry.notes = request.notes
 
-    # Actualizar sub-modelos
+    # Actualizar sub-modelos con MERGE parcial (no reemplazo completo)
     if request.market_context:
-        entry.market_context = MarketContext(**request.market_context.model_dump())
+        existing = entry.market_context.to_dict() if entry.market_context else {}
+        incoming = {k: v for k, v in request.market_context.model_dump().items() if v is not None}
+        existing.update(incoming)
+        entry.market_context = MarketContext.from_dict(existing)
 
     if request.setup:
-        setup_data = request.setup.model_dump()
+        existing = entry.setup.to_dict() if entry.setup else {}
+        incoming = request.setup.model_dump()
+        # Solo actualizar campos que fueron explicitamente enviados (no None)
+        for key, val in incoming.items():
+            if val is not None:
+                existing[key] = val
         try:
-            setup_data['pattern_type'] = PatternType(setup_data['pattern_type'])
+            existing['pattern_type'] = PatternType(existing.get('pattern_type', 'custom'))
         except ValueError:
-            setup_data['pattern_type'] = PatternType.CUSTOM
-        entry.setup = TradeSetup(**setup_data)
+            existing['pattern_type'] = PatternType.CUSTOM
+        entry.setup = TradeSetup(**{k: v for k, v in existing.items() if k in TradeSetup.__dataclass_fields__})
 
     if request.execution:
-        entry.execution = ExecutionQuality(**request.execution.model_dump())
+        existing = entry.execution.to_dict() if entry.execution else {}
+        incoming = request.execution.model_dump()
+        for key, val in incoming.items():
+            if val is not None:
+                existing[key] = val
+        entry.execution = ExecutionQuality(**{k: v for k, v in existing.items() if k in ExecutionQuality.__dataclass_fields__})
 
     if request.reflection:
-        entry.reflection = TradeReflection(**request.reflection.model_dump())
+        existing = entry.reflection.to_dict() if entry.reflection else {}
+        incoming = request.reflection.model_dump()
+        for key, val in incoming.items():
+            if val is not None:
+                existing[key] = val
+        entry.reflection = TradeReflection(**{k: v for k, v in existing.items() if k in TradeReflection.__dataclass_fields__})
 
     # Recalcular duration si hay exit_time
     if entry.exit_time:

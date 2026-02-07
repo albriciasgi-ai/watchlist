@@ -107,6 +107,9 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   });
   const [alertSending, setAlertSending] = useState(false);
   const [alertResult, setAlertResult] = useState(null); // { sent, failed, total_valid, results }
+  const [alertOrderType, setAlertOrderType] = useState(() => {
+    try { return localStorage.getItem('zoneDetector_alertOrderType') || 'market'; } catch { return 'market'; }
+  });
 
   // === REALTIME ZONE DETECTION SERVICE ===
   const [realtimeEnabled, setRealtimeEnabled] = useState(false);
@@ -425,6 +428,11 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     try { localStorage.setItem('zoneDetector_tradingBotUrl', url); } catch {}
   }, []);
 
+  const handleOrderTypeChange = useCallback((type) => {
+    setAlertOrderType(type);
+    try { localStorage.setItem('zoneDetector_alertOrderType', type); } catch {}
+  }, []);
+
   const handleSendAlerts = useCallback(async () => {
     const manager = getManager();
     if (!manager || detectedZones.length === 0) return;
@@ -435,7 +443,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       const result = await manager.sendZoneAlertsBatch(
         detectedZones,
         params.entry_mode || 'breakout_close',
-        tradingBotUrl
+        tradingBotUrl,
+        alertOrderType
       );
       setAlertResult(result);
       console.log(`[ZoneDetector] Alertas enviadas:`, result);
@@ -444,7 +453,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     } finally {
       setAlertSending(false);
     }
-  }, [getManager, detectedZones, params.entry_mode, tradingBotUrl]);
+  }, [getManager, detectedZones, params.entry_mode, tradingBotUrl, alertOrderType]);
 
   // === HANDLERS REALTIME SERVICE ===
   const handleRealtimeToggle = useCallback(async () => {
@@ -1585,6 +1594,40 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                   />
                 </div>
 
+                <div style={styles.row}>
+                  <label style={styles.label}>Tipo de orden:</label>
+                  <div style={{display: 'flex', gap: '4px'}}>
+                    <button
+                      style={{
+                        ...styles.miniBtn,
+                        backgroundColor: alertOrderType === 'market' ? '#1976D2' : '#333',
+                        color: alertOrderType === 'market' ? '#fff' : '#aaa',
+                        border: alertOrderType === 'market' ? '1px solid #42A5F5' : '1px solid #555'
+                      }}
+                      onClick={() => handleOrderTypeChange('market')}
+                    >
+                      Market
+                    </button>
+                    <button
+                      style={{
+                        ...styles.miniBtn,
+                        backgroundColor: alertOrderType === 'limit' ? '#F57C00' : '#333',
+                        color: alertOrderType === 'limit' ? '#fff' : '#aaa',
+                        border: alertOrderType === 'limit' ? '1px solid #FFB74D' : '1px solid #555'
+                      }}
+                      onClick={() => handleOrderTypeChange('limit')}
+                    >
+                      Limit
+                    </button>
+                  </div>
+                </div>
+                <div style={{fontSize: '10px', color: '#777', marginTop: '-4px', marginBottom: '6px', paddingLeft: '2px'}}>
+                  {alertOrderType === 'market'
+                    ? 'Market: Compra al precio actual. TP/SL se calculan con los defaults del TradingBot.'
+                    : 'Limit: Compra al entry_price de la zona. TP/SL exactos de la simulacion.'
+                  }
+                </div>
+
                 {/* Boton enviar alertas (solo si hay zonas detectadas) */}
                 {stats && detectedZones.length > 0 && (
                   <div style={{marginTop: '8px'}}>
@@ -1593,7 +1636,11 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                       onClick={handleSendAlerts}
                       disabled={alertSending}
                     >
-                      {alertSending ? 'Enviando...' : `Enviar Alertas (${detectedZones.filter(z => z.trade_result && z.trade_result !== 'SKIPPED' && z.trade_result !== 'NO_ENTRY' && z.entry_price && z.sl_price && z.tp_price).length} zonas)`}
+                      {alertSending ? 'Enviando...' : `Enviar ${alertOrderType === 'limit' ? 'Limit' : 'Market'} (${detectedZones.filter(z => {
+                        if (!z.trade_result || z.trade_result === 'SKIPPED' || z.trade_result === 'NO_ENTRY' || !z.entry_price) return false;
+                        if (alertOrderType === 'limit' && (!z.sl_price || !z.tp_price)) return false;
+                        return true;
+                      }).length} zonas)`}
                     </button>
 
                     {/* Resultado del envio */}
@@ -1967,6 +2014,13 @@ const styles = {
     backgroundColor: '#E65100',
     color: 'white',
     fontSize: '13px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  miniBtn: {
+    padding: '4px 10px',
+    borderRadius: '3px',
+    fontSize: '11px',
     cursor: 'pointer',
     fontWeight: 'bold'
   }
