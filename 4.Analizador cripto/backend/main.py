@@ -5238,6 +5238,144 @@ async def clear_zone_realtime_cooldowns():
         return {"success": False, "error": str(e)}
 
 
+@app.get("/api/zones/realtime/metrics/{symbol}")
+async def get_zone_realtime_metrics(
+    symbol: str,
+    interval: str = "60",
+    days: int = 1,
+    detection_method: str = "trading_zones",
+    consol_min_bars: int = 8,
+    consol_atr_ratio: float = 0.6,
+    consol_max_range_pct: float = 2.0,
+    consol_body_ratio: float = 0.5,
+    atr_dyn_period: int = 200,
+    atr_dyn_ma_period: int = 20,
+    atr_dyn_multiplier: float = 1.0,
+    use_ttm_prefilter: bool = False,
+    use_bbwp_scoring: bool = False,
+    atr_band_ma_period: int = 20,
+    ttm_atr_length: int = 20,
+    ttm_kc_multiplier: float = 1.5,
+    bbwp_lookback: int = 252,
+    bbwp_squeeze_threshold: float = 20,
+):
+    """
+    Retorna metricas por candle para las barras de estado del Zone Detector.
+    Cada metrica es un bool por candle: True = condicion cumplida.
+    Carga velas historicas directamente de Bybit API (no depende del buffer realtime).
+
+    Para que el global_atr sea representativo (como en la deteccion real), se cargan
+    datos extra de contexto (minimo 7 dias) aunque el chart solo muestre 1 dia.
+    """
+    try:
+        zone_service = get_zone_service()
+
+        # Construir dict de params para pasar al compute
+        metrics_params = {
+            "detection_method": detection_method,
+            "consol_min_bars": consol_min_bars,
+            "consol_atr_ratio": consol_atr_ratio,
+            "consol_max_range_pct": consol_max_range_pct,
+            "consol_body_ratio": consol_body_ratio,
+            "atr_dyn_period": atr_dyn_period,
+            "atr_dyn_ma_period": atr_dyn_ma_period,
+            "atr_dyn_multiplier": atr_dyn_multiplier,
+            "use_ttm_prefilter": use_ttm_prefilter,
+            "use_bbwp_scoring": use_bbwp_scoring,
+            "atr_band_ma_period": atr_band_ma_period,
+            "ttm_atr_length": ttm_atr_length,
+            "ttm_kc_multiplier": ttm_kc_multiplier,
+            "bbwp_lookback": bbwp_lookback,
+            "bbwp_squeeze_threshold": bbwp_squeeze_threshold,
+        }
+
+        # Normalizar interval
+        interval_clean = interval.replace("m", "").replace("h", "").replace("d", "D").replace("w", "W")
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
+        interval_minutes = get_interval_minutes(interval_final)
+
+        # Calcular velas necesarias para el rango visible
+        max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+        days_to_fetch = min(days, max_days_allowed)
+        visible_candles_count = int(days_to_fetch * 24 * 60 / interval_minutes)
+
+        # Contexto extra para global_atr: minimo 7 dias o 500 velas
+        context_days = max(days_to_fetch, 7)
+        context_days = min(context_days, max_days_allowed)
+        context_candles_count = int(context_days * 24 * 60 / interval_minutes)
+        # Asegurar minimo 500 velas de contexto
+        context_candles_count = max(context_candles_count, 500)
+        total_to_fetch = max(visible_candles_count, context_candles_count)
+
+        # Fetch de Bybit API
+        now_ms = int(time.time() * 1000)
+        start_ms = now_ms - (context_days * 24 * 60 * 60 * 1000)
+        # Ajustar start para cubrir el total_to_fetch
+        candles_start_ms = now_ms - int(total_to_fetch * interval_minutes * 60 * 1000)
+        start_ms = min(start_ms, candles_start_ms)
+        all_candles = []
+
+        async with httpx.AsyncClient(timeout=30) as client:
+            current_start = start_ms
+            max_requests = 20
+            for req_num in range(max_requests):
+                remaining = total_to_fetch - len(all_candles)
+                if remaining <= 0:
+                    break
+                fetch_limit = min(1000, remaining)
+                url = (
+                    "https://api.bybit.com/v5/market/kline?"
+                    f"category=linear&symbol={symbol.upper()}&interval={interval_final}"
+                    f"&start={current_start}&limit={fetch_limit}"
+                )
+                try:
+                    r = await client.get(url)
+                    data = r.json()
+                except Exception:
+                    break
+                if data.get("retCode") != 0:
+                    break
+                batch = data["result"]["list"]
+                if not batch:
+                    break
+                batch.reverse()
+                all_candles.extend(batch)
+                last_ts = int(batch[-1][0])
+                current_start = last_ts + (interval_minutes * 60 * 1000)
+                if current_start >= now_ms:
+                    break
+                await asyncio.sleep(0.05)
+
+        # Convertir a formato dict
+        all_dicts = []
+        for c in all_candles:
+            all_dicts.append({
+                "timestamp": int(c[0]),
+                "open": float(c[1]),
+                "high": float(c[2]),
+                "low": float(c[3]),
+                "close": float(c[4]),
+                "volume": float(c[5]),
+            })
+
+        # Separar: contexto completo vs rango visible
+        context_candles = all_dicts  # Todas las velas para global_atr
+        visible_candles = all_dicts[-visible_candles_count:] if len(all_dicts) > visible_candles_count else all_dicts
+
+        metrics = zone_service.compute_per_candle_metrics(
+            symbol.upper(), visible_candles,
+            context_candles=context_candles,
+            params=metrics_params
+        )
+        return {"success": True, "symbol": symbol.upper(), **metrics}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 # ============================================================
 # Zone Detector Presets (persistencia en archivo JSON)
 # ============================================================

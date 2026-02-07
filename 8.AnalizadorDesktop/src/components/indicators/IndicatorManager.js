@@ -61,6 +61,12 @@ class IndicatorManager {
     // 🎯 NUEVO: Zone Visualizer (para trading zones)
     this.zoneVisualizerIndicator = null;
 
+    // Realtime zone polling
+    this._realtimeZoneTimerId = null;
+    this._realtimeZoneEnabled = false;
+    this._lastRealtimeZoneFingerprint = ''; // Para detectar cambios
+    this._zoneMetricsTimerId = null;
+
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -129,8 +135,10 @@ class IndicatorManager {
 
     // Swing Detector - solo si habilitado
     if (indicatorStates['Swing Detector'] === true) {
-      log.debug(`[${this.symbol}] Creando Swing Detector`);
+      console.log(`[${this.symbol}] [SWING] initialize(): Creando SwingDetectorIndicator`);
       this.indicators.push(new SwingDetectorIndicator(this.symbol, this.interval, this.days));
+    } else {
+      console.log(`[${this.symbol}] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=${indicatorStates['Swing Detector']})`);
     }
 
     // S&R v2 (Swing-based) - solo si habilitado
@@ -280,7 +288,12 @@ class IndicatorManager {
       const priority3 = []; // Opcionales
 
       this.indicators.forEach((indicator) => {
-        if (!indicator.enabled) return;
+        if (!indicator.enabled) {
+          if (indicator.name === 'Swing Detector') {
+            console.warn(`[${this.symbol}] [SWING] refresh(): SKIP - indicator.enabled=false`);
+          }
+          return;
+        }
 
         // VWAP - Prioridad 1
         if (indicator.name === "VWAP") {
@@ -313,6 +326,7 @@ class IndicatorManager {
 
         // Swing Detector - Prioridad 2
         if (indicator.name === "Swing Detector" && indicator.fetchData) {
+          console.log(`[${this.symbol}] [SWING] refresh(): agregado a priority2 (enabled=${indicator.enabled})`);
           priority2.push({ indicator, name: "Swing Detector" });
         }
 
@@ -375,6 +389,9 @@ class IndicatorManager {
         await executeBatch(priority3, "Prioridad 3 (opcionales)");
       }
 
+      // Zone Detector metrics - cargar en background despues de los indicadores
+      this._fetchZoneMetrics();
+
       const duration = Date.now() - startTime;
       const totalIndicators = priority1.length + priority2.length + priority3.length;
       log.debug(`[${this.symbol}] Refresh completado en ${duration}ms (${totalIndicators} indicadores en 3 batches)`);
@@ -408,32 +425,48 @@ class IndicatorManager {
   toggleIndicator(name, enabled) {
     let indicator = this.indicators.find(ind => ind.name === name);
 
+    if (name === 'Swing Detector') {
+      console.log(`[${this.symbol}] [SWING] toggleIndicator(${name}, ${enabled}): found=${!!indicator}, totalIndicators=${this.indicators.length}`);
+    }
+
     // 🚀 LAZY: Si se habilita y no existe, crearlo bajo demanda
     if (enabled && !indicator) {
-      log.debug(`[${this.symbol}] 🚀 Creando ${name} bajo demanda (lazy)`);
+      log.debug(`[${this.symbol}] Creando ${name} bajo demanda (lazy)`);
       indicator = this._createIndicator(name);
       if (indicator) {
         indicator.indicatorManager = this;
         this.indicators.push(indicator);
+        if (name === 'Swing Detector') {
+          console.log(`[${this.symbol}] [SWING] Creado bajo demanda, enabled=${indicator.enabled}`);
+        }
       }
     }
 
     if (indicator) {
       indicator.setEnabled(enabled);
 
+      if (name === 'Swing Detector') {
+        console.log(`[${this.symbol}] [SWING] setEnabled(${enabled}) aplicado, indicator.enabled=${indicator.enabled}`);
+      }
+
       // Cargar datos si se habilita
       if (enabled && indicator.fetchData) {
-        log.debug(`[${this.symbol}] 📥 Cargando datos para ${name}...`);
+        log.debug(`[${this.symbol}] Cargando datos para ${name}...`);
 
         indicator.fetchData().then(() => {
-          log.debug(`[${this.symbol}] ✅ Datos de ${name} cargados`);
+          log.debug(`[${this.symbol}] Datos de ${name} cargados`);
+          if (name === 'Swing Detector') {
+            console.log(`[${this.symbol}] [SWING] fetchData completado via toggle, signals=${indicator.signals?.length}, requestRedraw=${!!this.requestRedraw}`);
+          }
           if (this.requestRedraw) {
             this.requestRedraw();
           }
         }).catch(err => {
-          log.error(`[${this.symbol}] ❌ Error cargando ${name}:`, err);
+          log.error(`[${this.symbol}] Error cargando ${name}:`, err);
         });
       }
+    } else if (name === 'Swing Detector') {
+      console.warn(`[${this.symbol}] [SWING] toggleIndicator: indicator es NULL despues de intentar crear`);
     }
   }
 
@@ -467,13 +500,22 @@ class IndicatorManager {
   }
 
   renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null, manualLevels = []) {
-    // ✅ SOLUCIÓN 1: Verificar si hay Fixed Range Profiles activos para este símbolo
+    // Log de diagnostico una vez por segundo
+    if (!this._lastOverlayLog || Date.now() - this._lastOverlayLog > 2000) {
+      this._lastOverlayLog = Date.now();
+      const overlayIndicators = this.indicators.filter(i => i.renderOverlay);
+      const enabledOverlays = overlayIndicators.filter(i => i.enabled);
+      const swingInd = this.indicators.find(i => i.name === 'Swing Detector');
+      console.log(`[${this.symbol}] [RENDER] renderOverlays: ${this.indicators.length} total, ${overlayIndicators.length} con renderOverlay, ${enabledOverlays.length} enabled. Swing=${swingInd ? `found(enabled=${swingInd.enabled})` : 'NOT FOUND'}`);
+    }
+
+    // Verificar si hay Fixed Range Profiles activos para este simbolo
     const activeFixedRanges = this.fixedRangeIndicators.filter(
       ind => ind.enabled && ind.symbol === this.symbol
     );
     const hasActiveFixedRanges = activeFixedRanges.length > 0;
 
-    // Renderizar indicadores normales (Volume Profile dinámico)
+    // Renderizar indicadores normales (Volume Profile dinamico)
     this.indicators.forEach(indicator => {
       if (indicator.renderOverlay && indicator.enabled) {
         // ✅ SOLUCIÓN 1: Si es Volume Profile y debe ocultarse cuando hay Fixed Ranges activos
@@ -1209,6 +1251,10 @@ class IndicatorManager {
   destroy() {
     log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
 
+    // Detener polling de zonas realtime y metricas
+    this.stopRealtimeZonePolling();
+    this._stopZoneMetricsPolling();
+
     // Destroy all indicators (stops pending fetches)
     this.indicators.forEach(indicator => {
       if (indicator.destroy) {
@@ -1260,17 +1306,155 @@ class IndicatorManager {
     });
   }
 
+  // --------------------------------------------------
+  // Realtime Zone Polling
+  // --------------------------------------------------
+
+  /**
+   * Verifica si el servicio realtime de zonas esta corriendo y auto-inicia el polling.
+   */
+  async _checkAndStartRealtimeZonePolling() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/status`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.success && data.running) {
+        log.info(`[${this.symbol}] Servicio realtime de zonas activo - iniciando polling`);
+        this.startRealtimeZonePolling();
+      }
+    } catch (e) {
+      // Backend no disponible - no hacer nada
+    }
+  }
+
+  /**
+   * Inicia polling de zonas detectadas en tiempo real por el backend.
+   * Consulta /api/zones/realtime/zones/{symbol} y actualiza el ZoneVisualizer.
+   */
+  startRealtimeZonePolling(intervalMs = 15000) {
+    this.stopRealtimeZonePolling();
+    this._realtimeZoneEnabled = true;
+    this._lastRealtimeZoneFingerprint = '';
+
+    log.info(`[${this.symbol}] Realtime zone polling iniciado (cada ${intervalMs / 1000}s)`);
+
+    // Primera consulta inmediata
+    this._fetchRealtimeZones();
+    this._fetchZoneMetrics();
+
+    this._realtimeZoneTimerId = setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      this._fetchRealtimeZones();
+      this._fetchZoneMetrics();
+    }, intervalMs);
+  }
+
+  /**
+   * Detiene polling de zonas realtime.
+   */
+  stopRealtimeZonePolling() {
+    if (this._realtimeZoneTimerId) {
+      clearInterval(this._realtimeZoneTimerId);
+      this._realtimeZoneTimerId = null;
+    }
+    this._realtimeZoneEnabled = false;
+  }
+
+  /**
+   * Fetch zonas realtime del backend y actualiza el ZoneVisualizer.
+   */
+  async _fetchRealtimeZones() {
+    if (!this._realtimeZoneEnabled || !this.zoneVisualizerIndicator) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/zones/${this.symbol}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+      if (!data.success) return;
+
+      const zones = data.zones || [];
+
+      // Generar fingerprint para detectar cambios (count + resultados + timestamps)
+      const fingerprint = zones.map(z => `${z.start_timestamp}_${z.trade_result}`).join('|');
+      if (fingerprint !== this._lastRealtimeZoneFingerprint) {
+        log.info(`[${this.symbol}] Realtime zones actualizadas: ${zones.length} zonas`);
+        this._lastRealtimeZoneFingerprint = fingerprint;
+        this.zoneVisualizerIndicator.setRealtimeZones(zones);
+
+        // Forzar redraw del chart
+        if (this.requestRedraw) {
+          this.requestRedraw();
+        }
+      }
+    } catch (e) {
+      // Silenciar errores de red (backend puede no estar corriendo)
+    }
+  }
+
+  /**
+   * Inicia polling independiente de metricas del Zone Detector.
+   */
+  _startZoneMetricsPolling(intervalMs = 30000) {
+    this._stopZoneMetricsPolling();
+    // Primer fetch ya se hizo en refresh(), solo iniciar timer
+    this._zoneMetricsTimerId = setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      this._fetchZoneMetrics();
+    }, intervalMs);
+  }
+
+  /**
+   * Detiene polling de metricas del Zone Detector.
+   */
+  _stopZoneMetricsPolling() {
+    if (this._zoneMetricsTimerId) {
+      clearInterval(this._zoneMetricsTimerId);
+      this._zoneMetricsTimerId = null;
+    }
+  }
+
+  /**
+   * Fetch metricas por candle del Zone Detector (ATR, Band, TTM, BBWP).
+   */
+  async _fetchZoneMetrics() {
+    if (!this.zoneVisualizerIndicator) return;
+    try {
+      // Sincronizar interval/days del chart con el ZoneVisualizer
+      this.zoneVisualizerIndicator.interval = this.interval;
+      this.zoneVisualizerIndicator.days = this.days;
+
+      await this.zoneVisualizerIndicator.fetchMetrics();
+      // Forzar redraw para pintar las barras
+      if (this.requestRedraw) {
+        this.requestRedraw();
+      }
+    } catch (e) {
+      // Silenciar errores
+    }
+  }
+
   /**
    * 🚀 Inicia polling en todos los indicadores después de carga completa
    */
   startAllPolling() {
-    log.info(`[${this.symbol}] 🚀 startAllPolling() llamado - ${this.indicators.length} indicadores`);
+    log.info(`[${this.symbol}] startAllPolling() llamado - ${this.indicators.length} indicadores`);
+    const swingInd = this.indicators.find(i => i.name === 'Swing Detector');
+    console.log(`[${this.symbol}] [SWING] startAllPolling(): Swing Detector ${swingInd ? `found (enabled=${swingInd.enabled}, hasStartPolling=${!!swingInd.startPollingIfReady})` : 'NOT FOUND'}`);
+
     this.indicators.forEach(indicator => {
       if (indicator.startPollingIfReady) {
         log.info(`[${this.symbol}] -> Llamando startPollingIfReady() para ${indicator.name}`);
         indicator.startPollingIfReady();
       }
     });
+
+    // Auto-detectar si el servicio realtime de zonas esta corriendo
+    this._checkAndStartRealtimeZonePolling();
+
+    // Polling independiente de metricas del Zone Detector (cada 30s)
+    this._startZoneMetricsPolling();
+
     log.info(`[${this.symbol}] 🚀 Polling iniciado para todos los indicadores`);
   }
 
@@ -1285,6 +1469,7 @@ class IndicatorManager {
         indicator.stopPolling();
       }
     });
+    this._stopZoneMetricsPolling();
     log.info(`[${this.symbol}] 🛑 Polling detenido para todos los indicadores`);
   }
 
@@ -1507,6 +1692,8 @@ class IndicatorManager {
 
       if (result.success && result.zones) {
         this.zoneVisualizerIndicator.setZones(result.zones);
+        // Sincronizar params de deteccion para que fetchMetrics los use
+        this.zoneVisualizerIndicator.setDetectionParams(params);
         log.info(`[${this.symbol}] ${result.zones.length} zonas cargadas (${result.candles_count || '?'} velas analizadas)`);
 
         return {

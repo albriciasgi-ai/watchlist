@@ -835,6 +835,7 @@ class SwingService:
             # Detectar si cambiaron interval o days para re-analizar
             old_interval = self.config.interval
             old_days = self.config.days
+            was_enabled = self.config.enabled
 
             # VALIDACION: Rechazar valores invalidos de interval
             VALID_INTERVALS = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"]
@@ -852,7 +853,15 @@ class SwingService:
             self._save_config()
             logger.info(f"[SWING_SERVICE] Config updated: {new_config.keys()}")
 
-            # Si cambió interval o days, re-analizar datos históricos
+            import asyncio
+
+            # Auto-start: si enabled cambio de false a true y no esta corriendo
+            if not was_enabled and self.config.enabled and not self.running:
+                logger.info("[SWING_SERVICE] enabled changed to True, auto-starting service...")
+                asyncio.create_task(self.start())
+                return True
+
+            # Si cambio interval o days, re-analizar datos historicos
             needs_reanalyze = (
                 'interval' in new_config and new_config['interval'] != old_interval or
                 'days' in new_config and new_config['days'] != old_days
@@ -860,7 +869,6 @@ class SwingService:
 
             if needs_reanalyze:
                 logger.info(f"[SWING_SERVICE] Interval/days changed, triggering re-analysis...")
-                import asyncio
                 asyncio.create_task(self.reanalyze_historical())
 
             return True

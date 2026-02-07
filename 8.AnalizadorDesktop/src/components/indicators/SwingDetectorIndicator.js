@@ -38,7 +38,7 @@ class SwingDetectorIndicator extends IndicatorBase {
       ZONE_BOTH: 'rgba(255, 152, 0, 0.1)'     // Orange zone
     };
 
-    console.log(`[${this.symbol}] SwingDetectorIndicator initialized`);
+    console.log(`[${this.symbol}] [SWING] CONSTRUCTOR: enabled=${this.enabled}, config.enabled=${this.config?.enabled}, interval=${this.interval}, days=${this.days}`);
   }
 
   loadConfig() {
@@ -100,6 +100,11 @@ class SwingDetectorIndicator extends IndicatorBase {
   }
 
   async fetchData() {
+    console.log(`[${this.symbol}] [SWING] fetchData() INICIO - enabled=${this.enabled}`);
+
+    // Verificar si el servicio backend esta corriendo, si no, habilitarlo
+    await this._ensureBackendRunning();
+
     // Sync days with backend first to ensure signals cover the requested period
     await this._syncDaysOnInit();
 
@@ -109,16 +114,68 @@ class SwingDetectorIndicator extends IndicatorBase {
       this.fetchStatus()
     ]);
 
-    // 🚀 NO iniciar polling aquí - se iniciará después de carga completa
+    console.log(`[${this.symbol}] [SWING] fetchData() FIN - signals=${this.signals.length}, zones=${this.priceZones.length}`);
+
+    // NO iniciar polling aqui - se iniciara despues de carga completa
     // via startPollingIfReady() llamado desde IndicatorManager
+  }
+
+  /**
+   * Verifica si el backend swing service esta corriendo.
+   * Si no lo esta, envia enabled=true para auto-iniciarlo y espera a que arranque.
+   */
+  async _ensureBackendRunning() {
+    try {
+      const statusRes = await fetch(`${API_BASE_URL}/api/swing/status`);
+      if (!statusRes.ok) return;
+
+      const status = await statusRes.json();
+      if (status.running) {
+        console.log(`[${this.symbol}] [SWING] Backend service already running`);
+        return;
+      }
+
+      // Servicio no esta corriendo - habilitarlo
+      console.log(`[${this.symbol}] [SWING] Backend service NOT running (enabled=${status.enabled}), auto-starting...`);
+      const configRes = await fetch(`${API_BASE_URL}/api/swing/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: true })
+      });
+
+      if (!configRes.ok) return;
+
+      console.log(`[${this.symbol}] [SWING] Sent enabled=true to backend, waiting for service to start...`);
+
+      // Esperar hasta 10 segundos a que el servicio arranque
+      for (let i = 0; i < 5; i++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+          const checkRes = await fetch(`${API_BASE_URL}/api/swing/status`);
+          if (checkRes.ok) {
+            const checkStatus = await checkRes.json();
+            console.log(`[${this.symbol}] [SWING] Auto-start check ${i + 1}/5: running=${checkStatus.running}`);
+            if (checkStatus.running) {
+              console.log(`[${this.symbol}] [SWING] Backend service started successfully`);
+              return;
+            }
+          }
+        } catch (e) {
+          // Ignorar errores de check, seguir esperando
+        }
+      }
+      console.warn(`[${this.symbol}] [SWING] Backend service did not start after 10s, continuing anyway`);
+    } catch (error) {
+      console.warn(`[${this.symbol}] [SWING] _ensureBackendRunning error:`, error);
+    }
   }
 
   /**
    * 🚀 Inicia polling solo si está listo (llamado después de carga completa)
    */
   startPollingIfReady() {
-    console.log(`[${this.symbol}] SwingDetector startPollingIfReady: interval=${!!this._pollingInterval}, enabled=${this.enabled}, config.enabled=${this.config?.enabled}`);
-    if (!this._pollingInterval && this.enabled && this.config.enabled) {
+    console.log(`[${this.symbol}] SwingDetector startPollingIfReady: interval=${!!this._pollingInterval}, enabled=${this.enabled}`);
+    if (!this._pollingInterval && this.enabled) {
       this._startPolling();
     }
   }
@@ -150,7 +207,7 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     // Poll signals at configured interval
     this._pollingInterval = setInterval(async () => {
-      if (this.enabled && this.config.enabled) {
+      if (this.enabled) {
         const updated = await this.fetchSignals();
         // Disparar redraw si hay datos nuevos y tenemos referencia al manager
         if (updated && this.indicatorManager?.requestRedraw) {
@@ -161,7 +218,7 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     // Poll status less frequently
     this._statusPollingInterval = setInterval(() => {
-      if (this.enabled && this.config.enabled) {
+      if (this.enabled) {
         this.fetchStatus();
       }
     }, this.statusFetchIntervalMs);
@@ -192,7 +249,10 @@ class SwingDetectorIndicator extends IndicatorBase {
 
   async fetchSignals(forceRefresh = false) {
     // Prevent concurrent fetches
-    if (this.isFetchingSignals) return false;
+    if (this.isFetchingSignals) {
+      console.log(`[${this.symbol}] [SWING] fetchSignals() SKIP - ya fetching`);
+      return false;
+    }
     this.isFetchingSignals = true;
     this.lastFetchTime = Date.now(); // Update immediately to prevent re-entry
 
@@ -202,36 +262,40 @@ class SwingDetectorIndicator extends IndicatorBase {
         const cached = await IndicatorCache.get('swing', this.symbol, this.interval);
         if (cached) {
           this.signals = cached;
+          console.log(`[${this.symbol}] [SWING] fetchSignals() CACHE HIT: ${cached.length} signals`);
           return true; // Usar datos cacheados
         }
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}`);
+      const url = `${API_BASE_URL}/api/swing/signals/${this.symbol}`;
+      console.log(`[${this.symbol}] [SWING] fetchSignals() fetching: ${url}`);
+      const response = await fetch(url);
 
       if (!response.ok) {
-        console.warn(`[${this.symbol}] SwingDetector fetch failed: ${response.status}`);
+        console.warn(`[${this.symbol}] [SWING] fetchSignals() FAILED: HTTP ${response.status}`);
         return false;
       }
 
       const data = await response.json();
       const allSignals = data.signals || [];
 
-      // ⚠️ FIX: Filtrar señales por el interval actual del chart
-      // El backend puede tener señales de múltiples timeframes
+      // Filtrar senales por el interval actual del chart
       this.signals = allSignals.filter(s => s.interval === this.interval);
+
+      console.log(`[${this.symbol}] [SWING] fetchSignals() OK: ${this.signals.length}/${allSignals.length} signals match interval=${this.interval}`);
+      if (allSignals.length > 0 && this.signals.length === 0) {
+        // Mostrar que intervals tienen las senales para diagnosticar
+        const intervals = [...new Set(allSignals.map(s => s.interval))];
+        console.warn(`[${this.symbol}] [SWING] Senales existen para intervals: [${intervals.join(', ')}] pero chart usa interval=${this.interval}`);
+      }
 
       // Guardar en cache
       if (this.signals.length > 0) {
         IndicatorCache.set('swing', this.symbol, this.interval, this.signals);
-        console.log(`[${this.symbol}] SwingDetector: ${this.signals.length}/${allSignals.length} signals for interval ${this.interval} (cached)`);
-      } else if (allSignals.length > 0) {
-        console.log(`[${this.symbol}] SwingDetector: ${allSignals.length} signals exist but none match interval ${this.interval}`);
-      } else {
-        console.log(`[${this.symbol}] SwingDetector: Backend returned 0 signals`);
       }
       return true;
     } catch (error) {
-      console.error(`[${this.symbol}] SwingDetector fetch error:`, error);
+      console.error(`[${this.symbol}] [SWING] fetchSignals() ERROR:`, error);
       return false;
     } finally {
       this.isFetchingSignals = false;
@@ -248,6 +312,7 @@ class SwingDetectorIndicator extends IndicatorBase {
       const response = await fetch(`${API_BASE_URL}/api/swing/status`);
 
       if (!response.ok) {
+        console.warn(`[${this.symbol}] [SWING] fetchStatus() FAILED: HTTP ${response.status}`);
         return;
       }
 
@@ -255,8 +320,9 @@ class SwingDetectorIndicator extends IndicatorBase {
       // Filter zones by this symbol (zones without symbol field apply to all for backwards compatibility)
       const allZones = data.priceZones || [];
       this.priceZones = allZones.filter(z => !z.symbol || z.symbol === this.symbol);
+      console.log(`[${this.symbol}] [SWING] fetchStatus() OK: ${this.priceZones.length} zones (service enabled=${data.enabled}, running=${data.running})`);
     } catch (error) {
-      console.error(`[${this.symbol}] SwingDetector status error:`, error);
+      console.error(`[${this.symbol}] [SWING] fetchStatus() ERROR:`, error);
     } finally {
       this.isFetchingStatus = false;
     }
@@ -264,12 +330,15 @@ class SwingDetectorIndicator extends IndicatorBase {
 
   // Called by IndicatorManager on each render
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled || !this.config.enabled) {
+    if (!this.enabled) {
       return;
     }
 
-    // 🚀 OPTIMIZADO: No hacer fetch aquí - se hace via setInterval en _startPolling()
-    // Esto elimina Date.now() y comparaciones en cada frame (~60 veces/segundo)
+    // Log detallado una vez por segundo para no saturar consola
+    if (!this._lastRenderLog || Date.now() - this._lastRenderLog > 1000) {
+      this._lastRenderLog = Date.now();
+      console.log(`[${this.symbol}] [SWING] renderOverlay: signals=${this.signals.length}, zones=${this.priceZones.length}, visibleCandles=${visibleCandles?.length}, hasPriceContext=${!!priceContext}`);
+    }
 
     // Helper function to convert price to Y coordinate
     // Use priceContext.priceToY if available (properly anchored to chart)
@@ -301,6 +370,9 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     const candleWidth = bounds.width / visibleCandles.length;
 
+    // Contar matches para logging
+    let matchCount = 0;
+
     // Render signals on visible candles
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
@@ -308,11 +380,25 @@ class SwingDetectorIndicator extends IndicatorBase {
 
       if (!signal) continue;
 
+      matchCount++;
       const x = bounds.x + i * candleWidth + candleWidth / 2;
       const highY = priceToY(candle.high);
       const lowY = priceToY(candle.low);
 
       this.drawSwingArrow(ctx, x, highY, lowY, signal);
+    }
+
+    // Log matches una vez por segundo
+    if (!this._lastMatchLog || Date.now() - this._lastMatchLog > 1000) {
+      this._lastMatchLog = Date.now();
+      if (matchCount > 0) {
+        console.log(`[${this.symbol}] [SWING] RENDERED ${matchCount} arrows on chart`);
+      } else if (this.signals.length > 0) {
+        // Hay senales pero ninguna coincide con las velas visibles - diagnosticar
+        const signalTsRange = { min: Math.min(...this.signals.map(s => s.timestamp)), max: Math.max(...this.signals.map(s => s.timestamp)) };
+        const candleTsRange = { min: visibleCandles[0]?.timestamp, max: visibleCandles[visibleCandles.length - 1]?.timestamp };
+        console.warn(`[${this.symbol}] [SWING] 0 matches! Signal timestamps: ${new Date(signalTsRange.min).toLocaleString()}-${new Date(signalTsRange.max).toLocaleString()}, Candle timestamps: ${new Date(candleTsRange.min).toLocaleString()}-${new Date(candleTsRange.max).toLocaleString()}`);
+      }
     }
   }
 

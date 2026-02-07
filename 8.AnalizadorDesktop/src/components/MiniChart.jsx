@@ -615,8 +615,46 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const marginLeft = 10;
     const marginRight = 65;
     const marginTop = 25;
-    const timeAxisHeight = 25;
-    
+
+    // Calcular timeAxisHeight dinamicamente segun barras activas (VWAP + Zone Detector)
+    const barH = 8;
+    const barGap = 2;
+    let totalActiveBars = 0;
+
+    // Contar barras VWAP activas
+    const vwapInd = indicatorManagerRef.current?.getVWAPIndicator();
+    if (vwapInd && vwapInd.enabled) {
+      if (vwapInd.showBandWidth) totalActiveBars++;
+      if (vwapInd.showBBWP) totalActiveBars++;
+      if (vwapInd.showTTMSqueeze) totalActiveBars++;
+    }
+
+    // Contar barras Zone Detector activas
+    const zoneVis = indicatorManagerRef.current?.getZoneVisualizerIndicator();
+    if (zoneVis && zoneVis.enabled && zoneVis._metricsMap.size > 0) {
+      const layers = zoneVis._activeLayers || {};
+      if (layers.primary) totalActiveBars++;
+      if (layers.ttm_squeeze) totalActiveBars++;
+      if (layers.bbwp) totalActiveBars++;
+    }
+
+    // barsSpace = barras + gaps + margen sup(5) + separador VWAP/Zone(4) + time labels(15)
+    let barsGroups = 0;
+    if (vwapInd && vwapInd.enabled) {
+      const vwapBars = (vwapInd.showBandWidth ? 1 : 0) + (vwapInd.showBBWP ? 1 : 0) + (vwapInd.showTTMSqueeze ? 1 : 0);
+      if (vwapBars > 0) barsGroups++;
+    }
+    if (zoneVis && zoneVis.enabled && zoneVis._metricsMap.size > 0) {
+      const layers = zoneVis._activeLayers || {};
+      const zoneBars = (layers.primary ? 1 : 0) + (layers.ttm_squeeze ? 1 : 0) + (layers.bbwp ? 1 : 0);
+      if (zoneBars > 0) barsGroups++;
+    }
+    const separatorSpace = barsGroups > 1 ? 4 : 0;
+    const barsSpace = totalActiveBars > 0
+      ? 5 + (totalActiveBars * barH) + (Math.max(0, totalActiveBars - 1) * barGap) + separatorSpace
+      : 0;
+    const timeAxisHeight = Math.max(25, barsSpace + 18);
+
     const baseVolumeHeight = 50;
     const minPriceChartHeight = 180;
     
@@ -990,21 +1028,38 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
 
     // ✅ Draw VWAP volatility bars below volume panel
+    let totalBarsHeight = 0;
+    const barsStartY = volumeStartY + volumeHeight + 5;
     const vwapIndicator = indicatorManagerRef.current?.getVWAPIndicator();
     if (vwapIndicator && vwapIndicator.enabled) {
-      const volatilityBarsStartY = volumeStartY + volumeHeight + 5;
-      vwapIndicator.renderVolatilityBars(
+      const vwapBarsH = vwapIndicator.renderVolatilityBars(
         ctx,
         marginLeft,
-        volatilityBarsStartY,
+        barsStartY,
         width - marginLeft - marginRight,
         barWidth,
         visibleCandles
       );
+      totalBarsHeight += vwapBarsH;
+    }
+
+    // ✅ Draw Zone Detector metrics bars below VWAP bars
+    const zoneVisualizer = indicatorManagerRef.current?.getZoneVisualizerIndicator();
+    if (zoneVisualizer && zoneVisualizer.enabled && zoneVisualizer._metricsMap.size > 0) {
+      const zoneBarsStartY = barsStartY + totalBarsHeight + (totalBarsHeight > 0 ? 4 : 0);
+      const zoneBarsH = zoneVisualizer.renderMetricsBars(
+        ctx,
+        marginLeft,
+        zoneBarsStartY,
+        width - marginLeft - marginRight,
+        barWidth,
+        visibleCandles
+      );
+      totalBarsHeight += zoneBarsH + (totalBarsHeight > 0 && zoneBarsH > 0 ? 4 : 0);
     }
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
-    const timeY = volumeStartY + volumeHeight + 15;
+    const timeY = volumeStartY + volumeHeight + (totalBarsHeight > 0 ? totalBarsHeight + 10 : 15);
     
     ctx.fillStyle = textColor;
     ctx.font = "10px Inter, sans-serif";
@@ -1095,7 +1150,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
           const textWidth = ctx.measureText(dateText).width;
           const labelX = mouseX - textWidth / 2;
-          const labelY = height - timeAxisHeight / 2;
+          // Si hay barras de metricas, posicionar el rotulo arriba de ellas
+          const hasBars = totalActiveBars > 0;
+          const labelY = hasBars
+            ? (height - timeAxisHeight + 9)  // Justo encima de las barras
+            : (height - timeAxisHeight / 2); // Centro del eje (sin barras)
 
           ctx.fillStyle = "#333";
           ctx.fillRect(labelX - 4, labelY - 12, textWidth + 8, 18);

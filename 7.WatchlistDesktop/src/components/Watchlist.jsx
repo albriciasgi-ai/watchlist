@@ -198,6 +198,105 @@ const Watchlist = () => {
     };
   }, []);
 
+  // Screenshot server: responder a solicitudes de coordenadas de charts
+  useEffect(() => {
+    if (window.electronAPI && window.electronAPI.receive) {
+      window.electronAPI.receive('request-chart-rects', () => {
+        const rects = {};
+        const gridEl = document.querySelector('.grid-container');
+        if (gridEl) {
+          const chartWrappers = gridEl.querySelectorAll('[data-symbol]');
+          chartWrappers.forEach((wrapper) => {
+            const sym = wrapper.getAttribute('data-symbol');
+            // Buscar el canvas dentro del MiniChart
+            const canvas = wrapper.querySelector('canvas');
+            if (canvas && sym) {
+              const rect = canvas.getBoundingClientRect();
+              // devicePixelRatio para coordenadas reales de pixeles
+              const dpr = window.devicePixelRatio || 1;
+              rects[sym] = {
+                x: Math.round(rect.x * dpr),
+                y: Math.round(rect.y * dpr),
+                width: Math.round(rect.width * dpr),
+                height: Math.round(rect.height * dpr)
+              };
+            }
+          });
+        }
+        if (window.electronAPI.reportChartRects) {
+          window.electronAPI.reportChartRects(rects);
+        }
+      });
+
+      // Screenshot server: scroll al simbolo para capturar charts fuera del viewport
+      window.electronAPI.receive('scroll-to-symbol', (symbol) => {
+        const gridEl = document.querySelector('.grid-container');
+        if (!gridEl) {
+          window.electronAPI.reportScrollComplete(null);
+          return;
+        }
+        const wrapper = gridEl.querySelector(`[data-symbol="${symbol}"]`);
+        if (!wrapper) {
+          window.electronAPI.reportScrollComplete(null);
+          return;
+        }
+
+        // Scroll al simbolo
+        wrapper.scrollIntoView({ behavior: 'instant', block: 'center' });
+
+        // Funcion para reportar coordenadas del canvas
+        const reportRect = () => {
+          const canvas = wrapper.querySelector('canvas');
+          if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            window.electronAPI.reportScrollComplete({
+              x: Math.round(rect.x * dpr),
+              y: Math.round(rect.y * dpr),
+              width: Math.round(rect.width * dpr),
+              height: Math.round(rect.height * dpr)
+            });
+          } else {
+            window.electronAPI.reportScrollComplete(null);
+          }
+        };
+
+        // Esperar a que los indicadores terminen de cargar
+        const manager = IndicatorManagerRegistry.get(symbol);
+        if (manager) {
+          console.log(`[Screenshot] Esperando indicadores de ${symbol}...`);
+          manager.refresh().then(() => {
+            console.log(`[Screenshot] Indicadores de ${symbol} listos`);
+            // Esperar 2 frames para que el canvas se redibuje
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                reportRect();
+              });
+            });
+          }).catch(() => {
+            console.warn(`[Screenshot] Error refrescando indicadores de ${symbol}, capturando de todos modos`);
+            requestAnimationFrame(() => reportRect());
+          });
+        } else {
+          // Sin IndicatorManager, reportar despues de 2 frames
+          console.warn(`[Screenshot] No hay IndicatorManager para ${symbol}`);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              reportRect();
+            });
+          });
+        }
+      });
+
+      // Screenshot server: restaurar scroll despues de captura
+      window.electronAPI.receive('scroll-restore', (scrollTop) => {
+        const gridEl = document.querySelector('.grid-container');
+        const scrollContainer = gridEl ? (gridEl.parentElement || document.documentElement) : document.documentElement;
+        scrollContainer.scrollTop = scrollTop || 0;
+      });
+    }
+  }, []);
+
   // ⏱️ CRONOMETRO: Estados para medir tiempo de carga
   const [loadStartTime, setLoadStartTime] = useState(Date.now());
   const [loadedCharts, setLoadedCharts] = useState(new Set());
@@ -1356,6 +1455,7 @@ const Watchlist = () => {
         {symbols.map((sym) => (
           <div
             key={sym}
+            data-symbol={sym}
             onMouseDown={(e) => handleMouseDown(e, sym)}
             onMouseUp={(e) => handleDropOnSymbol(e, sym)}
             onMouseEnter={() => handleMouseEnterWhileDragging(sym)}

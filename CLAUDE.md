@@ -2878,7 +2878,7 @@ Esto causa **gaps en los graficos** cuando el usuario cambia de tab. Electron de
 │   │   └── Logger.js
 │   ├── hooks/
 │   │   └── useGlobalAlerts.js
-│   ├── config.js                     # API_BASE_URL = localhost:10000
+│   ├── config.js                     # API_BASE_URL = localhost:10001
 │   └── main.jsx
 │
 ├── assets/
@@ -3131,9 +3131,14 @@ def _get_default_rejection_config(self) -> Dict:
 - Verificar que `swing_config.json` tiene interval valido
 
 **Backend no conecta:**
-- Verificar que backend corre en puerto 10000
+- Verificar que backend corre en puerto 10001
 - Verificar proxy en vite.config.js
 - En produccion, verificar API_BASE_URL en config.js
+
+**Zonas realtime no aparecen:**
+- Verificar servicio activo: `GET /api/zones/realtime/status`
+- Verificar IndicatorManager tiene polling: buscar `Realtime zones actualizadas` en consola
+- Ver seccion ZONE DETECTOR REALTIME para detalles completos
 
 **Icono no aparece en tray:**
 - Verificar que existe `assets/icon.ico`
@@ -4115,3 +4120,172 @@ const result = await manager.loadTradingZones(params);
 **Score muy bajo en todas las zonas:**
 - Revisar que no se esta usando continuation_score incorrectamente
 - El score maximo sin continuation es ~80 (momentum + compression + volume + bbwp)
+
+---
+
+# ZONE DETECTOR REALTIME (Febrero 2026)
+
+Sistema de deteccion de zonas de consolidacion en tiempo real con visualizacion en el chart y alertas al TradingBot.
+
+## Arquitectura
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                     ZONE DETECTOR REALTIME                            │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  BACKEND (4.Analizador cripto/backend/)                               │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ zone_service.py                                                  │ │
+│  │   WebSocket candle close → _detect_and_alert()                   │ │
+│  │     → zone_detector.detect_zones() (con parametros de config)    │ │
+│  │     → _store_zones() → almacena en _recent_zones dict           │ │
+│  │     → _send_alert() (si alertsEnabled=true) → TradingBot :5000  │ │
+│  │                                                                   │ │
+│  │ zone_realtime_config.json                                        │ │
+│  │   enabled, symbols, interval, window_candles, alertsEnabled...   │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│           │                                                           │
+│  Endpoints:                                                           │
+│  - GET /api/zones/realtime/status  → Estado del servicio              │
+│  - GET /api/zones/realtime/zones/{symbol}  → Zonas detectadas         │
+│  - POST /api/zones/realtime/toggle  → Activar/desactivar             │
+│  - POST /api/zones/realtime/config  → Actualizar configuracion        │
+│  - POST /api/zones/realtime/reanalyze  → Re-analizar historico        │
+│           │                                                           │
+│  FRONTEND (8.AnalizadorDesktop/src/)                                  │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ IndicatorManager.js                                              │ │
+│  │   _fetchRealtimeZones() (cada 15s, con fingerprint detection)    │ │
+│  │   → zoneVisualizerIndicator.setRealtimeZones(zones)              │ │
+│  │   → requestRedraw()                                              │ │
+│  │                                                                   │ │
+│  │ ZoneVisualizerIndicator.js                                       │ │
+│  │   _manualZones[] + _realtimeZones[] → _mergeZones() → zones[]   │ │
+│  │   Renderiza: consolidacion + trade rectangle + labels            │ │
+│  │   Estados: WIN (verde), LOSS (rojo), OPEN (amarillo)             │ │
+│  │                                                                   │ │
+│  │ ZoneDetectorSettings.jsx                                         │ │
+│  │   Modal de configuracion con toggle start/stop polling           │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│                                                                       │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+## Flujo Completo
+
+```
+1. Usuario activa servicio realtime desde ZoneDetectorSettings modal
+   POST /api/zones/realtime/toggle {enabled: true}
+      ↓
+2. Backend inicia zone_service: conecta WebSocket, carga historico
+      ↓
+3. En cada cierre de vela:
+   _detect_and_alert() → zone_detector.detect_zones()
+      ↓
+4. Zonas detectadas se almacenan en _recent_zones[symbol]
+   Si alertsEnabled=true → POST al TradingBot (puerto 5000)
+      ↓
+5. Frontend: IndicatorManager hace polling GET /api/zones/realtime/zones/{symbol}
+   Cada 15 segundos (auto-inicia si detecta servicio activo)
+      ↓
+6. Si fingerprint cambio → setRealtimeZones() → _mergeZones() → redraw
+      ↓
+7. Chart renderiza zonas con colores segun estado del trade
+```
+
+## Separacion de Fuentes de Zonas
+
+**Problema resuelto:** El polling realtime sobrescribia zonas manuales.
+
+**Solucion:** Dos fuentes independientes en ZoneVisualizerIndicator:
+
+| Fuente | Array | Metodo | Origen |
+|--------|-------|--------|--------|
+| Manual | `_manualZones` | `setZones()` | Boton "Detectar zonas" |
+| Realtime | `_realtimeZones` | `setRealtimeZones()` | Polling cada 15s |
+
+`_mergeZones()` combina ambas con deduplicacion por `start_timestamp + end_timestamp`. Si hay conflicto, la zona manual tiene prioridad.
+
+## Estado OPEN para Trades en Progreso
+
+**Problema resuelto:** Trades sin TP/SL se mostraban como LOSS.
+
+**Cambio en backend** (`zone_detector.py`):
+- Antes: PENDING → forzaba WIN/LOSS segun P&L parcial
+- Ahora: PENDING → `trade_result = "OPEN"` con P&L parcial informativo
+
+**Renderizado frontend** (`ZoneVisualizerIndicator.js`):
+
+| Estado | Color | Borde | Extension | Label |
+|--------|-------|-------|-----------|-------|
+| WIN | Verde | Solido | Hasta `trade_close_timestamp` | W |
+| LOSS | Rojo | Solido | Hasta `trade_close_timestamp` | L |
+| OPEN | Amarillo | Discontinuo | Hasta borde derecho del chart | O |
+
+## Fingerprint Change Detection
+
+```javascript
+// En IndicatorManager._fetchRealtimeZones()
+const fingerprint = zones.map(z => `${z.start_timestamp}_${z.trade_result}`).join('|');
+if (fingerprint !== this._lastRealtimeZoneFingerprint) {
+  // Detecta: nueva zona, o transicion OPEN→WIN/LOSS
+  this.zoneVisualizerIndicator.setRealtimeZones(zones);
+  this.requestRedraw();
+}
+```
+
+## Config Realtime
+
+```json
+// 4.Analizador cripto/backend/config/zone_realtime_config.json
+{
+  "enabled": true,
+  "symbols": ["BTCUSDT"],
+  "interval": "1",
+  "window_candles": 100,
+  "alertsEnabled": true,
+  "alertTargetUrl": "http://localhost:5000/api/watchlist-alert",
+  "cooldownMinutes": 5
+}
+```
+
+**Nota:** `alertsEnabled` controla envio al TradingBot. La deteccion y visualizacion funcionan independientemente.
+
+## Archivos del Sistema
+
+### Backend
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `zone_service.py` | Servicio realtime: WebSocket → deteccion → almacenamiento → alertas |
+| `zone_detector.py` | Algoritmo de deteccion + simulacion trades (OPEN/WIN/LOSS) |
+| `config/zone_realtime_config.json` | Configuracion persistente del servicio |
+
+### Frontend
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `indicators/IndicatorManager.js` | Polling realtime zones, auto-deteccion servicio activo |
+| `indicators/ZoneVisualizerIndicator.js` | Dual source (manual/realtime), merge, render OPEN state |
+| `ZoneDetectorSettings.jsx` | Modal config, toggle servicio, control polling chart |
+
+## Troubleshooting
+
+**Zonas realtime no aparecen en el chart:**
+- Verificar servicio activo: `GET /api/zones/realtime/status`
+- Verificar zonas almacenadas: `GET /api/zones/realtime/zones/{symbol}`
+- Consola: buscar `[{symbol}] Realtime zones actualizadas: N zonas`
+
+**0 alertas al TradingBot:**
+- Verificar `alertsEnabled: true` en `zone_realtime_config.json`
+- El checkbox "Alertas" en el modal controla este flag
+
+**Zonas manuales desaparecen con realtime activo:**
+- Corregido con separacion `_manualZones` / `_realtimeZones`
+- Polling debe usar `setRealtimeZones()`, nunca `setZones()`
+
+**Trades muestran LOSS en vez de OPEN:**
+- Verificar fix en `zone_detector.py` (PENDING → OPEN)
+
+**Problema conocido:** `_send_alert()` en `zone_service.py` envia `custom_stop_loss` y `custom_take_profit` pero no `order_type`, lo cual puede causar inconsistencia de TP/SL en ordenes market.

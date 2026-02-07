@@ -119,6 +119,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const [realtimeWindowCandles, setRealtimeWindowCandles] = useState(500);
   const [realtimeCooldown, setRealtimeCooldown] = useState(30);
   const [realtimeMinScore, setRealtimeMinScore] = useState(0);
+  const [realtimeConfigMsg, setRealtimeConfigMsg] = useState(null); // {type: 'ok'|'error', text}
   const realtimePollingRef = useRef(null);
 
   // === PRESETS ===
@@ -151,7 +152,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   }, []);
 
   // Cargar estado del servicio realtime al abrir el modal
-  const fetchRealtimeStatus = useCallback(async () => {
+  const fetchRealtimeStatus = useCallback(async (syncConfig = false) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/zones/realtime/status`);
       const data = await res.json();
@@ -159,8 +160,10 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         setRealtimeEnabled(data.enabled || false);
         setRealtimeRunning(data.running || false);
         setRealtimeStatus(data);
-        // Cargar config del servicio
-        if (data.config) {
+        // Solo actualizar inputs de config cuando se indica explicitamente
+        // (al abrir el modal o despues de guardar). El polling NO sobrescribe
+        // los valores que el usuario pueda estar editando.
+        if (syncConfig && data.config) {
           setRealtimeWindowCandles(data.config.window_candles || 500);
           setRealtimeCooldown(data.config.cooldownMinutes || 30);
           setRealtimeMinScore(data.config.min_score_filter || 0);
@@ -173,9 +176,11 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
 
   useEffect(() => {
     if (isOpen) {
-      fetchRealtimeStatus();
-      // Polling del estado cada 10s mientras el modal esta abierto
-      realtimePollingRef.current = setInterval(fetchRealtimeStatus, 10000);
+      // Al abrir el modal, cargar config del backend para inicializar inputs
+      fetchRealtimeStatus(true);
+      // Polling del estado cada 10s - solo actualiza stats (zonas, alertas, uptime)
+      // NO sobrescribe los inputs de config que el usuario puede estar editando
+      realtimePollingRef.current = setInterval(() => fetchRealtimeStatus(false), 10000);
     }
     return () => {
       if (realtimePollingRef.current) {
@@ -459,15 +464,27 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const handleRealtimeToggle = useCallback(async () => {
     setRealtimeLoading(true);
     try {
+      const starting = !realtimeRunning;
       const endpoint = realtimeRunning
         ? `${API_BASE_URL}/api/zones/realtime/stop`
         : `${API_BASE_URL}/api/zones/realtime/start`;
       const res = await fetch(endpoint, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        setRealtimeRunning(!realtimeRunning);
-        setRealtimeEnabled(!realtimeRunning);
-        await fetchRealtimeStatus();
+        setRealtimeRunning(starting);
+        setRealtimeEnabled(starting);
+        // Sincronizar config despues de start/stop
+        await fetchRealtimeStatus(true);
+
+        // Iniciar/detener polling de zonas en el chart
+        const manager = getManager();
+        if (manager) {
+          if (starting) {
+            manager.startRealtimeZonePolling();
+          } else {
+            manager.stopRealtimeZonePolling();
+          }
+        }
       } else {
         console.error('[ZoneDetector] Error toggling realtime:', data.error);
       }
@@ -476,10 +493,11 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     } finally {
       setRealtimeLoading(false);
     }
-  }, [realtimeRunning, fetchRealtimeStatus]);
+  }, [realtimeRunning, fetchRealtimeStatus, getManager]);
 
   const handleRealtimeConfigSave = useCallback(async () => {
     setRealtimeLoading(true);
+    setRealtimeConfigMsg(null);
     try {
       // Enviar config actual de parametros del detector + realtime settings
       const configPayload = {
@@ -519,12 +537,25 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       });
       const data = await res.json();
       if (data.success) {
-        console.log('[ZoneDetector] Realtime config guardada:', data.updated);
-        await fetchRealtimeStatus();
+        const updated = data.updated || [];
+        console.log('[ZoneDetector] Realtime config guardada:', updated);
+        // Sincronizar config desde backend para confirmar que se guardo correctamente
+        await fetchRealtimeStatus(true);
+        const restarted = data.status?.running && updated.some(k => ['interval', 'symbols', 'window_candles'].includes(k));
+        setRealtimeConfigMsg({
+          type: 'ok',
+          text: updated.length > 0
+            ? `Config aplicada (${updated.length} cambios)${restarted ? ' - servicio reiniciado' : ''}`
+            : 'Sin cambios (los valores ya eran iguales)'
+        });
+        // Auto-ocultar mensaje despues de 5s
+        setTimeout(() => setRealtimeConfigMsg(null), 5000);
       } else {
+        setRealtimeConfigMsg({ type: 'error', text: data.error || 'Error guardando config' });
         console.error('[ZoneDetector] Error guardando config realtime:', data.error);
       }
     } catch (e) {
+      setRealtimeConfigMsg({ type: 'error', text: e.message });
       console.error('[ZoneDetector] Error guardando config realtime:', e);
     } finally {
       setRealtimeLoading(false);
@@ -538,7 +569,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       const data = await res.json();
       if (data.success) {
         console.log('[ZoneDetector] Cooldowns limpiados');
-        await fetchRealtimeStatus();
+        // Solo actualizar stats, no sobrescribir inputs
+        await fetchRealtimeStatus(false);
       }
     } catch (e) {
       console.error('[ZoneDetector] Error limpiando cooldowns:', e);
@@ -552,7 +584,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       const data = await res.json();
       if (data.success) {
         console.log('[ZoneDetector] Re-analisis realtime completado');
-        await fetchRealtimeStatus();
+        // Solo actualizar stats (zonas detectadas), no sobrescribir inputs
+        await fetchRealtimeStatus(false);
       }
     } catch (e) {
       console.error('[ZoneDetector] Error re-analizando:', e);
@@ -1455,8 +1488,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                 type="number"
                 style={{...styles.input, width: '80px'}}
                 value={realtimeWindowCandles}
-                onChange={(e) => setRealtimeWindowCandles(Math.max(100, Math.min(5000, parseInt(e.target.value) || 500)))}
-                min={100}
+                onChange={(e) => setRealtimeWindowCandles(Math.max(5, Math.min(5000, parseInt(e.target.value) || 500)))}
+                min={5}
                 max={5000}
               />
               <span style={{fontSize: '10px', color: '#666', marginLeft: '4px'}}>
@@ -1533,19 +1566,87 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
               )}
             </div>
 
+            {/* Mensaje de confirmacion de config */}
+            {realtimeConfigMsg && (
+              <div style={{
+                marginTop: '6px',
+                padding: '5px 8px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                backgroundColor: realtimeConfigMsg.type === 'ok' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 87, 34, 0.1)',
+                color: realtimeConfigMsg.type === 'ok' ? '#81C784' : '#FF8A65',
+                border: `1px solid ${realtimeConfigMsg.type === 'ok' ? '#4CAF5030' : '#FF572230'}`
+              }}>
+                {realtimeConfigMsg.type === 'ok' ? '>> ' : '!! '}{realtimeConfigMsg.text}
+              </div>
+            )}
+
             {/* Stats del servicio */}
             {realtimeStatus && realtimeRunning && (
               <div style={{marginTop: '8px', fontSize: '11px', color: '#B0B0B0'}}>
+                {/* Indicador de actividad: ultima vela procesada */}
+                {(() => {
+                  const candlesProcessed = realtimeStatus.stats?.candles_processed || 0;
+                  const lastAgo = realtimeStatus.last_candle_ago_seconds;
+                  const detectionsRun = realtimeStatus.stats?.detections_run || 0;
+                  const isReceiving = candlesProcessed > 0 && lastAgo != null && lastAgo < 600;
+                  return (
+                    <div style={{
+                      padding: '6px 8px',
+                      marginBottom: '6px',
+                      borderRadius: '4px',
+                      backgroundColor: isReceiving ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)',
+                      border: `1px solid ${isReceiving ? '#4CAF5040' : '#FF980040'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: isReceiving ? '#4CAF50' : '#FF9800',
+                        animation: isReceiving ? 'none' : undefined
+                      }} />
+                      <span style={{color: isReceiving ? '#81C784' : '#FFB74D'}}>
+                        {candlesProcessed === 0
+                          ? 'Esperando primer cierre de vela...'
+                          : `${candlesProcessed} velas procesadas, ${detectionsRun} detecciones`
+                        }
+                        {candlesProcessed > 0 && lastAgo != null && (
+                          <span style={{color: '#999', marginLeft: '4px'}}>
+                            (ultima hace {lastAgo < 60 ? `${lastAgo}s` : `${Math.round(lastAgo / 60)}m`})
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })()}
+
                 <div style={{display: 'flex', gap: '12px', flexWrap: 'wrap'}}>
-                  <span>Zonas: {realtimeStatus.stats?.zones_detected || 0}</span>
+                  <span>Zonas nuevas: {realtimeStatus.stats?.zones_detected || 0}</span>
                   <span>Alertas: {realtimeStatus.stats?.alerts_sent || 0}</span>
-                  <span>Bloqueadas: {realtimeStatus.stats?.alerts_blocked_cooldown || 0}</span>
+                  <span>Bloq. cooldown: {realtimeStatus.stats?.alerts_blocked_cooldown || 0}</span>
+                  <span>Bloq. score: {realtimeStatus.stats?.alerts_blocked_score || 0}</span>
+                </div>
+                <div style={{display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '2px'}}>
                   <span>Uptime: {Math.round((realtimeStatus.uptime_seconds || 0) / 60)}m</span>
+                  {realtimeStatus.stats?.last_detection_zones != null && realtimeStatus.stats?.detections_run > 0 && (
+                    <span>Ult. deteccion: {realtimeStatus.stats.last_detection_zones} zonas en buffer</span>
+                  )}
                 </div>
                 {realtimeStatus.buffers && (
                   <div style={{marginTop: '4px'}}>
                     Buffers: {Object.entries(realtimeStatus.buffers).map(([sym, count]) => (
                       <span key={sym} style={{marginRight: '8px'}}>{sym}: {count} velas</span>
+                    ))}
+                  </div>
+                )}
+                {realtimeStatus.known_zones && Object.values(realtimeStatus.known_zones).some(v => v > 0) && (
+                  <div style={{marginTop: '4px'}}>
+                    Zonas conocidas: {Object.entries(realtimeStatus.known_zones).map(([sym, count]) => (
+                      <span key={sym} style={{marginRight: '8px'}}>{sym}: {count}</span>
                     ))}
                   </div>
                 )}

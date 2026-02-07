@@ -122,6 +122,11 @@ class ZoneService:
             "zones_detected": 0,
             "alerts_sent": 0,
             "alerts_blocked_cooldown": 0,
+            "alerts_blocked_score": 0,
+            "candles_processed": 0,
+            "detections_run": 0,
+            "last_candle_time": 0,
+            "last_detection_zones": 0,
             "start_time": 0,
         }
 
@@ -253,7 +258,9 @@ class ZoneService:
             return
 
         close_price = candle_dict.get("close", 0)
-        logger.debug(f"[ZONE_SERVICE] Candle cerrada: {symbol} @ {close_price}")
+        self.stats["candles_processed"] += 1
+        self.stats["last_candle_time"] = time.time()
+        logger.debug(f"[ZONE_SERVICE] Candle cerrada: {symbol} @ {close_price} (total procesadas: {self.stats['candles_processed']})")
 
         # Agregar al buffer deslizante
         buffer = self._candle_buffers.get(symbol, [])
@@ -298,6 +305,9 @@ class ZoneService:
 
         # Detectar usando metodo trading_zones
         zones = self.detector.detect_zones(window, method="trading_zones", params=params)
+
+        self.stats["detections_run"] += 1
+        self.stats["last_detection_zones"] = len(zones) if zones else 0
 
         if not zones:
             return
@@ -352,6 +362,7 @@ class ZoneService:
                 alert_logger.info(
                     f"BLOCKED_LOW_SCORE | {symbol} | score={zone.trading_score:.1f} < min={self.config.min_score_filter}"
                 )
+                self.stats["alerts_blocked_score"] += 1
                 continue
 
             new_zones.append(zone)
@@ -667,6 +678,136 @@ class ZoneService:
         """Retorna zonas detectadas para un simbolo."""
         return self._recent_zones.get(symbol, [])
 
+    def compute_per_candle_metrics(self, symbol: str, candles: List[Dict] = None,
+                                    context_candles: List[Dict] = None,
+                                    params: Dict = None) -> Dict:
+        """
+        Calcula metricas por candle para las barras de estado del frontend.
+        Se adapta al metodo de deteccion seleccionado.
+
+        Args:
+          candles: Velas visibles (se calculan metricas para estas)
+          context_candles: Velas de contexto mas amplio para calcular global_atr.
+          params: Parametros del frontend (detection_method, consol_*, atr_dyn_*, etc.)
+        """
+        if candles is None:
+            candles = self._candle_buffers.get(symbol, [])
+        if len(candles) < 20:
+            return {"timestamps": [], "primary": [],
+                    "ttm_squeeze": [], "bbwp": [], "active_layers": {}}
+
+        p = params or {}
+        detection_method = p.get("detection_method", "trading_zones")
+
+        n = len(candles)
+        timestamps = [c["timestamp"] for c in candles]
+
+        # --- Banda PRINCIPAL: depende del metodo de deteccion ---
+        # Una sola banda que indica "aqui se cumplen las condiciones de zona"
+        primary = [False] * n
+
+        if detection_method == "atr_dynamic":
+            # ATR Dynamic: replica exacta de _atr_dynamic_method
+            # count_outside == 0 en ventana rolling de ma_period velas
+            atr_period = int(p.get("atr_dyn_period", 200))
+            ma_period = int(p.get("atr_dyn_ma_period", 20))
+            mult = float(p.get("atr_dyn_multiplier", 1.0))
+
+            sma_vals = self.detector._calculate_sma(candles, ma_period)
+            atr_vals = self.detector._calculate_rolling_atr_for_trading(candles, atr_period)
+
+            start_index = max(atr_period, ma_period)
+            for i in range(start_index, n):
+                if i >= len(atr_vals) or i >= len(sma_vals):
+                    continue
+                atr_val = atr_vals[i] * mult
+                ma_val = sma_vals[i]
+                if atr_val <= 0 or ma_val <= 0:
+                    continue
+                # Contar velas fuera en las ultimas ma_period velas
+                count_outside = 0
+                for j in range(max(0, i - ma_period + 1), i + 1):
+                    deviation = abs(candles[j]['close'] - ma_val)
+                    if deviation > atr_val:
+                        count_outside += 1
+                primary[i] = (count_outside == 0)
+
+        else:
+            # trading_zones: las 3 condiciones se cumplen simultaneamente
+            ctx = context_candles if context_candles and len(context_candles) > len(candles) else candles
+            ctx_n = len(ctx)
+            global_atr = self.detector._calculate_atr(ctx, min(14, ctx_n // 4))
+
+            win = int(p.get("consol_min_bars", self.config.consol_min_bars))
+            atr_ratio_thresh = float(p.get("consol_atr_ratio", self.config.consol_atr_ratio))
+            range_pct_thresh = float(p.get("consol_max_range_pct", self.config.consol_max_range_pct))
+            body_ratio_thresh = float(p.get("consol_body_ratio", self.config.consol_body_ratio))
+
+            for i in range(win, n + 1):
+                window = candles[i - win:i]
+                # Condicion 1: ATR ratio
+                local_atr = self.detector._calculate_atr(window, min(5, len(window) // 2))
+                ratio = local_atr / global_atr if global_atr > 0 else 1.0
+                pass_atr = ratio <= atr_ratio_thresh
+                # Condicion 2: Range %
+                range_high = max(c['high'] for c in window)
+                range_low = min(c['low'] for c in window)
+                range_mid = (range_high + range_low) / 2
+                range_pct = ((range_high - range_low) / range_mid) * 100 if range_mid > 0 else 100
+                pass_range = range_pct <= range_pct_thresh
+                # Condicion 3: Body ratio
+                avg_body = self.detector._calculate_avg_body_ratio(window)
+                pass_body = avg_body <= body_ratio_thresh
+                # Las 3 deben cumplirse
+                primary[i - 1] = pass_atr and pass_range and pass_body
+            # Rellenar primeras velas
+            if win < n:
+                for i in range(win):
+                    primary[i] = primary[win]
+
+        # --- Capas opcionales ---
+        use_ttm = bool(p.get("use_ttm_prefilter", self.config.use_ttm_prefilter))
+        use_bbwp = bool(p.get("use_bbwp_scoring", self.config.use_bbwp_scoring))
+
+        ttm_squeeze = [False] * n
+        if use_ttm:
+            bb_period = int(p.get("atr_band_ma_period", getattr(self.config, 'atr_band_ma_period', 20)))
+            bb_sma = self.detector._calculate_sma(candles, bb_period)
+            bb_std = self.detector._calculate_std_dev(candles, bb_period)
+            kc_atr_length = int(p.get("ttm_atr_length", getattr(self.config, 'ttm_atr_length', 20)))
+            kc_multiplier = float(p.get("ttm_kc_multiplier", getattr(self.config, 'ttm_kc_multiplier', 1.5)))
+            ttm_squeeze = self.detector._calculate_ttm_squeeze_values(
+                candles, bb_sma, bb_std, kc_atr_length, kc_multiplier
+            )
+
+        bbwp_pass = [False] * n
+        if use_bbwp:
+            bb_period = int(p.get("atr_band_ma_period", getattr(self.config, 'atr_band_ma_period', 20)))
+            bb_sma = self.detector._calculate_sma(candles, bb_period)
+            bb_std = self.detector._calculate_std_dev(candles, bb_period)
+            lookback = int(p.get("bbwp_lookback", getattr(self.config, 'bbwp_lookback', 252)))
+            threshold = float(p.get("bbwp_squeeze_threshold", getattr(self.config, 'bbwp_squeeze_threshold', 20)))
+            bbwp_vals = self.detector._calculate_bbwp_values(
+                candles, bb_sma, bb_std, lookback
+            )
+            bbwp_pass = [v <= threshold for v in bbwp_vals]
+
+        method_label = "IN RANGE" if detection_method == "atr_dynamic" else "CONSOL"
+        active_layers = {
+            "primary": True,
+            "ttm_squeeze": use_ttm,
+            "bbwp": use_bbwp,
+        }
+
+        return {
+            "timestamps": [int(t) for t in timestamps],
+            "primary": [bool(v) for v in primary],
+            "ttm_squeeze": [bool(v) for v in ttm_squeeze],
+            "bbwp": [bool(v) for v in bbwp_pass],
+            "active_layers": active_layers,
+            "method_label": method_label,
+        }
+
     # --------------------------------------------------
     # Config update
     # --------------------------------------------------
@@ -699,12 +840,18 @@ class ZoneService:
         for symbol, known in self._known_zones.items():
             known_info[symbol] = len(known)
 
+        # Calcular tiempo desde ultima vela procesada
+        last_candle_ago = 0
+        if self.stats["last_candle_time"] > 0:
+            last_candle_ago = round(time.time() - self.stats["last_candle_time"])
+
         return {
             "enabled": self.config.enabled,
             "running": self.running,
             "uptime_seconds": round(uptime),
             "config": self.config.to_dict(),
             "stats": self.stats.copy(),
+            "last_candle_ago_seconds": last_candle_ago,
             "buffers": buffer_info,
             "known_zones": known_info,
             "cooldowns": {

@@ -27,6 +27,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     });
   },
 
+  // Reportar coordenadas de los charts al main process (para screenshot server)
+  reportChartRects: (rects) => {
+    ipcRenderer.send('report-chart-rects', rects);
+  },
+
   // Comunicacion con el main process (para futuras extensiones)
   send: (channel, data) => {
     // Whitelist de canales permitidos
@@ -36,9 +41,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
 
+  // Reportar que el scroll al simbolo se completo (con nuevas coordenadas)
+  reportScrollComplete: (rect) => {
+    ipcRenderer.send('scroll-to-symbol-done', rect);
+  },
+
   receive: (channel, callback) => {
-    const validChannels = ['alert:received', 'app:update-available'];
+    const validChannels = ['alert:received', 'app:update-available', 'request-chart-rects', 'scroll-to-symbol', 'scroll-restore'];
     if (validChannels.includes(channel)) {
+      ipcRenderer.removeAllListeners(channel);
       ipcRenderer.on(channel, (event, ...args) => callback(...args));
     }
   },

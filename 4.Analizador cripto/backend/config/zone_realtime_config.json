@@ -4,7 +4,7 @@
     "BTCUSDT"
   ],
   "interval": "1",
-  "window_candles": 500,
+  "window_candles": 5,
   "consol_min_bars": 8,
   "consol_max_bars": 50,
   "consol_max_range_pct": 2.0,
@@ -30,5 +30,5 @@
   "use_inside_pct_filter": false,
   "alertsEnabled": true,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert",
-  "cooldownMinutes": 30
+  "cooldownMinutes": 5
 }

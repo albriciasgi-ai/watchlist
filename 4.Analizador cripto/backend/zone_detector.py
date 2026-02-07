@@ -1517,19 +1517,15 @@ class ZoneDetector:
 
             if trade_result == "PENDING":
                 # No alcanzo TP ni SL con los datos disponibles
-                # Cerrar al precio de la ultima vela como LOSS parcial
+                # Marcar como OPEN con PnL parcial actual
                 last_candle = candles[-1]
                 if breakout_direction == "UP":
                     pnl = (last_candle['close'] - entry_price) / r_distance if r_distance > 0 else 0
                 else:
                     pnl = (entry_price - last_candle['close']) / r_distance if r_distance > 0 else 0
 
-                if pnl >= 0:
-                    trade_result = "WIN"
-                    trade_pnl_r = min(pnl, 2.0)  # Cap a 2R (TP)
-                else:
-                    trade_result = "LOSS"
-                    trade_pnl_r = max(pnl, -1.0)  # Cap a -1R (SL)
+                trade_result = "OPEN"
+                trade_pnl_r = max(min(pnl, 2.0), -1.0)
 
                 bars_to_close = len(post_entry)
                 trade_close_idx = len(candles) - 1
@@ -2596,12 +2592,8 @@ class ZoneDetector:
                 else:
                     pnl = (entry_price - last_candle['close']) / r_distance if r_distance > 0 else 0
 
-                if pnl >= 0:
-                    trade_result = "WIN"
-                    trade_pnl_r = min(pnl, 2.0)
-                else:
-                    trade_result = "LOSS"
-                    trade_pnl_r = max(pnl, -1.0)
+                trade_result = "OPEN"
+                trade_pnl_r = max(min(pnl, 2.0), -1.0)
 
                 bars_to_close = len(post_entry)
                 trade_close_idx = len(candles) - 1

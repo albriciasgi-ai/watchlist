@@ -1,10 +1,11 @@
 """
 Trading Journal - Screenshot Service
-Captura screenshots del grafico del AnalizadorDesktop via HTTP + mplfinance (fallback).
+Captura screenshots del grafico via HTTP + mplfinance (fallback).
 
 Estrategia de captura:
-1. Electron capture: HTTP GET al servidor de screenshots del AnalizadorDesktop (puerto 5180)
-2. Fallback mplfinance: Genera grafico estatico con datos de la API
+1. AnalizadorDesktop (puerto 5180): Solo si el simbolo coincide con el que se muestra
+2. WatchlistDesktop (puerto 5181): Captura region del minichart del simbolo solicitado
+3. Fallback mplfinance: Genera grafico estatico con datos de la API
 """
 
 import os
@@ -27,8 +28,9 @@ except ImportError:
     logger.warning("mplfinance not available for fallback charts")
 
 
-# URL del servidor de screenshots del AnalizadorDesktop
-ELECTRON_SCREENSHOT_URL = "http://127.0.0.1:5180"
+# URLs de servidores de screenshots
+ELECTRON_SCREENSHOT_URL = "http://127.0.0.1:5180"    # AnalizadorDesktop
+WATCHLIST_SCREENSHOT_URL = "http://127.0.0.1:5181"   # WatchlistDesktop
 
 
 class ScreenshotService:
@@ -36,27 +38,37 @@ class ScreenshotService:
     Servicio de capturas de pantalla.
 
     Estrategia:
-    1. Intenta capturar via HTTP desde AnalizadorDesktop (Electron, puerto 5180)
-    2. Si falla, usa mplfinance para generar grafico estatico
-    3. Guarda imagenes en screenshots/{symbol}/{entry_id}_{event}.png
+    1. AnalizadorDesktop (puerto 5180) - solo si el simbolo coincide
+    2. WatchlistDesktop (puerto 5181) - captura region del minichart
+    3. mplfinance - genera grafico estatico con datos de API
+    4. Guarda imagenes en screenshots/{symbol}/{entry_id}_{event}.png
     """
 
     def __init__(
         self,
         screenshots_dir: str = "screenshots",
-        electron_url: str = ELECTRON_SCREENSHOT_URL
+        electron_url: str = ELECTRON_SCREENSHOT_URL,
+        watchlist_url: str = WATCHLIST_SCREENSHOT_URL
     ):
         self.screenshots_dir = Path(screenshots_dir)
         self.screenshots_dir.mkdir(parents=True, exist_ok=True)
         self.electron_url = electron_url
+        self.watchlist_url = watchlist_url
 
     async def initialize(self):
-        """Inicializa el servicio y verifica disponibilidad del Electron screenshot server"""
+        """Inicializa el servicio y verifica disponibilidad de los screenshot servers"""
         electron_ok = await self._check_electron_available()
+        watchlist_ok = await self._check_watchlist_available()
+        methods = []
         if electron_ok:
-            logger.info(f"Screenshot service initialized (Electron capture at {self.electron_url})")
-        elif MPLFINANCE_AVAILABLE:
-            logger.info("Screenshot service initialized (mplfinance fallback only - Electron not available)")
+            methods.append(f"AnalizadorDesktop ({self.electron_url})")
+        if watchlist_ok:
+            methods.append(f"WatchlistDesktop ({self.watchlist_url})")
+        if MPLFINANCE_AVAILABLE:
+            methods.append("mplfinance fallback")
+
+        if methods:
+            logger.info(f"Screenshot service initialized: {', '.join(methods)}")
         else:
             logger.warning("Screenshot service initialized (NO capture methods available)")
 
@@ -65,14 +77,29 @@ class ScreenshotService:
         logger.info("Screenshot service shut down")
 
     async def _check_electron_available(self) -> bool:
-        """Verifica si el servidor de screenshots de Electron esta disponible"""
+        """Verifica si el servidor de screenshots del AnalizadorDesktop esta disponible"""
         import httpx
         try:
             async with httpx.AsyncClient(timeout=3.0) as client:
                 response = await client.get(f"{self.electron_url}/status")
                 if response.status_code == 200:
                     data = response.json()
-                    logger.info(f"Electron screenshot server: available={data.get('available')}, symbol={data.get('currentSymbol')}")
+                    logger.info(f"AnalizadorDesktop screenshot server: available={data.get('available')}, symbol={data.get('currentSymbol')}")
+                    return data.get('available', False)
+        except Exception:
+            pass
+        return False
+
+    async def _check_watchlist_available(self) -> bool:
+        """Verifica si el servidor de screenshots del WatchlistDesktop esta disponible"""
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=3.0) as client:
+                response = await client.get(f"{self.watchlist_url}/status")
+                if response.status_code == 200:
+                    data = response.json()
+                    symbols = data.get('symbols', [])
+                    logger.info(f"WatchlistDesktop screenshot server: available={data.get('available')}, symbols={len(symbols)}")
                     return data.get('available', False)
         except Exception:
             pass
@@ -110,7 +137,7 @@ class ScreenshotService:
         filename = f"{entry_id}_{event_type}_{timestamp}.png"
         filepath = symbol_dir / filename
 
-        # 1. Intentar captura desde Electron (AnalizadorDesktop)
+        # 1. Intentar captura desde AnalizadorDesktop (solo si el simbolo coincide)
         success = await self._capture_from_electron(
             symbol=symbol,
             filepath=str(filepath)
@@ -118,7 +145,15 @@ class ScreenshotService:
         if success:
             return str(filepath)
 
-        # 2. Fallback a mplfinance con datos proporcionados
+        # 2. Intentar captura desde WatchlistDesktop (region del minichart)
+        success = await self._capture_from_watchlist(
+            symbol=symbol,
+            filepath=str(filepath)
+        )
+        if success:
+            return str(filepath)
+
+        # 3. Fallback a mplfinance con datos proporcionados
         if MPLFINANCE_AVAILABLE and candles_data:
             success = await self._capture_with_mplfinance(
                 symbol=symbol,
@@ -128,7 +163,7 @@ class ScreenshotService:
             if success:
                 return str(filepath)
 
-        # 3. Fallback: obtener datos de la API y generar grafico
+        # 4. Fallback: obtener datos de la API y generar grafico
         if MPLFINANCE_AVAILABLE:
             candles = await self._fetch_candles_for_fallback(symbol, timeframe)
             if candles:
@@ -148,7 +183,8 @@ class ScreenshotService:
         symbol: str,
         filepath: str
     ) -> bool:
-        """Captura screenshot desde el AnalizadorDesktop via HTTP"""
+        """Captura screenshot desde el AnalizadorDesktop via HTTP.
+        Solo acepta si el simbolo solicitado coincide con el que se muestra."""
         import httpx
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
@@ -162,15 +198,15 @@ class ScreenshotService:
                     symbol_match = response.headers.get('X-Symbol-Match', 'false') == 'true'
                     current_symbol = response.headers.get('X-Current-Symbol', 'unknown')
 
-                    # Guardar la imagen PNG
+                    if not symbol_match:
+                        logger.info(f"AnalizadorDesktop: simbolo no coincide (requested: {symbol}, showing: {current_symbol}), trying next method")
+                        return False
+
+                    # Guardar la imagen PNG solo si coincide
                     with open(filepath, 'wb') as f:
                         f.write(response.content)
 
-                    if symbol_match:
-                        logger.info(f"Electron screenshot saved: {filepath} (symbol: {symbol})")
-                    else:
-                        logger.info(f"Electron screenshot saved: {filepath} (requested: {symbol}, showing: {current_symbol})")
-
+                    logger.info(f"AnalizadorDesktop screenshot saved: {filepath} (symbol: {symbol})")
                     return True
                 else:
                     error_msg = "unknown error"
@@ -178,14 +214,60 @@ class ScreenshotService:
                         error_msg = response.json().get('error', error_msg)
                     except Exception:
                         pass
-                    logger.warning(f"Electron screenshot failed ({response.status_code}): {error_msg}")
+                    logger.warning(f"AnalizadorDesktop screenshot failed ({response.status_code}): {error_msg}")
                     return False
 
         except httpx.ConnectError:
-            logger.debug("Electron screenshot server not available (AnalizadorDesktop not running?)")
+            logger.debug("AnalizadorDesktop screenshot server not available")
             return False
         except Exception as e:
-            logger.warning(f"Electron screenshot error: {e}")
+            logger.warning(f"AnalizadorDesktop screenshot error: {e}")
+            return False
+
+    async def _capture_from_watchlist(
+        self,
+        symbol: str,
+        filepath: str
+    ) -> bool:
+        """Captura screenshot de la region del minichart desde WatchlistDesktop via HTTP"""
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=180.0) as client:
+                response = await client.get(
+                    f"{self.watchlist_url}/screenshot",
+                    params={"symbol": symbol}
+                )
+
+                if response.status_code == 200:
+                    # Guardar la imagen PNG
+                    with open(filepath, 'wb') as f:
+                        f.write(response.content)
+
+                    logger.info(f"WatchlistDesktop screenshot saved: {filepath} (symbol: {symbol})")
+                    return True
+                elif response.status_code == 404:
+                    error_data = {}
+                    try:
+                        error_data = response.json()
+                    except Exception:
+                        pass
+                    available = error_data.get('available_symbols', [])
+                    logger.info(f"WatchlistDesktop: {symbol} not in grid (available: {available})")
+                    return False
+                else:
+                    error_msg = "unknown error"
+                    try:
+                        error_msg = response.json().get('error', error_msg)
+                    except Exception:
+                        pass
+                    logger.warning(f"WatchlistDesktop screenshot failed ({response.status_code}): {error_msg}")
+                    return False
+
+        except httpx.ConnectError:
+            logger.debug("WatchlistDesktop screenshot server not available")
+            return False
+        except Exception as e:
+            logger.warning(f"WatchlistDesktop screenshot error: {e}")
             return False
 
     async def _capture_with_mplfinance(
@@ -325,6 +407,7 @@ class ScreenshotService:
         """Retorna estado del servicio"""
         return {
             "electron_screenshot_url": self.electron_url,
+            "watchlist_screenshot_url": self.watchlist_url,
             "mplfinance_available": MPLFINANCE_AVAILABLE,
             "screenshots_dir": str(self.screenshots_dir)
         }

@@ -16550,3 +16550,712 @@ httpx.ReadTimeout
 2026-02-06 22:31:23,406 | INFO | store.journal_store | Updated journal entry: efe0f1d5-d152-4837-aa7e-d7f41ad84810
 2026-02-06 22:31:23,410 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/efe0f1d5-d152-4837-aa7e-d7f41ad84810_entry_20260206_223122.png
 2026-02-06 22:34:13,011 | INFO | store.journal_store | Updated journal entry: a914f158-5a37-4036-ad4b-0357e206deca
+2026-02-06 23:45:32,912 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 00:40:07,533 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-07 00:40:07,872 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 00:40:07,878 | INFO | services.position_monitor |   Exit manual: exit=70155.0000, sl=69185.2000, tp=73924.9000
+2026-02-07 00:40:07,879 | INFO | services.position_monitor | R-Multiple calculated: -0.43R
+2026-02-07 00:40:07,889 | INFO | store.journal_store | Updated journal entry: efe0f1d5-d152-4837-aa7e-d7f41ad84810
+2026-02-07 00:40:09,255 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 00:40:09,264 | INFO | services.screenshot_service | Electron screenshot saved: screenshots\BTCUSDT\efe0f1d5-d152-4837-aa7e-d7f41ad84810_exit_20260207_004007.png (symbol: BTCUSDT)
+2026-02-07 00:40:09,275 | INFO | store.journal_store | Updated journal entry: efe0f1d5-d152-4837-aa7e-d7f41ad84810
+2026-02-07 00:40:09,282 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/efe0f1d5-d152-4837-aa7e-d7f41ad84810_exit_20260207_004007.png
+2026-02-07 00:40:09,282 | INFO | services.position_monitor | Closed journal entry efe0f1d5-d152-4837-aa7e-d7f41ad84810: PnL $-1.33 (-0.83%) [-0.43R]
+2026-02-07 08:37:54,264 | INFO | main | Trading Journal Backend shutting down...
+2026-02-07 08:37:54,266 | INFO | services.position_monitor | Position monitor stopped
+2026-02-07 08:37:54,266 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-07 08:37:54,267 | INFO | main | Shutdown complete
+2026-02-07 08:38:00,145 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:00,320 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:00,338 | INFO | main | ============================================================
+2026-02-07 08:38:00,339 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:38:00,339 | INFO | main | Database: data/journal.db
+2026-02-07 08:38:00,339 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:38:00,339 | INFO | main | ============================================================
+2026-02-07 08:38:00,729 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:38:00,731 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:38:00,733 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-07 08:38:01,062 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:38:01,063 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:38:01,063 | INFO | main | Position monitor ENABLED
+2026-02-07 08:38:01,063 | INFO | main | All services started successfully
+2026-02-07 08:38:15,011 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 08:38:17,183 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:17,279 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:17,295 | INFO | main | ============================================================
+2026-02-07 08:38:17,295 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:38:17,295 | INFO | main | Database: data/journal.db
+2026-02-07 08:38:17,296 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:38:17,296 | INFO | main | ============================================================
+2026-02-07 08:38:17,681 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:38:17,683 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:38:17,685 | INFO | services.screenshot_service | Screenshot service initialized (Electron capture at http://127.0.0.1:5180)
+2026-02-07 08:38:17,995 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:38:17,995 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:38:17,996 | INFO | main | Position monitor ENABLED
+2026-02-07 08:38:17,996 | INFO | main | All services started successfully
+2026-02-07 08:38:30,404 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 08:38:32,514 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:32,604 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:32,620 | INFO | main | ============================================================
+2026-02-07 08:38:32,621 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:38:32,621 | INFO | main | Database: data/journal.db
+2026-02-07 08:38:32,621 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:38:32,621 | INFO | main | ============================================================
+2026-02-07 08:38:33,004 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:38:33,006 | INFO | services.screenshot_service | Electron screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:38:38,666 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:38,755 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:38,771 | INFO | main | ============================================================
+2026-02-07 08:38:38,772 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:38:38,772 | INFO | main | Database: data/journal.db
+2026-02-07 08:38:38,772 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:38:38,772 | INFO | main | ============================================================
+2026-02-07 08:38:39,140 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:38:39,142 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:38:41,500 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-07 08:38:41,808 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:38:41,809 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:38:41,810 | INFO | main | Position monitor ENABLED
+2026-02-07 08:38:41,810 | INFO | main | All services started successfully
+2026-02-07 08:38:55,609 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 08:38:57,709 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:57,802 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:38:57,819 | INFO | main | ============================================================
+2026-02-07 08:38:57,819 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:38:57,819 | INFO | main | Database: data/journal.db
+2026-02-07 08:38:57,820 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:38:57,820 | INFO | main | ============================================================
+2026-02-07 08:38:58,186 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:38:58,188 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:39:00,533 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-07 08:39:00,840 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:39:00,840 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:39:00,841 | INFO | main | Position monitor ENABLED
+2026-02-07 08:39:00,841 | INFO | main | All services started successfully
+2026-02-07 08:39:13,800 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 08:39:16,023 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:39:16,117 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:39:16,137 | INFO | main | ============================================================
+2026-02-07 08:39:16,137 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:39:16,137 | INFO | main | Database: data/journal.db
+2026-02-07 08:39:16,138 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:39:16,138 | INFO | main | ============================================================
+2026-02-07 08:39:16,616 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:39:16,618 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:39:19,015 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-07 08:39:19,323 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:39:19,323 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:39:19,324 | INFO | main | Position monitor ENABLED
+2026-02-07 08:39:19,324 | INFO | main | All services started successfully
+2026-02-07 08:39:31,014 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 08:39:33,228 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:39:33,330 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 08:39:33,351 | INFO | main | ============================================================
+2026-02-07 08:39:33,351 | INFO | main | Trading Journal Backend starting...
+2026-02-07 08:39:33,351 | INFO | main | Database: data/journal.db
+2026-02-07 08:39:33,352 | INFO | main | Screenshots: screenshots/
+2026-02-07 08:39:33,352 | INFO | main | ============================================================
+2026-02-07 08:39:33,748 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 08:39:33,750 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 08:39:36,104 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-07 08:39:36,412 | INFO | services.position_monitor | Loaded 0 existing open entries from database
+2026-02-07 08:39:36,412 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 08:39:36,412 | INFO | main | Position monitor ENABLED
+2026-02-07 08:39:36,413 | INFO | main | All services started successfully
+2026-02-07 08:39:48,075 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 09:26:25,312 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 69040.1
+2026-02-07 09:26:25,313 | INFO | services.position_monitor |   SL: 70549.2, TP: 65924.2
+2026-02-07 09:26:25,363 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 09:26:25,366 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 09:26:25,366 | INFO | services.position_monitor |   Risk calculated from SL: $1.51
+2026-02-07 09:26:25,366 | INFO | services.position_monitor |   R:R ratio: 2.06
+2026-02-07 09:26:25,371 | INFO | store.journal_store | Created journal entry: 047ab5a6-abd6-40af-b3d5-0284800abc77 - BTCUSDT short
+2026-02-07 09:26:25,375 | INFO | services.position_monitor | Created journal entry 047ab5a6-abd6-40af-b3d5-0284800abc77 for BTCUSDT (source: analizador)
+2026-02-07 09:26:28,342 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:26:28,345 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\BTCUSDT\047ab5a6-abd6-40af-b3d5-0284800abc77_entry_20260207_092625.png (symbol: BTCUSDT)
+2026-02-07 09:26:28,348 | INFO | store.journal_store | Updated journal entry: 047ab5a6-abd6-40af-b3d5-0284800abc77
+2026-02-07 09:26:28,351 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/047ab5a6-abd6-40af-b3d5-0284800abc77_entry_20260207_092625.png
+2026-02-07 09:42:20,788 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2024.55
+2026-02-07 09:42:20,789 | INFO | services.position_monitor |   SL: 1977.64, TP: 2105.16
+2026-02-07 09:42:20,837 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 09:42:20,840 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 09:42:20,840 | INFO | services.position_monitor |   Risk calculated from SL: $1.88
+2026-02-07 09:42:20,840 | INFO | services.position_monitor |   R:R ratio: 1.72
+2026-02-07 09:42:20,844 | INFO | store.journal_store | Created journal entry: 097506ac-b37b-4f71-a1cc-9eb93b4397bb - ETHUSDT long
+2026-02-07 09:42:20,847 | INFO | services.position_monitor | Created journal entry 097506ac-b37b-4f71-a1cc-9eb93b4397bb for ETHUSDT (source: analizador)
+2026-02-07 09:42:21,725 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:42:21,728 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 09:42:22,367 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:42:22,369 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\097506ac-b37b-4f71-a1cc-9eb93b4397bb_entry_20260207_094220.png (symbol: ETHUSDT)
+2026-02-07 09:42:22,374 | INFO | store.journal_store | Updated journal entry: 097506ac-b37b-4f71-a1cc-9eb93b4397bb
+2026-02-07 09:42:22,378 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/097506ac-b37b-4f71-a1cc-9eb93b4397bb_entry_20260207_094220.png
+2026-02-07 09:45:45,261 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-07 09:45:46,116 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 09:45:46,118 | INFO | services.position_monitor |   Exit manual: exit=68778.1000, sl=70549.2000, tp=65924.2000
+2026-02-07 09:45:46,118 | INFO | services.position_monitor | R-Multiple calculated: 0.12R
+2026-02-07 09:45:46,123 | INFO | store.journal_store | Updated journal entry: 047ab5a6-abd6-40af-b3d5-0284800abc77
+2026-02-07 09:45:47,030 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:45:47,034 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\047ab5a6-abd6-40af-b3d5-0284800abc77_exit_20260207_094546.png (symbol: BTCUSDT)
+2026-02-07 09:45:47,039 | INFO | store.journal_store | Updated journal entry: 047ab5a6-abd6-40af-b3d5-0284800abc77
+2026-02-07 09:45:47,042 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/047ab5a6-abd6-40af-b3d5-0284800abc77_exit_20260207_094546.png
+2026-02-07 09:45:47,042 | INFO | services.position_monitor | Closed journal entry 047ab5a6-abd6-40af-b3d5-0284800abc77: PnL $0.19 (0.38%) [0.12R]
+2026-02-07 09:45:47,043 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-07 09:45:47,376 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 09:45:47,379 | INFO | services.position_monitor |   Exit manual: exit=2029.5500, sl=1977.6400, tp=2105.1600
+2026-02-07 09:45:47,379 | INFO | services.position_monitor | R-Multiple calculated: 0.06R
+2026-02-07 09:45:47,383 | INFO | store.journal_store | Updated journal entry: 097506ac-b37b-4f71-a1cc-9eb93b4397bb
+2026-02-07 09:45:48,274 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:45:48,277 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 09:45:48,912 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 09:45:48,916 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\097506ac-b37b-4f71-a1cc-9eb93b4397bb_exit_20260207_094547.png (symbol: ETHUSDT)
+2026-02-07 09:45:48,920 | INFO | store.journal_store | Updated journal entry: 097506ac-b37b-4f71-a1cc-9eb93b4397bb
+2026-02-07 09:45:48,923 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ETHUSDT/097506ac-b37b-4f71-a1cc-9eb93b4397bb_exit_20260207_094547.png
+2026-02-07 09:45:48,923 | INFO | services.position_monitor | Closed journal entry 097506ac-b37b-4f71-a1cc-9eb93b4397bb: PnL $0.11 (0.25%) [0.06R]
+2026-02-07 10:00:26,337 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 68629.1
+2026-02-07 10:00:26,338 | INFO | services.position_monitor |   SL: 70128.3, TP: 65530.8
+2026-02-07 10:00:26,391 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 10:00:26,393 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 10:00:26,393 | INFO | services.position_monitor |   Risk calculated from SL: $1.50
+2026-02-07 10:00:26,394 | INFO | services.position_monitor |   R:R ratio: 2.07
+2026-02-07 10:00:26,399 | INFO | store.journal_store | Created journal entry: d5160ab8-1dd6-4d51-b652-00b695ab74c2 - BTCUSDT short
+2026-02-07 10:00:26,402 | INFO | services.position_monitor | Created journal entry d5160ab8-1dd6-4d51-b652-00b695ab74c2 for BTCUSDT (source: analizador)
+2026-02-07 10:00:27,292 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 10:00:27,296 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\d5160ab8-1dd6-4d51-b652-00b695ab74c2_entry_20260207_100026.png (symbol: BTCUSDT)
+2026-02-07 10:00:27,300 | INFO | store.journal_store | Updated journal entry: d5160ab8-1dd6-4d51-b652-00b695ab74c2
+2026-02-07 10:00:27,315 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/d5160ab8-1dd6-4d51-b652-00b695ab74c2_entry_20260207_100026.png
+2026-02-07 10:00:27,315 | INFO | services.position_monitor | New position detected: ETHUSDT Sell @ 2019.07
+2026-02-07 10:00:27,316 | INFO | services.position_monitor |   SL: 2065.53, TP: 1938.33
+2026-02-07 10:00:27,348 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 10:00:27,350 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 10:00:27,350 | INFO | services.position_monitor |   Risk calculated from SL: $1.86
+2026-02-07 10:00:27,350 | INFO | services.position_monitor |   R:R ratio: 1.74
+2026-02-07 10:00:27,354 | INFO | store.journal_store | Created journal entry: aa4a8164-2c08-427d-9f66-67a0b9339cd4 - ETHUSDT short
+2026-02-07 10:00:27,358 | INFO | services.position_monitor | Created journal entry aa4a8164-2c08-427d-9f66-67a0b9339cd4 for ETHUSDT (source: analizador)
+2026-02-07 10:00:28,241 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 10:00:28,245 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 10:00:29,124 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 10:00:29,127 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\aa4a8164-2c08-427d-9f66-67a0b9339cd4_entry_20260207_100027.png (symbol: ETHUSDT)
+2026-02-07 10:00:29,132 | INFO | store.journal_store | Updated journal entry: aa4a8164-2c08-427d-9f66-67a0b9339cd4
+2026-02-07 10:00:29,135 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/aa4a8164-2c08-427d-9f66-67a0b9339cd4_entry_20260207_100027.png
+2026-02-07 10:09:25,142 | INFO | main | Trading Journal Backend shutting down...
+2026-02-07 10:09:25,144 | INFO | services.position_monitor | Position monitor stopped
+2026-02-07 10:09:25,144 | INFO | services.screenshot_service | Screenshot service shut down
+2026-02-07 10:09:25,145 | INFO | main | Shutdown complete
+2026-02-07 10:09:27,454 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 10:09:27,548 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 10:09:27,563 | INFO | main | ============================================================
+2026-02-07 10:09:27,564 | INFO | main | Trading Journal Backend starting...
+2026-02-07 10:09:27,564 | INFO | main | Database: data/journal.db
+2026-02-07 10:09:27,564 | INFO | main | Screenshots: screenshots/
+2026-02-07 10:09:27,565 | INFO | main | ============================================================
+2026-02-07 10:09:27,930 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 10:09:27,932 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 10:09:28,247 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/status "HTTP/1.1 200 OK"
+2026-02-07 10:09:28,250 | INFO | services.screenshot_service | WatchlistDesktop screenshot server: available=True, symbols=10
+2026-02-07 10:09:28,251 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), WatchlistDesktop (http://127.0.0.1:5181), mplfinance fallback
+2026-02-07 10:09:28,570 | INFO | services.position_monitor | Loaded 2 existing open entries from database
+2026-02-07 10:09:28,570 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 10:09:28,571 | INFO | main | Position monitor ENABLED
+2026-02-07 10:09:28,571 | INFO | main | All services started successfully
+2026-02-07 10:09:42,848 | INFO | services.position_monitor | Synced 2 positions from TradingBot
+2026-02-07 10:50:38,064 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 10:50:40,243 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 10:50:40,349 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-07 10:50:40,367 | INFO | main | ============================================================
+2026-02-07 10:50:40,367 | INFO | main | Trading Journal Backend starting...
+2026-02-07 10:50:40,367 | INFO | main | Database: data/journal.db
+2026-02-07 10:50:40,367 | INFO | main | Screenshots: screenshots/
+2026-02-07 10:50:40,367 | INFO | main | ============================================================
+2026-02-07 10:50:40,754 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-07 10:50:40,756 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-07 10:50:43,090 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-07 10:50:43,405 | INFO | services.position_monitor | Loaded 2 existing open entries from database
+2026-02-07 10:50:43,405 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-07 10:50:43,405 | INFO | main | Position monitor ENABLED
+2026-02-07 10:50:43,405 | INFO | main | All services started successfully
+2026-02-07 10:50:59,818 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-07 10:50:59,818 | INFO | services.position_monitor | Orphan entry detected during sync: ETHUSDT (no active position)
+2026-02-07 10:50:59,818 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-07 10:51:00,171 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 10:51:00,174 | INFO | services.position_monitor |   Exit manual: exit=2041.4700, sl=2065.5300, tp=1938.3300
+2026-02-07 10:51:00,174 | INFO | services.position_monitor | R-Multiple calculated: -0.53R
+2026-02-07 10:51:00,177 | INFO | store.journal_store | Updated journal entry: aa4a8164-2c08-427d-9f66-67a0b9339cd4
+2026-02-07 10:51:01,088 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 10:51:01,090 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 10:51:10,733 | ERROR | services.screenshot_service | All screenshot methods failed for ETHUSDT
+2026-02-07 10:51:10,734 | INFO | services.position_monitor | Closed journal entry aa4a8164-2c08-427d-9f66-67a0b9339cd4: PnL $-0.99 (-1.11%) [-0.53R]
+2026-02-07 10:51:10,734 | INFO | services.position_monitor | Orphan entry detected during sync: BTCUSDT (no active position)
+2026-02-07 10:51:10,734 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-07 10:51:11,100 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 10:51:11,102 | INFO | services.position_monitor |   Exit manual: exit=69056.0000, sl=70128.3000, tp=65530.8000
+2026-02-07 10:51:11,103 | INFO | services.position_monitor | R-Multiple calculated: -0.34R
+2026-02-07 10:51:11,105 | INFO | store.journal_store | Updated journal entry: d5160ab8-1dd6-4d51-b652-00b695ab74c2
+2026-02-07 10:51:12,012 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 10:51:12,015 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\d5160ab8-1dd6-4d51-b652-00b695ab74c2_exit_20260207_105111.png (symbol: BTCUSDT)
+2026-02-07 10:51:12,019 | INFO | store.journal_store | Updated journal entry: d5160ab8-1dd6-4d51-b652-00b695ab74c2
+2026-02-07 10:51:12,023 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/d5160ab8-1dd6-4d51-b652-00b695ab74c2_exit_20260207_105111.png
+2026-02-07 10:51:12,023 | INFO | services.position_monitor | Closed journal entry d5160ab8-1dd6-4d51-b652-00b695ab74c2: PnL $-0.50 (-0.62%) [-0.34R]
+2026-02-07 10:51:12,023 | INFO | services.position_monitor | Closed 2 orphan entries during initial sync
+2026-02-07 10:51:49,908 | INFO | store.journal_store | Deleted journal entry: aa4a8164-2c08-427d-9f66-67a0b9339cd4
+2026-02-07 10:51:49,915 | INFO | store.journal_store | Deleted journal entry: 097506ac-b37b-4f71-a1cc-9eb93b4397bb
+2026-02-07 10:51:49,921 | INFO | store.journal_store | Deleted journal entry: d5160ab8-1dd6-4d51-b652-00b695ab74c2
+2026-02-07 10:51:49,928 | INFO | store.journal_store | Deleted journal entry: 047ab5a6-abd6-40af-b3d5-0284800abc77
+2026-02-07 10:51:49,933 | INFO | store.journal_store | Deleted journal entry: efe0f1d5-d152-4837-aa7e-d7f41ad84810
+2026-02-07 10:51:49,939 | INFO | store.journal_store | Deleted journal entry: a914f158-5a37-4036-ad4b-0357e206deca
+2026-02-07 10:51:49,946 | INFO | store.journal_store | Deleted journal entry: a4423448-fd04-4a85-a3f6-7159c7a9ae63
+2026-02-07 10:51:49,953 | INFO | store.journal_store | Deleted journal entry: 7f7db991-0c4d-49ab-b917-06f1e920b08f
+2026-02-07 10:51:49,959 | INFO | store.journal_store | Deleted journal entry: 74091e2e-c1e2-4abe-b617-2289a48094a9
+2026-02-07 10:57:17,654 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 10:58:24,201 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 10:58:59,244 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 10:59:34,273 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:00:37,915 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:10:55,913 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:11:30,937 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:15:53,478 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:17:24,693 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:20:57,626 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:31:05,620 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:31:40,644 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:43:18,745 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:45:23,062 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:45:58,069 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 11:51:13,456 | INFO | services.position_monitor | New position detected: TRXUSDT Buy @ 0.27566
+2026-02-07 11:51:13,456 | INFO | services.position_monitor |   SL: 0.2729, TP: 0.28117
+2026-02-07 11:51:13,520 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 11:51:13,522 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 11:51:13,522 | INFO | services.position_monitor |   Risk calculated from SL: $1.00
+2026-02-07 11:51:13,522 | INFO | services.position_monitor |   R:R ratio: 2.00
+2026-02-07 11:51:13,526 | INFO | store.journal_store | Created journal entry: 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf - TRXUSDT long
+2026-02-07 11:51:13,529 | INFO | services.position_monitor | Created journal entry 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf for TRXUSDT (source: analizador)
+2026-02-07 11:51:17,340 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:51:17,343 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\TRXUSDT\57dc58ba-27e3-45f1-a6d1-0db54e08b6cf_entry_20260207_115113.png (symbol: TRXUSDT)
+2026-02-07 11:51:17,347 | INFO | store.journal_store | Updated journal entry: 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf
+2026-02-07 11:51:17,351 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/57dc58ba-27e3-45f1-a6d1-0db54e08b6cf_entry_20260207_115113.png
+2026-02-07 11:57:14,802 | INFO | services.position_monitor | New position detected: ETHUSDT Sell @ 2048.4
+2026-02-07 11:57:14,803 | INFO | services.position_monitor |   SL: 2095.27, TP: 1966.24
+2026-02-07 11:57:14,865 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 11:57:14,867 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 11:57:14,867 | INFO | services.position_monitor |   Risk calculated from SL: $1.87
+2026-02-07 11:57:14,867 | INFO | services.position_monitor |   R:R ratio: 1.75
+2026-02-07 11:57:14,871 | INFO | store.journal_store | Created journal entry: 04273fab-16c0-4537-8ca3-4f50d11d2b5c - ETHUSDT short
+2026-02-07 11:57:14,874 | INFO | services.position_monitor | Created journal entry 04273fab-16c0-4537-8ca3-4f50d11d2b5c for ETHUSDT (source: analizador)
+2026-02-07 11:57:15,768 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:57:15,771 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 11:57:17,167 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:57:17,170 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\04273fab-16c0-4537-8ca3-4f50d11d2b5c_entry_20260207_115714.png (symbol: ETHUSDT)
+2026-02-07 11:57:17,174 | INFO | store.journal_store | Updated journal entry: 04273fab-16c0-4537-8ca3-4f50d11d2b5c
+2026-02-07 11:57:17,178 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/04273fab-16c0-4537-8ca3-4f50d11d2b5c_entry_20260207_115714.png
+2026-02-07 11:57:17,178 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 0.997
+2026-02-07 11:57:17,179 | INFO | services.position_monitor |   SL: 1.0187, TP: 0.9519
+2026-02-07 11:57:17,212 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 11:57:17,214 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 11:57:17,215 | INFO | services.position_monitor |   Risk calculated from SL: $2.82
+2026-02-07 11:57:17,215 | INFO | services.position_monitor |   R:R ratio: 2.08
+2026-02-07 11:57:17,219 | INFO | store.journal_store | Created journal entry: 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b - SUIUSDT short
+2026-02-07 11:57:17,223 | INFO | services.position_monitor | Created journal entry 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b for SUIUSDT (source: analizador)
+2026-02-07 11:57:18,114 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:57:18,115 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SUIUSDT, showing: BTCUSDT), trying next method
+2026-02-07 11:57:19,493 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:57:19,496 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SUIUSDT\5ac0dd95-ed81-453f-b2bf-c3cb25afe27b_entry_20260207_115717.png (symbol: SUIUSDT)
+2026-02-07 11:57:19,499 | INFO | store.journal_store | Updated journal entry: 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b
+2026-02-07 11:57:19,502 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/5ac0dd95-ed81-453f-b2bf-c3cb25afe27b_entry_20260207_115717.png
+2026-02-07 11:59:09,032 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.4185
+2026-02-07 11:59:09,033 | INFO | services.position_monitor |   SL: 1.4326, TP: 1.3901
+2026-02-07 11:59:09,096 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 11:59:09,098 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 11:59:09,098 | INFO | services.position_monitor |   Risk calculated from SL: $0.99
+2026-02-07 11:59:09,099 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-07 11:59:09,102 | INFO | store.journal_store | Created journal entry: 98152e00-acf1-4d91-9941-d91470b496fc - XRPUSDT short
+2026-02-07 11:59:09,105 | INFO | services.position_monitor | Created journal entry 98152e00-acf1-4d91-9941-d91470b496fc for XRPUSDT (source: analizador)
+2026-02-07 11:59:10,005 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:59:10,008 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: XRPUSDT, showing: BTCUSDT), trying next method
+2026-02-07 11:59:11,408 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 11:59:11,411 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\XRPUSDT\98152e00-acf1-4d91-9941-d91470b496fc_entry_20260207_115909.png (symbol: XRPUSDT)
+2026-02-07 11:59:11,415 | INFO | store.journal_store | Updated journal entry: 98152e00-acf1-4d91-9941-d91470b496fc
+2026-02-07 11:59:11,418 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/98152e00-acf1-4d91-9941-d91470b496fc_entry_20260207_115909.png
+2026-02-07 12:00:05,875 | INFO | services.position_monitor | New position detected: DOGEUSDT Sell @ 0.09774
+2026-02-07 12:00:05,876 | INFO | services.position_monitor |   SL: 0.09989, TP: 0.09334
+2026-02-07 12:00:05,937 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:00:05,939 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:00:05,940 | INFO | services.position_monitor |   Risk calculated from SL: $3.00
+2026-02-07 12:00:05,940 | INFO | services.position_monitor |   R:R ratio: 2.05
+2026-02-07 12:00:05,944 | INFO | store.journal_store | Created journal entry: e2934261-6af8-4275-8c36-e79eb14905e1 - DOGEUSDT short
+2026-02-07 12:00:05,947 | INFO | services.position_monitor | Created journal entry e2934261-6af8-4275-8c36-e79eb14905e1 for DOGEUSDT (source: analizador)
+2026-02-07 12:00:06,841 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:00:06,844 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: DOGEUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:00:08,217 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:00:08,221 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\DOGEUSDT\e2934261-6af8-4275-8c36-e79eb14905e1_entry_20260207_120005.png (symbol: DOGEUSDT)
+2026-02-07 12:00:08,225 | INFO | store.journal_store | Updated journal entry: e2934261-6af8-4275-8c36-e79eb14905e1
+2026-02-07 12:00:08,228 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/e2934261-6af8-4275-8c36-e79eb14905e1_entry_20260207_120005.png
+2026-02-07 12:01:35,874 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:02:10,904 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:02:45,921 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:03:20,955 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:03:40,520 | INFO | services.position_monitor | New position detected: SOLUSDT Buy @ 87.04
+2026-02-07 12:03:40,521 | INFO | services.position_monitor |   SL: 86.16, TP: 88.78
+2026-02-07 12:03:40,577 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:03:40,579 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 12:03:40,579 | INFO | services.position_monitor |   Risk calculated from SL: $2.02
+2026-02-07 12:03:40,579 | INFO | services.position_monitor |   R:R ratio: 1.98
+2026-02-07 12:03:40,581 | INFO | store.journal_store | Created journal entry: 66ba1912-c7ed-4608-adfc-8f333780b187 - SOLUSDT long
+2026-02-07 12:03:40,584 | INFO | services.position_monitor | Created journal entry 66ba1912-c7ed-4608-adfc-8f333780b187 for SOLUSDT (source: analizador)
+2026-02-07 12:03:41,564 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:03:41,567 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:03:42,971 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:03:42,975 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\66ba1912-c7ed-4608-adfc-8f333780b187_entry_20260207_120340.png (symbol: SOLUSDT)
+2026-02-07 12:03:42,978 | INFO | store.journal_store | Updated journal entry: 66ba1912-c7ed-4608-adfc-8f333780b187
+2026-02-07 12:03:42,982 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/66ba1912-c7ed-4608-adfc-8f333780b187_entry_20260207_120340.png
+2026-02-07 12:04:12,739 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-07 12:04:13,129 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:13,132 | INFO | services.position_monitor |   Exit manual: exit=1.1214, sl=1.0187, tp=0.9519
+2026-02-07 12:04:13,132 | INFO | services.position_monitor | R-Multiple calculated: -1.06R
+2026-02-07 12:04:13,134 | INFO | store.journal_store | Updated journal entry: 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b
+2026-02-07 12:04:14,055 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:14,074 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SUIUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:04:15,537 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:15,540 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SUIUSDT\5ac0dd95-ed81-453f-b2bf-c3cb25afe27b_exit_20260207_120413.png (symbol: SUIUSDT)
+2026-02-07 12:04:15,545 | INFO | store.journal_store | Updated journal entry: 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b
+2026-02-07 12:04:15,549 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SUIUSDT/5ac0dd95-ed81-453f-b2bf-c3cb25afe27b_exit_20260207_120413.png
+2026-02-07 12:04:15,549 | INFO | services.position_monitor | Closed journal entry 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b: PnL $-3.00 (-12.48%) [-1.06R]
+2026-02-07 12:04:45,238 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-07 12:04:45,554 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:45,556 | INFO | services.position_monitor |   Exit manual: exit=1.4186, sl=1.4326, tp=1.3901
+2026-02-07 12:04:45,557 | INFO | services.position_monitor | R-Multiple calculated: -0.12R
+2026-02-07 12:04:45,560 | INFO | store.journal_store | Updated journal entry: 98152e00-acf1-4d91-9941-d91470b496fc
+2026-02-07 12:04:46,473 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:46,476 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: XRPUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:04:47,876 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:47,879 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\XRPUSDT\98152e00-acf1-4d91-9941-d91470b496fc_exit_20260207_120445.png (symbol: XRPUSDT)
+2026-02-07 12:04:47,882 | INFO | store.journal_store | Updated journal entry: 98152e00-acf1-4d91-9941-d91470b496fc
+2026-02-07 12:04:47,885 | INFO | services.position_monitor | Exit screenshot saved: screenshots/XRPUSDT/98152e00-acf1-4d91-9941-d91470b496fc_exit_20260207_120445.png
+2026-02-07 12:04:47,886 | INFO | services.position_monitor | Closed journal entry 98152e00-acf1-4d91-9941-d91470b496fc: PnL $-0.12 (-0.01%) [-0.12R]
+2026-02-07 12:04:47,886 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-07 12:04:48,787 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:48,789 | INFO | services.position_monitor |   Exit manual: exit=2043.1800, sl=2095.2700, tp=1966.2400
+2026-02-07 12:04:48,790 | INFO | services.position_monitor | R-Multiple calculated: 0.06R
+2026-02-07 12:04:48,792 | INFO | store.journal_store | Updated journal entry: 04273fab-16c0-4537-8ca3-4f50d11d2b5c
+2026-02-07 12:04:49,686 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:49,689 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:04:51,070 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:51,073 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\04273fab-16c0-4537-8ca3-4f50d11d2b5c_exit_20260207_120448.png (symbol: ETHUSDT)
+2026-02-07 12:04:51,079 | INFO | store.journal_store | Updated journal entry: 04273fab-16c0-4537-8ca3-4f50d11d2b5c
+2026-02-07 12:04:51,082 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ETHUSDT/04273fab-16c0-4537-8ca3-4f50d11d2b5c_exit_20260207_120448.png
+2026-02-07 12:04:51,082 | INFO | services.position_monitor | Closed journal entry 04273fab-16c0-4537-8ca3-4f50d11d2b5c: PnL $0.12 (0.25%) [0.06R]
+2026-02-07 12:04:51,083 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-02-07 12:04:52,030 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/TRXUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:52,033 | INFO | services.position_monitor |   Exit manual: exit=0.2760, sl=0.2729, tp=0.2812
+2026-02-07 12:04:52,033 | INFO | services.position_monitor | R-Multiple calculated: 0.03R
+2026-02-07 12:04:52,038 | INFO | store.journal_store | Updated journal entry: 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf
+2026-02-07 12:04:52,945 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:52,948 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: TRXUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:04:54,357 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:54,360 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\TRXUSDT\57dc58ba-27e3-45f1-a6d1-0db54e08b6cf_exit_20260207_120452.png (symbol: TRXUSDT)
+2026-02-07 12:04:54,366 | INFO | store.journal_store | Updated journal entry: 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf
+2026-02-07 12:04:54,371 | INFO | services.position_monitor | Exit screenshot saved: screenshots/TRXUSDT/57dc58ba-27e3-45f1-a6d1-0db54e08b6cf_exit_20260207_120452.png
+2026-02-07 12:04:54,371 | INFO | services.position_monitor | Closed journal entry 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf: PnL $0.03 (0.14%) [0.03R]
+2026-02-07 12:04:54,371 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-07 12:04:54,691 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:54,694 | INFO | services.position_monitor |   Exit manual: exit=87.0500, sl=86.1600, tp=88.7800
+2026-02-07 12:04:54,694 | INFO | services.position_monitor | R-Multiple calculated: -0.10R
+2026-02-07 12:04:54,698 | INFO | store.journal_store | Updated journal entry: 66ba1912-c7ed-4608-adfc-8f333780b187
+2026-02-07 12:04:55,616 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:55,619 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:04:57,036 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:57,039 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\66ba1912-c7ed-4608-adfc-8f333780b187_exit_20260207_120454.png (symbol: SOLUSDT)
+2026-02-07 12:04:57,042 | INFO | store.journal_store | Updated journal entry: 66ba1912-c7ed-4608-adfc-8f333780b187
+2026-02-07 12:04:57,045 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SOLUSDT/66ba1912-c7ed-4608-adfc-8f333780b187_exit_20260207_120454.png
+2026-02-07 12:04:57,045 | INFO | services.position_monitor | Closed journal entry 66ba1912-c7ed-4608-adfc-8f333780b187: PnL $-0.20 (0.01%) [-0.10R]
+2026-02-07 12:04:57,045 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-02-07 12:04:58,084 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 12:04:58,087 | INFO | services.position_monitor |   Exit manual: exit=0.0974, sl=0.0999, tp=0.0933
+2026-02-07 12:04:58,087 | INFO | services.position_monitor | R-Multiple calculated: 0.10R
+2026-02-07 12:04:58,091 | INFO | store.journal_store | Updated journal entry: e2934261-6af8-4275-8c36-e79eb14905e1
+2026-02-07 12:04:58,995 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:04:59,000 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: DOGEUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:05:00,413 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:05:00,416 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\DOGEUSDT\e2934261-6af8-4275-8c36-e79eb14905e1_exit_20260207_120458.png (symbol: DOGEUSDT)
+2026-02-07 12:05:00,420 | INFO | store.journal_store | Updated journal entry: e2934261-6af8-4275-8c36-e79eb14905e1
+2026-02-07 12:05:00,423 | INFO | services.position_monitor | Exit screenshot saved: screenshots/DOGEUSDT/e2934261-6af8-4275-8c36-e79eb14905e1_exit_20260207_120458.png
+2026-02-07 12:05:00,423 | INFO | services.position_monitor | Closed journal entry e2934261-6af8-4275-8c36-e79eb14905e1: PnL $0.30 (0.33%) [0.10R]
+2026-02-07 12:05:27,265 | INFO | services.position_monitor | New position detected: ETHUSDT Buy @ 2042.75
+2026-02-07 12:05:27,265 | INFO | services.position_monitor |   SL: 1996.2, TP: 2124.92
+2026-02-07 12:05:27,332 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:05:27,335 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 12:05:27,335 | INFO | services.position_monitor |   Risk calculated from SL: $1.86
+2026-02-07 12:05:27,336 | INFO | services.position_monitor |   R:R ratio: 1.77
+2026-02-07 12:05:27,338 | INFO | store.journal_store | Created journal entry: 6f76102c-4afc-4439-aba3-0922d61804c2 - ETHUSDT long
+2026-02-07 12:05:27,341 | INFO | services.position_monitor | Created journal entry 6f76102c-4afc-4439-aba3-0922d61804c2 for ETHUSDT (source: analizador)
+2026-02-07 12:05:28,249 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:05:28,252 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:05:29,750 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:05:29,753 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ETHUSDT\6f76102c-4afc-4439-aba3-0922d61804c2_entry_20260207_120527.png (symbol: ETHUSDT)
+2026-02-07 12:05:29,756 | INFO | store.journal_store | Updated journal entry: 6f76102c-4afc-4439-aba3-0922d61804c2
+2026-02-07 12:05:29,759 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ETHUSDT/6f76102c-4afc-4439-aba3-0922d61804c2_entry_20260207_120527.png
+2026-02-07 12:06:04,791 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:06:39,814 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:07:14,850 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:07:33,984 | INFO | services.position_monitor | New position detected: XRPUSDT Buy @ 1.4175
+2026-02-07 12:07:33,984 | INFO | services.position_monitor |   SL: 1.4036, TP: 1.4461
+2026-02-07 12:07:34,067 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:07:34,071 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 12:07:34,071 | INFO | services.position_monitor |   Risk calculated from SL: $0.98
+2026-02-07 12:07:34,071 | INFO | services.position_monitor |   R:R ratio: 2.06
+2026-02-07 12:07:34,074 | INFO | store.journal_store | Created journal entry: bd2a31f1-ecc1-4ac7-81ee-181302c56e3a - XRPUSDT long
+2026-02-07 12:07:34,080 | INFO | services.position_monitor | Created journal entry bd2a31f1-ecc1-4ac7-81ee-181302c56e3a for XRPUSDT (source: analizador)
+2026-02-07 12:07:35,131 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:07:35,135 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: XRPUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:07:36,611 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:07:36,614 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\XRPUSDT\bd2a31f1-ecc1-4ac7-81ee-181302c56e3a_entry_20260207_120734.png (symbol: XRPUSDT)
+2026-02-07 12:07:36,617 | INFO | store.journal_store | Updated journal entry: bd2a31f1-ecc1-4ac7-81ee-181302c56e3a
+2026-02-07 12:07:36,621 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/bd2a31f1-ecc1-4ac7-81ee-181302c56e3a_entry_20260207_120734.png
+2026-02-07 12:07:36,621 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 68872.1
+2026-02-07 12:07:36,621 | INFO | services.position_monitor |   SL: 70405.8, TP: 65790.2
+2026-02-07 12:07:36,655 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:07:36,658 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:07:36,658 | INFO | services.position_monitor |   Risk calculated from SL: $1.53
+2026-02-07 12:07:36,658 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-07 12:07:36,663 | INFO | store.journal_store | Created journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8 - BTCUSDT short
+2026-02-07 12:07:36,667 | INFO | services.position_monitor | Created journal entry b79176fc-9803-4152-ba18-6f0856f7e6f8 for BTCUSDT (source: analizador)
+2026-02-07 12:07:37,563 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:07:37,567 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\b79176fc-9803-4152-ba18-6f0856f7e6f8_entry_20260207_120736.png (symbol: BTCUSDT)
+2026-02-07 12:07:37,572 | INFO | store.journal_store | Updated journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8
+2026-02-07 12:07:37,575 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/b79176fc-9803-4152-ba18-6f0856f7e6f8_entry_20260207_120736.png
+2026-02-07 12:08:12,613 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:10:07,265 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 0.9951
+2026-02-07 12:10:07,266 | INFO | services.position_monitor |   SL: 1.0169, TP: 0.9503
+2026-02-07 12:10:07,342 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:10:07,344 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:10:07,345 | INFO | services.position_monitor |   Risk calculated from SL: $2.83
+2026-02-07 12:10:07,345 | INFO | services.position_monitor |   R:R ratio: 2.06
+2026-02-07 12:10:07,348 | INFO | store.journal_store | Created journal entry: 7788a44f-85b0-4a60-b2d0-cb45cf055dc1 - SUIUSDT short
+2026-02-07 12:10:07,352 | INFO | services.position_monitor | Created journal entry 7788a44f-85b0-4a60-b2d0-cb45cf055dc1 for SUIUSDT (source: analizador)
+2026-02-07 12:10:08,365 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:10:08,378 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SUIUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:10:09,839 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:10:09,842 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SUIUSDT\7788a44f-85b0-4a60-b2d0-cb45cf055dc1_entry_20260207_121007.png (symbol: SUIUSDT)
+2026-02-07 12:10:09,847 | INFO | store.journal_store | Updated journal entry: 7788a44f-85b0-4a60-b2d0-cb45cf055dc1
+2026-02-07 12:10:09,850 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/7788a44f-85b0-4a60-b2d0-cb45cf055dc1_entry_20260207_121007.png
+2026-02-07 12:10:32,529 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 86.84
+2026-02-07 12:10:32,529 | INFO | services.position_monitor |   SL: 87.69, TP: 85.09
+2026-02-07 12:10:32,587 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:10:32,593 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:10:32,593 | INFO | services.position_monitor |   Risk calculated from SL: $1.87
+2026-02-07 12:10:32,594 | INFO | services.position_monitor |   R:R ratio: 2.06
+2026-02-07 12:10:32,598 | INFO | store.journal_store | Created journal entry: cd6324b5-7c69-46a9-85fd-bbf36c520f05 - SOLUSDT short
+2026-02-07 12:10:32,604 | INFO | services.position_monitor | Created journal entry cd6324b5-7c69-46a9-85fd-bbf36c520f05 for SOLUSDT (source: analizador)
+2026-02-07 12:10:33,547 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:10:33,550 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:10:35,019 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:10:35,022 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\cd6324b5-7c69-46a9-85fd-bbf36c520f05_entry_20260207_121032.png (symbol: SOLUSDT)
+2026-02-07 12:10:35,026 | INFO | store.journal_store | Updated journal entry: cd6324b5-7c69-46a9-85fd-bbf36c520f05
+2026-02-07 12:10:35,030 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/cd6324b5-7c69-46a9-85fd-bbf36c520f05_entry_20260207_121032.png
+2026-02-07 12:21:23,226 | INFO | store.journal_store | Updated journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8
+2026-02-07 12:28:14,484 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:28:49,509 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:29:22,942 | INFO | services.position_monitor | New position detected: POLUSDT Buy @ 0.0969
+2026-02-07 12:29:22,942 | INFO | services.position_monitor |   SL: 0.09599, TP: 0.09889
+2026-02-07 12:29:22,993 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:29:22,996 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 12:29:22,996 | INFO | services.position_monitor |   Risk calculated from SL: $0.94
+2026-02-07 12:29:22,996 | INFO | services.position_monitor |   R:R ratio: 2.19
+2026-02-07 12:29:22,998 | INFO | store.journal_store | Created journal entry: c567454e-7d63-485f-9533-e4939e59d3f3 - POLUSDT long
+2026-02-07 12:29:23,002 | INFO | services.position_monitor | Created journal entry c567454e-7d63-485f-9533-e4939e59d3f3 for POLUSDT (source: analizador)
+2026-02-07 12:29:23,903 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=POLUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:29:23,906 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: POLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:29:24,230 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=POLUSDT "HTTP/1.1 404 Not Found"
+2026-02-07 12:29:24,232 | INFO | services.screenshot_service | WatchlistDesktop: POLUSDT not in grid (available: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT'])
+2026-02-07 12:29:39,409 | ERROR | services.screenshot_service | All screenshot methods failed for POLUSDT
+2026-02-07 12:30:14,438 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:31:17,314 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:33:26,154 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:34:19,320 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:35:15,420 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:35:50,446 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 12:38:07,554 | INFO | services.position_monitor | New position detected: DOGEUSDT Buy @ 0.09811
+2026-02-07 12:38:07,554 | INFO | services.position_monitor |   SL: 0.09595, TP: 0.10252
+2026-02-07 12:38:07,625 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:38:07,628 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_LOW (LONG), raw_source=swing_detector
+2026-02-07 12:38:07,628 | INFO | services.position_monitor |   Risk calculated from SL: $3.02
+2026-02-07 12:38:07,629 | INFO | services.position_monitor |   R:R ratio: 2.04
+2026-02-07 12:38:07,634 | INFO | store.journal_store | Created journal entry: b65171f1-d23d-4b65-a9f5-7d98b9c3af20 - DOGEUSDT long
+2026-02-07 12:38:07,638 | INFO | services.position_monitor | Created journal entry b65171f1-d23d-4b65-a9f5-7d98b9c3af20 for DOGEUSDT (source: analizador)
+2026-02-07 12:38:08,653 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:38:08,656 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: DOGEUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:38:10,071 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:38:10,074 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\DOGEUSDT\b65171f1-d23d-4b65-a9f5-7d98b9c3af20_entry_20260207_123807.png (symbol: DOGEUSDT)
+2026-02-07 12:38:10,078 | INFO | store.journal_store | Updated journal entry: b65171f1-d23d-4b65-a9f5-7d98b9c3af20
+2026-02-07 12:38:10,082 | INFO | services.position_monitor | Entry screenshot saved: screenshots/DOGEUSDT/b65171f1-d23d-4b65-a9f5-7d98b9c3af20_entry_20260207_123807.png
+2026-02-07 12:44:23,226 | INFO | services.position_monitor | New position detected: TRXUSDT Sell @ 0.27641
+2026-02-07 12:44:23,227 | INFO | services.position_monitor |   SL: 0.27917, TP: 0.27088
+2026-02-07 12:44:23,278 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:44:23,280 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:44:23,280 | INFO | services.position_monitor |   Risk calculated from SL: $1.00
+2026-02-07 12:44:23,280 | INFO | services.position_monitor |   R:R ratio: 2.00
+2026-02-07 12:44:23,284 | INFO | store.journal_store | Created journal entry: 70d39c94-60be-45c5-a4f6-6156ef7c74a0 - TRXUSDT short
+2026-02-07 12:44:23,287 | INFO | services.position_monitor | Created journal entry 70d39c94-60be-45c5-a4f6-6156ef7c74a0 for TRXUSDT (source: analizador)
+2026-02-07 12:44:24,184 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:44:24,186 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: TRXUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:44:25,592 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:44:25,596 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\TRXUSDT\70d39c94-60be-45c5-a4f6-6156ef7c74a0_entry_20260207_124423.png (symbol: TRXUSDT)
+2026-02-07 12:44:25,599 | INFO | store.journal_store | Updated journal entry: 70d39c94-60be-45c5-a4f6-6156ef7c74a0
+2026-02-07 12:44:25,602 | INFO | services.position_monitor | Entry screenshot saved: screenshots/TRXUSDT/70d39c94-60be-45c5-a4f6-6156ef7c74a0_entry_20260207_124423.png
+2026-02-07 12:45:16,914 | INFO | services.position_monitor | New position detected: ADAUSDT Sell @ 0.2741
+2026-02-07 12:45:16,915 | INFO | services.position_monitor |   SL: 0.2768, TP: 0.2686
+2026-02-07 12:45:16,970 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 12:45:16,972 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 12:45:16,972 | INFO | services.position_monitor |   Risk calculated from SL: $0.98
+2026-02-07 12:45:16,973 | INFO | services.position_monitor |   R:R ratio: 2.04
+2026-02-07 12:45:16,976 | INFO | store.journal_store | Created journal entry: 443624d8-23f3-4e65-8854-21e91023b5ad - ADAUSDT short
+2026-02-07 12:45:16,980 | INFO | services.position_monitor | Created journal entry 443624d8-23f3-4e65-8854-21e91023b5ad for ADAUSDT (source: analizador)
+2026-02-07 12:45:17,860 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:45:17,862 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ADAUSDT, showing: BTCUSDT), trying next method
+2026-02-07 12:45:19,253 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 12:45:19,257 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ADAUSDT\443624d8-23f3-4e65-8854-21e91023b5ad_entry_20260207_124516.png (symbol: ADAUSDT)
+2026-02-07 12:45:19,260 | INFO | store.journal_store | Updated journal entry: 443624d8-23f3-4e65-8854-21e91023b5ad
+2026-02-07 12:45:19,264 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ADAUSDT/443624d8-23f3-4e65-8854-21e91023b5ad_entry_20260207_124516.png
+2026-02-07 13:05:52,363 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-07 13:05:52,745 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 13:05:52,748 | INFO | services.position_monitor |   Exit by SL: exit=87.6900 vs sl=87.6900 (diff=0.00%)
+2026-02-07 13:05:52,748 | INFO | services.position_monitor | R-Multiple calculated: -1.11R
+2026-02-07 13:05:52,751 | INFO | store.journal_store | Updated journal entry: cd6324b5-7c69-46a9-85fd-bbf36c520f05
+2026-02-07 13:05:53,636 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:05:53,638 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:05:55,043 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:05:55,046 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\cd6324b5-7c69-46a9-85fd-bbf36c520f05_exit_20260207_130552.png (symbol: SOLUSDT)
+2026-02-07 13:05:55,052 | INFO | store.journal_store | Updated journal entry: cd6324b5-7c69-46a9-85fd-bbf36c520f05
+2026-02-07 13:05:55,056 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SOLUSDT/cd6324b5-7c69-46a9-85fd-bbf36c520f05_exit_20260207_130552.png
+2026-02-07 13:05:55,056 | INFO | services.position_monitor | Closed journal entry cd6324b5-7c69-46a9-85fd-bbf36c520f05: PnL $-2.08 (-0.98%) [-1.11R]
+2026-02-07 13:16:38,270 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-07 13:27:18,091 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 88.11
+2026-02-07 13:27:18,092 | INFO | services.position_monitor |   SL: 88.99, TP: 86.34
+2026-02-07 13:27:18,145 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:27:18,149 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:27:18,149 | INFO | services.position_monitor |   Risk calculated from SL: $1.94
+2026-02-07 13:27:18,149 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-07 13:27:18,152 | INFO | store.journal_store | Created journal entry: 509f3101-afeb-4b5a-8549-62f22b3facf2 - SOLUSDT short
+2026-02-07 13:27:18,155 | INFO | services.position_monitor | Created journal entry 509f3101-afeb-4b5a-8549-62f22b3facf2 for SOLUSDT (source: analizador)
+2026-02-07 13:27:19,055 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:27:19,057 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:27:20,452 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:27:20,456 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\509f3101-afeb-4b5a-8549-62f22b3facf2_entry_20260207_132718.png (symbol: SOLUSDT)
+2026-02-07 13:27:20,462 | INFO | store.journal_store | Updated journal entry: 509f3101-afeb-4b5a-8549-62f22b3facf2
+2026-02-07 13:27:20,467 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/509f3101-afeb-4b5a-8549-62f22b3facf2_entry_20260207_132718.png
+2026-02-07 13:28:14,370 | INFO | services.position_monitor | New position detected: PAXGUSDT Sell @ 4959.7
+2026-02-07 13:28:14,371 | INFO | services.position_monitor |   SL: 5068.8, TP: 4736.5
+2026-02-07 13:28:14,431 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:28:14,434 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:28:14,435 | INFO | services.position_monitor |   Risk calculated from SL: $2.18
+2026-02-07 13:28:14,435 | INFO | services.position_monitor |   R:R ratio: 2.05
+2026-02-07 13:28:14,439 | INFO | store.journal_store | Created journal entry: d0c835a5-5882-4dc0-a862-e4964124a153 - PAXGUSDT short
+2026-02-07 13:28:14,442 | INFO | services.position_monitor | Created journal entry d0c835a5-5882-4dc0-a862-e4964124a153 for PAXGUSDT (source: analizador)
+2026-02-07 13:28:15,350 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=PAXGUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:28:15,352 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: PAXGUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:28:15,674 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=PAXGUSDT "HTTP/1.1 404 Not Found"
+2026-02-07 13:28:15,677 | INFO | services.screenshot_service | WatchlistDesktop: PAXGUSDT not in grid (available: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT'])
+2026-02-07 13:28:22,726 | INFO | httpx | HTTP Request: GET http://localhost:8000/api/historical/PAXGUSDT?interval=1&limit=100 "HTTP/1.1 200 OK"
+2026-02-07 13:28:24,112 | INFO | services.screenshot_service | mplfinance screenshot saved: screenshots\PAXGUSDT\d0c835a5-5882-4dc0-a862-e4964124a153_entry_20260207_132814.png
+2026-02-07 13:28:24,116 | INFO | store.journal_store | Updated journal entry: d0c835a5-5882-4dc0-a862-e4964124a153
+2026-02-07 13:28:24,119 | INFO | services.position_monitor | Entry screenshot saved: screenshots/PAXGUSDT/d0c835a5-5882-4dc0-a862-e4964124a153_entry_20260207_132814.png
+2026-02-07 13:30:14,241 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-02-07 13:30:14,563 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 13:30:14,567 | INFO | services.position_monitor |   Exit by SL: exit=0.2768 vs sl=0.2768 (diff=0.00%)
+2026-02-07 13:30:14,567 | INFO | services.position_monitor | R-Multiple calculated: -1.11R
+2026-02-07 13:30:14,569 | INFO | store.journal_store | Updated journal entry: 443624d8-23f3-4e65-8854-21e91023b5ad
+2026-02-07 13:30:15,470 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:30:15,472 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ADAUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:30:16,855 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:30:16,860 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ADAUSDT\443624d8-23f3-4e65-8854-21e91023b5ad_exit_20260207_133014.png (symbol: ADAUSDT)
+2026-02-07 13:30:16,865 | INFO | store.journal_store | Updated journal entry: 443624d8-23f3-4e65-8854-21e91023b5ad
+2026-02-07 13:30:16,868 | INFO | services.position_monitor | Exit screenshot saved: screenshots/ADAUSDT/443624d8-23f3-4e65-8854-21e91023b5ad_exit_20260207_133014.png
+2026-02-07 13:30:16,868 | INFO | services.position_monitor | Closed journal entry 443624d8-23f3-4e65-8854-21e91023b5ad: PnL $-1.09 (-0.98%) [-1.11R]
+2026-02-07 13:35:45,292 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-07 13:35:45,875 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 13:35:45,877 | INFO | services.position_monitor |   Exit by TP: exit=1.4462 vs tp=1.4461 (diff=0.01%)
+2026-02-07 13:35:45,878 | INFO | services.position_monitor | R-Multiple calculated: 1.95R
+2026-02-07 13:35:45,880 | INFO | store.journal_store | Updated journal entry: bd2a31f1-ecc1-4ac7-81ee-181302c56e3a
+2026-02-07 13:35:49,760 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:35:49,766 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\XRPUSDT\bd2a31f1-ecc1-4ac7-81ee-181302c56e3a_exit_20260207_133545.png (symbol: XRPUSDT)
+2026-02-07 13:35:49,770 | INFO | store.journal_store | Updated journal entry: bd2a31f1-ecc1-4ac7-81ee-181302c56e3a
+2026-02-07 13:35:49,774 | INFO | services.position_monitor | Exit screenshot saved: screenshots/XRPUSDT/bd2a31f1-ecc1-4ac7-81ee-181302c56e3a_exit_20260207_133545.png
+2026-02-07 13:35:49,774 | INFO | services.position_monitor | Closed journal entry bd2a31f1-ecc1-4ac7-81ee-181302c56e3a: PnL $1.91 (2.02%) [1.95R]
+2026-02-07 13:35:49,775 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-07 13:35:50,670 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 13:35:50,672 | INFO | services.position_monitor |   Exit by SL: exit=1.0164 vs sl=1.0169 (diff=0.05%)
+2026-02-07 13:35:50,672 | INFO | services.position_monitor | R-Multiple calculated: -1.03R
+2026-02-07 13:35:50,676 | INFO | store.journal_store | Updated journal entry: 7788a44f-85b0-4a60-b2d0-cb45cf055dc1
+2026-02-07 13:35:54,709 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:35:54,713 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SUIUSDT\7788a44f-85b0-4a60-b2d0-cb45cf055dc1_exit_20260207_133550.png (symbol: SUIUSDT)
+2026-02-07 13:35:54,719 | INFO | store.journal_store | Updated journal entry: 7788a44f-85b0-4a60-b2d0-cb45cf055dc1
+2026-02-07 13:35:54,723 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SUIUSDT/7788a44f-85b0-4a60-b2d0-cb45cf055dc1_exit_20260207_133550.png
+2026-02-07 13:35:54,723 | INFO | services.position_monitor | Closed journal entry 7788a44f-85b0-4a60-b2d0-cb45cf055dc1: PnL $-2.91 (-2.14%) [-1.03R]
+2026-02-07 13:40:06,933 | INFO | services.position_monitor | New position detected: XRPUSDT Sell @ 1.4398
+2026-02-07 13:40:06,934 | INFO | services.position_monitor |   SL: 1.4541, TP: 1.411
+2026-02-07 13:40:06,986 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:40:06,988 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:40:06,988 | INFO | services.position_monitor |   Risk calculated from SL: $0.99
+2026-02-07 13:40:06,988 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-07 13:40:06,991 | INFO | store.journal_store | Created journal entry: b90f53af-d5d7-4f08-8ae8-b08c667875b5 - XRPUSDT short
+2026-02-07 13:40:06,995 | INFO | services.position_monitor | Created journal entry b90f53af-d5d7-4f08-8ae8-b08c667875b5 for XRPUSDT (source: analizador)
+2026-02-07 13:40:07,911 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:07,913 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: XRPUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:40:09,303 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:09,309 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\XRPUSDT\b90f53af-d5d7-4f08-8ae8-b08c667875b5_entry_20260207_134006.png (symbol: XRPUSDT)
+2026-02-07 13:40:09,312 | INFO | store.journal_store | Updated journal entry: b90f53af-d5d7-4f08-8ae8-b08c667875b5
+2026-02-07 13:40:09,315 | INFO | services.position_monitor | Entry screenshot saved: screenshots/XRPUSDT/b90f53af-d5d7-4f08-8ae8-b08c667875b5_entry_20260207_134006.png
+2026-02-07 13:40:09,315 | INFO | services.position_monitor | New position detected: SUIUSDT Sell @ 1.0159
+2026-02-07 13:40:09,315 | INFO | services.position_monitor |   SL: 1.0385, TP: 0.9704
+2026-02-07 13:40:09,349 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:40:09,351 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:40:09,351 | INFO | services.position_monitor |   Risk calculated from SL: $2.94
+2026-02-07 13:40:09,351 | INFO | services.position_monitor |   R:R ratio: 2.01
+2026-02-07 13:40:09,355 | INFO | store.journal_store | Created journal entry: fd36f8d8-f4af-477a-b037-a9a41afc26f2 - SUIUSDT short
+2026-02-07 13:40:09,358 | INFO | services.position_monitor | Created journal entry fd36f8d8-f4af-477a-b037-a9a41afc26f2 for SUIUSDT (source: analizador)
+2026-02-07 13:40:10,257 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:10,259 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SUIUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:40:11,632 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:11,635 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SUIUSDT\fd36f8d8-f4af-477a-b037-a9a41afc26f2_entry_20260207_134009.png (symbol: SUIUSDT)
+2026-02-07 13:40:11,638 | INFO | store.journal_store | Updated journal entry: fd36f8d8-f4af-477a-b037-a9a41afc26f2
+2026-02-07 13:40:11,643 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SUIUSDT/fd36f8d8-f4af-477a-b037-a9a41afc26f2_entry_20260207_134009.png
+2026-02-07 13:40:28,724 | INFO | services.position_monitor | New position detected: ADAUSDT Sell @ 0.2773
+2026-02-07 13:40:28,724 | INFO | services.position_monitor |   SL: 0.28, TP: 0.2717
+2026-02-07 13:40:28,763 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:40:28,766 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:40:28,767 | INFO | services.position_monitor |   Risk calculated from SL: $0.97
+2026-02-07 13:40:28,767 | INFO | services.position_monitor |   R:R ratio: 2.07
+2026-02-07 13:40:28,769 | INFO | store.journal_store | Created journal entry: de879379-68cb-4bfe-a0d4-7bda35ca0ebd - ADAUSDT short
+2026-02-07 13:40:28,773 | INFO | services.position_monitor | Created journal entry de879379-68cb-4bfe-a0d4-7bda35ca0ebd for ADAUSDT (source: analizador)
+2026-02-07 13:40:29,669 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:29,673 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ADAUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:40:31,071 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:40:31,074 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\ADAUSDT\de879379-68cb-4bfe-a0d4-7bda35ca0ebd_entry_20260207_134028.png (symbol: ADAUSDT)
+2026-02-07 13:40:31,078 | INFO | store.journal_store | Updated journal entry: de879379-68cb-4bfe-a0d4-7bda35ca0ebd
+2026-02-07 13:40:31,081 | INFO | services.position_monitor | Entry screenshot saved: screenshots/ADAUSDT/de879379-68cb-4bfe-a0d4-7bda35ca0ebd_entry_20260207_134028.png
+2026-02-07 13:49:16,874 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-07 13:49:17,735 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-07 13:49:17,737 | INFO | services.position_monitor |   Exit by SL: exit=88.9900 vs sl=88.9900 (diff=0.00%)
+2026-02-07 13:49:17,738 | INFO | services.position_monitor | R-Multiple calculated: -1.11R
+2026-02-07 13:49:17,741 | INFO | store.journal_store | Updated journal entry: 509f3101-afeb-4b5a-8549-62f22b3facf2
+2026-02-07 13:49:18,621 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:49:18,625 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:49:20,015 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:49:20,031 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\509f3101-afeb-4b5a-8549-62f22b3facf2_exit_20260207_134917.png (symbol: SOLUSDT)
+2026-02-07 13:49:20,034 | INFO | store.journal_store | Updated journal entry: 509f3101-afeb-4b5a-8549-62f22b3facf2
+2026-02-07 13:49:20,037 | INFO | services.position_monitor | Exit screenshot saved: screenshots/SOLUSDT/509f3101-afeb-4b5a-8549-62f22b3facf2_exit_20260207_134917.png
+2026-02-07 13:49:20,038 | INFO | services.position_monitor | Closed journal entry 509f3101-afeb-4b5a-8549-62f22b3facf2: PnL $-2.15 (-1.00%) [-1.11R]
+2026-02-07 13:54:16,108 | INFO | services.position_monitor | New position detected: SOLUSDT Sell @ 88.82
+2026-02-07 13:54:16,108 | INFO | services.position_monitor |   SL: 89.71, TP: 87.05
+2026-02-07 13:54:16,182 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-07 13:54:16,184 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=SWING_HIGH (SHORT), raw_source=swing_detector
+2026-02-07 13:54:16,184 | INFO | services.position_monitor |   Risk calculated from SL: $1.96
+2026-02-07 13:54:16,185 | INFO | services.position_monitor |   R:R ratio: 1.99
+2026-02-07 13:54:16,188 | INFO | store.journal_store | Created journal entry: 18f92ccd-22f5-41e4-bd12-fc6b21d8a335 - SOLUSDT short
+2026-02-07 13:54:16,191 | INFO | services.position_monitor | Created journal entry 18f92ccd-22f5-41e4-bd12-fc6b21d8a335 for SOLUSDT (source: analizador)
+2026-02-07 13:54:17,103 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:54:17,107 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-07 13:54:18,531 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5181/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-07 13:54:18,535 | INFO | services.screenshot_service | WatchlistDesktop screenshot saved: screenshots\SOLUSDT\18f92ccd-22f5-41e4-bd12-fc6b21d8a335_entry_20260207_135416.png (symbol: SOLUSDT)
+2026-02-07 13:54:18,540 | INFO | store.journal_store | Updated journal entry: 18f92ccd-22f5-41e4-bd12-fc6b21d8a335
+2026-02-07 13:54:18,544 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/18f92ccd-22f5-41e4-bd12-fc6b21d8a335_entry_20260207_135416.png
+2026-02-07 14:45:20,887 | WARNING | services.position_monitor | TradingBot read timeout

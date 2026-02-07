@@ -249,24 +249,25 @@ const SingleSymbolAnalyzer = () => {
     wsManager.changeInterval(interval);
   }, [interval]);
 
-  // Sincronizar Swing Detector con backend
+  // Sincronizar Swing Detector con backend (incluye auto-start)
   useEffect(() => {
     const syncSwingDetector = async () => {
       if (!indicatorStates["Swing Detector"]) return;
 
       try {
-        log.debug(`Sincronizando Swing Detector: interval=${interval}, days=${days}`);
+        log.info(`Sincronizando Swing Detector: interval=${interval}, days=${days}, enabled=true`);
         const response = await fetch(`${API_BASE_URL}/api/swing/config`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            enabled: true,
             interval: interval,
             days: parseInt(days)
           })
         });
 
         if (response.ok) {
-          log.debug('Swing Detector sincronizado');
+          log.info('Swing Detector sincronizado (enabled + interval + days)');
         }
       } catch (error) {
         log.error('Error sincronizando Swing Detector:', error);

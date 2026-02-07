@@ -2522,3 +2522,215 @@
 2026-02-02 14:15:06 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
 2026-02-02 14:20:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2347.03 | direction=SHORT | volume_zscore=0.00 | interval=1
 2026-02-02 14:20:05 | ERROR | ALERT_ERROR | ETHUSDT | All connection attempts failed
+2026-02-07 09:19:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68834.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:19:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2037.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:19:32 | ERROR | ALERT_TIMEOUT | BTCUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:19:32 | ERROR | ALERT_TIMEOUT | ETHUSDT | Trading Bot not responding | url=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:25:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69035.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:25:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2045.04 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:26:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2045.04 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:26:01 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69035.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:27:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69013.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:27:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69013.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:28:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69034.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:28:56 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_HIGH | remaining=120s
+2026-02-07 09:28:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2045.26 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:28:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_HIGH | remaining=120s
+2026-02-07 09:33:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68940.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:33:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2040.67 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:33:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68940.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:34:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2040.67 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:38:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=68923.40 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 09:38:59 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=68923.40 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:41:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68533.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:41:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2025.07 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 09:41:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68533.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:42:01 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2025.07 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 09:59:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=68996.10 | direction=SHORT | volume_zscore=0.00 | interval=60
+2026-02-07 09:59:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2040.40 | direction=SHORT | volume_zscore=0.00 | interval=60
+2026-02-07 09:59:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2040.40 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 10:00:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=68996.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:04:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68890.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:04:56 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2042.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:04:58 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2042.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:04:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68890.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:06:57 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69054.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:07:11 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69054.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:09:58 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68781.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:09:59 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2035.94 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:10:06 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2035.94 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:10:06 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68781.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:11:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2040.68 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:11:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2040.68 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:14:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68721.70 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:14:56 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_LOW | remaining=2s
+2026-02-07 12:17:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=68776.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:18:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=68776.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:20:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68785.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:20:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2046.12 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:21:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68785.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:21:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2046.12 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:22:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=68887.90 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:22:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2050.33 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:22:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2050.33 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:23:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=68887.90 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:25:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2050.71 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:25:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_LOW | remaining=0s
+2026-02-07 12:30:01 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=68987.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:30:10 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=68987.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:30:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2055.71 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:31:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2055.71 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:36:08 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=68950.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:36:09 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2052.12 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:36:12 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2052.12 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:36:16 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=68950.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:41:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69375.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:42:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69375.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:42:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2069.54 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:42:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2069.54 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:44:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69209.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:44:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2066.39 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:44:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69209.40 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:44:59 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2066.39 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:46:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69271.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:47:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69271.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:48:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2065.81 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:48:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2065.81 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:49:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69196.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:50:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69196.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:54:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2058.71 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:54:59 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2058.71 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:57:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69062.20 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:57:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2057.60 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 12:57:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_LOW | remaining=120s
+2026-02-07 12:57:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69062.20 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 12:58:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2060.71 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 12:58:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2060.71 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:02:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69186.20 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:02:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2062.02 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:02:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_HIGH | remaining=60s
+2026-02-07 13:03:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69186.20 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:04:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69118.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:04:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2060.64 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:05:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69118.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:05:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2060.64 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:06:58 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69165.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:06:58 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_HIGH | remaining=58s
+2026-02-07 13:10:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2068.89 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:10:05 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2068.89 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:12:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2063.36 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:12:05 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2063.36 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:18:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69066.70 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:19:07 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69066.70 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:24:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69391.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:24:58 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2087.21 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:25:05 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2087.21 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:25:05 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69391.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:27:57 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69246.60 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:27:58 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2080.35 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:28:07 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69246.60 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:28:07 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2080.35 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:33:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2088.19 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:33:12 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2088.19 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:38:03 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69604.80 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:38:04 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2100.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:38:13 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2100.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:38:13 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69604.80 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:43:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69377.50 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:44:08 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69377.50 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:46:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69480.70 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:46:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2099.19 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:46:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2099.19 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:47:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69480.70 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:49:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69418.20 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:49:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2096.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:50:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69418.20 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:50:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2096.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:53:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69585.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:53:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2104.32 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 13:54:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2104.32 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:54:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69585.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:57:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2094.98 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:57:59 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2094.98 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 13:58:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69381.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 13:59:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69381.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:01:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69476.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:01:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2095.98 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:01:59 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69476.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:02:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2095.98 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:04:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69358.70 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:04:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2092.56 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:05:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2092.56 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:05:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69358.70 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:05:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69384.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:05:56 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_HIGH | remaining=60s
+2026-02-07 14:05:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2092.29 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:05:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_HIGH | remaining=60s
+2026-02-07 14:09:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69528.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:09:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2099.76 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:10:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2099.76 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:10:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69528.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:14:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69305.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:14:59 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69305.40 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:15:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2087.05 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:16:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2087.05 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:18:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69343.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:18:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2089.30 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:18:59 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69343.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:19:00 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2089.30 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:21:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69350.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:21:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2091.26 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:21:57 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_HIGH | remaining=120s
+2026-02-07 14:22:00 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69350.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:23:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2090.23 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:24:00 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2090.23 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:25:56 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69477.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:25:57 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2094.02 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:25:59 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2094.02 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:26:00 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69477.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:34:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69310.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:34:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2085.09 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:34:03 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69310.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:34:04 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2085.09 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:37:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2084.93 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:37:01 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_LOW | remaining=120s
+2026-02-07 14:40:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69413.20 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:40:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2092.65 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:40:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2092.65 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:40:04 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69413.20 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:44:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2093.13 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:44:01 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_HIGH | remaining=60s
+2026-02-07 14:46:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69320.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:46:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2090.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:46:03 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69320.30 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:46:04 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2090.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:51:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69447.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:51:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2095.13 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:51:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2095.13 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:51:04 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69447.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:56:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69321.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 14:56:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2091.54 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 14:56:04 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69321.90 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 14:56:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2091.54 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:00:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69248.30 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:00:00 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_LOW | remaining=60s
+2026-02-07 15:00:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2087.98 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:00:06 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2087.98 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:02:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69338.20 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 15:02:04 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69338.20 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:06:02 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2095.70 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 15:06:05 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2095.70 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:07:01 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69374.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 15:07:05 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69374.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:14:05 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69229.50 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:14:07 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2084.40 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:14:09 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2084.40 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:14:09 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69229.50 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:15:06 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=69347.40 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 15:15:07 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2088.24 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-07 15:15:09 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2088.24 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:15:09 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=69347.40 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-07 15:19:00 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69291.90 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:19:00 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SWING_LOW | remaining=5s
+2026-02-07 15:19:01 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2086.19 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-07 15:19:01 | INFO | BLOCKED_COOLDOWN | ETHUSDT | SWING_LOW | remaining=5s

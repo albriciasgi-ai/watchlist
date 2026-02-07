@@ -7,7 +7,10 @@
       "Bash(npx eslint:*)",
       "Bash(node -e:*)",
       "Bash(if exist node_modules.vite rmdir /s /q node_modules.vite)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(nul)",
+      "Bash(tasklist /FI 'IMAGENAME eq python.exe' 2)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

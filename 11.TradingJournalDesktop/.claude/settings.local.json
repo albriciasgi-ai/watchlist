@@ -14,7 +14,8 @@
       "WebFetch(domain:bybit-exchange.github.io)",
       "Bash(curl:*)",
       "Bash(dir:*)",
-      "Bash(curl.exe:*)"
+      "Bash(curl.exe:*)",
+      "Bash(.venvScriptspip.exe list 2)"
     ],
     "deny": [],
     "ask": []
