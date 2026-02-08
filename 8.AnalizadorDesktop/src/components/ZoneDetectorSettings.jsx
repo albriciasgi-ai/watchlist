@@ -167,6 +167,9 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [tradePanelFullscreen, setTradePanelFullscreen] = useState(false);
 
+  // === MINIMIZAR MODAL ===
+  const [minimized, setMinimized] = useState(false);
+
   // === PRESETS ===
   const [presets, setPresets] = useState({});
   const [selectedPreset, setSelectedPreset] = useState('');
@@ -930,9 +933,21 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         profitFactor: profitFactor === Infinity ? '++' : (profitFactor === 0 ? '0.00' : profitFactor.toFixed(2)),
         direction: z.breakout_direction || '',
         score: z.trading_score || 0,
+        zoneStartTs: z.start_timestamp || 0,
+        entryTs: entryTs,
       };
     });
   }, [detectedZones, multiResults, symbol]);
+
+  // Handler: click en trade navega el grafico a esa zona
+  const handleTradeClick = useCallback((trade) => {
+    const ts = trade.zoneStartTs || trade.entryTs;
+    if (!ts) return;
+    const manager = IndicatorManagerRegistry.get(trade.symbol || symbol);
+    if (manager && manager.navigateToTimestamp) {
+      manager.navigateToTimestamp(ts);
+    }
+  }, [symbol]);
 
   if (!isOpen) return null;
 
@@ -987,7 +1002,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     const panelStyle = isFullscreen ? {
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: '#1A1A2A',
+      backgroundColor: '#FAFAFA',
       zIndex: 1100,
       display: 'flex',
       flexDirection: 'column',
@@ -999,14 +1014,37 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       transform: 'translateY(-50%)',
       width: '480px',
       maxHeight: '90vh',
-      backgroundColor: '#1A1A2A',
+      backgroundColor: '#FAFAFA',
       borderRadius: '8px',
-      boxShadow: '0 4px 30px rgba(0,0,0,0.7)',
-      border: '1px solid #333',
+      boxShadow: '0 4px 30px rgba(0,0,0,0.15)',
+      border: '1px solid #D0D0D0',
       zIndex: 1050,
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden'
+    };
+
+    // Colores light mode para la tabla
+    const lt = {
+      headerBg: '#E8EAF0',
+      rowEven: '#FFFFFF',
+      rowOdd: '#F5F6F8',
+      rowBorder: '#E0E0E0',
+      textPrimary: '#333333',
+      textSecondary: '#666666',
+      textMuted: '#999999',
+      thColor: '#555555',
+      thBorder: '#CCC',
+      green: '#2E7D32',
+      red: '#C62828',
+      yellow: '#E65100',
+      svgBg: '#FFFFFF',
+      svgGrid: '#E8E8E8',
+      svgZero: '#BBBBBB',
+      svgAxisText: '#888888',
+      summaryBg: '#EEF0F4',
+      summaryText: '#555555',
+      summaryValue: '#222222',
     };
 
     return (
@@ -1014,16 +1052,16 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         {/* Header */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '10px 14px', borderBottom: '1px solid #333', backgroundColor: '#252536',
+          padding: '10px 14px', borderBottom: '1px solid #D0D0D0', backgroundColor: lt.headerBg,
           flexShrink: 0
         }}>
           <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-            <span style={{fontSize: '14px', fontWeight: 'bold', color: '#E0E0E0'}}>
+            <span style={{fontSize: '14px', fontWeight: 'bold', color: lt.textPrimary}}>
               Trades ({data.length})
             </span>
             <span style={{
               fontSize: '13px', fontWeight: 'bold',
-              color: lastEquity >= 0 ? '#4CAF50' : '#FF5722'
+              color: lastEquity >= 0 ? lt.green : lt.red
             }}>
               {lastEquity >= 0 ? '+' : ''}{lastEquity.toFixed(2)}R
             </span>
@@ -1031,8 +1069,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
           <div style={{display: 'flex', gap: '6px'}}>
             <button
               style={{
-                background: 'none', border: '1px solid #555', borderRadius: '4px',
-                color: '#B0B0B0', cursor: 'pointer', padding: '3px 8px', fontSize: '12px'
+                background: 'none', border: '1px solid #BBB', borderRadius: '4px',
+                color: lt.textSecondary, cursor: 'pointer', padding: '3px 8px', fontSize: '12px'
               }}
               onClick={() => setTradePanelFullscreen(!isFullscreen)}
               title={isFullscreen ? 'Salir de fullscreen' : 'Fullscreen'}
@@ -1042,7 +1080,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             <button
               style={{
                 background: 'none', border: 'none',
-                color: '#888', cursor: 'pointer', fontSize: '20px', padding: '0 4px'
+                color: '#999', cursor: 'pointer', fontSize: '20px', padding: '0 4px'
               }}
               onClick={() => { setShowTradePanel(false); setTradePanelFullscreen(false); }}
             >
@@ -1054,7 +1092,7 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         {/* Content */}
         <div style={{flex: 1, overflow: 'auto', padding: '10px 14px'}}>
           {data.length === 0 ? (
-            <div style={{textAlign: 'center', padding: '30px', color: '#666', fontSize: '13px'}}>
+            <div style={{textAlign: 'center', padding: '30px', color: lt.textMuted, fontSize: '13px'}}>
               No hay trades ejecutados (WIN/LOSS).
               <br/>Ejecuta una deteccion primero.
             </div>
@@ -1062,110 +1100,111 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
             <>
               {/* Equity Curve */}
               <div style={{marginBottom: '12px'}}>
-                <div style={{fontSize: '11px', color: '#888', marginBottom: '4px'}}>Equity Curve</div>
+                <div style={{fontSize: '11px', color: lt.textSecondary, marginBottom: '4px'}}>Equity Curve</div>
                 <svg width="100%" viewBox={`0 0 ${svgW} ${svgH}`} style={{
-                  backgroundColor: '#151520', borderRadius: '4px', border: '1px solid #333'
+                  backgroundColor: lt.svgBg, borderRadius: '4px', border: '1px solid #D0D0D0'
                 }}>
                   {/* Grid lines */}
                   {yGridLines.map((g, i) => (
                     <g key={i}>
                       <line x1={pad.left} y1={g.y} x2={svgW - pad.right} y2={g.y}
-                        stroke="#2A2A3A" strokeWidth="0.5" />
+                        stroke={lt.svgGrid} strokeWidth="0.5" />
                       <text x={pad.left - 4} y={g.y + 3} textAnchor="end"
-                        fill="#666" fontSize="9">{g.label}R</text>
+                        fill={lt.svgAxisText} fontSize="9">{g.label}R</text>
                     </g>
                   ))}
                   {/* Zero line */}
                   <line x1={pad.left} y1={zeroY} x2={svgW - pad.right} y2={zeroY}
-                    stroke="#555" strokeWidth="0.8" strokeDasharray="3,3" />
+                    stroke={lt.svgZero} strokeWidth="0.8" strokeDasharray="3,3" />
                   {/* Area fill */}
-                  <path d={areaD} fill={equityColor} opacity="0.08" />
+                  <path d={areaD} fill={equityColor} opacity="0.12" />
                   {/* Equity line */}
-                  <path d={pathD} fill="none" stroke={equityColor} strokeWidth="1.5" />
+                  <path d={pathD} fill="none" stroke={equityColor} strokeWidth="1.8" />
                   {/* Dots on key points */}
                   {equityPoints.length <= 60 && equityPoints.map((p, i) => (
-                    i > 0 && <circle key={i} cx={toSvgX(p.x)} cy={toSvgY(p.y)} r="2"
-                      fill={p.y >= 0 ? '#4CAF50' : '#FF5722'} />
+                    i > 0 && <circle key={i} cx={toSvgX(p.x)} cy={toSvgY(p.y)} r="2.5"
+                      fill={p.y >= 0 ? lt.green : lt.red} />
                   ))}
                   {/* X axis labels */}
-                  <text x={pad.left} y={svgH - 4} fill="#666" fontSize="8">1</text>
-                  <text x={svgW - pad.right} y={svgH - 4} textAnchor="end" fill="#666" fontSize="8">{data.length}</text>
-                  <text x={(pad.left + svgW - pad.right) / 2} y={svgH - 4} textAnchor="middle" fill="#555" fontSize="8">Trade #</text>
+                  <text x={pad.left} y={svgH - 4} fill={lt.svgAxisText} fontSize="8">1</text>
+                  <text x={svgW - pad.right} y={svgH - 4} textAnchor="end" fill={lt.svgAxisText} fontSize="8">{data.length}</text>
+                  <text x={(pad.left + svgW - pad.right) / 2} y={svgH - 4} textAnchor="middle" fill={lt.svgZero} fontSize="8">Trade #</text>
                 </svg>
               </div>
 
               {/* Tabla de trades */}
               <div style={{
-                border: '1px solid #333', borderRadius: '4px',
+                border: '1px solid #D0D0D0', borderRadius: '4px',
                 maxHeight: isFullscreen ? 'calc(100vh - 300px)' : '350px',
                 overflowY: 'auto'
               }}>
                 <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '10px'}}>
                   <thead>
-                    <tr style={{backgroundColor: '#252536', position: 'sticky', top: 0, zIndex: 2}}>
-                      <th style={styles.th}>#</th>
-                      {multiResults && <th style={styles.th}>Sym</th>}
-                      <th style={styles.th}>Entrada</th>
-                      <th style={styles.th}>Cierre</th>
-                      <th style={styles.th}>Dir</th>
-                      <th style={styles.th}>Res</th>
-                      <th style={styles.th}>PnL (R)</th>
-                      <th style={styles.th}>Profit</th>
-                      <th style={styles.th}>DD</th>
-                      <th style={styles.th}>PF</th>
+                    <tr style={{backgroundColor: lt.headerBg, position: 'sticky', top: 0, zIndex: 2}}>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>#</th>
+                      {multiResults && <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Sym</th>}
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Entrada</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Cierre</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Dir</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Res</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>PnL (R)</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>Profit</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>DD</th>
+                      <th style={{...styles.th, color: lt.thColor, borderBottom: `1px solid ${lt.thBorder}`}}>PF</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.map((t, i) => (
-                      <tr key={i} style={{
-                        backgroundColor: i % 2 === 0 ? '#1E1E2E' : '#222236',
-                        borderBottom: '1px solid #2A2A3A'
+                      <tr key={i} onClick={() => handleTradeClick(t)} style={{
+                        backgroundColor: i % 2 === 0 ? lt.rowEven : lt.rowOdd,
+                        borderBottom: `1px solid ${lt.rowBorder}`,
+                        cursor: 'pointer'
                       }}>
-                        <td style={{...styles.td, color: '#888'}}>{t.num}</td>
+                        <td style={{...styles.td, color: lt.textMuted}}>{t.num}</td>
                         {multiResults && (
-                          <td style={{...styles.td, fontSize: '9px', color: '#B0B0B0'}}>
+                          <td style={{...styles.td, fontSize: '9px', color: lt.textSecondary}}>
                             {t.symbol.replace('USDT', '')}
                           </td>
                         )}
-                        <td style={{...styles.td, fontSize: '9px'}}>{t.entryDate}</td>
-                        <td style={{...styles.td, fontSize: '9px'}}>{t.closeDate}</td>
+                        <td style={{...styles.td, fontSize: '9px', color: lt.textSecondary}}>{t.entryDate}</td>
+                        <td style={{...styles.td, fontSize: '9px', color: lt.textSecondary}}>{t.closeDate}</td>
                         <td style={{
                           ...styles.td,
-                          color: t.direction === 'UP' ? '#4CAF50' : '#FF5722',
+                          color: t.direction === 'UP' ? lt.green : lt.red,
                           fontSize: '9px'
                         }}>
                           {t.direction === 'UP' ? 'L' : 'S'}
                         </td>
                         <td style={{
                           ...styles.td, fontWeight: 'bold',
-                          color: t.result === 'WIN' ? '#4CAF50' : '#FF5722'
+                          color: t.result === 'WIN' ? lt.green : lt.red
                         }}>
                           {t.result === 'WIN' ? 'W' : 'L'}
                         </td>
                         <td style={{
                           ...styles.td, fontWeight: 'bold',
-                          color: t.pnlR >= 0 ? '#4CAF50' : '#FF5722'
+                          color: t.pnlR >= 0 ? lt.green : lt.red
                         }}>
                           {t.pnlR >= 0 ? '+' : ''}{t.pnlR.toFixed(2)}
                         </td>
                         <td style={{
                           ...styles.td, fontWeight: 'bold',
-                          color: t.cumulativeProfit >= 0 ? '#4CAF50' : '#FF5722'
+                          color: t.cumulativeProfit >= 0 ? lt.green : lt.red
                         }}>
                           {t.cumulativeProfit >= 0 ? '+' : ''}{t.cumulativeProfit.toFixed(2)}
                         </td>
                         <td style={{
                           ...styles.td,
-                          color: t.drawdown > 0 ? '#FF5722' : '#666'
+                          color: t.drawdown > 0 ? lt.red : lt.textMuted
                         }}>
                           {t.drawdown > 0 ? `-${t.drawdown.toFixed(2)}` : '0'}
                         </td>
                         <td style={{
                           ...styles.td,
-                          color: t.profitFactor === '++' ? '#4CAF50'
-                            : parseFloat(t.profitFactor) >= 1.5 ? '#4CAF50'
-                            : parseFloat(t.profitFactor) >= 1 ? '#FFC107'
-                            : '#FF5722'
+                          color: t.profitFactor === '++' ? lt.green
+                            : parseFloat(t.profitFactor) >= 1.5 ? lt.green
+                            : parseFloat(t.profitFactor) >= 1 ? lt.yellow
+                            : lt.red
                         }}>
                           {t.profitFactor}
                         </td>
@@ -1179,20 +1218,20 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
               <div style={{
                 display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap',
                 marginTop: '10px', padding: '8px',
-                backgroundColor: '#252536', borderRadius: '4px',
-                fontSize: '11px', color: '#B0B0B0'
+                backgroundColor: lt.summaryBg, borderRadius: '4px',
+                fontSize: '11px', color: lt.summaryText
               }}>
-                <span>Trades: <strong style={{color: '#E0E0E0'}}>{data.length}</strong></span>
-                <span>WR: <strong style={{color: '#E0E0E0'}}>
+                <span>Trades: <strong style={{color: lt.summaryValue}}>{data.length}</strong></span>
+                <span>WR: <strong style={{color: lt.summaryValue}}>
                   {(data.filter(t => t.result === 'WIN').length / data.length * 100).toFixed(1)}%
                 </strong></span>
-                <span>PnL: <strong style={{color: lastEquity >= 0 ? '#4CAF50' : '#FF5722'}}>
+                <span>PnL: <strong style={{color: lastEquity >= 0 ? lt.green : lt.red}}>
                   {lastEquity >= 0 ? '+' : ''}{lastEquity.toFixed(2)}R
                 </strong></span>
-                <span>Max DD: <strong style={{color: '#FF5722'}}>
+                <span>Max DD: <strong style={{color: lt.red}}>
                   -{Math.max(...data.map(t => t.drawdown)).toFixed(2)}R
                 </strong></span>
-                <span>PF: <strong style={{color: '#E0E0E0'}}>
+                <span>PF: <strong style={{color: lt.summaryValue}}>
                   {data.length > 0 ? data[data.length - 1].profitFactor : '--'}
                 </strong></span>
               </div>
@@ -1203,13 +1242,70 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     );
   };
 
+  // --- Render minimizado: barra flotante ---
+  if (minimized) {
+    return (
+      <>
+        {renderTradePanel()}
+        <div style={{
+          position: 'fixed', bottom: '16px', left: '50%', transform: 'translateX(-50%)',
+          backgroundColor: '#1E1E2E', borderRadius: '8px', padding: '8px 16px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.5)', border: '1px solid #444',
+          zIndex: 1000, display: 'flex', alignItems: 'center', gap: '12px',
+          cursor: 'default', userSelect: 'none'
+        }}>
+          <span style={{fontSize: '13px', color: '#E0E0E0', fontWeight: 'bold'}}>
+            Detector de Zonas
+          </span>
+          {stats && (
+            <span style={{fontSize: '11px', color: '#B0B0B0'}}>
+              {stats.total_zones || 0} zonas | WR {stats.win_rate?.toFixed(0) || 0}% | PnL {stats.total_pnl_r > 0 ? '+' : ''}{stats.total_pnl_r?.toFixed(1) || 0}R
+            </span>
+          )}
+          <button
+            style={{
+              padding: '3px 10px', borderRadius: '4px', border: '1px solid #4A6FA5',
+              backgroundColor: 'transparent', color: '#4A6FA5', fontSize: '12px',
+              cursor: 'pointer', fontWeight: 'bold'
+            }}
+            onClick={() => setMinimized(false)}
+          >
+            Abrir
+          </button>
+          <button
+            style={{
+              background: 'none', border: 'none', color: '#888',
+              cursor: 'pointer', fontSize: '16px', padding: '0 2px'
+            }}
+            onClick={onClose}
+            title="Cerrar"
+          >
+            x
+          </button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div style={styles.overlay}>
       {renderTradePanel()}
       <div style={styles.modal}>
         <div style={styles.header}>
-          <h3 style={styles.title}>🎯 Detector de Zonas</h3>
-          <button style={styles.closeBtn} onClick={onClose}>×</button>
+          <h3 style={styles.title}>Detector de Zonas</h3>
+          <div style={{display: 'flex', gap: '4px', alignItems: 'center'}}>
+            <button
+              style={{
+                background: 'none', border: '1px solid #555', borderRadius: '4px',
+                color: '#888', cursor: 'pointer', padding: '2px 8px', fontSize: '13px'
+              }}
+              onClick={() => setMinimized(true)}
+              title="Minimizar"
+            >
+              _
+            </button>
+            <button style={styles.closeBtn} onClick={onClose}>x</button>
+          </div>
         </div>
 
         <div style={styles.content}>

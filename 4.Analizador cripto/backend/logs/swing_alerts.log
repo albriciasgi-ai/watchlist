@@ -7616,3 +7616,4 @@
 2026-02-08 12:49:06 | ERROR | ALERT_ERROR | TRBUSDT | All connection attempts failed
 2026-02-08 12:49:06 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
 2026-02-08 12:49:06 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
+2026-02-08 13:30:02 | INFO | BLOCKED_HISTORICAL | DOGEUSDT | SWING_LOW | price=0.10 | signal_ts=1770575100 | service_start=1770575387

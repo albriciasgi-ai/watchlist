@@ -2230,6 +2230,22 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           };
         }
 
+        // Agregar navigateToTimestamp para navegacion desde paneles externos
+        externalIndicatorManager.navigateToTimestamp = (timestamp) => {
+          const candles = candlesRef.current;
+          if (!candles || candles.length === 0) return;
+          const idx = candles.findIndex(c => c.timestamp >= timestamp);
+          if (idx === -1) return;
+          const chartWidth = canvasRef.current?.width || 800;
+          const barWidth = Math.max(2, Math.min(40, 8 * viewStateRef.current.zoom));
+          const candlesPerScreen = Math.floor(chartWidth / barWidth);
+          const centerOffset = Math.floor(candlesPerScreen / 3);
+          const targetOffset = Math.max(0, candles.length - idx - centerOffset);
+          viewStateRef.current.offset = targetOffset;
+          priceScaleRef.current.minPrice = null;
+          drawChart(candles, lastPriceRef.current, null, null);
+        };
+
         log.debug(`[${symbol}] 📊 ✅ IndicatorManager externo conectado`);
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         return; // NO crear nuevo manager
@@ -2246,6 +2262,22 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           log.debug(`[${symbol}] 🔄 Redraw requested by indicator`);
           drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         }
+      };
+
+      // Agregar navigateToTimestamp para navegacion desde paneles externos
+      indicatorManagerRef.current.navigateToTimestamp = (timestamp) => {
+        const candles = candlesRef.current;
+        if (!candles || candles.length === 0) return;
+        const idx = candles.findIndex(c => c.timestamp >= timestamp);
+        if (idx === -1) return;
+        const chartWidth = canvasRef.current?.width || 800;
+        const barWidth = Math.max(2, Math.min(40, 8 * viewStateRef.current.zoom));
+        const candlesPerScreen = Math.floor(chartWidth / barWidth);
+        const centerOffset = Math.floor(candlesPerScreen / 3);
+        const targetOffset = Math.max(0, candles.length - idx - centerOffset);
+        viewStateRef.current.offset = targetOffset;
+        priceScaleRef.current.minPrice = null;
+        drawChart(candles, lastPriceRef.current, null, null);
       };
 
       // 📋 Registrar en el registro global
