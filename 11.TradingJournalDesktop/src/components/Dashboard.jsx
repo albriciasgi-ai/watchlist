@@ -285,7 +285,12 @@ function Dashboard({ onViewTrade }) {
                   {formatCurrency(trade.pnl_usd)}
                 </span>
                 <span className="trade-time">
-                  {new Date(trade.entry_time).toLocaleDateString()}
+                  {(() => {
+                    if (!trade.entry_time) return '-'
+                    const t = trade.entry_time
+                    const d = /^\d{10,13}$/.test(t) ? new Date(parseInt(t, 10)) : new Date(t)
+                    return isNaN(d.getTime()) ? '-' : d.toLocaleDateString('es-ES')
+                  })()}
                 </span>
               </div>
             ))

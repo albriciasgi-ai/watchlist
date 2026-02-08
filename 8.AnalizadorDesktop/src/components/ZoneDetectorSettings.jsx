@@ -44,6 +44,7 @@ const defaultParams = {
   use_bbwp_scoring: false,
   bbwp_lookback: 252,
   bbwp_squeeze_threshold: 20,
+  bbwp_history_days: 0,  // 0 = usar mismos datos, >0 = dias extra de historial para BBWP
   use_inside_pct_filter: false,
   min_inside_pct: 70.0,
   // Filtro de calidad
@@ -121,6 +122,28 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
   const [realtimeMinScore, setRealtimeMinScore] = useState(0);
   const [realtimeConfigMsg, setRealtimeConfigMsg] = useState(null); // {type: 'ok'|'error', text}
   const realtimePollingRef = useRef(null);
+
+  // === OPTIMIZACION ===
+  const [showOptimizer, setShowOptimizer] = useState(false);
+  const [optRunning, setOptRunning] = useState(false);
+  const [optProgress, setOptProgress] = useState(null); // { current, total, percent, eta, best_so_far }
+  const [optResults, setOptResults] = useState(null); // { results, total_combos, elapsed, metric }
+  const [optMetric, setOptMetric] = useState('expectancy'); // Metrica objetivo
+  const [optEstimate, setOptEstimate] = useState(null); // { estimated_seconds, total_combos, candles }
+  const [optEstimating, setOptEstimating] = useState(false);
+  const [optParamRanges, setOptParamRanges] = useState({
+    // Parametros clave para optimizar con rangos por defecto
+    atr_dyn_multiplier: { enabled: true, min: 0.5, max: 2.0, step: 0.25 },
+    atr_dyn_ma_period: { enabled: true, min: 10, max: 40, step: 5 },
+    atr_dyn_max_breakout: { enabled: false, min: 2, max: 10, step: 2 },
+    consol_max_range_pct: { enabled: false, min: 1.0, max: 4.0, step: 0.5 },
+    min_score_filter: { enabled: false, min: 0, max: 60, step: 10 },
+    lookforward_bars: { enabled: false, min: 50, max: 200, step: 25 },
+    atr_dyn_period: { enabled: false, min: 100, max: 300, step: 50 },
+    ttm_atr_length: { enabled: false, min: 10, max: 30, step: 5 },
+    ttm_kc_multiplier: { enabled: false, min: 1.0, max: 2.5, step: 0.25 },
+    ttm_min_squeeze_bars: { enabled: false, min: 3, max: 10, step: 1 },
+  });
 
   // === PRESETS ===
   const [presets, setPresets] = useState({});
@@ -346,6 +369,117 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       setLoading(false);
     }
   }, [getManager, params, zoneDays, onZonesLoaded, interval, symbol]);
+
+  // Handler de optimizacion
+  // Construye enabledRanges y base_params desde el estado actual
+  const buildOptParams = useCallback(() => {
+    const enabledRanges = {};
+    let totalCombos = 1;
+    for (const [name, range] of Object.entries(optParamRanges)) {
+      if (range.enabled) {
+        enabledRanges[name] = { min: range.min, max: range.max, step: range.step };
+        const count = Math.floor((range.max - range.min) / range.step) + 1;
+        totalCombos *= Math.min(count, 20);
+      }
+    }
+    const base = { ...params };
+    for (const name of Object.keys(enabledRanges)) {
+      delete base[name];
+    }
+    return { enabledRanges, totalCombos, base };
+  }, [optParamRanges, params]);
+
+  // Paso 1: Estimar tiempo
+  const handleEstimate = useCallback(async () => {
+    const manager = getManager();
+    if (!manager) { setError('IndicatorManager no disponible.'); return; }
+
+    const { enabledRanges, totalCombos } = buildOptParams();
+    if (Object.keys(enabledRanges).length === 0) {
+      setError('Selecciona al menos un parametro para optimizar.');
+      return;
+    }
+    if (totalCombos > 5000) {
+      setError(`Demasiadas combinaciones (~${totalCombos}). Reduce rangos o aumenta steps.`);
+      return;
+    }
+
+    setOptEstimating(true);
+    setOptEstimate(null);
+    setError(null);
+
+    const base = { ...params };
+    for (const name of Object.keys(enabledRanges)) delete base[name];
+
+    const result = await manager.estimateOptimization({
+      days: zoneDays,
+      base_params: base,
+      param_ranges: enabledRanges
+    });
+
+    setOptEstimating(false);
+    if (result.success) {
+      setOptEstimate(result);
+    } else {
+      setError(`Estimacion: ${result.error || 'Error desconocido'}`);
+    }
+  }, [getManager, buildOptParams, params, zoneDays]);
+
+  // Paso 2: Ejecutar optimizacion (despues de confirmar estimacion)
+  const handleOptimize = useCallback(async () => {
+    const manager = getManager();
+    if (!manager) { setError('IndicatorManager no disponible.'); return; }
+
+    const { enabledRanges, totalCombos, base } = buildOptParams();
+
+    setOptRunning(true);
+    setOptResults(null);
+    setOptEstimate(null);
+    setOptProgress({ total: totalCombos });
+    setError(null);
+
+    await manager.optimizeTradingZones({
+      days: zoneDays,
+      base_params: base,
+      param_ranges: enabledRanges,
+      metric: optMetric,
+      top_n: 15,
+      onComplete: (data) => {
+        setOptResults(data);
+        setOptRunning(false);
+        setOptProgress(null);
+      },
+      onError: (msg) => {
+        setError(`Optimizacion: ${msg}`);
+        setOptRunning(false);
+        setOptProgress(null);
+      }
+    });
+  }, [getManager, buildOptParams, zoneDays, optMetric]);
+
+  // Cancelar estimacion pendiente
+  const handleCancelEstimate = useCallback(() => {
+    setOptEstimate(null);
+  }, []);
+
+  // Aplicar resultado de optimizacion al panel de parametros
+  const handleApplyOptResult = useCallback((resultParams) => {
+    setParams(prev => ({
+      ...prev,
+      ...resultParams
+    }));
+    console.log('[ZoneDetector] Parametros optimizados aplicados:', resultParams);
+  }, []);
+
+  const handleOptRangeChange = useCallback((paramName, field, value) => {
+    setOptParamRanges(prev => ({
+      ...prev,
+      [paramName]: {
+        ...prev[paramName],
+        [field]: field === 'enabled' ? value : parseFloat(value) || 0
+      }
+    }));
+  }, []);
 
   const handleClear = useCallback(() => {
     const manager = getManager();
@@ -1037,8 +1171,19 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
                     <label style={styles.label}>Threshold %:</label>
                     <input type="number" style={styles.input} value={params.bbwp_squeeze_threshold}
                       onChange={(e) => handleParamChange('bbwp_squeeze_threshold', parseInt(e.target.value))}
-                      min="5" max="50" />
+                      min="5" max="80" />
                   </div>
+                  <div style={styles.row}>
+                    <label style={styles.label}>Historial dias:</label>
+                    <input type="number" style={styles.input} value={params.bbwp_history_days || 0}
+                      onChange={(e) => handleParamChange('bbwp_history_days', parseInt(e.target.value))}
+                      min="0" max="30" />
+                  </div>
+                  {(params.bbwp_history_days || 0) > 0 && (
+                    <div style={{fontSize: '10px', color: '#4fc3f7', marginTop: '2px'}}>
+                      Cargara {params.bbwp_history_days}d de velas para BBWP, detecta zonas solo en los dias seleccionados
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1454,6 +1599,294 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
               )}
             </div>
           )}
+
+          {/* === OPTIMIZADOR DE PARAMETROS === */}
+          <div style={styles.optimizerSection}>
+            <div
+              style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: showOptimizer ? '8px' : 0}}
+              onClick={() => setShowOptimizer(!showOptimizer)}
+            >
+              <h4 style={{...styles.sectionTitle, marginBottom: 0}}>
+                Optimizador de Parametros
+              </h4>
+              <span style={{fontSize: '12px', color: '#888'}}>{showOptimizer ? '▲' : '▼'}</span>
+            </div>
+
+            {showOptimizer && (
+              <>
+                <div style={{fontSize: '11px', color: '#888', marginBottom: '10px'}}>
+                  Grid search sobre rangos de parametros. Descarga velas 1 vez y prueba todas las combinaciones.
+                </div>
+
+                {/* Metrica objetivo */}
+                <div style={{...styles.row, marginBottom: '10px'}}>
+                  <label style={styles.label}>Optimizar para:</label>
+                  <select
+                    style={{...styles.input, width: '130px', textAlign: 'left'}}
+                    value={optMetric}
+                    onChange={(e) => setOptMetric(e.target.value)}
+                  >
+                    <option value="expectancy">Expectancy (R)</option>
+                    <option value="total_pnl_r">P&L Total (R)</option>
+                    <option value="win_rate">Win Rate (%)</option>
+                    <option value="profit_factor">Profit Factor</option>
+                  </select>
+                </div>
+
+                {/* Tabla de parametros */}
+                <div style={{marginBottom: '10px'}}>
+                  <div style={{display: 'grid', gridTemplateColumns: '24px 1fr 55px 55px 55px', gap: '4px', alignItems: 'center', marginBottom: '4px'}}>
+                    <span style={{fontSize: '10px', color: '#666'}}></span>
+                    <span style={{fontSize: '10px', color: '#666'}}>Parametro</span>
+                    <span style={{fontSize: '10px', color: '#666', textAlign: 'center'}}>Min</span>
+                    <span style={{fontSize: '10px', color: '#666', textAlign: 'center'}}>Max</span>
+                    <span style={{fontSize: '10px', color: '#666', textAlign: 'center'}}>Step</span>
+                  </div>
+
+                  {Object.entries(optParamRanges).map(([name, range]) => {
+                    const labels = {
+                      atr_dyn_multiplier: 'ATR Multiplier',
+                      atr_dyn_ma_period: 'MA Period',
+                      atr_dyn_max_breakout: 'Max Breakout',
+                      consol_max_range_pct: 'Max Range %',
+                      min_score_filter: 'Min Score',
+                      lookforward_bars: 'Lookforward',
+                      atr_dyn_period: 'ATR Period',
+                      ttm_atr_length: 'TTM ATR Length',
+                      ttm_kc_multiplier: 'TTM KC Mult',
+                      ttm_min_squeeze_bars: 'TTM Min Bars',
+                    };
+                    const count = Math.min(Math.floor((range.max - range.min) / range.step) + 1, 20);
+                    return (
+                      <div key={name} style={{
+                        display: 'grid',
+                        gridTemplateColumns: '24px 1fr 55px 55px 55px',
+                        gap: '4px',
+                        alignItems: 'center',
+                        marginBottom: '3px',
+                        opacity: range.enabled ? 1 : 0.5
+                      }}>
+                        <input
+                          type="checkbox"
+                          checked={range.enabled}
+                          onChange={(e) => handleOptRangeChange(name, 'enabled', e.target.checked)}
+                          style={{margin: 0, cursor: 'pointer'}}
+                        />
+                        <span style={{fontSize: '11px', color: range.enabled ? '#B0B0B0' : '#666'}}>
+                          {labels[name] || name}
+                          {range.enabled && <span style={{color: '#555', marginLeft: '4px'}}>({count})</span>}
+                        </span>
+                        <input
+                          type="number"
+                          style={{...styles.optInput}}
+                          value={range.min}
+                          onChange={(e) => handleOptRangeChange(name, 'min', e.target.value)}
+                          disabled={!range.enabled}
+                        />
+                        <input
+                          type="number"
+                          style={{...styles.optInput}}
+                          value={range.max}
+                          onChange={(e) => handleOptRangeChange(name, 'max', e.target.value)}
+                          disabled={!range.enabled}
+                        />
+                        <input
+                          type="number"
+                          style={{...styles.optInput}}
+                          value={range.step}
+                          onChange={(e) => handleOptRangeChange(name, 'step', e.target.value)}
+                          disabled={!range.enabled}
+                          step="any"
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {/* Total combinaciones */}
+                  {(() => {
+                    let total = 1;
+                    let enabledCount = 0;
+                    for (const range of Object.values(optParamRanges)) {
+                      if (range.enabled) {
+                        enabledCount++;
+                        total *= Math.min(Math.floor((range.max - range.min) / range.step) + 1, 20);
+                      }
+                    }
+                    return (
+                      <div style={{fontSize: '11px', color: total > 5000 ? '#FF5722' : total > 500 ? '#FFC107' : '#4CAF50', marginTop: '6px'}}>
+                        {enabledCount > 0
+                          ? `${total.toLocaleString()} combinaciones (${enabledCount} parametros)`
+                          : 'Selecciona al menos un parametro'
+                        }
+                        {total > 5000 && ' — Max: 5000'}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Boton estimar / ejecutar */}
+                {!optEstimate && !optRunning && (
+                  <button
+                    style={{
+                      ...styles.detectBtn,
+                      backgroundColor: optEstimating ? '#555' : '#6A1B9A',
+                      marginBottom: '10px',
+                      width: '100%'
+                    }}
+                    onClick={handleEstimate}
+                    disabled={optEstimating || optRunning || loading}
+                  >
+                    {optEstimating ? 'Estimando tiempo...' : 'Estimar y Ejecutar'}
+                  </button>
+                )}
+
+                {/* Resultado de estimacion con confirmar/cancelar */}
+                {optEstimate && !optRunning && (
+                  <div style={{marginBottom: '10px', padding: '10px', backgroundColor: '#1A1A2E', borderRadius: '6px', border: '1px solid #6A1B9A'}}>
+                    <div style={{fontSize: '12px', color: '#CE93D8', fontWeight: 'bold', marginBottom: '8px'}}>
+                      Estimacion de tiempo
+                    </div>
+                    <div style={{fontSize: '11px', color: '#E0E0E0', lineHeight: '1.6'}}>
+                      <div>Combinaciones: <strong>{optEstimate.total_combos}</strong></div>
+                      <div>Velas: <strong>{optEstimate.candles?.toLocaleString()}</strong></div>
+                      <div>Tiempo por combo: <strong>{optEstimate.avg_per_combo}s</strong></div>
+                      <div style={{marginTop: '4px', fontSize: '13px', color: optEstimate.estimated_seconds > 300 ? '#FF8A80' : optEstimate.estimated_seconds > 60 ? '#FFD54F' : '#A5D6A7'}}>
+                        Tiempo estimado: <strong>
+                          {optEstimate.estimated_seconds < 60
+                            ? `${optEstimate.estimated_seconds.toFixed(0)} segundos`
+                            : optEstimate.estimated_seconds < 3600
+                              ? `${Math.floor(optEstimate.estimated_seconds / 60)} min ${Math.round(optEstimate.estimated_seconds % 60)}s`
+                              : `${Math.floor(optEstimate.estimated_seconds / 3600)}h ${Math.round((optEstimate.estimated_seconds % 3600) / 60)} min`
+                          }
+                        </strong>
+                      </div>
+                    </div>
+                    <div style={{display: 'flex', gap: '8px', marginTop: '10px'}}>
+                      <button
+                        style={{...styles.detectBtn, backgroundColor: '#6A1B9A', flex: 1}}
+                        onClick={handleOptimize}
+                      >
+                        Confirmar y Ejecutar
+                      </button>
+                      <button
+                        style={{...styles.detectBtn, backgroundColor: '#444', flex: 0.6}}
+                        onClick={handleCancelEstimate}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Indicador de progreso durante ejecucion */}
+                {optRunning && (
+                  <div style={{marginBottom: '10px', textAlign: 'center'}}>
+                    <div style={{fontSize: '11px', color: '#CE93D8', marginBottom: '6px'}}>
+                      Procesando {optProgress?.total || '?'} combinaciones en el backend...
+                    </div>
+                    <div style={{height: '4px', backgroundColor: '#333', borderRadius: '2px', overflow: 'hidden', position: 'relative'}}>
+                      <div
+                        ref={el => {
+                          if (el && !el.dataset.animated) {
+                            el.dataset.animated = '1';
+                            const style = document.createElement('style');
+                            style.textContent = '@keyframes optBarSlide{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}';
+                            document.head.appendChild(style);
+                          }
+                        }}
+                        style={{
+                          height: '100%',
+                          width: '40%',
+                          backgroundColor: '#7B1FA2',
+                          borderRadius: '2px',
+                          position: 'absolute',
+                          animation: 'optBarSlide 1.5s ease-in-out infinite'
+                        }}
+                      />
+                    </div>
+                    <div style={{fontSize: '10px', color: '#888', marginTop: '4px'}}>
+                      Revisa los logs del backend para ver el progreso.
+                    </div>
+                  </div>
+                )}
+
+                {/* Resultados */}
+                {optResults && optResults.results && optResults.results.length > 0 && (
+                  <div style={{marginBottom: '10px'}}>
+                    <div style={{fontSize: '11px', color: '#B0B0B0', marginBottom: '6px'}}>
+                      Top {optResults.results.length} de {optResults.total_combos} combinaciones ({optResults.elapsed}s)
+                      {' — Ordenado por '}<strong style={{color: '#CE93D8'}}>{optResults.metric}</strong>
+                    </div>
+
+                    <div style={{maxHeight: '250px', overflowY: 'auto', border: '1px solid #333', borderRadius: '4px'}}>
+                      <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '10px'}}>
+                        <thead>
+                          <tr style={{backgroundColor: '#252536', position: 'sticky', top: 0}}>
+                            <th style={styles.th}>#</th>
+                            <th style={styles.th}>Params</th>
+                            <th style={styles.th}>WR%</th>
+                            <th style={styles.th}>W/L</th>
+                            <th style={styles.th}>PnL</th>
+                            <th style={styles.th}>Expect</th>
+                            <th style={styles.th}>PF</th>
+                            <th style={styles.th}>DD</th>
+                            <th style={styles.th}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {optResults.results.map((r, i) => (
+                            <tr key={i} style={{
+                              backgroundColor: i === 0 ? 'rgba(106, 27, 154, 0.15)' : (i % 2 === 0 ? '#1E1E2E' : '#252536'),
+                              borderBottom: '1px solid #333'
+                            }}>
+                              <td style={{...styles.td, color: i === 0 ? '#CE93D8' : '#888', fontWeight: i === 0 ? 'bold' : 'normal'}}>
+                                {i + 1}
+                              </td>
+                              <td style={{...styles.td, textAlign: 'left', maxWidth: '120px'}}>
+                                {Object.entries(r.params).map(([k, v]) => (
+                                  <div key={k} style={{whiteSpace: 'nowrap'}}>
+                                    <span style={{color: '#888'}}>{k.replace('atr_dyn_', '').replace('consol_', '')}:</span>{' '}
+                                    <span style={{color: '#E0E0E0'}}>{typeof v === 'number' ? (v % 1 ? v.toFixed(2) : v) : v}</span>
+                                  </div>
+                                ))}
+                              </td>
+                              <td style={{...styles.td, color: r.win_rate >= 50 ? '#4CAF50' : '#FF5722'}}>{r.win_rate}%</td>
+                              <td style={styles.td}>{r.wins}/{r.losses}</td>
+                              <td style={{...styles.td, color: r.total_pnl_r >= 0 ? '#4CAF50' : '#FF5722'}}>
+                                {r.total_pnl_r > 0 ? '+' : ''}{r.total_pnl_r}R
+                              </td>
+                              <td style={{...styles.td, color: r.expectancy >= 0 ? '#4CAF50' : '#FF5722'}}>
+                                {r.expectancy > 0 ? '+' : ''}{r.expectancy}
+                              </td>
+                              <td style={{...styles.td, color: r.profit_factor >= 1.5 ? '#4CAF50' : r.profit_factor >= 1 ? '#FFC107' : '#FF5722'}}>
+                                {r.profit_factor}
+                              </td>
+                              <td style={{...styles.td, color: '#FF5722'}}>-{r.max_drawdown_r}R</td>
+                              <td style={styles.td}>
+                                <button
+                                  style={styles.applyBtn}
+                                  onClick={() => handleApplyOptResult(r.params)}
+                                  title="Aplicar estos parametros"
+                                >
+                                  Aplicar
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {optResults && optResults.results && optResults.results.length === 0 && (
+                  <div style={{fontSize: '11px', color: '#FF5722', marginBottom: '10px'}}>
+                    No se encontraron resultados validos. Intenta con rangos diferentes.
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
           {/* === DETECCION EN TIEMPO REAL === */}
           <div style={styles.realtimeSection}>
@@ -2124,6 +2557,48 @@ const styles = {
     fontSize: '11px',
     cursor: 'pointer',
     fontWeight: 'bold'
+  },
+  // Optimizer styles
+  optimizerSection: {
+    marginBottom: '12px',
+    padding: '10px',
+    backgroundColor: '#1A1A2E',
+    borderRadius: '6px',
+    border: '1px solid #2D1B69'
+  },
+  optInput: {
+    width: '100%',
+    padding: '3px 4px',
+    borderRadius: '3px',
+    border: '1px solid #444',
+    backgroundColor: '#2A2A3A',
+    color: '#E0E0E0',
+    fontSize: '11px',
+    textAlign: 'center'
+  },
+  th: {
+    padding: '4px 6px',
+    textAlign: 'center',
+    color: '#888',
+    fontWeight: 'normal',
+    borderBottom: '1px solid #444',
+    whiteSpace: 'nowrap'
+  },
+  td: {
+    padding: '4px 6px',
+    textAlign: 'center',
+    color: '#B0B0B0',
+    whiteSpace: 'nowrap'
+  },
+  applyBtn: {
+    padding: '2px 8px',
+    borderRadius: '3px',
+    border: '1px solid #7B1FA2',
+    backgroundColor: 'transparent',
+    color: '#CE93D8',
+    fontSize: '10px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap'
   }
 };
 

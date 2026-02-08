@@ -1641,6 +1641,7 @@ class IndicatorManager {
           use_bbwp_scoring: params.use_bbwp_scoring || false,
           bbwp_lookback: params.bbwp_lookback || 252,
           bbwp_squeeze_threshold: params.bbwp_squeeze_threshold || 20,
+          bbwp_history_days: params.bbwp_history_days || 0,
           use_inside_pct_filter: params.use_inside_pct_filter || false,
           min_inside_pct: params.min_inside_pct || 70.0,
           // Filtro de calidad
@@ -1715,6 +1716,93 @@ class IndicatorManager {
         errorMsg = `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`;
       }
       return { success: false, error: errorMsg };
+    }
+  }
+
+  /**
+   * Ejecuta optimizacion de parametros (grid search).
+   * @param {object} opts - { days, base_params, param_ranges, metric, top_n, onProgress, onComplete, onError }
+   * @returns {Promise<void>}
+   */
+  async estimateOptimization(opts = {}) {
+    const { days, base_params = {}, param_ranges = {} } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      base_params,
+      param_ranges
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/zones/optimize-estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      return await response.json();
+    } catch (error) {
+      return { success: false, error: error.message || 'Error de conexion' };
+    }
+  }
+
+  async optimizeTradingZones(opts = {}) {
+    const {
+      days, base_params = {}, param_ranges = {},
+      metric = 'expectancy', top_n = 10,
+      onProgress, onComplete, onError
+    } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      base_params,
+      param_ranges,
+      metric,
+      top_n
+    };
+
+    log.info(`[${this.symbol}] Optimizacion: ${Object.keys(param_ranges).length} params, metric=${metric}`);
+
+    try {
+      // Timeout largo: optimizacion puede tardar muchos minutos con muchas combinaciones
+      const controller = new AbortController();
+      const timeoutMs = 60 * 60 * 1000; // 60 minutos max
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/optimize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error || `HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        log.info(`[${this.symbol}] Optimizacion completada: ${data.total_combos} combos en ${data.elapsed}s`);
+        if (onComplete) onComplete(data);
+      } else {
+        if (onError) onError(data.error || 'Error desconocido');
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] Error en optimizacion:`, error.message);
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Timeout: la optimizacion tardo mas de 60 minutos.';
+      }
+      if (onError) onError(errMsg);
     }
   }
 

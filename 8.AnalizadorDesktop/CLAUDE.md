@@ -458,6 +458,17 @@ Archivos que NO deben modificarse sin cuidado:
 
 ## HISTORIAL DE CAMBIOS
 
+### Febrero 2026 - Optimizador de Parametros (Grid Search)
+
+1. **Endpoint `/api/zones/optimize`**: Grid search ejecutado en thread pool (`run_in_executor`) para no bloquear el event loop. Retorna JSON con top N resultados.
+2. **Endpoint `/api/zones/optimize-estimate`**: Ejecuta 2 combos de prueba y extrapola el tiempo total. Permite al usuario decidir si ejecutar o no.
+3. **IndicatorManager**: Metodos `estimateOptimization()` y `optimizeTradingZones()` con timeout de 60 minutos.
+4. **UI de 2 pasos**: Click "Estimar y Ejecutar" → muestra estimacion (tiempo, combos, velas) con colores segun duracion → "Confirmar y Ejecutar" o "Cancelar".
+5. **10 parametros optimizables**: atr_dyn_multiplier, atr_dyn_ma_period, atr_dyn_max_breakout, consol_max_range_pct, min_score_filter, lookforward_bars, atr_dyn_period, ttm_atr_length, ttm_kc_multiplier, ttm_min_squeeze_bars.
+6. **Parametros fijos del modal**: Los parametros no seleccionados para optimizar se toman del estado actual del modal.
+7. **Metricas objetivo**: expectancy, total_pnl_r, win_rate, profit_factor.
+8. **Tabla de resultados**: Top 15 con WR%, W/L, PnL, Expectancy, Profit Factor, Max DD y boton "Aplicar".
+
 ### Febrero 2026 - Zone Detector Realtime + Fixes
 
 1. **Realtime Zone Polling**: IndicatorManager ahora hace polling a `/api/zones/realtime/zones/{symbol}` cada 15s para renderizar zonas detectadas en tiempo real
@@ -811,3 +822,188 @@ Esto permite detectar cuando un trade OPEN pasa a WIN/LOSS sin que cambie la can
 ### Leccion Aprendida
 
 **CRITICO:** Nunca usar `setZones()` para zonas realtime. Esto sobrescribe las zonas manuales. Siempre usar `setRealtimeZones()` para zonas del polling y `setZones()` solo para el boton "Detectar zonas".
+
+---
+
+## OPTIMIZADOR DE PARAMETROS - GRID SEARCH (Febrero 2026)
+
+Sistema para encontrar la mejor combinacion de parametros del Zone Detector mediante busqueda exhaustiva.
+
+### Arquitectura
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    OPTIMIZER FLOW                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  1. ESTIMAR                                                       │
+│  ZoneDetectorSettings → IndicatorManager.estimateOptimization()  │
+│      → POST /api/zones/optimize-estimate                          │
+│      → Ejecuta 2 combos de prueba en thread pool                 │
+│      → Retorna: avg_per_combo, estimated_seconds, total_combos   │
+│                                                                   │
+│  2. CONFIRMAR (usuario decide)                                    │
+│  UI muestra: tiempo estimado, combos, velas                      │
+│  Colores: verde (<1min), amarillo (<5min), rojo (>5min)          │
+│                                                                   │
+│  3. EJECUTAR                                                      │
+│  ZoneDetectorSettings → IndicatorManager.optimizeTradingZones()  │
+│      → POST /api/zones/optimize                                   │
+│      → Grid search completo en thread pool (run_in_executor)     │
+│      → Logs cada 10 combos en backend                            │
+│      → Retorna top N resultados ordenados por metrica            │
+│                                                                   │
+│  4. RESULTADOS                                                    │
+│  Tabla con top 15: params, WR%, W/L, PnL, Expect, PF, DD       │
+│  Boton "Aplicar" por fila → carga params al modal               │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Endpoints API
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/zones/optimize-estimate` | POST | Ejecuta 2 combos de prueba y extrapola tiempo total |
+| `/api/zones/optimize` | POST | Grid search completo, retorna top N resultados |
+
+### Request Body (ambos endpoints)
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "interval": "5",
+  "days": 400,
+  "base_params": { "lookforward_bars": 100, "entry_mode": "breakout_close", ... },
+  "param_ranges": {
+    "atr_dyn_multiplier": { "min": 0.5, "max": 2.0, "step": 0.25 },
+    "ttm_kc_multiplier": { "min": 1.0, "max": 2.5, "step": 0.25 }
+  },
+  "metric": "expectancy",
+  "top_n": 15
+}
+```
+
+### Response de Estimacion
+
+```json
+{
+  "success": true,
+  "total_combos": 49,
+  "candles": 115200,
+  "fetch_time": 12.3,
+  "avg_per_combo": 3.2,
+  "estimated_seconds": 169.1,
+  "sample_combos_run": 2
+}
+```
+
+### Response de Optimizacion
+
+```json
+{
+  "success": true,
+  "total_combos": 49,
+  "elapsed": 155.7,
+  "fetch_time": 12.3,
+  "candles": 115200,
+  "metric": "expectancy",
+  "results": [
+    {
+      "params": { "atr_dyn_multiplier": 1.0, "ttm_kc_multiplier": 1.5 },
+      "total_zones": 25,
+      "wins": 15, "losses": 8, "total_closed": 23,
+      "win_rate": 65.2,
+      "total_pnl_r": 22.0,
+      "expectancy": 0.957,
+      "profit_factor": 1.88,
+      "max_drawdown_r": 4.0
+    }
+  ],
+  "all_results_count": 49
+}
+```
+
+### Parametros Optimizables
+
+| Parametro | Label UI | Default Range | Descripcion |
+|-----------|----------|---------------|-------------|
+| `atr_dyn_multiplier` | ATR Multiplier | 0.5 - 2.0 (0.25) | Multiplicador ATR para ancho de zona |
+| `atr_dyn_ma_period` | MA Period | 10 - 40 (5) | Periodo media movil del ATR |
+| `atr_dyn_max_breakout` | Max Breakout | 2 - 10 (2) | Max velas de breakout permitidas |
+| `consol_max_range_pct` | Max Range % | 1.0 - 4.0 (0.5) | Maximo rango de precio de la zona |
+| `min_score_filter` | Min Score | 0 - 60 (10) | Score minimo para incluir zona |
+| `lookforward_bars` | Lookforward | 50 - 200 (25) | Velas a futuro para simular trade |
+| `atr_dyn_period` | ATR Period | 100 - 300 (50) | Periodo del calculo ATR |
+| `ttm_atr_length` | TTM ATR Length | 10 - 30 (5) | Periodo ATR para Keltner Channels |
+| `ttm_kc_multiplier` | TTM KC Mult | 1.0 - 2.5 (0.25) | Multiplicador Keltner Channel |
+| `ttm_min_squeeze_bars` | TTM Min Bars | 3 - 10 (1) | Min velas consecutivas en squeeze |
+
+**Nota:** Los parametros TTM solo afectan si `use_ttm_prefilter=true` esta activado en el modal.
+
+### Limites y Validaciones
+
+- **Max combinaciones**: 5,000 (frontend y backend validan)
+- **Max valores por parametro**: 20 (se submuestrean si excede)
+- **Timeout frontend**: 60 minutos
+- **Thread pool**: `run_in_executor(None, ...)` para no bloquear uvicorn
+
+### Metricas de Optimizacion
+
+| Metrica | Descripcion |
+|---------|-------------|
+| `expectancy` | PnL promedio por trade cerrado (en R) |
+| `total_pnl_r` | PnL total acumulado (en R) |
+| `win_rate` | Porcentaje de trades ganadores |
+| `profit_factor` | Ganancia bruta / Perdida bruta |
+
+### Archivos del Sistema
+
+| Archivo | Responsabilidad |
+|---------|-----------------|
+| `4.Analizador cripto/backend/main.py` | Endpoints optimize + optimize-estimate |
+| `src/components/indicators/IndicatorManager.js` | Metodos estimateOptimization() y optimizeTradingZones() |
+| `src/components/ZoneDetectorSettings.jsx` | UI: estados, handlers, tabla de resultados |
+
+### Leccion Aprendida: Event Loop Blocking
+
+**CRITICO:** Nunca ejecutar codigo CPU-bound sincrono dentro de un `async def` en FastAPI/uvicorn. Esto bloquea el event loop completo, impidiendo que el servidor responda a cualquier request.
+
+**Incorrecto:**
+```python
+@app.post("/api/endpoint")
+async def handler():
+    for combo in all_combos:  # BLOQUEA el event loop
+        run_heavy_computation(combo)
+```
+
+**Correcto:**
+```python
+@app.post("/api/endpoint")
+async def handler():
+    def run_all():
+        for combo in all_combos:
+            run_heavy_computation(combo)
+        return results
+
+    loop = asyncio.get_event_loop()
+    results = await loop.run_in_executor(None, run_all)  # Thread pool
+```
+
+### Troubleshooting
+
+**Estimacion dice 0 segundos:**
+- Puede ser que los datos estan en cache y la deteccion es muy rapida
+- Verificar que hay velas suficientes: revisar `candles` en la respuesta
+
+**Optimizacion se corta sin resultados:**
+- Verificar timeout del frontend (60 min)
+- Revisar logs del backend por errores en combos individuales
+- Logs de progreso aparecen cada 10 combos: `[SYMBOL] [OPTIMIZE] Progreso: N/M`
+
+**Error "name 'np' is not defined":**
+- Ya corregido. La generacion de rangos usa Python puro (while loop) en vez de numpy
+
+**Resultados TTM no cambian nada:**
+- Verificar que `use_ttm_prefilter` esta activado en el modal
+- Si esta desactivado, los parametros TTM se ignoran en la deteccion

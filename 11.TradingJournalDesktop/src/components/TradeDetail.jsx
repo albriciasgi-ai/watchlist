@@ -133,8 +133,15 @@ function TradeDetail({ tradeId, onBack, onDeleted }) {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-'
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('es-ES', {
+    // Bybit puede enviar timestamps en ms como string (ej: "1738900000000")
+    let date
+    if (/^\d{10,13}$/.test(dateStr)) {
+      date = new Date(parseInt(dateStr, 10))
+    } else {
+      date = new Date(dateStr)
+    }
+    if (isNaN(date.getTime())) return '-'
+    return date.toLocaleString('es-ES', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',

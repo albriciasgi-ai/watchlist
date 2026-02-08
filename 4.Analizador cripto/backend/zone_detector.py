@@ -153,6 +153,7 @@ class ZoneDetectionParams:
     use_bbwp_scoring: bool = False
     bbwp_lookback: int = 252           # Periodos para calcular percentil
     bbwp_squeeze_threshold: int = 20   # BBWP < esto = squeeze (bonus)
+    bbwp_history_days: int = 0         # Dias extra de historial para BBWP (0 = usar mismos datos)
 
     # Capa 5: % velas dentro como validacion (descarta zonas con muchas velas fuera)
     use_inside_pct_filter: bool = False
@@ -189,7 +190,8 @@ class ZoneDetector:
         self,
         candles: List[Dict],
         method: str = "pivot_cluster",
-        params: Optional[ZoneDetectionParams] = None
+        params: Optional[ZoneDetectionParams] = None,
+        detection_start_idx: int = 0
     ) -> List[Zone]:
         """
         Detecta zonas de consolidación usando el método especificado.
@@ -198,6 +200,8 @@ class ZoneDetector:
             candles: Lista de velas OHLCV
             method: Método de detección a usar
             params: Parámetros de configuración
+            detection_start_idx: Indice desde donde detectar zonas (para BBWP extendido).
+                                 Las velas antes de este indice solo se usan para contexto BBWP.
 
         Returns:
             Lista de zonas detectadas, ordenadas por score descendente
@@ -221,7 +225,7 @@ class ZoneDetector:
         elif method == "trading_zones":
             zones = self._trading_zones_method(candles, params, params.lookforward_bars)
         elif method == "atr_dynamic":
-            zones = self._atr_dynamic_method(candles, params)
+            zones = self._atr_dynamic_method(candles, params, detection_start_idx=detection_start_idx)
         else:
             raise ValueError(f"Metodo desconocido: {method}. Usar: {self.METHODS}")
 
@@ -1983,7 +1987,8 @@ class ZoneDetector:
     # Soporta re-ingreso y merge de rangos solapados
     # =========================================================================
 
-    def _atr_dynamic_method(self, candles: List[Dict], params: ZoneDetectionParams) -> List[TradingZone]:
+    def _atr_dynamic_method(self, candles: List[Dict], params: ZoneDetectionParams,
+                            detection_start_idx: int = 0) -> List[TradingZone]:
         """
         Detecta rangos usando ATR dinamico (inspirado en LuxAlgo Range Detector).
         Luego simula trades igual que trading_zones.
@@ -1996,6 +2001,9 @@ class ZoneDetector:
         5. Permite re-ingreso si sale por menos de max_breakout velas
         6. Post-procesa mergeando rangos solapados
         7. Simula trades con TP=2R, SL=1R
+
+        detection_start_idx: Si > 0, solo retorna zonas que empiecen desde este indice.
+                             Las velas anteriores se usan para contexto BBWP/TTM.
         """
         atr_period = params.atr_dyn_period        # 200 default
         ma_period = params.atr_dyn_ma_period      # 20 default (tambien min velas)
@@ -2263,6 +2271,17 @@ class ZoneDetector:
             raw_ranges = self._merge_overlapping_atr_ranges(raw_ranges)
 
         print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos crudos detectados (post-merge)")
+
+        # 3.5. Filtrar por detection_start_idx (BBWP extendido)
+        # Solo conservar zonas que terminen dentro del rango de deteccion solicitado
+        if detection_start_idx > 0:
+            pre_filter_count = len(raw_ranges)
+            raw_ranges = [r for r in raw_ranges if r['end_idx'] >= detection_start_idx]
+            filtered_out = pre_filter_count - len(raw_ranges)
+            if filtered_out > 0:
+                print(f"[ZoneDetector] BBWP historial: {filtered_out} rangos descartados "
+                      f"(anteriores a idx {detection_start_idx} = {_ts_to_str(candles[detection_start_idx]['timestamp'])})")
+            print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos en ventana de deteccion")
 
         # 4. Filtrar rangos y preparar para simulacion de trades
         filtered_ranges = []
@@ -2775,11 +2794,13 @@ class ZoneDetector:
                     if avg_bbwp <= params.bbwp_squeeze_threshold:
                         bbwp_bonus = (params.bbwp_squeeze_threshold - avg_bbwp) / params.bbwp_squeeze_threshold * 15
                         base_score += bbwp_bonus
+                    hist_info = f", history_days={params.bbwp_history_days}" if params.bbwp_history_days > 0 else ""
                     print(f"[ZoneDetector] BBWP DEBUG zona {_ts_to_str(start_ts)}: "
                           f"avg_bbwp={avg_bbwp:.1f}, threshold={params.bbwp_squeeze_threshold}, "
                           f"bonus={bbwp_bonus:.1f}, lookback={params.bbwp_lookback}, "
                           f"vals_count={len(zone_bbwp_vals)}, "
-                          f"min={min(zone_bbwp_vals):.1f}, max={max(zone_bbwp_vals):.1f}")
+                          f"min={min(zone_bbwp_vals):.1f}, max={max(zone_bbwp_vals):.1f}"
+                          f"{hist_info}, total_bbwp_vals={len(bbwp_values)}")
 
             # --- Filtro de score minimo ---
             if params.min_score_filter > 0 and base_score < params.min_score_filter:

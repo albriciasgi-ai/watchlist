@@ -10,7 +10,8 @@
       "WebSearch",
       "Bash(nul)",
       "Bash(tasklist /FI 'IMAGENAME eq python.exe' 2)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx vite build:*)"
     ],
     "deny": [],
     "ask": []

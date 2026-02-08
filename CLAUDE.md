@@ -4289,3 +4289,115 @@ if (fingerprint !== this._lastRealtimeZoneFingerprint) {
 - Verificar fix en `zone_detector.py` (PENDING → OPEN)
 
 **Problema conocido:** `_send_alert()` en `zone_service.py` envia `custom_stop_loss` y `custom_take_profit` pero no `order_type`, lo cual puede causar inconsistencia de TP/SL en ordenes market.
+
+---
+
+# OPTIMIZADOR DE PARAMETROS - GRID SEARCH (Febrero 2026)
+
+Sistema para encontrar la mejor combinacion de parametros del Zone Detector mediante busqueda exhaustiva (grid search).
+
+## Archivos del Sistema
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `4.Analizador cripto/backend/main.py` | Endpoints `/api/zones/optimize` y `/api/zones/optimize-estimate` |
+| `8.AnalizadorDesktop/src/components/indicators/IndicatorManager.js` | Metodos `estimateOptimization()` y `optimizeTradingZones()` |
+| `8.AnalizadorDesktop/src/components/ZoneDetectorSettings.jsx` | UI: estimacion, confirmacion, ejecucion, tabla de resultados |
+
+## Flujo de Uso
+
+1. **Usuario abre modal Zone Detector** → seccion "Optimizador de Parametros"
+2. **Selecciona parametros a optimizar** (checkbox) y ajusta rangos min/max/step
+3. **Click "Estimar y Ejecutar"** → backend ejecuta 2 combos de prueba y extrapola
+4. **UI muestra estimacion**: tiempo, combinaciones, velas. Colores: verde (<1min), amarillo (<5min), rojo (>5min)
+5. **"Confirmar y Ejecutar"** → grid search completo en thread pool
+6. **Tabla de resultados**: Top 15 ordenados por metrica elegida, boton "Aplicar" por fila
+7. Los parametros no optimizados se toman del estado actual del modal
+
+## Endpoints API
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/zones/optimize-estimate` | POST | Ejecuta 2 combos de prueba y extrapola tiempo |
+| `/api/zones/optimize` | POST | Grid search completo, retorna top N resultados |
+
+### Request Body
+
+```json
+{
+  "symbol": "BTCUSDT",
+  "interval": "5",
+  "days": 400,
+  "base_params": { "lookforward_bars": 100, "entry_mode": "breakout_close" },
+  "param_ranges": {
+    "atr_dyn_multiplier": { "min": 0.5, "max": 2.0, "step": 0.25 },
+    "ttm_kc_multiplier": { "min": 1.0, "max": 2.5, "step": 0.25 }
+  },
+  "metric": "expectancy",
+  "top_n": 15
+}
+```
+
+## Parametros Optimizables
+
+| Parametro | Label UI | Default Range | Descripcion |
+|-----------|----------|---------------|-------------|
+| `atr_dyn_multiplier` | ATR Multiplier | 0.5 - 2.0 (0.25) | Multiplicador ATR para ancho de zona |
+| `atr_dyn_ma_period` | MA Period | 10 - 40 (5) | Periodo media movil del ATR |
+| `atr_dyn_max_breakout` | Max Breakout | 2 - 10 (2) | Max velas de breakout permitidas |
+| `consol_max_range_pct` | Max Range % | 1.0 - 4.0 (0.5) | Maximo rango de precio de la zona |
+| `min_score_filter` | Min Score | 0 - 60 (10) | Score minimo para incluir zona |
+| `lookforward_bars` | Lookforward | 50 - 200 (25) | Velas a futuro para simular trade |
+| `atr_dyn_period` | ATR Period | 100 - 300 (50) | Periodo del calculo ATR |
+| `ttm_atr_length` | TTM ATR Length | 10 - 30 (5) | Periodo ATR para Keltner Channels |
+| `ttm_kc_multiplier` | TTM KC Mult | 1.0 - 2.5 (0.25) | Multiplicador Keltner Channel |
+| `ttm_min_squeeze_bars` | TTM Min Bars | 3 - 10 (1) | Min velas consecutivas en squeeze |
+
+**Nota:** Los parametros TTM solo surten efecto si `use_ttm_prefilter=true` esta activado en el modal.
+
+## Metricas de Optimizacion
+
+| Metrica | Descripcion |
+|---------|-------------|
+| `expectancy` | PnL promedio por trade cerrado (en R) |
+| `total_pnl_r` | PnL total acumulado (en R) |
+| `win_rate` | Porcentaje de trades ganadores |
+| `profit_factor` | Ganancia bruta / Perdida bruta |
+
+## Limites y Validaciones
+
+- **Max combinaciones**: 5,000 (frontend y backend validan)
+- **Max valores por parametro**: 20 (se submuestrean si excede)
+- **Timeout frontend**: 60 minutos
+- **Ejecucion**: `loop.run_in_executor(None, ...)` en thread pool para no bloquear uvicorn
+- **Logs**: Backend imprime progreso cada 10 combinaciones
+
+## Implementacion Backend
+
+El grid search se ejecuta en un thread pool para no bloquear el event loop de uvicorn:
+
+```python
+def run_all_combos():
+    results = []
+    for i, combo in enumerate(all_combos):
+        result = run_single_combo(combo_dict)
+        results.append(result)
+    results.sort(key=lambda r: r.get(metric, 0), reverse=True)
+    return results
+
+loop = asyncio.get_event_loop()
+results = await loop.run_in_executor(None, run_all_combos)
+```
+
+**CRITICO:** Nunca ejecutar codigo CPU-bound sincrono dentro de un `async def` en FastAPI. Siempre usar `run_in_executor` para offload a thread pool.
+
+## Troubleshooting
+
+**Estimacion dice 0 segundos:**
+- Datos en cache hacen la deteccion muy rapida con pocas velas
+
+**Optimizacion se corta sin resultados:**
+- Verificar timeout (60 min). Revisar logs: `[SYMBOL] [OPTIMIZE] Progreso: N/M`
+
+**Resultados TTM no cambian nada:**
+- Verificar que `use_ttm_prefilter` esta activado en el modal

@@ -4581,8 +4581,21 @@ async def detect_trading_zones(request: Request):
 
         # Obtener datos historicos
         _fetch_start = _time.time()
-        print(f"[{symbol}] [ZONES] Descargando velas de Bybit...")
-        historical = await get_historical(symbol, interval, days)
+
+        # Si BBWP necesita mas historial, cargar velas extra
+        bbwp_history_days = params_dict.get("bbwp_history_days", 0)
+        use_bbwp = params_dict.get("use_bbwp_scoring", False)
+        actual_fetch_days = days
+
+        if use_bbwp and bbwp_history_days > days:
+            actual_fetch_days = bbwp_history_days
+            # Validar contra maximo permitido
+            if actual_fetch_days > max_days:
+                actual_fetch_days = max_days
+            print(f"[{symbol}] [ZONES] BBWP historial extendido: {days}d deteccion + {actual_fetch_days}d para BBWP")
+
+        print(f"[{symbol}] [ZONES] Descargando velas de Bybit ({actual_fetch_days} dias)...")
+        historical = await get_historical(symbol, interval, actual_fetch_days)
         _fetch_elapsed = _time.time() - _fetch_start
 
         if not historical.get('success') or not historical.get('data'):
@@ -4595,6 +4608,15 @@ async def detect_trading_zones(request: Request):
 
         candles = historical['data']
         print(f"[{symbol}] [ZONES] {len(candles)} velas obtenidas en {_fetch_elapsed:.1f}s (esperadas: ~{expected_candles})")
+
+        # Si cargamos velas extra para BBWP, calcular el offset de deteccion
+        # Solo detectar zonas en las ultimas 'days' velas, pero BBWP usa todas
+        bbwp_detection_offset = 0
+        if use_bbwp and actual_fetch_days > days:
+            interval_min_val = {"1":1,"3":3,"5":5,"15":15,"30":30,"60":60,"120":120,"240":240,"D":1440,"W":10080}.get(interval, 60)
+            detection_candles = int((days * 24 * 60) / interval_min_val)
+            bbwp_detection_offset = max(0, len(candles) - detection_candles)
+            print(f"[{symbol}] [ZONES] BBWP: {len(candles)} velas totales, deteccion desde idx {bbwp_detection_offset} ({detection_candles} velas de deteccion)")
 
         # Metodo de deteccion: "trading_zones" (actual) o "atr_dynamic" (nuevo basado en ATRBasedRangeDetector)
         detection_method = params_dict.get("detection_method", "trading_zones")
@@ -4643,6 +4665,8 @@ async def detect_trading_zones(request: Request):
             min_score_filter=params_dict.get("min_score_filter", 0),
             # Score intrinseco (sin sesgos post-trade)
             use_continuation_score=params_dict.get("use_continuation_score", False),
+            # BBWP historial extendido
+            bbwp_history_days=bbwp_history_days,
         )
 
         print(f"[{symbol}] [ZONES] Metodo de deteccion: {detection_method}")
@@ -4650,7 +4674,8 @@ async def detect_trading_zones(request: Request):
         # Detectar zonas con el metodo seleccionado
         _detect_start = _time.time()
         detector = ZoneDetector()
-        zones = detector.detect_zones(candles, method=detection_method, params=params)
+        zones = detector.detect_zones(candles, method=detection_method, params=params,
+                                       detection_start_idx=bbwp_detection_offset)
         _detect_elapsed = _time.time() - _detect_start
 
         _total_elapsed = _time.time() - _zone_start
@@ -4750,6 +4775,356 @@ async def detect_trading_zones(request: Request):
             "error": str(e),
             "zones": []
         }
+
+
+@app.post("/api/zones/optimize-estimate")
+async def optimize_estimate(request: Request):
+    """
+    Estima el tiempo que tardara la optimizacion ejecutando 2 combos de prueba.
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_params = body.get("base_params", {})
+        param_ranges = body.get("param_ranges", {})
+
+        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar valores para contar combinaciones
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        # Descargar datos (medir tiempo de fetch)
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        detection_method = base_params.get("detection_method", "atr_dynamic")
+
+        # Ejecutar 2 combos de prueba para medir tiempo promedio
+        all_combos = list(itertools.product(*param_values_list))
+        sample_combos = all_combos[:min(2, len(all_combos))]
+
+        def run_sample():
+            times = []
+            for combo in sample_combos:
+                combo_dict = dict(zip(param_names, combo))
+                merged = dict(base_params)
+                merged.update(combo_dict)
+                params = ZoneDetectionParams(
+                    consol_min_bars=int(merged.get("consol_min_bars", 8)),
+                    consol_max_bars=int(merged.get("consol_max_bars", 50)),
+                    consol_max_range_pct=float(merged.get("consol_max_range_pct", 2.0)),
+                    consol_atr_ratio=float(merged.get("consol_atr_ratio", 0.6)),
+                    consol_body_ratio=float(merged.get("consol_body_ratio", 0.5)),
+                    consol_max_outside_bars=int(merged.get("consol_max_outside_bars", 3)),
+                    lookforward_bars=int(merged.get("lookforward_bars", 100)),
+                    max_price_range_pct=float(merged.get("max_price_range_pct", 5.0)),
+                    entry_mode=merged.get("entry_mode", "breakout_close"),
+                    position_mode=merged.get("position_mode", "sequential"),
+                    swing_bars=int(merged.get("swing_bars", 5)),
+                    sl_mode=merged.get("sl_mode", "zone_opposite"),
+                    use_atr_band=bool(merged.get("use_atr_band", False)),
+                    atr_band_period=int(merged.get("atr_band_period", 200)),
+                    atr_band_multiplier=float(merged.get("atr_band_multiplier", 1.0)),
+                    atr_band_ma_period=int(merged.get("atr_band_ma_period", 20)),
+                    use_reentry=bool(merged.get("use_reentry", False)),
+                    max_reentry_bars=int(merged.get("max_reentry_bars", 3)),
+                    use_ttm_prefilter=bool(merged.get("use_ttm_prefilter", False)),
+                    ttm_atr_length=int(merged.get("ttm_atr_length", 20)),
+                    ttm_kc_multiplier=float(merged.get("ttm_kc_multiplier", 1.5)),
+                    ttm_min_squeeze_bars=int(merged.get("ttm_min_squeeze_bars", 5)),
+                    use_bbwp_scoring=False,
+                    use_inside_pct_filter=bool(merged.get("use_inside_pct_filter", False)),
+                    min_inside_pct=float(merged.get("min_inside_pct", 70.0)),
+                    atr_dyn_period=int(merged.get("atr_dyn_period", 200)),
+                    atr_dyn_ma_period=int(merged.get("atr_dyn_ma_period", 20)),
+                    atr_dyn_multiplier=float(merged.get("atr_dyn_multiplier", 1.0)),
+                    atr_dyn_max_breakout=int(merged.get("atr_dyn_max_breakout", 5)),
+                    atr_dyn_merge_overlap=bool(merged.get("atr_dyn_merge_overlap", True)),
+                    atr_dyn_min_bars=int(merged.get("atr_dyn_min_bars", 0)),
+                    sl_poc_buffer_pct=float(merged.get("sl_poc_buffer_pct", 50.0)),
+                    vp_bins_per_zone=int(merged.get("vp_bins_per_zone", 30)),
+                    min_score_filter=float(merged.get("min_score_filter", 0)),
+                    use_continuation_score=bool(merged.get("use_continuation_score", False)),
+                )
+                t0 = _time.time()
+                detector = ZoneDetector()
+                detector.detect_zones(candles, method=detection_method, params=params)
+                times.append(_time.time() - t0)
+            return times
+
+        loop = asyncio.get_event_loop()
+        sample_times = await loop.run_in_executor(None, run_sample)
+
+        avg_per_combo = sum(sample_times) / len(sample_times)
+        estimated_total = avg_per_combo * total_combos + _fetch_elapsed
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "candles": len(candles),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "avg_per_combo": round(avg_per_combo, 3),
+            "estimated_seconds": round(estimated_total, 1),
+            "sample_combos_run": len(sample_times),
+        }
+
+    except Exception as e:
+        print(f"[OPTIMIZE-ESTIMATE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/optimize")
+async def optimize_zone_params(request: Request):
+    """
+    Optimizacion de parametros por grid search.
+    Recibe rangos de parametros, ejecuta todas las combinaciones y retorna las mejores.
+    Ejecuta en thread pool para no bloquear el event loop.
+    """
+    import itertools
+    import time as _time
+    import concurrent.futures
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_params = body.get("base_params", {})  # Parametros fijos (no optimizables)
+        param_ranges = body.get("param_ranges", {})  # {param_name: {min, max, step}}
+        metric = body.get("metric", "expectancy")  # Metrica a optimizar
+        top_n = body.get("top_n", 10)  # Cuantos mejores resultados retornar
+
+        print(f"[{symbol}] [OPTIMIZE] === INICIO OPTIMIZACION ===")
+        print(f"[{symbol}] [OPTIMIZE] interval={interval}, days={days}, metric={metric}")
+        print(f"[{symbol}] [OPTIMIZE] Ranges: {param_ranges}")
+        print(f"[{symbol}] [OPTIMIZE] Base params: {list(base_params.keys())}")
+
+        # Validar dias
+        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar valores para cada parametro
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            # Generar valores con arange manual (sin numpy)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            # Limitar a maximo 20 valores por parametro para evitar explosion combinatoria
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+            print(f"[{symbol}] [OPTIMIZE] {name}: {vals} ({len(vals)} values)")
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        # Calcular total de combinaciones
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+        print(f"[{symbol}] [OPTIMIZE] Total combinaciones: {total_combos}")
+
+        if total_combos > 5000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Reduce rangos o aumenta steps. Max: 5000"}
+
+        # Descargar datos historicos UNA sola vez
+        print(f"[{symbol}] [OPTIMIZE] Descargando velas...")
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [OPTIMIZE] {len(candles)} velas obtenidas en {_fetch_elapsed:.1f}s")
+
+        detection_method = base_params.get("detection_method", "atr_dynamic")
+
+        # Funcion interna para ejecutar una combinacion
+        def run_single_combo(combo_dict):
+            """Ejecuta deteccion con una combinacion de parametros y retorna stats."""
+            # Merge base_params + combo
+            merged = dict(base_params)
+            merged.update(combo_dict)
+
+            params = ZoneDetectionParams(
+                consol_min_bars=int(merged.get("consol_min_bars", 8)),
+                consol_max_bars=int(merged.get("consol_max_bars", 50)),
+                consol_max_range_pct=float(merged.get("consol_max_range_pct", 2.0)),
+                consol_atr_ratio=float(merged.get("consol_atr_ratio", 0.6)),
+                consol_body_ratio=float(merged.get("consol_body_ratio", 0.5)),
+                consol_max_outside_bars=int(merged.get("consol_max_outside_bars", 3)),
+                lookforward_bars=int(merged.get("lookforward_bars", 100)),
+                max_price_range_pct=float(merged.get("max_price_range_pct", 5.0)),
+                entry_mode=merged.get("entry_mode", "breakout_close"),
+                position_mode=merged.get("position_mode", "sequential"),
+                swing_bars=int(merged.get("swing_bars", 5)),
+                sl_mode=merged.get("sl_mode", "zone_opposite"),
+                use_atr_band=bool(merged.get("use_atr_band", False)),
+                atr_band_period=int(merged.get("atr_band_period", 200)),
+                atr_band_multiplier=float(merged.get("atr_band_multiplier", 1.0)),
+                atr_band_ma_period=int(merged.get("atr_band_ma_period", 20)),
+                use_reentry=bool(merged.get("use_reentry", False)),
+                max_reentry_bars=int(merged.get("max_reentry_bars", 3)),
+                use_ttm_prefilter=bool(merged.get("use_ttm_prefilter", False)),
+                ttm_atr_length=int(merged.get("ttm_atr_length", 20)),
+                ttm_kc_multiplier=float(merged.get("ttm_kc_multiplier", 1.5)),
+                ttm_min_squeeze_bars=int(merged.get("ttm_min_squeeze_bars", 5)),
+                use_bbwp_scoring=False,  # Deshabilitado por defecto en optimizacion
+                use_inside_pct_filter=bool(merged.get("use_inside_pct_filter", False)),
+                min_inside_pct=float(merged.get("min_inside_pct", 70.0)),
+                atr_dyn_period=int(merged.get("atr_dyn_period", 200)),
+                atr_dyn_ma_period=int(merged.get("atr_dyn_ma_period", 20)),
+                atr_dyn_multiplier=float(merged.get("atr_dyn_multiplier", 1.0)),
+                atr_dyn_max_breakout=int(merged.get("atr_dyn_max_breakout", 5)),
+                atr_dyn_merge_overlap=bool(merged.get("atr_dyn_merge_overlap", True)),
+                atr_dyn_min_bars=int(merged.get("atr_dyn_min_bars", 0)),
+                sl_poc_buffer_pct=float(merged.get("sl_poc_buffer_pct", 50.0)),
+                vp_bins_per_zone=int(merged.get("vp_bins_per_zone", 30)),
+                min_score_filter=float(merged.get("min_score_filter", 0)),
+                use_continuation_score=bool(merged.get("use_continuation_score", False)),
+            )
+
+            detector = ZoneDetector()
+            zones = detector.detect_zones(candles, method=detection_method, params=params)
+
+            # Calcular stats
+            zones_data = [z.to_dict() for z in zones]
+            wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
+            losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
+            total_closed = wins + losses
+            total_pnl_r = sum(z.get('trade_pnl_r', 0) for z in zones_data if z.get('trade_result') in ('WIN', 'LOSS'))
+            win_rate = (wins / total_closed * 100) if total_closed > 0 else 0
+            expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
+
+            # Profit factor
+            gross_profit = sum(z.get('trade_pnl_r', 0) for z in zones_data if z.get('trade_result') == 'WIN')
+            gross_loss = abs(sum(z.get('trade_pnl_r', 0) for z in zones_data if z.get('trade_result') == 'LOSS'))
+            profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else (99.9 if gross_profit > 0 else 0)
+
+            # Max drawdown
+            active = sorted([z for z in zones_data if z.get('trade_result') in ('WIN', 'LOSS')],
+                          key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0))
+            max_equity = 0.0
+            max_drawdown = 0.0
+            equity = 0.0
+            for z in active:
+                equity += z.get('trade_pnl_r', 0)
+                if equity > max_equity:
+                    max_equity = equity
+                dd = max_equity - equity
+                if dd > max_drawdown:
+                    max_drawdown = dd
+
+            return {
+                "params": combo_dict,
+                "total_zones": len(zones_data),
+                "wins": wins,
+                "losses": losses,
+                "total_closed": total_closed,
+                "win_rate": round(win_rate, 1),
+                "total_pnl_r": round(total_pnl_r, 1),
+                "expectancy": round(expectancy, 3),
+                "profit_factor": round(profit_factor, 2),
+                "max_drawdown_r": round(max_drawdown, 2),
+            }
+
+        # Generar todas las combinaciones
+        all_combos = list(itertools.product(*param_values_list))
+
+        # Ejecutar grid search en thread pool para no bloquear el event loop
+        def run_all_combos():
+            results = []
+            _opt_start = _time.time()
+
+            for i, combo in enumerate(all_combos):
+                combo_dict = dict(zip(param_names, combo))
+                try:
+                    result = run_single_combo(combo_dict)
+                    results.append(result)
+                    if (i + 1) % 10 == 0:
+                        elapsed = _time.time() - _opt_start
+                        print(f"[{symbol}] [OPTIMIZE] Progreso: {i+1}/{total_combos} ({elapsed:.1f}s)")
+                except Exception as e:
+                    print(f"[{symbol}] [OPTIMIZE] Error en combo {combo_dict}: {e}")
+
+            # Ordenar por metrica objetivo
+            results.sort(key=lambda r: r.get(metric, 0), reverse=True)
+            _total_elapsed = _time.time() - _opt_start
+            return results, _total_elapsed
+
+        print(f"[{symbol}] [OPTIMIZE] Ejecutando {total_combos} combinaciones en thread pool...")
+        loop = asyncio.get_event_loop()
+        results, total_elapsed = await loop.run_in_executor(None, run_all_combos)
+
+        top_results = results[:top_n]
+
+        print(f"[{symbol}] [OPTIMIZE] Completado: {total_combos} combos en {total_elapsed:.1f}s")
+        if top_results:
+            best = top_results[0]
+            print(f"[{symbol}] [OPTIMIZE] MEJOR: {metric}={best.get(metric, 0)} | "
+                  f"WR={best['win_rate']}% | PnL={best['total_pnl_r']}R | params={best['params']}")
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "elapsed": round(total_elapsed, 1),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "candles": len(candles),
+            "metric": metric,
+            "results": top_results,
+            "all_results_count": len(results),
+        }
+
+    except Exception as e:
+        print(f"[OPTIMIZE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
 
 
 @app.post("/api/zones/export-csv")

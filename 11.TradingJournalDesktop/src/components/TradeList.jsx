@@ -89,8 +89,14 @@ function TradeList({ onViewTrade }) {
       let bVal = b[sortBy]
 
       if (sortBy === 'entry_time' || sortBy === 'exit_time') {
-        aVal = aVal ? new Date(aVal).getTime() : 0
-        bVal = bVal ? new Date(bVal).getTime() : 0
+        const parseTime = (v) => {
+          if (!v) return 0
+          if (/^\d{10,13}$/.test(v)) return parseInt(v, 10)
+          const t = new Date(v).getTime()
+          return isNaN(t) ? 0 : t
+        }
+        aVal = parseTime(aVal)
+        bVal = parseTime(bVal)
       }
 
       if (typeof aVal === 'number' && typeof bVal === 'number') {
@@ -141,8 +147,15 @@ function TradeList({ onViewTrade }) {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-'
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('es-ES', {
+    // Bybit puede enviar timestamps en ms como string (ej: "1738900000000")
+    let date
+    if (/^\d{10,13}$/.test(dateStr)) {
+      date = new Date(parseInt(dateStr, 10))
+    } else {
+      date = new Date(dateStr)
+    }
+    if (isNaN(date.getTime())) return '-'
+    return date.toLocaleString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: '2-digit',
