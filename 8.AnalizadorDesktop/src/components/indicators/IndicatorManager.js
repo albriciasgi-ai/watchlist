@@ -1648,6 +1648,8 @@ class IndicatorManager {
           min_score_filter: params.min_score_filter || 0,
           // Score intrinseco (sin sesgos post-trade)
           use_continuation_score: params.use_continuation_score || false,
+          // Risk:Reward ratio para TP
+          tp_rr_ratio: params.tp_rr_ratio || 2.0,
           // Volume Profile por zona (para va_breakout)
           sl_poc_buffer_pct: params.sl_poc_buffer_pct != null ? params.sl_poc_buffer_pct : 50.0,
           vp_bins_per_zone: params.vp_bins_per_zone || 30,
@@ -1664,7 +1666,7 @@ class IndicatorManager {
 
       // Timeout largo: 120 dias en 5m = ~35K velas, puede tardar 30-90s
       const controller = new AbortController();
-      const timeoutMs = 5 * 60 * 1000; // 5 minutos max
+      const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas max (400d en 1min es muy pesado)
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const startTime = Date.now();

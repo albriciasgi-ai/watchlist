@@ -95,6 +95,21 @@ MAX_DAYS_BY_INTERVAL = {
     "W": 1000,    # 1 semana -> max 1000 dias
 }
 
+# Limites extendidos SOLO para deteccion de zonas (detect, detect-multi, optimize)
+# El usuario necesita mas historial en timeframes bajos para backtesting sin afectar graficacion
+MAX_DAYS_ZONES = {
+    "1": 400,     # 1 min -> max 400 dias (~576k velas) - solo deteccion
+    "3": 400,     # 3 min -> max 400 dias
+    "5": 400,     # 5 min -> max 400 dias
+    "15": 730,    # 15 min -> max 730 dias
+    "30": 730,    # 30 min -> max 730 dias
+    "60": 1095,   # 1 hora -> max 1095 dias
+    "120": 1095,  # 2 horas -> max 1095 dias
+    "240": 1095,  # 4 horas -> max 1095 dias
+    "D": 2000,    # 1 dia -> max 2000 dias
+    "W": 1000,    # 1 semana -> max 1000 dias
+}
+
 def load_cache(symbol: str, interval: str, indicator: str):
     """Carga datos del cache si existen y son recientes"""
     cache_file = CACHE_DIR / f"{symbol}_{interval}_{indicator}.json"
@@ -246,7 +261,7 @@ def get_interval_minutes(interval: str) -> int:
         return int(interval)
 
 @app.get("/api/historical/{symbol}")
-async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None):
+async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None, skip_day_limit: bool = False):
     """
     Obtiene datos históricos de velas.
 
@@ -257,6 +272,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
     - since_timestamp: (OPCIONAL) Timestamp en ms desde el cual obtener velas.
                        Si se provee, ignora 'days' y obtiene velas desde ese timestamp hasta ahora.
                        Útil para carga incremental (solo pedir datos nuevos).
+    - skip_day_limit: Si True, no aplica MAX_DAYS_BY_INTERVAL (usado por zone detection que ya valido con MAX_DAYS_ZONES).
     """
     try:
         interval_clean = (
@@ -287,8 +303,13 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             print(f"[{symbol}] [DATA] HISTORICAL INCREMENTAL: desde {since_timestamp} (~{total_candles_needed} velas esperadas) @ {interval_final}")
         else:
             # Comportamiento original: usar days
-            max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
-            days_to_fetch = min(days, max_days_allowed)
+            if skip_day_limit:
+                # Zone detection ya valido contra MAX_DAYS_ZONES, no recortar aqui
+                days_to_fetch = days
+                max_days_allowed = days
+            else:
+                max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
+                days_to_fetch = min(days, max_days_allowed)
             minutes_in_period = days_to_fetch * 24 * 60
             total_candles_needed = int(minutes_in_period / interval_minutes)
             start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
@@ -302,7 +323,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         
         async with httpx.AsyncClient(timeout=60) as client:
             request_count = 0
-            max_requests = 120  # 120 requests x 1000 velas = 120,000 velas max (~416 dias en 5min)
+            max_requests = 600  # 600 requests x 1000 velas = 600,000 velas max (~400 dias en 1min)
             consecutive_errors = 0
             max_consecutive_errors = 3
 
@@ -4571,8 +4592,8 @@ async def detect_trading_zones(request: Request):
         print(f"[{symbol}] [ZONES] interval={interval}, days={days}, velas esperadas=~{expected_candles}")
         print(f"[{symbol}] [ZONES] Params: {params_dict}")
 
-        # Validar dias contra maximo permitido
-        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        # Validar dias contra maximo permitido (usar MAX_DAYS_ZONES para deteccion)
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
         if days > max_days:
             print(f"[{symbol}] [ZONES] Days {days} > max {max_days}, ajustando")
             days = max_days
@@ -4595,7 +4616,7 @@ async def detect_trading_zones(request: Request):
             print(f"[{symbol}] [ZONES] BBWP historial extendido: {days}d deteccion + {actual_fetch_days}d para BBWP")
 
         print(f"[{symbol}] [ZONES] Descargando velas de Bybit ({actual_fetch_days} dias)...")
-        historical = await get_historical(symbol, interval, actual_fetch_days)
+        historical = await get_historical(symbol, interval, actual_fetch_days, skip_day_limit=True)
         _fetch_elapsed = _time.time() - _fetch_start
 
         if not historical.get('success') or not historical.get('data'):
@@ -4629,6 +4650,7 @@ async def detect_trading_zones(request: Request):
             consol_atr_ratio=params_dict.get("consol_atr_ratio", 0.6),
             consol_body_ratio=params_dict.get("consol_body_ratio", 0.5),
             consol_max_outside_bars=params_dict.get("consol_max_outside_bars", 3),
+            tp_rr_ratio=float(params_dict.get("tp_rr_ratio", 2.0)),
             lookforward_bars=params_dict.get("lookforward_bars", 100),
             max_price_range_pct=params_dict.get("max_price_range_pct", 5.0),
             entry_mode=params_dict.get("entry_mode", "breakout_close"),
@@ -4777,6 +4799,246 @@ async def detect_trading_zones(request: Request):
         }
 
 
+@app.post("/api/zones/detect-multi")
+async def detect_trading_zones_multi(request: Request):
+    """
+    Detecta zonas de consolidacion para MULTIPLES simbolos con los mismos parametros.
+    Retorna resultados individuales por simbolo + estadisticas consolidadas.
+    Opcionalmente genera CSV consolidado.
+    """
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbols = body.get("symbols", ["BTCUSDT"])
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        params_dict = body.get("params", {})
+
+        if not symbols or len(symbols) == 0:
+            return {"success": False, "error": "No se especificaron simbolos"}
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Construir parametros de deteccion (comunes para todos los simbolos)
+        detection_method = params_dict.get("detection_method", "trading_zones")
+        bbwp_history_days = params_dict.get("bbwp_history_days", 0)
+        use_bbwp = params_dict.get("use_bbwp_scoring", False)
+        actual_fetch_days = days
+        if use_bbwp and bbwp_history_days > days:
+            actual_fetch_days = min(bbwp_history_days, max_days)
+
+        det_params = ZoneDetectionParams(
+            consol_min_bars=params_dict.get("consol_min_bars", 8),
+            consol_max_bars=params_dict.get("consol_max_bars", 50),
+            consol_max_range_pct=params_dict.get("consol_max_range_pct", 2.0),
+            consol_atr_ratio=params_dict.get("consol_atr_ratio", 0.6),
+            consol_body_ratio=params_dict.get("consol_body_ratio", 0.5),
+            consol_max_outside_bars=params_dict.get("consol_max_outside_bars", 3),
+            tp_rr_ratio=float(params_dict.get("tp_rr_ratio", 2.0)),
+            lookforward_bars=params_dict.get("lookforward_bars", 100),
+            max_price_range_pct=params_dict.get("max_price_range_pct", 5.0),
+            entry_mode=params_dict.get("entry_mode", "breakout_close"),
+            position_mode=params_dict.get("position_mode", "sequential"),
+            swing_bars=params_dict.get("swing_bars", 5),
+            sl_mode=params_dict.get("sl_mode", "zone_opposite"),
+            use_atr_band=params_dict.get("use_atr_band", False),
+            atr_band_period=params_dict.get("atr_band_period", 200),
+            atr_band_multiplier=params_dict.get("atr_band_multiplier", 1.0),
+            atr_band_ma_period=params_dict.get("atr_band_ma_period", 20),
+            use_reentry=params_dict.get("use_reentry", False),
+            max_reentry_bars=params_dict.get("max_reentry_bars", 3),
+            use_ttm_prefilter=params_dict.get("use_ttm_prefilter", False),
+            ttm_atr_length=params_dict.get("ttm_atr_length", 20),
+            ttm_kc_multiplier=params_dict.get("ttm_kc_multiplier", 1.5),
+            ttm_min_squeeze_bars=params_dict.get("ttm_min_squeeze_bars", 5),
+            use_bbwp_scoring=use_bbwp,
+            bbwp_lookback=params_dict.get("bbwp_lookback", 252),
+            bbwp_squeeze_threshold=params_dict.get("bbwp_squeeze_threshold", 20),
+            use_inside_pct_filter=params_dict.get("use_inside_pct_filter", False),
+            min_inside_pct=params_dict.get("min_inside_pct", 70.0),
+            atr_dyn_period=params_dict.get("atr_dyn_period", 200),
+            atr_dyn_ma_period=params_dict.get("atr_dyn_ma_period", 20),
+            atr_dyn_multiplier=params_dict.get("atr_dyn_multiplier", 1.0),
+            atr_dyn_max_breakout=params_dict.get("atr_dyn_max_breakout", 5),
+            atr_dyn_merge_overlap=params_dict.get("atr_dyn_merge_overlap", True),
+            atr_dyn_min_bars=params_dict.get("atr_dyn_min_bars", 0),
+            sl_poc_buffer_pct=params_dict.get("sl_poc_buffer_pct", 50.0),
+            vp_bins_per_zone=params_dict.get("vp_bins_per_zone", 30),
+            min_score_filter=params_dict.get("min_score_filter", 0),
+            use_continuation_score=params_dict.get("use_continuation_score", False),
+            bbwp_history_days=bbwp_history_days,
+        )
+
+        _multi_start = _time.time()
+        print(f"[MULTI-DETECT] === INICIO: {len(symbols)} simbolos, {days}d, {interval}m ===")
+
+        # Detectar por cada simbolo secuencialmente
+        symbol_results = []
+        all_zones_for_csv = []  # Todas las zonas de todos los simbolos
+        totals = {"zones": 0, "wins": 0, "losses": 0, "skipped": 0, "no_entry": 0, "pnl_r": 0.0}
+
+        for sym_idx, sym in enumerate(symbols):
+            sym_start = _time.time()
+            print(f"[MULTI-DETECT] [{sym_idx+1}/{len(symbols)}] {sym} - descargando velas...")
+
+            try:
+                # Fetch datos historicos (skip_day_limit: ya validamos contra MAX_DAYS_ZONES)
+                historical = await get_historical(sym, interval, actual_fetch_days, skip_day_limit=True)
+                if not historical.get('success') or not historical.get('data'):
+                    print(f"[MULTI-DETECT] [{sym}] ERROR: Sin datos historicos")
+                    symbol_results.append({
+                        "symbol": sym, "success": False, "error": "Sin datos historicos",
+                        "stats": None, "zones_count": 0
+                    })
+                    continue
+
+                candles = historical['data']
+
+                # Calcular offset BBWP si aplica
+                bbwp_offset = 0
+                if use_bbwp and actual_fetch_days > days:
+                    interval_min_val = {"1":1,"3":3,"5":5,"15":15,"30":30,"60":60,"120":120,"240":240,"D":1440,"W":10080}.get(interval, 60)
+                    detection_candles = int((days * 24 * 60) / interval_min_val)
+                    bbwp_offset = max(0, len(candles) - detection_candles)
+
+                # Detectar zonas
+                detector = ZoneDetector()
+                zones = detector.detect_zones(candles, method=detection_method, params=det_params,
+                                               detection_start_idx=bbwp_offset)
+                zones_data = [zone.to_dict() for zone in zones]
+
+                # Agregar simbolo a cada zona (para CSV consolidado)
+                for z in zones_data:
+                    z['symbol'] = sym
+
+                # Calcular stats por simbolo
+                wins = len([z for z in zones_data if z.get('trade_result') == 'WIN'])
+                losses = len([z for z in zones_data if z.get('trade_result') == 'LOSS'])
+                skipped = len([z for z in zones_data if z.get('trade_result') == 'SKIPPED'])
+                no_entry = len([z for z in zones_data if z.get('trade_result') == 'NO_ENTRY'])
+                total_pnl_r = sum(z.get('trade_pnl_r', 0) for z in zones_data)
+                total_closed = wins + losses
+                win_rate = (wins / total_closed * 100) if total_closed > 0 else 0
+                expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
+
+                # Profit factor
+                gross_profit = sum(z.get('trade_pnl_r', 0) for z in zones_data if z.get('trade_pnl_r', 0) > 0)
+                gross_loss = abs(sum(z.get('trade_pnl_r', 0) for z in zones_data if z.get('trade_pnl_r', 0) < 0))
+                profit_factor = round(gross_profit / gross_loss, 2) if gross_loss > 0 else (999.0 if gross_profit > 0 else 0.0)
+
+                # Max drawdown
+                active_trades = sorted(
+                    [z for z in zones_data if z.get('trade_result') in ('WIN', 'LOSS')],
+                    key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0)
+                )
+                equity = 0.0
+                max_equity = 0.0
+                max_drawdown = 0.0
+                for z in active_trades:
+                    equity += z.get('trade_pnl_r', 0)
+                    if equity > max_equity:
+                        max_equity = equity
+                    dd = max_equity - equity
+                    if dd > max_drawdown:
+                        max_drawdown = dd
+
+                sym_elapsed = _time.time() - sym_start
+                print(f"[MULTI-DETECT] [{sym}] {len(zones_data)} zonas, {wins}W/{losses}L, {total_pnl_r:+.1f}R ({sym_elapsed:.1f}s)")
+
+                sym_stats = {
+                    "total_zones": len(zones_data),
+                    "wins": wins, "losses": losses, "skipped": skipped, "no_entry": no_entry,
+                    "win_rate": round(win_rate, 1),
+                    "total_pnl_r": round(total_pnl_r, 1),
+                    "expectancy": round(expectancy, 3),
+                    "profit_factor": profit_factor,
+                    "max_drawdown_r": round(max_drawdown, 2),
+                }
+
+                symbol_results.append({
+                    "symbol": sym, "success": True, "stats": sym_stats,
+                    "zones_count": len(zones_data), "candles_count": len(candles)
+                })
+
+                all_zones_for_csv.extend(zones_data)
+                totals["zones"] += len(zones_data)
+                totals["wins"] += wins
+                totals["losses"] += losses
+                totals["skipped"] += skipped
+                totals["no_entry"] += no_entry
+                totals["pnl_r"] += total_pnl_r
+
+            except Exception as sym_err:
+                print(f"[MULTI-DETECT] [{sym}] ERROR: {str(sym_err)}")
+                symbol_results.append({
+                    "symbol": sym, "success": False, "error": str(sym_err),
+                    "stats": None, "zones_count": 0
+                })
+
+        # Estadisticas consolidadas
+        total_closed = totals["wins"] + totals["losses"]
+        consolidated_win_rate = (totals["wins"] / total_closed * 100) if total_closed > 0 else 0
+        consolidated_expectancy = (totals["pnl_r"] / total_closed) if total_closed > 0 else 0
+
+        # Profit factor consolidado
+        gross_profit_all = sum(z.get('trade_pnl_r', 0) for z in all_zones_for_csv if z.get('trade_pnl_r', 0) > 0)
+        gross_loss_all = abs(sum(z.get('trade_pnl_r', 0) for z in all_zones_for_csv if z.get('trade_pnl_r', 0) < 0))
+        consolidated_pf = round(gross_profit_all / gross_loss_all, 2) if gross_loss_all > 0 else (999.0 if gross_profit_all > 0 else 0.0)
+
+        # Max drawdown consolidado (por orden cronologico de todos los simbolos)
+        all_active = sorted(
+            [z for z in all_zones_for_csv if z.get('trade_result') in ('WIN', 'LOSS')],
+            key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0)
+        )
+        equity_all = 0.0
+        max_eq_all = 0.0
+        max_dd_all = 0.0
+        for z in all_active:
+            equity_all += z.get('trade_pnl_r', 0)
+            if equity_all > max_eq_all:
+                max_eq_all = equity_all
+            dd = max_eq_all - equity_all
+            if dd > max_dd_all:
+                max_dd_all = dd
+
+        consolidated_stats = {
+            "total_symbols": len(symbols),
+            "symbols_ok": len([r for r in symbol_results if r.get("success")]),
+            "total_zones": totals["zones"],
+            "wins": totals["wins"], "losses": totals["losses"],
+            "skipped": totals["skipped"], "no_entry": totals["no_entry"],
+            "win_rate": round(consolidated_win_rate, 1),
+            "total_pnl_r": round(totals["pnl_r"], 1),
+            "expectancy": round(consolidated_expectancy, 3),
+            "profit_factor": consolidated_pf,
+            "max_drawdown_r": round(max_dd_all, 2),
+        }
+
+        _total_elapsed = _time.time() - _multi_start
+        print(f"[MULTI-DETECT] === COMPLETO: {totals['zones']} zonas, {totals['pnl_r']:+.1f}R en {_total_elapsed:.1f}s ===")
+
+        return {
+            "success": True,
+            "symbols": symbols,
+            "interval": interval,
+            "days": days,
+            "symbol_results": symbol_results,
+            "consolidated_stats": consolidated_stats,
+            "all_zones": all_zones_for_csv,
+            "elapsed_seconds": round(_total_elapsed, 1),
+            "params_used": params_dict,
+        }
+
+    except Exception as e:
+        print(f"[MULTI-DETECT ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 @app.post("/api/zones/optimize-estimate")
 async def optimize_estimate(request: Request):
     """
@@ -4793,7 +5055,7 @@ async def optimize_estimate(request: Request):
         base_params = body.get("base_params", {})
         param_ranges = body.get("param_ranges", {})
 
-        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
         if days > max_days:
             days = max_days
 
@@ -4819,9 +5081,9 @@ async def optimize_estimate(request: Request):
         for vals in param_values_list:
             total_combos *= len(vals)
 
-        # Descargar datos (medir tiempo de fetch)
+        # Descargar datos (medir tiempo de fetch) - skip_day_limit para deteccion
         _fetch_start = _time.time()
-        historical = await get_historical(symbol, interval, days)
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
         _fetch_elapsed = _time.time() - _fetch_start
 
         if not historical.get('success') or not historical.get('data'):
@@ -4841,6 +5103,7 @@ async def optimize_estimate(request: Request):
                 merged = dict(base_params)
                 merged.update(combo_dict)
                 params = ZoneDetectionParams(
+                    tp_rr_ratio=float(merged.get("tp_rr_ratio", 2.0)),
                     consol_min_bars=int(merged.get("consol_min_bars", 8)),
                     consol_max_bars=int(merged.get("consol_max_bars", 50)),
                     consol_max_range_pct=float(merged.get("consol_max_range_pct", 2.0)),
@@ -4932,8 +5195,8 @@ async def optimize_zone_params(request: Request):
         print(f"[{symbol}] [OPTIMIZE] Ranges: {param_ranges}")
         print(f"[{symbol}] [OPTIMIZE] Base params: {list(base_params.keys())}")
 
-        # Validar dias
-        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        # Validar dias (usar MAX_DAYS_ZONES para deteccion)
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
         if days > max_days:
             days = max_days
 
@@ -4973,7 +5236,7 @@ async def optimize_zone_params(request: Request):
         # Descargar datos historicos UNA sola vez
         print(f"[{symbol}] [OPTIMIZE] Descargando velas...")
         _fetch_start = _time.time()
-        historical = await get_historical(symbol, interval, days)
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
         _fetch_elapsed = _time.time() - _fetch_start
 
         if not historical.get('success') or not historical.get('data'):
@@ -4992,6 +5255,7 @@ async def optimize_zone_params(request: Request):
             merged.update(combo_dict)
 
             params = ZoneDetectionParams(
+                tp_rr_ratio=float(merged.get("tp_rr_ratio", 2.0)),
                 consol_min_bars=int(merged.get("consol_min_bars", 8)),
                 consol_max_bars=int(merged.get("consol_max_bars", 50)),
                 consol_max_range_pct=float(merged.get("consol_max_range_pct", 2.0)),
@@ -5159,6 +5423,43 @@ async def export_zones_csv(request: Request):
         return {"success": False, "error": str(e)}
 
 
+@app.post("/api/zones/export-csv-multi")
+async def export_zones_csv_multi(request: Request):
+    """
+    Genera CSV consolidado multi-simbolo a partir de zonas ya detectadas.
+    Se invoca con un boton despues de la deteccion multi-simbolo.
+    """
+    try:
+        body = await request.json()
+        symbols = body.get("symbols", [])
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        zones_data = body.get("zones", [])
+        params_dict = body.get("params", {})
+
+        if not zones_data:
+            return {"success": False, "error": "No hay zonas para exportar"}
+
+        if not symbols:
+            # Extraer simbolos unicos de las zonas
+            symbols = list(set(z.get('symbol', 'UNKNOWN') for z in zones_data))
+
+        csv_path = _generate_multi_zones_csv(symbols, interval, days, zones_data, params_dict)
+        print(f"[MULTI-CSV] CSV exportado: {csv_path} ({len(zones_data)} zonas, {len(symbols)} simbolos)")
+
+        return {
+            "success": True,
+            "csv_path": csv_path,
+            "zones_exported": len(zones_data),
+            "symbols_count": len(symbols)
+        }
+    except Exception as e:
+        print(f"[MULTI-CSV ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
 def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict], params: dict) -> str:
     """
     Genera un archivo CSV con formato europeo (punto y coma, coma decimal).
@@ -5265,6 +5566,97 @@ def _generate_zones_csv(symbol: str, interval: str, days: int, zones: List[dict]
                 str(round(zone.get('vp_poc_price', 0), 2)).replace('.', ','),
                 str(round(zone.get('vp_vah_price', 0), 2)).replace('.', ','),
                 str(round(zone.get('vp_val_price', 0), 2)).replace('.', ',')
+            ]
+
+            f.write(";".join(row) + "\n")
+
+    return str(filepath)
+
+
+def _generate_multi_zones_csv(symbols: List[str], interval: str, days: int, zones: List[dict], params: dict) -> str:
+    """
+    Genera CSV consolidado multi-simbolo con formato europeo.
+    Incluye columna 'simbolo' y equity acumulado global.
+    """
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    symbols_label = "_".join(symbols[:3])
+    if len(symbols) > 3:
+        symbols_label += f"_+{len(symbols)-3}"
+    filename = f"MULTI_{symbols_label}_{interval}m_{days}d_{timestamp}.csv"
+    filepath = ZONES_CSV_DIR / filename
+
+    # Ordenar cronologicamente
+    sorted_zones = sorted(
+        zones,
+        key=lambda z: z.get('entry_timestamp', 0) or z.get('start_timestamp', 0)
+    )
+
+    headers = [
+        "zona_num", "simbolo", "fecha_entrada", "fecha_cierre",
+        "precio_min", "precio_max", "rango_pct",
+        "direccion", "precio_breakout",
+        "modo_entrada", "precio_entrada", "offset_barras",
+        "sl_price", "tp_price",
+        "resultado", "pnl_r", "equity_r",
+        "r_multiple", "alcanzo_2r", "alcanzo_3r",
+        "barras_cierre", "velas_en_zona", "duracion_horas", "score"
+    ]
+
+    with open(filepath, 'w', encoding='utf-8-sig') as f:
+        f.write("sep=;\n")
+        f.write(f"# Multi-simbolo: {', '.join(symbols)}\n")
+        f.write(f"# Parametros: {json.dumps(params)}\n")
+        f.write(f"# Fecha: {datetime.now().isoformat()}\n")
+
+        f.write(";".join(headers) + "\n")
+
+        running_equity = 0.0
+        for i, zone in enumerate(sorted_zones, 1):
+            entry_ts = zone.get('entry_timestamp', 0) or zone.get('start_timestamp', 0)
+            close_ts = zone.get('trade_close_timestamp', 0) or zone.get('end_timestamp', 0)
+            entry_dt = datetime.fromtimestamp(entry_ts / 1000) if entry_ts else None
+            close_dt = datetime.fromtimestamp(close_ts / 1000) if close_ts else None
+
+            entry_mode_label = zone.get('entry_mode', '')
+            if entry_mode_label == 'breakout_close':
+                entry_mode_label = 'Close Breakout'
+            elif entry_mode_label == 'va_breakout':
+                entry_mode_label = 'VA Breakout'
+            elif entry_mode_label == 'swing_confirmation':
+                entry_mode_label = 'Swing Confirm'
+
+            result = zone.get('trade_result', '')
+            if result in ('WIN', 'LOSS'):
+                running_equity += zone.get('trade_pnl_r', 0)
+                equity_str = str(round(running_equity, 2)).replace('.', ',')
+            else:
+                equity_str = "-"
+
+            row = [
+                str(i),
+                zone.get('symbol', ''),
+                entry_dt.strftime("%Y-%m-%d %H:%M") if entry_dt else "-",
+                close_dt.strftime("%Y-%m-%d %H:%M") if close_dt else "-",
+                str(zone.get('min_price', 0)).replace('.', ','),
+                str(zone.get('max_price', 0)).replace('.', ','),
+                str(round(zone.get('price_range_pct', 0), 2)).replace('.', ','),
+                zone.get('breakout_direction', ''),
+                str(zone.get('breakout_price', 0)).replace('.', ','),
+                entry_mode_label,
+                str(zone.get('entry_price', 0)).replace('.', ','),
+                str(zone.get('entry_bar_offset', 0)),
+                str(round(zone.get('sl_price', 0), 2)).replace('.', ','),
+                str(round(zone.get('tp_price', 0), 2)).replace('.', ','),
+                result,
+                str(zone.get('trade_pnl_r', 0)).replace('.', ','),
+                equity_str,
+                str(round(zone.get('r_multiple', 0), 2)).replace('.', ','),
+                "Si" if zone.get('reached_2r') else "No",
+                "Si" if zone.get('reached_3r') else "No",
+                str(zone.get('bars_to_close', 0)),
+                str(zone.get('candles_in_zone', 0)),
+                str(round(zone.get('duration_hours', 0), 1)).replace('.', ','),
+                str(round(zone.get('trading_score', 0), 0))
             ]
 
             f.write(";".join(row) + "\n")

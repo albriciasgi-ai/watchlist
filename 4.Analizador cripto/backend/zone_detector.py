@@ -53,7 +53,7 @@ class TradingZone(Zone):
     sl_price: float = 0.0  # Stop Loss
     tp_price: float = 0.0  # Take Profit
 
-    # Resultado del trade simulado (TP=2R, SL=1R, o cierre al final de datos)
+    # Resultado del trade simulado (TP=tp_rr_ratio*R, SL=1R, o cierre al final de datos)
     trade_result: str = ""  # "WIN", "LOSS", "SKIPPED", "NO_ENTRY"
     trade_pnl_r: float = 0.0  # +2 si TP, -1 si SL, parcial si cierre al final
     bars_to_close: int = 0  # Velas desde entrada hasta cierre
@@ -121,6 +121,7 @@ class ZoneDetectionParams:
     consol_max_outside_bars: int = 3   # Máximo velas consecutivas fuera del rango antes de cerrar
 
     # Trading Zones Method (simulacion de trades)
+    tp_rr_ratio: float = 2.0          # Risk:Reward ratio para Take Profit (ej: 2.0 = TP a 2R)
     lookforward_bars: int = 100        # Velas hacia adelante para simular el trade
     breakout_search_bars: int = 20     # Velas para buscar breakout despues de la consolidacion
     include_no_breakout: bool = True   # Incluir zonas sin breakout claro (usa primera vela fuera)
@@ -1387,45 +1388,48 @@ class ZoneDetector:
                 if r_distance == 0:
                     r_distance = zone_height  # fallback
                 # TP siempre del lado favorable (opuesto al SL)
+                _rr = params.tp_rr_ratio
                 if breakout_direction == "UP":
-                    tp_price = entry_price + (r_distance * 2)
+                    tp_price = entry_price + (r_distance * _rr)
                 else:
-                    tp_price = entry_price - (r_distance * 2)
+                    tp_price = entry_price - (r_distance * _rr)
 
                 from datetime import datetime
                 e_dt = datetime.fromtimestamp(entry_ts / 1000).strftime('%m/%d %H:%M') if entry_ts else '?'
-                print(f"[SL_MODE] Zona#{zone_num} swing_previous: dir={breakout_direction} entry={entry_price:.2f} sl={sl_price:.2f} tp={tp_price:.2f} R={r_distance:.2f} ({e_dt})")
+                print(f"[SL_MODE] Zona#{zone_num} swing_previous: dir={breakout_direction} entry={entry_price:.2f} sl={sl_price:.2f} tp={tp_price:.2f} R={r_distance:.2f} RR={_rr} ({e_dt})")
             else:
                 # zone_opposite: SL al lado opuesto del rango (1R = zone_height)
                 r_distance = zone_height
+                _rr = params.tp_rr_ratio
                 if breakout_direction == "UP":
                     sl_price = entry_price - zone_height
-                    tp_price = entry_price + (zone_height * 2)
+                    tp_price = entry_price + (zone_height * _rr)
                 else:
                     sl_price = entry_price + zone_height
-                    tp_price = entry_price - (zone_height * 2)
+                    tp_price = entry_price - (zone_height * _rr)
 
             # --- Validar coherencia SL/TP ---
             # LONG (UP): SL debe estar DEBAJO de entry, TP ENCIMA
             # SHORT (DOWN): SL debe estar ENCIMA de entry, TP DEBAJO
+            _rr = params.tp_rr_ratio
             if breakout_direction == "UP":
                 if sl_price >= entry_price:
                     print(f"[SL_FIX] Zona#{zone_num} UP: SL={sl_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
                     sl_price = entry_price - zone_height
                     r_distance = zone_height
-                    tp_price = entry_price + (zone_height * 2)
+                    tp_price = entry_price + (zone_height * _rr)
                 if tp_price <= entry_price:
                     print(f"[SL_FIX] Zona#{zone_num} UP: TP={tp_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
-                    tp_price = entry_price + (r_distance * 2)
+                    tp_price = entry_price + (r_distance * _rr)
             else:
                 if sl_price <= entry_price:
                     print(f"[SL_FIX] Zona#{zone_num} DOWN: SL={sl_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
                     sl_price = entry_price + zone_height
                     r_distance = zone_height
-                    tp_price = entry_price - (zone_height * 2)
+                    tp_price = entry_price - (zone_height * _rr)
                 if tp_price >= entry_price:
                     print(f"[SL_FIX] Zona#{zone_num} DOWN: TP={tp_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
-                    tp_price = entry_price - (r_distance * 2)
+                    tp_price = entry_price - (r_distance * _rr)
 
             # --- Metricas de momentum ---
             # Proteger contra indice fuera de rango
@@ -1471,6 +1475,7 @@ class ZoneDetector:
                 reached_3r = bool(r_multiple >= 3.0)
 
             # Simular hit de TP/SL (sin limite de velas)
+            _tp_rr = params.tp_rr_ratio
             trade_close_idx = entry_idx  # default si no cierra
             for bar_num, c in enumerate(post_entry):
                 if breakout_direction == "UP":
@@ -1484,22 +1489,16 @@ class ZoneDetector:
                     # Ambos tocados en la misma vela: inferir cual fue primero
                     # usando la direccion de la vela (open vs close)
                     if breakout_direction == "UP":
-                        # Trade LONG: TP arriba, SL abajo
-                        # Si la vela es alcista (close > open), probablemente subio primero al TP
-                        # Si la vela es bajista (close < open), probablemente bajo primero al SL
                         if c['close'] >= c['open']:
                             trade_result = "WIN"
-                            trade_pnl_r = 2.0
+                            trade_pnl_r = _tp_rr
                         else:
                             trade_result = "LOSS"
                             trade_pnl_r = -1.0
                     else:
-                        # Trade SHORT: TP abajo, SL arriba
-                        # Si la vela es bajista (close < open), probablemente bajo primero al TP
-                        # Si la vela es alcista (close > open), probablemente subio primero al SL
                         if c['close'] <= c['open']:
                             trade_result = "WIN"
-                            trade_pnl_r = 2.0
+                            trade_pnl_r = _tp_rr
                         else:
                             trade_result = "LOSS"
                             trade_pnl_r = -1.0
@@ -1508,7 +1507,7 @@ class ZoneDetector:
                     break
                 elif tp_hit:
                     trade_result = "WIN"
-                    trade_pnl_r = 2.0
+                    trade_pnl_r = _tp_rr
                     bars_to_close = bar_num + 1
                     trade_close_idx = entry_idx + bar_num
                     break
@@ -1529,7 +1528,7 @@ class ZoneDetector:
                     pnl = (entry_price - last_candle['close']) / r_distance if r_distance > 0 else 0
 
                 trade_result = "OPEN"
-                trade_pnl_r = max(min(pnl, 2.0), -1.0)
+                trade_pnl_r = max(min(pnl, _tp_rr), -1.0)
 
                 bars_to_close = len(post_entry)
                 trade_close_idx = len(candles) - 1
@@ -2616,6 +2615,7 @@ class ZoneDetector:
                 continue
 
             # --- Calcular SL/TP ---
+            _rr = params.tp_rr_ratio
             if params.entry_mode == "va_breakout" and poc_price > 0:
                 # SL basado en distancia Entry -> POC + buffer %
                 dist_to_poc = abs(entry_price - poc_price)
@@ -2626,10 +2626,10 @@ class ZoneDetector:
 
                 if breakout_direction == "UP":
                     sl_price = entry_price - r_distance
-                    tp_price = entry_price + (r_distance * 2)
+                    tp_price = entry_price + (r_distance * _rr)
                 else:
                     sl_price = entry_price + r_distance
-                    tp_price = entry_price - (r_distance * 2)
+                    tp_price = entry_price - (r_distance * _rr)
             elif params.sl_mode == "swing_previous":
                 sl_price = self._find_swing_sl(
                     candles, breakout_idx, breakout_direction,
@@ -2639,33 +2639,33 @@ class ZoneDetector:
                 if r_distance == 0:
                     r_distance = zone_height
                 if breakout_direction == "UP":
-                    tp_price = entry_price + (r_distance * 2)
+                    tp_price = entry_price + (r_distance * _rr)
                 else:
-                    tp_price = entry_price - (r_distance * 2)
+                    tp_price = entry_price - (r_distance * _rr)
             else:
                 r_distance = zone_height
                 if breakout_direction == "UP":
                     sl_price = entry_price - zone_height
-                    tp_price = entry_price + (zone_height * 2)
+                    tp_price = entry_price + (zone_height * _rr)
                 else:
                     sl_price = entry_price + zone_height
-                    tp_price = entry_price - (zone_height * 2)
+                    tp_price = entry_price - (zone_height * _rr)
 
             # --- Validar coherencia SL/TP ---
             if breakout_direction == "UP":
                 if sl_price >= entry_price:
                     sl_price = entry_price - zone_height
                     r_distance = zone_height
-                    tp_price = entry_price + (zone_height * 2)
+                    tp_price = entry_price + (zone_height * _rr)
                 if tp_price <= entry_price:
-                    tp_price = entry_price + (r_distance * 2)
+                    tp_price = entry_price + (r_distance * _rr)
             else:
                 if sl_price <= entry_price:
                     sl_price = entry_price + zone_height
                     r_distance = zone_height
-                    tp_price = entry_price - (zone_height * 2)
+                    tp_price = entry_price - (zone_height * _rr)
                 if tp_price >= entry_price:
-                    tp_price = entry_price - (r_distance * 2)
+                    tp_price = entry_price - (r_distance * _rr)
 
             # --- Metricas de momentum ---
             if breakout_idx >= len(candles):
@@ -2707,6 +2707,7 @@ class ZoneDetector:
                 reached_2r = bool(r_multiple >= 2.0)
                 reached_3r = bool(r_multiple >= 3.0)
 
+            _tp_rr = params.tp_rr_ratio
             trade_close_idx = entry_idx
             for bar_num, c in enumerate(post_entry):
                 if breakout_direction == "UP":
@@ -2720,14 +2721,14 @@ class ZoneDetector:
                     if breakout_direction == "UP":
                         if c['close'] >= c['open']:
                             trade_result = "WIN"
-                            trade_pnl_r = 2.0
+                            trade_pnl_r = _tp_rr
                         else:
                             trade_result = "LOSS"
                             trade_pnl_r = -1.0
                     else:
                         if c['close'] <= c['open']:
                             trade_result = "WIN"
-                            trade_pnl_r = 2.0
+                            trade_pnl_r = _tp_rr
                         else:
                             trade_result = "LOSS"
                             trade_pnl_r = -1.0
@@ -2736,7 +2737,7 @@ class ZoneDetector:
                     break
                 elif tp_hit:
                     trade_result = "WIN"
-                    trade_pnl_r = 2.0
+                    trade_pnl_r = _tp_rr
                     bars_to_close = bar_num + 1
                     trade_close_idx = entry_idx + bar_num
                     break
@@ -2755,7 +2756,7 @@ class ZoneDetector:
                     pnl = (entry_price - last_candle['close']) / r_distance if r_distance > 0 else 0
 
                 trade_result = "OPEN"
-                trade_pnl_r = max(min(pnl, 2.0), -1.0)
+                trade_pnl_r = max(min(pnl, _tp_rr), -1.0)
 
                 bars_to_close = len(post_entry)
                 trade_close_idx = len(candles) - 1
