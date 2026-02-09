@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "symbols": [
     "BTCUSDT",
     "ETHUSDT",
@@ -34,7 +34,7 @@
         "marginPercent": 20,
         "skipVolumeInRectangle": false
       },
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "BTCUSDT": {
@@ -46,7 +46,7 @@
       "swingBars": 5,
       "days": 1,
       "cooldownMinutes": 20,
-      "alertsEnabled": true
+      "alertsEnabled": false
     },
     "XRPUSDT": {
       "volumeFilter": {
@@ -55,7 +55,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "TRXUSDT": {
@@ -65,7 +65,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "GALAUSDT": {
@@ -75,7 +75,7 @@
         "lookbackBars": 50
       },
       "days": 5,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "SUIUSDT": {
@@ -85,7 +85,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "SOLUSDT": {
@@ -95,12 +95,12 @@
         "minZScore": 1.5,
         "lookbackBars": 50
       },
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "swingBars": 5
     },
     "PAXGUSDT": {
       "days": 360,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -110,7 +110,7 @@
     },
     "TRBUSDT": {
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -120,7 +120,7 @@
     },
     "ADAUSDT": {
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -130,7 +130,7 @@
     },
     "DOGEUSDT": {
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -140,7 +140,7 @@
     },
     "BNBUSDT": {
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -150,7 +150,7 @@
     },
     "POLUSDT": {
       "days": 1,
-      "alertsEnabled": true,
+      "alertsEnabled": false,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,

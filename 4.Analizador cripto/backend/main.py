@@ -3700,6 +3700,83 @@ async def get_swing_status(symbol: str = None):
         }
 
 
+@app.post("/api/swing/start")
+async def start_swing_service():
+    """Start the swing detector service."""
+    try:
+        swing_service = get_swing_service()
+        if swing_service.running:
+            return {"success": True, "message": "Already running"}
+        swing_service.config.enabled = True
+        swing_service._save_config()
+        await swing_service.start()
+        print("[SWING] Service started via API")
+        return {"success": True, "running": True}
+    except Exception as e:
+        print(f"[ERROR] Swing start: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/swing/stop")
+async def stop_swing_service():
+    """Stop the swing detector service."""
+    try:
+        swing_service = get_swing_service()
+        if not swing_service.running:
+            return {"success": True, "message": "Already stopped"}
+        await swing_service.stop()
+        swing_service.config.enabled = False
+        swing_service._save_config()
+        print("[SWING] Service stopped via API")
+        return {"success": True, "running": False}
+    except Exception as e:
+        print(f"[ERROR] Swing stop: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/swing/toggle-alerts")
+async def toggle_swing_alerts(request: Request):
+    """
+    Toggle alerts globally and per-symbol for the swing detector.
+    Body: { "enabled": true/false }
+    Sets alertsEnabled on global config AND on all symbolConfigs.
+    Also starts/stops the service accordingly.
+    """
+    try:
+        body = await request.json()
+        enabled = body.get("enabled", False)
+        swing_service = get_swing_service()
+
+        # Update global alertsEnabled
+        swing_service.config.alertsEnabled = enabled
+
+        # Update ALL symbolConfigs
+        for sym_key in swing_service.config.symbolConfigs:
+            swing_service.config.symbolConfigs[sym_key]["alertsEnabled"] = enabled
+
+        # Start or stop service accordingly
+        if enabled and not swing_service.running:
+            swing_service.config.enabled = True
+            await swing_service.start()
+            print(f"[SWING] Alerts enabled + service started via toggle-alerts")
+        elif not enabled and swing_service.running:
+            await swing_service.stop()
+            swing_service.config.enabled = False
+            print(f"[SWING] Alerts disabled + service stopped via toggle-alerts")
+
+        swing_service._save_config()
+
+        return {
+            "success": True,
+            "alertsEnabled": enabled,
+            "running": swing_service.running,
+            "symbolsUpdated": list(swing_service.config.symbolConfigs.keys())
+        }
+    except Exception as e:
+        print(f"[ERROR] Swing toggle-alerts: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
 @app.get("/api/ws/debug")
 async def get_websocket_debug():
     """
@@ -5736,6 +5813,33 @@ async def send_zone_alert(request: Request):
 
         if response.status_code == 200 and result.get("success"):
             print(f"[ZONE_ALERT] OK: {symbol} {pattern_direction} - TradingBot respondio: {result.get('message', 'success')}")
+
+            # Registrar en historial de alertas
+            try:
+                import uuid as _uuid
+                state_manager = get_pattern_state_manager()
+                from pattern_state_manager import AlertRecord
+                alert_record = AlertRecord(
+                    id=f"zone_{symbol}_{int(time.time()*1000)}_{_uuid.uuid4().hex[:6]}",
+                    timestamp=int(time.time() * 1000),
+                    symbol=symbol,
+                    interval="0",
+                    indicator="ZONE_DETECTOR",
+                    pattern_type=f"ZONE_BREAKOUT_{entry_mode.upper()}",
+                    direction=pattern_direction,
+                    price=float(entry_price),
+                    confidence=float(confidence),
+                    status="sent",
+                    entry=float(entry_price),
+                    stop_loss=float(sl_price) if sl_price else None,
+                    take_profit=float(tp_price) if tp_price else None,
+                    outcome="PENDING",
+                )
+                state_manager.add_alert_record(alert_record)
+                print(f"[ZONE_ALERT] Registrada en historial: {alert_record.id}")
+            except Exception as hist_err:
+                print(f"[ZONE_ALERT] Warning: No se pudo registrar en historial: {hist_err}")
+
             return {
                 "success": True,
                 "message": f"Alerta enviada: {symbol} {pattern_direction}",
@@ -5850,6 +5954,30 @@ async def send_zone_alerts_batch(request: Request):
 
                     if success:
                         sent += 1
+                        # Registrar en historial de alertas
+                        try:
+                            import uuid as _uuid
+                            state_manager = get_pattern_state_manager()
+                            from pattern_state_manager import AlertRecord
+                            alert_record = AlertRecord(
+                                id=f"zone_{symbol}_{int(time.time()*1000)}_{_uuid.uuid4().hex[:6]}",
+                                timestamp=int(time.time() * 1000),
+                                symbol=symbol,
+                                interval="0",
+                                indicator="ZONE_DETECTOR",
+                                pattern_type=f"ZONE_BREAKOUT_{entry_mode.upper()}",
+                                direction=pattern_direction,
+                                price=float(z["entry_price"]),
+                                confidence=float(z.get("trading_score", 70)),
+                                status="sent",
+                                entry=float(z["entry_price"]),
+                                stop_loss=float(z["sl_price"]) if z.get("sl_price") else None,
+                                take_profit=float(z["tp_price"]) if z.get("tp_price") else None,
+                                outcome="PENDING",
+                            )
+                            state_manager.add_alert_record(alert_record)
+                        except Exception as hist_err:
+                            print(f"[ZONE_ALERT_BATCH] Warning: No se pudo registrar en historial: {hist_err}")
                     else:
                         failed += 1
 

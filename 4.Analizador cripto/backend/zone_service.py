@@ -7,6 +7,7 @@ import asyncio
 import json
 import time
 import logging
+import uuid
 from pathlib import Path
 from typing import Optional, List, Dict
 from dataclasses import dataclass, field, asdict
@@ -14,6 +15,7 @@ from dataclasses import dataclass, field, asdict
 import httpx
 
 from zone_detector import ZoneDetector, ZoneDetectionParams, TradingZone
+from pattern_state_manager import get_pattern_state_manager, AlertRecord
 
 logger = logging.getLogger("zone_service")
 
@@ -117,6 +119,13 @@ class ZoneService:
         # Cooldown por simbolo+direccion
         self._cooldowns: Dict[str, float] = {}
 
+        # Trades abiertos (zonas con trade_result=OPEN que se monitorean vela a vela)
+        self._open_trades: Dict[str, List[Dict]] = {}  # symbol -> list of zone dicts
+
+        # Zonas pendientes de breakout (consolidaciones detectadas sin ruptura aun)
+        # Cada entrada tiene: zone_high, zone_low, vah, val, poc, start_ts, end_ts, etc.
+        self._pending_zones: Dict[str, List[Dict]] = {}  # symbol -> list of pending zone dicts
+
         # Stats
         self.stats = {
             "zones_detected": 0,
@@ -128,6 +137,9 @@ class ZoneService:
             "last_candle_time": 0,
             "last_detection_zones": 0,
             "start_time": 0,
+            "open_trades_resolved": 0,
+            "pending_zones_current": 0,
+            "pending_breakouts_detected": 0,
         }
 
         # HTTP client
@@ -282,11 +294,344 @@ class ZoneService:
         if len(buffer) < max(50, self.config.consol_min_bars + 30):
             return  # Insuficientes velas
 
-        # Detectar zonas en el buffer
+        # Actualizar trades abiertos con la nueva vela
+        self._update_open_trades(symbol, candle_dict)
+
+        # Chequear breakouts instantaneos en pending zones
+        try:
+            await self._check_pending_breakouts(symbol, candle_dict)
+        except Exception as e:
+            logger.error(f"[ZONE_SERVICE] Error chequeando pending breakouts para {symbol}: {e}")
+
+        # Detectar zonas en el buffer (actualiza pending zones + zonas con breakout)
         try:
             await self._detect_and_alert(symbol, buffer)
         except Exception as e:
             logger.error(f"[ZONE_SERVICE] Error detectando zonas para {symbol}: {e}")
+
+    # --------------------------------------------------
+    # Open trade tracking
+    # --------------------------------------------------
+
+    def _update_open_trades(self, symbol: str, candle: Dict):
+        """
+        Verifica si la vela actual toca SL o TP de trades abiertos.
+        Actualiza trade_result de OPEN a WIN/LOSS segun corresponda.
+        """
+        open_trades = self._open_trades.get(symbol, [])
+        if not open_trades:
+            return
+
+        resolved = []
+        for trade in open_trades:
+            direction = trade.get("breakout_direction", "")
+            entry_price = trade.get("entry_price", 0)
+            sl_price = trade.get("sl_price", 0)
+            tp_price = trade.get("tp_price", 0)
+            r_distance = abs(entry_price - sl_price) if entry_price and sl_price else 0
+
+            if not entry_price or not sl_price or not tp_price:
+                continue
+
+            high = candle.get("high", 0)
+            low = candle.get("low", 0)
+            close = candle.get("close", 0)
+
+            if direction == "UP":
+                tp_hit = high >= tp_price
+                sl_hit = low <= sl_price
+            else:
+                tp_hit = low <= tp_price
+                sl_hit = high >= sl_price
+
+            if tp_hit and sl_hit:
+                # Ambos tocados: inferir por direccion de la vela
+                if direction == "UP":
+                    result = "WIN" if close >= candle.get("open", 0) else "LOSS"
+                else:
+                    result = "WIN" if close <= candle.get("open", 0) else "LOSS"
+            elif tp_hit:
+                result = "WIN"
+            elif sl_hit:
+                result = "LOSS"
+            else:
+                # Sigue abierto - actualizar PnL parcial
+                if r_distance > 0:
+                    if direction == "UP":
+                        pnl = (close - entry_price) / r_distance
+                    else:
+                        pnl = (entry_price - close) / r_distance
+                    # Clamp entre -1 y 10
+                    trade["trade_pnl_r"] = round(max(min(pnl, 10.0), -1.0), 2)
+                trade["trade_close_timestamp"] = candle.get("timestamp", 0)
+                continue
+
+            # Trade resuelto - calcular PnL real en R
+            if result == "WIN" and r_distance > 0:
+                if direction == "UP":
+                    win_pnl = (tp_price - entry_price) / r_distance
+                else:
+                    win_pnl = (entry_price - tp_price) / r_distance
+            else:
+                win_pnl = 2.0  # fallback
+
+            trade["trade_result"] = result
+            trade["trade_pnl_r"] = round(win_pnl, 2) if result == "WIN" else -1.0
+            trade["trade_close_timestamp"] = candle.get("timestamp", 0)
+            resolved.append(trade)
+
+            alert_logger.info(
+                f"TRADE_RESOLVED | {symbol} | {result} | dir={direction} | "
+                f"entry={entry_price:.2f} | sl={sl_price:.2f} | tp={tp_price:.2f}"
+            )
+            self.stats["open_trades_resolved"] += 1
+
+        # Actualizar _recent_zones con TODOS los cambios (abiertos + resueltos)
+        # ANTES de remover los resueltos, para que el merge los encuentre
+        self._merge_tracked_trades_to_recent(symbol, open_trades)
+
+        # Remover trades resueltos de la lista de abiertos
+        if resolved:
+            self._open_trades[symbol] = [t for t in open_trades if t not in resolved]
+
+    def _merge_tracked_trades_to_recent(self, symbol: str, tracked_trades: List[Dict]):
+        """
+        Sincroniza trades rastreados (abiertos y recien resueltos) con _recent_zones
+        para que el frontend vea los cambios de trade_result en tiempo real.
+        """
+        if not tracked_trades:
+            return
+
+        recent = self._recent_zones.get(symbol, [])
+
+        # Crear mapa de trades rastreados por key unica
+        tracked_map = {}
+        for t in tracked_trades:
+            key = f"{t.get('start_timestamp', 0)}_{t.get('end_timestamp', 0)}_{t.get('breakout_direction', '')}"
+            tracked_map[key] = t
+
+        # Actualizar zonas existentes en recent
+        updated_keys = set()
+        for i, zone in enumerate(recent):
+            key = f"{zone.get('start_timestamp', 0)}_{zone.get('end_timestamp', 0)}_{zone.get('breakout_direction', '')}"
+            if key in tracked_map:
+                # Actualizar con datos del tracking
+                recent[i]["trade_result"] = tracked_map[key]["trade_result"]
+                recent[i]["trade_pnl_r"] = tracked_map[key]["trade_pnl_r"]
+                if "trade_close_timestamp" in tracked_map[key]:
+                    recent[i]["trade_close_timestamp"] = tracked_map[key]["trade_close_timestamp"]
+                updated_keys.add(key)
+
+        # Agregar trades que no estan en recent (caso: zona salio de ventana de deteccion)
+        for key, trade in tracked_map.items():
+            if key not in updated_keys:
+                recent.append(trade)
+
+        self._recent_zones[symbol] = recent
+
+    # --------------------------------------------------
+    # Pending zone breakout monitoring
+    # --------------------------------------------------
+
+    async def _check_pending_breakouts(self, symbol: str, candle: Dict):
+        """
+        Verifica si la vela actual rompe alguna zona pendiente de breakout.
+        Si rompe -> calcula entry/SL/TP inmediatamente y envia alerta.
+        Esto da respuesta INSTANTANEA al breakout, sin esperar re-deteccion.
+        """
+        pending = self._pending_zones.get(symbol, [])
+        if not pending:
+            return
+
+        close_price = candle.get("close", 0)
+        high = candle.get("high", 0)
+        low = candle.get("low", 0)
+        candle_ts = candle.get("timestamp", 0)
+
+        broken = []
+        for pz in pending:
+            breakout_upper = pz.get("breakout_upper", 0)
+            breakout_lower = pz.get("breakout_lower", 0)
+
+            if not breakout_upper or not breakout_lower:
+                continue
+
+            # Breakout UP: close por encima del limite superior
+            if close_price > breakout_upper:
+                direction = "UP"
+            # Breakout DOWN: close por debajo del limite inferior
+            elif close_price < breakout_lower:
+                direction = "DOWN"
+            else:
+                continue
+
+            # Breakout detectado instantaneamente
+            entry_price = close_price
+            zone_high = pz.get("zone_high", 0)
+            zone_low = pz.get("zone_low", 0)
+            zone_height = zone_high - zone_low if zone_high and zone_low else 0
+            poc_price = pz.get("poc_price", 0)
+
+            # Calcular SL/TP usando la misma logica que zone_detector
+            sl_price, tp_price, r_distance = self._calculate_sl_tp(
+                entry_price, direction, zone_high, zone_low, poc_price
+            )
+
+            if not sl_price or not tp_price:
+                continue
+
+            # Construir zona completa como dict para almacenar y alertar
+            zone_dict = {
+                "start_timestamp": pz.get("start_ts", 0),
+                "end_timestamp": pz.get("end_ts", 0),
+                "min_price": zone_low,
+                "max_price": zone_high,
+                "breakout_direction": direction,
+                "breakout_price": close_price,
+                "breakout_timestamp": candle_ts,
+                "entry_mode": self.config.entry_mode,
+                "entry_price": entry_price,
+                "entry_timestamp": candle_ts,
+                "entry_bar_offset": 0,
+                "sl_price": sl_price,
+                "tp_price": tp_price,
+                "trade_result": "OPEN",
+                "trade_pnl_r": 0.0,
+                "trade_close_timestamp": 0,
+                "trading_score": pz.get("trading_score", 50.0),
+                "candles_in_zone": pz.get("candle_count", 0),
+                "duration_hours": pz.get("duration_hours", 0),
+                "vp_poc_price": poc_price,
+                "vp_vah_price": pz.get("vah_price", 0),
+                "vp_val_price": pz.get("val_price", 0),
+                "timeline_index": 0,  # Se renumerara
+                "method": "trading_zones",
+            }
+
+            # Verificar que no sea zona ya conocida
+            zone_key = f"{pz.get('start_ts', 0)}_{pz.get('end_ts', 0)}_{direction}"
+            known = self._known_zones.get(symbol, {})
+            if zone_key in known:
+                continue
+
+            # Marcar como conocida
+            known[zone_key] = zone_dict
+            self._known_zones[symbol] = known
+
+            broken.append(pz)
+            self.stats["pending_breakouts_detected"] += 1
+            self.stats["zones_detected"] += 1
+
+            alert_logger.info(
+                f"INSTANT_BREAKOUT | {symbol} | {direction} | "
+                f"entry={entry_price:.2f} | sl={sl_price:.2f} | tp={tp_price:.2f} | "
+                f"score={zone_dict['trading_score']:.1f} | mode=pending_monitor"
+            )
+
+            # Registrar como open trade para tracking SL/TP
+            # (No agregar a _recent_zones aqui: _store_zones lo hara via _merge_tracked_trades_to_recent)
+            self._register_open_trades(symbol, [zone_dict])
+
+            # Filtro de score
+            if self.config.min_score_filter > 0 and zone_dict["trading_score"] < self.config.min_score_filter:
+                alert_logger.info(
+                    f"BLOCKED_LOW_SCORE | {symbol} | score={zone_dict['trading_score']:.1f} < min={self.config.min_score_filter}"
+                )
+                self.stats["alerts_blocked_score"] += 1
+                continue
+
+            # Enviar alerta
+            if self.config.alertsEnabled:
+                # Crear un TradingZone temporal para _process_alert
+                tz = TradingZone(
+                    id=f"instant_{int(candle_ts)}_{direction}",
+                    min_price=zone_low,
+                    max_price=zone_high,
+                    start_timestamp=pz.get("start_ts", 0),
+                    end_timestamp=pz.get("end_ts", 0),
+                    touches_support=0,
+                    touches_resistance=0,
+                    total_touches=0,
+                    duration_hours=pz.get("duration_hours", 0),
+                    avg_volume=0.0,
+                    volume_score=0.0,
+                    method="trading_zones",
+                    score=zone_dict["trading_score"],
+                    candles_in_zone=pz.get("candle_count", 0),
+                    price_range_pct=0.0,
+                    breakout_direction=direction,
+                    breakout_price=close_price,
+                    breakout_timestamp=candle_ts,
+                    entry_mode=self.config.entry_mode,
+                    entry_price=entry_price,
+                    entry_timestamp=candle_ts,
+                    sl_price=sl_price,
+                    tp_price=tp_price,
+                    trade_result="OPEN",
+                    trading_score=zone_dict["trading_score"],
+                )
+                await self._process_alert(symbol, tz)
+
+        # Remover zonas que ya rompieron de pending
+        if broken:
+            broken_set = set(id(pz) for pz in broken)
+            self._pending_zones[symbol] = [
+                pz for pz in pending if id(pz) not in broken_set
+            ]
+            self.stats["pending_zones_current"] = sum(
+                len(v) for v in self._pending_zones.values()
+            )
+
+    def _calculate_sl_tp(self, entry_price: float, direction: str,
+                         zone_high: float, zone_low: float,
+                         poc_price: float) -> tuple:
+        """
+        Calcula SL y TP replicando la logica del zone_detector.
+        Retorna (sl_price, tp_price, r_distance).
+        """
+        zone_height = zone_high - zone_low if zone_high and zone_low else 0
+        if zone_height <= 0 or entry_price <= 0:
+            return (0, 0, 0)
+
+        tp_rr = 2.0  # Default TP = 2R
+
+        if self.config.entry_mode == "va_breakout" and poc_price > 0:
+            # SL basado en distancia Entry -> POC + buffer %
+            dist_to_poc = abs(entry_price - poc_price)
+            if dist_to_poc == 0:
+                dist_to_poc = zone_height * 0.3
+            buffer_mult = 1.0 + (self.config.sl_poc_buffer_pct / 100.0)
+            r_distance = dist_to_poc * buffer_mult
+
+            if direction == "UP":
+                sl_price = entry_price - r_distance
+                tp_price = entry_price + (r_distance * tp_rr)
+            else:
+                sl_price = entry_price + r_distance
+                tp_price = entry_price - (r_distance * tp_rr)
+        else:
+            # SL basado en zone_height
+            r_distance = zone_height
+            if direction == "UP":
+                sl_price = entry_price - zone_height
+                tp_price = entry_price + (zone_height * tp_rr)
+            else:
+                sl_price = entry_price + zone_height
+                tp_price = entry_price - (zone_height * tp_rr)
+
+        # Validar coherencia
+        if direction == "UP":
+            if sl_price >= entry_price:
+                sl_price = entry_price - zone_height
+                r_distance = zone_height
+                tp_price = entry_price + (zone_height * tp_rr)
+        else:
+            if sl_price <= entry_price:
+                sl_price = entry_price + zone_height
+                r_distance = zone_height
+                tp_price = entry_price - (zone_height * tp_rr)
+
+        return (round(sl_price, 2), round(tp_price, 2), round(r_distance, 2))
 
     # --------------------------------------------------
     # Detection logic
@@ -294,11 +639,13 @@ class ZoneService:
 
     async def _detect_and_alert(self, symbol: str, candles: List[Dict]):
         """
-        Ejecuta deteccion de zonas y busca breakouts nuevos.
-        Solo alerta breakouts que ocurren en la vela mas reciente
-        (o muy cerca de ella) para evitar re-alertar historico.
+        Ejecuta deteccion de zonas con include_no_breakout=True para capturar:
+        1) Zonas CON breakout real -> flujo de alerta existente
+        2) Zonas SIN breakout real -> se guardan como pending zones para monitoreo vela a vela
         """
         params = self._build_detection_params()
+        # Activar include_no_breakout para capturar zonas pendientes
+        params.include_no_breakout = True
 
         # Solo usar la ventana configurada
         window = candles[-self.config.window_candles:] if len(candles) > self.config.window_candles else candles
@@ -312,43 +659,88 @@ class ZoneService:
         if not zones:
             return
 
-        # Timestamp de la ultima vela cerrada (la que acaba de cerrar)
-        last_candle_ts = candles[-1]["timestamp"]
-        # Ventana de "recencia": solo alertar breakouts cuyo breakout_timestamp
-        # esta en las ultimas N velas (evita re-alertar todo el historico)
-        # Usamos las ultimas 3 velas como margen
-        recency_window = 3
-        if len(candles) >= recency_window:
-            recency_ts = candles[-recency_window]["timestamp"]
-        else:
-            recency_ts = candles[0]["timestamp"]
-
-        # Almacenar todas las zonas para el frontend
-        self._store_zones(symbol, zones)
-
-        # Filtrar solo breakouts recientes y nuevos
-        known = self._known_zones.get(symbol, {})
-
-        # Collect valid new zones, then send only the best one per direction
-        new_zones = []
+        # Separar zonas con breakout REAL vs breakout FAKE (pendientes)
+        # El detector (_trading_zones_method) usa zone_high/zone_low para detectar breakout.
+        # Cuando include_no_breakout=True, zonas SIN breakout real reciben un fake breakout
+        # con breakout_price = last_candle['close'] que esta DENTRO de zone_high/zone_low.
+        # Clasificacion: breakout_price fuera de zone = real, dentro de zone = fake.
+        real_breakout_zones = []
+        pending_candidates = []
 
         for zone in zones:
             if not isinstance(zone, TradingZone):
                 continue
 
-            # Solo zonas con breakout real y entrada valida
+            # El detector siempre usa zone_high/zone_low como limites de breakout
+            bp = zone.breakout_price
+            if bp > zone.max_price or bp < zone.min_price:
+                real_breakout_zones.append(zone)
+            else:
+                # Breakout fake -> candidata a pending zone
+                pending_candidates.append(zone)
+
+        # --- Procesar zonas pendientes ---
+        self._update_pending_zones(symbol, pending_candidates, window)
+
+        # --- Almacenar zonas para el frontend ---
+        # Convertir zonas pendientes a dicts limpios (sin trade data ficticio)
+        clean_pending_dicts = []
+        for pz in pending_candidates:
+            d = pz.to_dict()
+            # Limpiar datos ficticios del simulador
+            d["breakout_direction"] = ""
+            d["breakout_price"] = 0.0
+            d["breakout_timestamp"] = 0
+            d["entry_price"] = 0.0
+            d["entry_timestamp"] = 0
+            d["sl_price"] = 0.0
+            d["tp_price"] = 0.0
+            d["trade_result"] = "PENDING"
+            d["trade_pnl_r"] = 0.0
+            d["bars_to_close"] = 0
+            d["trade_close_timestamp"] = 0
+            clean_pending_dicts.append(d)
+
+        # Combinar: reales intactas + pendientes limpias
+        all_zones = list(real_breakout_zones) + clean_pending_dicts
+        self._store_zones(symbol, all_zones, real_breakout_zones=real_breakout_zones)
+
+        # Timestamp de la ultima vela cerrada
+        last_candle_ts = candles[-1]["timestamp"]
+        # Ventana de "recencia": solo alertar breakouts recientes
+        recency_window = max(self.config.breakout_search_bars, 20) + 10
+        if len(candles) >= recency_window:
+            recency_ts = candles[-recency_window]["timestamp"]
+        else:
+            recency_ts = candles[0]["timestamp"]
+
+        # Filtrar solo breakouts recientes y nuevos
+        known = self._known_zones.get(symbol, {})
+
+        new_zones = []
+        skipped_no_trade = 0
+        skipped_no_entry = 0
+        skipped_old = 0
+        skipped_known = 0
+
+        for zone in real_breakout_zones:
+            # Solo zonas con resultado de trade valido
             if zone.trade_result in ("SKIPPED", "NO_ENTRY", ""):
+                skipped_no_trade += 1
                 continue
             if not zone.entry_price or not zone.sl_price or not zone.tp_price:
+                skipped_no_entry += 1
                 continue
 
-            # Solo breakouts recientes (timestamp dentro de la ventana de recencia)
+            # Solo breakouts recientes
             if zone.breakout_timestamp < recency_ts:
+                skipped_old += 1
                 continue
 
             # No re-alertar zonas ya conocidas
             zone_key = f"{zone.start_timestamp}_{zone.end_timestamp}_{zone.breakout_direction}"
             if zone_key in known:
+                skipped_known += 1
                 continue
 
             # Marcar como conocida
@@ -367,14 +759,23 @@ class ZoneService:
 
             new_zones.append(zone)
 
+        # Log detallado de filtrado
+        total_real = len(real_breakout_zones)
+        total_pending = len(pending_candidates)
+        if total_real > 0 and not new_zones:
+            logger.debug(
+                f"[ZONE_SERVICE] {symbol}: {total_real} breakouts reales + {total_pending} pendientes, "
+                f"0 nuevas para alertar (no_trade={skipped_no_trade}, no_entry={skipped_no_entry}, "
+                f"old={skipped_old}, known={skipped_known})"
+            )
+
         if not new_zones:
             return
 
-        # Only alert the BEST zone (highest trading_score) per direction
-        # This prevents flooding the TradingBot with dozens of alerts
+        # Only alert the BEST zone per direction
         best_by_direction = {}
         for zone in new_zones:
-            direction = zone.breakout_direction  # "UP" or "DOWN"
+            direction = zone.breakout_direction
             if direction not in best_by_direction or zone.trading_score > best_by_direction[direction].trading_score:
                 best_by_direction[direction] = zone
 
@@ -393,6 +794,76 @@ class ZoneService:
             # Enviar alerta si habilitado
             if self.config.alertsEnabled:
                 await self._process_alert(symbol, zone)
+
+    def _update_pending_zones(self, symbol: str, candidates: List[TradingZone], candles: List[Dict]):
+        """
+        Actualiza las zonas pendientes de breakout para un simbolo.
+        Reemplaza la lista completa en cada ciclo de deteccion porque las zonas
+        se re-detectan con cada nueva vela (el buffer deslizante las mantiene).
+        """
+        # Construir mapa de pending zones existentes para preservar metadata
+        existing_keys = {}
+        for pz in self._pending_zones.get(symbol, []):
+            key = f"{pz.get('start_ts', 0)}_{pz.get('end_ts', 0)}"
+            existing_keys[key] = pz
+
+        new_pending = []
+        for zone in candidates:
+            # Determinar limites de breakout segun entry_mode
+            if self.config.entry_mode == "va_breakout":
+                breakout_upper = zone.vp_vah_price if zone.vp_vah_price > 0 else zone.max_price
+                breakout_lower = zone.vp_val_price if zone.vp_val_price > 0 else zone.min_price
+            else:
+                breakout_upper = zone.max_price
+                breakout_lower = zone.min_price
+
+            # Clave para dedup y tracking
+            zone_key = f"{zone.start_timestamp}_{zone.end_timestamp}"
+
+            # Verificar que no sea una zona ya conocida con breakout real
+            # (puede pasar si la misma zona aparecio antes con breakout y ahora sin)
+            for direction in ("UP", "DOWN"):
+                full_key = f"{zone.start_timestamp}_{zone.end_timestamp}_{direction}"
+                if full_key in self._known_zones.get(symbol, {}):
+                    break
+            else:
+                # No hay breakout conocido para esta zona -> es genuinamente pendiente
+                pz_dict = {
+                    "start_ts": zone.start_timestamp,
+                    "end_ts": zone.end_timestamp,
+                    "zone_high": zone.max_price,
+                    "zone_low": zone.min_price,
+                    "breakout_upper": breakout_upper,
+                    "breakout_lower": breakout_lower,
+                    "poc_price": zone.vp_poc_price,
+                    "vah_price": zone.vp_vah_price,
+                    "val_price": zone.vp_val_price,
+                    "trading_score": zone.trading_score,
+                    "candle_count": zone.candles_in_zone,
+                    "duration_hours": zone.duration_hours,
+                    "first_seen": existing_keys.get(zone_key, {}).get("first_seen", time.time()),
+                }
+                new_pending.append(pz_dict)
+
+        # Limitar cantidad de pending zones
+        max_pending = 20
+        if len(new_pending) > max_pending:
+            # Mantener las mas recientes (por end_ts)
+            new_pending.sort(key=lambda z: z["end_ts"], reverse=True)
+            new_pending = new_pending[:max_pending]
+
+        old_count = len(self._pending_zones.get(symbol, []))
+        self._pending_zones[symbol] = new_pending
+        new_count = len(new_pending)
+
+        # Actualizar stat global
+        self.stats["pending_zones_current"] = sum(
+            len(v) for v in self._pending_zones.values()
+        )
+
+        # Loguear cambios significativos
+        if new_count != old_count:
+            logger.info(f"[ZONE_SERVICE] {symbol}: Pending zones: {old_count} -> {new_count}")
 
     def _build_detection_params(self) -> ZoneDetectionParams:
         """Construye ZoneDetectionParams desde la config del servicio."""
@@ -456,8 +927,32 @@ class ZoneService:
                 f"ALERT_SENT | {symbol} | {direction} | "
                 f"entry={zone.entry_price:.2f} | sl={zone.sl_price:.2f} | tp={zone.tp_price:.2f}"
             )
+
+            # Registrar en pattern_state_manager para que aparezca en el historial de alertas
+            try:
+                state_manager = get_pattern_state_manager()
+                alert_record = AlertRecord(
+                    id=f"zone_{symbol}_{int(time.time()*1000)}_{uuid.uuid4().hex[:6]}",
+                    timestamp=int(time.time() * 1000),
+                    symbol=symbol,
+                    interval=self.config.interval,
+                    indicator="ZONE_DETECTOR",
+                    pattern_type=f"ZONE_BREAKOUT_{zone.entry_mode.upper()}",
+                    direction=direction,
+                    price=float(zone.entry_price),
+                    confidence=float(zone.trading_score),
+                    status="sent",
+                    entry=float(zone.entry_price),
+                    stop_loss=float(zone.sl_price),
+                    take_profit=float(zone.tp_price),
+                    outcome="PENDING",
+                )
+                state_manager.add_alert_record(alert_record)
+                logger.info(f"[ZONE_SERVICE] Alerta registrada en historial: {alert_record.id}")
+            except Exception as e:
+                logger.error(f"[ZONE_SERVICE] Error registrando alerta en historial: {e}")
         else:
-            alert_logger.error(f"ALERT_FAILED | {symbol} | {direction}")
+            alert_logger.error(f"ALERT_FAILED | {symbol} | {direction} | entry={zone.entry_price:.2f} | (ver lineas anteriores para detalle)")
 
     async def _send_alert(self, symbol: str, zone: TradingZone) -> bool:
         """Envia HTTP POST al TradingBot."""
@@ -482,23 +977,34 @@ class ZoneService:
         }
 
         try:
+            logger.info(f"[ZONE_SERVICE] Enviando alerta: {symbol} {direction} -> {self.config.alertTargetUrl}")
             response = await self._http_client.post(
                 self.config.alertTargetUrl,
                 json=payload,
             )
             if response.status_code == 200:
                 result = response.json()
-                return result.get("success", False)
+                success = result.get("success", False)
+                if not success:
+                    reason = result.get("message", result.get("detail", "unknown"))
+                    alert_logger.info(f"ALERT_REJECTED | {symbol} | {direction} | reason={reason}")
+                    logger.warning(f"[ZONE_SERVICE] TradingBot rechazo alerta: {reason}")
+                return success
             else:
-                logger.warning(f"[ZONE_SERVICE] Alerta rechazada: HTTP {response.status_code}")
+                body_text = response.text[:200] if response.text else "empty"
+                alert_logger.error(f"ALERT_HTTP_ERROR | {symbol} | {direction} | status={response.status_code} | body={body_text}")
+                logger.warning(f"[ZONE_SERVICE] Alerta rechazada: HTTP {response.status_code} - {body_text}")
                 return False
         except httpx.ConnectError:
+            alert_logger.error(f"ALERT_CONNECT_ERROR | {symbol} | {direction} | TradingBot no disponible en {self.config.alertTargetUrl}")
             logger.error("[ZONE_SERVICE] TradingBot no disponible (ConnectError)")
             return False
         except httpx.TimeoutException:
+            alert_logger.error(f"ALERT_TIMEOUT | {symbol} | {direction}")
             logger.error("[ZONE_SERVICE] Timeout enviando alerta")
             return False
         except Exception as e:
+            alert_logger.error(f"ALERT_EXCEPTION | {symbol} | {direction} | error={str(e)}")
             logger.error(f"[ZONE_SERVICE] Error enviando alerta: {e}")
             return False
 
@@ -640,27 +1146,75 @@ class ZoneService:
         return unique[-desired_candles:]
 
     async def _initial_detection(self, symbol: str, candles: List[Dict]):
-        """Deteccion inicial para llenar zonas conocidas (sin enviar alertas)."""
+        """Deteccion inicial para llenar zonas conocidas y pending zones (sin enviar alertas)."""
         params = self._build_detection_params()
+        params.include_no_breakout = True  # Incluir zonas pendientes tambien
+
         zones = self.detector.detect_zones(candles, method="trading_zones", params=params)
 
+        # Separar breakouts reales vs fake (pendientes)
+        # Misma logica que _detect_and_alert: breakout_price fuera de zone = real
         known = {}
+        pending_candidates = []
+
         for zone in zones:
-            if isinstance(zone, TradingZone) and zone.breakout_direction:
+            if not isinstance(zone, TradingZone):
+                continue
+            if not zone.breakout_direction:
+                continue
+
+            bp = zone.breakout_price
+            if bp > zone.max_price or bp < zone.min_price:
+                # Breakout real -> registrar como conocida
                 zone_key = f"{zone.start_timestamp}_{zone.end_timestamp}_{zone.breakout_direction}"
                 known[zone_key] = zone
+            else:
+                # Breakout fake -> candidata a pending
+                pending_candidates.append(zone)
 
         self._known_zones[symbol] = known
-        self._store_zones(symbol, zones)
 
-        logger.info(f"[ZONE_SERVICE] {symbol}: Deteccion inicial -> {len(zones)} zonas, {len(known)} con breakout")
+        # Limpiar zonas pendientes para que no muestren trade data ficticio
+        clean_pending_dicts = []
+        for pz in pending_candidates:
+            d = pz.to_dict()
+            d["breakout_direction"] = ""
+            d["breakout_price"] = 0.0
+            d["breakout_timestamp"] = 0
+            d["entry_price"] = 0.0
+            d["entry_timestamp"] = 0
+            d["sl_price"] = 0.0
+            d["tp_price"] = 0.0
+            d["trade_result"] = "PENDING"
+            d["trade_pnl_r"] = 0.0
+            d["bars_to_close"] = 0
+            d["trade_close_timestamp"] = 0
+            clean_pending_dicts.append(d)
+
+        # Almacenar: reales con trade data + pendientes sin trade data
+        all_zones_for_frontend = list(known.values()) + clean_pending_dicts
+        # En initial_detection no registramos open trades (trades historicos ya tienen resultado)
+        self._store_zones(symbol, all_zones_for_frontend, real_breakout_zones=None)
+
+        # Llenar pending zones al inicio
+        if pending_candidates:
+            self._update_pending_zones(symbol, pending_candidates, candles)
+
+        pending_count = len(self._pending_zones.get(symbol, []))
+        logger.info(
+            f"[ZONE_SERVICE] {symbol}: Deteccion inicial -> {len(zones)} zonas, "
+            f"{len(known)} con breakout real, {pending_count} pendientes"
+        )
 
     # --------------------------------------------------
     # Zone storage (for frontend queries)
     # --------------------------------------------------
 
-    def _store_zones(self, symbol: str, zones):
-        """Almacena zonas para consulta del frontend."""
+    def _store_zones(self, symbol: str, zones, real_breakout_zones: list = None):
+        """
+        Almacena zonas para consulta del frontend.
+        Solo registra trades OPEN de zonas con breakout REAL (no fake/pending).
+        """
         zone_dicts = []
         for z in zones:
             if isinstance(z, TradingZone):
@@ -673,6 +1227,79 @@ class ZoneService:
             zone_dicts = zone_dicts[:self._max_zones_per_symbol]
 
         self._recent_zones[symbol] = zone_dicts
+
+        # Solo registrar trades OPEN de breakouts reales (no de fake breakouts)
+        # Las zonas con fake breakout tienen trade_result=OPEN del simulador
+        # pero el trade no es real -> no debemos rastrearlo
+        if real_breakout_zones:
+            real_dicts = []
+            for z in real_breakout_zones:
+                if isinstance(z, TradingZone):
+                    real_dicts.append(z.to_dict())
+                elif isinstance(z, dict):
+                    real_dicts.append(z)
+            self._register_open_trades(symbol, real_dicts)
+
+        # Merge open trades para que el frontend vea trades que salieron de ventana
+        open_trades = self._open_trades.get(symbol, [])
+        if open_trades:
+            self._merge_tracked_trades_to_recent(symbol, open_trades)
+
+        # Re-numerar timeline_index para evitar duplicados despues del merge
+        self._renumber_zones(symbol)
+
+    def _register_open_trades(self, symbol: str, zone_dicts: List[Dict]):
+        """
+        Registra zonas con trade_result=OPEN en _open_trades para tracking vela a vela.
+        Solo registra trades que no esten ya rastreados.
+        """
+        open_zones = [
+            z for z in zone_dicts
+            if z.get("trade_result") == "OPEN"
+            and z.get("entry_price")
+            and z.get("sl_price")
+            and z.get("tp_price")
+        ]
+
+        if not open_zones:
+            return
+
+        existing = self._open_trades.get(symbol, [])
+        existing_keys = {
+            f"{t.get('start_timestamp', 0)}_{t.get('end_timestamp', 0)}_{t.get('breakout_direction', '')}"
+            for t in existing
+        }
+
+        new_count = 0
+        for trade in open_zones:
+            key = f"{trade.get('start_timestamp', 0)}_{trade.get('end_timestamp', 0)}_{trade.get('breakout_direction', '')}"
+            if key not in existing_keys:
+                self._open_trades.setdefault(symbol, []).append(dict(trade))  # Copia independiente
+                existing_keys.add(key)
+                new_count += 1
+
+        if new_count > 0:
+            total = len(self._open_trades.get(symbol, []))
+            logger.info(f"[ZONE_SERVICE] {symbol}: {new_count} nuevos trades OPEN registrados (total tracking: {total})")
+            alert_logger.info(
+                f"OPEN_TRADE_REGISTERED | {symbol} | +{new_count} trades | "
+                f"total_tracking={total}"
+            )
+
+    def _renumber_zones(self, symbol: str):
+        """
+        Re-numera timeline_index de todas las zonas en _recent_zones
+        para garantizar numeros unicos y cronologicos.
+        """
+        recent = self._recent_zones.get(symbol, [])
+        if not recent:
+            return
+
+        # Ordenar por entry_timestamp (o start_timestamp si no tiene entry)
+        recent.sort(key=lambda z: z.get("entry_timestamp", 0) or z.get("start_timestamp", 0))
+
+        for i, zone in enumerate(recent):
+            zone["timeline_index"] = i + 1  # 1-based
 
     def get_zones(self, symbol: str) -> List[Dict]:
         """Retorna zonas detectadas para un simbolo."""
@@ -845,6 +1472,27 @@ class ZoneService:
         if self.stats["last_candle_time"] > 0:
             last_candle_ago = round(time.time() - self.stats["last_candle_time"])
 
+        open_trades_info = {}
+        for sym, trades in self._open_trades.items():
+            open_trades_info[sym] = len(trades)
+
+        pending_zones_info = {}
+        for sym, pending in self._pending_zones.items():
+            pending_zones_info[sym] = {
+                "count": len(pending),
+                "zones": [
+                    {
+                        "zone_high": pz.get("zone_high", 0),
+                        "zone_low": pz.get("zone_low", 0),
+                        "breakout_upper": pz.get("breakout_upper", 0),
+                        "breakout_lower": pz.get("breakout_lower", 0),
+                        "score": pz.get("trading_score", 0),
+                        "candles": pz.get("candle_count", 0),
+                    }
+                    for pz in pending
+                ]
+            }
+
         return {
             "enabled": self.config.enabled,
             "running": self.running,
@@ -854,6 +1502,8 @@ class ZoneService:
             "last_candle_ago_seconds": last_candle_ago,
             "buffers": buffer_info,
             "known_zones": known_info,
+            "open_trades": open_trades_info,
+            "pending_zones": pending_zones_info,
             "cooldowns": {
                 k: round(self.config.cooldownMinutes * 60 - (time.time() - v))
                 for k, v in self._cooldowns.items()
@@ -870,6 +1520,9 @@ class ZoneService:
         """Re-analiza historico con config actual. Limpia zonas conocidas."""
         self._known_zones.clear()
         self._recent_zones.clear()
+        self._open_trades.clear()
+        self._pending_zones.clear()
+        self.stats["pending_zones_current"] = 0
 
         for symbol in self.config.symbols:
             buffer = self._candle_buffers.get(symbol, [])

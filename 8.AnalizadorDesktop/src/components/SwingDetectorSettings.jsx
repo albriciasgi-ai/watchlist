@@ -19,7 +19,8 @@ const SwingDetectorSettings = ({
   currentSymbol,
   watchlistDays,      // Days selected in Watchlist (synced automatically)
   watchlistInterval,  // Interval selected in Watchlist
-  onBackendConfigSaved // Callback when backend config is saved (to refresh indicators)
+  onBackendConfigSaved, // Callback when backend config is saved (to refresh indicators)
+  onAlertsChange       // Callback to notify parent when alerts are toggled (for visual indicator)
 }) => {
   const [localConfig, setLocalConfig] = useState(config);
   const [backendStatus, setBackendStatus] = useState(null);
@@ -110,6 +111,10 @@ const SwingDetectorSettings = ({
       if (response.ok) {
         const data = await response.json();
         setBackendStatus(data);
+        // Notify parent of alerts state
+        if (onAlertsChange) {
+          onAlertsChange(data.running && data.alertsEnabled);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch swing status:', error);
@@ -520,10 +525,35 @@ const SwingDetectorSettings = ({
         </label>
       </div>
 
-      {/* Enable/Disable Alerts to Trading Bot - PER SYMBOL */}
+      {/* Enable/Disable Alerts to Trading Bot - MASTER TOGGLE */}
       {(() => {
-        // Get alertsEnabled from local state (pending changes) or from backend symbolConfig
-        const alertsEnabled = localSymbolConfig?.alertsEnabled ?? backendStatus?.symbolConfig?.alertsEnabled ?? backendStatus?.alertsEnabled ?? true;
+        // Get alertsEnabled from backend status (global toggle)
+        const alertsEnabled = backendStatus?.alertsEnabled ?? false;
+        const isRunning = backendStatus?.running ?? false;
+
+        const handleToggleAlerts = async (enabled) => {
+          setLoading(true);
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/swing/toggle-alerts`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ enabled })
+            });
+            if (response.ok) {
+              const data = await response.json();
+              console.log(`[SwingDetector] Alerts toggled: enabled=${data.alertsEnabled}, running=${data.running}`);
+              await fetchBackendStatus();
+              if (onAlertsChange) {
+                onAlertsChange(data.alertsEnabled && data.running);
+              }
+            }
+          } catch (error) {
+            console.error('[SwingDetector] Error toggling alerts:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
         return (
           <div style={{
             marginBottom: '16px',
@@ -541,18 +571,18 @@ const SwingDetectorSettings = ({
               <input
                 type="checkbox"
                 checked={alertsEnabled}
-                onChange={(e) => handleBackendConfigUpdate({ alertsEnabled: e.target.checked })}
+                onChange={(e) => handleToggleAlerts(e.target.checked)}
                 disabled={loading}
                 style={{ marginRight: '8px', width: '18px', height: '18px' }}
               />
               <span style={{ color: alertsEnabled ? '#2E7D32' : '#E65100' }}>
-                {alertsEnabled ? `🔔 Alerts ENABLED for ${currentSymbol}` : `🔕 Alerts DISABLED for ${currentSymbol}`}
+                {alertsEnabled ? '🔔 Alerts ENABLED (all symbols)' : '🔕 Alerts DISABLED (all symbols)'}
               </span>
             </label>
             <div style={{ fontSize: '11px', color: '#666', marginTop: '6px', marginLeft: '26px' }}>
               {alertsEnabled
-                ? `Swing signals for ${currentSymbol} will be sent to Trading Bot (port 5000)`
-                : `Swing signals for ${currentSymbol} will NOT be sent - display only mode`}
+                ? `Swing service ${isRunning ? 'RUNNING' : 'starting...'} - signals sent to Trading Bot (port 5000)`
+                : 'Swing service stopped - display only mode (no alerts sent)'}
             </div>
           </div>
         );

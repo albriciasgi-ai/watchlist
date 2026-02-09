@@ -7617,3 +7617,89 @@
 2026-02-08 12:49:06 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
 2026-02-08 12:49:06 | ERROR | ALERT_ERROR | POLUSDT | All connection attempts failed
 2026-02-08 13:30:02 | INFO | BLOCKED_HISTORICAL | DOGEUSDT | SWING_LOW | price=0.10 | signal_ts=1770575100 | service_start=1770575387
+2026-02-08 18:35:02 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=70226.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 18:35:06 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=70226.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 18:42:03 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=69992.00 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 18:42:05 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=69992.00 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 18:55:03 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=70647.50 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 18:55:06 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=70647.50 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:02:03 | INFO | BLOCKED_HISTORICAL | PAXGUSDT | SWING_HIGH | price=5045.60 | signal_ts=1770595020 | service_start=1770595142
+2026-02-08 19:03:02 | INFO | BLOCKED_HISTORICAL | ETHUSDT | SWING_LOW | price=2088.04 | signal_ts=1770595080 | service_start=1770595142
+2026-02-08 19:03:03 | INFO | BLOCKED_HISTORICAL | TRBUSDT | SWING_LOW | price=14.66 | signal_ts=1770595080 | service_start=1770595142
+2026-02-08 19:03:03 | INFO | BLOCKED_HISTORICAL | BTCUSDT | SWING_LOW | price=70256.30 | signal_ts=1770595080 | service_start=1770595142
+2026-02-08 19:04:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:04:06 | INFO | ALERT_SENT | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:05:03 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:05:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:05:03 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.28 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:05:05 | INFO | ALERT_SENT | DOGEUSDT | SWING_LOW | price=0.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:05:05 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:05:06 | INFO | ALERT_SENT | TRXUSDT | SWING_LOW | price=0.28 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:06:03 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2091.65 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:06:06 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2091.65 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:08:03 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=86.59 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:08:06 | INFO | ALERT_SENT | SOLUSDT | SWING_LOW | price=86.59 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:10:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.43 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:10:03 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_HIGH | price=14.73 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:10:03 | INFO | SIGNAL_DETECTED | TRXUSDT | SWING_HIGH | price=0.28 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:10:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=0.97 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:10:03 | INFO | ALERT_SENT | TRBUSDT | SWING_HIGH | price=14.73 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:10:03 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5040.60 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:10:04 | INFO | ALERT_SENT | XRPUSDT | SWING_HIGH | price=1.43 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:10:04 | INFO | ALERT_SENT | TRXUSDT | SWING_HIGH | price=0.28 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:10:05 | INFO | ALERT_SENT | PAXGUSDT | SWING_LOW | price=5040.60 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:10:05 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=0.97 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:11:02 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=70520.20 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:11:03 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:11:04 | INFO | ALERT_SENT | DOGEUSDT | SWING_HIGH | price=0.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:11:05 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=70520.20 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:12:03 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=14.68 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:12:03 | INFO | ALERT_SENT | TRBUSDT | SWING_LOW | price=14.68 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:13:03 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2087.91 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:13:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:13:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:13:04 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2087.91 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:13:04 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:13:05 | INFO | ALERT_SENT | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:14:03 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5043.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:14:03 | INFO | SIGNAL_DETECTED | POLUSDT | SWING_HIGH | price=0.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:14:05 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5043.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:14:07 | INFO | ALERT_SENT | POLUSDT | SWING_HIGH | price=0.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:02 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_HIGH | price=0.27 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:02 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=70525.00 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_HIGH | price=0.10 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=2090.63 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_HIGH | price=1.44 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_HIGH | price=86.96 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=0.97 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_HIGH | price=641.60 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_LOW | price=5041.20 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:20:03 | INFO | ALERT_SENT | BNBUSDT | SWING_HIGH | price=641.60 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:04 | INFO | ALERT_SENT | ETHUSDT | SWING_HIGH | price=2090.63 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:04 | INFO | ALERT_SENT | DOGEUSDT | SWING_HIGH | price=0.10 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:05 | INFO | ALERT_SENT | SOLUSDT | SWING_HIGH | price=86.96 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:05 | INFO | ALERT_SENT | PAXGUSDT | SWING_LOW | price=5041.20 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:05 | INFO | ALERT_SENT | XRPUSDT | SWING_HIGH | price=1.44 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:05 | INFO | ALERT_SENT | SUIUSDT | SWING_HIGH | price=0.97 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:05 | INFO | ALERT_SENT | ADAUSDT | SWING_HIGH | price=0.27 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:20:06 | INFO | ALERT_SENT | BTCUSDT | SWING_HIGH | price=70525.00 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:02 | INFO | SIGNAL_DETECTED | ADAUSDT | SWING_LOW | price=0.27 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:02 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_LOW | price=70399.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | DOGEUSDT | SWING_LOW | price=0.10 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=2083.82 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=14.66 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=86.68 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | BNBUSDT | SWING_LOW | price=639.80 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | ALERT_SENT | TRBUSDT | SWING_LOW | price=14.66 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:03 | INFO | SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=5047.90 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-08 19:22:03 | INFO | ALERT_SENT | BNBUSDT | SWING_LOW | price=639.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:04 | INFO | ALERT_SENT | ETHUSDT | SWING_LOW | price=2083.82 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:04 | INFO | ALERT_SENT | XRPUSDT | SWING_LOW | price=1.43 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:04 | INFO | ALERT_SENT | PAXGUSDT | SWING_HIGH | price=5047.90 | direction=SHORT | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:05 | INFO | ALERT_SENT | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:05 | INFO | ALERT_SENT | DOGEUSDT | SWING_LOW | price=0.10 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:05 | INFO | ALERT_SENT | ADAUSDT | SWING_LOW | price=0.27 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:05 | INFO | ALERT_SENT | SOLUSDT | SWING_LOW | price=86.68 | direction=LONG | target=http://localhost:5000/api/watchlist-alert
+2026-02-08 19:22:05 | INFO | ALERT_SENT | BTCUSDT | SWING_LOW | price=70399.80 | direction=LONG | target=http://localhost:5000/api/watchlist-alert

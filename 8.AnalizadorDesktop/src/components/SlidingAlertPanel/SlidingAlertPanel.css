@@ -443,6 +443,11 @@
   color: white;
 }
 
+.indicator-badge.zone_detector {
+  background: #E65100;
+  color: white;
+}
+
 .cell-direction {
   padding: 4px 8px;
 }

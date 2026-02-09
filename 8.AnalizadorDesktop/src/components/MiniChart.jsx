@@ -110,7 +110,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, swingAlertsActive = false, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
 
@@ -2941,10 +2941,27 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
                 cursor: 'pointer',
                 fontSize: '11px',
                 fontWeight: 'bold',
-                marginLeft: '4px'
+                marginLeft: '4px',
+                position: 'relative'
               }}
             >
               SW
+              {swingAlertsActive && (
+                <span
+                  title="Alertas swing activas"
+                  style={{
+                    position: 'absolute',
+                    top: '-3px',
+                    right: '-3px',
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: '#4CAF50',
+                    border: '1.5px solid #1a1a2e',
+                    animation: 'zoneRealtimePulse 2s ease-in-out infinite'
+                  }}
+                />
+              )}
             </button>
           )}
           {indicatorStates && indicatorStates["S&R v2"] && (
@@ -3245,6 +3262,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
               onOpenDoubleTopBottomSettings={onOpenDoubleTopBottomSettings}
               onOpenSwingDetectorSettings={onOpenSwingDetectorSettings}
+              swingAlertsActive={swingAlertsActive}
               rejectionPatternConfig={rejectionPatternConfig}
               isFullscreenChild={true}
               onDrawingsChanged={() => {

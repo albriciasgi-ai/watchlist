@@ -17259,3 +17259,122 @@ httpx.ReadTimeout
 2026-02-07 13:54:18,540 | INFO | store.journal_store | Updated journal entry: 18f92ccd-22f5-41e4-bd12-fc6b21d8a335
 2026-02-07 13:54:18,544 | INFO | services.position_monitor | Entry screenshot saved: screenshots/SOLUSDT/18f92ccd-22f5-41e4-bd12-fc6b21d8a335_entry_20260207_135416.png
 2026-02-07 14:45:20,887 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-08 21:32:57,166 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-08 21:32:59,123 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-08 21:32:59,222 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-08 21:32:59,238 | INFO | main | ============================================================
+2026-02-08 21:32:59,238 | INFO | main | Trading Journal Backend starting...
+2026-02-08 21:32:59,239 | INFO | main | Database: data/journal.db
+2026-02-08 21:32:59,239 | INFO | main | Screenshots: screenshots/
+2026-02-08 21:32:59,239 | INFO | main | ============================================================
+2026-02-08 21:32:59,651 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-08 21:32:59,653 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-08 21:33:02,003 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-08 21:33:02,338 | INFO | services.position_monitor | Loaded 10 existing open entries from database
+2026-02-08 21:33:02,339 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-08 21:33:02,339 | INFO | main | Position monitor ENABLED
+2026-02-08 21:33:02,339 | INFO | main | All services started successfully
+2026-02-08 21:33:14,587 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-08 21:33:14,588 | INFO | services.position_monitor | Orphan entry detected during sync: POLUSDT (no active position)
+2026-02-08 21:33:14,588 | INFO | services.position_monitor | Position closed: POLUSDT
+2026-02-08 21:33:15,473 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/POLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:33:15,475 | INFO | services.position_monitor |   Exit by SL: exit=0.0955 vs sl=0.0960 (diff=0.47%)
+2026-02-08 21:33:15,476 | INFO | services.position_monitor | R-Multiple calculated: -0.38R
+2026-02-08 21:33:15,480 | INFO | store.journal_store | Updated journal entry: c567454e-7d63-485f-9533-e4939e59d3f3
+2026-02-08 21:33:16,397 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=POLUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:33:16,399 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: POLUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:33:26,039 | ERROR | services.screenshot_service | All screenshot methods failed for POLUSDT
+2026-02-08 21:33:26,039 | INFO | services.position_monitor | Closed journal entry c567454e-7d63-485f-9533-e4939e59d3f3: PnL $-0.36 (-1.40%) [-0.38R]
+2026-02-08 21:33:26,039 | INFO | services.position_monitor | Orphan entry detected during sync: SUIUSDT (no active position)
+2026-02-08 21:33:26,039 | INFO | services.position_monitor | Position closed: SUIUSDT
+2026-02-08 21:33:26,352 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SUIUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:33:26,355 | INFO | services.position_monitor |   Exit by TP: exit=0.9710 vs tp=0.9704 (diff=0.06%)
+2026-02-08 21:33:26,355 | INFO | services.position_monitor | R-Multiple calculated: -0.11R
+2026-02-08 21:33:26,358 | INFO | store.journal_store | Updated journal entry: fd36f8d8-f4af-477a-b037-a9a41afc26f2
+2026-02-08 21:33:27,242 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SUIUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:33:27,244 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SUIUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:33:36,815 | ERROR | services.screenshot_service | All screenshot methods failed for SUIUSDT
+2026-02-08 21:33:36,816 | INFO | services.position_monitor | Closed journal entry fd36f8d8-f4af-477a-b037-a9a41afc26f2: PnL $-0.32 (4.42%) [-0.11R]
+2026-02-08 21:33:36,816 | INFO | services.position_monitor | Orphan entry detected during sync: TRXUSDT (no active position)
+2026-02-08 21:33:36,816 | INFO | services.position_monitor | Position closed: TRXUSDT
+2026-02-08 21:33:37,679 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/TRXUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:33:37,682 | INFO | services.position_monitor |   Exit manual: exit=0.2775, sl=0.2792, tp=0.2709
+2026-02-08 21:33:37,682 | INFO | services.position_monitor | R-Multiple calculated: -0.15R
+2026-02-08 21:33:37,685 | INFO | store.journal_store | Updated journal entry: 70d39c94-60be-45c5-a4f6-6156ef7c74a0
+2026-02-08 21:33:38,573 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=TRXUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:33:38,575 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: TRXUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:33:48,157 | ERROR | services.screenshot_service | All screenshot methods failed for TRXUSDT
+2026-02-08 21:33:48,158 | INFO | services.position_monitor | Closed journal entry 70d39c94-60be-45c5-a4f6-6156ef7c74a0: PnL $-0.15 (-0.41%) [-0.15R]
+2026-02-08 21:33:48,158 | INFO | services.position_monitor | Orphan entry detected during sync: BTCUSDT (no active position)
+2026-02-08 21:33:48,158 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-08 21:33:49,052 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:33:49,054 | INFO | services.position_monitor |   Exit by SL: exit=70657.1000 vs sl=70405.8000 (diff=0.36%)
+2026-02-08 21:33:49,055 | INFO | services.position_monitor | R-Multiple calculated: -0.00R
+2026-02-08 21:33:49,059 | INFO | store.journal_store | Updated journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8
+2026-02-08 21:33:49,948 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:33:49,951 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\b79176fc-9803-4152-ba18-6f0856f7e6f8_exit_20260208_213349.png (symbol: BTCUSDT)
+2026-02-08 21:33:49,956 | INFO | store.journal_store | Updated journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8
+2026-02-08 21:33:49,960 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/b79176fc-9803-4152-ba18-6f0856f7e6f8_exit_20260208_213349.png
+2026-02-08 21:33:49,960 | INFO | services.position_monitor | Closed journal entry b79176fc-9803-4152-ba18-6f0856f7e6f8: PnL $-0.00 (-2.59%) [-0.00R]
+2026-02-08 21:33:49,960 | INFO | services.position_monitor | Orphan entry detected during sync: DOGEUSDT (no active position)
+2026-02-08 21:33:49,960 | INFO | services.position_monitor | Position closed: DOGEUSDT
+2026-02-08 21:33:50,292 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/DOGEUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:33:50,294 | INFO | services.position_monitor |   Exit manual: exit=0.0967, sl=0.0959, tp=0.1025
+2026-02-08 21:33:50,295 | INFO | services.position_monitor | R-Multiple calculated: -0.02R
+2026-02-08 21:33:50,299 | INFO | store.journal_store | Updated journal entry: b65171f1-d23d-4b65-a9f5-7d98b9c3af20
+2026-02-08 21:33:51,194 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=DOGEUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:33:51,197 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: DOGEUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:00,750 | ERROR | services.screenshot_service | All screenshot methods failed for DOGEUSDT
+2026-02-08 21:34:00,751 | INFO | services.position_monitor | Closed journal entry b65171f1-d23d-4b65-a9f5-7d98b9c3af20: PnL $-0.07 (-1.40%) [-0.02R]
+2026-02-08 21:34:00,751 | INFO | services.position_monitor | Orphan entry detected during sync: SOLUSDT (no active position)
+2026-02-08 21:34:00,751 | INFO | services.position_monitor | Position closed: SOLUSDT
+2026-02-08 21:34:01,793 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/SOLUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:34:01,795 | INFO | services.position_monitor |   Exit by TP: exit=87.0400 vs tp=87.0500 (diff=0.01%)
+2026-02-08 21:34:01,795 | INFO | services.position_monitor | R-Multiple calculated: 0.42R
+2026-02-08 21:34:01,799 | INFO | store.journal_store | Updated journal entry: 18f92ccd-22f5-41e4-bd12-fc6b21d8a335
+2026-02-08 21:34:02,690 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=SOLUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:34:02,693 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: SOLUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:12,279 | ERROR | services.screenshot_service | All screenshot methods failed for SOLUSDT
+2026-02-08 21:34:12,279 | INFO | services.position_monitor | Closed journal entry 18f92ccd-22f5-41e4-bd12-fc6b21d8a335: PnL $0.82 (2.00%) [0.42R]
+2026-02-08 21:34:12,279 | INFO | services.position_monitor | Orphan entry detected during sync: ADAUSDT (no active position)
+2026-02-08 21:34:12,280 | INFO | services.position_monitor | Position closed: ADAUSDT
+2026-02-08 21:34:14,040 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ADAUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:34:14,043 | INFO | services.position_monitor |   Exit by TP: exit=0.2704 vs tp=0.2717 (diff=0.48%)
+2026-02-08 21:34:14,043 | INFO | services.position_monitor | R-Multiple calculated: -0.30R
+2026-02-08 21:34:14,046 | INFO | store.journal_store | Updated journal entry: de879379-68cb-4bfe-a0d4-7bda35ca0ebd
+2026-02-08 21:34:14,963 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ADAUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:34:14,965 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ADAUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:24,558 | ERROR | services.screenshot_service | All screenshot methods failed for ADAUSDT
+2026-02-08 21:34:24,558 | INFO | services.position_monitor | Closed journal entry de879379-68cb-4bfe-a0d4-7bda35ca0ebd: PnL $-0.29 (2.49%) [-0.30R]
+2026-02-08 21:34:24,558 | INFO | services.position_monitor | Orphan entry detected during sync: PAXGUSDT (no active position)
+2026-02-08 21:34:24,559 | INFO | services.position_monitor | Position closed: PAXGUSDT
+2026-02-08 21:34:25,470 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/PAXGUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:34:25,473 | INFO | services.position_monitor |   Exit by SL: exit=5047.4000 vs sl=5068.8000 (diff=0.42%)
+2026-02-08 21:34:25,473 | INFO | services.position_monitor | R-Multiple calculated: -0.01R
+2026-02-08 21:34:25,475 | INFO | store.journal_store | Updated journal entry: d0c835a5-5882-4dc0-a862-e4964124a153
+2026-02-08 21:34:26,389 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=PAXGUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:34:26,409 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: PAXGUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:35,991 | ERROR | services.screenshot_service | All screenshot methods failed for PAXGUSDT
+2026-02-08 21:34:35,991 | INFO | services.position_monitor | Closed journal entry d0c835a5-5882-4dc0-a862-e4964124a153: PnL $-0.02 (-1.77%) [-0.01R]
+2026-02-08 21:34:35,991 | INFO | services.position_monitor | Orphan entry detected during sync: ETHUSDT (no active position)
+2026-02-08 21:34:35,991 | INFO | services.position_monitor | Position closed: ETHUSDT
+2026-02-08 21:34:36,869 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/ETHUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:34:36,871 | INFO | services.position_monitor |   Exit manual: exit=2092.7500, sl=1996.2000, tp=2124.9200
+2026-02-08 21:34:36,872 | INFO | services.position_monitor | R-Multiple calculated: -0.04R
+2026-02-08 21:34:36,875 | INFO | store.journal_store | Updated journal entry: 6f76102c-4afc-4439-aba3-0922d61804c2
+2026-02-08 21:34:37,766 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=ETHUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:34:37,769 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: ETHUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:47,364 | ERROR | services.screenshot_service | All screenshot methods failed for ETHUSDT
+2026-02-08 21:34:47,364 | INFO | services.position_monitor | Closed journal entry 6f76102c-4afc-4439-aba3-0922d61804c2: PnL $-0.08 (2.45%) [-0.04R]
+2026-02-08 21:34:47,364 | INFO | services.position_monitor | Orphan entry detected during sync: XRPUSDT (no active position)
+2026-02-08 21:34:47,364 | INFO | services.position_monitor | Position closed: XRPUSDT
+2026-02-08 21:34:48,237 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/XRPUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-08 21:34:48,241 | INFO | services.position_monitor |   Exit manual: exit=1.4376, sl=1.4541, tp=1.4110
+2026-02-08 21:34:48,241 | INFO | services.position_monitor | R-Multiple calculated: 0.35R
+2026-02-08 21:34:48,245 | INFO | store.journal_store | Updated journal entry: b90f53af-d5d7-4f08-8ae8-b08c667875b5
+2026-02-08 21:34:49,150 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=XRPUSDT "HTTP/1.1 200 OK"
+2026-02-08 21:34:49,152 | INFO | services.screenshot_service | AnalizadorDesktop: simbolo no coincide (requested: XRPUSDT, showing: BTCUSDT), trying next method
+2026-02-08 21:34:58,749 | ERROR | services.screenshot_service | All screenshot methods failed for XRPUSDT
+2026-02-08 21:34:58,749 | INFO | services.position_monitor | Closed journal entry b90f53af-d5d7-4f08-8ae8-b08c667875b5: PnL $0.35 (0.15%) [0.35R]
+2026-02-08 21:34:58,749 | INFO | services.position_monitor | Closed 10 orphan entries during initial sync
+2026-02-08 21:43:07,675 | WARNING | services.position_monitor | TradingBot read timeout

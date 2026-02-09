@@ -1250,6 +1250,13 @@ class ZoneDetector:
             avg_volume = np.mean([c['volume'] for c in zone_candles])
             volume_score = self._calculate_volume_score(avg_volume, all_volumes)
 
+            # Volume Profile
+            vp_data = self._calculate_zone_volume_profile(zone_candles, num_bins=params.vp_bins_per_zone)
+            poc_price = vp_data["poc_price"]
+            vah_price = vp_data["vah_price"]
+            val_price = vp_data["val_price"]
+            vp_total_volume = vp_data["total_volume"]
+
             # Detectar breakout: vela que CIERRA fuera del rango
             breakout_idx = r['end_idx']
             breakout_direction = ""
@@ -1350,7 +1357,9 @@ class ZoneDetector:
                         breakout_direction, breakout_close_price, breakout_ts,
                         params.entry_mode, entry_price, entry_ts, entry_bar_offset,
                         0.0, 0.0,  # sl_price, tp_price
-                        "SKIPPED", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                        "SKIPPED", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0,
+                        vp_poc_price=poc_price, vp_vah_price=vah_price,
+                        vp_val_price=val_price, vp_total_volume=vp_total_volume
                     )
                     trading_zones.append(trading_zone)
                     stats["skipped"] += 1
@@ -1370,7 +1379,9 @@ class ZoneDetector:
                     breakout_direction, breakout_close_price, breakout_ts,
                     params.entry_mode, 0.0, 0, 0,
                     0.0, 0.0,  # sl_price, tp_price
-                    "NO_ENTRY", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0
+                    "NO_ENTRY", 0.0, 0, 0.0, False, False, 0.0, 0, 0.0,
+                    vp_poc_price=poc_price, vp_vah_price=vah_price,
+                    vp_val_price=val_price, vp_total_volume=vp_total_volume
                 )
                 trading_zones.append(trading_zone)
                 stats["skipped"] += 1
@@ -1591,7 +1602,9 @@ class ZoneDetector:
                 trade_result, trade_pnl_r, bars_to_close,
                 r_multiple, reached_2r, reached_3r,
                 breakout_body_ratio, continuation_bars, trading_score,
-                trade_close_timestamp=trade_close_ts
+                trade_close_timestamp=trade_close_ts,
+                vp_poc_price=poc_price, vp_vah_price=vah_price,
+                vp_val_price=val_price, vp_total_volume=vp_total_volume
             )
             trading_zones.append(trading_zone)
 

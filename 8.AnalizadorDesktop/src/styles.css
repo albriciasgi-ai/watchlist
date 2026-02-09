@@ -1411,3 +1411,9 @@ body {
   border-color: #3b82f6;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
+
+/* Animacion del indicador de deteccion realtime de zonas */
+@keyframes zoneRealtimePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76, 175, 80, 0); }
+}

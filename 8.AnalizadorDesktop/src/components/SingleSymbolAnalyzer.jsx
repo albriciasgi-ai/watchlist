@@ -172,6 +172,14 @@ const SingleSymbolAnalyzer = () => {
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showZoneDetectorSettings, setShowZoneDetectorSettings] = useState(false);
 
+  // Estado de deteccion realtime de zonas (para indicador visual fuera del modal)
+  const [zoneRealtimeActive, setZoneRealtimeActive] = useState(false);
+  const zoneRealtimePollingRef = useRef(null);
+
+  // Estado de alertas swing detector (para indicador visual fuera del modal)
+  const [swingAlertsActive, setSwingAlertsActive] = useState(false);
+  const swingAlertsPollingRef = useRef(null);
+
   // Trading Panel state
   const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
   const [tpslBoxData, setTpslBoxData] = useState(null);
@@ -201,6 +209,54 @@ const SingleSymbolAnalyzer = () => {
       stopRobustness();
       pollingCoordinator.stop();
       log.info('[PollingCoordinator] Stopped');
+    };
+  }, []);
+
+  // Polling del estado realtime de zonas (para indicador visual)
+  useEffect(() => {
+    const checkRealtimeStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/zones/realtime/status`);
+        const data = await res.json();
+        if (data.success) {
+          setZoneRealtimeActive(data.running && data.config?.alertsEnabled);
+        } else {
+          setZoneRealtimeActive(false);
+        }
+      } catch {
+        setZoneRealtimeActive(false);
+      }
+    };
+
+    checkRealtimeStatus();
+    zoneRealtimePollingRef.current = setInterval(checkRealtimeStatus, 15000);
+
+    return () => {
+      if (zoneRealtimePollingRef.current) {
+        clearInterval(zoneRealtimePollingRef.current);
+      }
+    };
+  }, []);
+
+  // Polling del estado de alertas del Swing Detector (para indicador visual)
+  useEffect(() => {
+    const checkSwingStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/swing/status`);
+        const data = await res.json();
+        setSwingAlertsActive(data.running && data.alertsEnabled);
+      } catch {
+        setSwingAlertsActive(false);
+      }
+    };
+
+    checkSwingStatus();
+    swingAlertsPollingRef.current = setInterval(checkSwingStatus, 15000);
+
+    return () => {
+      if (swingAlertsPollingRef.current) {
+        clearInterval(swingAlertsPollingRef.current);
+      }
     };
   }, []);
 
@@ -734,10 +790,27 @@ const SingleSymbolAnalyzer = () => {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '13px'
+              fontSize: '13px',
+              position: 'relative'
             }}
           >
             🎯 Zonas
+            {zoneRealtimeActive && (
+              <span
+                title="Deteccion realtime activa"
+                style={{
+                  position: 'absolute',
+                  top: '-3px',
+                  right: '-3px',
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: '#4CAF50',
+                  border: '2px solid #1a1a2e',
+                  animation: 'zoneRealtimePulse 2s ease-in-out infinite'
+                }}
+              />
+            )}
           </button>
         </div>
       </div>
@@ -807,6 +880,7 @@ const SingleSymbolAnalyzer = () => {
             onOpenContinuationPatternSettings={handleOpenContinuationPatternSettings}
             onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
             onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
+            swingAlertsActive={swingAlertsActive}
             onOpenSR2Settings={handleOpenSR2Settings}
             rejectionPatternConfig={rejectionPatternConfig}
             onFullscreenChange={handleFullscreenChange}
@@ -1034,7 +1108,22 @@ const SingleSymbolAnalyzer = () => {
         <div className="modal-overlay" onClick={() => setShowSwingDetectorSettings(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Swing Detector - {symbol}</h3>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                Swing Detector - {symbol}
+                {swingAlertsActive && (
+                  <span
+                    title="Alertas swing activas"
+                    style={{
+                      display: 'inline-block',
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      backgroundColor: '#4CAF50',
+                      animation: 'zoneRealtimePulse 2s ease-in-out infinite'
+                    }}
+                  />
+                )}
+              </h3>
               <button className="modal-close-btn" onClick={() => setShowSwingDetectorSettings(false)}>X</button>
             </div>
             <div className="modal-body">
@@ -1064,6 +1153,7 @@ const SingleSymbolAnalyzer = () => {
                     }
                   }
                 }}
+                onAlertsChange={(active) => setSwingAlertsActive(active)}
               />
             </div>
           </div>
@@ -1085,23 +1175,22 @@ const SingleSymbolAnalyzer = () => {
         />
       )}
 
-      {showZoneDetectorSettings && (
-        <ZoneDetectorSettings
-          isOpen={showZoneDetectorSettings}
-          onClose={() => setShowZoneDetectorSettings(false)}
-          indicatorManager={indicatorManagerRef.current}
-          symbol={symbol}
-          interval={interval}
-          onZonesLoaded={(result) => {
-            log.info(`Zonas cargadas: ${result.zones?.length || 0}`);
-            // Forzar redraw del chart usando el manager del Registry
-            const manager = IndicatorManagerRegistry.get(symbol);
-            if (manager?.requestRedraw) {
-              manager.requestRedraw();
-            }
-          }}
-        />
-      )}
+      <ZoneDetectorSettings
+        isOpen={showZoneDetectorSettings}
+        onClose={() => setShowZoneDetectorSettings(false)}
+        indicatorManager={indicatorManagerRef.current}
+        symbol={symbol}
+        interval={interval}
+        onZonesLoaded={(result) => {
+          log.info(`Zonas cargadas: ${result.zones?.length || 0}`);
+          // Forzar redraw del chart usando el manager del Registry
+          const manager = IndicatorManagerRegistry.get(symbol);
+          if (manager?.requestRedraw) {
+            manager.requestRedraw();
+          }
+        }}
+        onRealtimeChange={(active) => setZoneRealtimeActive(active)}
+      />
     </div>
   );
 };

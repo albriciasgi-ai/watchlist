@@ -85,7 +85,7 @@ const STRING_PARAMS = ['entry_mode', 'position_mode', 'sl_mode', 'detection_meth
 // Campos booleanos (toggles de capas)
 const BOOL_PARAMS = ['use_atr_band', 'use_reentry', 'use_ttm_prefilter', 'use_bbwp_scoring', 'use_inside_pct_filter', 'atr_dyn_merge_overlap', 'use_continuation_score'];
 
-function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded, symbol, interval }) {
+function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded, symbol, interval, onRealtimeChange }) {
   // Calcular maxDays y defaultDays basados en interval (reactivos)
   // Asegurar que interval sea string para buscar en el objeto
   const maxDays = useMemo(() => {
@@ -208,6 +208,10 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
         setRealtimeEnabled(data.enabled || false);
         setRealtimeRunning(data.running || false);
         setRealtimeStatus(data);
+        // Notificar al padre sobre el estado realtime
+        if (onRealtimeChange) {
+          onRealtimeChange(data.running && data.config?.alertsEnabled);
+        }
         // Solo actualizar inputs de config cuando se indica explicitamente
         // (al abrir el modal o despues de guardar). El polling NO sobrescribe
         // los valores que el usuario pueda estar editando.
@@ -215,6 +219,43 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
           setRealtimeWindowCandles(data.config.window_candles || 500);
           setRealtimeCooldown(data.config.cooldownMinutes || 30);
           setRealtimeMinScore(data.config.min_score_filter || 0);
+
+          // Sincronizar parametros de deteccion desde el backend
+          // para que el modal muestre los mismos valores que el servicio usa
+          const cfg = data.config;
+          setParams(prev => {
+            const updated = { ...prev };
+            // Parametros de consolidacion
+            if (cfg.consol_min_bars != null) updated.consol_min_bars = cfg.consol_min_bars;
+            if (cfg.consol_max_bars != null) updated.consol_max_bars = cfg.consol_max_bars;
+            if (cfg.consol_max_range_pct != null) updated.consol_max_range_pct = cfg.consol_max_range_pct;
+            if (cfg.consol_atr_ratio != null) updated.consol_atr_ratio = cfg.consol_atr_ratio;
+            if (cfg.consol_body_ratio != null) updated.consol_body_ratio = cfg.consol_body_ratio;
+            if (cfg.consol_max_outside_bars != null) updated.consol_max_outside_bars = cfg.consol_max_outside_bars;
+            if (cfg.max_price_range_pct != null) updated.max_price_range_pct = cfg.max_price_range_pct;
+            // Modos de entrada y SL
+            if (cfg.entry_mode) updated.entry_mode = cfg.entry_mode;
+            if (cfg.sl_mode) updated.sl_mode = cfg.sl_mode;
+            if (cfg.sl_poc_buffer_pct != null) updated.sl_poc_buffer_pct = cfg.sl_poc_buffer_pct;
+            if (cfg.swing_bars != null) updated.swing_bars = cfg.swing_bars;
+            if (cfg.breakout_search_bars != null) updated.breakout_search_bars = cfg.breakout_search_bars;
+            if (cfg.vp_bins_per_zone != null) updated.vp_bins_per_zone = cfg.vp_bins_per_zone;
+            // Capas v3.0
+            if (cfg.use_atr_band != null) updated.use_atr_band = cfg.use_atr_band;
+            if (cfg.use_reentry != null) updated.use_reentry = cfg.use_reentry;
+            if (cfg.use_ttm_prefilter != null) updated.use_ttm_prefilter = cfg.use_ttm_prefilter;
+            if (cfg.use_bbwp_scoring != null) updated.use_bbwp_scoring = cfg.use_bbwp_scoring;
+            if (cfg.use_inside_pct_filter != null) updated.use_inside_pct_filter = cfg.use_inside_pct_filter;
+            return updated;
+          });
+
+          // Sincronizar tambien alertsEnabled y tradingBotUrl
+          if (cfg.alertsEnabled != null) setAlertsEnabled(cfg.alertsEnabled);
+          if (cfg.alertTargetUrl) {
+            // Extraer URL base del target (quitar /api/watchlist-alert)
+            const baseUrl = cfg.alertTargetUrl.replace(/\/api\/watchlist-alert$/, '');
+            if (baseUrl) setTradingBotUrl(baseUrl);
+          }
         }
       }
     } catch (e) {
@@ -922,7 +963,8 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
       };
 
       return {
-        num: i + 1,
+        num: z.timeline_index || (i + 1),
+        tradeNum: i + 1,
         symbol: z.symbol || symbol || '',
         entryDate: fmtDate(entryTs),
         closeDate: fmtDate(closeTs),
@@ -949,7 +991,9 @@ function ZoneDetectorSettings({ isOpen, onClose, indicatorManager, onZonesLoaded
     }
   }, [symbol]);
 
-  if (!isOpen) return null;
+  // Cuando el modal esta cerrado, mantener el componente montado pero oculto
+  // para preservar el estado de params, zonas detectadas, etc.
+  if (!isOpen) return <div style={{ display: 'none' }} />;
 
   // --- Render del panel de trades (drawer lateral) ---
   const renderTradePanel = () => {
